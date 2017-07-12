@@ -24,6 +24,10 @@ namespace DiscordChatExporter.Services
                 var editedTimeStamp = messageJson.Value<DateTime?>("edited_timestamp");
                 string content = messageJson.Value<string>("content");
 
+                // Lazy workaround for calls
+                if (messageJson["call"] != null)
+                    content = "Started a call.";
+
                 // Get author
                 var authorJson = messageJson["author"];
                 string authorId = authorJson.Value<string>("id");

@@ -87,7 +87,7 @@ namespace DiscordChatExporter.Services
             content = HtmlDocument.HtmlEncode(content);
 
             // Links from URLs
-            content = Regex.Replace(content, "((^|\\s)(https?|ftp)://[^\\s/$.?#].[^\\s]*($|\\s))",
+            content = Regex.Replace(content, "((https?|ftp)://[^\\s/$.?#].[^\\s]*)",
                 "<a href=\"$1\">$1</a>");
 
             // Preformatted multiline

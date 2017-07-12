@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.13
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordChatExporter", "DiscordChatExporter\DiscordChatExporter.csproj", "{4BE915D1-129C-49E2-860E-62045ACA5EAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscordChatExporter", "DiscordChatExporter\DiscordChatExporter.csproj", "{4BE915D1-129C-49E2-860E-62045ACA5EAD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EA305DD5-1F98-415D-B6C4-65053A58F914}"
+	ProjectSection(SolutionItems) = preProject
+		License.txt = License.txt
+		Readme.md = Readme.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

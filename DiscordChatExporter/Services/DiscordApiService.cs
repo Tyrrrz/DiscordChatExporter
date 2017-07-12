@@ -37,9 +37,9 @@ namespace DiscordChatExporter.Services
                     string attachmentId = attachmentJson.Value<string>("id");
                     string attachmentUrl = attachmentJson.Value<string>("url");
                     string attachmentFileName = attachmentJson.Value<string>("filename");
-                    long attachmentContentLength = attachmentJson.Value<long>("size");
+                    bool attachmentIsImage = attachmentJson["width"] != null;
 
-                    var attachment = new Attachment(attachmentId, attachmentUrl, attachmentFileName, attachmentContentLength);
+                    var attachment = new Attachment(attachmentId, attachmentUrl, attachmentFileName, attachmentIsImage);
                     attachments.Add(attachment);
                 }
 

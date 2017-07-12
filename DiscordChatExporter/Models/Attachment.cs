@@ -8,14 +8,14 @@
 
         public string FileName { get; }
 
-        public long ContentLength { get; }
+        public bool IsImage { get; }
 
-        public Attachment(string id, string url, string fileName, long contentLength)
+        public Attachment(string id, string url, string fileName, bool isImage)
         {
             Id = id;
             Url = url;
             FileName = fileName;
-            ContentLength = contentLength;
+            IsImage = isImage;
         }
     }
 }

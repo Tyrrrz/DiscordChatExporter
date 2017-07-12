@@ -164,11 +164,22 @@ namespace DiscordChatExporter.Services
                         // Attachments
                         foreach (var attachment in message.Attachments)
                         {
-                            messageBodyHtml.AppendChild(
-                                HtmlNode.CreateNode("<div class=\"msg-attachment\">" +
-                                                    $"<a href=\"{attachment.Url}\">" +
-                                                    $"<img class=\"msg-attachment\" src=\"{attachment.Url}\" />" +
-                                                    "</a></div>"));
+                            if (attachment.IsImage)
+                            {
+                                messageBodyHtml.AppendChild(
+                                    HtmlNode.CreateNode("<div class=\"msg-attachment\">" +
+                                                        $"<a href=\"{attachment.Url}\">" +
+                                                        $"<img class=\"msg-attachment\" src=\"{attachment.Url}\" />" +
+                                                        "</a></div>"));
+                            }
+                            else
+                            {
+                                messageBodyHtml.AppendChild(
+                                    HtmlNode.CreateNode("<div class=\"msg-attachment\">" +
+                                                        $"<a href=\"{attachment.Url}\">" +
+                                                        $"Attachment: {attachment.FileName}" +
+                                                        "</a></div>"));
+                            }
                         }
                     }
                 }

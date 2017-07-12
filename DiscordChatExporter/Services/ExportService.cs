@@ -91,10 +91,10 @@ namespace DiscordChatExporter.Services
                 "<a href=\"$1\">$1</a>");
 
             // Preformatted multiline
-            content = Regex.Replace(content, "```([^`]*?)```", e => "<pre>" + e.Groups[1].Value + "</pre>");
+            content = Regex.Replace(content, "```([^`]*?)```", e => "<span class=\"pre\">" + e.Groups[1].Value + "</span>");
 
             // Preformatted
-            content = Regex.Replace(content, "`([^`]*?)`", e => "<pre>" + e.Groups[1].Value + "</pre>");
+            content = Regex.Replace(content, "`([^`]*?)`", e => "<span class=\"pre\">" + e.Groups[1].Value + "</span>");
 
             // Bold
             content = Regex.Replace(content, "\\*\\*([^\\*]*?)\\*\\*", "<b>$1</b>");

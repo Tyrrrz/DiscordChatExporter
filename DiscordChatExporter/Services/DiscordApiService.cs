@@ -21,6 +21,7 @@ namespace DiscordChatExporter.Services
                 // Get basic data
                 string id = messageJson.Value<string>("id");
                 var timeStamp = messageJson.Value<DateTime>("timestamp");
+                var editedTimeStamp = messageJson.Value<DateTime?>("edited_timestamp");
                 string content = messageJson.Value<string>("content");
 
                 // Get author
@@ -44,7 +45,7 @@ namespace DiscordChatExporter.Services
                 }
 
                 var author = new User(authorId, authorName, authorAvatarHash);
-                var message = new Message(id, timeStamp, author, content, attachments);
+                var message = new Message(id, timeStamp, editedTimeStamp, author, content, attachments);
 
                 yield return message;
             }

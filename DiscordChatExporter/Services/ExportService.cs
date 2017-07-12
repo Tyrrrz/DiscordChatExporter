@@ -155,7 +155,15 @@ namespace DiscordChatExporter.Services
                     if (message.Content.IsNotBlank())
                     {
                         string content = FormatMessageContent(message.Content);
-                        messageBodyHtml.AppendChild(HtmlNode.CreateNode($"<div class=\"msg-content\">{content}</div>"));
+                        var contentHtml = messageBodyHtml.AppendChild(HtmlNode.CreateNode($"<div class=\"msg-content\">{content}</div>"));
+
+                        // Is edited
+                        if (message.EditedTimeStamp != null)
+                        {
+                            contentHtml.AppendChild(
+                                HtmlNode.CreateNode(
+                                    $"<span class=\"msg-edited\" title=\"{message.EditedTimeStamp:g}\">(edited)</span>"));
+                        }
                     }
 
                     // Attachments

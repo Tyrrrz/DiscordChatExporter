@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Discord Chat Log</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            background-color: #ffffff;
+            font-size: 15px;
+            font-family: Whitney, Helvetica Neue, Helvetica, Arial, sans-serif;
+        }
+        a {
+            text-decoration: none;
+            color: #37bcf7;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        pre {
+            margin: 0;
+            padding-left: 2px;
+            padding-right: 2px;
+            background-color: #f9f9f9;
+            font-family: Consolas, Courier New, Courier, Monospace;
+            display: inline;
+        }
+        div#info {
+            width: 100%;
+            margin-bottom: 20px;
+            color: #939799;
+        }
+        div#log {
+            width: 100%;            
+        }
+        div.msg {
+            display: flex;
+            margin-left: 10px;
+            margin-right: 10px;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            border-top: 1px solid #eceeef;
+        }
+        img.msg-avatar {
+            flex: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+        div.msg-body {
+            flex: 1;
+            margin-left: 15px;
+        }
+        span.msg-user {            
+            color: #2f3136;
+            font-size: 1.15em;
+        }
+        span.msg-date {
+            margin-left: 5px;
+            color: #b7bcbf;
+            font-size: 0.8em;
+            font-weight: 200;
+        }
+        div.msg-content {
+            padding-top: 5px;
+            color: #939799;
+        }
+        div.msg-attachment {
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+        img.msg-attachment {
+            max-width: 50%;
+            max-height: 500px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="info" />
+    <div id="log" />
+</body>
+</html>

@@ -2,6 +2,17 @@
 
 Command line executable that can export [Discord](https://discordapp.com) channel chat logs to a pretty HTML file.
 
+## Features
+
+- Produced HTML is styled similar to the Discord's light theme
+- Displays user avatars
+- Messages are grouped by author and time
+- Discord's markdown characters are correctly formatted
+- URLs are automatically converted to links
+- Attached images are inlined with a link to the full version
+- Other attached files are rendered as a download link
+- Edited messages are properly marked with the edit timestamp
+
 ## Usage
 
 Executing the application requires an access token and channel ID as parameters.

@@ -2,6 +2,10 @@
 
 Command line executable that can export [Discord](https://discordapp.com) channel chat logs to a pretty HTML file.
 
+## Screenshots
+
+![](http://www.tyrrrz.me/projects/images/discordchatexporter_1.png)
+
 ## Features
 
 - Produced HTML is styled similar to the Discord's light theme

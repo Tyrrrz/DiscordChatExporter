@@ -7,82 +7,113 @@
 
     <style>
         body {
-            background-color: #ffffff;
-            font-size: 15px;
             font-family: Whitney, Helvetica Neue, Helvetica, Arial, sans-serif;
+            font-size: 15px;
+
+            background-color: #fff;
         }
+
         a {
             text-decoration: none;
+
             color: #37bcf7;
         }
+
         a:hover {
             text-decoration: underline;
         }
+
         span.pre {
-            padding-left: 2px;
-            padding-right: 2px;
-            background-color: #f9f9f9;
             font-family: Consolas, Courier New, Courier, Monospace;
+
+            padding-right: 2px;
+            padding-left: 2px;
+
+            background-color: #f9f9f9;
         }
+
         div#info {
             max-width: 100%;
             margin-bottom: 20px;
+
             color: #939799;
         }
+
         div#log {
-            max-width: 100%;            
+            max-width: 100%;
         }
+
         div.msg {
             display: flex;
-            margin-left: 10px;
+
             margin-right: 10px;
+            margin-left: 10px;
             padding-top: 15px;
             padding-bottom: 15px;
+
             border-top: 1px solid #eceeef;
         }
+
         img.msg-avatar {
-            flex: 0;
             width: 40px;
             height: 40px;
+
             border-radius: 50%;
+
+            flex: 0;
         }
+
         div.msg-body {
-            flex: 1;
             margin-left: 15px;
+
+            flex: 1;
         }
-        span.msg-user {            
-            color: #2f3136;
+
+        span.msg-user {
             font-size: 1.15em;
+
+            color: #2f3136;
         }
+
         span.msg-date {
-            margin-left: 5px;
-            color: #b7bcbf;
-            font-size: 0.8em;
+            font-size: .8em;
             font-weight: 200;
+
+            margin-left: 5px;
+
+            color: #b7bcbf;
         }
+
         span.msg-edited {
-            margin-left: 5px;
-            color: #b7bcbf;
-            font-size: 0.8em;
+            font-size: .8em;
             font-weight: 200;
+
+            margin-left: 5px;
+
+            color: #b7bcbf;
         }
+
         div.msg-content {
             padding-top: 5px;
+
             color: #939799;
         }
+
         div.msg-attachment {
             margin-top: 5px;
             margin-bottom: 5px;
         }
+
         img.msg-attachment {
             max-width: 50%;
             max-height: 500px;
         }
+
     </style>
 </head>
 
 <body>
-    <div id="info" />
-    <div id="log" />
+    <div id="info"></div>
+    <div id="log"></div>
 </body>
 </html>

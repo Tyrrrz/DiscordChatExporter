@@ -75,11 +75,11 @@ namespace DiscordChatExporter.Services
 
             // Preformatted multiline
             content = Regex.Replace(content, "```([^`]*?)```",
-                e => "<span class=\"pre\">" + e.Groups[1].Value + "</span>");
+                m => "<div class=\"pre\">" + m.Groups[1].Value + "</div>");
 
-            // Preformatted
+            // Preformatted inline
             content = Regex.Replace(content, "`([^`]*?)`",
-                e => "<span class=\"pre\">" + e.Groups[1].Value + "</span>");
+                m => "<span class=\"pre\">" + m.Groups[1].Value + "</span>");
 
             // Bold
             content = Regex.Replace(content, "\\*\\*([^\\*]*?)\\*\\*", "<b>$1</b>");

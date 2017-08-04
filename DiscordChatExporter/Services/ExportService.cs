@@ -27,37 +27,37 @@ namespace DiscordChatExporter.Services
             var result = new List<MessageGroup>();
 
             // Group adjacent messages by timestamp and author
-            var buffer = new List<Message>();
+            var groupBuffer = new List<Message>();
             foreach (var message in messages)
             {
-                var bufferFirst = buffer.FirstOrDefault();
+                var groupFirst = groupBuffer.FirstOrDefault();
 
                 // Group break condition
                 bool breakCondition =
-                    bufferFirst != null &&
+                    groupFirst != null &&
                     (
-                        message.Author.Id != bufferFirst.Author.Id ||
-                        (message.TimeStamp - bufferFirst.TimeStamp).TotalHours > 1 ||
-                        message.TimeStamp.Hour != bufferFirst.TimeStamp.Hour
+                        message.Author.Id != groupFirst.Author.Id ||
+                        (message.TimeStamp - groupFirst.TimeStamp).TotalHours > 1 ||
+                        message.TimeStamp.Hour != groupFirst.TimeStamp.Hour
                     );
 
                 // If condition is true - flush buffer
                 if (breakCondition)
                 {
-                    var group = new MessageGroup(bufferFirst.Author, bufferFirst.TimeStamp, buffer);
+                    var group = new MessageGroup(groupFirst.Author, groupFirst.TimeStamp, groupBuffer);
                     result.Add(group);
-                    buffer.Clear();
+                    groupBuffer.Clear();
                 }
 
                 // Add message to buffer
-                buffer.Add(message);
+                groupBuffer.Add(message);
             }
 
             // Add what's remaining in buffer
-            if (buffer.Any())
+            if (groupBuffer.Any())
             {
-                var bufferFirst = buffer.First();
-                var group = new MessageGroup(bufferFirst.Author, bufferFirst.TimeStamp, buffer);
+                var groupFirst = groupBuffer.First();
+                var group = new MessageGroup(groupFirst.Author, groupFirst.TimeStamp, groupBuffer);
                 result.Add(group);
             }
 
@@ -110,7 +110,7 @@ namespace DiscordChatExporter.Services
             infoHtml.AppendChild(HtmlNode.CreateNode($"<div>Participants: <b>{participants}</b></div>"));
             infoHtml.AppendChild(HtmlNode.CreateNode($"<div>Messages: <b>{chatLog.Messages.Count:N0}</b></div>"));
 
-            // Messages
+            // Log
             var logHtml = doc.GetElementbyId("log");
             var messageGroups = GroupMessages(chatLog.Messages);
             foreach (var messageGroup in messageGroups)
@@ -119,8 +119,10 @@ namespace DiscordChatExporter.Services
                 var messageHtml = logHtml.AppendChild(HtmlNode.CreateNode("<div class=\"msg\"></div>"));
 
                 // Avatar
-                messageHtml.AppendChild(HtmlNode.CreateNode("<img class=\"msg-avatar\" " +
-                                                            $"src=\"{messageGroup.Author.AvatarUrl}\"></img>"));
+                messageHtml.AppendChild(HtmlNode.CreateNode("<div class=\"msg-avatar\">" +
+                                                            $"<img class=\"msg-avatar\" src=\"{messageGroup.Author.AvatarUrl}\" />" +
+                                                            "</div>" +
+                                                            "</img>"));
 
                 // Body
                 var messageBodyHtml = messageHtml.AppendChild(HtmlNode.CreateNode("<div class=\"msg-body\"></div>"));
@@ -133,16 +135,18 @@ namespace DiscordChatExporter.Services
                 string timeStamp = HtmlDocument.HtmlEncode(messageGroup.FirstTimeStamp.ToString("g"));
                 messageBodyHtml.AppendChild(HtmlNode.CreateNode($"<span class=\"msg-date\">{timeStamp}</span>"));
 
-                // Separate messages
+                // Individual messages
                 foreach (var message in messageGroup.Messages)
                 {
                     // Content
                     if (message.Content.IsNotBlank())
                     {
                         string content = FormatMessageContent(message.Content);
-                        var contentHtml = messageBodyHtml.AppendChild(HtmlNode.CreateNode($"<div class=\"msg-content\">{content}</div>"));
+                        var contentHtml =
+                            messageBodyHtml.AppendChild(
+                                HtmlNode.CreateNode($"<div class=\"msg-content\">{content}</div>"));
 
-                        // Is edited
+                        // Edited timestamp
                         if (message.EditedTimeStamp != null)
                         {
                             contentHtml.AppendChild(
@@ -152,27 +156,25 @@ namespace DiscordChatExporter.Services
                     }
 
                     // Attachments
-                    if (message.Attachments.Any())
+                    foreach (var attachment in message.Attachments)
                     {
-                        // Attachments
-                        foreach (var attachment in message.Attachments)
+                        if (attachment.IsImage)
                         {
-                            if (attachment.IsImage)
-                            {
-                                messageBodyHtml.AppendChild(
-                                    HtmlNode.CreateNode("<div class=\"msg-attachment\">" +
-                                                        $"<a href=\"{attachment.Url}\">" +
-                                                        $"<img class=\"msg-attachment\" src=\"{attachment.Url}\" />" +
-                                                        "</a></div>"));
-                            }
-                            else
-                            {
-                                messageBodyHtml.AppendChild(
-                                    HtmlNode.CreateNode("<div class=\"msg-attachment\">" +
-                                                        $"<a href=\"{attachment.Url}\">" +
-                                                        $"Attachment: {attachment.FileName}" +
-                                                        "</a></div>"));
-                            }
+                            messageBodyHtml.AppendChild(
+                                HtmlNode.CreateNode("<div class=\"msg-attachment\">" +
+                                                    $"<a href=\"{attachment.Url}\">" +
+                                                    $"<img class=\"msg-attachment\" src=\"{attachment.Url}\" />" +
+                                                    "</a>" +
+                                                    "</div>"));
+                        }
+                        else
+                        {
+                            messageBodyHtml.AppendChild(
+                                HtmlNode.CreateNode("<div class=\"msg-attachment\">" +
+                                                    $"<a href=\"{attachment.Url}\">" +
+                                                    $"Attachment: {attachment.FileName}" +
+                                                    "</a>" +
+                                                    "</div>"));
                         }
                     }
                 }

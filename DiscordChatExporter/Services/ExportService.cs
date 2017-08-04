@@ -121,8 +121,7 @@ namespace DiscordChatExporter.Services
                 // Avatar
                 messageHtml.AppendChild(HtmlNode.CreateNode("<div class=\"msg-avatar\">" +
                                                             $"<img class=\"msg-avatar\" src=\"{messageGroup.Author.AvatarUrl}\" />" +
-                                                            "</div>" +
-                                                            "</img>"));
+                                                            "</div>"));
 
                 // Body
                 var messageBodyHtml = messageHtml.AppendChild(HtmlNode.CreateNode("<div class=\"msg-body\"></div>"));

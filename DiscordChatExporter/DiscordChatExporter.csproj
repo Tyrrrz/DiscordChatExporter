@@ -14,7 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommandLineParser" Version="1.9.71" />
     <PackageReference Include="HtmlAgilityPack" Version="1.5.1" />
     <PackageReference Include="Newtonsoft.json" Version="10.0.3" />
     <PackageReference Include="Tyrrrz.Extensions" Version="1.4.0" />

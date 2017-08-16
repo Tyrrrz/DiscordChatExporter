@@ -8,14 +8,14 @@ Command line executable that can export [Discord](https://discordapp.com) channe
 
 ## Features
 
-- Produced HTML is styled similar to the Discord's light theme
+- Produces output styled similar to the Discord's light theme
 - Displays user avatars
-- Messages are grouped by author and time
-- Discord's markdown characters are correctly formatted
-- URLs are automatically converted to links
-- Attached images are inlined with a link to the full version
-- Other attached files are rendered as a download link
-- Edited messages are properly marked with the edit timestamp
+- Groups messages by author and time
+- Handles Discord markdown characters
+- Converts URLs to links
+- Inlines attached images with a link to the full version
+- Inserts download links for other types of attached files
+- Marks edited messages with a timestamp
 
 ## Usage
 

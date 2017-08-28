@@ -23,14 +23,14 @@ The program expects an access token and channel ID as parameters.
 
 `DiscordChatExporter.exe /token:REkOTVqm9RWOTNOLCdiuMpWd.QiglBz.Lub0E0TZ1xX4ZxCtnwtpBhWt3v1 /channelId:459360869055190534`
 
-### Getting access token:
+#### Getting access token:
 
 - Open Discord desktop or web client
 - Press `Ctrl+Shift+I`
 - Navigate to `Storage > LocalStorage > discordapp.com`
 - Find the value for `token` and extract it
 
-### Getting channel ID:
+#### Getting channel ID:
 
 - Open Discord desktop or web client
 - Navigate to any DM or server channel

@@ -19,13 +19,28 @@ Command line executable that can export [Discord](https://discordapp.com) channe
 
 ## Usage
 
-Executing the application requires an access token and channel ID as parameters.
+The program expects an access token and channel ID as parameters.
 
-You can get your token by opening the Discord app, pressing `Ctrl+Shift+I`, navigating to `Storage > LocalStorage > discordapp.com` and extracting `token`'s value.
+`DiscordChatExporter.exe /token:REkOTVqm9RWOTNOLCdiuMpWd.QiglBz.Lub0E0TZ1xX4ZxCtnwtpBhWt3v1 /channelId:459360869055190534`
 
-You can get the channel ID by enabling `Developer Mode` in `Settings > Appearance` and then right clicking on the channel and clicking on `Copy ID`.
+### Getting access token:
 
-- `DiscordChatExporter.exe /token:REkOTVqm9RWOTNOLCdiuMpWd.QiglBz.Lub0E0TZ1xX4ZxCtnwtpBhWt3v1 /channelId:459360869055190534`
+- Open Discord desktop or web client
+- Press `Ctrl+Shift+I`
+- Navigate to `Storage > LocalStorage > discordapp.com`
+- Find the value for `token` and extract it
+
+### Getting channel ID:
+
+- Open Discord desktop or web client
+- Navigate to any DM or server channel
+- Extract the current URL:
+    - If using desktop client, press `Ctrl+Shift+I`, type `window.location.href` in console and extract the result
+    - If using web client, just take the current URL from the address bar
+- Pull the ID from the URL:
+    - If it's a DM channel, the format looks like this: `https://discordapp.com/channels/@me/CHANNEL_ID`
+    - If it's a server channel, the format looks like this:
+    `https://discordapp.com/channels/WHATEVER/CHANNEL_ID`
 
 ## Libraries used
 

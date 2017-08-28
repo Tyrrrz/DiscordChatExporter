@@ -6,6 +6,10 @@ Command line executable that can export [Discord](https://discordapp.com) channe
 
 ![](http://www.tyrrrz.me/projects/images/discordchatexporter_1.png)
 
+## Download
+
+- [See releases](https://github.com/Tyrrrz/DiscordChatExporter/releases)
+
 ## Features
 
 - Produces output styled similar to the Discord's light theme

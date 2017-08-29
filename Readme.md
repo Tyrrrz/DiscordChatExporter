@@ -31,7 +31,7 @@ The program expects an access token and channel ID as parameters.
 
 - Open Discord desktop or web client
 - Press `Ctrl+Shift+I`
-- Navigate to `Storage > LocalStorage > discordapp.com`
+- Navigate to `Application > Storage > Local Storage > https://discordapp.com`
 - Find the value for `token` and extract it
 
 #### Getting channel ID:

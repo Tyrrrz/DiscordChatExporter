@@ -3,8 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net45</TargetFramework>
-    <AssemblyVersion>1.0.0</AssemblyVersion>
-    <FileVersion>$(AssemblyVersion)</FileVersion>
+    <Version>1.0.0</Version>
     <Company>Tyrrrz</Company>
     <Copyright>Copyright (c) 2017 Alexey Golub</Copyright>
   </PropertyGroup>

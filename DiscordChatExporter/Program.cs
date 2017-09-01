@@ -11,7 +11,7 @@ namespace DiscordChatExporter
     public static class Program
     {
         private static readonly DiscordApiService DiscordApiService = new DiscordApiService();
-        private static readonly ExportService ExportService = new ExportService();
+        private static readonly HtmlExportService HtmlExportService = new HtmlExportService();
 
         private static Options GetOptions(string[] args)
         {
@@ -53,7 +53,7 @@ namespace DiscordChatExporter
 
             // Export
             Console.WriteLine("Exporting messages...");
-            ExportService.Export($"{options.ChannelId}.html", chatLog);
+            HtmlExportService.Export($"{options.ChannelId}.html", chatLog);
         }
 
         public static void Main(string[] args)

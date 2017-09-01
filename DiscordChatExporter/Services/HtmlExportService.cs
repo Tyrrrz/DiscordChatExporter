@@ -8,7 +8,7 @@ using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Services
 {
-    public class ExportService
+    public class HtmlExportService
     {
         private HtmlDocument GetTemplate()
         {

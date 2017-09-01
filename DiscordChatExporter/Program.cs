@@ -17,11 +17,11 @@ namespace DiscordChatExporter
         {
             // Parse the arguments
             var argsDic = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            foreach (string arg in args)
+            foreach (var arg in args)
             {
                 var match = Regex.Match(arg, "/(.*?):\"?(.*?)\"?$");
-                string key = match.Groups[1].Value;
-                string value = match.Groups[2].Value;
+                var key = match.Groups[1].Value;
+                var value = match.Groups[2].Value;
 
                 if (key.IsBlank())
                     continue;
@@ -30,8 +30,8 @@ namespace DiscordChatExporter
             }
 
             // Extract required arguments
-            string token = argsDic.GetOrDefault("token");
-            string channelId = argsDic.GetOrDefault("channelId");
+            var token = argsDic.GetOrDefault("token");
+            var channelId = argsDic.GetOrDefault("channelId");
 
             // Verify arguments
             if (token.IsBlank() || channelId.IsBlank())

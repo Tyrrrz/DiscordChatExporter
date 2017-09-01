@@ -14,7 +14,7 @@ namespace DiscordChatExporter.Services
     {
         private HtmlDocument GetTemplate()
         {
-            string resourcePath = "DiscordChatExporter.Resources.HtmlExportService.Template.html";
+            var resourcePath = "DiscordChatExporter.Resources.HtmlExportService.Template.html";
 
             var assembly = Assembly.GetExecutingAssembly();
             var stream = assembly.GetManifestResourceStream(resourcePath);
@@ -31,7 +31,7 @@ namespace DiscordChatExporter.Services
 
         private string GetStyle(Theme theme)
         {
-            string resourcePath = $"DiscordChatExporter.Resources.HtmlExportService.{theme}Theme.css";
+            var resourcePath = $"DiscordChatExporter.Resources.HtmlExportService.{theme}Theme.css";
 
             var assembly = Assembly.GetExecutingAssembly();
             var stream = assembly.GetManifestResourceStream(resourcePath);
@@ -56,7 +56,7 @@ namespace DiscordChatExporter.Services
                 var groupFirst = groupBuffer.FirstOrDefault();
 
                 // Group break condition
-                bool breakCondition =
+                var breakCondition =
                     groupFirst != null &&
                     (
                         message.Author.Id != groupFirst.Author.Id ||
@@ -125,7 +125,7 @@ namespace DiscordChatExporter.Services
         public void Export(string filePath, ChatLog chatLog, Theme theme)
         {
             var doc = GetTemplate();
-            string style = GetStyle(theme);
+            var style = GetStyle(theme);
 
             // Set theme
             var themeHtml = doc.GetElementbyId("theme");
@@ -134,7 +134,7 @@ namespace DiscordChatExporter.Services
             // Info
             var infoHtml = doc.GetElementbyId("info");
             infoHtml.AppendChild(HtmlNode.CreateNode($"<div>Channel ID: <b>{chatLog.ChannelId}</b></div>"));
-            string participants = HtmlDocument.HtmlEncode(chatLog.Participants.Select(u => u.Name).JoinToString(", "));
+            var participants = HtmlDocument.HtmlEncode(chatLog.Participants.Select(u => u.Name).JoinToString(", "));
             infoHtml.AppendChild(HtmlNode.CreateNode($"<div>Participants: <b>{participants}</b></div>"));
             infoHtml.AppendChild(HtmlNode.CreateNode($"<div>Messages: <b>{chatLog.Messages.Count:N0}</b></div>"));
 
@@ -155,11 +155,11 @@ namespace DiscordChatExporter.Services
                 var messageBodyHtml = messageHtml.AppendChild(HtmlNode.CreateNode("<div class=\"msg-body\"></div>"));
 
                 // Author
-                string authorName = HtmlDocument.HtmlEncode(messageGroup.Author.Name);
+                var authorName = HtmlDocument.HtmlEncode(messageGroup.Author.Name);
                 messageBodyHtml.AppendChild(HtmlNode.CreateNode($"<span class=\"msg-user\">{authorName}</span>"));
 
                 // Date
-                string timeStamp = HtmlDocument.HtmlEncode(messageGroup.FirstTimeStamp.ToString("g"));
+                var timeStamp = HtmlDocument.HtmlEncode(messageGroup.FirstTimeStamp.ToString("g"));
                 messageBodyHtml.AppendChild(HtmlNode.CreateNode($"<span class=\"msg-date\">{timeStamp}</span>"));
 
                 // Individual messages
@@ -168,7 +168,7 @@ namespace DiscordChatExporter.Services
                     // Content
                     if (message.Content.IsNotBlank())
                     {
-                        string content = FormatMessageContent(message.Content);
+                        var content = FormatMessageContent(message.Content);
                         var contentHtml =
                             messageBodyHtml.AppendChild(
                                 HtmlNode.CreateNode($"<div class=\"msg-content\">{content}</div>"));

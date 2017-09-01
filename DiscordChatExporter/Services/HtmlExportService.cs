@@ -122,7 +122,7 @@ namespace DiscordChatExporter.Services
             return content;
         }
 
-        public void Export(string filePath, Theme theme, ChatLog chatLog)
+        public void Export(string filePath, ChatLog chatLog, Theme theme)
         {
             var doc = GetTemplate();
             string style = GetStyle(theme);

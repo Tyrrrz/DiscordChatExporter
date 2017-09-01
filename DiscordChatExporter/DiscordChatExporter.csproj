@@ -9,10 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\HtmlExportService\DarkTheme.css" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <EmbeddedResource Include="Resources\HtmlExportService\LightTheme.css" />
     <EmbeddedResource Include="Resources\HtmlExportService\DarkTheme.css" />
     <EmbeddedResource Include="Resources\HtmlExportService\Template.html" />
   </ItemGroup>

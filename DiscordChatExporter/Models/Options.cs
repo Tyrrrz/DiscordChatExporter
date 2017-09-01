@@ -6,10 +6,13 @@
 
         public string ChannelId { get; }
 
-        public Options(string token, string channelId)
+        public Theme Theme { get; }
+
+        public Options(string token, string channelId, Theme theme)
         {
             Token = token;
             ChannelId = channelId;
+            Theme = theme;
         }
     }
 }

@@ -37,8 +37,11 @@ namespace DiscordChatExporter
             if (token.IsBlank() || channelId.IsBlank())
                 throw new ArgumentException("Some or all required command line arguments are missing");
 
+            // Exract optional arguments
+            var theme = argsDic.GetOrDefault("theme").ParseEnumOrDefault<Theme>();
+
             // Create option set
-            return new Options(token, channelId);
+            return new Options(token, channelId, theme);
         }
 
         private static async Task MainAsync(string[] args)
@@ -53,7 +56,7 @@ namespace DiscordChatExporter
 
             // Export
             Console.WriteLine("Exporting messages...");
-            HtmlExportService.Export($"{options.ChannelId}.html", Theme.Dark, chatLog);
+            HtmlExportService.Export($"{options.ChannelId}.html", chatLog, options.Theme);
         }
 
         public static void Main(string[] args)

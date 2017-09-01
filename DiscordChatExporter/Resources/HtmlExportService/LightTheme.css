@@ -2,13 +2,13 @@
     font-family: Whitney, Helvetica Neue, Helvetica, Arial, sans-serif;
     font-size: 16px;
 
-    background-color: #36393E;
+    background-color: #FFFFFF;
 }
 
 a {
     text-decoration: none;
 
-    color: #0096CF;
+    color: #00B0F4;
 }
 
 a:hover {
@@ -21,14 +21,14 @@ div.pre, span.pre {
     padding-right: 2px;
     padding-left: 2px;
 
-    background-color: #2F3136;
+    background-color: #F9F9F9;
 }
 
 div#info {
     max-width: 100%;
     margin-bottom: 20px;
 
-    color: rgba(255, 255, 255, 0.7);
+    color: #737F8D;
 }
 
 div#log {
@@ -43,7 +43,7 @@ div.msg {
     padding-top: 15px;
     padding-bottom: 15px;
 
-    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    border-top: 1px solid #ECEEEF;
 }
 
 div.msg-avatar {
@@ -67,7 +67,7 @@ div.msg-body {
 span.msg-user {
     font-size: 1rem;
 
-    color: #FFFFFF;
+    color: #2F3136;
 }
 
 span.msg-date {
@@ -75,7 +75,7 @@ span.msg-date {
 
     margin-left: 5px;
 
-    color: rgba(255, 255, 255, 0.2);
+    color: #99AAB5;
 }
 
 span.msg-edited {
@@ -83,7 +83,7 @@ span.msg-edited {
 
     margin-left: 5px;
 
-    color: rgba(255, 255, 255, 0.2);
+    color: #99AAB5;
 }
 
 div.msg-content {
@@ -91,7 +91,7 @@ div.msg-content {
 
     padding-top: 5px;
 
-    color: rgba(255, 255, 255, 0.7);
+    color: #737F8D;
 }
 
 div.msg-attachment {

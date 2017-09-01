@@ -12,7 +12,7 @@ Command line executable that can export [Discord](https://discordapp.com) channe
 
 ## Features
 
-- Produces output styled similar to the Discord's light theme
+- Supports both dark and light theme
 - Displays user avatars
 - Groups messages by author and time
 - Handles Discord markdown characters
@@ -23,18 +23,18 @@ Command line executable that can export [Discord](https://discordapp.com) channe
 
 ## Usage
 
-The program expects an access token and channel ID as parameters.
+The program expects an access token and channel ID as parameters. At minimum, the execution should look like this:
 
 `DiscordChatExporter.exe /token:REkOTVqm9RWOTNOLCdiuMpWd.QiglBz.Lub0E0TZ1xX4ZxCtnwtpBhWt3v1 /channelId:459360869055190534`
 
-#### Getting access token:
+#### Getting access token
 
 - Open Discord desktop or web client
 - Press `Ctrl+Shift+I`
 - Navigate to `Application > Storage > Local Storage > https://discordapp.com`
 - Find the value for `token` and extract it
 
-#### Getting channel ID:
+#### Getting channel ID
 
 - Open Discord desktop or web client
 - Navigate to any DM or server channel
@@ -45,6 +45,10 @@ The program expects an access token and channel ID as parameters.
     - If it's a DM channel, the format looks like this: `https://discordapp.com/channels/@me/CHANNEL_ID`
     - If it's a server channel, the format looks like this:
     `https://discordapp.com/channels/WHATEVER/CHANNEL_ID`
+
+#### Optional arguments
+
+- `/theme:[Dark/Light]` - sets the style of the output
 
 ## Libraries used
 

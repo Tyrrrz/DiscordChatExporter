@@ -10,8 +10,8 @@ namespace DiscordChatExporter
 {
     public static class Program
     {
-        private static readonly DiscordApiService DiscordApiService = new DiscordApiService();
-        private static readonly HtmlExportService HtmlExportService = new HtmlExportService();
+        private static readonly DiscordApiService ApiService = new DiscordApiService();
+        private static readonly HtmlExportService ExportService = new HtmlExportService();
 
         private static Options GetOptions(string[] args)
         {
@@ -51,12 +51,12 @@ namespace DiscordChatExporter
 
             // Get messages
             Console.WriteLine("Getting messages...");
-            var messages = await DiscordApiService.GetMessagesAsync(options.Token, options.ChannelId);
+            var messages = await ApiService.GetMessagesAsync(options.Token, options.ChannelId);
             var chatLog = new ChatLog(options.ChannelId, messages);
 
             // Export
             Console.WriteLine("Exporting messages...");
-            HtmlExportService.Export($"{options.ChannelId}.html", chatLog, options.Theme);
+            ExportService.Export($"{options.ChannelId}.html", chatLog, options.Theme);
         }
 
         public static void Main(string[] args)

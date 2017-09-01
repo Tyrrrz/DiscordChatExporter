@@ -14,10 +14,10 @@ namespace DiscordChatExporter.Services
     {
         private HtmlDocument GetTemplate()
         {
-            string templateName = "DiscordChatExporter.Resources.HtmlExportService.Template.html";
+            string resourcePath = "DiscordChatExporter.Resources.HtmlExportService.Template.html";
 
             var assembly = Assembly.GetExecutingAssembly();
-            var stream = assembly.GetManifestResourceStream(templateName);
+            var stream = assembly.GetManifestResourceStream(resourcePath);
             if (stream == null)
                 throw new MissingManifestResourceException("Could not find template resource");
 
@@ -31,12 +31,12 @@ namespace DiscordChatExporter.Services
 
         private string GetStyle(Theme theme)
         {
-            string styleName = $"DiscordChatExporter.Resources.HtmlExportService.{theme}Theme.css";
+            string resourcePath = $"DiscordChatExporter.Resources.HtmlExportService.{theme}Theme.css";
 
             var assembly = Assembly.GetExecutingAssembly();
-            var stream = assembly.GetManifestResourceStream(styleName);
+            var stream = assembly.GetManifestResourceStream(resourcePath);
             if (stream == null)
-                throw new MissingManifestResourceException("Could not find theme style resource");
+                throw new MissingManifestResourceException("Could not find style resource");
 
             using (stream)
             using (var reader = new StreamReader(stream))

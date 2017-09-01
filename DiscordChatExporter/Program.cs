@@ -53,7 +53,7 @@ namespace DiscordChatExporter
 
             // Export
             Console.WriteLine("Exporting messages...");
-            HtmlExportService.Export($"{options.ChannelId}.html", chatLog);
+            HtmlExportService.Export($"{options.ChannelId}.html", Theme.Dark, chatLog);
         }
 
         public static void Main(string[] args)

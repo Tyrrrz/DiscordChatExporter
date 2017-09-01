@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Resources;
 using System.Text.RegularExpressions;
 using DiscordChatExporter.Models;
 using HtmlAgilityPack;
@@ -8,17 +10,38 @@ using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Services
 {
-    public class ExportService
+    public class HtmlExportService
     {
         private HtmlDocument GetTemplate()
         {
-            const string templateName = "DiscordChatExporter.Services.ExportTemplate.html";
+            string templateName = "DiscordChatExporter.Resources.HtmlExportService.Template.html";
+
             var assembly = Assembly.GetExecutingAssembly();
-            using (var stream = assembly.GetManifestResourceStream(templateName))
+            var stream = assembly.GetManifestResourceStream(templateName);
+            if (stream == null)
+                throw new MissingManifestResourceException("Could not find template resource");
+
+            using (stream)
             {
                 var doc = new HtmlDocument();
                 doc.Load(stream);
                 return doc;
+            }
+        }
+
+        private string GetStyle(Theme theme)
+        {
+            string styleName = $"DiscordChatExporter.Resources.HtmlExportService.{theme}Theme.css";
+
+            var assembly = Assembly.GetExecutingAssembly();
+            var stream = assembly.GetManifestResourceStream(styleName);
+            if (stream == null)
+                throw new MissingManifestResourceException("Could not find theme style resource");
+
+            using (stream)
+            using (var reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
             }
         }
 
@@ -99,9 +122,14 @@ namespace DiscordChatExporter.Services
             return content;
         }
 
-        public void Export(string filePath, ChatLog chatLog)
+        public void Export(string filePath, ChatLog chatLog, Theme theme)
         {
             var doc = GetTemplate();
+            string style = GetStyle(theme);
+
+            // Set theme
+            var themeHtml = doc.GetElementbyId("theme");
+            themeHtml.InnerHtml = style;
 
             // Info
             var infoHtml = doc.GetElementbyId("info");

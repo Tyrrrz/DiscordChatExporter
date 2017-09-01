@@ -9,7 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Services\ExportTemplate.html" />
+    <EmbeddedResource Include="Resources\HtmlExportService\LightTheme.css" />
+    <EmbeddedResource Include="Resources\HtmlExportService\DarkTheme.css" />
+    <EmbeddedResource Include="Resources\HtmlExportService\Template.html" />
   </ItemGroup>
 
   <ItemGroup>

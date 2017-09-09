@@ -8,10 +8,15 @@ using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Services
 {
-    public class DiscordApiService
+    public class DiscordApiService : IDisposable
     {
         private const string ApiRoot = "https://discordapp.com/api";
         private readonly HttpClient _httpClient = new HttpClient();
+
+        ~DiscordApiService()
+        {
+            Dispose(false);
+        }
 
         private IEnumerable<Message> ParseMessages(string json)
         {
@@ -35,9 +40,8 @@ namespace DiscordChatExporter.Services
                 var authorAvatarHash = authorJson.Value<string>("avatar");
 
                 // Get attachment
-                var attachmentsJson = messageJson["attachments"];
                 var attachments = new List<Attachment>();
-                foreach (var attachmentJson in attachmentsJson)
+                foreach (var attachmentJson in messageJson["attachments"].EmptyIfNull())
                 {
                     var attachmentId = attachmentJson.Value<string>("id");
                     var attachmentUrl = attachmentJson.Value<string>("url");
@@ -60,7 +64,7 @@ namespace DiscordChatExporter.Services
             var result = new List<Message>();
 
             // We are going backwards from last message to first
-            // ...collecting everything between them in batches
+            // collecting everything between them in batches
             string beforeId = null;
             while (true)
             {
@@ -94,6 +98,20 @@ namespace DiscordChatExporter.Services
             result.Reverse();
 
             return result;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _httpClient.Dispose();
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

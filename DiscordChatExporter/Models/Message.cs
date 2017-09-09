@@ -18,7 +18,8 @@ namespace DiscordChatExporter.Models
 
         public IReadOnlyList<Attachment> Attachments { get; }
 
-        public Message(string id, DateTime timeStamp, DateTime? editedTimeStamp, User author, string content, IEnumerable<Attachment> attachments)
+        public Message(string id, DateTime timeStamp, DateTime? editedTimeStamp, User author, string content,
+            IEnumerable<Attachment> attachments)
         {
             Id = id;
             TimeStamp = timeStamp;

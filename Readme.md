@@ -4,7 +4,7 @@ Command line executable that can export [Discord](https://discordapp.com) channe
 
 ## Screenshots
 
-![](http://www.tyrrrz.me/projects/images/discordchatexporter_1.png)
+![](http://www.tyrrrz.me/Projects/DiscordChatExporter/Images/1.png)
 
 ## Download
 

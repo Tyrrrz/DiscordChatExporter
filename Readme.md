@@ -1,6 +1,6 @@
 # DiscordChatExporter
 
-Command line executable that can export [Discord](https://discordapp.com) channel chat logs to a pretty HTML file.
+DiscordChatExporter can be used to export message history from [Discord](https://discordapp.com) to an HTML file. It works for both direct message chats and guild chats, supports markdown, message grouping, and attachments, and has an option to choose between light and dark themes.
 
 ## Screenshots
 

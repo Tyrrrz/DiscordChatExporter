@@ -1,0 +1,238 @@
+mixin TwoColumns (one = "*", two = "*") for Grid {
+  combine ColumnDefinitions: [
+    ColumnDefinition { Width: $one }
+    ColumnDefinition { Width: $two }
+  ]
+}
+
+mixin ThreeColumns (one = none, two = none, three = none) for Grid {
+  #TwoColumns($one, $two)
+  combine ColumnDefinitions: ColumnDefinition { Width: $three }
+}
+
+mixin FourColumns (one = none, two = none, three = none, four = none) for Grid {
+  #ThreeColumns($one, $two, $three)
+  combine ColumnDefinitions: ColumnDefinition { Width: $four }
+}
+
+mixin FiveColumns (one = none, two = none, three = none, four = none, five = none) for Grid {
+  #FourColumns($one, $two, $three, $four)
+  combine ColumnDefinitions: ColumnDefinition { Width: $five }
+}
+
+mixin TwoRows (one = none, two = none) for Grid
+{
+  combine RowDefinitions: [
+    RowDefinition { Height: $one }
+    RowDefinition { Height: $two }
+  ]
+}
+
+mixin ThreeRows (one = none, two = none, three = none) for Grid
+{
+  #TwoRows($one, $two)
+  combine RowDefinitions: RowDefinition { Height: $three }
+}
+
+mixin FourRows (one = none, two = none, three = none, four = none) for Grid
+{
+  #ThreeRows($one, $two, $three)
+  combine RowDefinitions: RowDefinition { Height: $four }
+}
+
+mixin FiveRows (one = none, two = none, three = none, four = none, five = none) for Grid
+{
+  #FourRows($one, $two, $three, $four)
+  combine RowDefinitions: RowDefinition { Height: $five }
+}
+
+mixin Cell (row = none, column = none, rowSpan = none, columnSpan = none) for FrameworkElement {
+  Grid.Row: $row
+  Grid.Column: $column
+  Grid.RowSpan: $rowSpan
+  Grid.ColumnSpan: $columnSpan
+}
+
+alias ImageCached(source) {
+  Image {    
+    Source: BitmapImage {
+      UriCachePolicy: "Revalidate"
+      UriSource: $source
+    }
+  }
+}
+
+mixin Setter(property, value, targetName=none) for Style {
+  Setter { Property: $property, Value: $value, TargetName: $targetName }
+}
+
+/*
+mixin AddSetter(property, value, targetName=none) for Style {
+  combine Setters: #Setter($property, $value, $targetName) {}
+}*/
+
+alias DataTrigger(binding, bindingValue) {
+  DataTrigger { Binding: $binding, Value: $bindingValue }
+}
+
+alias Trigger(property, value) {
+  Trigger { Property: $property, Value: $value }
+}
+
+alias EventTrigger(event, sourceName=none) {
+  EventTrigger { RoutedEvent: $event, SourceName: $sourceName }
+}
+
+alias DataTrigger_SetProperty(binding, bindingValue, property, propertyValue) {
+  @DataTrigger ($binding, $bindingValue) {
+    #Setter($property, $propertyValue)
+  }
+}
+
+alias Trigger_SetProperty(triggerProperty, triggerValue, property, propertyValue) {
+  @Trigger ($triggerProperty, $triggerValue) {
+    #Setter($property, $propertyValue)
+  }
+}
+
+alias EventTrigger_SetProperty(event, property, propertyValue) {
+  @EventTrigger ($event) {
+    #Setter($property, $propertyValue)
+  }
+}
+alias VisibleIf_DataTrigger(binding, valueForVisible) {
+  @DataTrigger_SetProperty($binding, $valueForVisible, "Visibility", "Visible") {}
+}
+
+alias CollapsedIf_DataTrigger(binding, valueForCollapsed) {
+  @DataTrigger_SetProperty($binding, $valueForCollapsed, "Visibility", "Collapsed") {}
+}
+
+alias StackPanelHorizontal() {
+  StackPanel {
+    Orientation: Horizontal
+  }
+}
+
+alias GridItemsControl() {
+  ItemsControl {
+    ScrollViewer.HorizontalScrollBarVisibility: Disabled,
+
+    ItemsPanel: ItemsPanelTemplate { 
+      WrapPanel {
+        IsItemsHost: true
+        Orientation: Horizontal
+      }
+    }
+  }  
+}
+
+////////////////
+// Animations //
+////////////////
+
+alias DoubleAnimation(property, frm = "0", to = "1", duration = "0:0:1", targetName=none, beginTime=none) {
+  DoubleAnimation {
+    Storyboard.TargetProperty: $property
+    Storyboard.TargetName: $targetName
+    From: $frm
+    To: $to
+    Duration: $duration
+    BeginTime: $beginTime
+  }
+}
+
+alias DoubleAnimationStoryboard (property, frm = "0", to = "1", duration = "0:0:1", targetName=none) {
+  BeginStoryboard {
+    Storyboard {
+      @DoubleAnimation($property, $frm, $to, $duration, $targetName) {}
+    }
+  }
+}
+
+mixin DoubleAnimation_PropertyTrigger(triggerProperty, triggerValue, animationProperty, frm, to, duration) for Style {  
+  combine Triggers: @Trigger ($triggerProperty, $triggerValue) {
+    EnterActions: @DoubleAnimationStoryboard($animationProperty, $frm, $to, $duration) {}
+  }
+}
+
+mixin DoubleAnimation_PropertyTrigger_Toggle(triggerProperty, triggerValue, animationProperty, frm, to, duration) for Style {  
+  combine Triggers: @Trigger ($triggerProperty, $triggerValue) {
+    EnterActions: @DoubleAnimationStoryboard($animationProperty, $frm, $to, $duration) {}
+    ExitActions: @DoubleAnimationStoryboard($animationProperty, $to, $frm, $duration) {}
+  }
+}
+
+mixin DoubleAnimation_EventTrigger(triggerEvent, animationProperty, frm, to, duration) for Style {
+  combine Triggers: EventTrigger {    
+    RoutedEvent: $triggerEvent
+    @DoubleAnimationStoryboard($animationProperty, $frm, $to, $duration) {}
+  }
+}
+
+mixin DoubleAnimation_DataTrigger(binding, value, animationProperty, frm, to, duration) for Style {
+  combine Triggers: DataTrigger {  
+    Binding: $binding
+    Value: $value
+    EnterActions: @DoubleAnimationStoryboard($animationProperty, $frm, $to, $duration) {}
+  }
+}
+
+mixin FadeIn_OnProperty(property, value, frm = "0", to = "1", duration = "0:0:1") for Style {
+  #DoubleAnimation_PropertyTrigger($property, $value, "Opacity", $frm, $to, $duration)
+}
+
+mixin FadeOut_OnProperty(property, value, frm = "1", to = "0", duration = "0:0:1") for Style {
+  #DoubleAnimation_PropertyTrigger($property, $value, "Opacity", $frm, $to, $duration)
+}
+
+mixin FadeIn_OnEvent(event, frm = "0", to = "1", duration = "0:0:1") for Style {
+  #DoubleAnimation_EventTrigger($event, "Opacity", $frm, $to, $duration)
+}
+
+mixin FadeOut_OnEvent(event, frm = "1", to = "0", duration = "0:0:1") for Style {
+  #DoubleAnimation_EventTrigger($event, "Opacity", $frm, $to, $duration)
+}
+
+mixin FadeIn_OnData(binding, value, from_ = "0", to = "1", duration = "0:0:1") for Style {
+  #DoubleAnimation_DataTrigger($binding, $value, "Opacity", $from_, $to, $duration)
+}
+
+mixin FadeOut_OnData(binding, value, from_ = "1", to = "0", duration = "0:0:1") for Style {
+  #DoubleAnimation_DataTrigger($binding, $value, "Opacity", $from_, $to, $duration)
+}
+
+mixin Property_OnBinding(binding, bindingValue, property, propertyValue, initialValue) for Style {
+  #Setter("Visibility", $initialValue)
+  combine Triggers: [
+    @DataTrigger_SetProperty($binding, $bindingValue, $property, $propertyValue) {}
+  ]
+}
+
+mixin Visibility_OnBinding(binding, bindingValue, visibilityValue="Visible", initialValue="Collapsed") for Style {
+  #Property_OnBinding($binding, $bindingValue, "Visibility", $visibilityValue, $initialValue)
+}
+
+mixin Fade_OnBinding(binding, bindingValue) for Style {
+  #Setter("Visibility", "Visible")
+  #Setter("Opacity", "0")
+
+  combine Triggers: [
+    @DataTrigger($binding, $bindingValue) {
+      EnterActions: [
+        @DoubleAnimationStoryboard("Opacity", 0, 1, "0:0:0.5") {}  
+      ]
+      ExitActions: [
+        @DoubleAnimationStoryboard("Opacity", 1, 0, "0:0:0.5") {}  
+      ]
+      #Setter("Opacity", 1)
+    }
+    @Trigger("Opacity", 0) {
+      #Setter("Visibility", "Hidden")
+    }
+  ]
+}
+
+mixin MergeDictionary (source) for ResourceDictionary {
+  combine MergedDictionaries: ResourceDictionary { Source: $source }
+}

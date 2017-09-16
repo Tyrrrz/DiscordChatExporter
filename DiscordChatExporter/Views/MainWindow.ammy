@@ -1,0 +1,4 @@
+﻿Window "DiscordChatExporter.Views.MainWindow" {
+	WindowStartupLocation: CenterScreen
+	Title: "Main Window"
+}

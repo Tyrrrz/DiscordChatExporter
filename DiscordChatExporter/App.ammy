@@ -1,0 +1,3 @@
+﻿Application "DiscordChatExporter.App" {
+  StartupUri: "Views/MainWindow.g.xaml"
+}

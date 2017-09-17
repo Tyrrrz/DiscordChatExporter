@@ -15,6 +15,7 @@ Window "DiscordChatExporter.Views.MainWindow" {
   TextElement.Foreground: resource dyn "SecondaryTextBrush"
   TextOptions.TextFormattingMode: Ideal
   TextOptions.TextRenderingMode: Auto
+  FocusManager.FocusedElement: bind from "TokenTextBox"
 
   Grid {
     #ThreeRows("Auto", "*", "Auto")
@@ -31,12 +32,13 @@ Window "DiscordChatExporter.Views.MainWindow" {
             #TwoColumns("*", "Auto")
 
             // Token
-            TextBox {
+            TextBox "TokenTextBox" {
               Grid.Column: 0
               Margin: 5
               BorderThickness: 0
               FontSize: 16
               HintAssist.Hint: "Authorization token"
+              KeyDown: TokenTextBox_KeyDown
               Text: bind Token
             }
 

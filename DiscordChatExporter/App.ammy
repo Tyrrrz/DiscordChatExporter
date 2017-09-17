@@ -1,7 +1,7 @@
 ﻿Application "DiscordChatExporter.App" {
   StartupUri: "Views/MainWindow.g.xaml"
-  Startup: App_OnStartup
-  Exit: App_OnExit
+  Startup: App_Startup
+  Exit: App_Exit
 
   Resources: ResourceDictionary {
     // Material Design

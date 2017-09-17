@@ -1,1 +1,0 @@
-<Window x:Class="DiscordChatExporter.Views.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ns0="clr-namespace:AmmySidekick;assembly=AmmySidekick" WindowStartupLocation="CenterScreen" Title="Main Window" ns0:Ammy.Register="/DiscordChatExporter;component/Views/MainWindow.g.xaml"/>

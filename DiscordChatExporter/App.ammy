@@ -1,5 +1,7 @@
 ﻿Application "DiscordChatExporter.App" {
   StartupUri: "Views/MainWindow.g.xaml"
+  Startup: App_OnStartup
+  Exit: App_OnExit
 
   Resources: ResourceDictionary {
     // Material Design
@@ -47,5 +49,8 @@
       BasedOn: resource "MaterialDesignTextBox"
       #Setter("Foreground", resource dyn "PrimaryTextBrush")
     }
+
+    // Locator
+    Locator Key="Locator" { }
   }
 }

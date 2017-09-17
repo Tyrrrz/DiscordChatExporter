@@ -1,9 +1,11 @@
 ﻿using MaterialDesignThemes.Wpf
 
 Window "DiscordChatExporter.Views.MainWindow" {
+  DataContext: bind MainViewModel from $resource Locator
   Title: "DiscordChatExporter"
   Width: 520
   Height: 600
+  Background: resource dyn "MaterialDesignPaper"
   WindowStartupLocation: CenterScreen
   UseLayoutRounding: true
   SnapsToDevicePixels: true
@@ -17,7 +19,7 @@ Window "DiscordChatExporter.Views.MainWindow" {
   Grid {
     #ThreeRows("Auto", "*", "Auto")
 
-    // Authorization
+    // Top
     Border {
       Grid.Row: 0
       Background: resource dyn "PrimaryHueMidBrush"
@@ -35,18 +37,22 @@ Window "DiscordChatExporter.Views.MainWindow" {
               BorderThickness: 0
               FontSize: 16
               HintAssist.Hint: "Authorization token"
+              Text: bind Token
             }
 
             // Submit
             Button {
               Style: resource dyn "MaterialDesignFlatButton"
               Grid.Column: 1
+              IsEnabled: bind IsBusy
+                              convert (bool b) => !b
               Margin: 5
               Padding: 4
+              Command: bind PullChannelsCommand
               PackIcon {
                 Width: 24
                 Height: 24
-                Kind: "ArrowRight"
+                Kind: PackIconKind.ArrowRight
               }
             }
           }
@@ -56,23 +62,57 @@ Window "DiscordChatExporter.Views.MainWindow" {
         ProgressBar {
           Background: Transparent
           IsIndeterminate: true
+          Visibility: bind IsBusy
+                           convert (bool b) => b ? Visibility.Visible : Visibility.Hidden
         }
       }
     }
 
-    // Channels
+    // Middle
     Border {
       Grid.Row: 1
-      Margin: 5
-      TreeView {
+      IsEnabled: bind IsBusy
+                      convert (bool b) => !b
+
+      // Channels
+      ListBox {
+        Resources: [
+          CollectionViewSource Key="Channels" {
+            Source: bind Channels
+            GroupDescriptions: [
+              PropertyGroupDescription { PropertyName: "Group" }
+            ]
+          }
+        ]
+
+        ItemsSource: bind from $resource Channels
+        SelectedItem: bind SelectedChannel
+        DisplayMemberPath: "Channel.Name"
+        GroupStyle: GroupStyle {
+          ContainerStyle: Style {
+            TargetType: "GroupItem"
+            Setter {
+              Property: "Template"
+              Value: ControlTemplate {
+                Expander {
+                  Header: bind Name
+                  ItemsPresenter { }
+                }
+              }
+            }
+          }
+        }
       }
     }
 
-    // Export
+    // Bottom
     Button {
       Grid.Row: 2
+      IsEnabled: bind IsBusy
+                      convert (bool b) => !b
       Margin: 5
-      "EXPORT"
+      Command: bind ExportChatLogCommand
+      Content: "EXPORT"
     }
   }
 }

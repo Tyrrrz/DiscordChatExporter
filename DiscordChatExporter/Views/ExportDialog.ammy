@@ -22,7 +22,7 @@ UserControl "DiscordChatExporter.Views.ExportDialog" {
         PackIcon {
           Width: 24
           Height: 24
-          Kind: "DotsHorizontal"
+          Kind: PackIconKind.DotsHorizontal
         }
       }
     }

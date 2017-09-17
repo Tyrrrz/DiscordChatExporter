@@ -25,7 +25,13 @@ namespace DiscordChatExporter.ViewModels
         public string Token
         {
             get => _token;
-            set => Set(ref _token, value);
+            set
+            {
+                // Strip quotes
+                value = value?.Trim('"');
+
+                Set(ref _token, value);
+            }
         }
 
         public IReadOnlyList<ChannelViewModel> Channels

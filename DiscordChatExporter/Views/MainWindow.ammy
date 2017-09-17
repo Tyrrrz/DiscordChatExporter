@@ -3,8 +3,8 @@
 Window "DiscordChatExporter.Views.MainWindow" {
   DataContext: bind MainViewModel from $resource Locator
   Title: "DiscordChatExporter"
-  Width: 520
-  Height: 600
+  Width: 620
+  Height: 550
   Background: resource dyn "MaterialDesignPaper"
   WindowStartupLocation: CenterScreen
   UseLayoutRounding: true

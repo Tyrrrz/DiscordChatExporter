@@ -28,7 +28,7 @@ Window "DiscordChatExporter.Views.MainWindow" {
           Grid {
             #TwoColumns("*", "Auto")
 
-            // Auth token
+            // Token
             TextBox {
               Grid.Column: 0
               Margin: 5

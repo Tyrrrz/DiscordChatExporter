@@ -82,6 +82,9 @@
     <Compile Include="App.ammy.cs">
       <DependentUpon>App.ammy</DependentUpon>
     </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="ViewModels\IMainViewModel.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\ExportDialog.ammy.cs">
       <DependentUpon>ExportDialog.ammy</DependentUpon>
     </Compile>
@@ -116,7 +119,6 @@
   <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="Services\" />
-    <Folder Include="ViewModels\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Ammy.1.2.87\build\Ammy.targets" Condition="Exists('..\packages\Ammy.1.2.87\build\Ammy.targets')" />

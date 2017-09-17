@@ -69,6 +69,11 @@
       <Generator>XamlIntelliSenseFileGenerator</Generator>
       <DependentUpon>App.ammy</DependentUpon>
     </Page>
+    <Page Include="Views\ExportDialog.g.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <DependentUpon>ExportDialog.ammy</DependentUpon>
+    </Page>
     <Page Include="Views\MainWindow.g.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -76,6 +81,9 @@
     </Page>
     <Compile Include="App.ammy.cs">
       <DependentUpon>App.ammy</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ExportDialog.ammy.cs">
+      <DependentUpon>ExportDialog.ammy</DependentUpon>
     </Compile>
     <Compile Include="Views\MainWindow.ammy.cs">
       <DependentUpon>MainWindow.ammy</DependentUpon>
@@ -99,6 +107,7 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Views\ExportDialog.ammy" />
     <None Include="Views\MainWindow.ammy" />
   </ItemGroup>
   <ItemGroup>

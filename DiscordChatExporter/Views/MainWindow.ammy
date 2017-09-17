@@ -1,4 +1,78 @@
-﻿Window "DiscordChatExporter.Views.MainWindow" {
-	WindowStartupLocation: CenterScreen
-	Title: "Main Window"
+﻿using MaterialDesignThemes.Wpf
+
+Window "DiscordChatExporter.Views.MainWindow" {
+  Title: "DiscordChatExporter"
+  Width: 520
+  Height: 600
+  WindowStartupLocation: CenterScreen
+  UseLayoutRounding: true
+  SnapsToDevicePixels: true
+  FontFamily: resource dyn "MaterialDesignFont"
+  TextElement.FontSize: 13
+  TextElement.FontWeight: Regular
+  TextElement.Foreground: resource dyn "SecondaryTextBrush"
+  TextOptions.TextFormattingMode: Ideal
+  TextOptions.TextRenderingMode: Auto
+
+  Grid {
+    #ThreeRows("Auto", "*", "Auto")
+
+    // Authorization
+    Border {
+      Grid.Row: 0
+      Background: resource dyn "PrimaryHueMidBrush"
+      TextElement.Foreground: resource dyn "SecondaryInverseTextBrush"
+      StackPanel {
+        Card {
+          Margin: 5
+          Grid {
+            #TwoColumns("*", "Auto")
+
+            // Auth token
+            TextBox {
+              Grid.Column: 0
+              Margin: 5
+              BorderThickness: 0
+              FontSize: 16
+              HintAssist.Hint: "Authorization token"
+            }
+
+            // Submit
+            Button {
+              Style: resource dyn "MaterialDesignFlatButton"
+              Grid.Column: 1
+              Margin: 5
+              Padding: 4
+              PackIcon {
+                Width: 24
+                Height: 24
+                Kind: "ArrowRight"
+              }
+            }
+          }
+        }
+
+        // Progress
+        ProgressBar {
+          Background: Transparent
+          IsIndeterminate: true
+        }
+      }
+    }
+
+    // Channels
+    Border {
+      Grid.Row: 1
+      Margin: 5
+      TreeView {
+      }
+    }
+
+    // Export
+    Button {
+      Grid.Row: 2
+      Margin: 5
+      "EXPORT"
+    }
+  }
 }

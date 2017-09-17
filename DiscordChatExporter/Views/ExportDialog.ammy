@@ -1,0 +1,30 @@
+﻿using MaterialDesignThemes.Wpf
+
+UserControl "DiscordChatExporter.Views.ExportDialog" {
+  StackPanel {
+    Grid {
+      #TwoColumns("*", "Auto")
+
+      // Output file path
+      TextBox {
+        Grid.Column: 0
+        Margin: 5
+        HintAssist.Hint: "Output file path"
+        HintAssist.IsFloating: true
+      }
+
+      // Locate file
+      Button {
+        Style: resource dyn "MaterialDesignFlatButton"
+        Grid.Column: 1
+        Margin: 5
+        Padding: 4
+        PackIcon {
+          Width: 24
+          Height: 24
+          Kind: "DotsHorizontal"
+        }
+      }
+    }
+  }
+}

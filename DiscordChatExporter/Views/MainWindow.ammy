@@ -40,14 +40,15 @@ Window "DiscordChatExporter.Views.MainWindow" {
               HintAssist.Hint: "Authorization token"
               KeyDown: TokenTextBox_KeyDown
               Text: bind Token
+                    set [
+                        UpdateSourceTrigger: PropertyChanged
+                    ]
             }
 
             // Submit
             Button {
               Style: resource dyn "MaterialDesignFlatButton"
               Grid.Column: 1
-              IsEnabled: bind IsBusy
-                              convert (bool b) => b ? false : true
               Margin: 5
               Padding: 4
               Command: bind PullChannelsCommand
@@ -73,8 +74,6 @@ Window "DiscordChatExporter.Views.MainWindow" {
     // Middle
     Border {
       Grid.Row: 1
-      IsEnabled: bind IsBusy
-                      convert (bool b) => b ? false : true
 
       // Channels
       ListBox {
@@ -110,8 +109,6 @@ Window "DiscordChatExporter.Views.MainWindow" {
     // Bottom
     Border {
       Grid.Row: 2
-      IsEnabled: bind IsBusy
-                      convert (bool b) => b ? false : true  
 
       // Convert
       Button {

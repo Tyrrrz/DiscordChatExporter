@@ -3,6 +3,7 @@ using DiscordChatExporter.Models;
 using DiscordChatExporter.Services;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.ViewModels
 {
@@ -19,7 +20,12 @@ namespace DiscordChatExporter.ViewModels
         public bool IsBusy
         {
             get => _isBusy;
-            private set => Set(ref _isBusy, value);
+            private set
+            {
+                Set(ref _isBusy, value);
+                PullChannelsCommand.RaiseCanExecuteChanged();
+                ExportChatLogCommand.RaiseCanExecuteChanged();
+            }
         }
 
         public string Token
@@ -27,10 +33,8 @@ namespace DiscordChatExporter.ViewModels
             get => _token;
             set
             {
-                // Strip quotes
-                value = value?.Trim('"');
-
                 Set(ref _token, value);
+                PullChannelsCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -43,7 +47,11 @@ namespace DiscordChatExporter.ViewModels
         public ChannelViewModel SelectedChannel
         {
             get => _selectedChannel;
-            set => Set(ref _selectedChannel, value);
+            set
+            {
+                Set(ref _selectedChannel, value);
+                ExportChatLogCommand.RaiseCanExecuteChanged();
+            }
         }
 
         public RelayCommand PullChannelsCommand { get; }
@@ -55,15 +63,18 @@ namespace DiscordChatExporter.ViewModels
             _exportService = exportService;
 
             // Commands
-            PullChannelsCommand = new RelayCommand(PullChannels);
-            ExportChatLogCommand = new RelayCommand(ExportChatLog);
+            PullChannelsCommand = new RelayCommand(PullChannels, () => Token.IsNotBlank() && !IsBusy);
+            ExportChatLogCommand = new RelayCommand(ExportChatLog, () => SelectedChannel != null && !IsBusy);
         }
 
         private async void PullChannels()
         {
             IsBusy = true;
-            var token = Token;
+            var token = Token.Trim('"');
             var channelVms = new List<ChannelViewModel>();
+
+            // Clear existing
+            Channels = new ChannelViewModel[0];
 
             // Get DM channels
             var dmChannels = await _apiService.GetDirectMessageChannelsAsync(token);
@@ -93,7 +104,7 @@ namespace DiscordChatExporter.ViewModels
         private async void ExportChatLog()
         {
             IsBusy = true;
-            var token = Token;
+            var token = Token.Trim('"');
             var channel = SelectedChannel.Channel;
 
             // Get messages

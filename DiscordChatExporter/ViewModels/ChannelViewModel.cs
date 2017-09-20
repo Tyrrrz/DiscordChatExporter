@@ -4,13 +4,13 @@ namespace DiscordChatExporter.ViewModels
 {
     public class ChannelViewModel
     {
-        public string Group { get; }
+        public string GroupName { get; }
 
         public Channel Channel { get; }
 
-        public ChannelViewModel(string group, Channel channel)
+        public ChannelViewModel(string groupName, Channel channel)
         {
-            Group = group;
+            GroupName = groupName;
             Channel = channel;
         }
     }

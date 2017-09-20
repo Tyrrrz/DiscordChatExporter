@@ -1,8 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using DiscordChatExporter.Models;
 using DiscordChatExporter.Services;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using Microsoft.Win32;
 using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.ViewModels
@@ -14,8 +18,9 @@ namespace DiscordChatExporter.ViewModels
 
         private bool _isBusy;
         private string _token;
-        private IReadOnlyList<ChannelViewModel> _channels;
+        private IReadOnlyList<ChannelViewModel> _availableChannels;
         private ChannelViewModel _selectedChannel;
+        private Theme _selectedTheme;
 
         public bool IsBusy
         {
@@ -38,10 +43,10 @@ namespace DiscordChatExporter.ViewModels
             }
         }
 
-        public IReadOnlyList<ChannelViewModel> Channels
+        public IReadOnlyList<ChannelViewModel> AvailableChannels
         {
-            get => _channels;
-            private set => Set(ref _channels, value);
+            get => _availableChannels;
+            private set => Set(ref _availableChannels, value);
         }
 
         public ChannelViewModel SelectedChannel
@@ -54,6 +59,14 @@ namespace DiscordChatExporter.ViewModels
             }
         }
 
+        public IReadOnlyList<Theme> AvailableThemes { get; }
+
+        public Theme SelectedTheme
+        {
+            get => _selectedTheme;
+            set => Set(ref _selectedTheme, value);
+        }
+
         public RelayCommand PullChannelsCommand { get; }
         public RelayCommand ExportChatLogCommand { get; }
 
@@ -62,9 +75,14 @@ namespace DiscordChatExporter.ViewModels
             _apiService = apiService;
             _exportService = exportService;
 
+            // Defaults
+            AvailableThemes = Enum.GetValues(typeof(Theme)).Cast<Theme>().ToArray();
+
             // Commands
-            PullChannelsCommand = new RelayCommand(PullChannels, () => Token.IsNotBlank() && !IsBusy);
-            ExportChatLogCommand = new RelayCommand(ExportChatLog, () => SelectedChannel != null && !IsBusy);
+            PullChannelsCommand = new RelayCommand(PullChannels,
+                () => Token.IsNotBlank() && !IsBusy);
+            ExportChatLogCommand = new RelayCommand(ExportChatLog,
+                () => SelectedChannel != null && !IsBusy);
         }
 
         private async void PullChannels()
@@ -74,7 +92,7 @@ namespace DiscordChatExporter.ViewModels
             var channelVms = new List<ChannelViewModel>();
 
             // Clear existing
-            Channels = new ChannelViewModel[0];
+            AvailableChannels = new ChannelViewModel[0];
 
             // Get DM channels
             var dmChannels = await _apiService.GetDirectMessageChannelsAsync(token);
@@ -96,8 +114,7 @@ namespace DiscordChatExporter.ViewModels
                 }
             }
 
-            Channels = channelVms;
-
+            AvailableChannels = channelVms;
             IsBusy = false;
         }
 
@@ -105,16 +122,39 @@ namespace DiscordChatExporter.ViewModels
         {
             IsBusy = true;
             var token = Token.Trim('"');
-            var channel = SelectedChannel.Channel;
+            var channelVm = SelectedChannel;
+            
+            // Get safe file names
+            var safeGroupName = channelVm.GroupName;
+            var safeChannelName = channelVm.Channel.Name;
+            foreach (var invalidChar in Path.GetInvalidFileNameChars())
+            {
+                safeGroupName = safeGroupName.Replace(invalidChar, '_');
+                safeChannelName = safeChannelName.Replace(invalidChar, '_');
+            }
+
+            // Ask for path
+            var sfd = new SaveFileDialog
+            {
+                FileName = $"{safeGroupName} - {safeChannelName}.html",
+                Filter = "HTML files (*.html)|*.html|All files (*.*)|*.*",
+                DefaultExt = "html",
+                AddExtension = true
+            };
+            if (sfd.ShowDialog() != true)
+            {
+                IsBusy = false;
+                return;
+            }
 
             // Get messages
-            var messages = await _apiService.GetChannelMessagesAsync(token, channel.Id);
+            var messages = await _apiService.GetChannelMessagesAsync(token, channelVm.Channel.Id);
 
             // Create log
-            var chatLog = new ChatLog(channel.Id, messages);
+            var chatLog = new ChatLog(channelVm.Channel.Id, messages);
 
             // Export
-            _exportService.Export($"{channel.Name}.html", chatLog, Theme.Dark);
+            _exportService.Export(sfd.FileName, chatLog, SelectedTheme);
 
             IsBusy = false;
         }

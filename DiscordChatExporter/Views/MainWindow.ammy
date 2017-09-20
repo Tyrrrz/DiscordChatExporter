@@ -72,36 +72,63 @@ Window "DiscordChatExporter.Views.MainWindow" {
     }
 
     // Middle
-    Border {
+    Grid {
+      #TwoRows("*", "Auto")
+
       Grid.Row: 1
 
       // Channels
-      ListBox {
-        Resources: [
-          CollectionViewSource Key="Channels" {
-            Source: bind Channels
-            GroupDescriptions: [
-              PropertyGroupDescription { PropertyName: "Group" }
-            ]
-          }
-        ]
+      StackPanel {
+        Grid.Row: 0
 
-        ItemsSource: bind from $resource Channels
-        SelectedItem: bind SelectedChannel
-        DisplayMemberPath: "Channel.Name"
-        GroupStyle: GroupStyle {
-          ContainerStyle: Style {
-            TargetType: "GroupItem"
-            Setter {
-              Property: "Template"
-              Value: ControlTemplate {
-                Expander {
-                  Header: bind Name
-                  ItemsPresenter { }
+        TextBlock {
+          Margin: 5
+          Text: "Available channels"
+        }
+        ListBox {
+          Margin: 5
+          Resources: [
+            CollectionViewSource Key="AvailableChannels" {
+              Source: bind AvailableChannels
+              GroupDescriptions: [
+                PropertyGroupDescription { PropertyName: "GroupName" }
+              ]
+            }
+          ]
+
+          ItemsSource: bind from $resource AvailableChannels
+          SelectedItem: bind SelectedChannel
+          DisplayMemberPath: "Channel.Name"
+          GroupStyle: GroupStyle {
+            ContainerStyle: Style {
+              TargetType: "GroupItem"
+              Setter {
+                Property: "Template"
+                Value: ControlTemplate {
+                  Expander {
+                    Header: bind Name
+                    ItemsPresenter { }
+                  }
                 }
               }
             }
           }
+        }
+      }
+
+      // Options
+      StackPanel {
+        Grid.Row: 1
+
+        // Theme
+        TextBlock {
+          Margin: 5
+          Text: "Theme"
+        }
+        ComboBox {
+          Margin: 5
+          ItemsSource: bind AvailableThemes
+          SelectedItem: bind SelectedTheme
         }
       }
     }

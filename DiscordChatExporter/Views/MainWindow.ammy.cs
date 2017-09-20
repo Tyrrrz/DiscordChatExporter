@@ -5,6 +5,8 @@ namespace DiscordChatExporter.Views
 {
     public partial class MainWindow
     {
+        private IMainViewModel ViewModel => (IMainViewModel) DataContext;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -15,7 +17,7 @@ namespace DiscordChatExporter.Views
             if (e.Key == Key.Enter)
             {
                 // Execute command
-                ((IMainViewModel) DataContext).PullChannelsCommand.Execute(null);
+                ViewModel.PullChannelsCommand.Execute(null);
             }
         }
     }

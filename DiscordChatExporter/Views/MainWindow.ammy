@@ -47,7 +47,7 @@ Window "DiscordChatExporter.Views.MainWindow" {
               Style: resource dyn "MaterialDesignFlatButton"
               Grid.Column: 1
               IsEnabled: bind IsBusy
-                              convert (bool b) => !b
+                              convert (bool b) => b ? false : true
               Margin: 5
               Padding: 4
               Command: bind PullChannelsCommand
@@ -74,7 +74,7 @@ Window "DiscordChatExporter.Views.MainWindow" {
     Border {
       Grid.Row: 1
       IsEnabled: bind IsBusy
-                      convert (bool b) => !b
+                      convert (bool b) => b ? false : true
 
       // Channels
       ListBox {
@@ -108,13 +108,17 @@ Window "DiscordChatExporter.Views.MainWindow" {
     }
 
     // Bottom
-    Button {
+    Border {
       Grid.Row: 2
       IsEnabled: bind IsBusy
-                      convert (bool b) => !b
-      Margin: 5
-      Command: bind ExportChatLogCommand
-      Content: "EXPORT"
+                      convert (bool b) => b ? false : true  
+
+      // Convert
+      Button {
+        Margin: 5
+        Command: bind ExportChatLogCommand
+        Content: "EXPORT"
+      } 
     }
   }
 }

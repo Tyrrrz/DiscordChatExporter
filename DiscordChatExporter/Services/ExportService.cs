@@ -10,7 +10,7 @@ using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Services
 {
-    public partial class HtmlExportService : IExportService
+    public partial class ExportService : IExportService
     {
         public void Export(string filePath, ChatLog chatLog, Theme theme)
         {
@@ -101,7 +101,7 @@ namespace DiscordChatExporter.Services
         }
     }
 
-    public partial class HtmlExportService
+    public partial class ExportService
     {
         private static HtmlDocument GetTemplate()
         {

@@ -13,6 +13,7 @@ namespace DiscordChatExporter.ViewModels
 {
     public class MainViewModel : ViewModelBase, IMainViewModel
     {
+        private readonly ISettingsService _settingsService;
         private readonly IApiService _apiService;
         private readonly IExportService _exportService;
 
@@ -38,7 +39,11 @@ namespace DiscordChatExporter.ViewModels
             get => _token;
             set
             {
+                // Remove invalid chars
+                value = value?.Trim('"');
+
                 Set(ref _token, value);
+                _settingsService.Token = value;
                 PullChannelsCommand.RaiseCanExecuteChanged();
             }
         }
@@ -70,12 +75,14 @@ namespace DiscordChatExporter.ViewModels
         public RelayCommand PullChannelsCommand { get; }
         public RelayCommand ExportChatLogCommand { get; }
 
-        public MainViewModel(IApiService apiService, IExportService exportService)
+        public MainViewModel(ISettingsService settingsService, IApiService apiService, IExportService exportService)
         {
+            _settingsService = settingsService;
             _apiService = apiService;
             _exportService = exportService;
 
             // Defaults
+            _token = _settingsService.Token;
             AvailableThemes = Enum.GetValues(typeof(Theme)).Cast<Theme>().ToArray();
 
             // Commands
@@ -88,7 +95,7 @@ namespace DiscordChatExporter.ViewModels
         private async void PullChannels()
         {
             IsBusy = true;
-            var token = Token.Trim('"');
+            var token = Token;
             var channelVms = new List<ChannelViewModel>();
 
             // Clear existing
@@ -121,7 +128,7 @@ namespace DiscordChatExporter.ViewModels
         private async void ExportChatLog()
         {
             IsBusy = true;
-            var token = Token.Trim('"');
+            var token = Token;
             var channelVm = SelectedChannel;
             
             // Get safe file names

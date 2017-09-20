@@ -37,7 +37,7 @@ Window "DiscordChatExporter.Views.MainWindow" {
               Margin: 5
               BorderThickness: 0
               FontSize: 16
-              HintAssist.Hint: "Authorization token"
+              HintAssist.Hint: "Token"
               KeyDown: TokenTextBox_KeyDown
               Text: bind Token
                     set [
@@ -83,7 +83,7 @@ Window "DiscordChatExporter.Views.MainWindow" {
 
         TextBlock {
           Margin: 5
-          Text: "Available channels"
+          Text: "Channels"
         }
         ListBox {
           Margin: 5

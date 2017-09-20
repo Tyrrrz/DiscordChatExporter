@@ -13,14 +13,20 @@ namespace DiscordChatExporter
 
             // Services
             SimpleIoc.Default.Register<IApiService, ApiService>();
-            SimpleIoc.Default.Register<IExportService, HtmlExportService>();
+            SimpleIoc.Default.Register<IExportService, ExportService>();
+            SimpleIoc.Default.Register<ISettingsService, SettingsService>();
 
             // View models
             SimpleIoc.Default.Register<IMainViewModel, MainViewModel>();
+
+            // Load settings
+            ServiceLocator.Current.GetInstance<ISettingsService>().Load();
         }
 
         public static void Cleanup()
         {
+            // Save settings
+            ServiceLocator.Current.GetInstance<ISettingsService>().Save();
         }
 
         public IMainViewModel MainViewModel => ServiceLocator.Current.GetInstance<IMainViewModel>();

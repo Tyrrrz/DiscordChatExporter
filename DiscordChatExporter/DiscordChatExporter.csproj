@@ -109,9 +109,11 @@
     <Compile Include="Models\User.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Services\ApiService.cs" />
-    <Compile Include="Services\HtmlExportService.cs" />
+    <Compile Include="Services\ExportService.cs" />
     <Compile Include="Services\IApiService.cs" />
     <Compile Include="Services\IExportService.cs" />
+    <Compile Include="Services\ISettingsService.cs" />
+    <Compile Include="Services\SettingsService.cs" />
     <Compile Include="ViewModels\ChannelViewModel.cs" />
     <Compile Include="ViewModels\IMainViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />

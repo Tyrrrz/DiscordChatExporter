@@ -1,5 +1,8 @@
-﻿using System.Windows.Input;
+﻿using System.Windows;
+using System.Windows.Input;
 using DiscordChatExporter.ViewModels;
+using MaterialDesignThemes.Wpf;
+using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Views
 {
@@ -19,6 +22,11 @@ namespace DiscordChatExporter.Views
                 // Execute command
                 ViewModel.PullChannelsCommand.Execute(null);
             }
+        }
+
+        public void ShowSettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            DialogHost.Show(new SettingsDialog()).Forget();
         }
     }
 }

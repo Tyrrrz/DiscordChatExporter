@@ -17,132 +17,154 @@ Window "DiscordChatExporter.Views.MainWindow" {
   TextOptions.TextRenderingMode: Auto
   FocusManager.FocusedElement: bind from "TokenTextBox"
 
-  Grid {
-    #ThreeRows("Auto", "*", "Auto")
+  DialogHost {
+    CloseOnClickAway: true
 
-    // Top
-    Border {
-      Grid.Row: 0
-      Background: resource dyn "PrimaryHueMidBrush"
-      TextElement.Foreground: resource dyn "SecondaryInverseTextBrush"
-      StackPanel {
-        Card {
-          Margin: 5
-          Grid {
-            #TwoColumns("*", "Auto")
+    Grid {
+      #ThreeRows("Auto", "*", "Auto")
 
-            // Token
-            TextBox "TokenTextBox" {
-              Grid.Column: 0
-              Margin: 5
-              BorderThickness: 0
-              FontSize: 16
-              HintAssist.Hint: "Token"
-              KeyDown: TokenTextBox_KeyDown
-              Text: bind Token
-                    set [
-                        UpdateSourceTrigger: PropertyChanged
-                    ]
-            }
+      // Top
+      Border {
+        Grid.Row: 0
+        Background: resource dyn "PrimaryHueMidBrush"
+        TextElement.Foreground: resource dyn "SecondaryInverseTextBrush"
+        StackPanel {
+          Card {
+            Margin: 5
+            Grid {
+              #TwoColumns("*", "Auto")
 
-            // Submit
-            Button {
-              Style: resource dyn "MaterialDesignFlatButton"
-              Grid.Column: 1
-              Margin: 5
-              Padding: 4
-              Command: bind PullChannelsCommand
-              PackIcon {
-                Width: 24
-                Height: 24
-                Kind: PackIconKind.ArrowRight
+              // Token
+              TextBox "TokenTextBox" {
+                Grid.Column: 0
+                Margin: 5
+                BorderThickness: 0
+                FontSize: 16
+                HintAssist.Hint: "Token"
+                KeyDown: TokenTextBox_KeyDown
+                Text: bind Token
+                      set [
+                          UpdateSourceTrigger: PropertyChanged
+                      ]
+              }
+
+              // Submit
+              Button {
+                Style: resource dyn "MaterialDesignFlatButton"
+                Grid.Column: 1
+                Margin: 5
+                Padding: 4
+                Command: bind PullChannelsCommand
+                PackIcon {
+                  Width: 24
+                  Height: 24
+                  Kind: PackIconKind.ArrowRight
+                }
               }
             }
           }
-        }
 
-        // Progress
-        ProgressBar {
-          Background: Transparent
-          IsIndeterminate: true
-          Visibility: bind IsBusy
-                           convert (bool b) => b ? Visibility.Visible : Visibility.Hidden
+          // Progress
+          ProgressBar {
+            Background: Transparent
+            IsIndeterminate: true
+            Visibility: bind IsBusy
+                             convert (bool b) => b ? Visibility.Visible : Visibility.Hidden
+          }
         }
       }
-    }
 
-    // Middle
-    Grid {
-      #TwoRows("*", "Auto")
+      // Middle
+      Border {
+        Grid.Row: 1
+        BorderThickness: "0 0 0 1"
+        BorderBrush: resource dyn "DividerBrush"
 
-      Grid.Row: 1
+        // Channels
+        Grid {
+          ListBox {
+            Resources: [
+              CollectionViewSource Key="AvailableChannels" {
+                Source: bind AvailableChannels
+                GroupDescriptions: [
+                  PropertyGroupDescription { PropertyName: "GroupName" }
+                ]
+              }
+            ]
 
-      // Channels
-      StackPanel {
-        Grid.Row: 0
-
-        TextBlock {
-          Margin: 5
-          Text: "Channels"
-        }
-        ListBox {
-          Margin: 5
-          Resources: [
-            CollectionViewSource Key="AvailableChannels" {
-              Source: bind AvailableChannels
-              GroupDescriptions: [
-                PropertyGroupDescription { PropertyName: "GroupName" }
-              ]
-            }
-          ]
-
-          ItemsSource: bind from $resource AvailableChannels
-          SelectedItem: bind SelectedChannel
-          DisplayMemberPath: "Channel.Name"
-          GroupStyle: GroupStyle {
-            ContainerStyle: Style {
-              TargetType: "GroupItem"
-              Setter {
-                Property: "Template"
-                Value: ControlTemplate {
-                  Expander {
-                    Header: bind Name
-                    ItemsPresenter { }
+            ItemsSource: bind from $resource AvailableChannels
+            SelectedItem: bind SelectedChannel
+            DisplayMemberPath: "Channel.Name"
+            GroupStyle: GroupStyle {
+              ContainerStyle: Style {
+                TargetType: "GroupItem"
+                Setter {
+                  Property: "Template"
+                  Value: ControlTemplate {
+                    Expander {
+                      Header: bind Name
+                      ItemsPresenter { }
+                    }
                   }
                 }
               }
             }
           }
+
+          // Placeholder
+          TextBlock {
+            Margin: 5
+            FontSize: 16
+            VerticalAlignment: Center
+            HorizontalAlignment: Center
+            Text: "No channels"
+            Visibility: bind IsDataAvailable
+                        convert (bool b) => b ? Visibility.Collapsed : Visibility.Visible
+          }
         }
       }
 
-      // Options
-      StackPanel {
-        Grid.Row: 1
+      // Bottom
+      DockPanel {
+        Grid.Row: 2
+        LastChildFill: false
 
-        // Theme
-        TextBlock {
-          Margin: 5
-          Text: "Theme"
+        // Help
+        Button {
+          Style: resource dyn "MaterialDesignFlatButton"
+          DockPanel.Dock: Left
+          Padding: 4
+          Margin: "5 5 0 5"
+          Command: bind ShowHelpCommand
+          PackIcon {
+            Kind: PackIconKind.HelpCircle
+            Width: 24
+            Height: 24
+          }
         }
-        ComboBox {
+
+        // Settings
+        Button "ShowSettingsButton" {
+          Style: resource dyn "MaterialDesignFlatButton"
+          DockPanel.Dock: Left
+          Padding: 4
+          Margin: "0 5 5 5"
+          Click: ShowSettingsButton_Click
+          PackIcon {
+            Kind: PackIconKind.Settings
+            Width: 24
+            Height: 24
+          }
+        }
+
+        // Convert
+        Button {
+          DockPanel.Dock: Right
           Margin: 5
-          ItemsSource: bind AvailableThemes
-          SelectedItem: bind SelectedTheme
+          Command: bind ExportChatLogCommand
+          Content: "EXPORT"
         }
       }
-    }
-
-    // Bottom
-    Border {
-      Grid.Row: 2
-
-      // Convert
-      Button {
-        Margin: 5
-        Command: bind ExportChatLogCommand
-        Content: "EXPORT"
-      } 
     }
   }
 }

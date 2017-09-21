@@ -32,6 +32,8 @@
     SolidColorBrush Key="SecondaryInverseTextBrush" { Color: resource dyn "InverseTextColor", Opacity: 0.7 }
     SolidColorBrush Key="DimInverseTextBrush" { Color: resource dyn "InverseTextColor", Opacity: 0.52 }
     SolidColorBrush Key="AccentTextBrush" { Color: resource dyn "AccentColor", Opacity: 1 }
+    SolidColorBrush Key="DividerBrush" { Color: resource dyn "TextColor", Opacity: 0.12 }
+    SolidColorBrush Key="InverseDividerBrush" { Color: resource dyn "InverseTextColor", Opacity: 0.12 }
 
     // Styles
     Style {
@@ -47,6 +49,12 @@
     Style {
       TargetType: "TextBox"
       BasedOn: resource "MaterialDesignTextBox"
+      #Setter("Foreground", resource dyn "PrimaryTextBrush")
+    }
+
+    Style {
+      TargetType: "ComboBox"
+      BasedOn: resource "MaterialDesignComboBox"
       #Setter("Foreground", resource dyn "PrimaryTextBrush")
     }
 

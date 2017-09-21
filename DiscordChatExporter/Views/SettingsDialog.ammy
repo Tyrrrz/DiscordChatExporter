@@ -1,0 +1,56 @@
+﻿using MaterialDesignThemes.Wpf
+
+UserControl "DiscordChatExporter.Views.SettingsDialog" {
+  DataContext: bind SettingsViewModel from $resource Locator
+  Width: 300
+
+  // Content
+  StackPanel {
+    // Header
+    Border {
+      BorderThickness: "0 0 0 1"
+      BorderBrush: resource dyn "DividerBrush"
+
+      DockPanel {
+        LastChildFill: false
+
+        // Title
+        TextBlock {
+          Margin: "10 5 5 5"
+          FontSize: 16
+          FontWeight: SemiBold
+          VerticalAlignment: Center
+          DockPanel.Dock: Left
+          Text: "Settings"
+        }
+
+        // Close
+        Button {
+          DockPanel.Dock: Right
+          Style: resource dyn "MaterialDesignFlatButton"
+          Padding: 4
+          Margin: "5 5 5 5"
+          Command: DialogHost.CloseDialogCommand
+          PackIcon {
+            Width: 24
+            Height: 24
+            Kind: PackIconKind.Close
+          }
+        }
+      }
+    }
+
+    // Theme
+    TextBlock {
+      Margin: "10 5 10 0"
+      Text: "Theme"
+    }
+    ComboBox {
+      Margin: "10 0 10 5"
+      IsReadOnly: true
+      ItemsSource: bind AvailableThemes
+      SelectedItem: bind Theme
+      BorderThickness: 0
+    }
+  }
+}

@@ -84,6 +84,11 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ViewModels\ISettingsViewModel.cs" />
+    <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="Views\SettingsDialog.ammy.cs">
+      <DependentUpon>SettingsDialog.ammy</DependentUpon>
+    </Compile>
     <Page Include="App.g.xaml">
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
@@ -120,6 +125,11 @@
     <Compile Include="Views\MainWindow.ammy.cs">
       <DependentUpon>MainWindow.ammy</DependentUpon>
     </Compile>
+    <Page Include="Views\SettingsDialog.g.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <DependentUpon>SettingsDialog.ammy</DependentUpon>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -140,6 +150,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Views\MainWindow.ammy" />
+    <None Include="Views\SettingsDialog.ammy" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

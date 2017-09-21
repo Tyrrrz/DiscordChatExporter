@@ -18,6 +18,7 @@ namespace DiscordChatExporter
 
             // View models
             SimpleIoc.Default.Register<IMainViewModel, MainViewModel>();
+            SimpleIoc.Default.Register<ISettingsViewModel, SettingsViewModel>();
 
             // Load settings
             ServiceLocator.Current.GetInstance<ISettingsService>().Load();
@@ -30,5 +31,6 @@ namespace DiscordChatExporter
         }
 
         public IMainViewModel MainViewModel => ServiceLocator.Current.GetInstance<IMainViewModel>();
+        public ISettingsViewModel SettingsViewModel => ServiceLocator.Current.GetInstance<ISettingsViewModel>();
     }
 }

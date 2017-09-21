@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using DiscordChatExporter.Models;
 using DiscordChatExporter.Services;
 using GalaSoft.MvvmLight;
@@ -18,10 +17,8 @@ namespace DiscordChatExporter.ViewModels
         private readonly IExportService _exportService;
 
         private bool _isBusy;
-        private string _token;
         private IReadOnlyList<ChannelViewModel> _availableChannels;
         private ChannelViewModel _selectedChannel;
-        private Theme _selectedTheme;
 
         public bool IsBusy
         {
@@ -34,15 +31,16 @@ namespace DiscordChatExporter.ViewModels
             }
         }
 
+        public bool IsDataAvailable => AvailableChannels.NotNullAndAny();
+
         public string Token
         {
-            get => _token;
+            get => _settingsService.Token;
             set
             {
                 // Remove invalid chars
                 value = value?.Trim('"');
 
-                Set(ref _token, value);
                 _settingsService.Token = value;
                 PullChannelsCommand.RaiseCanExecuteChanged();
             }
@@ -51,7 +49,11 @@ namespace DiscordChatExporter.ViewModels
         public IReadOnlyList<ChannelViewModel> AvailableChannels
         {
             get => _availableChannels;
-            private set => Set(ref _availableChannels, value);
+            private set
+            {
+                Set(ref _availableChannels, value);
+                RaisePropertyChanged(() => IsDataAvailable);
+            }
         }
 
         public ChannelViewModel SelectedChannel
@@ -64,14 +66,7 @@ namespace DiscordChatExporter.ViewModels
             }
         }
 
-        public IReadOnlyList<Theme> AvailableThemes { get; }
-
-        public Theme SelectedTheme
-        {
-            get => _selectedTheme;
-            set => Set(ref _selectedTheme, value);
-        }
-
+        public RelayCommand ShowHelpCommand { get; }
         public RelayCommand PullChannelsCommand { get; }
         public RelayCommand ExportChatLogCommand { get; }
 
@@ -81,15 +76,17 @@ namespace DiscordChatExporter.ViewModels
             _apiService = apiService;
             _exportService = exportService;
 
-            // Defaults
-            _token = _settingsService.Token;
-            AvailableThemes = Enum.GetValues(typeof(Theme)).Cast<Theme>().ToArray();
-
             // Commands
+            ShowHelpCommand = new RelayCommand(ShowHelp);
             PullChannelsCommand = new RelayCommand(PullChannels,
                 () => Token.IsNotBlank() && !IsBusy);
             ExportChatLogCommand = new RelayCommand(ExportChatLog,
                 () => SelectedChannel != null && !IsBusy);
+        }
+
+        private void ShowHelp()
+        {
+            Process.Start("https://github.com/Tyrrrz/DiscordChatExporter/wiki");
         }
 
         private async void PullChannels()
@@ -100,6 +97,7 @@ namespace DiscordChatExporter.ViewModels
 
             // Clear existing
             AvailableChannels = new ChannelViewModel[0];
+            SelectedChannel = null;
 
             // Get DM channels
             var dmChannels = await _apiService.GetDirectMessageChannelsAsync(token);
@@ -122,6 +120,7 @@ namespace DiscordChatExporter.ViewModels
             }
 
             AvailableChannels = channelVms;
+            SelectedChannel = null;
             IsBusy = false;
         }
 
@@ -161,7 +160,7 @@ namespace DiscordChatExporter.ViewModels
             var chatLog = new ChatLog(channelVm.Channel.Id, messages);
 
             // Export
-            _exportService.Export(sfd.FileName, chatLog, SelectedTheme);
+            _exportService.Export(sfd.FileName, chatLog, _settingsService.Theme);
 
             IsBusy = false;
         }

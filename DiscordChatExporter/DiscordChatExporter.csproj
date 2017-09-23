@@ -156,9 +156,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\HtmlExportService\DarkTheme.css" />
-    <EmbeddedResource Include="Resources\HtmlExportService\LightTheme.css" />
-    <EmbeddedResource Include="Resources\HtmlExportService\Template.html" />
+    <EmbeddedResource Include="Resources\ExportService\DarkTheme.css" />
+    <EmbeddedResource Include="Resources\ExportService\LightTheme.css" />
+    <EmbeddedResource Include="Resources\ExportService\Template.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Ammy.1.2.87\build\Ammy.targets" Condition="Exists('..\packages\Ammy.1.2.87\build\Ammy.targets')" />

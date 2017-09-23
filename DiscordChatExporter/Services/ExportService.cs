@@ -105,7 +105,7 @@ namespace DiscordChatExporter.Services
     {
         private static HtmlDocument GetTemplate()
         {
-            var resourcePath = "DiscordChatExporter.Resources.HtmlExportService.Template.html";
+            var resourcePath = "DiscordChatExporter.Resources.ExportService.Template.html";
 
             var assembly = Assembly.GetExecutingAssembly();
             var stream = assembly.GetManifestResourceStream(resourcePath);
@@ -122,7 +122,7 @@ namespace DiscordChatExporter.Services
 
         private static string GetStyle(Theme theme)
         {
-            var resourcePath = $"DiscordChatExporter.Resources.HtmlExportService.{theme}Theme.css";
+            var resourcePath = $"DiscordChatExporter.Resources.ExportService.{theme}Theme.css";
 
             var assembly = Assembly.GetExecutingAssembly();
             var stream = assembly.GetManifestResourceStream(resourcePath);

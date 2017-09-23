@@ -119,7 +119,6 @@
     <Compile Include="Services\IExportService.cs" />
     <Compile Include="Services\ISettingsService.cs" />
     <Compile Include="Services\SettingsService.cs" />
-    <Compile Include="ViewModels\ChannelViewModel.cs" />
     <Compile Include="ViewModels\IMainViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\MainWindow.ammy.cs">

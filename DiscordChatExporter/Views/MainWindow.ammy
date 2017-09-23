@@ -77,49 +77,50 @@ Window "DiscordChatExporter.Views.MainWindow" {
       // Middle
       Border {
         Grid.Row: 1
+        Background: White
         BorderThickness: "0 0 0 1"
         BorderBrush: resource dyn "DividerBrush"
 
-        // Channels
         Grid {
-          ListBox {
-            Resources: [
-              CollectionViewSource Key="AvailableChannels" {
-                Source: bind AvailableChannels
-                GroupDescriptions: [
-                  PropertyGroupDescription { PropertyName: "GroupName" }
-                ]
-              }
-            ]
+          #ThreeColumns("*", "Auto", "*")
 
-            ItemsSource: bind from $resource AvailableChannels
+          // Guilds
+          ListBox {
+            Grid.Column: 0
+            ItemsSource: bind AvailableGuilds
+            DisplayMemberPath: "Name"
+            SelectedItem: bind SelectedGuild
+          }
+
+          // Divider
+          GridSplitter {
+            Grid.Column: 1
+            Width: 5
+            Background: resource dyn "DividerBrush"
+            ResizeBehavior: PreviousAndNext
+          }
+
+          // Channels
+          ListBox {
+            Grid.Column: 2
+            ItemsSource: bind AvailableChannels
+            DisplayMemberPath: "Name"
             SelectedItem: bind SelectedChannel
-            DisplayMemberPath: "Channel.Name"
-            GroupStyle: GroupStyle {
-              ContainerStyle: Style {
-                TargetType: "GroupItem"
-                Setter {
-                  Property: "Template"
-                  Value: ControlTemplate {
-                    Expander {
-                      Header: bind Name
-                      ItemsPresenter { }
-                    }
-                  }
-                }
-              }
-            }
           }
 
           // Placeholder
-          TextBlock {
-            Margin: 5
-            FontSize: 16
-            VerticalAlignment: Center
-            HorizontalAlignment: Center
-            Text: "No channels"
+          Border {
+            Grid.ColumnSpan: 3
+            Background: White
             Visibility: bind IsDataAvailable
-                        convert (bool b) => b ? Visibility.Collapsed : Visibility.Visible
+                          convert (bool b) => b ? Visibility.Collapsed : Visibility.Visible
+            TextBlock {
+              Margin: 5
+              FontSize: 16
+              VerticalAlignment: Center
+              HorizontalAlignment: Center
+              Text: "No channels"
+            }
           }
         }
       }
@@ -136,6 +137,7 @@ Window "DiscordChatExporter.Views.MainWindow" {
           Padding: 4
           Margin: "5 5 0 5"
           Command: bind ShowHelpCommand
+          ToolTip: "Usage guide"
           PackIcon {
             Kind: PackIconKind.HelpCircle
             Width: 24
@@ -150,6 +152,7 @@ Window "DiscordChatExporter.Views.MainWindow" {
           Padding: 4
           Margin: "0 5 5 5"
           Click: ShowSettingsButton_Click
+          ToolTip: "Settings"
           PackIcon {
             Kind: PackIconKind.Settings
             Width: 24
@@ -162,6 +165,7 @@ Window "DiscordChatExporter.Views.MainWindow" {
           DockPanel.Dock: Right
           Margin: 5
           Command: bind ExportChatLogCommand
+          ToolTip: "Save selected channel's messages"
           Content: "EXPORT"
         }
       }

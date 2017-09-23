@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using DiscordChatExporter.Models;
 using DiscordChatExporter.Services;
 using GalaSoft.MvvmLight;
@@ -16,9 +17,14 @@ namespace DiscordChatExporter.ViewModels
         private readonly IApiService _apiService;
         private readonly IExportService _exportService;
 
+        private readonly Dictionary<Guild, IReadOnlyList<Channel>> _guildChannelsMap;
+
         private bool _isBusy;
-        private IReadOnlyList<ChannelViewModel> _availableChannels;
-        private ChannelViewModel _selectedChannel;
+
+        private IReadOnlyList<Guild> _availableGuilds;
+        private Guild _selectedGuild;
+        private IReadOnlyList<Channel> _availableChannels;
+        private Channel _selectedChannel;
 
         public bool IsBusy
         {
@@ -31,7 +37,7 @@ namespace DiscordChatExporter.ViewModels
             }
         }
 
-        public bool IsDataAvailable => AvailableChannels.NotNullAndAny();
+        public bool IsDataAvailable => AvailableGuilds.NotNullAndAny();
 
         public string Token
         {
@@ -46,17 +52,34 @@ namespace DiscordChatExporter.ViewModels
             }
         }
 
-        public IReadOnlyList<ChannelViewModel> AvailableChannels
+        public IReadOnlyList<Guild> AvailableGuilds
         {
-            get => _availableChannels;
+            get => _availableGuilds;
             private set
             {
-                Set(ref _availableChannels, value);
+                Set(ref _availableGuilds, value);
                 RaisePropertyChanged(() => IsDataAvailable);
             }
         }
 
-        public ChannelViewModel SelectedChannel
+        public Guild SelectedGuild
+        {
+            get => _selectedGuild;
+            set
+            {
+                Set(ref _selectedGuild, value);
+                AvailableChannels = value != null ? _guildChannelsMap[value] : new Channel[0];
+                ExportChatLogCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        public IReadOnlyList<Channel> AvailableChannels
+        {
+            get => _availableChannels;
+            private set => Set(ref _availableChannels, value);
+        }
+
+        public Channel SelectedChannel
         {
             get => _selectedChannel;
             set
@@ -76,6 +99,8 @@ namespace DiscordChatExporter.ViewModels
             _apiService = apiService;
             _exportService = exportService;
 
+            _guildChannelsMap = new Dictionary<Guild, IReadOnlyList<Channel>>();
+
             // Commands
             ShowHelpCommand = new RelayCommand(ShowHelp);
             PullChannelsCommand = new RelayCommand(PullChannels,
@@ -93,34 +118,28 @@ namespace DiscordChatExporter.ViewModels
         {
             IsBusy = true;
             var token = Token;
-            var channelVms = new List<ChannelViewModel>();
 
             // Clear existing
-            AvailableChannels = new ChannelViewModel[0];
+            _guildChannelsMap.Clear();
+            AvailableGuilds = new Guild[0];
+            AvailableChannels = new Channel[0];
+            SelectedGuild = null;
             SelectedChannel = null;
 
             // Get DM channels
             var dmChannels = await _apiService.GetDirectMessageChannelsAsync(token);
-            foreach (var channel in dmChannels)
-            {
-                var channelVm = new ChannelViewModel("Direct Messages", channel);
-                channelVms.Add(channelVm);
-            }
+            var dmGuild = new Guild("@me", "Direct Messages");
+            _guildChannelsMap[dmGuild] = dmChannels.ToArray();
 
             // Get guild channels
             var guilds = await _apiService.GetGuildsAsync(token);
             foreach (var guild in guilds)
             {
                 var guildChannels = await _apiService.GetGuildChannelsAsync(token, guild.Id);
-                foreach (var channel in guildChannels)
-                {
-                    var channelVm = new ChannelViewModel(guild.Name, channel);
-                    channelVms.Add(channelVm);
-                }
+                _guildChannelsMap[guild] = guildChannels.ToArray();
             }
 
-            AvailableChannels = channelVms;
-            SelectedChannel = null;
+            AvailableGuilds = _guildChannelsMap.Keys.ToArray();
             IsBusy = false;
         }
 
@@ -128,11 +147,12 @@ namespace DiscordChatExporter.ViewModels
         {
             IsBusy = true;
             var token = Token;
-            var channelVm = SelectedChannel;
+            var guild = SelectedGuild;
+            var channel = SelectedChannel;
             
             // Get safe file names
-            var safeGroupName = channelVm.GroupName;
-            var safeChannelName = channelVm.Channel.Name;
+            var safeGroupName = guild.Name;
+            var safeChannelName = channel.Name;
             foreach (var invalidChar in Path.GetInvalidFileNameChars())
             {
                 safeGroupName = safeGroupName.Replace(invalidChar, '_');
@@ -154,10 +174,10 @@ namespace DiscordChatExporter.ViewModels
             }
 
             // Get messages
-            var messages = await _apiService.GetChannelMessagesAsync(token, channelVm.Channel.Id);
+            var messages = await _apiService.GetChannelMessagesAsync(token, channel.Id);
 
             // Create log
-            var chatLog = new ChatLog(channelVm.Channel.Id, messages);
+            var chatLog = new ChatLog(channel.Id, messages);
 
             // Export
             _exportService.Export(sfd.FileName, chatLog, _settingsService.Theme);

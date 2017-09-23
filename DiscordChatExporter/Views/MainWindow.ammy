@@ -75,40 +75,35 @@ Window "DiscordChatExporter.Views.MainWindow" {
       }
 
       // Middle
-      Border {
+      Grid {
         Grid.Row: 1
         Background: White
-        BorderThickness: "0 0 0 1"
-        BorderBrush: resource dyn "DividerBrush"
+        #ThreeColumns("*", "Auto", "*")
+        Visibility: bind IsDataAvailable
+                        convert (bool b) => b ? Visibility.Visible : Visibility.Hidden
 
-        Grid {
-          #ThreeColumns("*", "Auto", "*")
-          Visibility: bind IsDataAvailable
-                          convert (bool b) => b ? Visibility.Visible : Visibility.Hidden
+        // Guilds
+        ListBox {
+          Grid.Column: 0
+          ItemsSource: bind AvailableGuilds
+          DisplayMemberPath: "Name"
+          SelectedItem: bind SelectedGuild
+        }
 
-          // Guilds
-          ListBox {
-            Grid.Column: 0
-            ItemsSource: bind AvailableGuilds
-            DisplayMemberPath: "Name"
-            SelectedItem: bind SelectedGuild
-          }
+        // Divider
+        GridSplitter {
+          Grid.Column: 1
+          Width: 5
+          Background: resource dyn "DividerBrush"
+          ResizeBehavior: PreviousAndNext
+        }
 
-          // Divider
-          GridSplitter {
-            Grid.Column: 1
-            Width: 5
-            Background: resource dyn "DividerBrush"
-            ResizeBehavior: PreviousAndNext
-          }
-
-          // Channels
-          ListBox {
-            Grid.Column: 2
-            ItemsSource: bind AvailableChannels
-            DisplayMemberPath: "Name"
-            SelectedItem: bind SelectedChannel
-          }
+        // Channels
+        ListBox {
+          Grid.Column: 2
+          ItemsSource: bind AvailableChannels
+          DisplayMemberPath: "Name"
+          SelectedItem: bind SelectedChannel
         }
       }
 

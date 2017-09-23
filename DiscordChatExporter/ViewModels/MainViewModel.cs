@@ -37,8 +37,6 @@ namespace DiscordChatExporter.ViewModels
             }
         }
 
-        public bool IsDataAvailable => AvailableGuilds.NotNullAndAny();
-
         public string Token
         {
             get => _settingsService.Token;
@@ -58,9 +56,11 @@ namespace DiscordChatExporter.ViewModels
             private set
             {
                 Set(ref _availableGuilds, value);
-                RaisePropertyChanged(() => IsDataAvailable);
+                RaisePropertyChanged(() => AnyAvailableGuilds);
             }
         }
+
+        public bool AnyAvailableGuilds => AvailableGuilds.NotNullAndAny();
 
         public Guild SelectedGuild
         {
@@ -76,8 +76,14 @@ namespace DiscordChatExporter.ViewModels
         public IReadOnlyList<Channel> AvailableChannels
         {
             get => _availableChannels;
-            private set => Set(ref _availableChannels, value);
+            private set
+            {
+                Set(ref _availableChannels, value);
+                RaisePropertyChanged(() => AnyAvailableChannels);
+            }
         }
+
+        public bool AnyAvailableChannels => AvailableChannels.NotNullAndAny();
 
         public Channel SelectedChannel
         {

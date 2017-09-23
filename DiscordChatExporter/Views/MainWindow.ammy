@@ -77,33 +77,71 @@ Window "DiscordChatExporter.Views.MainWindow" {
       // Middle
       Grid {
         Grid.Row: 1
-        Background: White
-        #ThreeColumns("*", "Auto", "*")
-        Visibility: bind IsDataAvailable
-                        convert (bool b) => b ? Visibility.Visible : Visibility.Hidden
+        #TwoColumns("*", "*")
 
         // Guilds
-        ListBox {
+        DockPanel {
           Grid.Column: 0
-          ItemsSource: bind AvailableGuilds
-          DisplayMemberPath: "Name"
-          SelectedItem: bind SelectedGuild
-        }
+          Visibility: bind AnyAvailableGuilds
+                      convert (bool b) => b ? Visibility.Visible : Visibility.Hidden
 
-        // Divider
-        GridSplitter {
-          Grid.Column: 1
-          Width: 5
-          Background: resource dyn "DividerBrush"
-          ResizeBehavior: PreviousAndNext
+          TextBlock {
+            DockPanel.Dock: Top
+            Margin: "10 15 10 0"
+            FontWeight: SemiBold
+            Text: "Guilds"
+          }
+
+          Card {
+            Margin: 5
+            VerticalAlignment: Stretch
+            ShadowAssist.ShadowDepth: Depth1
+
+            ListBox {
+              ItemsSource: bind AvailableGuilds
+              SelectedItem: bind SelectedGuild
+              ItemTemplate: DataTemplate {
+                TextBlock {
+                  Padding: "10 0 5 0"
+                  Text: bind Name
+                }
+              }
+            }  
+          }
+          
         }
+        
 
         // Channels
-        ListBox {
-          Grid.Column: 2
-          ItemsSource: bind AvailableChannels
-          DisplayMemberPath: "Name"
-          SelectedItem: bind SelectedChannel
+        DockPanel {
+          Grid.Column: 1
+          Visibility: bind AnyAvailableChannels
+                      convert (bool b) => b ? Visibility.Visible : Visibility.Hidden
+
+          TextBlock {
+            DockPanel.Dock: Top
+            Margin: "10 15 10 0"
+            FontWeight: SemiBold
+            Text: "Channels"
+          }
+
+          Card {
+            Margin: 5
+            VerticalAlignment: Stretch
+            ShadowAssist.ShadowDepth: Depth1
+
+            ListBox {
+              ItemsSource: bind AvailableChannels
+              SelectedItem: bind SelectedChannel
+              ItemTemplate: DataTemplate {
+                TextBlock {
+                  Padding: "10 0 5 0"
+                  Text: bind Name
+                }
+              }
+            }  
+          }
+          
         }
       }
 

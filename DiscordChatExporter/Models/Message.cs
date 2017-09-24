@@ -8,23 +8,24 @@ namespace DiscordChatExporter.Models
     {
         public string Id { get; }
 
+        public User Author { get; }
+
         public DateTime TimeStamp { get; }
 
         public DateTime? EditedTimeStamp { get; }
-
-        public User Author { get; }
 
         public string Content { get; }
 
         public IReadOnlyList<Attachment> Attachments { get; }
 
-        public Message(string id, DateTime timeStamp, DateTime? editedTimeStamp, User author, string content,
-            IEnumerable<Attachment> attachments)
+        public Message(string id, User author,
+            DateTime timeStamp, DateTime? editedTimeStamp,
+            string content, IEnumerable<Attachment> attachments)
         {
             Id = id;
+            Author = author;
             TimeStamp = timeStamp;
             EditedTimeStamp = editedTimeStamp;
-            Author = author;
             Content = content;
             Attachments = attachments.ToArray();
         }

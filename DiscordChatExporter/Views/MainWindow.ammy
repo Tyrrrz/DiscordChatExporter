@@ -18,8 +18,6 @@ Window "DiscordChatExporter.Views.MainWindow" {
   FocusManager.FocusedElement: bind from "TokenTextBox"
 
   DialogHost {
-    CloseOnClickAway: true
-
     Grid {
       #ThreeRows("Auto", "*", "Auto")
 

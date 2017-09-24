@@ -4,18 +4,21 @@
     {
         public string Id { get; }
 
+        public AttachmentType Type { get; }
+
         public string Url { get; }
 
         public string FileName { get; }
 
-        public bool IsImage { get; }
+        public long FileSize { get; }
 
-        public Attachment(string id, string url, string fileName, bool isImage)
+        public Attachment(string id, AttachmentType type, string url, string fileName, long fileSize)
         {
             Id = id;
+            Type = type;
             Url = url;
             FileName = fileName;
-            IsImage = isImage;
+            FileSize = fileSize;
         }
     }
 }

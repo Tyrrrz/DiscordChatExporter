@@ -12,7 +12,7 @@ namespace DiscordChatExporter.Services
 {
     public partial class ExportService : IExportService
     {
-        public void Export(string filePath, ChatLog chatLog, Theme theme)
+        public void Export(string filePath, ChannelChatLog channelChatLog, Theme theme)
         {
             var doc = GetTemplate();
             var style = GetStyle(theme);
@@ -23,14 +23,16 @@ namespace DiscordChatExporter.Services
 
             // Info
             var infoHtml = doc.GetElementbyId("info");
-            infoHtml.AppendChild(HtmlNode.CreateNode($"<div>Channel ID: <b>{chatLog.ChannelId}</b></div>"));
-            var participants = HtmlDocument.HtmlEncode(chatLog.Participants.Select(u => u.Name).JoinToString(", "));
-            infoHtml.AppendChild(HtmlNode.CreateNode($"<div>Participants: <b>{participants}</b></div>"));
-            infoHtml.AppendChild(HtmlNode.CreateNode($"<div>Messages: <b>{chatLog.Messages.Count:N0}</b></div>"));
+            infoHtml.AppendChild(HtmlNode.CreateNode(
+                $"<div>Guild: <b>{channelChatLog.Guild.Name}</b> ({channelChatLog.Guild.Id})</div>"));
+            infoHtml.AppendChild(HtmlNode.CreateNode(
+                $"<div>Channel: <b>{channelChatLog.Channel.Name}</b> ({channelChatLog.Channel.Id})</div>"));
+            infoHtml.AppendChild(HtmlNode.CreateNode(
+                $"<div>Messages: <b>{channelChatLog.Messages.Count:N0}</b></div>"));
 
             // Log
             var logHtml = doc.GetElementbyId("log");
-            var messageGroups = GroupMessages(chatLog.Messages);
+            var messageGroups = GroupMessages(channelChatLog.Messages);
             foreach (var messageGroup in messageGroups)
             {
                 // Container
@@ -49,7 +51,7 @@ namespace DiscordChatExporter.Services
                 messageBodyHtml.AppendChild(HtmlNode.CreateNode($"<span class=\"msg-user\">{authorName}</span>"));
 
                 // Date
-                var timeStamp = HtmlDocument.HtmlEncode(messageGroup.FirstTimeStamp.ToString("g"));
+                var timeStamp = HtmlDocument.HtmlEncode(messageGroup.TimeStamp.ToString("g"));
                 messageBodyHtml.AppendChild(HtmlNode.CreateNode($"<span class=\"msg-date\">{timeStamp}</span>"));
 
                 // Individual messages
@@ -75,7 +77,7 @@ namespace DiscordChatExporter.Services
                     // Attachments
                     foreach (var attachment in message.Attachments)
                     {
-                        if (attachment.IsImage)
+                        if (attachment.Type == AttachmentType.Image)
                         {
                             messageBodyHtml.AppendChild(
                                 HtmlNode.CreateNode("<div class=\"msg-attachment\">" +

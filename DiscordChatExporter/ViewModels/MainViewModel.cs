@@ -134,7 +134,7 @@ namespace DiscordChatExporter.ViewModels
 
             // Get DM channels
             var dmChannels = await _apiService.GetDirectMessageChannelsAsync(token);
-            var dmGuild = new Guild("@me", "Direct Messages");
+            var dmGuild = new Guild("@me", "Direct Messages", "");
             _guildChannelsMap[dmGuild] = dmChannels.ToArray();
 
             // Get guild channels
@@ -183,7 +183,7 @@ namespace DiscordChatExporter.ViewModels
             var messages = await _apiService.GetChannelMessagesAsync(token, channel.Id);
 
             // Create log
-            var chatLog = new ChatLog(channel.Id, messages);
+            var chatLog = new ChannelChatLog(guild, channel, messages);
 
             // Export
             _exportService.Export(sfd.FileName, chatLog, _settingsService.Theme);

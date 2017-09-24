@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using DiscordChatExporter.Models;
@@ -27,7 +28,7 @@ namespace DiscordChatExporter.Services
             var response = await _httpClient.GetStringAsync(url);
 
             // Parse
-            var guilds = ParseGuilds(response);
+            var guilds = JArray.Parse(response).Select(ParseGuild);
 
             return guilds;
         }
@@ -41,7 +42,7 @@ namespace DiscordChatExporter.Services
             var response = await _httpClient.GetStringAsync(url);
 
             // Parse
-            var channels = ParseChannels(response);
+            var channels = JArray.Parse(response).Select(ParseChannel);
 
             return channels;
         }
@@ -55,7 +56,7 @@ namespace DiscordChatExporter.Services
             var response = await _httpClient.GetStringAsync(url);
 
             // Parse
-            var channels = ParseChannels(response);
+            var channels = JArray.Parse(response).Select(ParseChannel);
 
             return channels;
         }
@@ -78,7 +79,7 @@ namespace DiscordChatExporter.Services
                 var response = await _httpClient.GetStringAsync(url);
 
                 // Parse
-                var messages = ParseMessages(response);
+                var messages = JArray.Parse(response).Select(ParseMessage);
 
                 // Add messages to list
                 string currentMessageId = null;
@@ -118,77 +119,94 @@ namespace DiscordChatExporter.Services
 
     public partial class ApiService
     {
-        private static IEnumerable<Guild> ParseGuilds(string json)
+        private static User ParseUser(JToken token)
         {
-            foreach (var guildJson in JArray.Parse(json))
-            {
-                // Get basic data
-                var id = guildJson.Value<string>("id");
-                var name = guildJson.Value<string>("name");
+            var id = token.Value<string>("id");
+            var discriminator = token.Value<int>("discriminator");
+            var name = token.Value<string>("username");
+            var avatarHash = token.Value<string>("avatar");
 
-                var guild = new Guild(id, name);
-
-                yield return guild;
-            }
+            return new User(id, discriminator, name, avatarHash);
         }
 
-        private static IEnumerable<Channel> ParseChannels(string json)
+        private static Guild ParseGuild(JToken token)
         {
-            foreach (var channelJson in JArray.Parse(json))
-            {
-                // Get basic data
-                var id = channelJson.Value<string>("id");
-                var name = channelJson.Value<string>("name") ?? channelJson["recipient"].Value<string>("username");
-                var type = channelJson.Value<string>("type")?.ToLowerInvariant();
+            var id = token.Value<string>("id");
+            var name = token.Value<string>("name");
+            var iconHash = token.Value<string>("icon");
 
-                // Skip non-text channels
-                if (!type.IsEither(null, "text", "dm", "group_dm"))
-                    continue;
-
-                var channel = new Channel(id, name);
-
-                yield return channel;
-            }
+            return new Guild(id, name, iconHash);
         }
 
-        private static IEnumerable<Message> ParseMessages(string json)
+        private static Channel ParseChannel(JToken token)
         {
-            foreach (var messageJson in JArray.Parse(json))
+            // Get basic data
+            var id = token.Value<string>("id");
+
+            // Determine type
+            var typeStr = token.Value<string>("type")?.ToLowerInvariant();
+            var type = ChannelType.DirectTextChat;
+            if (typeStr == "group")
+                type = ChannelType.DirectGroupTextChat;
+            else if (typeStr == "text")
+                type = ChannelType.GuildTextChat;
+            else if (typeStr == "voice")
+                type = ChannelType.GuildVoiceChat;
+
+            // Extract name based on type
+            string name;
+            if (type.IsEither(ChannelType.GuildTextChat, ChannelType.GuildVoiceChat))
             {
-                // Get basic data
-                var id = messageJson.Value<string>("id");
-                var timeStamp = messageJson.Value<DateTime>("timestamp");
-                var editedTimeStamp = messageJson.Value<DateTime?>("edited_timestamp");
-                var content = messageJson.Value<string>("content");
-
-                // Lazy workaround for calls
-                if (messageJson["call"] != null)
-                    content = "Started a call.";
-
-                // Get author
-                var authorJson = messageJson["author"];
-                var authorId = authorJson.Value<string>("id");
-                var authorName = authorJson.Value<string>("username");
-                var authorAvatarHash = authorJson.Value<string>("avatar");
-
-                // Get attachment
-                var attachments = new List<Attachment>();
-                foreach (var attachmentJson in messageJson["attachments"].EmptyIfNull())
-                {
-                    var attachmentId = attachmentJson.Value<string>("id");
-                    var attachmentUrl = attachmentJson.Value<string>("url");
-                    var attachmentFileName = attachmentJson.Value<string>("filename");
-                    var attachmentIsImage = attachmentJson["width"] != null;
-
-                    var attachment = new Attachment(attachmentId, attachmentUrl, attachmentFileName, attachmentIsImage);
-                    attachments.Add(attachment);
-                }
-
-                var author = new User(authorId, authorName, authorAvatarHash);
-                var message = new Message(id, timeStamp, editedTimeStamp, author, content, attachments);
-
-                yield return message;
+                name = token.Value<string>("name");
             }
+            else if (type == ChannelType.DirectTextChat)
+            {
+                var user = ParseUser(token["recipient"]);
+                name = $"{user.Name}#{user.Discriminator}";
+            }
+            else
+            {
+                var user = ParseUser(token["recipient"]);
+                name = $"{user.Name}#{user.Discriminator}";
+            }
+
+            return new Channel(id, name, type);
+        }
+
+        private static Message ParseMessage(JToken token)
+        {
+            // Get basic data
+            var id = token.Value<string>("id");
+            var timeStamp = token.Value<DateTime>("timestamp");
+            var editedTimeStamp = token.Value<DateTime?>("edited_timestamp");
+            var content = token.Value<string>("content");
+
+            // Lazy workaround for calls
+            if (token["call"] != null)
+                content = "Started a call.";
+
+            // Get author
+            var author = ParseUser(token["author"]);
+
+            // Get attachment
+            var attachments = new List<Attachment>();
+            foreach (var attachmentJson in token["attachments"].EmptyIfNull())
+            {
+                var attachmentId = attachmentJson.Value<string>("id");
+                var attachmentUrl = attachmentJson.Value<string>("url");
+                var attachmentType = attachmentJson["width"] != null
+                    ? AttachmentType.Image
+                    : AttachmentType.Unrecognized;
+                var attachmentFileName = attachmentJson.Value<string>("filename");
+                var attachmentFileSize = attachmentJson.Value<long>("size");
+
+                var attachment = new Attachment(
+                    attachmentId, attachmentType, attachmentUrl,
+                    attachmentFileName, attachmentFileSize);
+                attachments.Add(attachment);
+            }
+
+            return new Message(id, author, timeStamp, editedTimeStamp, content, attachments);
         }
     }
 }

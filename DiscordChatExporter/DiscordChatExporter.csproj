@@ -84,6 +84,9 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\AttachmentType.cs" />
+    <Compile Include="Models\ChannelChatLog.cs" />
+    <Compile Include="Models\ChannelType.cs" />
     <Compile Include="ViewModels\ISettingsViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Views\SettingsDialog.ammy.cs">
@@ -105,11 +108,9 @@
     <Compile Include="Locator.cs" />
     <Compile Include="Models\Attachment.cs" />
     <Compile Include="Models\Channel.cs" />
-    <Compile Include="Models\ChatLog.cs" />
     <Compile Include="Models\Guild.cs" />
     <Compile Include="Models\Message.cs" />
     <Compile Include="Models\MessageGroup.cs" />
-    <Compile Include="Models\Options.cs" />
     <Compile Include="Models\Theme.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Program.cs" />

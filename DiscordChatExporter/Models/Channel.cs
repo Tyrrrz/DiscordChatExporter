@@ -6,10 +6,13 @@
 
         public string Name { get; }
 
-        public Channel(string id, string name)
+        public ChannelType Type { get; }
+
+        public Channel(string id, string name, ChannelType type)
         {
             Id = id;
             Name = name;
+            Type = type;
         }
 
         public override string ToString()

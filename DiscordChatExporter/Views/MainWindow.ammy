@@ -93,7 +93,7 @@ Window "DiscordChatExporter.Views.MainWindow" {
           }
 
           Card {
-            Margin: 5
+            Margin: "5 5 3 5"
             VerticalAlignment: Stretch
             ShadowAssist.ShadowDepth: Depth1
 
@@ -136,7 +136,7 @@ Window "DiscordChatExporter.Views.MainWindow" {
           }
 
           Card {
-            Margin: 5
+            Margin: "3 5 5 5"
             VerticalAlignment: Stretch
             ShadowAssist.ShadowDepth: Depth1
 

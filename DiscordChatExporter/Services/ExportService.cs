@@ -91,7 +91,7 @@ namespace DiscordChatExporter.Services
                             messageBodyHtml.AppendChild(
                                 HtmlNode.CreateNode("<div class=\"msg-attachment\">" +
                                                     $"<a href=\"{attachment.Url}\">" +
-                                                    $"Attachment: {attachment.FileName}" +
+                                                    $"Attachment: {attachment.FileName} ({NormalizeFileSize(attachment.FileSize)})" +
                                                     "</a>" +
                                                     "</div>"));
                         }
@@ -136,6 +136,21 @@ namespace DiscordChatExporter.Services
             {
                 return reader.ReadToEnd();
             }
+        }
+
+        private static string NormalizeFileSize(long fileSize)
+        {
+            string[] units = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
+            double size = fileSize;
+            var unit = 0;
+
+            while (size >= 1024)
+            {
+                size /= 1024;
+                ++unit;
+            }
+
+            return $"{size:0.#} {units[unit]}";
         }
 
         private static IEnumerable<MessageGroup> GroupMessages(IEnumerable<Message> messages)

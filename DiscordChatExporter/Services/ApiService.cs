@@ -149,7 +149,7 @@ namespace DiscordChatExporter.Services
             if (type.IsEither(ChannelType.DirectTextChat, ChannelType.DirectGroupTextChat))
             {
                 var recipients = token["recipients"].Select(ParseUser);
-                name = recipients.Select(r => $"{r.Name}#{r.Discriminator:D4}").JoinToString(", ");
+                name = recipients.Select(r => $"{r.Name}#{r.Discriminator:0000}").JoinToString(", ");
             }
             else
             {

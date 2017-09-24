@@ -1,105 +1,109 @@
 ﻿body {
+    background-color: #36393E;
+    color: rgba(255, 255, 255, 0.7);
     font-family: Whitney, Helvetica Neue, Helvetica, Arial, sans-serif;
     font-size: 16px;
-
-    background-color: #36393E;
 }
 
 a {
-    text-decoration: none;
-
     color: #0096CF;
+    text-decoration: none;
 }
 
-a:hover {
-    text-decoration: underline;
-}
+a:hover { text-decoration: underline; }
 
 div.pre, span.pre {
-    font-family: Consolas, Courier New, Courier, Monospace;
-
-    padding-right: 2px;
-    padding-left: 2px;
-
     background-color: #2F3136;
+    font-family: Consolas, Courier New, Courier, Monospace;
+    padding-left: 2px;
+    padding-right: 2px;
 }
 
 div#info {
-    max-width: 100%;
-    margin-bottom: 20px;
-
-    color: rgba(255, 255, 255, 0.7);
-}
-
-div#log {
+    display: flex;
+    margin-bottom: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
     max-width: 100%;
 }
+
+div#log { max-width: 100%; }
+
+img.guild-icon {
+    max-height: 64px;
+    max-width: 64px;
+}
+
+div.info-right {
+    flex: 1;
+    margin-left: 10px;
+}
+
+div.guild-name {
+    color: #FFFFFF;
+    font-size: 1.4rem;
+}
+
+div.channel-name {
+    color: #FFFFFF;
+    font-size: 1.2rem;
+}
+
+div.misc { margin-top: 2px; }
 
 div.msg {
-    display: flex;
-
-    margin-right: 10px;
-    margin-left: 10px;
-    padding-top: 15px;
-    padding-bottom: 15px;
-
     border-top: 1px solid rgba(255, 255, 255, 0.04);
+    display: flex;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding-bottom: 15px;
+    padding-top: 15px;
 }
 
-div.msg-avatar {
-    width: 40px;
+div.msg-left {
     height: 40px;
+    width: 40px;
 }
 
 img.msg-avatar {
-    width: 40px;
-    height: 40px;
-
     border-radius: 50%;
+    height: 40px;
+    width: 40px;
 }
 
-div.msg-body {
-    margin-left: 20px;
-
+div.msg-right {
     flex: 1;
+    margin-left: 20px;
 }
 
 span.msg-user {
-    font-size: 1rem;
-
     color: #FFFFFF;
+    font-size: 1rem;
 }
 
 span.msg-date {
-    font-size: .75rem;
-
-    margin-left: 5px;
-
     color: rgba(255, 255, 255, 0.2);
+    font-size: .75rem;
+    margin-left: 5px;
 }
 
 span.msg-edited {
-    font-size: .8rem;
-
-    margin-left: 5px;
-
     color: rgba(255, 255, 255, 0.2);
+    font-size: .8rem;
+    margin-left: 5px;
 }
 
 div.msg-content {
     font-size: .9375rem;
-
     padding-top: 5px;
-
-    color: rgba(255, 255, 255, 0.7);
 }
 
 div.msg-attachment {
-    margin-top: 5px;
     margin-bottom: 5px;
+    margin-top: 5px;
 }
 
 img.msg-attachment {
-    max-width: 50%;
     max-height: 500px;
+    max-width: 50%;
 }

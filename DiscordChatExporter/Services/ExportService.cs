@@ -21,14 +21,22 @@ namespace DiscordChatExporter.Services
             var themeHtml = doc.GetElementbyId("theme");
             themeHtml.InnerHtml = style;
 
+            // Title
+            var titleHtml = doc.DocumentNode.Element("html").Element("head").Element("title");
+            titleHtml.InnerHtml = $"{channelChatLog.Guild.Name} - {channelChatLog.Channel.Name}";
+
             // Info
             var infoHtml = doc.GetElementbyId("info");
-            infoHtml.AppendChild(HtmlNode.CreateNode(
-                $"<div>Guild: <b>{channelChatLog.Guild.Name}</b> ({channelChatLog.Guild.Id})</div>"));
-            infoHtml.AppendChild(HtmlNode.CreateNode(
-                $"<div>Channel: <b>{channelChatLog.Channel.Name}</b> ({channelChatLog.Channel.Id})</div>"));
-            infoHtml.AppendChild(HtmlNode.CreateNode(
-                $"<div>Messages: <b>{channelChatLog.Messages.Count:N0}</b></div>"));
+            var infoLeftHtml = infoHtml.AppendChild(HtmlNode.CreateNode("<div class=\"info-left\"></div>"));
+            infoLeftHtml.AppendChild(HtmlNode.CreateNode(
+                $"<img class=\"guild-icon\" src=\"{channelChatLog.Guild.IconUrl}\" />"));
+            var infoRightHtml = infoHtml.AppendChild(HtmlNode.CreateNode("<div class=\"info-right\"></div>"));
+            infoRightHtml.AppendChild(HtmlNode.CreateNode(
+                $"<div class=\"guild-name\">{channelChatLog.Guild.Name}</div>"));
+            infoRightHtml.AppendChild(HtmlNode.CreateNode(
+                $"<div class=\"channel-name\">{channelChatLog.Channel.Name}</div>"));
+            infoRightHtml.AppendChild(HtmlNode.CreateNode(
+                $"<div class=\"misc\">{channelChatLog.Messages.Count:N0} messages</div>"));
 
             // Log
             var logHtml = doc.GetElementbyId("log");
@@ -38,21 +46,23 @@ namespace DiscordChatExporter.Services
                 // Container
                 var messageHtml = logHtml.AppendChild(HtmlNode.CreateNode("<div class=\"msg\"></div>"));
 
-                // Avatar
-                messageHtml.AppendChild(HtmlNode.CreateNode("<div class=\"msg-avatar\">" +
-                                                            $"<img class=\"msg-avatar\" src=\"{messageGroup.Author.AvatarUrl}\" />" +
-                                                            "</div>"));
+                // Left
+                var messageLeftHtml = messageHtml.AppendChild(HtmlNode.CreateNode("<div class=\"msg-left\"></div>"));
 
-                // Body
-                var messageBodyHtml = messageHtml.AppendChild(HtmlNode.CreateNode("<div class=\"msg-body\"></div>"));
+                // Avatar
+                messageLeftHtml.AppendChild(
+                    HtmlNode.CreateNode($"<img class=\"msg-avatar\" src=\"{messageGroup.Author.AvatarUrl}\" />"));
+
+                // Right
+                var messageRightHtml = messageHtml.AppendChild(HtmlNode.CreateNode("<div class=\"msg-right\"></div>"));
 
                 // Author
                 var authorName = HtmlDocument.HtmlEncode(messageGroup.Author.Name);
-                messageBodyHtml.AppendChild(HtmlNode.CreateNode($"<span class=\"msg-user\">{authorName}</span>"));
+                messageRightHtml.AppendChild(HtmlNode.CreateNode($"<span class=\"msg-user\">{authorName}</span>"));
 
                 // Date
                 var timeStamp = HtmlDocument.HtmlEncode(messageGroup.TimeStamp.ToString("g"));
-                messageBodyHtml.AppendChild(HtmlNode.CreateNode($"<span class=\"msg-date\">{timeStamp}</span>"));
+                messageRightHtml.AppendChild(HtmlNode.CreateNode($"<span class=\"msg-date\">{timeStamp}</span>"));
 
                 // Individual messages
                 foreach (var message in messageGroup.Messages)
@@ -62,7 +72,7 @@ namespace DiscordChatExporter.Services
                     {
                         var content = FormatMessageContent(message.Content);
                         var contentHtml =
-                            messageBodyHtml.AppendChild(
+                            messageRightHtml.AppendChild(
                                 HtmlNode.CreateNode($"<div class=\"msg-content\">{content}</div>"));
 
                         // Edited timestamp
@@ -79,7 +89,7 @@ namespace DiscordChatExporter.Services
                     {
                         if (attachment.Type == AttachmentType.Image)
                         {
-                            messageBodyHtml.AppendChild(
+                            messageRightHtml.AppendChild(
                                 HtmlNode.CreateNode("<div class=\"msg-attachment\">" +
                                                     $"<a href=\"{attachment.Url}\">" +
                                                     $"<img class=\"msg-attachment\" src=\"{attachment.Url}\" />" +
@@ -88,7 +98,7 @@ namespace DiscordChatExporter.Services
                         }
                         else
                         {
-                            messageBodyHtml.AppendChild(
+                            messageRightHtml.AppendChild(
                                 HtmlNode.CreateNode("<div class=\"msg-attachment\">" +
                                                     $"<a href=\"{attachment.Url}\">" +
                                                     $"Attachment: {attachment.FileName} ({NormalizeFileSize(attachment.FileSize)})" +

@@ -84,6 +84,10 @@ Window "DiscordChatExporter.Views.MainWindow" {
           Grid.Column: 0
           Visibility: bind AnyAvailableGuilds
                       convert (bool b) => b ? Visibility.Visible : Visibility.Hidden
+          Style: Style {
+            TargetType: "DockPanel"
+            #FadeIn_OnProperty("Visibility", Visibility.Visible, 0, 1, "0:0:0.25")
+          }
 
           TextBlock {
             DockPanel.Dock: Top
@@ -127,6 +131,10 @@ Window "DiscordChatExporter.Views.MainWindow" {
           Grid.Column: 1
           Visibility: bind AnyAvailableChannels
                       convert (bool b) => b ? Visibility.Visible : Visibility.Hidden
+          Style: Style {
+            TargetType: "DockPanel"
+            #FadeIn_OnProperty("Visibility", Visibility.Visible, 0, 1, "0:0:0.25")
+          }
 
           TextBlock {
             DockPanel.Dock: Top

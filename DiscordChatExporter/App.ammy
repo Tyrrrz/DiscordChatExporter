@@ -37,6 +37,11 @@
 
     // Styles
     Style {
+      TargetType: "Image"
+      #Setter("RenderOptions.BitmapScalingMode", "HighQuality")
+    }
+
+    Style {
       TargetType: "ProgressBar"
       BasedOn: resource "MaterialDesignLinearProgressBar"
       #Setter("Foreground", resource dyn "SecondaryAccentBrush")

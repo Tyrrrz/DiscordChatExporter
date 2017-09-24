@@ -76,6 +76,8 @@ Window "DiscordChatExporter.Views.MainWindow" {
       Grid {
         Grid.Row: 1
         #TwoColumns("*", "*")
+        IsEnabled: bind IsBusy
+                   convert (bool b) => b ? false : true
 
         // Guilds
         DockPanel {
@@ -99,9 +101,19 @@ Window "DiscordChatExporter.Views.MainWindow" {
               ItemsSource: bind AvailableGuilds
               SelectedItem: bind SelectedGuild
               ItemTemplate: DataTemplate {
-                TextBlock {
-                  Padding: "10 0 5 0"
-                  Text: bind Name
+                DockPanel {
+                  Image {
+                    DockPanel.Dock: Left
+                    Source: bind IconUrl
+                    Width: 16
+                    Height: 16
+                  }
+
+                  TextBlock {
+                    DockPanel.Dock: Right
+                    Padding: "5 0 5 0"
+                    Text: bind Name
+                  }
                 }
               }
             }  

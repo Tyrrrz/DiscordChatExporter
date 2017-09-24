@@ -11,7 +11,7 @@ namespace DiscordChatExporter.Services
 {
     public partial class ApiService : IApiService, IDisposable
     {
-        private const string ApiRoot = "https://discordapp.com/api";
+        private const string ApiRoot = "https://discordapp.com/api/v6";
         private readonly HttpClient _httpClient = new HttpClient();
 
         ~ApiService()
@@ -142,32 +142,18 @@ namespace DiscordChatExporter.Services
         {
             // Get basic data
             var id = token.Value<string>("id");
-
-            // Determine type
-            var typeStr = token.Value<string>("type")?.ToLowerInvariant();
-            var type = ChannelType.DirectTextChat;
-            if (typeStr == "group")
-                type = ChannelType.DirectGroupTextChat;
-            else if (typeStr == "text")
-                type = ChannelType.GuildTextChat;
-            else if (typeStr == "voice")
-                type = ChannelType.GuildVoiceChat;
+            var type = (ChannelType) token.Value<int>("type");
 
             // Extract name based on type
             string name;
-            if (type.IsEither(ChannelType.GuildTextChat, ChannelType.GuildVoiceChat))
+            if (type.IsEither(ChannelType.DirectTextChat, ChannelType.DirectGroupTextChat))
             {
-                name = token.Value<string>("name");
-            }
-            else if (type == ChannelType.DirectTextChat)
-            {
-                var user = ParseUser(token["recipient"]);
-                name = $"{user.Name}#{user.Discriminator}";
+                var recipients = token["recipients"].Select(ParseUser);
+                name = recipients.Select(r => $"{r.Name}#{r.Discriminator:D4}").JoinToString(", ");
             }
             else
             {
-                var user = ParseUser(token["recipient"]);
-                name = $"{user.Name}#{user.Discriminator}";
+                name = token.Value<string>("name");
             }
 
             return new Channel(id, name, type);

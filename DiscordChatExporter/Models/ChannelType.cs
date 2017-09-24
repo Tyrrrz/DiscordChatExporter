@@ -3,8 +3,9 @@
     public enum ChannelType
     {
         GuildTextChat,
-        GuildVoiceChat,
         DirectTextChat,
-        DirectGroupTextChat
+        GuildVoiceChat,
+        DirectGroupTextChat,
+        Category
     }
 }

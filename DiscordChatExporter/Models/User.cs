@@ -14,7 +14,7 @@ namespace DiscordChatExporter.Models
 
         public string AvatarUrl => AvatarHash.IsNotBlank()
             ? $"https://cdn.discordapp.com/avatars/{Id}/{AvatarHash}.png"
-            : $"https://cd.ndiscordapp.com/embed/avatars/{Discriminator % 5}.png";
+            : $"https://cdn.discordapp.com/embed/avatars/{Discriminator % 5}.png";
 
         public User(string id, int discriminator, string name, string avatarHash)
         {

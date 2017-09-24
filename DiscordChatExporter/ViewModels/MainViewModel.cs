@@ -134,7 +134,7 @@ namespace DiscordChatExporter.ViewModels
 
             // Get DM channels
             var dmChannels = await _apiService.GetDirectMessageChannelsAsync(token);
-            var dmGuild = new Guild("@me", "Direct Messages", "");
+            var dmGuild = new Guild("@me", "Direct Messages", null);
             _guildChannelsMap[dmGuild] = dmChannels.ToArray();
 
             // Get guild channels
@@ -142,6 +142,7 @@ namespace DiscordChatExporter.ViewModels
             foreach (var guild in guilds)
             {
                 var guildChannels = await _apiService.GetGuildChannelsAsync(token, guild.Id);
+                guildChannels = guildChannels.Where(c => c.Type == ChannelType.GuildTextChat);
                 _guildChannelsMap[guild] = guildChannels.ToArray();
             }
 

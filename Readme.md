@@ -1,10 +1,10 @@
 # DiscordChatExporter
 
-Command line executable that can export [Discord](https://discordapp.com) channel chat logs to a pretty HTML file.
+DiscordChatExporter can be used to export message history from [Discord](https://discordapp.com) to an HTML file. It works for both direct message chats and guild chats, supports markdown, message grouping, and attachments. There are options to configure the output, such as date format, color theme, message grouping limit, etc.
 
 ## Screenshots
 
-![](http://www.tyrrrz.me/projects/images/discordchatexporter_1.png)
+![](http://www.tyrrrz.me/Projects/DiscordChatExporter/Images/1.png)
 
 ## Download
 
@@ -12,6 +12,7 @@ Command line executable that can export [Discord](https://discordapp.com) channe
 
 ## Features
 
+- Exports to a self-contained HTML file
 - Supports both dark and light theme
 - Displays user avatars
 - Groups messages by author and time
@@ -23,32 +24,7 @@ Command line executable that can export [Discord](https://discordapp.com) channe
 
 ## Usage
 
-The program expects an access token and channel ID as parameters. At minimum, the execution should look like this:
-
-`DiscordChatExporter.exe /token:REkOTVqm9RWOTNOLCdiuMpWd.QiglBz.Lub0E0TZ1xX4ZxCtnwtpBhWt3v1 /channelId:459360869055190534`
-
-#### Getting access token
-
-- Open Discord desktop or web client
-- Press `Ctrl+Shift+I`
-- Navigate to `Application > Storage > Local Storage > https://discordapp.com`
-- Find the value for `token` and extract it
-
-#### Getting channel ID
-
-- Open Discord desktop or web client
-- Navigate to any DM or server channel
-- Extract the current URL:
-    - If using desktop client, press `Ctrl+Shift+I`, type `window.location.href` in console and extract the result
-    - If using web client, just take the current URL from the address bar
-- Pull the ID from the URL:
-    - If it's a DM channel, the format looks like this: `https://discordapp.com/channels/@me/CHANNEL_ID`
-    - If it's a server channel, the format looks like this:
-    `https://discordapp.com/channels/WHATEVER/CHANNEL_ID`
-
-#### Optional arguments
-
-- `/theme:[Dark/Light]` - sets the style of the output
+Check out the [wiki](https://github.com/Tyrrrz/DiscordChatExporter/wiki) for helpful information on how to use this tool.
 
 ## Libraries used
 

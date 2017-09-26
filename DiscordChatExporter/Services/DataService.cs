@@ -9,12 +9,12 @@ using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Services
 {
-    public partial class ApiService : IApiService, IDisposable
+    public partial class DataService : IDataService, IDisposable
     {
         private const string ApiRoot = "https://discordapp.com/api/v6";
         private readonly HttpClient _httpClient = new HttpClient();
 
-        ~ApiService()
+        ~DataService()
         {
             Dispose(false);
         }
@@ -117,7 +117,7 @@ namespace DiscordChatExporter.Services
         }
     }
 
-    public partial class ApiService
+    public partial class DataService
     {
         private static User ParseUser(JToken token)
         {
@@ -149,7 +149,7 @@ namespace DiscordChatExporter.Services
             if (type.IsEither(ChannelType.DirectTextChat, ChannelType.DirectGroupTextChat))
             {
                 var recipients = token["recipients"].Select(ParseUser);
-                name = recipients.Select(r => $"{r.Name}#{r.Discriminator:0000}").JoinToString(", ");
+                name = recipients.Select(r => r.Name).JoinToString(", ");
             }
             else
             {

@@ -1,4 +1,5 @@
 ﻿using MaterialDesignThemes.Wpf
+using MaterialDesignThemes.Wpf.Transitions
 
 Window "DiscordChatExporter.Views.MainWindow" {
   DataContext: bind MainViewModel from $resource Locator
@@ -18,12 +19,13 @@ Window "DiscordChatExporter.Views.MainWindow" {
   FocusManager.FocusedElement: bind from "TokenTextBox"
 
   DialogHost {
-    Grid {
-      #ThreeRows("Auto", "*", "Auto")
+    DockPanel {
+      IsEnabled: bind IsBusy
+                   convert (bool b) => b ? false : true
 
-      // Top
+      // Toolbar
       Border {
-        Grid.Row: 0
+        DockPanel.Dock: Top
         Background: resource dyn "PrimaryHueMidBrush"
         TextElement.Foreground: resource dyn "SecondaryInverseTextBrush"
         StackPanel {
@@ -52,7 +54,7 @@ Window "DiscordChatExporter.Views.MainWindow" {
                 Grid.Column: 1
                 Margin: 5
                 Padding: 4
-                Command: bind PullChannelsCommand
+                Command: bind PullDataCommand
                 PackIcon {
                   Width: 24
                   Height: 24
@@ -72,139 +74,88 @@ Window "DiscordChatExporter.Views.MainWindow" {
         }
       }
 
-      // Middle
-      Grid {
-        Grid.Row: 1
-        #TwoColumns("*", "*")
-        IsEnabled: bind IsBusy
-                   convert (bool b) => b ? false : true
-
-        // Guilds
-        DockPanel {
-          Grid.Column: 0
-          Visibility: bind AnyAvailableGuilds
+      // Content
+      Border {
+        Background: resource dyn "MaterialDesignCardBackground"
+        VerticalAlignment: Stretch
+        Visibility: bind IsDataAvailable
                       convert (bool b) => b ? Visibility.Visible : Visibility.Hidden
-          Style: Style {
-            TargetType: "DockPanel"
-            #FadeIn_OnProperty("Visibility", Visibility.Visible, 0, 1, "0:0:0.25")
-          }
 
-          TextBlock {
-            DockPanel.Dock: Top
-            Margin: "10 15 10 0"
-            FontWeight: SemiBold
-            Text: "Guilds"
-          }
-
-          Card {
-            Margin: "5 5 3 5"
-            VerticalAlignment: Stretch
-            ShadowAssist.ShadowDepth: Depth1
+        DockPanel {
+          // Guilds
+          Border {
+            DockPanel.Dock: Left
+            BorderThickness: "0 0 1 0"
+            BorderBrush: resource dyn "DividerBrush"
 
             ListBox {
-              ItemsSource: bind AvailableGuilds
+              ScrollViewer.VerticalScrollBarVisibility: Hidden
               SelectedItem: bind SelectedGuild
+              ItemsSource: bind AvailableGuilds
+              VirtualizingStackPanel.IsVirtualizing: false
               ItemTemplate: DataTemplate {
-                DockPanel {
-                  Image {
-                    DockPanel.Dock: Left
-                    Source: bind IconUrl
-                    Width: 16
-                    Height: 16
+                TransitioningContent {
+                  OpeningEffect: TransitionEffect {
+                    Kind: SlideInFromRight
+                    Duration: "0:0:0.3"
                   }
 
-                  TextBlock {
-                    DockPanel.Dock: Right
-                    Padding: "5 0 5 0"
-                    Text: bind Name
+                  Border "Root" {
+                    Margin: -8
+                    Cursor: CursorType.Hand
+                    Background: Transparent
+                    Image {
+                      Margin: 6
+                      Source: bind IconUrl
+                      Width: 48
+                      Height: 48
+                      ToolTip: bind Name
+                    }
                   }
                 }
               }
-            }  
-          }
-          
-        }
-        
-
-        // Channels
-        DockPanel {
-          Grid.Column: 1
-          Visibility: bind AnyAvailableChannels
-                      convert (bool b) => b ? Visibility.Visible : Visibility.Hidden
-          Style: Style {
-            TargetType: "DockPanel"
-            #FadeIn_OnProperty("Visibility", Visibility.Visible, 0, 1, "0:0:0.25")
+            }
           }
 
-          TextBlock {
-            DockPanel.Dock: Top
-            Margin: "10 15 10 0"
-            FontWeight: SemiBold
-            Text: "Channels"
-          }
-
-          Card {
-            Margin: "3 5 5 5"
-            VerticalAlignment: Stretch
-            ShadowAssist.ShadowDepth: Depth1
-
+          // Channels
+          Border {
             ListBox {
               ItemsSource: bind AvailableChannels
-              SelectedItem: bind SelectedChannel
+              VirtualizingStackPanel.IsVirtualizing: false
               ItemTemplate: DataTemplate {
-                TextBlock {
-                  Padding: "10 0 5 0"
-                  Text: bind Name
+                TransitioningContent {
+                  OpeningEffect: TransitionEffect {
+                    Kind: SlideInFromLeft
+                    Duration: "0:0:0.3"
+                  }
+
+                  @StackPanelHorizontal "Root" {
+                    Margin: -8
+                    InputBindings: [
+                      MouseBinding {
+                        MouseAction: LeftClick
+                        Command: bind DataContext.ExportCommand from $ancestor<ItemsControl>
+                        CommandParameter: bind
+                      }
+                    ]
+                    Background: Transparent
+                    Cursor: CursorType.Hand
+                    PackIcon {
+                      Margin: "4 7 0 6"
+                      Kind: PackIconKind.Pound
+                      VerticalAlignment: Center
+                    }
+                    TextBlock {
+                      Margin: "3 6 6 6"
+                      FontSize: 14
+                      Text: bind Name
+                      VerticalAlignment: Center
+                    }  
+                  }
                 }
               }
-            }  
+            }
           }
-          
-        }
-      }
-
-      // Bottom
-      DockPanel {
-        Grid.Row: 2
-        LastChildFill: false
-
-        // Help
-        Button {
-          Style: resource dyn "MaterialDesignFlatButton"
-          DockPanel.Dock: Left
-          Padding: 4
-          Margin: "5 5 0 5"
-          Command: bind ShowHelpCommand
-          ToolTip: "Usage guide"
-          PackIcon {
-            Kind: PackIconKind.HelpCircle
-            Width: 24
-            Height: 24
-          }
-        }
-
-        // Settings
-        Button "ShowSettingsButton" {
-          Style: resource dyn "MaterialDesignFlatButton"
-          DockPanel.Dock: Left
-          Padding: 4
-          Margin: "0 5 5 5"
-          Click: ShowSettingsButton_Click
-          ToolTip: "Settings"
-          PackIcon {
-            Kind: PackIconKind.Settings
-            Width: 24
-            Height: 24
-          }
-        }
-
-        // Convert
-        Button {
-          DockPanel.Dock: Right
-          Margin: 5
-          Command: bind ExportChatLogCommand
-          ToolTip: "Save selected channel's messages"
-          Content: "EXPORT"
         }
       }
     }

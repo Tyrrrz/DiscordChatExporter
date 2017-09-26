@@ -4,7 +4,7 @@ using DiscordChatExporter.Models;
 
 namespace DiscordChatExporter.Services
 {
-    public interface IApiService
+    public interface IDataService
     {
         Task<IEnumerable<Guild>> GetGuildsAsync(string token);
 

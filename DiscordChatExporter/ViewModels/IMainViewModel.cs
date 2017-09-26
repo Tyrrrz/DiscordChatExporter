@@ -7,19 +7,16 @@ namespace DiscordChatExporter.ViewModels
     public interface IMainViewModel
     {
         bool IsBusy { get; }
+        bool IsDataAvailable { get; }
 
         string Token { get; set; }
 
         IReadOnlyList<Guild> AvailableGuilds { get; }
-        bool AnyAvailableGuilds { get; }
         Guild SelectedGuild { get; set; }
-
         IReadOnlyList<Channel> AvailableChannels { get; }
-        bool AnyAvailableChannels { get; }
-        Channel SelectedChannel { get; set; }
 
+        RelayCommand PullDataCommand { get; }
+        RelayCommand<Channel> ExportCommand { get; }
         RelayCommand ShowHelpCommand { get; }
-        RelayCommand PullChannelsCommand { get; }
-        RelayCommand ExportChatLogCommand { get; }
     }
 }

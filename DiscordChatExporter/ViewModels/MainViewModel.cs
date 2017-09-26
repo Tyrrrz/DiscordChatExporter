@@ -14,7 +14,7 @@ namespace DiscordChatExporter.ViewModels
     public class MainViewModel : ViewModelBase, IMainViewModel
     {
         private readonly ISettingsService _settingsService;
-        private readonly IApiService _apiService;
+        private readonly IDataService _dataService;
         private readonly IExportService _exportService;
 
         private readonly Dictionary<Guild, IReadOnlyList<Channel>> _guildChannelsMap;
@@ -24,7 +24,6 @@ namespace DiscordChatExporter.ViewModels
         private IReadOnlyList<Guild> _availableGuilds;
         private Guild _selectedGuild;
         private IReadOnlyList<Channel> _availableChannels;
-        private Channel _selectedChannel;
 
         public bool IsBusy
         {
@@ -32,10 +31,12 @@ namespace DiscordChatExporter.ViewModels
             private set
             {
                 Set(ref _isBusy, value);
-                PullChannelsCommand.RaiseCanExecuteChanged();
-                ExportChatLogCommand.RaiseCanExecuteChanged();
+                PullDataCommand.RaiseCanExecuteChanged();
+                ExportCommand.RaiseCanExecuteChanged();
             }
         }
+
+        public bool IsDataAvailable => AvailableGuilds.NotNullAndAny();
 
         public string Token
         {
@@ -46,7 +47,7 @@ namespace DiscordChatExporter.ViewModels
                 value = value?.Trim('"');
 
                 _settingsService.Token = value;
-                PullChannelsCommand.RaiseCanExecuteChanged();
+                PullDataCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -56,11 +57,9 @@ namespace DiscordChatExporter.ViewModels
             private set
             {
                 Set(ref _availableGuilds, value);
-                RaisePropertyChanged(() => AnyAvailableGuilds);
+                RaisePropertyChanged(() => IsDataAvailable);
             }
         }
-
-        public bool AnyAvailableGuilds => AvailableGuilds.NotNullAndAny();
 
         public Guild SelectedGuild
         {
@@ -69,50 +68,32 @@ namespace DiscordChatExporter.ViewModels
             {
                 Set(ref _selectedGuild, value);
                 AvailableChannels = value != null ? _guildChannelsMap[value] : new Channel[0];
-                ExportChatLogCommand.RaiseCanExecuteChanged();
+                ExportCommand.RaiseCanExecuteChanged();
             }
         }
 
         public IReadOnlyList<Channel> AvailableChannels
         {
             get => _availableChannels;
-            private set
-            {
-                Set(ref _availableChannels, value);
-                RaisePropertyChanged(() => AnyAvailableChannels);
-            }
-        }
-
-        public bool AnyAvailableChannels => AvailableChannels.NotNullAndAny();
-
-        public Channel SelectedChannel
-        {
-            get => _selectedChannel;
-            set
-            {
-                Set(ref _selectedChannel, value);
-                ExportChatLogCommand.RaiseCanExecuteChanged();
-            }
+            private set => Set(ref _availableChannels, value);
         }
 
         public RelayCommand ShowHelpCommand { get; }
-        public RelayCommand PullChannelsCommand { get; }
-        public RelayCommand ExportChatLogCommand { get; }
+        public RelayCommand PullDataCommand { get; }
+        public RelayCommand<Channel> ExportCommand { get; }
 
-        public MainViewModel(ISettingsService settingsService, IApiService apiService, IExportService exportService)
+        public MainViewModel(ISettingsService settingsService, IDataService dataService, IExportService exportService)
         {
             _settingsService = settingsService;
-            _apiService = apiService;
+            _dataService = dataService;
             _exportService = exportService;
 
             _guildChannelsMap = new Dictionary<Guild, IReadOnlyList<Channel>>();
 
             // Commands
             ShowHelpCommand = new RelayCommand(ShowHelp);
-            PullChannelsCommand = new RelayCommand(PullChannels,
-                () => Token.IsNotBlank() && !IsBusy);
-            ExportChatLogCommand = new RelayCommand(ExportChatLog,
-                () => SelectedChannel != null && !IsBusy);
+            PullDataCommand = new RelayCommand(PullData, () => Token.IsNotBlank() && !IsBusy);
+            ExportCommand = new RelayCommand<Channel>(Export, _ => !IsBusy);
         }
 
         private void ShowHelp()
@@ -120,45 +101,41 @@ namespace DiscordChatExporter.ViewModels
             Process.Start("https://github.com/Tyrrrz/DiscordChatExporter/wiki");
         }
 
-        private async void PullChannels()
+        private async void PullData()
         {
             IsBusy = true;
-            var token = Token;
 
             // Clear existing
             _guildChannelsMap.Clear();
             AvailableGuilds = new Guild[0];
             AvailableChannels = new Channel[0];
             SelectedGuild = null;
-            SelectedChannel = null;
 
             // Get DM channels
-            var dmChannels = await _apiService.GetDirectMessageChannelsAsync(token);
+            var dmChannels = await _dataService.GetDirectMessageChannelsAsync(Token);
             var dmGuild = new Guild("@me", "Direct Messages", null);
             _guildChannelsMap[dmGuild] = dmChannels.ToArray();
 
             // Get guild channels
-            var guilds = await _apiService.GetGuildsAsync(token);
+            var guilds = await _dataService.GetGuildsAsync(Token);
             foreach (var guild in guilds)
             {
-                var guildChannels = await _apiService.GetGuildChannelsAsync(token, guild.Id);
+                var guildChannels = await _dataService.GetGuildChannelsAsync(Token, guild.Id);
                 guildChannels = guildChannels.Where(c => c.Type == ChannelType.GuildTextChat);
                 _guildChannelsMap[guild] = guildChannels.ToArray();
             }
 
             AvailableGuilds = _guildChannelsMap.Keys.ToArray();
+            SelectedGuild = AvailableGuilds.FirstOrDefault();
             IsBusy = false;
         }
 
-        private async void ExportChatLog()
+        private async void Export(Channel channel)
         {
             IsBusy = true;
-            var token = Token;
-            var guild = SelectedGuild;
-            var channel = SelectedChannel;
             
             // Get safe file names
-            var safeGroupName = guild.Name;
+            var safeGroupName = SelectedGuild.Name;
             var safeChannelName = channel.Name;
             foreach (var invalidChar in Path.GetInvalidFileNameChars())
             {
@@ -181,10 +158,10 @@ namespace DiscordChatExporter.ViewModels
             }
 
             // Get messages
-            var messages = await _apiService.GetChannelMessagesAsync(token, channel.Id);
+            var messages = await _dataService.GetChannelMessagesAsync(Token, channel.Id);
 
             // Create log
-            var chatLog = new ChannelChatLog(guild, channel, messages);
+            var chatLog = new ChannelChatLog(SelectedGuild, channel, messages);
 
             // Export
             _exportService.Export(sfd.FileName, chatLog, _settingsService.Theme);

@@ -114,9 +114,9 @@
     <Compile Include="Models\Theme.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Services\ApiService.cs" />
+    <Compile Include="Services\DataService.cs" />
     <Compile Include="Services\ExportService.cs" />
-    <Compile Include="Services\IApiService.cs" />
+    <Compile Include="Services\IDataService.cs" />
     <Compile Include="Services\IExportService.cs" />
     <Compile Include="Services\ISettingsService.cs" />
     <Compile Include="Services\SettingsService.cs" />

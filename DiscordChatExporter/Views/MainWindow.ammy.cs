@@ -20,7 +20,7 @@ namespace DiscordChatExporter.Views
             if (e.Key == Key.Enter)
             {
                 // Execute command
-                ViewModel.PullChannelsCommand.Execute(null);
+                ViewModel.PullDataCommand.Execute(null);
             }
         }
 

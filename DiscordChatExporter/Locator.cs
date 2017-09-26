@@ -12,7 +12,7 @@ namespace DiscordChatExporter
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
             // Services
-            SimpleIoc.Default.Register<IApiService, ApiService>();
+            SimpleIoc.Default.Register<IDataService, DataService>();
             SimpleIoc.Default.Register<IExportService, ExportService>();
             SimpleIoc.Default.Register<ISettingsService, SettingsService>();
 

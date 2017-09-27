@@ -1,0 +1,26 @@
+﻿using MaterialDesignThemes.Wpf
+
+UserControl "DiscordChatExporter.Views.SettingsDialog" {
+  DataContext: bind SettingsViewModel from $resource Locator
+  Width: 250
+
+  StackPanel {
+    // Theme
+    ComboBox {
+      HintAssist.Hint: "Theme"
+      HintAssist.IsFloating: true
+      Margin: 8
+      IsReadOnly: true
+      ItemsSource: bind AvailableThemes
+      SelectedItem: bind Theme
+    }
+
+    // Save
+    Button {
+      Command: DialogHost.CloseDialogCommand
+      Content: "SAVE"
+      Margin: 8
+      Style: resource dyn "MaterialDesignFlatButton"
+    }
+  }
+}

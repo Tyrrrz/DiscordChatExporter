@@ -8,14 +8,14 @@ namespace DiscordChatExporter.Models
     {
         public User Author { get; }
 
-        public DateTime FirstTimeStamp { get; }
+        public DateTime TimeStamp { get; }
 
         public IReadOnlyList<Message> Messages { get; }
 
-        public MessageGroup(User author, DateTime firstTimeStamp, IEnumerable<Message> messages)
+        public MessageGroup(User author, DateTime timeStamp, IEnumerable<Message> messages)
         {
             Author = author;
-            FirstTimeStamp = firstTimeStamp;
+            TimeStamp = timeStamp;
             Messages = messages.ToArray();
         }
     }

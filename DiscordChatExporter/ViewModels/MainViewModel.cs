@@ -110,17 +110,21 @@ namespace DiscordChatExporter.ViewModels
             SelectedGuild = null;
 
             // Get DM channels
-            var dmChannels = await _dataService.GetDirectMessageChannelsAsync(Token);
-            var dmGuild = new Guild("@me", "Direct Messages", null);
-            _guildChannelsMap[dmGuild] = dmChannels.ToArray();
+            {
+                var channels = await _dataService.GetDirectMessageChannelsAsync(Token);
+                var guild = new Guild("@me", "Direct Messages", null);
+                _guildChannelsMap[guild] = channels.ToArray();
+            }
 
             // Get guild channels
-            var guilds = await _dataService.GetGuildsAsync(Token);
-            foreach (var guild in guilds)
             {
-                var guildChannels = await _dataService.GetGuildChannelsAsync(Token, guild.Id);
-                guildChannels = guildChannels.Where(c => c.Type == ChannelType.GuildTextChat);
-                _guildChannelsMap[guild] = guildChannels.ToArray();
+                var guilds = await _dataService.GetGuildsAsync(Token);
+                foreach (var guild in guilds)
+                {
+                    var channels = await _dataService.GetGuildChannelsAsync(Token, guild.Id);
+                    channels = channels.Where(c => c.Type == ChannelType.GuildTextChat);
+                    _guildChannelsMap[guild] = channels.ToArray();
+                }
             }
 
             AvailableGuilds = _guildChannelsMap.Keys.ToArray();
@@ -133,13 +137,8 @@ namespace DiscordChatExporter.ViewModels
             IsBusy = true;
             
             // Get safe file names
-            var safeGroupName = SelectedGuild.Name;
-            var safeChannelName = channel.Name;
-            foreach (var invalidChar in Path.GetInvalidFileNameChars())
-            {
-                safeGroupName = safeGroupName.Replace(invalidChar, '_');
-                safeChannelName = safeChannelName.Replace(invalidChar, '_');
-            }
+            var safeGroupName = SelectedGuild.Name.Replace(Path.GetInvalidFileNameChars(), '_');
+            var safeChannelName = channel.Name.Replace(Path.GetInvalidFileNameChars(), '_');
 
             // Ask for path
             var sfd = new SaveFileDialog

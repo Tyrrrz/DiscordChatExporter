@@ -14,11 +14,6 @@ namespace DiscordChatExporter.Services
         private const string ApiRoot = "https://discordapp.com/api/v6";
         private readonly HttpClient _httpClient = new HttpClient();
 
-        ~DataService()
-        {
-            Dispose(false);
-        }
-
         public async Task<IEnumerable<Guild>> GetGuildsAsync(string token)
         {
             // Form request url

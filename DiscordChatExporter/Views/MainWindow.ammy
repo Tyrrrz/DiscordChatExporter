@@ -71,6 +71,7 @@ Window "DiscordChatExporter.Views.MainWindow" {
             // Popup menu
             PopupBox {
               Grid.Column: 1
+              Foreground: resource dyn "PrimaryHueMidForegroundBrush"
               PlacementMode: LeftAndAlignTopEdges
 
               StackPanel {

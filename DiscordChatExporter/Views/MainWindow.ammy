@@ -2,26 +2,26 @@
 using MaterialDesignThemes.Wpf.Transitions
 
 Window "DiscordChatExporter.Views.MainWindow" {
-  DataContext: bind MainViewModel from $resource Locator
   Title: "DiscordChatExporter"
-  Width: 620
+  Width: 600
   Height: 550
   Background: resource dyn "MaterialDesignPaper"
-  WindowStartupLocation: CenterScreen
-  UseLayoutRounding: true
-  SnapsToDevicePixels: true
+  DataContext: bind MainViewModel from $resource Locator
+  FocusManager.FocusedElement: bind from "TokenTextBox"
   FontFamily: resource dyn "MaterialDesignFont"
+  SnapsToDevicePixels: true
   TextElement.FontSize: 13
   TextElement.FontWeight: Regular
   TextElement.Foreground: resource dyn "SecondaryTextBrush"
   TextOptions.TextFormattingMode: Ideal
   TextOptions.TextRenderingMode: Auto
-  FocusManager.FocusedElement: bind from "TokenTextBox"
+  UseLayoutRounding: true
+  WindowStartupLocation: CenterScreen
 
   DialogHost {
     DockPanel {
       IsEnabled: bind IsBusy
-                   convert (bool b) => b ? false : true
+                 convert (bool b) => b ? false : true
 
       // Toolbar
       Border {
@@ -29,36 +29,58 @@ Window "DiscordChatExporter.Views.MainWindow" {
         Background: resource dyn "PrimaryHueMidBrush"
         TextElement.Foreground: resource dyn "SecondaryInverseTextBrush"
         StackPanel {
-          Card {
-            Margin: 5
-            Grid {
-              #TwoColumns("*", "Auto")
+          Grid {
+            #TwoColumns("*", "Auto")
 
-              // Token
-              TextBox "TokenTextBox" {
-                Grid.Column: 0
-                Margin: 5
-                BorderThickness: 0
-                FontSize: 16
-                HintAssist.Hint: "Token"
-                KeyDown: TokenTextBox_KeyDown
-                Text: bind Token
-                      set [
-                          UpdateSourceTrigger: PropertyChanged
-                      ]
+            Card {
+              Grid.Column: 0
+              Margin: "6 6 0 6"
+
+              Grid {
+                #TwoColumns("*", "Auto")
+
+                // Token
+                TextBox "TokenTextBox" {
+                  Grid.Column: 0
+                  Margin: 6
+                  BorderThickness: 0
+                  HintAssist.Hint: "Token"
+                  KeyDown: TokenTextBox_KeyDown
+                  FontSize: 16
+                  Text: bind Token
+                        set [ UpdateSourceTrigger: PropertyChanged ]
+                }
+
+                // Submit
+                Button {
+                  Grid.Column: 1
+                  Margin: "0 6 6 6"
+                  Padding: 4
+                  Command: bind PullDataCommand
+                  Style: resource dyn "MaterialDesignFlatButton"
+
+                  PackIcon {
+                    Width: 24
+                    Height: 24
+                    Kind: PackIconKind.ArrowRight
+                  }
+                }
               }
+            }
 
-              // Submit
-              Button {
-                Style: resource dyn "MaterialDesignFlatButton"
-                Grid.Column: 1
-                Margin: 5
-                Padding: 4
-                Command: bind PullDataCommand
-                PackIcon {
-                  Width: 24
-                  Height: 24
-                  Kind: PackIconKind.ArrowRight
+            // Popup menu
+            PopupBox {
+              Grid.Column: 1
+              PlacementMode: LeftAndAlignTopEdges
+
+              StackPanel {
+                Button {
+                  Command: bind ShowSettingsCommand
+                  Content: "Settings"
+                }
+                Button {
+                  Command: bind ShowAboutCommand
+                  Content: "About"
                 }
               }
             }
@@ -75,40 +97,41 @@ Window "DiscordChatExporter.Views.MainWindow" {
       }
 
       // Content
-      Border {
-        Background: resource dyn "MaterialDesignCardBackground"
-        VerticalAlignment: Stretch
-        Visibility: bind IsDataAvailable
+      Grid {
+        DockPanel {
+          Background: resource dyn "MaterialDesignCardBackground"
+          Visibility: bind IsDataAvailable
                       convert (bool b) => b ? Visibility.Visible : Visibility.Hidden
 
-        DockPanel {
           // Guilds
           Border {
             DockPanel.Dock: Left
-            BorderThickness: "0 0 1 0"
             BorderBrush: resource dyn "DividerBrush"
+            BorderThickness: "0 0 1 0"
 
             ListBox {
+              ItemsSource: bind AvailableGuilds
               ScrollViewer.VerticalScrollBarVisibility: Hidden
               SelectedItem: bind SelectedGuild
-              ItemsSource: bind AvailableGuilds
               VirtualizingStackPanel.IsVirtualizing: false
+
               ItemTemplate: DataTemplate {
                 TransitioningContent {
                   OpeningEffect: TransitionEffect {
-                    Kind: SlideInFromRight
                     Duration: "0:0:0.3"
+                    Kind: SlideInFromRight
                   }
 
-                  Border "Root" {
+                  Border {
                     Margin: -8
-                    Cursor: CursorType.Hand
                     Background: Transparent
+                    Cursor: CursorType.Hand
+
                     Image {
                       Margin: 6
-                      Source: bind IconUrl
                       Width: 48
                       Height: 48
+                      Source: bind IconUrl
                       ToolTip: bind Name
                     }
                   }
@@ -121,25 +144,28 @@ Window "DiscordChatExporter.Views.MainWindow" {
           Border {
             ListBox {
               ItemsSource: bind AvailableChannels
+              HorizontalContentAlignment: Stretch
               VirtualizingStackPanel.IsVirtualizing: false
+
               ItemTemplate: DataTemplate {
                 TransitioningContent {
                   OpeningEffect: TransitionEffect {
-                    Kind: SlideInFromLeft
                     Duration: "0:0:0.3"
+                    Kind: SlideInFromLeft
                   }
 
-                  @StackPanelHorizontal "Root" {
+                  @StackPanelHorizontal {
                     Margin: -8
-                    InputBindings: [
-                      MouseBinding {
-                        MouseAction: LeftClick
-                        Command: bind DataContext.ExportCommand from $ancestor<ItemsControl>
-                        CommandParameter: bind
-                      }
-                    ]
                     Background: Transparent
                     Cursor: CursorType.Hand
+                    InputBindings: [
+                      MouseBinding {
+                        Command: bind DataContext.ExportChannelCommand from $ancestor<ItemsControl>
+                        CommandParameter: bind
+                        MouseAction: LeftClick
+                      }
+                    ]
+
                     PackIcon {
                       Margin: "4 7 0 6"
                       Kind: PackIconKind.Pound
@@ -154,6 +180,77 @@ Window "DiscordChatExporter.Views.MainWindow" {
                   }
                 }
               }
+            }
+          }
+        }
+
+        // Content placeholder
+        StackPanel {
+          Margin: "32 32 8 8"
+          Visibility: bind IsDataAvailable
+                      convert (bool b) => b ? Visibility.Hidden : Visibility.Visible
+
+          TextBlock {
+            FontSize: 18
+            Text: "DiscordChatExporter needs your authorization token to work."
+          }
+
+          TextBlock {
+            Margin: "0 8 0 0"
+            FontSize: 16
+            Text: "To obtain it, follow these steps:"
+          }
+
+          TextBlock {
+            Margin: "8 0 0 0"
+            FontSize: 14
+
+            Run {
+              Text: "1. Open the Discord app"
+            }
+            LineBreak { }
+            Run {
+              Text: "2. Log in if you haven't"
+            }
+            LineBreak { }
+            Run {
+              Text: "3. Press"
+            }
+            Run {
+              Text: "Ctrl+Shift+I"
+              Foreground: resource dyn "PrimaryTextBrush"
+            }
+            LineBreak { }
+            Run {
+              Text: "4. Navigate to"
+            }
+            Run {
+              Text: "Application"
+              Foreground: resource dyn "PrimaryTextBrush"
+            }
+            Run { Text: "tab" }
+            LineBreak { }
+            Run {
+              Text: "5. Expand"
+            }
+            Run {
+              Text: "Storage > Local Storage > https://discordapp.com"
+              Foreground: resource dyn "PrimaryTextBrush"
+            }
+            LineBreak { }
+            Run {
+              Text: "6. Find"
+            }
+            Run {
+              Text: "&quot;token&quot;"
+              Foreground: resource dyn "PrimaryTextBrush"
+            }
+            Run {
+              Text: "under key and copy the value"
+            }
+            LineBreak { }
+            Run {
+              Text: "7. Paste the value in the textbox above"
             }
           }
         }

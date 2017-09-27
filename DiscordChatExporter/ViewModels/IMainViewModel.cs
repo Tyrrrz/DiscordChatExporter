@@ -16,7 +16,8 @@ namespace DiscordChatExporter.ViewModels
         IReadOnlyList<Channel> AvailableChannels { get; }
 
         RelayCommand PullDataCommand { get; }
-        RelayCommand<Channel> ExportCommand { get; }
-        RelayCommand ShowHelpCommand { get; }
+        RelayCommand<Channel> ExportChannelCommand { get; }
+        RelayCommand ShowSettingsCommand { get; }
+        RelayCommand ShowAboutCommand { get; }
     }
 }

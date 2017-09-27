@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using DiscordChatExporter.Messages;
 using DiscordChatExporter.Models;
 using DiscordChatExporter.Services;
 using GalaSoft.MvvmLight;
@@ -32,7 +33,7 @@ namespace DiscordChatExporter.ViewModels
             {
                 Set(ref _isBusy, value);
                 PullDataCommand.RaiseCanExecuteChanged();
-                ExportCommand.RaiseCanExecuteChanged();
+                ExportChannelCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -68,7 +69,7 @@ namespace DiscordChatExporter.ViewModels
             {
                 Set(ref _selectedGuild, value);
                 AvailableChannels = value != null ? _guildChannelsMap[value] : new Channel[0];
-                ExportCommand.RaiseCanExecuteChanged();
+                ExportChannelCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -78,9 +79,10 @@ namespace DiscordChatExporter.ViewModels
             private set => Set(ref _availableChannels, value);
         }
 
-        public RelayCommand ShowHelpCommand { get; }
         public RelayCommand PullDataCommand { get; }
-        public RelayCommand<Channel> ExportCommand { get; }
+        public RelayCommand<Channel> ExportChannelCommand { get; }
+        public RelayCommand ShowSettingsCommand { get; }
+        public RelayCommand ShowAboutCommand { get; }
 
         public MainViewModel(ISettingsService settingsService, IDataService dataService, IExportService exportService)
         {
@@ -91,14 +93,10 @@ namespace DiscordChatExporter.ViewModels
             _guildChannelsMap = new Dictionary<Guild, IReadOnlyList<Channel>>();
 
             // Commands
-            ShowHelpCommand = new RelayCommand(ShowHelp);
             PullDataCommand = new RelayCommand(PullData, () => Token.IsNotBlank() && !IsBusy);
-            ExportCommand = new RelayCommand<Channel>(Export, _ => !IsBusy);
-        }
-
-        private void ShowHelp()
-        {
-            Process.Start("https://github.com/Tyrrrz/DiscordChatExporter/wiki");
+            ExportChannelCommand = new RelayCommand<Channel>(ExportChannel, _ => !IsBusy);
+            ShowSettingsCommand = new RelayCommand(ShowSettings);
+            ShowAboutCommand = new RelayCommand(ShowAbout);
         }
 
         private async void PullData()
@@ -130,7 +128,7 @@ namespace DiscordChatExporter.ViewModels
             IsBusy = false;
         }
 
-        private async void Export(Channel channel)
+        private async void ExportChannel(Channel channel)
         {
             IsBusy = true;
             
@@ -167,6 +165,16 @@ namespace DiscordChatExporter.ViewModels
             _exportService.Export(sfd.FileName, chatLog, _settingsService.Theme);
 
             IsBusy = false;
+        }
+
+        private void ShowSettings()
+        {
+            MessengerInstance.Send(new ShowSettingsMessage());
+        }
+
+        private void ShowAbout()
+        {
+            Process.Start("https://github.com/Tyrrrz/DiscordChatExporter");
         }
     }
 }

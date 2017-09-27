@@ -22,12 +22,12 @@ DiscordChatExporter can be used to export message history from [Discord](https:/
 - Inserts download links for other types of attached files
 - Marks edited messages with a timestamp
 
-## Usage
-
-Check out the [wiki](https://github.com/Tyrrrz/DiscordChatExporter/wiki) for helpful information on how to use this tool.
-
 ## Libraries used
 
+- [AmmyUI](https://github.com/AmmyUI/AmmyUI)
+- [GalaSoft.MVVMLight](http://www.mvvmlight.net)
+- [MaterialDesignInXamlToolkit](https://github.com/ButchersBoy/MaterialDesignInXamlToolkit)
+- [Newtonsoft.Json](http://www.newtonsoft.com/json)
 - [HtmlAgilityPack](https://github.com/zzzprojects/html-agility-pack)
-- [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json)
 - [Tyrrrz.Extensions](https://github.com/Tyrrrz/Extensions)
+- [Tyrrrz.Settings](https://github.com/Tyrrrz/Settings)

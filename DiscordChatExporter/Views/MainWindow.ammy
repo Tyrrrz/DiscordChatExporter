@@ -128,9 +128,16 @@ Window "DiscordChatExporter.Views.MainWindow" {
                     Cursor: CursorType.Hand
 
                     Image {
-                      Margin: "12 6 12 6"
+                      Margin: "12 4 12 4"
                       Width: 48
                       Height: 48
+                      OpacityMask: RadialGradientBrush {
+                        GradientStops: [
+                          GradientStop { Color: "#FF000000", Offset: 0 }
+                          GradientStop { Color: "#FF000000", Offset: 0.96 }
+                          GradientStop { Color: "#00000000", Offset: 1 }
+                        ]
+                      }
                       Source: bind IconUrl
                       ToolTip: bind Name
                     }

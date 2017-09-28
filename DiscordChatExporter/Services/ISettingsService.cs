@@ -7,6 +7,7 @@ namespace DiscordChatExporter.Services
         string Token { get; set; }
         Theme Theme { get; set; }
         string DateFormat { get; set; }
+        int MessageGroupLimit { get; set; }
 
         void Load();
         void Save();

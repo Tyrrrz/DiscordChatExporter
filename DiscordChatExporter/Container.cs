@@ -14,6 +14,7 @@ namespace DiscordChatExporter
             // Services
             SimpleIoc.Default.Register<IDataService, DataService>();
             SimpleIoc.Default.Register<IExportService, ExportService>();
+            SimpleIoc.Default.Register<IMessageGroupService, MessageGroupService>();
             SimpleIoc.Default.Register<ISettingsService, SettingsService>();
 
             // View models

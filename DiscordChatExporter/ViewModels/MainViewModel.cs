@@ -17,6 +17,7 @@ namespace DiscordChatExporter.ViewModels
     {
         private readonly ISettingsService _settingsService;
         private readonly IDataService _dataService;
+        private readonly IMessageGroupService _messageGroupService;
         private readonly IExportService _exportService;
 
         private readonly Dictionary<Guild, IReadOnlyList<Channel>> _guildChannelsMap;
@@ -85,10 +86,12 @@ namespace DiscordChatExporter.ViewModels
         public RelayCommand ShowSettingsCommand { get; }
         public RelayCommand ShowAboutCommand { get; }
 
-        public MainViewModel(ISettingsService settingsService, IDataService dataService, IExportService exportService)
+        public MainViewModel(ISettingsService settingsService, IDataService dataService,
+            IMessageGroupService messageGroupService, IExportService exportService)
         {
             _settingsService = settingsService;
             _dataService = dataService;
+            _messageGroupService = messageGroupService;
             _exportService = exportService;
 
             _guildChannelsMap = new Dictionary<Guild, IReadOnlyList<Channel>>();
@@ -166,8 +169,11 @@ namespace DiscordChatExporter.ViewModels
                 // Get messages
                 var messages = await _dataService.GetChannelMessagesAsync(_cachedToken, channel.Id);
 
+                // Group them
+                var messageGroups = _messageGroupService.GroupMessages(messages);
+
                 // Create log
-                var chatLog = new ChannelChatLog(SelectedGuild, channel, messages);
+                var chatLog = new ChannelChatLog(SelectedGuild, channel, messageGroups);
 
                 // Export
                 _exportService.Export(sfd.FileName, chatLog, _settingsService.Theme);

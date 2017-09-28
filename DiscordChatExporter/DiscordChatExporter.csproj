@@ -91,6 +91,8 @@
     <Compile Include="Models\AttachmentType.cs" />
     <Compile Include="Models\ChannelChatLog.cs" />
     <Compile Include="Models\ChannelType.cs" />
+    <Compile Include="Services\IMessageGroupService.cs" />
+    <Compile Include="Services\MessageGroupService.cs" />
     <Compile Include="ViewModels\ErrorViewModel.cs" />
     <Compile Include="ViewModels\IErrorViewModel.cs" />
     <Compile Include="ViewModels\ISettingsViewModel.cs" />

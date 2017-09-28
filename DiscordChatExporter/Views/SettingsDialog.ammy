@@ -23,6 +23,13 @@ UserControl "DiscordChatExporter.Views.SettingsDialog" {
       Text: bind DateFormat
     }
 
+    // Group limit
+    TextBox {
+      Margin: "16 8 16 8"
+      HintAssist.Hint: "Message group limit"
+      HintAssist.IsFloating: true
+      Text: bind MessageGroupLimit
+    }
 
     // Save
     Button {

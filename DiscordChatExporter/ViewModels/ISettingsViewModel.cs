@@ -7,5 +7,7 @@ namespace DiscordChatExporter.ViewModels
     {
         IReadOnlyList<Theme> AvailableThemes { get; }
         Theme Theme { get; set; }
+        string DateFormat { get; set; }
+        int MessageGroupLimit { get; set; }
     }
 }

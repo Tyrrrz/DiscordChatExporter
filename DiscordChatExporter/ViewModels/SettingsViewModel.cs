@@ -4,6 +4,7 @@ using System.Linq;
 using DiscordChatExporter.Models;
 using DiscordChatExporter.Services;
 using GalaSoft.MvvmLight;
+using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.ViewModels
 {
@@ -23,6 +24,12 @@ namespace DiscordChatExporter.ViewModels
         {
             get => _settingsService.DateFormat;
             set => _settingsService.DateFormat = value;
+        }
+
+        public int MessageGroupLimit
+        {
+            get => _settingsService.MessageGroupLimit;
+            set => _settingsService.MessageGroupLimit = value.ClampMin(0);
         }
 
         public SettingsViewModel(ISettingsService settingsService)

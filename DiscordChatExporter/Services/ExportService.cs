@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Reflection;
 using System.Resources;
 using System.Text.RegularExpressions;
@@ -19,7 +17,7 @@ namespace DiscordChatExporter.Services
             _settingsService = settingsService;
         }
 
-        public void Export(string filePath, ChannelChatLog channelChatLog, Theme theme)
+        public void Export(string filePath, ChannelChatLog log, Theme theme)
         {
             var doc = GetTemplate();
             var style = GetStyle(theme);
@@ -31,25 +29,24 @@ namespace DiscordChatExporter.Services
 
             // Title
             var titleHtml = doc.DocumentNode.Element("html").Element("head").Element("title");
-            titleHtml.InnerHtml = $"{channelChatLog.Guild.Name} - {channelChatLog.Channel.Name}";
+            titleHtml.InnerHtml = $"{log.Guild.Name} - {log.Channel.Name}";
 
             // Info
             var infoHtml = doc.GetElementbyId("info");
             var infoLeftHtml = infoHtml.AppendChild(HtmlNode.CreateNode("<div class=\"info-left\"></div>"));
             infoLeftHtml.AppendChild(HtmlNode.CreateNode(
-                $"<img class=\"guild-icon\" src=\"{channelChatLog.Guild.IconUrl}\" />"));
+                $"<img class=\"guild-icon\" src=\"{log.Guild.IconUrl}\" />"));
             var infoRightHtml = infoHtml.AppendChild(HtmlNode.CreateNode("<div class=\"info-right\"></div>"));
             infoRightHtml.AppendChild(HtmlNode.CreateNode(
-                $"<div class=\"guild-name\">{channelChatLog.Guild.Name}</div>"));
+                $"<div class=\"guild-name\">{log.Guild.Name}</div>"));
             infoRightHtml.AppendChild(HtmlNode.CreateNode(
-                $"<div class=\"channel-name\">{channelChatLog.Channel.Name}</div>"));
+                $"<div class=\"channel-name\">{log.Channel.Name}</div>"));
             infoRightHtml.AppendChild(HtmlNode.CreateNode(
-                $"<div class=\"misc\">{channelChatLog.Messages.Count:N0} messages</div>"));
+                $"<div class=\"misc\">{log.MessageGroups.Count:N0} messages</div>"));
 
             // Log
             var logHtml = doc.GetElementbyId("log");
-            var messageGroups = GroupMessages(channelChatLog.Messages);
-            foreach (var messageGroup in messageGroups)
+            foreach (var messageGroup in log.MessageGroups)
             {
                 // Container
                 var messageHtml = logHtml.AppendChild(HtmlNode.CreateNode("<div class=\"msg\"></div>"));
@@ -169,48 +166,6 @@ namespace DiscordChatExporter.Services
             }
 
             return $"{size:0.#} {units[unit]}";
-        }
-
-        private static IEnumerable<MessageGroup> GroupMessages(IEnumerable<Message> messages)
-        {
-            var result = new List<MessageGroup>();
-
-            // Group adjacent messages by timestamp and author
-            var groupBuffer = new List<Message>();
-            foreach (var message in messages)
-            {
-                var groupFirst = groupBuffer.FirstOrDefault();
-
-                // Group break condition
-                var breakCondition =
-                    groupFirst != null &&
-                    (
-                        message.Author.Id != groupFirst.Author.Id ||
-                        (message.TimeStamp - groupFirst.TimeStamp).TotalHours > 1 ||
-                        message.TimeStamp.Hour != groupFirst.TimeStamp.Hour
-                    );
-
-                // If condition is true - flush buffer
-                if (breakCondition)
-                {
-                    var group = new MessageGroup(groupFirst.Author, groupFirst.TimeStamp, groupBuffer);
-                    result.Add(group);
-                    groupBuffer.Clear();
-                }
-
-                // Add message to buffer
-                groupBuffer.Add(message);
-            }
-
-            // Add what's remaining in buffer
-            if (groupBuffer.Any())
-            {
-                var groupFirst = groupBuffer.First();
-                var group = new MessageGroup(groupFirst.Author, groupFirst.TimeStamp, groupBuffer);
-                result.Add(group);
-            }
-
-            return result;
         }
 
         private static string FormatMessageContent(string content)

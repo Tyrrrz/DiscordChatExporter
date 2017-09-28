@@ -9,13 +9,13 @@ namespace DiscordChatExporter.Models
 
         public Channel Channel { get; }
 
-        public IReadOnlyList<Message> Messages { get; }
+        public IReadOnlyList<MessageGroup> MessageGroups { get; }
 
-        public ChannelChatLog(Guild guild, Channel channel, IEnumerable<Message> messages)
+        public ChannelChatLog(Guild guild, Channel channel, IEnumerable<MessageGroup> messageGroups)
         {
             Guild = guild;
             Channel = channel;
-            Messages = messages.ToArray();
+            MessageGroups = messageGroups.ToArray();
         }
     }
 }

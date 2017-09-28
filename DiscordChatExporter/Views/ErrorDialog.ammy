@@ -7,18 +7,18 @@ UserControl "DiscordChatExporter.Views.ErrorDialog" {
     StackPanel {
       // Message
       TextBlock {
-        Margin: 8
+        Margin: 16
         FontSize: 16
-        HorizontalAlignment: Center
         TextWrapping: WrapWithOverflow
         Text: bind Message
       }
 
       // OK
       Button {
+        Margin: 8
         Command: DialogHost.CloseDialogCommand
         Content: "OK"
-        Margin: 8
+        HorizontalAlignment: Right
         Style: resource dyn "MaterialDesignFlatButton"
       }
     }

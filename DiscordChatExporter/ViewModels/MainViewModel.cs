@@ -171,6 +171,9 @@ namespace DiscordChatExporter.ViewModels
 
                 // Export
                 _exportService.Export(sfd.FileName, chatLog, _settingsService.Theme);
+
+                // Show dialog
+                MessengerInstance.Send(new ShowExportDoneMessage(sfd.FileName));
             }
             catch (UnathorizedException)
             {

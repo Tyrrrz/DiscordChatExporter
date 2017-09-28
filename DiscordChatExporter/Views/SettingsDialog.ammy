@@ -7,9 +7,9 @@ UserControl "DiscordChatExporter.Views.SettingsDialog" {
   StackPanel {
     // Theme
     ComboBox {
+      Margin: 16
       HintAssist.Hint: "Theme"
       HintAssist.IsFloating: true
-      Margin: 8
       IsReadOnly: true
       ItemsSource: bind AvailableThemes
       SelectedItem: bind Theme
@@ -17,9 +17,10 @@ UserControl "DiscordChatExporter.Views.SettingsDialog" {
 
     // Save
     Button {
+      Margin: 8
       Command: DialogHost.CloseDialogCommand
       Content: "SAVE"
-      Margin: 8
+      HorizontalAlignment: Right
       Style: resource dyn "MaterialDesignFlatButton"
     }
   }

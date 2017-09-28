@@ -1,0 +1,37 @@
+﻿using MaterialDesignThemes.Wpf
+
+UserControl "DiscordChatExporter.Views.ExportDoneDialog" {
+  DataContext: bind ExportDoneViewModel from $resource Container
+  Width: 250
+
+  StackPanel {
+    // Message
+    TextBlock {
+      Margin: 16
+      FontSize: 16
+      TextWrapping: WrapWithOverflow
+      Text: "Finished exporting chat log"
+    }
+
+    // Buttons
+    @StackPanelHorizontal {
+      HorizontalAlignment: Right
+
+      // Open
+      Button {
+        Command: bind OpenCommand
+        Content: "OPEN IT"
+        Margin: 8
+        Style: resource dyn "MaterialDesignFlatButton"
+      }
+
+      // Dismiss
+      Button {
+        Command: DialogHost.CloseDialogCommand
+        Content: "DISMISS"
+        Margin: 8
+        Style: resource dyn "MaterialDesignFlatButton"
+      }
+    }
+  }
+}

@@ -86,6 +86,7 @@
   <ItemGroup>
     <Compile Include="Exceptions\UnathorizedException.cs" />
     <Compile Include="Messages\ShowErrorMessage.cs" />
+    <Compile Include="Messages\ShowExportDoneMessage.cs" />
     <Compile Include="Messages\ShowSettingsMessage.cs" />
     <Compile Include="Models\AttachmentType.cs" />
     <Compile Include="Models\ChannelChatLog.cs" />
@@ -93,9 +94,14 @@
     <Compile Include="ViewModels\ErrorViewModel.cs" />
     <Compile Include="ViewModels\IErrorViewModel.cs" />
     <Compile Include="ViewModels\ISettingsViewModel.cs" />
+    <Compile Include="ViewModels\IExportDoneViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="ViewModels\ExportDoneViewModel.cs" />
     <Compile Include="Views\ErrorDialog.ammy.cs">
       <DependentUpon>ErrorDialog.ammy</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ExportDoneDialog.ammy.cs">
+      <DependentUpon>ExportDoneDialog.ammy</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsDialog.ammy.cs">
       <DependentUpon>SettingsDialog.ammy</DependentUpon>
@@ -109,6 +115,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <DependentUpon>ErrorDialog.ammy</DependentUpon>
+    </Page>
+    <Page Include="Views\ExportDoneDialog.g.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <DependentUpon>ExportDoneDialog.ammy</DependentUpon>
     </Page>
     <Page Include="Views\MainWindow.g.xaml">
       <SubType>Designer</SubType>
@@ -163,6 +174,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Views\ErrorDialog.ammy" />
+    <None Include="Views\ExportDoneDialog.ammy" />
     <None Include="Views\MainWindow.ammy" />
     <None Include="Views\SettingsDialog.ammy" />
   </ItemGroup>

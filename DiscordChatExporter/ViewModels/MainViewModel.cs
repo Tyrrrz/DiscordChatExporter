@@ -176,7 +176,7 @@ namespace DiscordChatExporter.ViewModels
                 var chatLog = new ChannelChatLog(SelectedGuild, channel, messageGroups);
 
                 // Export
-                _exportService.Export(sfd.FileName, chatLog, _settingsService.Theme);
+                await _exportService.ExportAsync(sfd.FileName, chatLog, _settingsService.Theme);
 
                 // Show dialog
                 MessengerInstance.Send(new ShowExportDoneMessage(sfd.FileName));

@@ -21,10 +21,10 @@ namespace DiscordChatExporter.ViewModels
         private readonly Dictionary<Guild, IReadOnlyList<Channel>> _guildChannelsMap;
 
         private bool _isBusy;
-
         private IReadOnlyList<Guild> _availableGuilds;
         private Guild _selectedGuild;
         private IReadOnlyList<Channel> _availableChannels;
+        private string _cachedToken;
 
         public bool IsBusy
         {
@@ -102,26 +102,24 @@ namespace DiscordChatExporter.ViewModels
         private async void PullData()
         {
             IsBusy = true;
+            _cachedToken = Token;
 
             // Clear existing
             _guildChannelsMap.Clear();
-            AvailableGuilds = new Guild[0];
-            AvailableChannels = new Channel[0];
-            SelectedGuild = null;
 
             // Get DM channels
             {
-                var channels = await _dataService.GetDirectMessageChannelsAsync(Token);
+                var channels = await _dataService.GetDirectMessageChannelsAsync(_cachedToken);
                 var guild = new Guild("@me", "Direct Messages", null);
                 _guildChannelsMap[guild] = channels.ToArray();
             }
 
             // Get guild channels
             {
-                var guilds = await _dataService.GetGuildsAsync(Token);
+                var guilds = await _dataService.GetGuildsAsync(_cachedToken);
                 foreach (var guild in guilds)
                 {
-                    var channels = await _dataService.GetGuildChannelsAsync(Token, guild.Id);
+                    var channels = await _dataService.GetGuildChannelsAsync(_cachedToken, guild.Id);
                     channels = channels.Where(c => c.Type == ChannelType.GuildTextChat);
                     _guildChannelsMap[guild] = channels.ToArray();
                 }
@@ -155,7 +153,7 @@ namespace DiscordChatExporter.ViewModels
             }
 
             // Get messages
-            var messages = await _dataService.GetChannelMessagesAsync(Token, channel.Id);
+            var messages = await _dataService.GetChannelMessagesAsync(_cachedToken, channel.Id);
 
             // Create log
             var chatLog = new ChannelChatLog(SelectedGuild, channel, messages);

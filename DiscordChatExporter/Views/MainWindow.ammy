@@ -20,9 +20,6 @@ Window "DiscordChatExporter.Views.MainWindow" {
 
   DialogHost {
     DockPanel {
-      IsEnabled: bind IsBusy
-                 convert (bool b) => b ? false : true
-
       // Toolbar
       Border {
         DockPanel.Dock: Top
@@ -101,6 +98,8 @@ Window "DiscordChatExporter.Views.MainWindow" {
       Grid {
         DockPanel {
           Background: resource dyn "MaterialDesignCardBackground"
+          IsEnabled: bind IsBusy
+                     convert (bool b) => b ? false : true
           Visibility: bind IsDataAvailable
                       convert (bool b) => b ? Visibility.Visible : Visibility.Hidden
 

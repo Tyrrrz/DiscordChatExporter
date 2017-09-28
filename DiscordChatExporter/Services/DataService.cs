@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using DiscordChatExporter.Exceptions;
 using DiscordChatExporter.Models;
 using Newtonsoft.Json.Linq;
 using Tyrrrz.Extensions;
@@ -14,16 +16,30 @@ namespace DiscordChatExporter.Services
         private const string ApiRoot = "https://discordapp.com/api/v6";
         private readonly HttpClient _httpClient = new HttpClient();
 
+        private async Task<string> GetStringAsync(string url)
+        {
+            using (var response = await _httpClient.GetAsync(url))
+            {
+                // Check status code
+                if (response.StatusCode.IsEither(HttpStatusCode.Unauthorized, HttpStatusCode.Forbidden))
+                    throw new UnathorizedException();
+                response.EnsureSuccessStatusCode();
+
+                // Get content
+                return await response.Content.ReadAsStringAsync();
+            }
+        }
+
         public async Task<IEnumerable<Guild>> GetGuildsAsync(string token)
         {
             // Form request url
             var url = $"{ApiRoot}/users/@me/guilds?token={token}&limit=100";
 
             // Get response
-            var response = await _httpClient.GetStringAsync(url);
+            var content = await GetStringAsync(url);
 
             // Parse
-            var guilds = JArray.Parse(response).Select(ParseGuild);
+            var guilds = JArray.Parse(content).Select(ParseGuild);
 
             return guilds;
         }
@@ -34,10 +50,10 @@ namespace DiscordChatExporter.Services
             var url = $"{ApiRoot}/users/@me/channels?token={token}";
 
             // Get response
-            var response = await _httpClient.GetStringAsync(url);
+            var content = await GetStringAsync(url);
 
             // Parse
-            var channels = JArray.Parse(response).Select(ParseChannel);
+            var channels = JArray.Parse(content).Select(ParseChannel);
 
             return channels;
         }
@@ -48,10 +64,10 @@ namespace DiscordChatExporter.Services
             var url = $"{ApiRoot}/guilds/{guildId}/channels?token={token}";
 
             // Get response
-            var response = await _httpClient.GetStringAsync(url);
+            var content = await GetStringAsync(url);
 
             // Parse
-            var channels = JArray.Parse(response).Select(ParseChannel);
+            var channels = JArray.Parse(content).Select(ParseChannel);
 
             return channels;
         }
@@ -71,10 +87,10 @@ namespace DiscordChatExporter.Services
                     url += $"&before={beforeId}";
 
                 // Get response
-                var response = await _httpClient.GetStringAsync(url);
+                var content = await GetStringAsync(url);
 
                 // Parse
-                var messages = JArray.Parse(response).Select(ParseMessage);
+                var messages = JArray.Parse(content).Select(ParseMessage);
 
                 // Add messages to list
                 string currentMessageId = null;

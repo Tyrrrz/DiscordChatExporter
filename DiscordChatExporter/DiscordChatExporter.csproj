@@ -84,12 +84,19 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\UnathorizedException.cs" />
+    <Compile Include="Messages\ShowErrorMessage.cs" />
     <Compile Include="Messages\ShowSettingsMessage.cs" />
     <Compile Include="Models\AttachmentType.cs" />
     <Compile Include="Models\ChannelChatLog.cs" />
     <Compile Include="Models\ChannelType.cs" />
+    <Compile Include="ViewModels\ErrorViewModel.cs" />
+    <Compile Include="ViewModels\IErrorViewModel.cs" />
     <Compile Include="ViewModels\ISettingsViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="Views\ErrorDialog.ammy.cs">
+      <DependentUpon>ErrorDialog.ammy</DependentUpon>
+    </Compile>
     <Compile Include="Views\SettingsDialog.ammy.cs">
       <DependentUpon>SettingsDialog.ammy</DependentUpon>
     </Compile>
@@ -97,6 +104,11 @@
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
       <DependentUpon>App.ammy</DependentUpon>
+    </Page>
+    <Page Include="Views\ErrorDialog.g.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <DependentUpon>ErrorDialog.ammy</DependentUpon>
     </Page>
     <Page Include="Views\MainWindow.g.xaml">
       <SubType>Designer</SubType>
@@ -150,6 +162,7 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Views\ErrorDialog.ammy" />
     <None Include="Views\MainWindow.ammy" />
     <None Include="Views\SettingsDialog.ammy" />
   </ItemGroup>

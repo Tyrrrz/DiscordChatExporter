@@ -1,0 +1,25 @@
+﻿using MaterialDesignThemes.Wpf
+
+UserControl "DiscordChatExporter.Views.ErrorDialog" {
+  DataContext: bind ErrorViewModel from $resource Container
+    Width: 250
+
+    StackPanel {
+      // Message
+      TextBlock {
+        Margin: 8
+        FontSize: 16
+        HorizontalAlignment: Center
+        TextWrapping: WrapWithOverflow
+        Text: bind Message
+      }
+
+      // OK
+      Button {
+        Command: DialogHost.CloseDialogCommand
+        Content: "OK"
+        Margin: 8
+        Style: resource dyn "MaterialDesignFlatButton"
+      }
+    }
+}

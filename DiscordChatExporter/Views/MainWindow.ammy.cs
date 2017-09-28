@@ -17,6 +17,7 @@ namespace DiscordChatExporter.Views
             InitializeComponent();
             Title += $" v{Assembly.GetExecutingAssembly().GetName().Version}";
 
+            Messenger.Default.Register<ShowErrorMessage>(this, m => DialogHost.Show(new ErrorDialog()).Forget());
             Messenger.Default.Register<ShowSettingsMessage>(this, m => DialogHost.Show(new SettingsDialog()).Forget());
         }
 

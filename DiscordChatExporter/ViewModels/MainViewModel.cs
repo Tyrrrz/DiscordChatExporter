@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using DiscordChatExporter.Exceptions;
 using DiscordChatExporter.Messages;
 using DiscordChatExporter.Models;
 using DiscordChatExporter.Services;
@@ -107,22 +108,29 @@ namespace DiscordChatExporter.ViewModels
             // Clear existing
             _guildChannelsMap.Clear();
 
-            // Get DM channels
+            try
             {
-                var channels = await _dataService.GetDirectMessageChannelsAsync(_cachedToken);
-                var guild = new Guild("@me", "Direct Messages", null);
-                _guildChannelsMap[guild] = channels.ToArray();
-            }
-
-            // Get guild channels
-            {
-                var guilds = await _dataService.GetGuildsAsync(_cachedToken);
-                foreach (var guild in guilds)
+                // Get DM channels
                 {
-                    var channels = await _dataService.GetGuildChannelsAsync(_cachedToken, guild.Id);
-                    channels = channels.Where(c => c.Type == ChannelType.GuildTextChat);
+                    var channels = await _dataService.GetDirectMessageChannelsAsync(_cachedToken);
+                    var guild = new Guild("@me", "Direct Messages", null);
                     _guildChannelsMap[guild] = channels.ToArray();
                 }
+
+                // Get guild channels
+                {
+                    var guilds = await _dataService.GetGuildsAsync(_cachedToken);
+                    foreach (var guild in guilds)
+                    {
+                        var channels = await _dataService.GetGuildChannelsAsync(_cachedToken, guild.Id);
+                        channels = channels.Where(c => c.Type == ChannelType.GuildTextChat);
+                        _guildChannelsMap[guild] = channels.ToArray();
+                    }
+                }
+            }
+            catch (UnathorizedException)
+            {
+                MessengerInstance.Send(new ShowErrorMessage("Failed to authorize. Make sure the token is valid."));
             }
 
             AvailableGuilds = _guildChannelsMap.Keys.ToArray();
@@ -135,13 +143,13 @@ namespace DiscordChatExporter.ViewModels
             IsBusy = true;
             
             // Get safe file names
-            var safeGroupName = SelectedGuild.Name.Replace(Path.GetInvalidFileNameChars(), '_');
+            var safeGuildName = SelectedGuild.Name.Replace(Path.GetInvalidFileNameChars(), '_');
             var safeChannelName = channel.Name.Replace(Path.GetInvalidFileNameChars(), '_');
 
             // Ask for path
             var sfd = new SaveFileDialog
             {
-                FileName = $"{safeGroupName} - {safeChannelName}.html",
+                FileName = $"{safeGuildName} - {safeChannelName}.html",
                 Filter = "HTML files (*.html)|*.html|All files (*.*)|*.*",
                 DefaultExt = "html",
                 AddExtension = true
@@ -152,14 +160,22 @@ namespace DiscordChatExporter.ViewModels
                 return;
             }
 
-            // Get messages
-            var messages = await _dataService.GetChannelMessagesAsync(_cachedToken, channel.Id);
-
-            // Create log
-            var chatLog = new ChannelChatLog(SelectedGuild, channel, messages);
-
             // Export
-            _exportService.Export(sfd.FileName, chatLog, _settingsService.Theme);
+            try
+            {
+                // Get messages
+                var messages = await _dataService.GetChannelMessagesAsync(_cachedToken, channel.Id);
+
+                // Create log
+                var chatLog = new ChannelChatLog(SelectedGuild, channel, messages);
+
+                // Export
+                _exportService.Export(sfd.FileName, chatLog, _settingsService.Theme);
+            }
+            catch (UnathorizedException)
+            {
+                MessengerInstance.Send(new ShowErrorMessage("Failed to export. You don't have access to that channel."));
+            }
 
             IsBusy = false;
         }

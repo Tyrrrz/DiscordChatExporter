@@ -7,13 +7,22 @@ UserControl "DiscordChatExporter.Views.SettingsDialog" {
   StackPanel {
     // Theme
     ComboBox {
-      Margin: 16
+      Margin: "16 16 16 8"
       HintAssist.Hint: "Theme"
       HintAssist.IsFloating: true
       IsReadOnly: true
       ItemsSource: bind AvailableThemes
       SelectedItem: bind Theme
     }
+
+    // Date format
+    TextBox {
+      Margin: "16 8 16 8"
+      HintAssist.Hint: "Date format"
+      HintAssist.IsFloating: true
+      Text: bind DateFormat
+    }
+
 
     // Save
     Button {

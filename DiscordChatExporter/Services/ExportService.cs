@@ -12,10 +12,18 @@ namespace DiscordChatExporter.Services
 {
     public partial class ExportService : IExportService
     {
+        private readonly ISettingsService _settingsService;
+
+        public ExportService(ISettingsService settingsService)
+        {
+            _settingsService = settingsService;
+        }
+
         public void Export(string filePath, ChannelChatLog channelChatLog, Theme theme)
         {
             var doc = GetTemplate();
             var style = GetStyle(theme);
+            var dateFormat = _settingsService.DateFormat;
 
             // Set theme
             var themeHtml = doc.GetElementbyId("theme");
@@ -61,7 +69,7 @@ namespace DiscordChatExporter.Services
                 messageRightHtml.AppendChild(HtmlNode.CreateNode($"<span class=\"msg-user\">{authorName}</span>"));
 
                 // Date
-                var timeStamp = HtmlDocument.HtmlEncode(messageGroup.TimeStamp.ToString("g"));
+                var timeStamp = HtmlDocument.HtmlEncode(messageGroup.TimeStamp.ToString(dateFormat));
                 messageRightHtml.AppendChild(HtmlNode.CreateNode($"<span class=\"msg-date\">{timeStamp}</span>"));
 
                 // Individual messages
@@ -80,7 +88,7 @@ namespace DiscordChatExporter.Services
                         {
                             contentHtml.AppendChild(
                                 HtmlNode.CreateNode(
-                                    $"<span class=\"msg-edited\" title=\"{message.EditedTimeStamp:g}\">(edited)</span>"));
+                                    $"<span class=\"msg-edited\" title=\"{message.EditedTimeStamp.Value.ToString(dateFormat)}\">(edited)</span>"));
                         }
                     }
 
@@ -150,7 +158,7 @@ namespace DiscordChatExporter.Services
 
         private static string NormalizeFileSize(long fileSize)
         {
-            string[] units = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
+            string[] units = {"B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"};
             double size = fileSize;
             var unit = 0;
 

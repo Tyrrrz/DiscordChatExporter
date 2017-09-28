@@ -7,6 +7,7 @@ namespace DiscordChatExporter.Services
     {
         public string Token { get; set; }
         public Theme Theme { get; set; }
+        public string DateFormat { get; set; } = "dd-MMM-yy hh:mm";
 
         public SettingsService()
         {

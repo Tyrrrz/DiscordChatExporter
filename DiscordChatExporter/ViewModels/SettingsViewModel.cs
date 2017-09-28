@@ -19,6 +19,12 @@ namespace DiscordChatExporter.ViewModels
             set => _settingsService.Theme = value;
         }
 
+        public string DateFormat
+        {
+            get => _settingsService.DateFormat;
+            set => _settingsService.DateFormat = value;
+        }
+
         public SettingsViewModel(ISettingsService settingsService)
         {
             _settingsService = settingsService;

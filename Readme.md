@@ -4,7 +4,7 @@ DiscordChatExporter can be used to export message history from [Discord](https:/
 
 ## Screenshots
 
-![](http://www.tyrrrz.me/Projects/DiscordChatExporter/Images/1.png)
+![](http://www.tyrrrz.me/Projects/DiscordChatExporter/Images/3.png)
 
 ## Download
 

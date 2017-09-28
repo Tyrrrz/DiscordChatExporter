@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Text.RegularExpressions;
@@ -42,7 +43,7 @@ namespace DiscordChatExporter.Services
             infoRightHtml.AppendChild(HtmlNode.CreateNode(
                 $"<div class=\"channel-name\">{log.Channel.Name}</div>"));
             infoRightHtml.AppendChild(HtmlNode.CreateNode(
-                $"<div class=\"misc\">{log.MessageGroups.Count:N0} messages</div>"));
+                $"<div class=\"misc\">{log.MessageGroups.SelectMany(g => g.Messages).Count():N0} messages</div>"));
 
             // Log
             var logHtml = doc.GetElementbyId("log");

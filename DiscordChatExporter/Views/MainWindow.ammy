@@ -6,7 +6,7 @@ Window "DiscordChatExporter.Views.MainWindow" {
   Width: 600
   Height: 550
   Background: resource dyn "MaterialDesignPaper"
-  DataContext: bind MainViewModel from $resource Locator
+  DataContext: bind MainViewModel from $resource Container
   FocusManager.FocusedElement: bind from "TokenTextBox"
   FontFamily: resource dyn "MaterialDesignFont"
   SnapsToDevicePixels: true
@@ -128,7 +128,7 @@ Window "DiscordChatExporter.Views.MainWindow" {
                     Cursor: CursorType.Hand
 
                     Image {
-                      Margin: 6
+                      Margin: "12 6 12 6"
                       Width: 48
                       Height: 48
                       Source: bind IconUrl
@@ -167,12 +167,12 @@ Window "DiscordChatExporter.Views.MainWindow" {
                     ]
 
                     PackIcon {
-                      Margin: "4 7 0 6"
+                      Margin: "16 7 0 6"
                       Kind: PackIconKind.Pound
                       VerticalAlignment: Center
                     }
                     TextBlock {
-                      Margin: "3 6 6 6"
+                      Margin: "3 8 8 8"
                       FontSize: 14
                       Text: bind Name
                       VerticalAlignment: Center

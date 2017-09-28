@@ -63,7 +63,7 @@
       #Setter("Foreground", resource dyn "PrimaryTextBrush")
     }
 
-    // Locator
-    Locator Key="Locator" { }
+    // Container
+    Container Key="Container" { }
   }
 }

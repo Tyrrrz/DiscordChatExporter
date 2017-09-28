@@ -1,7 +1,7 @@
 ﻿using MaterialDesignThemes.Wpf
 
 UserControl "DiscordChatExporter.Views.SettingsDialog" {
-  DataContext: bind SettingsViewModel from $resource Locator
+  DataContext: bind SettingsViewModel from $resource Container
   Width: 250
 
   StackPanel {

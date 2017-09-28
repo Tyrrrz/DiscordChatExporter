@@ -5,7 +5,7 @@ using Microsoft.Practices.ServiceLocation;
 
 namespace DiscordChatExporter
 {
-    public class Locator
+    public class Container
     {
         public static void Init()
         {

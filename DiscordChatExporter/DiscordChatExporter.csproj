@@ -106,7 +106,7 @@
     <Compile Include="App.ammy.cs">
       <DependentUpon>App.ammy</DependentUpon>
     </Compile>
-    <Compile Include="Locator.cs" />
+    <Compile Include="Container.cs" />
     <Compile Include="Models\Attachment.cs" />
     <Compile Include="Models\Channel.cs" />
     <Compile Include="Models\Guild.cs" />

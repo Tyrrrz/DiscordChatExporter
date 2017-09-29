@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using DiscordChatExporter.Exceptions;
 using DiscordChatExporter.Messages;
 using DiscordChatExporter.Models;
@@ -131,9 +132,10 @@ namespace DiscordChatExporter.ViewModels
                     }
                 }
             }
-            catch (UnathorizedException)
+            catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
             {
-                MessengerInstance.Send(new ShowErrorMessage("Failed to authorize. Make sure the token is valid."));
+                const string message = "Could not authorize using the given token. Make sure it's valid.";
+                MessengerInstance.Send(new ShowErrorMessage(message));
             }
 
             AvailableGuilds = _guildChannelsMap.Keys.ToArray();
@@ -181,9 +183,10 @@ namespace DiscordChatExporter.ViewModels
                 // Show dialog
                 MessengerInstance.Send(new ShowExportDoneMessage(sfd.FileName));
             }
-            catch (UnathorizedException)
+            catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
             {
-                MessengerInstance.Send(new ShowErrorMessage("Failed to export. You don't have access to that channel."));
+                const string message = "You don't have access to the messages in that channel.";
+                MessengerInstance.Send(new ShowErrorMessage(message));
             }
 
             IsBusy = false;

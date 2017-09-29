@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using DiscordChatExporter.Exceptions;
@@ -21,9 +20,9 @@ namespace DiscordChatExporter.Services
             using (var response = await _httpClient.GetAsync(url))
             {
                 // Check status code
-                if (response.StatusCode.IsEither(HttpStatusCode.Unauthorized, HttpStatusCode.Forbidden))
-                    throw new UnathorizedException();
-                response.EnsureSuccessStatusCode();
+                // We throw our own exception here because default one doesn't have status code
+                if (!response.IsSuccessStatusCode)
+                    throw new HttpErrorStatusCodeException(response.StatusCode);
 
                 // Get content
                 return await response.Content.ReadAsStringAsync();

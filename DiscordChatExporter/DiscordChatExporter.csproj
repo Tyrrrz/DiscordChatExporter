@@ -84,7 +84,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Exceptions\UnathorizedException.cs" />
+    <Compile Include="Exceptions\HttpErrorStatusCodeException.cs" />
     <Compile Include="Messages\ShowErrorMessage.cs" />
     <Compile Include="Messages\ShowExportDoneMessage.cs" />
     <Compile Include="Messages\ShowSettingsMessage.cs" />

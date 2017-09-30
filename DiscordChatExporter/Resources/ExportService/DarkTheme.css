@@ -12,7 +12,13 @@ a {
 
 a:hover { text-decoration: underline; }
 
-div.pre, span.pre {
+div.pre {
+    background-color: #2F3136;
+    font-family: Consolas, Courier New, Courier, Monospace;
+    padding: 8px;
+}
+
+span.pre {
     background-color: #2F3136;
     font-family: Consolas, Courier New, Courier, Monospace;
     padding-left: 2px;

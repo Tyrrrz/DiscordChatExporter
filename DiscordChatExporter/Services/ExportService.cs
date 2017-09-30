@@ -174,7 +174,7 @@ namespace DiscordChatExporter.Services
 
             // Preformatted multiline
             content = Regex.Replace(content, "```([^`]*?)```",
-                m => "<div class=\"pre\">" + m.Groups[1].Value + "</div>");
+                m => "<div class=\"pre\">" + m.Groups[1].Value.Trim('\n') + "</div>");
 
             // Preformatted inline
             content = Regex.Replace(content, "`([^`]*?)`",
@@ -193,7 +193,7 @@ namespace DiscordChatExporter.Services
             content = Regex.Replace(content, "~~([^~]*?)~~", "<s>$1</s>");
 
             // New lines
-            content = content.Replace("\n", "</br>");
+            content = content.Replace("\n", "<br />");
 
             return content;
         }

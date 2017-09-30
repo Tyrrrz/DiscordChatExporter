@@ -17,6 +17,8 @@ namespace DiscordChatExporter.ViewModels
 
         private string _filePath;
         private ExportFormat _format;
+        private DateTime? _from;
+        private DateTime? _to;
 
         public Guild Guild { get; private set; }
 
@@ -40,6 +42,18 @@ namespace DiscordChatExporter.ViewModels
             set => Set(ref _format, value);
         }
 
+        public DateTime? From
+        {
+            get => _from;
+            set => Set(ref _from, value);
+        }
+
+        public DateTime? To
+        {
+            get => _to;
+            set => Set(ref _to, value);
+        }
+
         // Commands
         public RelayCommand ExportCommand { get; }
 
@@ -59,14 +73,17 @@ namespace DiscordChatExporter.ViewModels
                 Guild = m.Guild;
                 Channel = m.Channel;
                 SelectedFormat = _settingsService.LastExportFormat;
-                FilePath = Path.Combine($"{Guild} - {Channel}.{SelectedFormat.GetFileExtension()}");
+                FilePath = $"{Guild} - {Channel}.{SelectedFormat.GetFileExtension()}"
+                    .Replace(Path.GetInvalidFileNameChars(), '_');
+                From = null;
+                To = null;
             });
         }
 
         private void Export()
         {
             _settingsService.LastExportFormat = SelectedFormat;
-            MessengerInstance.Send(new StartExportMessage(Channel, FilePath, SelectedFormat));
+            MessengerInstance.Send(new StartExportMessage(Channel, FilePath, SelectedFormat, From, To));
         }
     }
 }

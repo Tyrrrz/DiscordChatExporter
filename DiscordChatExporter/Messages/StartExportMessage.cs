@@ -1,4 +1,5 @@
-﻿using DiscordChatExporter.Models;
+﻿using System;
+using DiscordChatExporter.Models;
 
 namespace DiscordChatExporter.Messages
 {
@@ -10,11 +11,18 @@ namespace DiscordChatExporter.Messages
 
         public ExportFormat Format { get; }
 
-        public StartExportMessage(Channel channel, string filePath, ExportFormat format)
+        public DateTime? From { get; }
+
+        public DateTime? To { get; }
+
+        public StartExportMessage(Channel channel, string filePath, ExportFormat format,
+            DateTime? from, DateTime? to)
         {
             Channel = channel;
             FilePath = filePath;
             Format = format;
+            From = from;
+            To = to;
         }
     }
 }

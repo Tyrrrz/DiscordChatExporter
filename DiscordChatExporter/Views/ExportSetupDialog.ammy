@@ -33,6 +33,27 @@ UserControl "DiscordChatExporter.Views.ExportSetupDialog" {
       }
     }
 
+    // Date range
+    Grid {
+      #TwoColumns("*", "*")
+
+      DatePicker {
+        Grid.Column: 0
+        Margin: "16 16 8 8"
+        HintAssist.Hint: "From"
+        HintAssist.IsFloating: true
+        SelectedDate: bind From
+      }
+
+      DatePicker {
+        Grid.Column: 1
+        Margin: "8 16 16 8"
+        HintAssist.Hint: "To"
+        HintAssist.IsFloating: true
+        SelectedDate: bind To
+      }
+    }
+
     // Buttons
     @StackPanelHorizontal {
       HorizontalAlignment: Right

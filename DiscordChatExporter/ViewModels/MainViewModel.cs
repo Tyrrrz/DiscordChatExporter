@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -104,7 +105,7 @@ namespace DiscordChatExporter.ViewModels
             // Messages
             MessengerInstance.Register<StartExportMessage>(this, m =>
             {
-                Export(m.Channel, m.FilePath, m.Format);
+                Export(m.Channel, m.FilePath, m.Format, m.From, m.To);
             });
         }
 
@@ -161,14 +162,14 @@ namespace DiscordChatExporter.ViewModels
             MessengerInstance.Send(new ShowExportSetupMessage(SelectedGuild, channel));
         }
 
-        private async void Export(Channel channel, string filePath, ExportFormat format)
+        private async void Export(Channel channel, string filePath, ExportFormat format, DateTime? from, DateTime? to)
         {
             IsBusy = true;
 
             try
             {
                 // Get messages
-                var messages = await _dataService.GetChannelMessagesAsync(_cachedToken, channel.Id);
+                var messages = await _dataService.GetChannelMessagesAsync(_cachedToken, channel.Id, from, to);
 
                 // Group them
                 var messageGroups = _messageGroupService.GroupMessages(messages);

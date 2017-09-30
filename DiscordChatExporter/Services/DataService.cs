@@ -71,7 +71,7 @@ namespace DiscordChatExporter.Services
             return channels;
         }
 
-        public async Task<IReadOnlyList<Message>> GetChannelMessagesAsync(string token, string channelId)
+        public async Task<IReadOnlyList<Message>> GetChannelMessagesAsync(string token, string channelId, DateTime? from, DateTime? to)
         {
             var result = new List<Message>();
 
@@ -102,12 +102,21 @@ namespace DiscordChatExporter.Services
                 // If no messages - break
                 if (currentMessageId == null) break;
 
+                // If last message is older than from date - break
+                if (from != null && result.Last().TimeStamp < from) break;
+
                 // Otherwise offset the next request
                 beforeId = currentMessageId;
             }
 
             // Messages appear newest first, we need to reverse
             result.Reverse();
+
+            // Filter
+            if (from != null)
+                result.RemoveAll(m => m.TimeStamp < from);
+            if (to != null)
+                result.RemoveAll(m => m.TimeStamp > to);
 
             return result;
         }

@@ -138,7 +138,12 @@ namespace DiscordChatExporter.ViewModels
             }
             catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
             {
-                const string message = "Could not authorize using the given token. Make sure it's valid.";
+                const string message = "Unauthorized to perform request. Make sure token is valid.";
+                MessengerInstance.Send(new ShowErrorMessage(message));
+            }
+            catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
+            {
+                const string message = "Forbidden to perform request. The account may be locked by 2FA.";
                 MessengerInstance.Send(new ShowErrorMessage(message));
             }
 
@@ -188,7 +193,7 @@ namespace DiscordChatExporter.ViewModels
             }
             catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
             {
-                const string message = "You don't have access to the messages in that channel.";
+                const string message = "Forbidden to view messages in that channel.";
                 MessengerInstance.Send(new ShowErrorMessage(message));
             }
 

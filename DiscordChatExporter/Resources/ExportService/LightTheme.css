@@ -14,7 +14,9 @@ a:hover { text-decoration: underline; }
 
 div.pre {
     background-color: #F9F9F9;
+    color: rgb(101, 123, 131);
     font-family: Consolas, Courier New, Courier, Monospace;
+    margin-top: 4px;
     padding: 8px;
 }
 

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace DiscordChatExporter.Models
 {
@@ -11,11 +10,15 @@ namespace DiscordChatExporter.Models
 
         public IReadOnlyList<MessageGroup> MessageGroups { get; }
 
-        public ChannelChatLog(Guild guild, Channel channel, IEnumerable<MessageGroup> messageGroups)
+        public int TotalMessageCount { get; }
+
+        public ChannelChatLog(Guild guild, Channel channel, IReadOnlyList<MessageGroup> messageGroups,
+            int totalMessageCount)
         {
             Guild = guild;
             Channel = channel;
-            MessageGroups = messageGroups.ToArray();
+            MessageGroups = messageGroups;
+            TotalMessageCount = totalMessageCount;
         }
     }
 }

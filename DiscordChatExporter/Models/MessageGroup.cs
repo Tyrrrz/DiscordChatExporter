@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace DiscordChatExporter.Models
 {
@@ -12,11 +11,11 @@ namespace DiscordChatExporter.Models
 
         public IReadOnlyList<Message> Messages { get; }
 
-        public MessageGroup(User author, DateTime timeStamp, IEnumerable<Message> messages)
+        public MessageGroup(User author, DateTime timeStamp, IReadOnlyList<Message> messages)
         {
             Author = author;
             TimeStamp = timeStamp;
-            Messages = messages.ToArray();
+            Messages = messages;
         }
     }
 }

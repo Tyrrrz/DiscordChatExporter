@@ -127,8 +127,7 @@ namespace DiscordChatExporter.ViewModels
                     foreach (var guild in guilds)
                     {
                         var channels = await _dataService.GetGuildChannelsAsync(_cachedToken, guild.Id);
-                        channels = channels.Where(c => c.Type == ChannelType.GuildTextChat);
-                        _guildChannelsMap[guild] = channels.ToArray();
+                        _guildChannelsMap[guild] = channels.Where(c => c.Type == ChannelType.GuildTextChat).ToArray();
                     }
                 }
             }
@@ -175,7 +174,7 @@ namespace DiscordChatExporter.ViewModels
                 var messageGroups = _messageGroupService.GroupMessages(messages);
 
                 // Create log
-                var chatLog = new ChannelChatLog(SelectedGuild, channel, messageGroups);
+                var chatLog = new ChannelChatLog(SelectedGuild, channel, messageGroups, messages.Count);
 
                 // Export
                 await _exportService.ExportAsync(sfd.FileName, chatLog, _settingsService.Theme);

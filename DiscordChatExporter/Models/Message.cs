@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace DiscordChatExporter.Models
 {
@@ -20,14 +19,14 @@ namespace DiscordChatExporter.Models
 
         public Message(string id, User author,
             DateTime timeStamp, DateTime? editedTimeStamp,
-            string content, IEnumerable<Attachment> attachments)
+            string content, IReadOnlyList<Attachment> attachments)
         {
             Id = id;
             Author = author;
             TimeStamp = timeStamp;
             EditedTimeStamp = editedTimeStamp;
             Content = content;
-            Attachments = attachments.ToArray();
+            Attachments = attachments;
         }
 
         public override string ToString()

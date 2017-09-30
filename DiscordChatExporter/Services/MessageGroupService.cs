@@ -13,7 +13,7 @@ namespace DiscordChatExporter.Services
             _settingsService = settingsService;
         }
 
-        public IEnumerable<MessageGroup> GroupMessages(IEnumerable<Message> messages)
+        public IReadOnlyList<MessageGroup> GroupMessages(IReadOnlyList<Message> messages)
         {
             var groupLimit = _settingsService.MessageGroupLimit;
             var result = new List<MessageGroup>();
@@ -37,7 +37,7 @@ namespace DiscordChatExporter.Services
                 // If condition is true - flush buffer
                 if (breakCondition)
                 {
-                    var group = new MessageGroup(groupFirst.Author, groupFirst.TimeStamp, groupBuffer);
+                    var group = new MessageGroup(groupFirst.Author, groupFirst.TimeStamp, groupBuffer.ToArray());
                     result.Add(group);
                     groupBuffer.Clear();
                 }
@@ -50,7 +50,7 @@ namespace DiscordChatExporter.Services
             if (groupBuffer.Any())
             {
                 var groupFirst = groupBuffer.First();
-                var group = new MessageGroup(groupFirst.Author, groupFirst.TimeStamp, groupBuffer);
+                var group = new MessageGroup(groupFirst.Author, groupFirst.TimeStamp, groupBuffer.ToArray());
                 result.Add(group);
             }
 

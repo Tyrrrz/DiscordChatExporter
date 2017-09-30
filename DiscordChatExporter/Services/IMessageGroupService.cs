@@ -5,6 +5,6 @@ namespace DiscordChatExporter.Services
 {
     public interface IMessageGroupService
     {
-        IEnumerable<MessageGroup> GroupMessages(IEnumerable<Message> messages);
+        IReadOnlyList<MessageGroup> GroupMessages(IReadOnlyList<Message> messages);
     }
 }

@@ -29,7 +29,7 @@ namespace DiscordChatExporter.Services
             }
         }
 
-        public async Task<IEnumerable<Guild>> GetGuildsAsync(string token)
+        public async Task<IReadOnlyList<Guild>> GetGuildsAsync(string token)
         {
             // Form request url
             var url = $"{ApiRoot}/users/@me/guilds?token={token}&limit=100";
@@ -38,12 +38,12 @@ namespace DiscordChatExporter.Services
             var content = await GetStringAsync(url);
 
             // Parse
-            var guilds = JArray.Parse(content).Select(ParseGuild);
+            var guilds = JArray.Parse(content).Select(ParseGuild).ToArray();
 
             return guilds;
         }
 
-        public async Task<IEnumerable<Channel>> GetDirectMessageChannelsAsync(string token)
+        public async Task<IReadOnlyList<Channel>> GetDirectMessageChannelsAsync(string token)
         {
             // Form request url
             var url = $"{ApiRoot}/users/@me/channels?token={token}";
@@ -52,12 +52,12 @@ namespace DiscordChatExporter.Services
             var content = await GetStringAsync(url);
 
             // Parse
-            var channels = JArray.Parse(content).Select(ParseChannel);
+            var channels = JArray.Parse(content).Select(ParseChannel).ToArray();
 
             return channels;
         }
 
-        public async Task<IEnumerable<Channel>> GetGuildChannelsAsync(string token, string guildId)
+        public async Task<IReadOnlyList<Channel>> GetGuildChannelsAsync(string token, string guildId)
         {
             // Form request url
             var url = $"{ApiRoot}/guilds/{guildId}/channels?token={token}";
@@ -66,12 +66,12 @@ namespace DiscordChatExporter.Services
             var content = await GetStringAsync(url);
 
             // Parse
-            var channels = JArray.Parse(content).Select(ParseChannel);
+            var channels = JArray.Parse(content).Select(ParseChannel).ToArray();
 
             return channels;
         }
 
-        public async Task<IEnumerable<Message>> GetChannelMessagesAsync(string token, string channelId)
+        public async Task<IReadOnlyList<Message>> GetChannelMessagesAsync(string token, string channelId)
         {
             var result = new List<Message>();
 
@@ -92,7 +92,7 @@ namespace DiscordChatExporter.Services
                 var messages = JArray.Parse(content).Select(ParseMessage);
 
                 // Add messages to list
-                string currentMessageId = null;
+                var currentMessageId = default(string);
                 foreach (var message in messages)
                 {
                     result.Add(message);
@@ -192,7 +192,7 @@ namespace DiscordChatExporter.Services
                 var attachmentUrl = attachmentJson.Value<string>("url");
                 var attachmentType = attachmentJson["width"] != null
                     ? AttachmentType.Image
-                    : AttachmentType.Unrecognized;
+                    : AttachmentType.Other;
                 var attachmentFileName = attachmentJson.Value<string>("filename");
                 var attachmentFileSize = attachmentJson.Value<long>("size");
 

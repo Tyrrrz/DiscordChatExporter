@@ -2,7 +2,7 @@
 {
     public enum AttachmentType
     {
-        Unrecognized,
+        Other,
         Image
     }
 }

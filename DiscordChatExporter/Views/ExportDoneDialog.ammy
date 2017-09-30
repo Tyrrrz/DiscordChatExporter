@@ -18,7 +18,8 @@ UserControl "DiscordChatExporter.Views.ExportDoneDialog" {
       HorizontalAlignment: Right
 
       // Open
-      Button {
+      Button "OpenButton" {
+        Click: OpenButton_Click
         Command: bind OpenCommand
         Content: "OPEN IT"
         Margin: 8

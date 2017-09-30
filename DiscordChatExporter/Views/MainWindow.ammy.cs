@@ -18,8 +18,9 @@ namespace DiscordChatExporter.Views
             Title += $" v{Assembly.GetExecutingAssembly().GetName().Version}";
 
             Messenger.Default.Register<ShowErrorMessage>(this, m => DialogHost.Show(new ErrorDialog()).Forget());
-            Messenger.Default.Register<ShowSettingsMessage>(this, m => DialogHost.Show(new SettingsDialog()).Forget());
             Messenger.Default.Register<ShowExportDoneMessage>(this, m => DialogHost.Show(new ExportDoneDialog()).Forget());
+            Messenger.Default.Register<ShowExportSetupMessage>(this, m => DialogHost.Show(new ExportSetupDialog()).Forget());
+            Messenger.Default.Register<ShowSettingsMessage>(this, m => DialogHost.Show(new SettingsDialog()).Forget());
         }
 
         public void TokenTextBox_KeyDown(object sender, KeyEventArgs e)

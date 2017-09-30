@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Resources;
@@ -19,12 +20,53 @@ namespace DiscordChatExporter.Services
             _settingsService = settingsService;
         }
 
-        public async Task ExportAsync(string filePath, ChannelChatLog log, Theme theme)
+        public async Task ExportAsTextAsync(string filePath, ChannelChatLog log)
+        {
+            var dateFormat = _settingsService.DateFormat;
+
+            using (var writer = new StreamWriter(filePath, false, Encoding.UTF8, 128 * 1024))
+            {
+                // Guild and channel info
+                await writer.WriteLineAsync("=".Repeat(16));
+                await writer.WriteLineAsync($"Guild: {log.Guild}");
+                await writer.WriteLineAsync($"Channel: {log.Channel}");
+                await writer.WriteLineAsync($"Messages: {log.TotalMessageCount:N0}");
+                await writer.WriteLineAsync("=".Repeat(16));
+                await writer.WriteLineAsync();
+
+                // Chat log
+                foreach (var group in log.MessageGroups)
+                {
+                    var timeStampFormatted = group.TimeStamp.ToString(dateFormat);
+                    await writer.WriteLineAsync($"{group.Author}  [{timeStampFormatted}]");
+
+                    // Messages
+                    foreach (var message in group.Messages)
+                    {
+                        if (message.Content.IsNotBlank())
+                        {
+                            var contentFormatted = message.Content.Replace("\n", Environment.NewLine);
+                            await writer.WriteLineAsync(contentFormatted);
+                        }
+
+                        // Attachments
+                        foreach (var attachment in message.Attachments)
+                        {
+                            await writer.WriteLineAsync(attachment.Url);
+                        }
+                    }
+
+                    await writer.WriteLineAsync();
+                }
+            }
+        }
+
+        public async Task ExportAsHtmlAsync(string filePath, ChannelChatLog log, Theme theme)
         {
             var themeCss = GetThemeCss(theme);
             var dateFormat = _settingsService.DateFormat;
 
-            using (var writer = new StreamWriter(filePath, false, Encoding.UTF8, 128*1024))
+            using (var writer = new StreamWriter(filePath, false, Encoding.UTF8, 128 * 1024))
             {
                 // Generation info
                 await writer.WriteLineAsync("<!-- https://github.com/Tyrrrz/DiscordChatExporter -->");
@@ -35,7 +77,7 @@ namespace DiscordChatExporter.Services
 
                 // HEAD
                 await writer.WriteLineAsync("<head>");
-                await writer.WriteLineAsync($"<title>{log.Guild.Name} - {log.Channel.Name}</title>");
+                await writer.WriteLineAsync($"<title>{log.Guild} - {log.Channel}</title>");
                 await writer.WriteLineAsync("<meta charset=\"utf-8\" />");
                 await writer.WriteLineAsync("<meta name=\"viewport\" content=\"width=device-width\" />");
                 await writer.WriteLineAsync($"<style>{themeCss}</style>");
@@ -50,8 +92,8 @@ namespace DiscordChatExporter.Services
                 await writer.WriteLineAsync($"<img class=\"guild-icon\" src=\"{log.Guild.IconUrl}\" />");
                 await writer.WriteLineAsync("</div>"); // info-left
                 await writer.WriteLineAsync("<div class=\"info-right\">");
-                await writer.WriteLineAsync($"<div class=\"guild-name\">{log.Guild.Name}</div>");
-                await writer.WriteLineAsync($"<div class=\"channel-name\">{log.Channel.Name}</div>");
+                await writer.WriteLineAsync($"<div class=\"guild-name\">{log.Guild}</div>");
+                await writer.WriteLineAsync($"<div class=\"channel-name\">{log.Channel}</div>");
                 await writer.WriteLineAsync($"<div class=\"misc\">{log.TotalMessageCount:N0} messages</div>");
                 await writer.WriteLineAsync("</div>"); // info-right
                 await writer.WriteLineAsync("</div>"); // info
@@ -66,18 +108,20 @@ namespace DiscordChatExporter.Services
                     await writer.WriteLineAsync("</div>");
 
                     await writer.WriteLineAsync("<div class=\"msg-right\">");
-                    await writer.WriteLineAsync($"<span class=\"msg-user\">{HtmlEncode(group.Author.Name)}</span>");
+                    await writer.WriteAsync($"<span class=\"msg-user\" title=\"{HtmlEncode(group.Author)}\">");
+                    await writer.WriteAsync(HtmlEncode(group.Author.Name));
+                    await writer.WriteLineAsync("</span>");
                     var timeStampFormatted = HtmlEncode(group.TimeStamp.ToString(dateFormat));
                     await writer.WriteLineAsync($"<span class=\"msg-date\">{timeStampFormatted}</span>");
 
-                    // Message
+                    // Messages
                     foreach (var message in group.Messages)
                     {
                         // Content
                         if (message.Content.IsNotBlank())
                         {
                             await writer.WriteLineAsync("<div class=\"msg-content\">");
-                            var contentFormatted = FormatMessageContent(message.Content);
+                            var contentFormatted = FormatMessageContentHtml(message.Content);
                             await writer.WriteAsync(contentFormatted);
 
                             // Edited timestamp
@@ -99,7 +143,8 @@ namespace DiscordChatExporter.Services
                             {
                                 await writer.WriteLineAsync("<div class=\"msg-attachment\">");
                                 await writer.WriteLineAsync($"<a href=\"{attachment.Url}\">");
-                                await writer.WriteLineAsync($"<img class=\"msg-attachment\" src=\"{attachment.Url}\" />");
+                                await writer.WriteLineAsync(
+                                    $"<img class=\"msg-attachment\" src=\"{attachment.Url}\" />");
                                 await writer.WriteLineAsync("</a>");
                                 await writer.WriteLineAsync("</div>");
                             }
@@ -148,6 +193,11 @@ namespace DiscordChatExporter.Services
             return WebUtility.HtmlEncode(str);
         }
 
+        private static string HtmlEncode(object obj)
+        {
+            return WebUtility.HtmlEncode(obj.ToString());
+        }
+
         private static string FormatFileSize(long fileSize)
         {
             string[] units = {"B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"};
@@ -163,7 +213,7 @@ namespace DiscordChatExporter.Services
             return $"{size:0.#} {units[unit]}";
         }
 
-        private static string FormatMessageContent(string content)
+        private static string FormatMessageContentHtml(string content)
         {
             // Encode HTML
             content = HtmlEncode(content);

@@ -14,10 +14,14 @@ namespace DiscordChatExporter.ViewModels
 
         public ExportDoneViewModel()
         {
-            MessengerInstance.Register<ShowExportDoneMessage>(this, m => _filePath = m.FilePath);
-
             // Commands
             OpenCommand = new RelayCommand(Open);
+
+            // Messages
+            MessengerInstance.Register<ShowExportDoneMessage>(this, m =>
+            {
+                _filePath = m.FilePath;
+            });
         }
 
         private void Open()

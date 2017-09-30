@@ -1,0 +1,58 @@
+﻿using MaterialDesignThemes.Wpf
+
+UserControl "DiscordChatExporter.Views.ExportSetupDialog" {
+  DataContext: bind ExportSetupViewModel from $resource Container
+  Width: 350
+
+  StackPanel {
+    // File path
+    Grid {
+      #TwoColumns("*", "Auto")
+
+      TextBox {
+        Grid.Column: 0
+        Margin: "16 16 4 8"
+        HintAssist.Hint: "Output file"
+        HintAssist.IsFloating: true
+        Text: bind FilePath
+              set [ UpdateSourceTrigger: PropertyChanged ]
+      }
+
+      Button "LocateFilePathButton" {
+        Grid.Column: 1
+        Margin: "4 16 16 8"
+        Padding: 4
+        Click: LocateFilePathButton_Click
+        Style: resource dyn "MaterialDesignFlatButton"
+
+        PackIcon {
+          Kind: PackIconKind.DotsHorizontal
+          Width: 24
+          Height: 24
+        }
+      }
+    }
+
+    // Buttons
+    @StackPanelHorizontal {
+      HorizontalAlignment: Right
+
+      // Export
+      Button "ExportButton" {
+        Click: ExportButton_Click
+        Command: bind ExportCommand
+        Content: "EXPORT"
+        Margin: 8
+        Style: resource dyn "MaterialDesignFlatButton"
+      }
+
+      // Cancel
+      Button {
+        Command: DialogHost.CloseDialogCommand
+        Content: "CANCEL"
+        Margin: 8
+        Style: resource dyn "MaterialDesignFlatButton"
+      }
+    }
+  }
+}

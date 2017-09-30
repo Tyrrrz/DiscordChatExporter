@@ -84,14 +84,20 @@
     <Compile Include="Exceptions\HttpErrorStatusCodeException.cs" />
     <Compile Include="Messages\ShowErrorMessage.cs" />
     <Compile Include="Messages\ShowExportDoneMessage.cs" />
+    <Compile Include="Messages\ShowExportSetupMessage.cs" />
     <Compile Include="Messages\ShowSettingsMessage.cs" />
+    <Compile Include="Messages\StartExportMessage.cs" />
     <Compile Include="Models\AttachmentType.cs" />
     <Compile Include="Models\ChannelChatLog.cs" />
     <Compile Include="Models\ChannelType.cs" />
+    <Compile Include="Models\ExportFormat.cs" />
+    <Compile Include="Models\Extensions.cs" />
     <Compile Include="Services\IMessageGroupService.cs" />
     <Compile Include="Services\MessageGroupService.cs" />
     <Compile Include="ViewModels\ErrorViewModel.cs" />
+    <Compile Include="ViewModels\ExportSetupViewModel.cs" />
     <Compile Include="ViewModels\IErrorViewModel.cs" />
+    <Compile Include="ViewModels\IExportSetupViewModel.cs" />
     <Compile Include="ViewModels\ISettingsViewModel.cs" />
     <Compile Include="ViewModels\IExportDoneViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
@@ -101,6 +107,9 @@
     </Compile>
     <Compile Include="Views\ExportDoneDialog.ammy.cs">
       <DependentUpon>ExportDoneDialog.ammy</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ExportSetupDialog.ammy.cs">
+      <DependentUpon>ExportSetupDialog.ammy</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsDialog.ammy.cs">
       <DependentUpon>SettingsDialog.ammy</DependentUpon>
@@ -119,6 +128,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <DependentUpon>ExportDoneDialog.ammy</DependentUpon>
+    </Page>
+    <Page Include="Views\ExportSetupDialog.g.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <DependentUpon>ExportSetupDialog.ammy</DependentUpon>
     </Page>
     <Page Include="Views\MainWindow.g.xaml">
       <SubType>Designer</SubType>
@@ -174,6 +188,7 @@
     </None>
     <None Include="Views\ErrorDialog.ammy" />
     <None Include="Views\ExportDoneDialog.ammy" />
+    <None Include="Views\ExportSetupDialog.ammy" />
     <None Include="Views\MainWindow.ammy" />
     <None Include="Views\SettingsDialog.ammy" />
   </ItemGroup>

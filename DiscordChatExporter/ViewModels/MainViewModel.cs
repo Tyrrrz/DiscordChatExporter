@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Net;
 using DiscordChatExporter.Exceptions;
@@ -9,7 +8,6 @@ using DiscordChatExporter.Models;
 using DiscordChatExporter.Services;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
-using Microsoft.Win32;
 using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.ViewModels
@@ -36,7 +34,7 @@ namespace DiscordChatExporter.ViewModels
             {
                 Set(ref _isBusy, value);
                 PullDataCommand.RaiseCanExecuteChanged();
-                ExportChannelCommand.RaiseCanExecuteChanged();
+                ShowExportSetupCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -44,13 +42,13 @@ namespace DiscordChatExporter.ViewModels
 
         public string Token
         {
-            get => _settingsService.Token;
+            get => _settingsService.LastToken;
             set
             {
                 // Remove invalid chars
                 value = value?.Trim('"');
 
-                _settingsService.Token = value;
+                _settingsService.LastToken = value;
                 PullDataCommand.RaiseCanExecuteChanged();
             }
         }
@@ -72,7 +70,7 @@ namespace DiscordChatExporter.ViewModels
             {
                 Set(ref _selectedGuild, value);
                 AvailableChannels = value != null ? _guildChannelsMap[value] : new Channel[0];
-                ExportChannelCommand.RaiseCanExecuteChanged();
+                ShowExportSetupCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -83,9 +81,9 @@ namespace DiscordChatExporter.ViewModels
         }
 
         public RelayCommand PullDataCommand { get; }
-        public RelayCommand<Channel> ExportChannelCommand { get; }
         public RelayCommand ShowSettingsCommand { get; }
         public RelayCommand ShowAboutCommand { get; }
+        public RelayCommand<Channel> ShowExportSetupCommand { get; }
 
         public MainViewModel(ISettingsService settingsService, IDataService dataService,
             IMessageGroupService messageGroupService, IExportService exportService)
@@ -99,9 +97,15 @@ namespace DiscordChatExporter.ViewModels
 
             // Commands
             PullDataCommand = new RelayCommand(PullData, () => Token.IsNotBlank() && !IsBusy);
-            ExportChannelCommand = new RelayCommand<Channel>(ExportChannel, _ => !IsBusy);
             ShowSettingsCommand = new RelayCommand(ShowSettings);
             ShowAboutCommand = new RelayCommand(ShowAbout);
+            ShowExportSetupCommand = new RelayCommand<Channel>(ShowExportSetup, _ => !IsBusy);
+
+            // Messages
+            MessengerInstance.Register<StartExportMessage>(this, m =>
+            {
+                Export(m.Channel, m.FilePath, m.Format);
+            });
         }
 
         private async void PullData()
@@ -142,29 +146,25 @@ namespace DiscordChatExporter.ViewModels
             IsBusy = false;
         }
 
-        private async void ExportChannel(Channel channel)
+        private void ShowSettings()
+        {
+            MessengerInstance.Send(new ShowSettingsMessage());
+        }
+
+        private void ShowAbout()
+        {
+            Process.Start("https://github.com/Tyrrrz/DiscordChatExporter");
+        }
+
+        private void ShowExportSetup(Channel channel)
+        {
+            MessengerInstance.Send(new ShowExportSetupMessage(SelectedGuild, channel));
+        }
+
+        private async void Export(Channel channel, string filePath, ExportFormat format)
         {
             IsBusy = true;
-            
-            // Get safe file names
-            var safeGuildName = SelectedGuild.Name.Replace(Path.GetInvalidFileNameChars(), '_');
-            var safeChannelName = channel.Name.Replace(Path.GetInvalidFileNameChars(), '_');
 
-            // Ask for path
-            var sfd = new SaveFileDialog
-            {
-                FileName = $"{safeGuildName} - {safeChannelName}.html",
-                Filter = "HTML files (*.html)|*.html|All files (*.*)|*.*",
-                DefaultExt = "html",
-                AddExtension = true
-            };
-            if (sfd.ShowDialog() != true)
-            {
-                IsBusy = false;
-                return;
-            }
-
-            // Export
             try
             {
                 // Get messages
@@ -177,10 +177,13 @@ namespace DiscordChatExporter.ViewModels
                 var chatLog = new ChannelChatLog(SelectedGuild, channel, messageGroups, messages.Count);
 
                 // Export
-                await _exportService.ExportAsync(sfd.FileName, chatLog, _settingsService.Theme);
+                if (format == ExportFormat.Text)
+                    await _exportService.ExportAsTextAsync(filePath, chatLog);
+                else if (format == ExportFormat.Html)
+                    await _exportService.ExportAsHtmlAsync(filePath, chatLog, _settingsService.Theme);
 
-                // Show dialog
-                MessengerInstance.Send(new ShowExportDoneMessage(sfd.FileName));
+                // Notify completion
+                MessengerInstance.Send(new ShowExportDoneMessage(filePath));
             }
             catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
             {
@@ -189,16 +192,6 @@ namespace DiscordChatExporter.ViewModels
             }
 
             IsBusy = false;
-        }
-
-        private void ShowSettings()
-        {
-            MessengerInstance.Send(new ShowSettingsMessage());
-        }
-
-        private void ShowAbout()
-        {
-            Process.Start("https://github.com/Tyrrrz/DiscordChatExporter");
         }
     }
 }

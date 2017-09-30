@@ -9,7 +9,11 @@ namespace DiscordChatExporter.ViewModels
 
         public ErrorViewModel()
         {
-            MessengerInstance.Register<ShowErrorMessage>(this, m => Message = m.Message);
+            // Messages
+            MessengerInstance.Register<ShowErrorMessage>(this, m =>
+            {
+                Message = m.Message;
+            });
         }
     }
 }

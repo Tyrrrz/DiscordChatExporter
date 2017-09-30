@@ -167,7 +167,7 @@ Window "DiscordChatExporter.Views.MainWindow" {
                     Cursor: CursorType.Hand
                     InputBindings: [
                       MouseBinding {
-                        Command: bind DataContext.ExportChannelCommand from $ancestor<ItemsControl>
+                        Command: bind DataContext.ShowExportSetupCommand from $ancestor<ItemsControl>
                         CommandParameter: bind
                         MouseAction: LeftClick
                       }

@@ -28,6 +28,5 @@ DiscordChatExporter can be used to export message history from [Discord](https:/
 - [GalaSoft.MVVMLight](http://www.mvvmlight.net)
 - [MaterialDesignInXamlToolkit](https://github.com/ButchersBoy/MaterialDesignInXamlToolkit)
 - [Newtonsoft.Json](http://www.newtonsoft.com/json)
-- [HtmlAgilityPack](https://github.com/zzzprojects/html-agility-pack)
 - [Tyrrrz.Extensions](https://github.com/Tyrrrz/Extensions)
 - [Tyrrrz.Settings](https://github.com/Tyrrrz/Settings)

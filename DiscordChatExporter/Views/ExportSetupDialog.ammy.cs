@@ -10,14 +10,14 @@ namespace DiscordChatExporter.Views
 {
     public partial class ExportSetupDialog
     {
+        private IExportSetupViewModel ViewModel => (IExportSetupViewModel) DataContext;
+
         public ExportSetupDialog()
         {
             InitializeComponent();
         }
 
-        private IExportSetupViewModel ViewModel => (IExportSetupViewModel) DataContext;
-
-        private string GetOutputFileFilter()
+        private string GetFilter()
         {
             var filters = new List<string>();
             foreach (var format in ViewModel.AvailableFormats)
@@ -29,12 +29,17 @@ namespace DiscordChatExporter.Views
             return filters.JoinToString("|");
         }
 
-        public void LocateFilePathButton_Click(object sender, RoutedEventArgs args)
+        public void ExportButton_Click(object sender, RoutedEventArgs args)
+        {
+            DialogHost.CloseDialogCommand.Execute(null, null);
+        }
+
+        public void BrowseButton_Click(object sender, RoutedEventArgs args)
         {
             var sfd = new SaveFileDialog
             {
                 FileName = ViewModel.FilePath,
-                Filter = GetOutputFileFilter(),
+                Filter = GetFilter(),
                 FilterIndex = ViewModel.AvailableFormats.IndexOf(ViewModel.SelectedFormat) + 1,
                 AddExtension = true,
                 Title = "Select output file"
@@ -45,11 +50,6 @@ namespace DiscordChatExporter.Views
                 ViewModel.FilePath = sfd.FileName;
                 ViewModel.SelectedFormat = ViewModel.AvailableFormats[sfd.FilterIndex - 1];
             }
-        }
-
-        public void ExportButton_Click(object sender, RoutedEventArgs args)
-        {
-            DialogHost.CloseDialogCommand.Execute(null, null);
         }
     }
 }

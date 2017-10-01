@@ -26,12 +26,16 @@ namespace DiscordChatExporter.Services
 
             using (var writer = new StreamWriter(filePath, false, Encoding.UTF8, 128 * 1024))
             {
+                // Generation info
+                await writer.WriteLineAsync("https://github.com/Tyrrrz/DiscordChatExporter");
+                await writer.WriteLineAsync();
+
                 // Guild and channel info
-                await writer.WriteLineAsync("=".Repeat(16));
+                await writer.WriteLineAsync('='.Repeat(48));
                 await writer.WriteLineAsync($"Guild: {log.Guild}");
                 await writer.WriteLineAsync($"Channel: {log.Channel}");
                 await writer.WriteLineAsync($"Messages: {log.TotalMessageCount:N0}");
-                await writer.WriteLineAsync("=".Repeat(16));
+                await writer.WriteLineAsync('='.Repeat(48));
                 await writer.WriteLineAsync();
 
                 // Chat log
@@ -43,6 +47,7 @@ namespace DiscordChatExporter.Services
                     // Messages
                     foreach (var message in group.Messages)
                     {
+                        // Content
                         if (message.Content.IsNotBlank())
                         {
                             var contentFormatted = message.Content.Replace("\n", Environment.NewLine);

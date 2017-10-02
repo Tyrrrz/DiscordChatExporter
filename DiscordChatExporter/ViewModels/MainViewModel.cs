@@ -23,10 +23,10 @@ namespace DiscordChatExporter.ViewModels
         private readonly Dictionary<Guild, IReadOnlyList<Channel>> _guildChannelsMap;
 
         private bool _isBusy;
+        private string _token;
         private IReadOnlyList<Guild> _availableGuilds;
         private Guild _selectedGuild;
         private IReadOnlyList<Channel> _availableChannels;
-        private string _cachedToken;
 
         public bool IsBusy
         {
@@ -43,13 +43,13 @@ namespace DiscordChatExporter.ViewModels
 
         public string Token
         {
-            get => _settingsService.LastToken;
+            get => _token;
             set
             {
                 // Remove invalid chars
                 value = value?.Trim('"');
 
-                _settingsService.LastToken = value;
+                Set(ref _token, value);
                 PullDataCommand.RaiseCanExecuteChanged();
             }
         }
@@ -107,12 +107,20 @@ namespace DiscordChatExporter.ViewModels
             {
                 Export(m.Channel, m.FilePath, m.Format, m.From, m.To);
             });
+
+            // Defaults
+            _token = _settingsService.LastToken;
         }
 
         private async void PullData()
         {
             IsBusy = true;
-            _cachedToken = Token;
+
+            // Copy token so it doesn't get mutated
+            var token = Token;
+
+            // Save token
+            _settingsService.LastToken = token;
 
             // Clear existing
             _guildChannelsMap.Clear();
@@ -121,17 +129,17 @@ namespace DiscordChatExporter.ViewModels
             {
                 // Get DM channels
                 {
-                    var channels = await _dataService.GetDirectMessageChannelsAsync(_cachedToken);
+                    var channels = await _dataService.GetDirectMessageChannelsAsync(token);
                     var guild = new Guild("@me", "Direct Messages", null);
                     _guildChannelsMap[guild] = channels.ToArray();
                 }
 
                 // Get guild channels
                 {
-                    var guilds = await _dataService.GetGuildsAsync(_cachedToken);
+                    var guilds = await _dataService.GetGuildsAsync(token);
                     foreach (var guild in guilds)
                     {
-                        var channels = await _dataService.GetGuildChannelsAsync(_cachedToken, guild.Id);
+                        var channels = await _dataService.GetGuildChannelsAsync(token, guild.Id);
                         _guildChannelsMap[guild] = channels.Where(c => c.Type == ChannelType.GuildTextChat).ToArray();
                     }
                 }
@@ -171,22 +179,22 @@ namespace DiscordChatExporter.ViewModels
         {
             IsBusy = true;
 
+            // Get last used token
+            var token = _settingsService.LastToken;
+
             try
             {
                 // Get messages
-                var messages = await _dataService.GetChannelMessagesAsync(_cachedToken, channel.Id, from, to);
+                var messages = await _dataService.GetChannelMessagesAsync(token, channel.Id, from, to);
 
                 // Group them
                 var messageGroups = _messageGroupService.GroupMessages(messages);
 
                 // Create log
-                var chatLog = new ChannelChatLog(SelectedGuild, channel, messageGroups, messages.Count);
+                var log = new ChannelChatLog(SelectedGuild, channel, messageGroups, messages.Count);
 
                 // Export
-                if (format == ExportFormat.Text)
-                    await _exportService.ExportAsTextAsync(filePath, chatLog);
-                else if (format == ExportFormat.Html)
-                    await _exportService.ExportAsHtmlAsync(filePath, chatLog, _settingsService.Theme);
+                await _exportService.ExportAsync(format, filePath, log);
 
                 // Notify completion
                 MessengerInstance.Send(new ShowExportDoneMessage(filePath));

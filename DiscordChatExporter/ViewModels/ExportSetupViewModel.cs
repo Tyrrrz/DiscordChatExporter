@@ -39,7 +39,15 @@ namespace DiscordChatExporter.ViewModels
         public ExportFormat SelectedFormat
         {
             get => _format;
-            set => Set(ref _format, value);
+            set
+            {
+                Set(ref _format, value);
+
+                // Replace extension in path
+                var newExt = value.GetFileExtension();
+                if (FilePath != null && !FilePath.EndsWith(newExt))
+                    FilePath = FilePath.SubstringUntilLast(".") + "." + newExt;
+            }
         }
 
         public DateTime? From
@@ -82,7 +90,10 @@ namespace DiscordChatExporter.ViewModels
 
         private void Export()
         {
+            // Save format
             _settingsService.LastExportFormat = SelectedFormat;
+
+            // Start export
             MessengerInstance.Send(new StartExportMessage(Channel, FilePath, SelectedFormat, From, To));
         }
     }

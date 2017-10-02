@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Reflection;
-using System.Resources;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -20,7 +18,7 @@ namespace DiscordChatExporter.Services
             _settingsService = settingsService;
         }
 
-        public async Task ExportAsTextAsync(string filePath, ChannelChatLog log)
+        private async Task ExportAsTextAsync(string filePath, ChannelChatLog log)
         {
             var dateFormat = _settingsService.DateFormat;
 
@@ -66,9 +64,8 @@ namespace DiscordChatExporter.Services
             }
         }
 
-        public async Task ExportAsHtmlAsync(string filePath, ChannelChatLog log, Theme theme)
+        private async Task ExportAsHtmlAsync(string filePath, ChannelChatLog log, string css)
         {
-            var themeCss = GetThemeCss(theme);
             var dateFormat = _settingsService.DateFormat;
 
             using (var writer = new StreamWriter(filePath, false, Encoding.UTF8, 128 * 1024))
@@ -85,7 +82,7 @@ namespace DiscordChatExporter.Services
                 await writer.WriteLineAsync($"<title>{log.Guild} - {log.Channel}</title>");
                 await writer.WriteLineAsync("<meta charset=\"utf-8\" />");
                 await writer.WriteLineAsync("<meta name=\"viewport\" content=\"width=device-width\" />");
-                await writer.WriteLineAsync($"<style>{themeCss}</style>");
+                await writer.WriteLineAsync($"<style>{css}</style>");
                 await writer.WriteLineAsync("</head>");
 
                 // Body start
@@ -173,26 +170,30 @@ namespace DiscordChatExporter.Services
                 await writer.WriteLineAsync("</html>");
             }
         }
+
+        public Task ExportAsync(ExportFormat format, string filePath, ChannelChatLog log)
+        {
+            if (format == ExportFormat.PlainText)
+            {
+                return ExportAsTextAsync(filePath, log);
+            }
+            if (format == ExportFormat.HtmlDark)
+            {
+                var css = Program.GetResourceString("DiscordChatExporter.Resources.ExportService.DarkTheme.css");
+                return ExportAsHtmlAsync(filePath, log, css);
+            }
+            if (format == ExportFormat.HtmlLight)
+            {
+                var css = Program.GetResourceString("DiscordChatExporter.Resources.ExportService.LightTheme.css");
+                return ExportAsHtmlAsync(filePath, log, css);
+            }
+
+            throw new NotImplementedException();
+        }
     }
 
     public partial class ExportService
     {
-        private static string GetThemeCss(Theme theme)
-        {
-            var resourcePath = $"DiscordChatExporter.Resources.ExportService.{theme}Theme.css";
-
-            var assembly = Assembly.GetExecutingAssembly();
-            var stream = assembly.GetManifestResourceStream(resourcePath);
-            if (stream == null)
-                throw new MissingManifestResourceException("Could not find style resource");
-
-            using (stream)
-            using (var reader = new StreamReader(stream))
-            {
-                return reader.ReadToEnd();
-            }
-        }
-
         private static string HtmlEncode(string str)
         {
             return WebUtility.HtmlEncode(str);

@@ -5,7 +5,6 @@ namespace DiscordChatExporter.Services
 {
     public interface IExportService
     {
-        Task ExportAsTextAsync(string filePath, ChannelChatLog log);
-        Task ExportAsHtmlAsync(string filePath, ChannelChatLog log, Theme theme);
+        Task ExportAsync(ExportFormat format, string filePath, ChannelChatLog log);
     }
 }

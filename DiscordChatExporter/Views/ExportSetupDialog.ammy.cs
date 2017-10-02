@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Windows;
+﻿using System.Windows;
 using DiscordChatExporter.Models;
 using DiscordChatExporter.ViewModels;
 using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
-using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Views
 {
@@ -17,39 +15,30 @@ namespace DiscordChatExporter.Views
             InitializeComponent();
         }
 
-        private string GetFilter()
+        public void BrowseButton_Click(object sender, RoutedEventArgs args)
         {
-            var filters = new List<string>();
-            foreach (var format in ViewModel.AvailableFormats)
-            {
-                var ext = format.GetFileExtension();
-                filters.Add($"{format} (*.{ext})|*.{ext}");
-            }
+            // Get file extension of the selected format
+            var ext = ViewModel.SelectedFormat.GetFileExtension();
 
-            return filters.JoinToString("|");
+            // Open dialog
+            var sfd = new SaveFileDialog
+            {
+                FileName = ViewModel.FilePath,
+                Filter = $"{ext.ToUpperInvariant()} Files|*.{ext}|All Files|*.*",
+                AddExtension = true,
+                Title = "Select output file"
+            };
+
+            // Assign new file path if dialog was successful
+            if (sfd.ShowDialog() == true)
+            {
+                ViewModel.FilePath = sfd.FileName;
+            }
         }
 
         public void ExportButton_Click(object sender, RoutedEventArgs args)
         {
             DialogHost.CloseDialogCommand.Execute(null, null);
-        }
-
-        public void BrowseButton_Click(object sender, RoutedEventArgs args)
-        {
-            var sfd = new SaveFileDialog
-            {
-                FileName = ViewModel.FilePath,
-                Filter = GetFilter(),
-                FilterIndex = ViewModel.AvailableFormats.IndexOf(ViewModel.SelectedFormat) + 1,
-                AddExtension = true,
-                Title = "Select output file"
-            };
-
-            if (sfd.ShowDialog() == true)
-            {
-                ViewModel.FilePath = sfd.FileName;
-                ViewModel.SelectedFormat = ViewModel.AvailableFormats[sfd.FilterIndex - 1];
-            }
         }
     }
 }

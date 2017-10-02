@@ -2,7 +2,8 @@
 {
     public enum ExportFormat
     {
-        Text,
-        Html
+        PlainText,
+        HtmlDark,
+        HtmlLight
     }
 }

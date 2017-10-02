@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using DiscordChatExporter.Models;
-using DiscordChatExporter.Services;
+﻿using DiscordChatExporter.Services;
 using GalaSoft.MvvmLight;
 using Tyrrrz.Extensions;
 
@@ -11,14 +7,6 @@ namespace DiscordChatExporter.ViewModels
     public class SettingsViewModel : ViewModelBase, ISettingsViewModel
     {
         private readonly ISettingsService _settingsService;
-
-        public IReadOnlyList<Theme> AvailableThemes { get; }
-
-        public Theme Theme
-        {
-            get => _settingsService.Theme;
-            set => _settingsService.Theme = value;
-        }
 
         public string DateFormat
         {
@@ -35,9 +23,6 @@ namespace DiscordChatExporter.ViewModels
         public SettingsViewModel(ISettingsService settingsService)
         {
             _settingsService = settingsService;
-
-            // Defaults
-            AvailableThemes = Enum.GetValues(typeof(Theme)).Cast<Theme>().ToArray();
         }
     }
 }

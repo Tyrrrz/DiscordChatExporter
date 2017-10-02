@@ -4,7 +4,6 @@ namespace DiscordChatExporter.Services
 {
     public interface ISettingsService
     {
-        Theme Theme { get; set; }
         string DateFormat { get; set; }
         int MessageGroupLimit { get; set; }
 

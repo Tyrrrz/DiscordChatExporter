@@ -148,7 +148,6 @@
     <Compile Include="Models\Guild.cs" />
     <Compile Include="Models\Message.cs" />
     <Compile Include="Models\MessageGroup.cs" />
-    <Compile Include="Models\Theme.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Services\DataService.cs" />

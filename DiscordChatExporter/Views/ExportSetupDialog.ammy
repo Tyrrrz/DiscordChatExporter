@@ -1,8 +1,9 @@
-﻿using MaterialDesignThemes.Wpf
+﻿using DiscordChatExporter.Models
+using MaterialDesignThemes.Wpf
 
 UserControl "DiscordChatExporter.Views.ExportSetupDialog" {
   DataContext: bind ExportSetupViewModel from $resource Container
-  Width: 350
+  Width: 325
 
   StackPanel {
     // File path
@@ -15,13 +16,29 @@ UserControl "DiscordChatExporter.Views.ExportSetupDialog" {
             set [ UpdateSourceTrigger: PropertyChanged ]
     }
 
+    // Format
+    ComboBox {
+      Margin: "16 8 16 8"
+      HintAssist.Hint: "Export format"
+      HintAssist.IsFloating: true
+      IsReadOnly: true
+      ItemsSource: bind AvailableFormats
+      ItemTemplate: DataTemplate {
+        TextBlock {
+          Text: bind
+                convert (ExportFormat f) => Extensions.GetDisplayName(f)
+        }
+      }
+      SelectedItem: bind SelectedFormat
+    }
+
     // Date range
     Grid {
       #TwoColumns("*", "*")
 
       DatePicker {
         Grid.Column: 0
-        Margin: "16 16 8 8"
+        Margin: "16 20 8 8"
         HintAssist.Hint: "From"
         HintAssist.IsFloating: true
         SelectedDate: bind From
@@ -29,7 +46,7 @@ UserControl "DiscordChatExporter.Views.ExportSetupDialog" {
 
       DatePicker {
         Grid.Column: 1
-        Margin: "8 16 16 8"
+        Margin: "8 20 16 8"
         HintAssist.Hint: "To"
         HintAssist.IsFloating: true
         SelectedDate: bind To
@@ -40,19 +57,19 @@ UserControl "DiscordChatExporter.Views.ExportSetupDialog" {
     @StackPanelHorizontal {
       HorizontalAlignment: Right
 
+      // Browse
+      Button "BrowseButton" {
+        Click: BrowseButton_Click
+        Content: "BROWSE"
+        Margin: 8
+        Style: resource dyn "MaterialDesignFlatButton"
+      }
+
       // Export
       Button "ExportButton" {
         Click: ExportButton_Click
         Command: bind ExportCommand
         Content: "EXPORT"
-        Margin: 8
-        Style: resource dyn "MaterialDesignFlatButton"
-      }
-
-      // Browse
-      Button "BrowseButton" {
-        Click: BrowseButton_Click
-        Content: "BROWSE"
         Margin: 8
         Style: resource dyn "MaterialDesignFlatButton"
       }

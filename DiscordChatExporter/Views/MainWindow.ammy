@@ -46,6 +46,8 @@ Window "DiscordChatExporter.Views.MainWindow" {
                   FontSize: 16
                   Text: bind Token
                         set [ UpdateSourceTrigger: PropertyChanged ]
+                  TextFieldAssist.DecorationVisibility: Hidden
+                  TextFieldAssist.TextBoxViewMargin: "0 0 2 0"
                 }
 
                 // Submit

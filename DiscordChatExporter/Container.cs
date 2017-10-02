@@ -11,11 +11,14 @@ namespace DiscordChatExporter
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
+            // Settings
+            SimpleIoc.Default.Register<ISettingsService, SettingsService>();
+            ServiceLocator.Current.GetInstance<ISettingsService>().Load();
+
             // Services
             SimpleIoc.Default.Register<IDataService, DataService>();
             SimpleIoc.Default.Register<IExportService, ExportService>();
             SimpleIoc.Default.Register<IMessageGroupService, MessageGroupService>();
-            SimpleIoc.Default.Register<ISettingsService, SettingsService>();
 
             // View models
             SimpleIoc.Default.Register<IErrorViewModel, ErrorViewModel>(true);
@@ -23,14 +26,11 @@ namespace DiscordChatExporter
             SimpleIoc.Default.Register<IExportSetupViewModel, ExportSetupViewModel>(true);
             SimpleIoc.Default.Register<IMainViewModel, MainViewModel>(true);
             SimpleIoc.Default.Register<ISettingsViewModel, SettingsViewModel>(true);
-
-            // Load settings
-            ServiceLocator.Current.GetInstance<ISettingsService>().Load();
         }
 
         public static void Cleanup()
         {
-            // Save settings
+            // Settings
             ServiceLocator.Current.GetInstance<ISettingsService>().Save();
         }
 

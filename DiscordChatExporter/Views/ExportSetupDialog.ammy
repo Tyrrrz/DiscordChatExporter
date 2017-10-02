@@ -39,7 +39,7 @@ UserControl "DiscordChatExporter.Views.ExportSetupDialog" {
       DatePicker {
         Grid.Column: 0
         Margin: "16 20 8 8"
-        HintAssist.Hint: "From"
+        HintAssist.Hint: "From (optional)"
         HintAssist.IsFloating: true
         SelectedDate: bind From
       }
@@ -47,7 +47,7 @@ UserControl "DiscordChatExporter.Views.ExportSetupDialog" {
       DatePicker {
         Grid.Column: 1
         Margin: "8 20 16 8"
-        HintAssist.Hint: "To"
+        HintAssist.Hint: "To (optional)"
         HintAssist.IsFloating: true
         SelectedDate: bind To
       }

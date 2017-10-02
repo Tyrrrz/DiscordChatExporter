@@ -15,7 +15,6 @@ namespace DiscordChatExporter.Services
 
         public IReadOnlyList<MessageGroup> GroupMessages(IReadOnlyList<Message> messages)
         {
-            var groupLimit = _settingsService.MessageGroupLimit;
             var result = new List<MessageGroup>();
 
             // Group adjacent messages by timestamp and author
@@ -31,7 +30,7 @@ namespace DiscordChatExporter.Services
                         message.Author.Id != groupFirst.Author.Id ||
                         (message.TimeStamp - groupFirst.TimeStamp).TotalHours > 1 ||
                         message.TimeStamp.Hour != groupFirst.TimeStamp.Hour ||
-                        groupBuffer.Count >= groupLimit
+                        groupBuffer.Count >= _settingsService.MessageGroupLimit
                     );
 
                 // If condition is true - flush buffer

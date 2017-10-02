@@ -20,8 +20,6 @@ namespace DiscordChatExporter.Services
 
         private async Task ExportAsTextAsync(string filePath, ChannelChatLog log)
         {
-            var dateFormat = _settingsService.DateFormat;
-
             using (var writer = new StreamWriter(filePath, false, Encoding.UTF8, 128 * 1024))
             {
                 // Generation info
@@ -39,7 +37,7 @@ namespace DiscordChatExporter.Services
                 // Chat log
                 foreach (var group in log.MessageGroups)
                 {
-                    var timeStampFormatted = group.TimeStamp.ToString(dateFormat);
+                    var timeStampFormatted = group.TimeStamp.ToString(_settingsService.DateFormat);
                     await writer.WriteLineAsync($"{group.Author}  [{timeStampFormatted}]");
 
                     // Messages
@@ -66,8 +64,6 @@ namespace DiscordChatExporter.Services
 
         private async Task ExportAsHtmlAsync(string filePath, ChannelChatLog log, string css)
         {
-            var dateFormat = _settingsService.DateFormat;
-
             using (var writer = new StreamWriter(filePath, false, Encoding.UTF8, 128 * 1024))
             {
                 // Generation info
@@ -113,7 +109,7 @@ namespace DiscordChatExporter.Services
                     await writer.WriteAsync($"<span class=\"msg-user\" title=\"{HtmlEncode(group.Author)}\">");
                     await writer.WriteAsync(HtmlEncode(group.Author.Name));
                     await writer.WriteLineAsync("</span>");
-                    var timeStampFormatted = HtmlEncode(group.TimeStamp.ToString(dateFormat));
+                    var timeStampFormatted = HtmlEncode(group.TimeStamp.ToString(_settingsService.DateFormat));
                     await writer.WriteLineAsync($"<span class=\"msg-date\">{timeStampFormatted}</span>");
 
                     // Messages
@@ -130,7 +126,7 @@ namespace DiscordChatExporter.Services
                             if (message.EditedTimeStamp != null)
                             {
                                 var editedTimeStampFormatted =
-                                    HtmlEncode(message.EditedTimeStamp.Value.ToString(dateFormat));
+                                    HtmlEncode(message.EditedTimeStamp.Value.ToString(_settingsService.DateFormat));
                                 await writer.WriteAsync(
                                     $"<span class=\"msg-edited\" title=\"{editedTimeStampFormatted}\">(edited)</span>");
                             }

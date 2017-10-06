@@ -2,24 +2,24 @@
 
 UserControl "DiscordChatExporter.Views.ErrorDialog" {
   DataContext: bind ErrorViewModel from $resource Container
-    Width: 250
+  Width: 250
 
-    StackPanel {
-      // Message
-      TextBlock {
-        Margin: 16
-        FontSize: 16
-        TextWrapping: WrapWithOverflow
-        Text: bind Message
-      }
-
-      // OK
-      Button {
-        Margin: 8
-        Command: DialogHost.CloseDialogCommand
-        Content: "OK"
-        HorizontalAlignment: Right
-        Style: resource dyn "MaterialDesignFlatButton"
-      }
+  StackPanel {
+    // Message
+    TextBlock {
+      Margin: 16
+      FontSize: 16
+      TextWrapping: WrapWithOverflow
+      Text: bind Message
     }
+
+    // OK
+    Button {
+      Margin: 8
+      Command: DialogHost.CloseDialogCommand
+      Content: "OK"
+      HorizontalAlignment: Right
+      Style: resource dyn "MaterialDesignFlatButton"
+    }
+  }
 }

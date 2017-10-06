@@ -7,7 +7,7 @@ UserControl "DiscordChatExporter.Views.SettingsDialog" {
   StackPanel {
     // Date format
     TextBox {
-      Margin: "16 16 16 8"
+      Margin: [16, 16, 16, 8]
       HintAssist.Hint: "Date format"
       HintAssist.IsFloating: true
       Text: bind DateFormat
@@ -15,7 +15,7 @@ UserControl "DiscordChatExporter.Views.SettingsDialog" {
 
     // Group limit
     TextBox {
-      Margin: "16 8 16 8"
+      Margin: [16, 8, 16, 8]
       HintAssist.Hint: "Message group limit"
       HintAssist.IsFloating: true
       Text: bind MessageGroupLimit

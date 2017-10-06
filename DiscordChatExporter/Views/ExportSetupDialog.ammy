@@ -8,7 +8,7 @@ UserControl "DiscordChatExporter.Views.ExportSetupDialog" {
   StackPanel {
     // File path
     TextBox {
-      Margin: "16 16 16 8"
+      Margin: [16, 16, 16, 8]
       HintAssist.Hint: "Output file"
       HintAssist.IsFloating: true
       IsReadOnly: true
@@ -18,18 +18,19 @@ UserControl "DiscordChatExporter.Views.ExportSetupDialog" {
 
     // Format
     ComboBox {
-      Margin: "16 8 16 8"
+      Margin: [16, 8, 16, 8]
       HintAssist.Hint: "Export format"
       HintAssist.IsFloating: true
       IsReadOnly: true
       ItemsSource: bind AvailableFormats
+      SelectedItem: bind SelectedFormat
+
       ItemTemplate: DataTemplate {
         TextBlock {
           Text: bind
                 convert (ExportFormat f) => Extensions.GetDisplayName(f)
         }
       }
-      SelectedItem: bind SelectedFormat
     }
 
     // Date range
@@ -37,16 +38,16 @@ UserControl "DiscordChatExporter.Views.ExportSetupDialog" {
       #TwoColumns("*", "*")
 
       DatePicker {
-        Grid.Column: 0
-        Margin: "16 20 8 8"
+        #Cell(0, 0)
+        Margin: [16, 20, 8, 8]
         HintAssist.Hint: "From (optional)"
         HintAssist.IsFloating: true
         SelectedDate: bind From
       }
 
       DatePicker {
-        Grid.Column: 1
-        Margin: "8 20 16 8"
+        #Cell(0, 1)
+        Margin: [8, 20, 16, 8]
         HintAssist.Hint: "To (optional)"
         HintAssist.IsFloating: true
         SelectedDate: bind To
@@ -59,26 +60,27 @@ UserControl "DiscordChatExporter.Views.ExportSetupDialog" {
 
       // Browse
       Button "BrowseButton" {
+        Margin: 8
         Click: BrowseButton_Click
         Content: "BROWSE"
-        Margin: 8
         Style: resource dyn "MaterialDesignFlatButton"
       }
 
       // Export
       Button "ExportButton" {
+        Margin: 8
         Click: ExportButton_Click
         Command: bind ExportCommand
         Content: "EXPORT"
-        Margin: 8
+        IsDefault: true
         Style: resource dyn "MaterialDesignFlatButton"
       }
 
       // Cancel
       Button {
+        Margin: 8
         Command: DialogHost.CloseDialogCommand
         Content: "CANCEL"
-        Margin: 8
         Style: resource dyn "MaterialDesignFlatButton"
       }
     }

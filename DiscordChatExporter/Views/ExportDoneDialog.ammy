@@ -19,18 +19,18 @@ UserControl "DiscordChatExporter.Views.ExportDoneDialog" {
 
       // Open
       Button "OpenButton" {
+        Margin: 8
         Click: OpenButton_Click
         Command: bind OpenCommand
         Content: "OPEN IT"
-        Margin: 8
         Style: resource dyn "MaterialDesignFlatButton"
       }
 
       // Dismiss
       Button {
+        Margin: 8
         Command: DialogHost.CloseDialogCommand
         Content: "DISMISS"
-        Margin: 8
         Style: resource dyn "MaterialDesignFlatButton"
       }
     }

@@ -1,5 +1,6 @@
 # DiscordChatExporter
 
+[![Build](https://img.shields.io/appveyor/ci/Tyrrrz/DiscordChatExporter/master.svg)](https://ci.appveyor.com/project/Tyrrrz/DiscordChatExporter)
 [![Release](https://img.shields.io/github/release/Tyrrrz/DiscordChatExporter.svg)](https://github.com/Tyrrrz/DiscordChatExporter/releases)
 [![Downloads](https://img.shields.io/github/downloads/Tyrrrz/DiscordChatExporter/total.svg)](https://github.com/Tyrrrz/DiscordChatExporter/releases)
 
@@ -12,7 +13,8 @@ DiscordChatExporter can be used to export message history from a [Discord](https
 
 ## Download
 
-- [See releases](https://github.com/Tyrrrz/DiscordChatExporter/releases)
+- [Stable releases](https://github.com/Tyrrrz/DiscordChatExporter/releases)
+- [Continuous integration](https://ci.appveyor.com/project/Tyrrrz/DiscordChatExporter)
 
 ## Features
 

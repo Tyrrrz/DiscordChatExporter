@@ -1,5 +1,8 @@
 # DiscordChatExporter
 
+[![Release](https://img.shields.io/github/release/Tyrrrz/DiscordChatExporter.svg)](https://github.com/Tyrrrz/DiscordChatExporter/releases)
+[![Downloads](https://img.shields.io/github/downloads/Tyrrrz/DiscordChatExporter/total.svg)](https://github.com/Tyrrrz/DiscordChatExporter/releases)
+
 DiscordChatExporter can be used to export message history from a [Discord](https://discordapp.com) channel to a file. It works for both direct message chats and guild chats, supports markdown, message grouping, and attachments. The tool also lets you select from/to dates to limit the exported messages. There are options to configure the output, such as date format, color theme, message grouping limit, etc.
 
 ## Screenshots

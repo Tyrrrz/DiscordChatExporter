@@ -1,6 +1,6 @@
-$path = "..\DiscordChatExporter\bin\Release\*"
+$path = "$PSScriptRoot\..\DiscordChatExporter\bin\Release\*"
 $include = "*.exe", "*.dll", "*.config"
-$outputDir = "Output"
+$outputDir = "$PSScriptRoot\Output"
 $outputFile = "DiscordChatExporter.zip"
 
 # Create output directory
@@ -10,13 +10,13 @@ if (-Not (Test-Path $outputDir))
 }
 
 # Delete output if already exists
-if (Test-Path("$outputDir/$outputFile"))
+if (Test-Path("$outputDir\$outputFile"))
 {
-    Remove-Item -Path "$outputDir/$outputFile"
+    Remove-Item -Path "$outputDir\$outputFile"
 }
 
 # Get files
 $files = Get-ChildItem -Path $path -Include $include
 
 # Pack into archive
-$files | Compress-Archive -DestinationPath "$outputDir/$outputFile"
+$files | Compress-Archive -DestinationPath "$outputDir\$outputFile"

@@ -93,7 +93,7 @@ namespace DiscordChatExporter.Services
                 var messages = JArray.Parse(content).Select(ParseMessage);
 
                 // Add messages to list
-                var currentMessageId = default(string);
+                string currentMessageId = null;
                 foreach (var message in messages)
                 {
                     result.Add(message);

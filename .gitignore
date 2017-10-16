@@ -262,3 +262,6 @@ __pycache__/
 
 # Ammy auto-generated XAML
 *.g.xaml
+
+# Deploy output
+Deploy/Output/

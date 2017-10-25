@@ -117,3 +117,9 @@ img.msg-attachment {
     max-height: 500px;
     max-width: 50%;
 }
+
+img.emoji {
+    height: 24px;
+    width: 24px;
+    vertical-align: -.4em;
+}

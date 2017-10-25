@@ -248,6 +248,10 @@ namespace DiscordChatExporter.Services
             // New lines
             content = content.Replace("\n", "<br />");
 
+            // Custom emojis (<:name:id>)
+            content = Regex.Replace(content, "&lt;:.*?:(\\d+)&gt;",
+                "<img class=\"emoji\" src=\"https://cdn.discordapp.com/emojis/$1.png\" />");
+
             return content;
         }
     }

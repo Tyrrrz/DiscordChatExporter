@@ -26,7 +26,7 @@ span.pre {
     font-family: Consolas, Courier New, Courier, Monospace;
     padding-left: 2px;
     padding-right: 2px;
-    white-space: pre;
+    white-space: pre-wrap;
 }
 
 div#info {

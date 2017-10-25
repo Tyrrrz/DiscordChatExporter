@@ -220,28 +220,31 @@ namespace DiscordChatExporter.Services
             // Encode HTML
             content = HtmlEncode(content);
 
-            // Preformatted div
+            // Pre multiline (```text```)
             content = Regex.Replace(content, "```+(?:[^`]*?\\n)?([^`]+)\\n?```+",
                 m => "<div class=\"pre\">" + m.Groups[1].Value + "</div>");
 
-            // Preformatted span
+            // Pre inline (`text`)
             content = Regex.Replace(content, "`([^`]+)`",
                 m => "<span class=\"pre\">" + m.Groups[1].Value + "</span>");
 
-            // Links from URLs
+            // URL links
             content = Regex.Replace(content, "((https?|ftp)://[^\\s/$.?#].[^\\s]*)",
                 "<a href=\"$1\">$1</a>");
 
-            // Bold
+            // Bold (**text**)
             content = Regex.Replace(content, "\\*\\*([^\\*]*?)\\*\\*", "<b>$1</b>");
 
-            // Italic
+            // Italic (*text*)
             content = Regex.Replace(content, "\\*([^\\*]*?)\\*", "<i>$1</i>");
 
-            // Underline
+            // Underline (__text__)
             content = Regex.Replace(content, "__([^_]*?)__", "<u>$1</u>");
 
-            // Strike through
+            // Italic (_text_)
+            content = Regex.Replace(content, "_([^_]*?)_", "<i>$1</i>");
+
+            // Strike through (~~text~~)
             content = Regex.Replace(content, "~~([^~]*?)~~", "<s>$1</s>");
 
             // New lines

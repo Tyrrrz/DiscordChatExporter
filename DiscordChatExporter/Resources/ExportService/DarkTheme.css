@@ -18,7 +18,7 @@ div.pre {
     font-family: Consolas, Courier New, Courier, Monospace;
     margin-top: 4px;
     padding: 8px;
-    white-space: pre;
+    white-space: pre-wrap;
 }
 
 span.pre {
@@ -106,6 +106,7 @@ span.msg-edited {
 div.msg-content {
     font-size: .9375rem;
     padding-top: 5px;
+    word-break: break-all;
 }
 
 div.msg-attachment {

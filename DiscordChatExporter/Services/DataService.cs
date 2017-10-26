@@ -220,10 +220,23 @@ namespace DiscordChatExporter.Services
             var timeStamp = token.Value<DateTime>("timestamp");
             var editedTimeStamp = token.Value<DateTime?>("edited_timestamp");
             var content = token.Value<string>("content");
+            var type = (MessageType) token.Value<int>("type");
 
-            // Lazy workaround for calls
-            if (token["call"] != null)
+            // Workarounds for non-default types
+            if (type == MessageType.RecipientAdd)
+                content = "Added a recipient.";
+            else if (type == MessageType.RecipientRemove)
+                content = "Removed a recipient.";
+            else if (type == MessageType.Call)
                 content = "Started a call.";
+            else if (type == MessageType.ChannelNameChange)
+                content = "Changed the channel name.";
+            else if (type == MessageType.ChannelIconChange)
+                content = "Changed the channel icon.";
+            else if (type == MessageType.ChannelPinnedMessage)
+                content = "Pinned a message.";
+            else if (type == MessageType.GuildMemberJoin)
+                content = "Joined the server.";
 
             // Get author
             var author = ParseUser(token["author"]);

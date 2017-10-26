@@ -228,7 +228,7 @@ namespace DiscordChatExporter.Services
                 m =>
                 {
                     var mentionedUser = message.MentionedUsers.First(u => u.Id == m.Groups[1].Value);
-                    return $"@{mentionedUser.Name}";
+                    return $"@{mentionedUser}";
                 });
 
             // Role mentions (<@&id>)
@@ -291,7 +291,9 @@ namespace DiscordChatExporter.Services
                 m =>
                 {
                     var mentionedUser = message.MentionedUsers.First(u => u.Id == m.Groups[1].Value);
-                    return $"<span class=\"mention\">@{HtmlEncode(mentionedUser.Name)}</span>";
+                    return $"<span class=\"mention\" title=\"{HtmlEncode(mentionedUser)}\">" +
+                           $"@{HtmlEncode(mentionedUser.Name)}" +
+                           "</span>";
                 });
 
             // Role mentions (<@&id>)
@@ -299,12 +301,14 @@ namespace DiscordChatExporter.Services
                 m =>
                 {
                     var mentionedRole = message.MentionedRoles.First(r => r.Id == m.Groups[1].Value);
-                    return $"<span class=\"mention\">@{HtmlEncode(mentionedRole.Name)}</span>";
+                    return "<span class=\"mention\">" +
+                           $"@{HtmlEncode(mentionedRole.Name)}" +
+                           "</span>";
                 });
 
             // Custom emojis (<:name:id>)
-            content = Regex.Replace(content, "&lt;:.*?:(\\d*)&gt;",
-                "<img class=\"emoji\" src=\"https://cdn.discordapp.com/emojis/$1.png\" />");
+            content = Regex.Replace(content, "&lt;(:.*?:)(\\d*)&gt;",
+                "<img class=\"emoji\" title=\"$1\" src=\"https://cdn.discordapp.com/emojis/$2.png\" />");
 
             return content;
         }

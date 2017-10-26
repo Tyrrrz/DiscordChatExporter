@@ -13,7 +13,9 @@ namespace DiscordChatExporter.Services
     public partial class DataService : IDataService, IDisposable
     {
         private const string ApiRoot = "https://discordapp.com/api/v6";
+
         private readonly HttpClient _httpClient = new HttpClient();
+        private readonly Dictionary<string, Role> _rolesCache = new Dictionary<string, Role>();
 
         private async Task<string> GetStringAsync(string url)
         {
@@ -29,6 +31,20 @@ namespace DiscordChatExporter.Services
             }
         }
 
+        private async Task<IReadOnlyList<Role>> GetGuildRolesAsync(string token, string guildId)
+        {
+            // Form request url
+            var url = $"{ApiRoot}/guilds/{guildId}?token={token}";
+
+            // Get response
+            var content = await GetStringAsync(url);
+
+            // Parse
+            var roles = JToken.Parse(content)["roles"].Select(ParseRole).ToArray();
+
+            return roles;
+        }
+
         public async Task<IReadOnlyList<Guild>> GetGuildsAsync(string token)
         {
             // Form request url
@@ -39,6 +55,14 @@ namespace DiscordChatExporter.Services
 
             // Parse
             var guilds = JArray.Parse(content).Select(ParseGuild).ToArray();
+
+            // HACK: also get roles for all of them
+            foreach (var guild in guilds)
+            {
+                var roles = await GetGuildRolesAsync(token, guild.Id);
+                foreach (var role in roles)
+                    _rolesCache[role.Id] = role;
+            }
 
             return guilds;
         }
@@ -90,7 +114,7 @@ namespace DiscordChatExporter.Services
                 var content = await GetStringAsync(url);
 
                 // Parse
-                var messages = JArray.Parse(content).Select(ParseMessage);
+                var messages = JArray.Parse(content).Select(j => ParseMessage(j, _rolesCache));
 
                 // Add messages to list
                 string currentMessageId = null;
@@ -141,6 +165,15 @@ namespace DiscordChatExporter.Services
 
     public partial class DataService
     {
+        private static Guild ParseGuild(JToken token)
+        {
+            var id = token.Value<string>("id");
+            var name = token.Value<string>("name");
+            var iconHash = token.Value<string>("icon");
+
+            return new Guild(id, name, iconHash);
+        }
+
         private static User ParseUser(JToken token)
         {
             var id = token.Value<string>("id");
@@ -151,13 +184,12 @@ namespace DiscordChatExporter.Services
             return new User(id, discriminator, name, avatarHash);
         }
 
-        private static Guild ParseGuild(JToken token)
+        private static Role ParseRole(JToken token)
         {
             var id = token.Value<string>("id");
             var name = token.Value<string>("name");
-            var iconHash = token.Value<string>("icon");
 
-            return new Guild(id, name, iconHash);
+            return new Role(id, name);
         }
 
         private static Channel ParseChannel(JToken token)
@@ -181,7 +213,7 @@ namespace DiscordChatExporter.Services
             return new Channel(id, name, type);
         }
 
-        private static Message ParseMessage(JToken token)
+        private static Message ParseMessage(JToken token, IDictionary<string, Role> roles)
         {
             // Get basic data
             var id = token.Value<string>("id");
@@ -227,7 +259,15 @@ namespace DiscordChatExporter.Services
                 attachments.Add(attachment);
             }
 
-            return new Message(id, author, timeStamp, editedTimeStamp, content, attachments);
+            // Get mentions
+            var mentionedUsers = token["mentions"].Select(ParseUser).ToArray();
+            var mentionedRoles = token["mention_roles"]
+                .Values<string>()
+                .Select(i => roles.GetOrDefault(i) ?? new Role(i, "deleted-role"))
+                .ToArray();
+
+            return new Message(id, author, timeStamp, editedTimeStamp, content, attachments,
+                mentionedUsers, mentionedRoles);
         }
     }
 }

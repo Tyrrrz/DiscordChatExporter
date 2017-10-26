@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -46,7 +47,7 @@ namespace DiscordChatExporter.Services
                         // Content
                         if (message.Content.IsNotBlank())
                         {
-                            var contentFormatted = message.Content.Replace("\n", Environment.NewLine);
+                            var contentFormatted = FormatMessageContentText(message);
                             await writer.WriteLineAsync(contentFormatted);
                         }
 
@@ -119,7 +120,7 @@ namespace DiscordChatExporter.Services
                         if (message.Content.IsNotBlank())
                         {
                             await writer.WriteLineAsync("<div class=\"msg-content\">");
-                            var contentFormatted = FormatMessageContentHtml(message.Content);
+                            var contentFormatted = FormatMessageContentHtml(message);
                             await writer.WriteAsync(contentFormatted);
 
                             // Edited timestamp
@@ -215,8 +216,39 @@ namespace DiscordChatExporter.Services
             return $"{size:0.#} {units[unit]}";
         }
 
-        private static string FormatMessageContentHtml(string content)
+        public static string FormatMessageContentText(Message message)
         {
+            var content = message.Content;
+
+            // New lines
+            content = content.Replace("\n", Environment.NewLine);
+
+            // User mentions (<@id>)
+            content = Regex.Replace(content, "<@(\\d*)>",
+                m =>
+                {
+                    var mentionedUser = message.MentionedUsers.First(u => u.Id == m.Groups[1].Value);
+                    return $"@{mentionedUser}";
+                });
+
+            // Role mentions (<@&id>)
+            content = Regex.Replace(content, "<@&(\\d*)>",
+                m =>
+                {
+                    var mentionedRole = message.MentionedRoles.First(r => r.Id == m.Groups[1].Value);
+                    return $"@{mentionedRole.Name}";
+                });
+
+            // Custom emojis (<:name:id>)
+            content = Regex.Replace(content, "<(:.*?:)\\d*>", "$1");
+
+            return content;
+        }
+
+        private static string FormatMessageContentHtml(Message message)
+        {
+            var content = message.Content;
+
             // Encode HTML
             content = HtmlEncode(content);
 
@@ -248,9 +280,35 @@ namespace DiscordChatExporter.Services
             // New lines
             content = content.Replace("\n", "<br />");
 
+            // Meta mentions (@everyone)
+            content = content.Replace("@everyone", "<span class=\"mention\">@everyone</span>");
+
+            // Meta mentions (@here)
+            content = content.Replace("@here", "<span class=\"mention\">@here</span>");
+
+            // User mentions (<@id>)
+            content = Regex.Replace(content, "&lt;@(\\d*)&gt;",
+                m =>
+                {
+                    var mentionedUser = message.MentionedUsers.First(u => u.Id == m.Groups[1].Value);
+                    return $"<span class=\"mention\" title=\"{HtmlEncode(mentionedUser)}\">" +
+                           $"@{HtmlEncode(mentionedUser.Name)}" +
+                           "</span>";
+                });
+
+            // Role mentions (<@&id>)
+            content = Regex.Replace(content, "&lt;@&amp;(\\d*)&gt;",
+                m =>
+                {
+                    var mentionedRole = message.MentionedRoles.First(r => r.Id == m.Groups[1].Value);
+                    return "<span class=\"mention\">" +
+                           $"@{HtmlEncode(mentionedRole.Name)}" +
+                           "</span>";
+                });
+
             // Custom emojis (<:name:id>)
-            content = Regex.Replace(content, "&lt;:.*?:(\\d+)&gt;",
-                "<img class=\"emoji\" src=\"https://cdn.discordapp.com/emojis/$1.png\" />");
+            content = Regex.Replace(content, "&lt;(:.*?:)(\\d*)&gt;",
+                "<img class=\"emoji\" title=\"$1\" src=\"https://cdn.discordapp.com/emojis/$2.png\" />");
 
             return content;
         }

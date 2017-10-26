@@ -17,9 +17,14 @@ namespace DiscordChatExporter.Models
 
         public IReadOnlyList<Attachment> Attachments { get; }
 
+        public IReadOnlyList<User> MentionedUsers { get; }
+
+        public IReadOnlyList<Role> MentionedRoles { get; }
+
         public Message(string id, User author,
             DateTime timeStamp, DateTime? editedTimeStamp,
-            string content, IReadOnlyList<Attachment> attachments)
+            string content, IReadOnlyList<Attachment> attachments,
+            IReadOnlyList<User> mentionedUsers, IReadOnlyList<Role> mentionedRoles)
         {
             Id = id;
             Author = author;
@@ -27,6 +32,8 @@ namespace DiscordChatExporter.Models
             EditedTimeStamp = editedTimeStamp;
             Content = content;
             Attachments = attachments;
+            MentionedUsers = mentionedUsers;
+            MentionedRoles = mentionedRoles;
         }
 
         public override string ToString()

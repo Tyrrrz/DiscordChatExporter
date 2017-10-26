@@ -151,6 +151,18 @@ namespace DiscordChatExporter.Services
             return new User(id, discriminator, name, avatarHash);
         }
 
+        private static Role ParseRole(JToken token)
+        {
+            //var id = token.Value<string>("id");
+            //var name = token.Value<string>("name");
+
+            // HACK: temporary hack
+            var id = token.Value<string>();
+            var name = id;
+
+            return new Role(id, name);
+        }
+
         private static Guild ParseGuild(JToken token)
         {
             var id = token.Value<string>("id");
@@ -214,7 +226,12 @@ namespace DiscordChatExporter.Services
                 attachments.Add(attachment);
             }
 
-            return new Message(id, author, timeStamp, editedTimeStamp, content, attachments);
+            // Get mentions
+            var mentionedUsers = token["mentions"].Select(ParseUser).ToArray();
+            var mentionedRoles = token["mention_roles"].Select(ParseRole).ToArray();
+
+            return new Message(id, author, timeStamp, editedTimeStamp, content, attachments,
+                mentionedUsers, mentionedRoles);
         }
     }
 }

@@ -92,6 +92,7 @@
     <Compile Include="Models\ChannelType.cs" />
     <Compile Include="Models\ExportFormat.cs" />
     <Compile Include="Models\Extensions.cs" />
+    <Compile Include="Models\Role.cs" />
     <Compile Include="Services\IMessageGroupService.cs" />
     <Compile Include="Services\MessageGroupService.cs" />
     <Compile Include="ViewModels\ErrorViewModel.cs" />

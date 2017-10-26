@@ -123,3 +123,7 @@ img.emoji {
     width: 24px;
     vertical-align: -.4em;
 }
+
+span.mention {
+    font-weight: 600;
+}

@@ -224,7 +224,7 @@ namespace DiscordChatExporter.Services
 
             // User mentions (<@id>)
             foreach (var mentionedUser in message.MentionedUsers)
-                content = content.Replace($"<@{mentionedUser.Id}>", $"@{mentionedUser}");
+                content = Regex.Replace(content, $"<@!?{mentionedUser.Id}>", $"@{mentionedUser}");
 
             // Role mentions (<@&id>)
             foreach (var mentionedRole in message.MentionedRoles)
@@ -279,7 +279,7 @@ namespace DiscordChatExporter.Services
             // User mentions (<@id>)
             foreach (var mentionedUser in message.MentionedUsers)
             {
-                content = content.Replace($"&lt;@{mentionedUser.Id}&gt;",
+                content = Regex.Replace(content, $"&lt;@!?{mentionedUser.Id}&gt;",
                     $"<span class=\"mention\" title=\"{HtmlEncode(mentionedUser)}\">" +
                     $"@{HtmlEncode(mentionedUser.Name)}" +
                     "</span>");

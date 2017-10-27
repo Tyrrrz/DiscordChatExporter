@@ -21,14 +21,16 @@ DiscordChatExporter can be used to export message history from a [Discord](https
 - Intuitive GUI that displays available guilds and channels
 - Date ranges to limit messages
 - Groups messages by author and time
-- Export to a plain text file
-- Export to an HTML file
+- Exports to a plain text file
+- Exports to an HTML file
   - Dark and light themes
   - User avatars
   - Inline image attachments
   - Full markdown support
   - Automatic links
   - Styled similarly to the app
+- Renders custom emojis
+- Resolves user, role and channel mentions
 
 ## Libraries used
 

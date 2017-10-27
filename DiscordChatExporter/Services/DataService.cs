@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DiscordChatExporter.Exceptions;
 using DiscordChatExporter.Models;
@@ -15,7 +16,8 @@ namespace DiscordChatExporter.Services
         private const string ApiRoot = "https://discordapp.com/api/v6";
 
         private readonly HttpClient _httpClient = new HttpClient();
-        private readonly Dictionary<string, Role> _rolesCache = new Dictionary<string, Role>();
+        private readonly Dictionary<string, Role> _roleCache = new Dictionary<string, Role>();
+        private readonly Dictionary<string, Channel> _channelCache = new Dictionary<string, Channel>();
 
         private async Task<string> GetStringAsync(string url)
         {
@@ -61,7 +63,7 @@ namespace DiscordChatExporter.Services
             {
                 var roles = await GetGuildRolesAsync(token, guild.Id);
                 foreach (var role in roles)
-                    _rolesCache[role.Id] = role;
+                    _roleCache[role.Id] = role;
             }
 
             return guilds;
@@ -92,6 +94,10 @@ namespace DiscordChatExporter.Services
             // Parse
             var channels = JArray.Parse(content).Select(ParseChannel).ToArray();
 
+            // Cache
+            foreach (var channel in channels)
+                _channelCache[channel.Id] = channel;
+
             return channels;
         }
 
@@ -114,7 +120,7 @@ namespace DiscordChatExporter.Services
                 var content = await GetStringAsync(url);
 
                 // Parse
-                var messages = JArray.Parse(content).Select(j => ParseMessage(j, _rolesCache));
+                var messages = JArray.Parse(content).Select(j => ParseMessage(j, _roleCache, _channelCache));
 
                 // Add messages to list
                 string currentMessageId = null;
@@ -213,7 +219,8 @@ namespace DiscordChatExporter.Services
             return new Channel(id, name, type);
         }
 
-        private static Message ParseMessage(JToken token, IDictionary<string, Role> roles)
+        private static Message ParseMessage(JToken token,
+            IDictionary<string, Role> roles, IDictionary<string, Channel> channels)
         {
             // Get basic data
             var id = token.Value<string>("id");
@@ -259,15 +266,25 @@ namespace DiscordChatExporter.Services
                 attachments.Add(attachment);
             }
 
-            // Get mentions
+            // Get user mentions
             var mentionedUsers = token["mentions"].Select(ParseUser).ToArray();
+
+            // Get role mentions
             var mentionedRoles = token["mention_roles"]
                 .Values<string>()
                 .Select(i => roles.GetOrDefault(i) ?? new Role(i, "deleted-role"))
                 .ToArray();
 
+            // Get channel mentions
+            var mentionedChanenls = Regex.Matches(content, "<#(\\d+)>")
+                .Cast<Match>()
+                .Select(m => m.Groups[1].Value)
+                .ExceptBlank()
+                .Select(i => channels.GetOrDefault(i) ?? new Channel(i, "deleted-channel", ChannelType.GuildTextChat))
+                .ToArray();
+
             return new Message(id, author, timeStamp, editedTimeStamp, content, attachments,
-                mentionedUsers, mentionedRoles);
+                mentionedUsers, mentionedRoles, mentionedChanenls);
         }
     }
 }

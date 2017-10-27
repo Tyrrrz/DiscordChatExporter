@@ -230,6 +230,10 @@ namespace DiscordChatExporter.Services
             foreach (var mentionedRole in message.MentionedRoles)
                 content = content.Replace($"<@&{mentionedRole.Id}>", $"@{mentionedRole.Name}");
 
+            // Channel mentions (<#id>)
+            foreach (var mentionedChannel in message.MentionedChannels)
+                content = content.Replace($"<#{mentionedChannel.Id}>", $"#{mentionedChannel.Name}");
+
             // Custom emojis (<:name:id>)
             content = Regex.Replace(content, "<(:.*?:)\\d*>", "$1");
 
@@ -291,6 +295,15 @@ namespace DiscordChatExporter.Services
                 content = content.Replace($"&lt;@&amp;{mentionedRole.Id}&gt;",
                     "<span class=\"mention\">" +
                     $"@{HtmlEncode(mentionedRole.Name)}" +
+                    "</span>");
+            }
+
+            // Channel mentions (<#id>)
+            foreach (var mentionedChannel in message.MentionedChannels)
+            {
+                content = content.Replace($"&lt;#{mentionedChannel.Id}&gt;",
+                    "<span class=\"mention\">" +
+                    $"#{HtmlEncode(mentionedChannel.Name)}" +
                     "</span>");
             }
 

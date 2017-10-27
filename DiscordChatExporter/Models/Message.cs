@@ -21,10 +21,13 @@ namespace DiscordChatExporter.Models
 
         public IReadOnlyList<Role> MentionedRoles { get; }
 
+        public IReadOnlyList<Channel> MentionedChannels { get; }
+
         public Message(string id, User author,
             DateTime timeStamp, DateTime? editedTimeStamp,
             string content, IReadOnlyList<Attachment> attachments,
-            IReadOnlyList<User> mentionedUsers, IReadOnlyList<Role> mentionedRoles)
+            IReadOnlyList<User> mentionedUsers, IReadOnlyList<Role> mentionedRoles,
+            IReadOnlyList<Channel> mentionedChannels)
         {
             Id = id;
             Author = author;
@@ -34,6 +37,7 @@ namespace DiscordChatExporter.Models
             Attachments = attachments;
             MentionedUsers = mentionedUsers;
             MentionedRoles = mentionedRoles;
+            MentionedChannels = mentionedChannels;
         }
 
         public override string ToString()

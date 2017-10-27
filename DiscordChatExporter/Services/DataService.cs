@@ -289,7 +289,7 @@ namespace DiscordChatExporter.Services
                 .Select(i => channels.GetOrDefault(i) ?? new Channel(i, "deleted-channel", ChannelType.GuildTextChat))
                 .ToArray();
 
-            return new Message(id, author, timeStamp, editedTimeStamp, content, attachments,
+            return new Message(id, type, author, timeStamp, editedTimeStamp, content, attachments,
                 mentionedUsers, mentionedRoles, mentionedChanenls);
         }
     }

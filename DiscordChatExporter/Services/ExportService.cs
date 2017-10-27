@@ -249,9 +249,6 @@ namespace DiscordChatExporter.Services
             // Pre inline (`text`)
             content = Regex.Replace(content, "`([^`]+)`", "<span class=\"pre\">$1</span>");
 
-            // URL links
-            content = Regex.Replace(content, "((https?|ftp)://[^\\s/$.?#].[^\\s]*)", "<a href=\"$1\">$1</a>");
-
             // Bold (**text**)
             content = Regex.Replace(content, "\\*\\*([^\\*]*?)\\*\\*", "<b>$1</b>");
 
@@ -269,6 +266,9 @@ namespace DiscordChatExporter.Services
 
             // New lines
             content = content.Replace("\n", "<br />");
+
+            // URL links
+            content = Regex.Replace(content, "((https?|ftp)://[^\\s/$.?#].[^\\s<>]*)", "<a href=\"$1\">$1</a>");
 
             // Meta mentions (@everyone)
             content = content.Replace("@everyone", "<span class=\"mention\">@everyone</span>");

@@ -108,7 +108,7 @@ namespace DiscordChatExporter.Services
 
             // We are going backwards from last message to first
             // collecting everything between them in batches
-            string beforeId = null;
+            var beforeId = to != null ? DateTimeToSnowflake(to.Value) : null;
             while (true)
             {
                 // Form request url
@@ -126,6 +126,14 @@ namespace DiscordChatExporter.Services
                 string currentMessageId = null;
                 foreach (var message in messages)
                 {
+                    // Break when the message is older than from date
+                    if (from != null && message.TimeStamp < from)
+                    {
+                        currentMessageId = null;
+                        break;
+                    }
+
+                    // Add message
                     result.Add(message);
                     currentMessageId = message.Id;
                 }
@@ -134,22 +142,12 @@ namespace DiscordChatExporter.Services
                 if (currentMessageId == null)
                     break;
 
-                // If last message is older than from date - break
-                if (from != null && result.Last().TimeStamp < from)
-                    break;
-
                 // Otherwise offset the next request
                 beforeId = currentMessageId;
             }
 
             // Messages appear newest first, we need to reverse
             result.Reverse();
-
-            // Filter
-            if (from != null)
-                result.RemoveAll(m => m.TimeStamp < from);
-            if (to != null)
-                result.RemoveAll(m => m.TimeStamp > to);
 
             return result;
         }
@@ -171,6 +169,14 @@ namespace DiscordChatExporter.Services
 
     public partial class DataService
     {
+        private static string DateTimeToSnowflake(DateTime dateTime)
+        {
+            const long epoch = 62135596800000;
+            var unixTime = dateTime.ToUniversalTime().Ticks / TimeSpan.TicksPerMillisecond - epoch;
+            var value = ((ulong) unixTime - 1420070400000UL) << 22;
+            return value.ToString();
+        }
+
         private static Guild ParseGuild(JToken token)
         {
             var id = token.Value<string>("id");

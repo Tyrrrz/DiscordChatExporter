@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -224,20 +223,12 @@ namespace DiscordChatExporter.Services
             content = content.Replace("\n", Environment.NewLine);
 
             // User mentions (<@id>)
-            content = Regex.Replace(content, "<@(\\d*)>",
-                m =>
-                {
-                    var mentionedUser = message.MentionedUsers.First(u => u.Id == m.Groups[1].Value);
-                    return $"@{mentionedUser}";
-                });
+            foreach (var mentionedUser in message.MentionedUsers)
+                content = content.Replace($"<@{mentionedUser.Id}>", $"@{mentionedUser}");
 
             // Role mentions (<@&id>)
-            content = Regex.Replace(content, "<@&(\\d*)>",
-                m =>
-                {
-                    var mentionedRole = message.MentionedRoles.First(r => r.Id == m.Groups[1].Value);
-                    return $"@{mentionedRole.Name}";
-                });
+            foreach (var mentionedRole in message.MentionedRoles)
+                content = content.Replace($"<@&{mentionedRole.Id}>", $"@{mentionedRole.Name}");
 
             // Custom emojis (<:name:id>)
             content = Regex.Replace(content, "<(:.*?:)\\d*>", "$1");
@@ -259,8 +250,7 @@ namespace DiscordChatExporter.Services
             content = Regex.Replace(content, "`([^`]+)`", "<span class=\"pre\">$1</span>");
 
             // URL links
-            content = Regex.Replace(content, "((https?|ftp)://[^\\s/$.?#].[^\\s]*)",
-                "<a href=\"$1\">$1</a>");
+            content = Regex.Replace(content, "((https?|ftp)://[^\\s/$.?#].[^\\s]*)", "<a href=\"$1\">$1</a>");
 
             // Bold (**text**)
             content = Regex.Replace(content, "\\*\\*([^\\*]*?)\\*\\*", "<b>$1</b>");
@@ -287,24 +277,22 @@ namespace DiscordChatExporter.Services
             content = content.Replace("@here", "<span class=\"mention\">@here</span>");
 
             // User mentions (<@id>)
-            content = Regex.Replace(content, "&lt;@(\\d*)&gt;",
-                m =>
-                {
-                    var mentionedUser = message.MentionedUsers.First(u => u.Id == m.Groups[1].Value);
-                    return $"<span class=\"mention\" title=\"{HtmlEncode(mentionedUser)}\">" +
-                           $"@{HtmlEncode(mentionedUser.Name)}" +
-                           "</span>";
-                });
+            foreach (var mentionedUser in message.MentionedUsers)
+            {
+                content = content.Replace($"&lt;@{mentionedUser.Id}&gt;",
+                    $"<span class=\"mention\" title=\"{HtmlEncode(mentionedUser)}\">" +
+                    $"@{HtmlEncode(mentionedUser.Name)}" +
+                    "</span>");
+            }
 
             // Role mentions (<@&id>)
-            content = Regex.Replace(content, "&lt;@&amp;(\\d*)&gt;",
-                m =>
-                {
-                    var mentionedRole = message.MentionedRoles.First(r => r.Id == m.Groups[1].Value);
-                    return "<span class=\"mention\">" +
-                           $"@{HtmlEncode(mentionedRole.Name)}" +
-                           "</span>";
-                });
+            foreach (var mentionedRole in message.MentionedRoles)
+            {
+                content = content.Replace($"&lt;@&amp;{mentionedRole.Id}&gt;",
+                    "<span class=\"mention\">" +
+                    $"@{HtmlEncode(mentionedRole.Name)}" +
+                    "</span>");
+            }
 
             // Custom emojis (<:name:id>)
             content = Regex.Replace(content, "&lt;(:.*?:)(\\d*)&gt;",

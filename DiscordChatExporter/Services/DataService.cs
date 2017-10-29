@@ -19,6 +19,123 @@ namespace DiscordChatExporter.Services
         private readonly Dictionary<string, Role> _roleCache = new Dictionary<string, Role>();
         private readonly Dictionary<string, Channel> _channelCache = new Dictionary<string, Channel>();
 
+        private User ParseUser(JToken token)
+        {
+            var id = token.Value<string>("id");
+            var discriminator = token.Value<int>("discriminator");
+            var name = token.Value<string>("username");
+            var avatarHash = token.Value<string>("avatar");
+
+            return new User(id, discriminator, name, avatarHash);
+        }
+
+        private Role ParseRole(JToken token)
+        {
+            var id = token.Value<string>("id");
+            var name = token.Value<string>("name");
+
+            return new Role(id, name);
+        }
+
+        private Guild ParseGuild(JToken token)
+        {
+            var id = token.Value<string>("id");
+            var name = token.Value<string>("name");
+            var iconHash = token.Value<string>("icon");
+            var roles = token["roles"].Select(ParseRole).ToArray();
+
+            return new Guild(id, name, iconHash, roles);
+        }
+
+        private Channel ParseChannel(JToken token)
+        {
+            // Get basic data
+            var id = token.Value<string>("id");
+            var type = (ChannelType) token.Value<int>("type");
+
+            // Extract name based on type
+            string name;
+            if (type.IsEither(ChannelType.DirectTextChat, ChannelType.DirectGroupTextChat))
+            {
+                var recipients = token["recipients"].Select(ParseUser);
+                name = recipients.Select(r => r.Name).JoinToString(", ");
+            }
+            else
+            {
+                name = token.Value<string>("name");
+            }
+
+            return new Channel(id, name, type);
+        }
+
+        private Message ParseMessage(JToken token)
+        {
+            // Get basic data
+            var id = token.Value<string>("id");
+            var timeStamp = token.Value<DateTime>("timestamp");
+            var editedTimeStamp = token.Value<DateTime?>("edited_timestamp");
+            var content = token.Value<string>("content");
+            var type = (MessageType) token.Value<int>("type");
+
+            // Workarounds for non-default types
+            if (type == MessageType.RecipientAdd)
+                content = "Added a recipient.";
+            else if (type == MessageType.RecipientRemove)
+                content = "Removed a recipient.";
+            else if (type == MessageType.Call)
+                content = "Started a call.";
+            else if (type == MessageType.ChannelNameChange)
+                content = "Changed the channel name.";
+            else if (type == MessageType.ChannelIconChange)
+                content = "Changed the channel icon.";
+            else if (type == MessageType.ChannelPinnedMessage)
+                content = "Pinned a message.";
+            else if (type == MessageType.GuildMemberJoin)
+                content = "Joined the server.";
+
+            // Get author
+            var author = ParseUser(token["author"]);
+
+            // Get attachment
+            var attachments = new List<Attachment>();
+            foreach (var attachmentJson in token["attachments"].EmptyIfNull())
+            {
+                var attachmentId = attachmentJson.Value<string>("id");
+                var attachmentUrl = attachmentJson.Value<string>("url");
+                var attachmentType = attachmentJson["width"] != null
+                    ? AttachmentType.Image
+                    : AttachmentType.Other;
+                var attachmentFileName = attachmentJson.Value<string>("filename");
+                var attachmentFileSize = attachmentJson.Value<long>("size");
+
+                var attachment = new Attachment(
+                    attachmentId, attachmentType, attachmentUrl,
+                    attachmentFileName, attachmentFileSize);
+                attachments.Add(attachment);
+            }
+
+            // Get user mentions
+            var mentionedUsers = token["mentions"].Select(ParseUser).ToArray();
+
+            // Get role mentions
+            var mentionedRoles = token["mention_roles"]
+                .Values<string>()
+                .Select(i => _roleCache.GetOrDefault(i) ?? new Role(i, "deleted-role"))
+                .ToArray();
+
+            // Get channel mentions
+            var mentionedChannels = Regex.Matches(content, "<#(\\d+)>")
+                .Cast<Match>()
+                .Select(m => m.Groups[1].Value)
+                .ExceptBlank()
+                .Select(i => _channelCache.GetOrDefault(i) ??
+                             new Channel(i, "deleted-channel", ChannelType.GuildTextChat))
+                .ToArray();
+
+            return new Message(id, type, author, timeStamp, editedTimeStamp, content, attachments,
+                mentionedUsers, mentionedRoles, mentionedChannels);
+        }
+
         private async Task<string> GetStringAsync(string url)
         {
             using (var response = await _httpClient.GetAsync(url))
@@ -33,7 +150,7 @@ namespace DiscordChatExporter.Services
             }
         }
 
-        private async Task<IReadOnlyList<Role>> GetGuildRolesAsync(string token, string guildId)
+        public async Task<Guild> GetGuildAsync(string token, string guildId)
         {
             // Form request url
             var url = $"{ApiRoot}/guilds/{guildId}?token={token}";
@@ -42,12 +159,34 @@ namespace DiscordChatExporter.Services
             var content = await GetStringAsync(url);
 
             // Parse
-            var roles = JToken.Parse(content)["roles"].Select(ParseRole).ToArray();
+            var guild = ParseGuild(JToken.Parse(content));
 
-            return roles;
+            // Add roles to cache
+            foreach (var role in guild.Roles)
+                _roleCache[role.Id] = role;
+
+            return guild;
         }
 
-        public async Task<IReadOnlyList<Guild>> GetGuildsAsync(string token)
+        public async Task<IReadOnlyList<Channel>> GetGuildChannelsAsync(string token, string guildId)
+        {
+            // Form request url
+            var url = $"{ApiRoot}/guilds/{guildId}/channels?token={token}";
+
+            // Get response
+            var content = await GetStringAsync(url);
+
+            // Parse
+            var channels = JArray.Parse(content).Select(ParseChannel).ToArray();
+
+            // Add channels to cache
+            foreach (var channel in channels)
+                _channelCache[channel.Id] = channel;
+
+            return channels;
+        }
+
+        public async Task<IReadOnlyList<Guild>> GetUserGuildsAsync(string token)
         {
             // Form request url
             var url = $"{ApiRoot}/users/@me/guilds?token={token}&limit=100";
@@ -55,15 +194,15 @@ namespace DiscordChatExporter.Services
             // Get response
             var content = await GetStringAsync(url);
 
-            // Parse
-            var guilds = JArray.Parse(content).Select(ParseGuild).ToArray();
+            // Parse IDs
+            var guildIds = JArray.Parse(content).Select(t => t.Value<string>("id"));
 
-            // HACK: also get roles for all of them
-            foreach (var guild in guilds)
+            // Get full guild infos
+            var guilds = new List<Guild>();
+            foreach (var guildId in guildIds)
             {
-                var roles = await GetGuildRolesAsync(token, guild.Id);
-                foreach (var role in roles)
-                    _roleCache[role.Id] = role;
+                var guild = await GetGuildAsync(token, guildId);
+                guilds.Add(guild);
             }
 
             return guilds;
@@ -79,24 +218,6 @@ namespace DiscordChatExporter.Services
 
             // Parse
             var channels = JArray.Parse(content).Select(ParseChannel).ToArray();
-
-            return channels;
-        }
-
-        public async Task<IReadOnlyList<Channel>> GetGuildChannelsAsync(string token, string guildId)
-        {
-            // Form request url
-            var url = $"{ApiRoot}/guilds/{guildId}/channels?token={token}";
-
-            // Get response
-            var content = await GetStringAsync(url);
-
-            // Parse
-            var channels = JArray.Parse(content).Select(ParseChannel).ToArray();
-
-            // Cache
-            foreach (var channel in channels)
-                _channelCache[channel.Id] = channel;
 
             return channels;
         }
@@ -120,7 +241,7 @@ namespace DiscordChatExporter.Services
                 var content = await GetStringAsync(url);
 
                 // Parse
-                var messages = JArray.Parse(content).Select(j => ParseMessage(j, _roleCache, _channelCache));
+                var messages = JArray.Parse(content).Select(ParseMessage);
 
                 // Add messages to list
                 string currentMessageId = null;
@@ -175,122 +296,6 @@ namespace DiscordChatExporter.Services
             var unixTime = dateTime.ToUniversalTime().Ticks / TimeSpan.TicksPerMillisecond - epoch;
             var value = ((ulong) unixTime - 1420070400000UL) << 22;
             return value.ToString();
-        }
-
-        private static Guild ParseGuild(JToken token)
-        {
-            var id = token.Value<string>("id");
-            var name = token.Value<string>("name");
-            var iconHash = token.Value<string>("icon");
-
-            return new Guild(id, name, iconHash);
-        }
-
-        private static User ParseUser(JToken token)
-        {
-            var id = token.Value<string>("id");
-            var discriminator = token.Value<int>("discriminator");
-            var name = token.Value<string>("username");
-            var avatarHash = token.Value<string>("avatar");
-
-            return new User(id, discriminator, name, avatarHash);
-        }
-
-        private static Role ParseRole(JToken token)
-        {
-            var id = token.Value<string>("id");
-            var name = token.Value<string>("name");
-
-            return new Role(id, name);
-        }
-
-        private static Channel ParseChannel(JToken token)
-        {
-            // Get basic data
-            var id = token.Value<string>("id");
-            var type = (ChannelType) token.Value<int>("type");
-
-            // Extract name based on type
-            string name;
-            if (type.IsEither(ChannelType.DirectTextChat, ChannelType.DirectGroupTextChat))
-            {
-                var recipients = token["recipients"].Select(ParseUser);
-                name = recipients.Select(r => r.Name).JoinToString(", ");
-            }
-            else
-            {
-                name = token.Value<string>("name");
-            }
-
-            return new Channel(id, name, type);
-        }
-
-        private static Message ParseMessage(JToken token,
-            IDictionary<string, Role> roles, IDictionary<string, Channel> channels)
-        {
-            // Get basic data
-            var id = token.Value<string>("id");
-            var timeStamp = token.Value<DateTime>("timestamp");
-            var editedTimeStamp = token.Value<DateTime?>("edited_timestamp");
-            var content = token.Value<string>("content");
-            var type = (MessageType) token.Value<int>("type");
-
-            // Workarounds for non-default types
-            if (type == MessageType.RecipientAdd)
-                content = "Added a recipient.";
-            else if (type == MessageType.RecipientRemove)
-                content = "Removed a recipient.";
-            else if (type == MessageType.Call)
-                content = "Started a call.";
-            else if (type == MessageType.ChannelNameChange)
-                content = "Changed the channel name.";
-            else if (type == MessageType.ChannelIconChange)
-                content = "Changed the channel icon.";
-            else if (type == MessageType.ChannelPinnedMessage)
-                content = "Pinned a message.";
-            else if (type == MessageType.GuildMemberJoin)
-                content = "Joined the server.";
-
-            // Get author
-            var author = ParseUser(token["author"]);
-
-            // Get attachment
-            var attachments = new List<Attachment>();
-            foreach (var attachmentJson in token["attachments"].EmptyIfNull())
-            {
-                var attachmentId = attachmentJson.Value<string>("id");
-                var attachmentUrl = attachmentJson.Value<string>("url");
-                var attachmentType = attachmentJson["width"] != null
-                    ? AttachmentType.Image
-                    : AttachmentType.Other;
-                var attachmentFileName = attachmentJson.Value<string>("filename");
-                var attachmentFileSize = attachmentJson.Value<long>("size");
-
-                var attachment = new Attachment(
-                    attachmentId, attachmentType, attachmentUrl,
-                    attachmentFileName, attachmentFileSize);
-                attachments.Add(attachment);
-            }
-
-            // Get user mentions
-            var mentionedUsers = token["mentions"].Select(ParseUser).ToArray();
-
-            // Get role mentions
-            var mentionedRoles = token["mention_roles"]
-                .Values<string>()
-                .Select(i => roles.GetOrDefault(i) ?? new Role(i, "deleted-role"))
-                .ToArray();
-
-            // Get channel mentions
-            var mentionedChanenls = Regex.Matches(content, "<#(\\d+)>")
-                .Cast<Match>()
-                .Select(m => m.Groups[1].Value)
-                .ExceptBlank()
-                .Select(i => channels.GetOrDefault(i) ?? new Channel(i, "deleted-channel", ChannelType.GuildTextChat))
-                .ToArray();
-
-            return new Message(id, type, author, timeStamp, editedTimeStamp, content, attachments,
-                mentionedUsers, mentionedRoles, mentionedChanenls);
         }
     }
 }

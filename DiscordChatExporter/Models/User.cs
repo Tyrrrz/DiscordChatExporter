@@ -10,6 +10,8 @@ namespace DiscordChatExporter.Models
 
         public string Name { get; }
 
+        public string FullyQualifiedName => $"{Name}#{Discriminator:0000}";
+
         public string AvatarHash { get; }
 
         public string AvatarUrl => AvatarHash.IsNotBlank()
@@ -26,7 +28,7 @@ namespace DiscordChatExporter.Models
 
         public override string ToString()
         {
-            return $"{Name}#{Discriminator}";
+            return FullyQualifiedName;
         }
     }
 }

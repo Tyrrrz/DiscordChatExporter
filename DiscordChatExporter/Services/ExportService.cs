@@ -28,8 +28,9 @@ namespace DiscordChatExporter.Services
 
                 // Guild and channel info
                 await writer.WriteLineAsync('='.Repeat(48));
-                await writer.WriteLineAsync($"Guild: {log.Guild}");
-                await writer.WriteLineAsync($"Channel: {log.Channel}");
+                await writer.WriteLineAsync($"Guild: {log.Guild.Name}");
+                await writer.WriteLineAsync($"Channel: {log.Channel.Name}");
+                await writer.WriteLineAsync($"Topic: {log.Channel.Topic}");
                 await writer.WriteLineAsync($"Messages: {log.TotalMessageCount:N0}");
                 await writer.WriteLineAsync('='.Repeat(48));
                 await writer.WriteLineAsync();
@@ -38,7 +39,7 @@ namespace DiscordChatExporter.Services
                 foreach (var group in log.MessageGroups)
                 {
                     var timeStampFormatted = group.TimeStamp.ToString(_settingsService.DateFormat);
-                    await writer.WriteLineAsync($"{group.Author}  [{timeStampFormatted}]");
+                    await writer.WriteLineAsync($"{group.Author.FullyQualifiedName}  [{timeStampFormatted}]");
 
                     // Messages
                     foreach (var message in group.Messages)
@@ -75,7 +76,7 @@ namespace DiscordChatExporter.Services
 
                 // HEAD
                 await writer.WriteLineAsync("<head>");
-                await writer.WriteLineAsync($"<title>{log.Guild} - {log.Channel}</title>");
+                await writer.WriteLineAsync($"<title>{log.Guild.Name} - {log.Channel.Name}</title>");
                 await writer.WriteLineAsync("<meta charset=\"utf-8\" />");
                 await writer.WriteLineAsync("<meta name=\"viewport\" content=\"width=device-width\" />");
                 await writer.WriteLineAsync($"<style>{css}</style>");
@@ -90,9 +91,11 @@ namespace DiscordChatExporter.Services
                 await writer.WriteLineAsync($"<img class=\"guild-icon\" src=\"{log.Guild.IconUrl}\" />");
                 await writer.WriteLineAsync("</div>"); // info-left
                 await writer.WriteLineAsync("<div class=\"info-right\">");
-                await writer.WriteLineAsync($"<div class=\"guild-name\">{log.Guild}</div>");
-                await writer.WriteLineAsync($"<div class=\"channel-name\">{log.Channel}</div>");
-                await writer.WriteLineAsync($"<div class=\"misc\">{log.TotalMessageCount:N0} messages</div>");
+                await writer.WriteLineAsync($"<div class=\"guild-name\">{log.Guild.Name}</div>");
+                await writer.WriteLineAsync($"<div class=\"channel-name\">{log.Channel.Name}</div>");
+                await writer.WriteLineAsync($"<div class=\"channel-topic\">{log.Channel.Topic}</div>");
+                await writer.WriteLineAsync(
+                    $"<div class=\"channel-messagecount\">{log.TotalMessageCount:N0} messages</div>");
                 await writer.WriteLineAsync("</div>"); // info-right
                 await writer.WriteLineAsync("</div>"); // info
 
@@ -106,7 +109,8 @@ namespace DiscordChatExporter.Services
                     await writer.WriteLineAsync("</div>");
 
                     await writer.WriteLineAsync("<div class=\"msg-right\">");
-                    await writer.WriteAsync($"<span class=\"msg-user\" title=\"{HtmlEncode(group.Author)}\">");
+                    await writer.WriteAsync(
+                        $"<span class=\"msg-user\" title=\"{HtmlEncode(group.Author.FullyQualifiedName)}\">");
                     await writer.WriteAsync(HtmlEncode(group.Author.Name));
                     await writer.WriteLineAsync("</span>");
                     var timeStampFormatted = HtmlEncode(group.TimeStamp.ToString(_settingsService.DateFormat));

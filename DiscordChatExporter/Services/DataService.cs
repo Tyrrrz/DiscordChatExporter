@@ -52,6 +52,7 @@ namespace DiscordChatExporter.Services
             // Get basic data
             var id = token.Value<string>("id");
             var type = (ChannelType) token.Value<int>("type");
+            var topic = token.Value<string>("topic");
 
             // Extract name based on type
             string name;
@@ -65,7 +66,7 @@ namespace DiscordChatExporter.Services
                 name = token.Value<string>("name");
             }
 
-            return new Channel(id, name, type);
+            return new Channel(id, name, topic, type);
         }
 
         private Message ParseMessage(JToken token)
@@ -129,7 +130,7 @@ namespace DiscordChatExporter.Services
                 .Select(m => m.Groups[1].Value)
                 .ExceptBlank()
                 .Select(i => _channelCache.GetOrDefault(i) ??
-                             new Channel(i, "deleted-channel", ChannelType.GuildTextChat))
+                             new Channel(i, "deleted-channel", null, ChannelType.GuildTextChat))
                 .ToArray();
 
             return new Message(id, type, author, timeStamp, editedTimeStamp, content, attachments,

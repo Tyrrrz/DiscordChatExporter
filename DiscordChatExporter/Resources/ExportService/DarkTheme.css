@@ -10,7 +10,9 @@ a {
     text-decoration: none;
 }
 
-a:hover { text-decoration: underline; }
+a:hover {
+     text-decoration: underline;
+}
 
 div.pre {
     background-color: #2F3136;
@@ -37,7 +39,9 @@ div#info {
     max-width: 100%;
 }
 
-div#log { max-width: 100%; }
+div#log {
+     max-width: 100%;
+}
 
 img.guild-icon {
     max-height: 64px;
@@ -51,15 +55,22 @@ div.info-right {
 
 div.guild-name {
     color: #FFFFFF;
-    font-size: 1.4rem;
+    font-size: 1.4em;
 }
 
 div.channel-name {
     color: #FFFFFF;
-    font-size: 1.2rem;
+    font-size: 1.2em;
 }
 
-div.misc { margin-top: 2px; }
+div.channel-topic {
+    margin-top: 2px;
+    color: #FFFFFF;
+}
+
+div.channel-messagecount {
+    margin-top: 2px;
+}
 
 div.msg {
     border-top: 1px solid rgba(255, 255, 255, 0.04);
@@ -88,23 +99,23 @@ div.msg-right {
 
 span.msg-user {
     color: #FFFFFF;
-    font-size: 1rem;
+    font-size: 1em;
 }
 
 span.msg-date {
     color: rgba(255, 255, 255, 0.2);
-    font-size: .75rem;
+    font-size: .75em;
     margin-left: 5px;
 }
 
 span.msg-edited {
     color: rgba(255, 255, 255, 0.2);
-    font-size: .8rem;
+    font-size: .8em;
     margin-left: 5px;
 }
 
 div.msg-content {
-    font-size: .9375rem;
+    font-size: .9375em;
     padding-top: 5px;
     word-break: break-all;
 }

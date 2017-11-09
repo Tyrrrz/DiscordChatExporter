@@ -121,7 +121,7 @@ namespace DiscordChatExporter.Services
             // Get role mentions
             var mentionedRoles = token["mention_roles"]
                 .Values<string>()
-                .Select(i => _roleCache.GetOrDefault(i) ?? new Role(i, "deleted-role"))
+                .Select(i => _roleCache.GetOrDefault(i) ?? Role.CreateDeletedRole(id))
                 .ToArray();
 
             // Get channel mentions
@@ -129,8 +129,7 @@ namespace DiscordChatExporter.Services
                 .Cast<Match>()
                 .Select(m => m.Groups[1].Value)
                 .ExceptBlank()
-                .Select(i => _channelCache.GetOrDefault(i) ??
-                             new Channel(i, "deleted-channel", null, ChannelType.GuildTextChat))
+                .Select(i => _channelCache.GetOrDefault(i) ?? Channel.CreateDeletedChannel(id))
                 .ToArray();
 
             return new Message(id, type, author, timeStamp, editedTimeStamp, content, attachments,

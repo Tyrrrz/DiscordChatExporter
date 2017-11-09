@@ -1,6 +1,6 @@
 ﻿namespace DiscordChatExporter.Models
 {
-    public class Role
+    public partial class Role
     {
         public string Id { get; }
 
@@ -15,6 +15,14 @@
         public override string ToString()
         {
             return Name;
+        }
+    }
+
+    public partial class Role
+    {
+        public static Role CreateDeletedRole(string id)
+        {
+            return new Role(id, "deleted-role");
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace DiscordChatExporter.Models
 {
-    public class Channel
+    public partial class Channel
     {
         public string Id { get; }
 
@@ -21,6 +21,14 @@
         public override string ToString()
         {
             return Name;
+        }
+    }
+
+    public partial class Channel
+    {
+        public static Channel CreateDeletedChannel(string id)
+        {
+            return new Channel(id, "deleted-channel", null, ChannelType.GuildTextChat);
         }
     }
 }

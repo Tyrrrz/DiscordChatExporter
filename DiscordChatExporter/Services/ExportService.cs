@@ -188,7 +188,7 @@ namespace DiscordChatExporter.Services
                 return ExportAsHtmlAsync(filePath, log, css);
             }
 
-            throw new NotImplementedException();
+            throw new ArgumentOutOfRangeException(nameof(format));
         }
     }
 

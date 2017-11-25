@@ -35,6 +35,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>..\favicon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AmmySidekick, Version=1.0.0.0, Culture=neutral, PublicKeyToken=7c1296d24569a67d, processorArchitecture=MSIL">
       <HintPath>..\packages\Ammy.WPF.1.2.87\lib\net40\AmmySidekick.dll</HintPath>
@@ -199,6 +202,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\ExportService\DarkTheme.css" />
     <EmbeddedResource Include="Resources\ExportService\LightTheme.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="..\favicon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Ammy.1.2.87\build\Ammy.targets" Condition="Exists('..\packages\Ammy.1.2.87\build\Ammy.targets')" />

@@ -1,10 +1,8 @@
-# This config ensures the following:
-# - When Alexey Golub commits "Update version", deploys to GitHub releases from master
-
 version: '{build}'
 
 image: Visual Studio 2017
 configuration: Release
+skip_tags: true
 
 before_build:
 - ps: nuget restore

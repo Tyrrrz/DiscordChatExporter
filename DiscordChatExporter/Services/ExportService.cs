@@ -226,7 +226,7 @@ namespace DiscordChatExporter.Services
             // New lines
             content = content.Replace("\n", Environment.NewLine);
 
-            // User mentions (<@id>)
+            // User mentions (<@id> and <@!id>)
             foreach (var mentionedUser in message.MentionedUsers)
                 content = Regex.Replace(content, $"<@!?{mentionedUser.Id}>", $"@{mentionedUser}");
 
@@ -284,7 +284,7 @@ namespace DiscordChatExporter.Services
             // Meta mentions (@here)
             content = content.Replace("@here", "<span class=\"mention\">@here</span>");
 
-            // User mentions (<@id>)
+            // User mentions (<@id> and <@!id>)
             foreach (var mentionedUser in message.MentionedUsers)
             {
                 content = Regex.Replace(content, $"&lt;@!?{mentionedUser.Id}&gt;",

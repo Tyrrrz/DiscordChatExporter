@@ -2,7 +2,6 @@ version: '{build}'
 
 image: Visual Studio 2017
 configuration: Release
-skip_tags: true
 
 before_build:
 - ps: nuget restore
@@ -19,13 +18,10 @@ artifacts:
 
 deploy:
 - provider: GitHub
-  tag: APPVEYOR
-  release: APPVEYOR
   auth_token:
     secure: sjQHWRw29AMiVMn3MtidtWnAzAf1mJ+mkJ/7h1B9TIAHhkFrqwMK7LtXV+uNJ9AO
   artifact: DiscordChatExporter.zip
   draft: true
   on:
     branch: master
-    APPVEYOR_REPO_COMMIT_MESSAGE: Update version
-    APPVEYOR_REPO_COMMIT_AUTHOR: Alexey Golub
+    appveyor_repo_tag: true

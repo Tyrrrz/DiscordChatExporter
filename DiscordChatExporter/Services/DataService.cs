@@ -21,27 +21,27 @@ namespace DiscordChatExporter.Services
 
         private User ParseUser(JToken token)
         {
-            var id = token.Value<string>("id");
-            var discriminator = token.Value<int>("discriminator");
-            var name = token.Value<string>("username");
-            var avatarHash = token.Value<string>("avatar");
+            var id = token["id"].Value<string>();
+            var discriminator = token["discriminator"].Value<int>();
+            var name = token["username"].Value<string>();
+            var avatarHash = token["avatar"].Value<string>();
 
             return new User(id, discriminator, name, avatarHash);
         }
 
         private Role ParseRole(JToken token)
         {
-            var id = token.Value<string>("id");
-            var name = token.Value<string>("name");
+            var id = token["id"].Value<string>();
+            var name = token["name"].Value<string>();
 
             return new Role(id, name);
         }
 
         private Guild ParseGuild(JToken token)
         {
-            var id = token.Value<string>("id");
-            var name = token.Value<string>("name");
-            var iconHash = token.Value<string>("icon");
+            var id = token["id"].Value<string>();
+            var name = token["name"].Value<string>();
+            var iconHash = token["icon"].Value<string>();
             var roles = token["roles"].Select(ParseRole).ToArray();
 
             return new Guild(id, name, iconHash, roles);
@@ -50,9 +50,9 @@ namespace DiscordChatExporter.Services
         private Channel ParseChannel(JToken token)
         {
             // Get basic data
-            var id = token.Value<string>("id");
-            var type = (ChannelType) token.Value<int>("type");
-            var topic = token.Value<string>("topic");
+            var id = token["id"].Value<string>();
+            var type = (ChannelType) token["type"].Value<int>();
+            var topic = token["topic"].Value<string>();
 
             // Extract name based on type
             string name;
@@ -63,7 +63,7 @@ namespace DiscordChatExporter.Services
             }
             else
             {
-                name = token.Value<string>("name");
+                name = token["name"].Value<string>();
             }
 
             return new Channel(id, name, topic, type);
@@ -72,11 +72,11 @@ namespace DiscordChatExporter.Services
         private Message ParseMessage(JToken token)
         {
             // Get basic data
-            var id = token.Value<string>("id");
-            var timeStamp = token.Value<DateTime>("timestamp");
-            var editedTimeStamp = token.Value<DateTime?>("edited_timestamp");
-            var content = token.Value<string>("content");
-            var type = (MessageType) token.Value<int>("type");
+            var id = token["id"].Value<string>();
+            var timeStamp = token["timestamp"].Value<DateTime>();
+            var editedTimeStamp = token["edited_timestamp"].Value<DateTime?>();
+            var content = token["content"].Value<string>();
+            var type = (MessageType) token["type"].Value<int>();
 
             // Workarounds for non-default types
             if (type == MessageType.RecipientAdd)
@@ -101,13 +101,13 @@ namespace DiscordChatExporter.Services
             var attachments = new List<Attachment>();
             foreach (var attachmentJson in token["attachments"].EmptyIfNull())
             {
-                var attachmentId = attachmentJson.Value<string>("id");
-                var attachmentUrl = attachmentJson.Value<string>("url");
+                var attachmentId = attachmentJson["id"].Value<string>();
+                var attachmentUrl = attachmentJson["url"].Value<string>();
                 var attachmentType = attachmentJson["width"] != null
                     ? AttachmentType.Image
                     : AttachmentType.Other;
-                var attachmentFileName = attachmentJson.Value<string>("filename");
-                var attachmentFileSize = attachmentJson.Value<long>("size");
+                var attachmentFileName = attachmentJson["filename"].Value<string>();
+                var attachmentFileSize = attachmentJson["size"].Value<long>();
 
                 var attachment = new Attachment(
                     attachmentId, attachmentType, attachmentUrl,
@@ -195,7 +195,7 @@ namespace DiscordChatExporter.Services
             var content = await GetStringAsync(url);
 
             // Parse IDs
-            var guildIds = JArray.Parse(content).Select(t => t.Value<string>("id"));
+            var guildIds = JArray.Parse(content).Select(t => t["id"].Value<string>());
 
             // Get full guild infos
             var guilds = new List<Guild>();

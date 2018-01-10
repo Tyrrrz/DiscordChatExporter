@@ -42,6 +42,9 @@
     <Reference Include="AmmySidekick, Version=1.0.0.0, Culture=neutral, PublicKeyToken=7c1296d24569a67d, processorArchitecture=MSIL">
       <HintPath>..\packages\Ammy.WPF.1.2.87\lib\net40\AmmySidekick.dll</HintPath>
     </Reference>
+    <Reference Include="FluentCommandLineParser, Version=1.4.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentCommandLineParser.1.4.3\lib\net35\FluentCommandLineParser.dll</HintPath>
+    </Reference>
     <Reference Include="GalaSoft.MvvmLight, Version=5.3.0.19026, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
     </Reference>
@@ -84,6 +87,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cli.cs" />
     <Compile Include="Exceptions\HttpErrorStatusCodeException.cs" />
     <Compile Include="Messages\ShowErrorMessage.cs" />
     <Compile Include="Messages\ShowExportDoneMessage.cs" />
@@ -99,8 +103,10 @@
     <Compile Include="Models\MessageType.cs" />
     <Compile Include="Services\IMessageGroupService.cs" />
     <Compile Include="Services\MessageGroupService.cs" />
+    <Compile Include="ViewModels\CliViewModel.cs" />
     <Compile Include="ViewModels\ErrorViewModel.cs" />
     <Compile Include="ViewModels\ExportSetupViewModel.cs" />
+    <Compile Include="ViewModels\ICliViewModel.cs" />
     <Compile Include="ViewModels\IErrorViewModel.cs" />
     <Compile Include="ViewModels\IExportSetupViewModel.cs" />
     <Compile Include="ViewModels\ISettingsViewModel.cs" />

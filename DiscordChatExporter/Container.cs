@@ -7,13 +7,26 @@ namespace DiscordChatExporter
 {
     public class Container
     {
-        public static void Init()
+        public ICliViewModel CliViewModel => Resolve<ICliViewModel>();
+        public IErrorViewModel ErrorViewModel => Resolve<IErrorViewModel>();
+        public IExportDoneViewModel ExportDoneViewModel => Resolve<IExportDoneViewModel>();
+        public IExportSetupViewModel ExportSetupViewModel => Resolve<IExportSetupViewModel>();
+        public IMainViewModel MainViewModel => Resolve<IMainViewModel>();
+        public ISettingsViewModel SettingsViewModel => Resolve<ISettingsViewModel>();
+
+        private T Resolve<T>(string key = null)
+        {
+            return ServiceLocator.Current.GetInstance<T>(key);
+        }
+
+        public void Init()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
+            SimpleIoc.Default.Reset();
 
             // Settings
             SimpleIoc.Default.Register<ISettingsService, SettingsService>();
-            ServiceLocator.Current.GetInstance<ISettingsService>().Load();
+            Resolve<ISettingsService>().Load();
 
             // Services
             SimpleIoc.Default.Register<IDataService, DataService>();
@@ -28,16 +41,10 @@ namespace DiscordChatExporter
             SimpleIoc.Default.Register<ISettingsViewModel, SettingsViewModel>(true);
         }
 
-        public static void Cleanup()
+        public void Cleanup()
         {
             // Settings
             ServiceLocator.Current.GetInstance<ISettingsService>().Save();
         }
-
-        public IErrorViewModel ErrorViewModel => ServiceLocator.Current.GetInstance<IErrorViewModel>();
-        public IExportDoneViewModel ExportDoneViewModel => ServiceLocator.Current.GetInstance<IExportDoneViewModel>();
-        public IExportSetupViewModel ExportSetupViewModel => ServiceLocator.Current.GetInstance<IExportSetupViewModel>();
-        public IMainViewModel MainViewModel => ServiceLocator.Current.GetInstance<IMainViewModel>();
-        public ISettingsViewModel SettingsViewModel => ServiceLocator.Current.GetInstance<ISettingsViewModel>();
     }
 }

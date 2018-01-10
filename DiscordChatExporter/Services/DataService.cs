@@ -52,7 +52,7 @@ namespace DiscordChatExporter.Services
             // Get basic data
             var id = token["id"].Value<string>();
             var type = (ChannelType) token["type"].Value<int>();
-            var topic = token["topic"].Value<string>();
+            var topic = token["topic"]?.Value<string>();
 
             // Extract name based on type
             string name;
@@ -74,7 +74,7 @@ namespace DiscordChatExporter.Services
             // Get basic data
             var id = token["id"].Value<string>();
             var timeStamp = token["timestamp"].Value<DateTime>();
-            var editedTimeStamp = token["edited_timestamp"].Value<DateTime?>();
+            var editedTimeStamp = token["edited_timestamp"]?.Value<DateTime?>();
             var content = token["content"].Value<string>();
             var type = (MessageType) token["type"].Value<int>();
 

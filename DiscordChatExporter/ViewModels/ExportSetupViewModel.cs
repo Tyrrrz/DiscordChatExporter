@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using DiscordChatExporter.Core.Models;
+using DiscordChatExporter.Core.Services;
 using DiscordChatExporter.Messages;
-using DiscordChatExporter.Models;
-using DiscordChatExporter.Services;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using Tyrrrz.Extensions;

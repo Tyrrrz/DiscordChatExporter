@@ -1,5 +1,5 @@
 ﻿using System;
-using DiscordChatExporter.Models;
+using DiscordChatExporter.Core.Models;
 
 namespace DiscordChatExporter.Messages
 {

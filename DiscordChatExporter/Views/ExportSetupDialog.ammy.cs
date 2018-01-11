@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-using DiscordChatExporter.Models;
+using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.ViewModels;
 using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using DiscordChatExporter.Models;
+using DiscordChatExporter.Core.Models;
 using GalaSoft.MvvmLight.CommandWpf;
 
 namespace DiscordChatExporter.ViewModels

@@ -1,4 +1,4 @@
-﻿using DiscordChatExporter.Models
+﻿using DiscordChatExporter.Core.Models
 using MaterialDesignThemes.Wpf
 
 UserControl "DiscordChatExporter.Views.ExportSetupDialog" {

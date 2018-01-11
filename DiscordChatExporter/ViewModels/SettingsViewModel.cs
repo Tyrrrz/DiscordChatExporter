@@ -1,4 +1,4 @@
-﻿using DiscordChatExporter.Services;
+﻿using DiscordChatExporter.Core.Services;
 using GalaSoft.MvvmLight;
 using Tyrrrz.Extensions;
 

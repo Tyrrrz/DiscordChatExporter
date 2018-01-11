@@ -7,6 +7,8 @@ namespace DiscordChatExporter.Core.Models
     {
         public string Id { get; }
 
+        public string ChannelId { get; }
+
         public MessageType Type { get; }
 
         public User Author { get; }
@@ -25,13 +27,14 @@ namespace DiscordChatExporter.Core.Models
 
         public IReadOnlyList<Channel> MentionedChannels { get; }
 
-        public Message(string id, MessageType type, User author,
-            DateTime timeStamp, DateTime? editedTimeStamp,
-            string content, IReadOnlyList<Attachment> attachments,
-            IReadOnlyList<User> mentionedUsers, IReadOnlyList<Role> mentionedRoles,
-            IReadOnlyList<Channel> mentionedChannels)
+        public Message(string id, string channelId, MessageType type,
+            User author, DateTime timeStamp,
+            DateTime? editedTimeStamp, string content,
+            IReadOnlyList<Attachment> attachments, IReadOnlyList<User> mentionedUsers,
+            IReadOnlyList<Role> mentionedRoles, IReadOnlyList<Channel> mentionedChannels)
         {
             Id = id;
+            ChannelId = channelId;
             Type = type;
             Author = author;
             TimeStamp = timeStamp;

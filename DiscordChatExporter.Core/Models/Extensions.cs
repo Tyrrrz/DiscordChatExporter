@@ -13,7 +13,7 @@ namespace DiscordChatExporter.Core.Models
             if (format == ExportFormat.HtmlLight)
                 return "html";
 
-            throw new NotImplementedException();
+            throw new ArgumentOutOfRangeException(nameof(format));
         }
 
         public static string GetDisplayName(this ExportFormat format)
@@ -25,7 +25,7 @@ namespace DiscordChatExporter.Core.Models
             if (format == ExportFormat.HtmlLight)
                 return "HTML (Light)";
 
-            throw new NotImplementedException();
+            throw new ArgumentOutOfRangeException(nameof(format));
         }
     }
 }

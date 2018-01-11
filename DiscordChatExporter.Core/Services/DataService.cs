@@ -51,6 +51,7 @@ namespace DiscordChatExporter.Core.Services
         {
             // Get basic data
             var id = token["id"].Value<string>();
+            var guildId = token["guild_id"]?.Value<string>();
             var type = (ChannelType) token["type"].Value<int>();
             var topic = token["topic"]?.Value<string>();
 
@@ -58,6 +59,7 @@ namespace DiscordChatExporter.Core.Services
             string name;
             if (type.IsEither(ChannelType.DirectTextChat, ChannelType.DirectGroupTextChat))
             {
+                guildId = Guild.DirectMessages.Id;
                 var recipients = token["recipients"].Select(ParseUser);
                 name = recipients.Select(r => r.Name).JoinToString(", ");
             }
@@ -66,13 +68,14 @@ namespace DiscordChatExporter.Core.Services
                 name = token["name"].Value<string>();
             }
 
-            return new Channel(id, name, topic, type);
+            return new Channel(id, guildId, name, topic, type);
         }
 
         private Message ParseMessage(JToken token)
         {
             // Get basic data
             var id = token["id"].Value<string>();
+            var channelId = token["channel_id"].Value<string>();
             var timeStamp = token["timestamp"].Value<DateTime>();
             var editedTimeStamp = token["edited_timestamp"]?.Value<DateTime?>();
             var content = token["content"].Value<string>();
@@ -132,7 +135,7 @@ namespace DiscordChatExporter.Core.Services
                 .Select(i => _channelCache.GetOrDefault(i) ?? Channel.CreateDeletedChannel(id))
                 .ToArray();
 
-            return new Message(id, type, author, timeStamp, editedTimeStamp, content, attachments,
+            return new Message(id, channelId, type, author, timeStamp, editedTimeStamp, content, attachments,
                 mentionedUsers, mentionedRoles, mentionedChannels);
         }
 
@@ -166,6 +169,23 @@ namespace DiscordChatExporter.Core.Services
                 _roleCache[role.Id] = role;
 
             return guild;
+        }
+
+        public async Task<Channel> GetChannelAsync(string token, string channelId)
+        {
+            // Form request url
+            var url = $"{ApiRoot}/channels/{channelId}?token={token}";
+
+            // Get response
+            var content = await GetStringAsync(url);
+
+            // Parse
+            var channel = ParseChannel(JToken.Parse(content));
+
+            // Add channel to cache
+            _channelCache[channel.Id] = channel;
+
+            return channel;
         }
 
         public async Task<IReadOnlyList<Channel>> GetGuildChannelsAsync(string token, string guildId)

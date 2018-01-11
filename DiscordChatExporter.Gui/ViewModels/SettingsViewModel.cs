@@ -2,7 +2,7 @@
 using GalaSoft.MvvmLight;
 using Tyrrrz.Extensions;
 
-namespace DiscordChatExporter.ViewModels
+namespace DiscordChatExporter.Gui.ViewModels
 {
     public class SettingsViewModel : ViewModelBase, ISettingsViewModel
     {

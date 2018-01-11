@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace DiscordChatExporter
+namespace DiscordChatExporter.Gui
 {
     public partial class App
     {

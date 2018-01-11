@@ -1,4 +1,4 @@
-﻿namespace DiscordChatExporter.Views
+﻿namespace DiscordChatExporter.Gui.Views
 {
     public partial class ErrorDialog
     {

@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics;
-using DiscordChatExporter.Messages;
+using DiscordChatExporter.Gui.Messages;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 
-namespace DiscordChatExporter.ViewModels
+namespace DiscordChatExporter.Gui.ViewModels
 {
     public class ExportDoneViewModel : ViewModelBase, IExportDoneViewModel
     {

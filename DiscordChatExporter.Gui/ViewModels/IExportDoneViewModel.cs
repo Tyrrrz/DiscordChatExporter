@@ -1,6 +1,6 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
 
-namespace DiscordChatExporter.ViewModels
+namespace DiscordChatExporter.Gui.ViewModels
 {
     public interface IExportDoneViewModel
     {

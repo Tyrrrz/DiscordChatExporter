@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using DiscordChatExporter.Core.Models;
 using GalaSoft.MvvmLight.CommandWpf;
 
-namespace DiscordChatExporter.ViewModels
+namespace DiscordChatExporter.Gui.ViewModels
 {
     public interface IExportSetupViewModel
     {

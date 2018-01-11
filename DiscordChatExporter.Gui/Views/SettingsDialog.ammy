@@ -1,6 +1,6 @@
 ﻿using MaterialDesignThemes.Wpf
 
-UserControl "DiscordChatExporter.Views.SettingsDialog" {
+UserControl "DiscordChatExporter.Gui.Views.SettingsDialog" {
   DataContext: bind SettingsViewModel from $resource Container
   Width: 250
 

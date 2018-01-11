@@ -1,6 +1,6 @@
 ﻿using MaterialDesignThemes.Wpf
 
-UserControl "DiscordChatExporter.Views.ExportDoneDialog" {
+UserControl "DiscordChatExporter.Gui.Views.ExportDoneDialog" {
   DataContext: bind ExportDoneViewModel from $resource Container
   Width: 250
 

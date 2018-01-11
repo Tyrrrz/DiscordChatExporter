@@ -1,4 +1,4 @@
-﻿namespace DiscordChatExporter.ViewModels
+﻿namespace DiscordChatExporter.Gui.ViewModels
 {
     public interface ISettingsViewModel
     {

@@ -1,4 +1,4 @@
-﻿Application "DiscordChatExporter.App" {
+﻿Application "DiscordChatExporter.Gui.App" {
   StartupUri: "Views/MainWindow.g.xaml"
   Startup: App_Startup
   Exit: App_Exit

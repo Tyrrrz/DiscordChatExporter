@@ -1,10 +1,10 @@
 ﻿using System.Reflection;
-using DiscordChatExporter.Messages;
+using DiscordChatExporter.Gui.Messages;
 using GalaSoft.MvvmLight.Messaging;
 using MaterialDesignThemes.Wpf;
 using Tyrrrz.Extensions;
 
-namespace DiscordChatExporter.Views
+namespace DiscordChatExporter.Gui.Views
 {
     public partial class MainWindow
     {

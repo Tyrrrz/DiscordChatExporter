@@ -1,10 +1,10 @@
 ﻿using System.Windows;
 using DiscordChatExporter.Core.Models;
-using DiscordChatExporter.ViewModels;
+using DiscordChatExporter.Gui.ViewModels;
 using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
 
-namespace DiscordChatExporter.Views
+namespace DiscordChatExporter.Gui.Views
 {
     public partial class ExportSetupDialog
     {

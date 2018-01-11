@@ -1,7 +1,7 @@
 ﻿using System;
 using AmmySidekick;
 
-namespace DiscordChatExporter
+namespace DiscordChatExporter.Gui
 {
     public static class Program
     {

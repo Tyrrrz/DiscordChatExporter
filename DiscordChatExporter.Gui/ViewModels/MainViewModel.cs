@@ -6,12 +6,12 @@ using System.Net;
 using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.Core.Services;
-using DiscordChatExporter.Messages;
+using DiscordChatExporter.Gui.Messages;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using Tyrrrz.Extensions;
 
-namespace DiscordChatExporter.ViewModels
+namespace DiscordChatExporter.Gui.ViewModels
 {
     public class MainViewModel : ViewModelBase, IMainViewModel
     {

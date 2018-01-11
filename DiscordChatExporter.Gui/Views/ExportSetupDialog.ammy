@@ -1,7 +1,7 @@
 ﻿using DiscordChatExporter.Core.Models
 using MaterialDesignThemes.Wpf
 
-UserControl "DiscordChatExporter.Views.ExportSetupDialog" {
+UserControl "DiscordChatExporter.Gui.Views.ExportSetupDialog" {
   DataContext: bind ExportSetupViewModel from $resource Container
   Width: 325
 

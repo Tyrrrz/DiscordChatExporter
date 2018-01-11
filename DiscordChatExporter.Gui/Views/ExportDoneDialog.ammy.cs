@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using MaterialDesignThemes.Wpf;
 
-namespace DiscordChatExporter.Views
+namespace DiscordChatExporter.Gui.Views
 {
     public partial class ExportDoneDialog
     {

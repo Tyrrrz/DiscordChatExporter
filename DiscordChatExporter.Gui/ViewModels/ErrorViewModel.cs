@@ -1,7 +1,7 @@
-﻿using DiscordChatExporter.Messages;
+﻿using DiscordChatExporter.Gui.Messages;
 using GalaSoft.MvvmLight;
 
-namespace DiscordChatExporter.ViewModels
+namespace DiscordChatExporter.Gui.ViewModels
 {
     public class ErrorViewModel : ViewModelBase, IErrorViewModel
     {

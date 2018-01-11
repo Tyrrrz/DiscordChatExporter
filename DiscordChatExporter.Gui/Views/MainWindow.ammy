@@ -1,7 +1,7 @@
 ﻿using MaterialDesignThemes.Wpf
 using MaterialDesignThemes.Wpf.Transitions
 
-Window "DiscordChatExporter.Views.MainWindow" {
+Window "DiscordChatExporter.Gui.Views.MainWindow" {
   Title: "DiscordChatExporter"
   Width: 600
   Height: 550
@@ -9,7 +9,7 @@ Window "DiscordChatExporter.Views.MainWindow" {
   DataContext: bind MainViewModel from $resource Container
   FocusManager.FocusedElement: bind from "TokenTextBox"
   FontFamily: resource dyn "MaterialDesignFont"
-  Icon: "/DiscordChatExporter;component/favicon.ico"
+  Icon: "/DiscordChatExporter.Gui;component/favicon.ico"
   SnapsToDevicePixels: true
   TextElement.FontSize: 13
   TextElement.FontWeight: Regular

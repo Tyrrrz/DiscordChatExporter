@@ -1,9 +1,9 @@
 ﻿using DiscordChatExporter.Core.Services;
-using DiscordChatExporter.ViewModels;
+using DiscordChatExporter.Gui.ViewModels;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 
-namespace DiscordChatExporter
+namespace DiscordChatExporter.Gui
 {
     public class Container
     {

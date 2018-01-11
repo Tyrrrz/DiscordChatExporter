@@ -1,6 +1,6 @@
 ﻿using DiscordChatExporter.Core.Models;
 
-namespace DiscordChatExporter.Messages
+namespace DiscordChatExporter.Gui.Messages
 {
     public class ShowExportSetupMessage
     {

@@ -44,7 +44,7 @@ namespace DiscordChatExporter.Cli.ViewModels
                 {
                     var channels = await _dataService.GetGuildChannelsAsync(token, guild.Id);
                     selectedChannel = channels.FirstOrDefault(c => c.Id == channelId);
-                    selectedGuild = Guild.DirectMessages;
+                    selectedGuild = guild;
 
                     if (selectedChannel != null)
                         break;

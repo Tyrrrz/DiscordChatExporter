@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using DiscordChatExporter.Core.Models;
 using Fclp;
 
@@ -28,7 +29,8 @@ namespace DiscordChatExporter.Cli
             // Show help if no arguments
             if (parsed.EmptyArgs)
             {
-                Console.WriteLine("=== Discord Chat Exporter (Command Line Interface) ===");
+                var version = Assembly.GetExecutingAssembly().GetName().Version;
+                Console.WriteLine($"=== Discord Chat Exporter (Command Line Interface) v{version} ===");
                 Console.WriteLine();
                 Console.WriteLine("[-t] [--token]       Discord authorization token.");
                 Console.WriteLine("[-c] [--channel]     Discord channel ID.");

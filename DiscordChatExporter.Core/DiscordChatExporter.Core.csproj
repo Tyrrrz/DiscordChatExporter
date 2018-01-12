@@ -5,11 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\ExportService\DarkTheme.css" />
-    <None Remove="Resources\ExportService\LightTheme.css" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Include="Resources\ExportService\DarkTheme.css" />
     <EmbeddedResource Include="Resources\ExportService\LightTheme.css" />
   </ItemGroup>

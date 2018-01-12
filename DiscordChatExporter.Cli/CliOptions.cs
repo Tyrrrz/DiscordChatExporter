@@ -16,5 +16,9 @@ namespace DiscordChatExporter.Cli
         public DateTime? From { get; set; }
 
         public DateTime? To { get; set; }
+
+        public string DateFormat { get; set; }
+
+        public int MessageGroupLimit { get; set; }
     }
 }

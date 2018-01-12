@@ -8,6 +8,7 @@ namespace DiscordChatExporter.Cli
     public class Container
     {
         public IMainViewModel MainViewModel => Resolve<IMainViewModel>();
+        public ISettingsService SettingsService => Resolve<ISettingsService>();
 
         private T Resolve<T>(string key = null)
         {

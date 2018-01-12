@@ -12,35 +12,16 @@ namespace DiscordChatExporter.Cli
         {
             var argsParser = new FluentCommandLineParser<CliOptions>();
 
-            argsParser.Setup(o => o.Token)
-                .As('t', "token")
-                .Required()
-                .WithDescription("Discord authorization token.");
+            var settings = Container.SettingsService;
 
-            argsParser.Setup(o => o.ChannelId)
-                .As('c', "channel")
-                .Required()
-                .WithDescription("Discord channel ID.");
-
-            argsParser.Setup(o => o.ExportFormat)
-                .As('f', "format")
-                .SetDefault(ExportFormat.HtmlDark)
-                .WithDescription("Export format (PlainText/HtmlDark/HtmlLight). Optional.");
-
-            argsParser.Setup(o => o.FilePath)
-                .As('o', "output")
-                .SetDefault(null)
-                .WithDescription("Output file path. Optional.");
-
-            argsParser.Setup(o => o.From)
-                .As("datefrom")
-                .SetDefault(null)
-                .WithDescription("Messages after this date. Optional.");
-
-            argsParser.Setup(o => o.To)
-                .As("dateto")
-                .SetDefault(null)
-                .WithDescription("Messages before this date. Optional.");
+            argsParser.Setup(o => o.Token).As('t', "token").Required();
+            argsParser.Setup(o => o.ChannelId).As('c', "channel").Required();
+            argsParser.Setup(o => o.ExportFormat).As('f', "format").SetDefault(ExportFormat.HtmlDark);
+            argsParser.Setup(o => o.FilePath).As('o', "output").SetDefault(null);
+            argsParser.Setup(o => o.From).As("datefrom").SetDefault(null);
+            argsParser.Setup(o => o.To).As("dateto").SetDefault(null);
+            argsParser.Setup(o => o.DateFormat).As("dateformat").SetDefault(settings.DateFormat);
+            argsParser.Setup(o => o.MessageGroupLimit).As("grouplimit").SetDefault(settings.MessageGroupLimit);
 
             var parsed = argsParser.Parse(args);
 
@@ -49,12 +30,14 @@ namespace DiscordChatExporter.Cli
             {
                 Console.WriteLine("=== Discord Chat Exporter (Command Line Interface) ===");
                 Console.WriteLine();
-                Console.WriteLine("[-t] [--token]     Discord authorization token.");
-                Console.WriteLine("[-c] [--channel]   Discord channel ID.");
-                Console.WriteLine("[-f] [--format]    Export format (PlainText/HtmlDark/HtmlLight). Optional.");
-                Console.WriteLine("[-o] [--output]    Output file path. Optional.");
-                Console.WriteLine("     [--datefrom]  Limit to messages after this date. Optional.");
-                Console.WriteLine("     [--dateto]    Limit to messages before this date. Optional.");
+                Console.WriteLine("[-t] [--token]       Discord authorization token.");
+                Console.WriteLine("[-c] [--channel]     Discord channel ID.");
+                Console.WriteLine("[-f] [--format]      Export format (PlainText/HtmlDark/HtmlLight). Optional.");
+                Console.WriteLine("[-o] [--output]      Output file path. Optional.");
+                Console.WriteLine("     [--datefrom]    Limit to messages after this date. Optional.");
+                Console.WriteLine("     [--dateto]      Limit to messages before this date. Optional.");
+                Console.WriteLine("     [--dateformat]  Date format. Optional.");
+                Console.WriteLine("     [--grouplimit]  Message group limit. Optional.");
                 Environment.Exit(0);
             }
             // Show error if there are any
@@ -69,16 +52,19 @@ namespace DiscordChatExporter.Cli
 
         public static void Main(string[] args)
         {
-            // Parse options
-            var options = ParseOptions(args);
-
             // Init container
             Container.Init();
 
-            // Get view model
-            var vm = Container.MainViewModel;
+            // Parse options
+            var options = ParseOptions(args);
+
+            // Inject some settings
+            var settings = Container.SettingsService;
+            settings.DateFormat = options.DateFormat;
+            settings.MessageGroupLimit = options.MessageGroupLimit;
 
             // Export
+            var vm = Container.MainViewModel;
             vm.ExportAsync(
                 options.Token,
                 options.ChannelId,
@@ -89,6 +75,7 @@ namespace DiscordChatExporter.Cli
 
             // Cleanup container
             Container.Cleanup();
+            Console.WriteLine("Export complete.");
         }
     }
 }

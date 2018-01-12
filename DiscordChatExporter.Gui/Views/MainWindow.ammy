@@ -9,7 +9,7 @@ Window "DiscordChatExporter.Gui.Views.MainWindow" {
   DataContext: bind MainViewModel from $resource Container
   FocusManager.FocusedElement: bind from "TokenTextBox"
   FontFamily: resource dyn "MaterialDesignFont"
-  Icon: "/DiscordChatExporter.Gui;component/favicon.ico"
+  Icon: "/DiscordChatExporter;component/favicon.ico"
   SnapsToDevicePixels: true
   TextElement.FontSize: 13
   TextElement.FontWeight: Regular

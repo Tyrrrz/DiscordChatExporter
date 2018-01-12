@@ -19,7 +19,7 @@ DiscordChatExporter can be used to export message history from a [Discord](https
 ## Features
 
 - Intuitive GUI that displays available guilds and channels
-- Command line interface
+- CLI as additional alternative to GUI
 - Date ranges to limit messages
 - Groups messages by author and time
 - Exports to a plain text file
@@ -39,5 +39,7 @@ DiscordChatExporter can be used to export message history from a [Discord](https
 - [GalaSoft.MVVMLight](http://www.mvvmlight.net)
 - [MaterialDesignInXamlToolkit](https://github.com/ButchersBoy/MaterialDesignInXamlToolkit)
 - [Newtonsoft.Json](http://www.newtonsoft.com/json)
+- [FluentCommandLineParser](https://github.com/fclp/fluent-command-line-parser)
+- [Costura.Fody](https://github.com/Fody/Costura)
 - [Tyrrrz.Extensions](https://github.com/Tyrrrz/Extensions)
 - [Tyrrrz.Settings](https://github.com/Tyrrrz/Settings)

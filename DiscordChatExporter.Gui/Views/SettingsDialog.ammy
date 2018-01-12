@@ -1,0 +1,33 @@
+﻿using MaterialDesignThemes.Wpf
+
+UserControl "DiscordChatExporter.Gui.Views.SettingsDialog" {
+  DataContext: bind SettingsViewModel from $resource Container
+  Width: 250
+
+  StackPanel {
+    // Date format
+    TextBox {
+      Margin: [16, 16, 16, 8]
+      HintAssist.Hint: "Date format"
+      HintAssist.IsFloating: true
+      Text: bind DateFormat
+    }
+
+    // Group limit
+    TextBox {
+      Margin: [16, 8, 16, 8]
+      HintAssist.Hint: "Message group limit"
+      HintAssist.IsFloating: true
+      Text: bind MessageGroupLimit
+    }
+
+    // Save
+    Button {
+      Margin: 8
+      Command: DialogHost.CloseDialogCommand
+      Content: "SAVE"
+      HorizontalAlignment: Right
+      Style: resource dyn "MaterialDesignFlatButton"
+    }
+  }
+}

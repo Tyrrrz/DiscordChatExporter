@@ -19,6 +19,7 @@ DiscordChatExporter can be used to export message history from a [Discord](https
 ## Features
 
 - Intuitive GUI that displays available guilds and channels
+- Command line interface
 - Date ranges to limit messages
 - Groups messages by author and time
 - Exports to a plain text file

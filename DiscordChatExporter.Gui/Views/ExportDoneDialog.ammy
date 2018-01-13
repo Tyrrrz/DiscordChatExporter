@@ -22,7 +22,8 @@ UserControl "DiscordChatExporter.Gui.Views.ExportDoneDialog" {
         Margin: 8
         Click: OpenButton_Click
         Command: bind OpenCommand
-        Content: "OPEN IT"
+        Content: "OPEN"
+        IsDefault: true
         Style: resource dyn "MaterialDesignFlatButton"
       }
 
@@ -31,6 +32,7 @@ UserControl "DiscordChatExporter.Gui.Views.ExportDoneDialog" {
         Margin: 8
         Command: DialogHost.CloseDialogCommand
         Content: "DISMISS"
+        IsCancel: true
         Style: resource dyn "MaterialDesignFlatButton"
       }
     }

@@ -27,6 +27,8 @@ UserControl "DiscordChatExporter.Gui.Views.SettingsDialog" {
       Command: DialogHost.CloseDialogCommand
       Content: "SAVE"
       HorizontalAlignment: Right
+      IsDefault: true
+      IsCancel: true
       Style: resource dyn "MaterialDesignFlatButton"
     }
   }

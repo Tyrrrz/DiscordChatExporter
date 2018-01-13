@@ -81,6 +81,7 @@ UserControl "DiscordChatExporter.Gui.Views.ExportSetupDialog" {
         Margin: 8
         Command: DialogHost.CloseDialogCommand
         Content: "CANCEL"
+        IsCancel: true
         Style: resource dyn "MaterialDesignFlatButton"
       }
     }

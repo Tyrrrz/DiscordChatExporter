@@ -1,4 +1,5 @@
-﻿using Tyrrrz.Extensions;
+﻿using System.Globalization;
+using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Models
 {
@@ -14,9 +15,11 @@ namespace DiscordChatExporter.Core.Models
 
         public string AvatarHash { get; }
 
+        public string DefaultAvatarHash => (Discriminator % 5).ToString(CultureInfo.InvariantCulture);
+
         public string AvatarUrl => AvatarHash.IsNotBlank()
             ? $"https://cdn.discordapp.com/avatars/{Id}/{AvatarHash}.png"
-            : $"https://cdn.discordapp.com/embed/avatars/{Discriminator % 5}.png";
+            : $"https://cdn.discordapp.com/embed/avatars/{DefaultAvatarHash}.png";
 
         public User(string id, int discriminator, string name, string avatarHash)
         {

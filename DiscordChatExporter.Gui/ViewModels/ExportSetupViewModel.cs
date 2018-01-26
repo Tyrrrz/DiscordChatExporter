@@ -81,7 +81,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                 Guild = m.Guild;
                 Channel = m.Channel;
                 SelectedFormat = _settingsService.LastExportFormat;
-                FilePath = $"{Guild} - {Channel}.{SelectedFormat.GetFileExtension()}"
+                FilePath = $"{Guild.Name} - {Channel.Name}.{SelectedFormat.GetFileExtension()}"
                     .Replace(Path.GetInvalidFileNameChars(), '_');
                 From = null;
                 To = null;

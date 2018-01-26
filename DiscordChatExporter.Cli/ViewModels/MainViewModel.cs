@@ -33,7 +33,7 @@ namespace DiscordChatExporter.Cli.ViewModels
             // Generate file path if not set
             if (filePath.IsBlank())
             {
-                filePath = $"{guild} - {channel}.{format.GetFileExtension()}"
+                filePath = $"{guild.Name} - {channel.Name}.{format.GetFileExtension()}"
                     .Replace(Path.GetInvalidFileNameChars(), '_');
             }
 

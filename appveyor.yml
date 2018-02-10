@@ -15,12 +15,14 @@ after_build:
 artifacts:
 - path: Deploy\bin\DiscordChatExporter.zip
   name: DiscordChatExporter.zip
+- path: Deploy\bin\DiscordChatExporter.Cli.zip
+  name: DiscordChatExporter.Cli.zip
 
 deploy:
 - provider: GitHub
   auth_token:
     secure: sjQHWRw29AMiVMn3MtidtWnAzAf1mJ+mkJ/7h1B9TIAHhkFrqwMK7LtXV+uNJ9AO
-  artifact: DiscordChatExporter.zip
+  artifact: DiscordChatExporter.zip,DiscordChatExporter.Cli.zip
   draft: true
   on:
     branch: master

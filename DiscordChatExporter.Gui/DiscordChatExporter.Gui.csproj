@@ -43,7 +43,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AmmySidekick, Version=1.0.0.0, Culture=neutral, PublicKeyToken=7c1296d24569a67d, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ammy.WPF.1.2.87\lib\net40\AmmySidekick.dll</HintPath>
+      <HintPath>..\packages\Ammy.WPF.1.2.92\lib\net40\AmmySidekick.dll</HintPath>
     </Reference>
     <Reference Include="GalaSoft.MvvmLight, Version=5.3.0.19026, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
@@ -181,11 +181,11 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\Ammy.1.2.87\build\Ammy.targets" Condition="Exists('..\packages\Ammy.1.2.87\build\Ammy.targets')" />
+  <Import Project="..\packages\Ammy.1.2.92\build\Ammy.targets" Condition="Exists('..\packages\Ammy.1.2.92\build\Ammy.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Ammy.1.2.87\build\Ammy.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Ammy.1.2.87\build\Ammy.targets'))" />
+    <Error Condition="!Exists('..\packages\Ammy.1.2.92\build\Ammy.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Ammy.1.2.92\build\Ammy.targets'))" />
   </Target>
 </Project>

@@ -23,7 +23,7 @@ deploy:
   auth_token:
     secure: sjQHWRw29AMiVMn3MtidtWnAzAf1mJ+mkJ/7h1B9TIAHhkFrqwMK7LtXV+uNJ9AO
   artifact: DiscordChatExporter.zip,DiscordChatExporter.Cli.zip
-  draft: true
+  description: '[Changelog](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/Changelog.md)'
   on:
     branch: master
     appveyor_repo_tag: true

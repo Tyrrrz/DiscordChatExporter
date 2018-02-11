@@ -1,19 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EA305DD5-1F98-415D-B6C4-65053A58F914}"
 	ProjectSection(SolutionItems) = preProject
+		Changelog.md = Changelog.md
 		License.txt = License.txt
 		Readme.md = Readme.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordChatExporter.Gui", "DiscordChatExporter.Gui\DiscordChatExporter.Gui.csproj", "{732A67AF-93DE-49DF-B10F-FD74710B7863}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordChatExporter.Core", "DiscordChatExporter.Core\DiscordChatExporter.Core.csproj", "{707C0CD0-A7E0-4CAB-8DB9-07A45CB87377}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscordChatExporter.Core", "DiscordChatExporter.Core\DiscordChatExporter.Core.csproj", "{707C0CD0-A7E0-4CAB-8DB9-07A45CB87377}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordChatExporter.Cli", "DiscordChatExporter.Cli\DiscordChatExporter.Cli.csproj", "{D08624B6-3081-4BCB-91F8-E9832FACC6CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscordChatExporter.Cli", "DiscordChatExporter.Cli\DiscordChatExporter.Cli.csproj", "{D08624B6-3081-4BCB-91F8-E9832FACC6CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

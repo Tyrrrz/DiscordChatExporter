@@ -26,14 +26,22 @@ namespace DiscordChatExporter.Core.Services
             return null;
 #endif
 
-            // Remove some junk left over from last update
-            _updateManager.Cleanup();
+            try
+            {
+                // Remove some junk left over from last update
+                _updateManager.Cleanup();
 
-            // Check for updates
-            var check = await _updateManager.CheckForUpdatesAsync();
+                // Check for updates
+                var check = await _updateManager.CheckForUpdatesAsync();
 
-            // Return latest version or null if running latest version already
-            return check.CanUpdate ? _lastVersion = check.LastVersion : null;
+                // Return latest version or null if running latest version already
+                return check.CanUpdate ? _lastVersion = check.LastVersion : null;
+            }
+            catch
+            {
+                // It's okay for update to fail
+                return null;
+            }
         }
 
         public async Task PrepareUpdateAsync()
@@ -41,8 +49,15 @@ namespace DiscordChatExporter.Core.Services
             if (_lastVersion == null)
                 return;
 
-            // Download and prepare update
-            await _updateManager.PreparePackageAsync(_lastVersion);
+            try
+            {
+                // Download and prepare update
+                await _updateManager.PreparePackageAsync(_lastVersion);
+            }
+            catch
+            {
+                // It's okay for update to fail
+            }
         }
 
         public async Task ApplyUpdateAsync(bool restart = true)
@@ -52,10 +67,16 @@ namespace DiscordChatExporter.Core.Services
             if (_applied)
                 return;
 
-            // Enqueue an update
-            await _updateManager.EnqueueApplyPackageAsync(_lastVersion, restart);
-
-            _applied = true;
+            try
+            {
+                // Enqueue an update
+                await _updateManager.EnqueueApplyPackageAsync(_lastVersion, restart);
+                _applied = true;
+            }
+            catch
+            {
+                // It's okay for update to fail
+            }
         }
     }
 }

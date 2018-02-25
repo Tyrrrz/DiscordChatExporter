@@ -79,25 +79,16 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Messages\ShowErrorMessage.cs" />
-    <Compile Include="Messages\ShowExportDoneMessage.cs" />
     <Compile Include="Messages\ShowExportSetupMessage.cs" />
     <Compile Include="Messages\ShowNotificationMessage.cs" />
     <Compile Include="Messages\ShowSettingsMessage.cs" />
     <Compile Include="Messages\StartExportMessage.cs" />
-    <Compile Include="ViewModels\ErrorViewModel.cs" />
     <Compile Include="ViewModels\ExportSetupViewModel.cs" />
-    <Compile Include="ViewModels\IErrorViewModel.cs" />
     <Compile Include="ViewModels\IExportSetupViewModel.cs" />
     <Compile Include="ViewModels\ISettingsViewModel.cs" />
-    <Compile Include="ViewModels\IExportDoneViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
-    <Compile Include="ViewModels\ExportDoneViewModel.cs" />
     <Compile Include="Views\ErrorDialog.ammy.cs">
       <DependentUpon>ErrorDialog.ammy</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ExportDoneDialog.ammy.cs">
-      <DependentUpon>ExportDoneDialog.ammy</DependentUpon>
     </Compile>
     <Compile Include="Views\ExportSetupDialog.ammy.cs">
       <DependentUpon>ExportSetupDialog.ammy</DependentUpon>
@@ -114,11 +105,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <DependentUpon>ErrorDialog.ammy</DependentUpon>
-    </Page>
-    <Page Include="Views\ExportDoneDialog.g.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <DependentUpon>ExportDoneDialog.ammy</DependentUpon>
     </Page>
     <Page Include="Views\ExportSetupDialog.g.xaml">
       <SubType>Designer</SubType>
@@ -165,7 +151,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Views\ErrorDialog.ammy" />
-    <None Include="Views\ExportDoneDialog.ammy" />
     <None Include="Views\ExportSetupDialog.ammy" />
     <None Include="Views\MainWindow.ammy" />
     <None Include="Views\SettingsDialog.ammy" />

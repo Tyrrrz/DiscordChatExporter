@@ -21,10 +21,6 @@ namespace DiscordChatExporter.Gui.Views
                 m => Snackbar.MessageQueue.Enqueue(m.Message, m.CallbackCaption, m.Callback));
 
             // Dialog messages
-            Messenger.Default.Register<ShowErrorMessage>(this,
-                m => DialogHost.Show(new ErrorDialog()).Forget());
-            Messenger.Default.Register<ShowExportDoneMessage>(this,
-                m => DialogHost.Show(new ExportDoneDialog()).Forget());
             Messenger.Default.Register<ShowExportSetupMessage>(this,
                 m => DialogHost.Show(new ExportSetupDialog()).Forget());
             Messenger.Default.Register<ShowSettingsMessage>(this,

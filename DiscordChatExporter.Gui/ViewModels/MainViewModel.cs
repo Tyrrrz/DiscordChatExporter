@@ -132,8 +132,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                 // Notify user
                 MessengerInstance.Send(
                     new ShowNotificationMessage(
-                        $"DiscordChatExporter v{lastVersion} has been downloaded. " +
-                        "It will be installed once you exit.",
+                        $"DiscordChatExporter v{lastVersion} has been downloaded – it will be installed when you exit",
                         "INSTALL NOW",
                         async () =>
                         {
@@ -186,13 +185,13 @@ namespace DiscordChatExporter.Gui.ViewModels
             }
             catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
             {
-                const string message = "Unauthorized to perform request. Make sure token is valid.";
-                MessengerInstance.Send(new ShowErrorMessage(message));
+                const string message = "Unauthorized – make sure the token is valid";
+                MessengerInstance.Send(new ShowNotificationMessage(message));
             }
             catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
             {
-                const string message = "Forbidden to perform request. The account may be locked by 2FA.";
-                MessengerInstance.Send(new ShowErrorMessage(message));
+                const string message = "Forbidden – account may be locked by 2FA";
+                MessengerInstance.Send(new ShowNotificationMessage(message));
             }
 
             AvailableGuilds = _guildChannelsMap.Keys.ToArray();
@@ -237,12 +236,14 @@ namespace DiscordChatExporter.Gui.ViewModels
                 await _exportService.ExportAsync(format, filePath, log);
 
                 // Notify completion
-                MessengerInstance.Send(new ShowExportDoneMessage(filePath));
+                MessengerInstance.Send(new ShowNotificationMessage($"Export completed for channel [{channel.Name}]",
+                    "OPEN",
+                    () => Process.Start(filePath)));
             }
             catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
             {
-                const string message = "Forbidden to view messages in that channel.";
-                MessengerInstance.Send(new ShowErrorMessage(message));
+                const string message = "You don't have access to that channel";
+                MessengerInstance.Send(new ShowNotificationMessage(message));
             }
 
             IsBusy = false;

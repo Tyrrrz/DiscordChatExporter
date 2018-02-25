@@ -7,8 +7,6 @@ namespace DiscordChatExporter.Gui
 {
     public class Container
     {
-        public IErrorViewModel ErrorViewModel => Resolve<IErrorViewModel>();
-        public IExportDoneViewModel ExportDoneViewModel => Resolve<IExportDoneViewModel>();
         public IExportSetupViewModel ExportSetupViewModel => Resolve<IExportSetupViewModel>();
         public IMainViewModel MainViewModel => Resolve<IMainViewModel>();
         public ISettingsViewModel SettingsViewModel => Resolve<ISettingsViewModel>();
@@ -31,8 +29,6 @@ namespace DiscordChatExporter.Gui
             SimpleIoc.Default.Register<IUpdateService, UpdateService>();
 
             // View models
-            SimpleIoc.Default.Register<IErrorViewModel, ErrorViewModel>(true);
-            SimpleIoc.Default.Register<IExportDoneViewModel, ExportDoneViewModel>(true);
             SimpleIoc.Default.Register<IExportSetupViewModel, ExportSetupViewModel>(true);
             SimpleIoc.Default.Register<IMainViewModel, MainViewModel>(true);
             SimpleIoc.Default.Register<ISettingsViewModel, SettingsViewModel>(true);

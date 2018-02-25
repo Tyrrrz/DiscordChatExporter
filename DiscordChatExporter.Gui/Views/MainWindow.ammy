@@ -1,4 +1,5 @@
-﻿using MaterialDesignThemes.Wpf
+﻿using System.Windows.Interactivity;
+using MaterialDesignThemes.Wpf
 using MaterialDesignThemes.Wpf.Transitions
 
 Window "DiscordChatExporter.Gui.Views.MainWindow" {
@@ -19,15 +20,27 @@ Window "DiscordChatExporter.Gui.Views.MainWindow" {
   UseLayoutRounding: true
   WindowStartupLocation: CenterScreen
 
-  DialogHost {
-    DockPanel {
-      IsEnabled: bind IsBusy
-                 convert (bool b) => b ? false : true
+  Interaction.Triggers: [
+    Interactivity.EventTrigger {
+      EventName: "Loaded"
+      InvokeCommandAction { Command: bind ViewLoadedCommand }
+    },
+    Interactivity.EventTrigger {
+      EventName: "Closed"
+      InvokeCommandAction { Command: bind ViewClosedCommand }
+    }
+  ]
 
+  DialogHost {
+    SnackbarMessageQueue: bind MessageQueue from "Snackbar"
+
+    DockPanel {
       // Toolbar
       Border {
         DockPanel.Dock: Top
         Background: resource dyn "PrimaryHueMidBrush"
+        IsEnabled: bind IsBusy
+                   convert (bool b) => b ? false : true
         TextElement.Foreground: resource dyn "SecondaryInverseTextBrush"
         StackPanel {
           Grid {
@@ -104,6 +117,8 @@ Window "DiscordChatExporter.Gui.Views.MainWindow" {
       Grid {
         DockPanel {
           Background: resource dyn "MaterialDesignCardBackground"
+          IsEnabled: bind IsBusy
+                     convert (bool b) => b ? false : true
           Visibility: bind IsDataAvailable
                       convert (bool b) => b ? Visibility.Visible : Visibility.Hidden
 
@@ -264,6 +279,10 @@ Window "DiscordChatExporter.Gui.Views.MainWindow" {
               Text: "7. Paste the value in the textbox above"
             }
           }
+        }
+
+        // Snackbar
+        Snackbar "Snackbar" {
         }
       }
     }

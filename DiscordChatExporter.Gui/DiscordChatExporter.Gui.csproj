@@ -65,14 +65,12 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Xml" />
     <Reference Include="Tyrrrz.Extensions, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Tyrrrz.Extensions.1.5.0\lib\net45\Tyrrrz.Extensions.dll</HintPath>
     </Reference>
@@ -84,6 +82,7 @@
     <Compile Include="Messages\ShowErrorMessage.cs" />
     <Compile Include="Messages\ShowExportDoneMessage.cs" />
     <Compile Include="Messages\ShowExportSetupMessage.cs" />
+    <Compile Include="Messages\ShowNotificationMessage.cs" />
     <Compile Include="Messages\ShowSettingsMessage.cs" />
     <Compile Include="Messages\StartExportMessage.cs" />
     <Compile Include="ViewModels\ErrorViewModel.cs" />

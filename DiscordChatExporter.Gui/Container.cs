@@ -28,9 +28,7 @@ namespace DiscordChatExporter.Gui
             SimpleIoc.Default.Register<IExportService, ExportService>();
             SimpleIoc.Default.Register<IMessageGroupService, MessageGroupService>();
             SimpleIoc.Default.Register<ISettingsService, SettingsService>();
-
-            // Load settings
-            Resolve<ISettingsService>().Load();
+            SimpleIoc.Default.Register<IUpdateService, UpdateService>();
 
             // View models
             SimpleIoc.Default.Register<IErrorViewModel, ErrorViewModel>(true);
@@ -42,8 +40,6 @@ namespace DiscordChatExporter.Gui
 
         public void Cleanup()
         {
-            // Save settings
-            ServiceLocator.Current.GetInstance<ISettingsService>().Save();
         }
     }
 }

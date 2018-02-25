@@ -15,6 +15,8 @@ namespace DiscordChatExporter.Gui.ViewModels
         Guild SelectedGuild { get; set; }
         IReadOnlyList<Channel> AvailableChannels { get; }
 
+        RelayCommand ViewLoadedCommand { get; }
+        RelayCommand ViewClosedCommand { get; }
         RelayCommand PullDataCommand { get; }
         RelayCommand ShowSettingsCommand { get; }
         RelayCommand ShowAboutCommand { get; }

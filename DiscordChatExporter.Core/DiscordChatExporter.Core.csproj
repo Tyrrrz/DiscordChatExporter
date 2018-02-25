@@ -14,7 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
+    <PackageReference Include="Onova" Version="1.0.0" />
     <PackageReference Include="Tyrrrz.Extensions" Version="1.5.0" />
     <PackageReference Include="Tyrrrz.Settings" Version="1.3.2" />
   </ItemGroup>

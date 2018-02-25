@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Windows;
 using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.Core.Services;
@@ -16,6 +17,7 @@ namespace DiscordChatExporter.Gui.ViewModels
     public class MainViewModel : ViewModelBase, IMainViewModel
     {
         private readonly ISettingsService _settingsService;
+        private readonly IUpdateService _updateService;
         private readonly IDataService _dataService;
         private readonly IMessageGroupService _messageGroupService;
         private readonly IExportService _exportService;
@@ -81,15 +83,18 @@ namespace DiscordChatExporter.Gui.ViewModels
             private set => Set(ref _availableChannels, value);
         }
 
+        public RelayCommand ViewLoadedCommand { get; }
+        public RelayCommand ViewClosedCommand { get; }
         public RelayCommand PullDataCommand { get; }
         public RelayCommand ShowSettingsCommand { get; }
         public RelayCommand ShowAboutCommand { get; }
         public RelayCommand<Channel> ShowExportSetupCommand { get; }
 
-        public MainViewModel(ISettingsService settingsService, IDataService dataService,
+        public MainViewModel(ISettingsService settingsService, IUpdateService updateService, IDataService dataService,
             IMessageGroupService messageGroupService, IExportService exportService)
         {
             _settingsService = settingsService;
+            _updateService = updateService;
             _dataService = dataService;
             _messageGroupService = messageGroupService;
             _exportService = exportService;
@@ -97,19 +102,54 @@ namespace DiscordChatExporter.Gui.ViewModels
             _guildChannelsMap = new Dictionary<Guild, IReadOnlyList<Channel>>();
 
             // Commands
+            ViewLoadedCommand = new RelayCommand(ViewLoaded);
+            ViewClosedCommand = new RelayCommand(ViewClosed);
             PullDataCommand = new RelayCommand(PullData, () => Token.IsNotBlank() && !IsBusy);
             ShowSettingsCommand = new RelayCommand(ShowSettings);
             ShowAboutCommand = new RelayCommand(ShowAbout);
             ShowExportSetupCommand = new RelayCommand<Channel>(ShowExportSetup, _ => !IsBusy);
 
             // Messages
-            MessengerInstance.Register<StartExportMessage>(this, m =>
-            {
-                Export(m.Channel, m.FilePath, m.Format, m.From, m.To);
-            });
+            MessengerInstance.Register<StartExportMessage>(this,
+                m => { Export(m.Channel, m.FilePath, m.Format, m.From, m.To); });
+        }
 
-            // Defaults
-            _token = _settingsService.LastToken;
+        private async void ViewLoaded()
+        {
+            // Load settings
+            _settingsService.Load();
+
+            // Set last token
+            Token = _settingsService.LastToken;
+
+            // Check for updates
+            var lastVersion = await _updateService.CheckForUpdatesAsync();
+            if (lastVersion != null)
+            {
+                // Download updates
+                await _updateService.PrepareUpdateAsync();
+
+                // Notify user
+                MessengerInstance.Send(
+                    new ShowNotificationMessage(
+                        $"DiscordChatExporter v{lastVersion} has been downloaded. " +
+                        "It will be installed once you exit.",
+                        "INSTALL NOW",
+                        async () =>
+                        {
+                            await _updateService.ApplyUpdateAsync();
+                            Application.Current.Shutdown();
+                        }));
+            }
+        }
+
+        private void ViewClosed()
+        {
+            // Save settings
+            _settingsService.Save();
+
+            // Apply updates if available
+            _updateService.ApplyUpdateAsync(false);
         }
 
         private async void PullData()

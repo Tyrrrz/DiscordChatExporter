@@ -21,6 +21,23 @@ UserControl "DiscordChatExporter.Gui.Views.SettingsDialog" {
       Text: bind MessageGroupLimit
     }
 
+    // Auto-update
+    DockPanel {
+      LastChildFill: false
+
+      TextBlock {
+        Margin: [16, 8, 16, 8]
+        DockPanel.Dock: Left
+        Text: "Auto-updates"
+      }
+
+      ToggleButton {
+        Margin: [16, 8, 16, 8]
+        DockPanel.Dock: Right
+        IsChecked: bind IsAutoUpdateEnabled
+      }
+    }
+
     // Save
     Button {
       Margin: 8

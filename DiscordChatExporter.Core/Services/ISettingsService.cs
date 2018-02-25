@@ -4,6 +4,8 @@ namespace DiscordChatExporter.Core.Services
 {
     public interface ISettingsService
     {
+        bool IsAutoUpdateEnabled { get; set; }
+
         string DateFormat { get; set; }
         int MessageGroupLimit { get; set; }
 

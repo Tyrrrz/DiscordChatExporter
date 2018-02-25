@@ -7,13 +7,16 @@ namespace DiscordChatExporter.Core.Services
 {
     public class UpdateService : IUpdateService
     {
+        private readonly ISettingsService _settingsService;
         private readonly UpdateManager _updateManager;
 
         private Version _lastVersion;
         private bool _applied;
 
-        public UpdateService()
+        public UpdateService(ISettingsService settingsService)
         {
+            _settingsService = settingsService;
+
             _updateManager = new UpdateManager(
                 new GithubPackageResolver("Tyrrrz", "DiscordChatExporter", "DiscordChatExporter.zip"),
                 new ZipPackageExtractor());
@@ -25,6 +28,10 @@ namespace DiscordChatExporter.Core.Services
             // Never update in DEBUG mode
             return null;
 #endif
+
+            // Don't update if user disabled it
+            if (!_settingsService.IsAutoUpdateEnabled)
+                return null;
 
             try
             {

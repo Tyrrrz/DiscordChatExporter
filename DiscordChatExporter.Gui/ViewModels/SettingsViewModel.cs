@@ -8,6 +8,12 @@ namespace DiscordChatExporter.Gui.ViewModels
     {
         private readonly ISettingsService _settingsService;
 
+        public bool IsAutoUpdateEnabled
+        {
+            get => _settingsService.IsAutoUpdateEnabled;
+            set => _settingsService.IsAutoUpdateEnabled = value;
+        }
+
         public string DateFormat
         {
             get => _settingsService.DateFormat;

@@ -64,6 +64,40 @@ namespace DiscordChatExporter.Core.Services
             }
         }
 
+        private async Task ExportAsCsv(string filePath, ChannelChatLog log)
+        {
+            using (var writer = new CsvHelper.CsvWriter(new StreamWriter(filePath, false, Encoding.UTF8, 128 * 1024)))
+            {
+                // Chat log
+                foreach (var group in log.MessageGroups)
+                {
+                    writer.WriteField(group.Author.FullyQualifiedName);
+                    var timeStampFormatted = group.TimeStamp.ToString(_settingsService.DateFormat);
+                    writer.WriteField(timeStampFormatted);
+
+                    // Messages
+                    var attachments = new StringBuilder();
+                    foreach (var msg in group.Messages)
+                    {
+                        // Content
+                        if (msg.Content.IsNotBlank())
+                        {
+                            writer.WriteField(FormatMessageContentTextCSV(msg));
+                        }
+
+                        // Attachments
+                        foreach (var attach in msg.Attachments)
+                        {
+                            attachments.Append(attach.Url);
+                        }
+                    }
+
+                    writer.WriteField(attachments.ToString());
+                    writer.NextRecord();
+                }
+            }
+        }
+
         private async Task ExportAsHtmlAsync(string filePath, ChannelChatLog log, string css)
         {
             using (var writer = new StreamWriter(filePath, false, Encoding.UTF8, 128 * 1024))
@@ -178,15 +212,19 @@ namespace DiscordChatExporter.Core.Services
             {
                 return ExportAsTextAsync(filePath, log);
             }
-            if (format == ExportFormat.HtmlDark)
+            else if (format == ExportFormat.HtmlDark)
             {
                 var css = AssemblyHelper.GetResourceString("DiscordChatExporter.Core.Resources.ExportService.DarkTheme.css");
                 return ExportAsHtmlAsync(filePath, log, css);
             }
-            if (format == ExportFormat.HtmlLight)
+            else if (format == ExportFormat.HtmlLight)
             {
                 var css = AssemblyHelper.GetResourceString("DiscordChatExporter.Core.Resources.ExportService.LightTheme.css");
                 return ExportAsHtmlAsync(filePath, log, css);
+            }
+            else if (format == ExportFormat.CSV)
+            {
+                return ExportAsCsv(filePath, log);
             }
 
             throw new ArgumentOutOfRangeException(nameof(format));
@@ -207,7 +245,7 @@ namespace DiscordChatExporter.Core.Services
 
         private static string FormatFileSize(long fileSize)
         {
-            string[] units = {"B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"};
+            string[] units = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
             double size = fileSize;
             var unit = 0;
 
@@ -242,6 +280,13 @@ namespace DiscordChatExporter.Core.Services
             // Custom emojis (<:name:id>)
             content = Regex.Replace(content, "<(:.*?:)\\d*>", "$1");
 
+            return content;
+        }
+
+        public static string FormatMessageContentTextCSV(Message message)
+        {
+            string content = FormatMessageContentText(message);
+            content = content.Replace(Environment.NewLine, ", ");
             return content;
         }
 

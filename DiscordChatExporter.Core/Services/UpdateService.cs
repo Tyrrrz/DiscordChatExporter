@@ -8,82 +8,55 @@ namespace DiscordChatExporter.Core.Services
     public class UpdateService : IUpdateService
     {
         private readonly ISettingsService _settingsService;
-        private readonly UpdateManager _updateManager;
+        private readonly IUpdateManager _manager;
 
-        private Version _lastVersion;
-        private bool _applied;
+        private Version _updateVersion;
+        private bool _updateFinalized;
+
+        public bool NeedRestart { get; set; }
 
         public UpdateService(ISettingsService settingsService)
         {
             _settingsService = settingsService;
 
-            _updateManager = new UpdateManager(
+            _manager = new UpdateManager(
                 new GithubPackageResolver("Tyrrrz", "DiscordChatExporter", "DiscordChatExporter.zip"),
                 new ZipPackageExtractor());
         }
 
-        public async Task<Version> CheckForUpdatesAsync()
+        public async Task<Version> CheckPrepareUpdateAsync()
         {
-#if DEBUG
-            // Never update in DEBUG mode
-            return null;
-#endif
-
-            // Don't update if user disabled it
+            // If auto-update is disabled - don't check for updates
             if (!_settingsService.IsAutoUpdateEnabled)
                 return null;
 
-            try
-            {
-                // Remove some junk left over from last update
-                _updateManager.Cleanup();
+            // Cleanup leftover files
+            _manager.Cleanup();
 
-                // Check for updates
-                var check = await _updateManager.CheckForUpdatesAsync();
-
-                // Return latest version or null if running latest version already
-                return check.CanUpdate ? _lastVersion = check.LastVersion : null;
-            }
-            catch
-            {
-                // It's okay for update to fail
+            // Check for updates
+            var check = await _manager.CheckForUpdatesAsync();
+            if (!check.CanUpdate)
                 return null;
-            }
+
+            // Prepare the update
+            await _manager.PrepareUpdateAsync(check.LastVersion);
+
+            return _updateVersion = check.LastVersion;
         }
 
-        public async Task PrepareUpdateAsync()
+        public async Task FinalizeUpdateAsync()
         {
-            if (_lastVersion == null)
+            // Check if an update is pending
+            if (_updateVersion == null)
                 return;
 
-            try
-            {
-                // Download and prepare update
-                await _updateManager.PreparePackageAsync(_lastVersion);
-            }
-            catch
-            {
-                // It's okay for update to fail
-            }
-        }
-
-        public async Task ApplyUpdateAsync(bool restart = true)
-        {
-            if (_lastVersion == null)
-                return;
-            if (_applied)
+            // Check if the update has already been finalized
+            if (_updateFinalized)
                 return;
 
-            try
-            {
-                // Enqueue an update
-                await _updateManager.EnqueueApplyPackageAsync(_lastVersion, restart);
-                _applied = true;
-            }
-            catch
-            {
-                // It's okay for update to fail
-            }
+            // Launch the updater
+            await _manager.LaunchUpdaterAsync(_updateVersion, NeedRestart);
+            _updateFinalized = true;
         }
     }
 }

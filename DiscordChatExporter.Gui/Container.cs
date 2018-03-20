@@ -1,7 +1,7 @@
-﻿using DiscordChatExporter.Core.Services;
+﻿using CommonServiceLocator;
+using DiscordChatExporter.Core.Services;
 using DiscordChatExporter.Gui.ViewModels;
 using GalaSoft.MvvmLight.Ioc;
-using Microsoft.Practices.ServiceLocation;
 
 namespace DiscordChatExporter.Gui
 {

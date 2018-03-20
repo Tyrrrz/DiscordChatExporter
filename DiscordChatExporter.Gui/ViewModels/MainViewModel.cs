@@ -111,7 +111,7 @@ namespace DiscordChatExporter.Gui.ViewModels
 
             // Messages
             MessengerInstance.Register<StartExportMessage>(this,
-                m => { Export(m.Channel, m.FilePath, m.Format, m.From, m.To); });
+                m => Export(m.Channel, m.FilePath, m.Format, m.From, m.To));
         }
 
         private async void ViewLoaded()
@@ -122,33 +122,34 @@ namespace DiscordChatExporter.Gui.ViewModels
             // Set last token
             Token = _settingsService.LastToken;
 
-            // Check for updates
-            var lastVersion = await _updateService.CheckForUpdatesAsync();
-            if (lastVersion != null)
+            // Check and prepare update
+            try
             {
-                // Download updates
-                await _updateService.PrepareUpdateAsync();
-
-                // Notify user
-                MessengerInstance.Send(
-                    new ShowNotificationMessage(
-                        $"DiscordChatExporter v{lastVersion} has been downloaded – it will be installed when you exit",
-                        "INSTALL NOW",
-                        async () =>
+                var updateVersion = await _updateService.CheckPrepareUpdateAsync();
+                if (updateVersion != null)
+                {
+                    MessengerInstance.Send(new ShowNotificationMessage(
+                        $"Update to DiscordChatExporter v{updateVersion} will be installed when you exit",
+                        "INSTALL NOW", () =>
                         {
-                            await _updateService.ApplyUpdateAsync();
+                            _updateService.NeedRestart = true;
                             Application.Current.Shutdown();
                         }));
+                }
+            }
+            catch
+            {
+                MessengerInstance.Send(new ShowNotificationMessage("Failed to perform application auto-update"));
             }
         }
 
-        private void ViewClosed()
+        private async void ViewClosed()
         {
             // Save settings
             _settingsService.Save();
 
-            // Apply updates if available
-            _updateService.ApplyUpdateAsync(false);
+            // Finalize updates if available
+            await _updateService.FinalizeUpdateAsync();
         }
 
         private async void PullData()
@@ -185,13 +186,11 @@ namespace DiscordChatExporter.Gui.ViewModels
             }
             catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
             {
-                const string message = "Unauthorized – make sure the token is valid";
-                MessengerInstance.Send(new ShowNotificationMessage(message));
+                MessengerInstance.Send(new ShowNotificationMessage("Unauthorized – make sure the token is valid"));
             }
             catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
             {
-                const string message = "Forbidden – account may be locked by 2FA";
-                MessengerInstance.Send(new ShowNotificationMessage(message));
+                MessengerInstance.Send(new ShowNotificationMessage("Forbidden – account may be locked by 2FA"));
             }
 
             AvailableGuilds = _guildChannelsMap.Keys.ToArray();
@@ -237,13 +236,11 @@ namespace DiscordChatExporter.Gui.ViewModels
 
                 // Notify completion
                 MessengerInstance.Send(new ShowNotificationMessage($"Export completed for channel [{channel.Name}]",
-                    "OPEN",
-                    () => Process.Start(filePath)));
+                    "OPEN", () => Process.Start(filePath)));
             }
             catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
             {
-                const string message = "You don't have access to that channel";
-                MessengerInstance.Send(new ShowNotificationMessage(message));
+                MessengerInstance.Send(new ShowNotificationMessage("You don't have access to that channel"));
             }
 
             IsBusy = false;

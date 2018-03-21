@@ -14,6 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="CsvHelper" Version="7.0.1" />
         <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
         <PackageReference Include="Onova" Version="2.0.0" />
         <PackageReference Include="Tyrrrz.Extensions" Version="1.5.0" />

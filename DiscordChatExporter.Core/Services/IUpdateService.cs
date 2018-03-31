@@ -9,6 +9,6 @@ namespace DiscordChatExporter.Core.Services
 
         Task<Version> CheckPrepareUpdateAsync();
 
-        Task FinalizeUpdateAsync();
+        void FinalizeUpdate();
     }
 }

@@ -39,12 +39,13 @@ namespace DiscordChatExporter.Core.Services
                 return null;
 
             // Prepare the update
-            await _manager.PrepareUpdateAsync(check.LastVersion);
+            if (!_manager.IsUpdatePrepared(check.LastVersion))
+                await _manager.PrepareUpdateAsync(check.LastVersion);
 
             return _updateVersion = check.LastVersion;
         }
 
-        public async Task FinalizeUpdateAsync()
+        public void FinalizeUpdate()
         {
             // Check if an update is pending
             if (_updateVersion == null)
@@ -55,7 +56,7 @@ namespace DiscordChatExporter.Core.Services
                 return;
 
             // Launch the updater
-            await _manager.LaunchUpdaterAsync(_updateVersion, NeedRestart);
+            _manager.LaunchUpdater(_updateVersion, NeedRestart);
             _updateFinalized = true;
         }
     }

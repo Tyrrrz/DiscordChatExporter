@@ -60,8 +60,13 @@ namespace DiscordChatExporter.Core.Services
             if (type.IsEither(ChannelType.DirectTextChat, ChannelType.DirectGroupTextChat))
             {
                 guildId = Guild.DirectMessages.Id;
-                var recipients = token["recipients"].Select(ParseUser);
-                name = recipients.Select(r => r.Name).JoinToString(", ");
+
+                // Try to get name if it's set
+                name = token["name"]?.Value<string>();
+
+                // Otherwise use recipients as the name
+                if (name.IsBlank())
+                    name = token["recipients"].Select(ParseUser).Select(u => u.Name).JoinToString(", ");
             }
             else
             {

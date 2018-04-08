@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using Tyrrrz.Extensions;
+﻿using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Models
 {
@@ -11,11 +10,11 @@ namespace DiscordChatExporter.Core.Models
 
         public string Name { get; }
 
-        public string FullyQualifiedName => $"{Name}#{Discriminator:0000}";
+        public string FullName => $"{Name}#{Discriminator:0000}";
 
         public string AvatarHash { get; }
 
-        public string DefaultAvatarHash => (Discriminator % 5).ToString(CultureInfo.InvariantCulture);
+        public string DefaultAvatarHash => $"{Discriminator % 5}";
 
         public string AvatarUrl => AvatarHash.IsNotBlank()
             ? $"https://cdn.discordapp.com/avatars/{Id}/{AvatarHash}.png"
@@ -31,7 +30,7 @@ namespace DiscordChatExporter.Core.Models
 
         public override string ToString()
         {
-            return FullyQualifiedName;
+            return FullName;
         }
     }
 }

@@ -235,12 +235,12 @@ namespace DiscordChatExporter.Gui.ViewModels
                 await _exportService.ExportAsync(format, filePath, log);
 
                 // Notify completion
-                MessengerInstance.Send(new ShowNotificationMessage($"Export completed for channel [{channel.Name}]",
+                MessengerInstance.Send(new ShowNotificationMessage("Export complete",
                     "OPEN", () => Process.Start(filePath)));
             }
             catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
             {
-                MessengerInstance.Send(new ShowNotificationMessage("You don't have access to that channel"));
+                MessengerInstance.Send(new ShowNotificationMessage("You don't have access to this channel"));
             }
 
             IsBusy = false;

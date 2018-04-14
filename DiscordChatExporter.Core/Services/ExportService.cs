@@ -40,6 +40,10 @@ namespace DiscordChatExporter.Core.Services
                         .GetManifestResourceString("DiscordChatExporter.Core.Resources.ExportService.LightTheme.css");
                     await ExportAsHtmlAsync(log, output, css);
                 }
+                else if (format == ExportFormat.Csv)
+                {
+                    await ExportAsCsvAsync(log, output);
+                }
 
                 else throw new ArgumentOutOfRangeException(nameof(format));
             }

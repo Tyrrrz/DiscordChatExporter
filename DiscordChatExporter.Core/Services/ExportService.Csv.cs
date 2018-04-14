@@ -17,7 +17,7 @@ namespace DiscordChatExporter.Core.Services
             var content = message.Content;
 
             // New lines
-            content = content.Replace("\n", "\\n");
+            content = content.Replace("\n", ", ");
 
             // User mentions (<@id> and <@!id>)
             foreach (var mentionedUser in message.MentionedUsers)

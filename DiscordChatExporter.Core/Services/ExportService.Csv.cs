@@ -54,7 +54,7 @@ namespace DiscordChatExporter.Core.Services
                 {
                     foreach (var msg in group.Messages)
                     {
-                        writer.WriteField(msg.Author.FullName);
+                        writer.WriteField(msg.Author.FullName, true);
                         var timeStampFormatted = msg.TimeStamp.ToString(_settingsService.DateFormat);
                         writer.WriteField(timeStampFormatted);
 

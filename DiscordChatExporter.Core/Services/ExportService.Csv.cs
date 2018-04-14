@@ -44,6 +44,7 @@ namespace DiscordChatExporter.Core.Services
                 // Headers
 
                 writer.WriteField("Name");
+                writer.WriteField("Discriminator");
                 writer.WriteField("Date");
                 writer.WriteField("Content");
                 writer.WriteField("Attachments");
@@ -54,7 +55,9 @@ namespace DiscordChatExporter.Core.Services
                 {
                     foreach (var msg in group.Messages)
                     {
-                        writer.WriteField(msg.Author.FullName, true);
+                        writer.WriteField(msg.Author.Name, true);
+                        writer.WriteField(msg.Author.Discriminator);
+
                         var timeStampFormatted = msg.TimeStamp.ToString(_settingsService.DateFormat);
                         writer.WriteField(timeStampFormatted);
 

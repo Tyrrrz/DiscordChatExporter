@@ -41,7 +41,15 @@ namespace DiscordChatExporter.Core.Services
         {
             using (var writer = new CsvHelper.CsvWriter(output, false))
             {
-                // Chat log
+                // Headers
+
+                writer.WriteField("Name");
+                writer.WriteField("Date");
+                writer.WriteField("Content");
+                writer.WriteField("Attachments");
+                await writer.NextRecordAsync();
+
+                // Chat
                 foreach (var group in log.MessageGroups)
                 {
                     foreach (var msg in group.Messages)
@@ -56,7 +64,7 @@ namespace DiscordChatExporter.Core.Services
                         // Attachments
                         writer.WriteField(msg.Attachments.Select(x => x.Url).JoinToString(","), true);
 
-                        writer.NextRecord();
+                        await writer.NextRecordAsync();
                     }
                 }
             }

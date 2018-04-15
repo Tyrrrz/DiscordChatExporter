@@ -236,9 +236,11 @@ namespace DiscordChatExporter.Gui.ViewModels
                 // Export
                 await _exportService.ExportAsync(format, filePath, log);
 
+                // Open
+                Process.Start(filePath);
+
                 // Notify completion
-                MessengerInstance.Send(new ShowNotificationMessage("Export complete",
-                    "OPEN", () => Process.Start(filePath)));
+                MessengerInstance.Send(new ShowNotificationMessage("Export complete"));
             }
             catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
             {

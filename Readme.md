@@ -30,6 +30,7 @@ DiscordChatExporter can be used to export message history from a [Discord](https
   - Full markdown support
   - Automatic links
   - Styled similarly to the app
+- Exports to a CSV file
 - Renders custom emojis
 - Resolves user, role and channel mentions
 

@@ -39,15 +39,6 @@ namespace DiscordChatExporter.Core.Services
         {
             using (var writer = new CsvWriter(output))
             {
-                // Generation info
-                writer.WriteComment("https://github.com/Tyrrrz/DiscordChatExporter");
-
-                // Guild and channel info
-                writer.WriteComment($"Guild: {log.Guild.Name}");
-                writer.WriteComment($"Channel: {log.Channel.Name}");
-                writer.WriteComment($"Topic: {log.Channel.Topic}");
-                writer.WriteComment($"Messages: {log.TotalMessageCount:N0}");
-
                 // Headers
                 writer.WriteField("Author");
                 writer.WriteField("Date");
@@ -62,7 +53,7 @@ namespace DiscordChatExporter.Core.Services
                     foreach (var msg in group.Messages)
                     {
                         // Author
-                        writer.WriteField(msg.Author.FullName, true);
+                        writer.WriteField(msg.Author.FullName);
 
                         // Date
                         var timeStampFormatted = msg.TimeStamp.ToString(_settingsService.DateFormat);
@@ -70,11 +61,11 @@ namespace DiscordChatExporter.Core.Services
 
                         // Content
                         var contentFormatted = msg.Content.IsNotBlank() ? FormatMessageContentCsv(msg) : null;
-                        writer.WriteField(contentFormatted, true);
+                        writer.WriteField(contentFormatted);
 
                         // Attachments
                         var attachmentsFormatted = msg.Attachments.Select(a => a.Url).JoinToString(",");
-                        writer.WriteField(attachmentsFormatted, true);
+                        writer.WriteField(attachmentsFormatted);
 
                         await writer.NextRecordAsync();
                     }

@@ -171,7 +171,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                 {
                     var channels = await _dataService.GetDirectMessageChannelsAsync(token);
                     var guild = Guild.DirectMessages;
-                    _guildChannelsMap[guild] = channels.ToArray();
+                    _guildChannelsMap[guild] = channels.OrderBy(c => c.Name).ToArray();
                 }
 
                 // Get guild channels
@@ -180,7 +180,9 @@ namespace DiscordChatExporter.Gui.ViewModels
                     foreach (var guild in guilds)
                     {
                         var channels = await _dataService.GetGuildChannelsAsync(token, guild.Id);
-                        _guildChannelsMap[guild] = channels.Where(c => c.Type == ChannelType.GuildTextChat).ToArray();
+                        _guildChannelsMap[guild] = channels.Where(c => c.Type == ChannelType.GuildTextChat)
+                            .OrderBy(c => c.Name)
+                            .ToArray();
                     }
                 }
             }

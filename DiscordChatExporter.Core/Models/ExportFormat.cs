@@ -4,6 +4,7 @@
     {
         PlainText,
         HtmlDark,
-        HtmlLight
+        HtmlLight,
+        Csv
     }
 }

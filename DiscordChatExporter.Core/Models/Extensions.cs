@@ -12,6 +12,8 @@ namespace DiscordChatExporter.Core.Models
                 return "html";
             if (format == ExportFormat.HtmlLight)
                 return "html";
+            if (format == ExportFormat.Csv)
+                return "csv";
 
             throw new ArgumentOutOfRangeException(nameof(format));
         }
@@ -24,6 +26,8 @@ namespace DiscordChatExporter.Core.Models
                 return "HTML (Dark)";
             if (format == ExportFormat.HtmlLight)
                 return "HTML (Light)";
+            if (format == ExportFormat.Csv)
+                return "Comma Seperated Values (CSV)";
 
             throw new ArgumentOutOfRangeException(nameof(format));
         }

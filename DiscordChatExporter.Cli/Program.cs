@@ -2,6 +2,7 @@
 using System.Reflection;
 using DiscordChatExporter.Core.Models;
 using Fclp;
+using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Cli
 {
@@ -12,17 +13,20 @@ namespace DiscordChatExporter.Cli
         private static void ShowHelp()
         {
             var version = Assembly.GetExecutingAssembly().GetName().Version;
+            var availableFormats = Enum.GetNames(typeof(ExportFormat));
 
             Console.WriteLine($"=== Discord Chat Exporter (Command Line Interface) v{version} ===");
             Console.WriteLine();
             Console.WriteLine("[-t] [--token]       Discord authorization token.");
             Console.WriteLine("[-c] [--channel]     Discord channel ID.");
-            Console.WriteLine("[-f] [--format]      Export format (PlainText/HtmlDark/HtmlLight). Optional.");
+            Console.WriteLine("[-f] [--format]      Export format. Optional.");
             Console.WriteLine("[-o] [--output]      Output file path. Optional.");
             Console.WriteLine("     [--datefrom]    Limit to messages after this date. Optional.");
             Console.WriteLine("     [--dateto]      Limit to messages before this date. Optional.");
             Console.WriteLine("     [--dateformat]  Date format. Optional.");
             Console.WriteLine("     [--grouplimit]  Message group limit. Optional.");
+            Console.WriteLine();
+            Console.WriteLine($"Available export formats: {availableFormats.JoinToString(", ")}");
             Console.WriteLine();
             Console.WriteLine("# To get authorization token:");
             Console.WriteLine(" - Open Discord app");

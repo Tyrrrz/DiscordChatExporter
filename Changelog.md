@@ -1,3 +1,9 @@
+### v2.4.1 (15-Apr-2018)
+
+- Added CSV export format.
+- Channels are now ordered by name in the UI.
+- Exported file is now always opened upon completion.
+
 ### v2.4 (08-Apr-2018)
 
 - Added channel topic to output.

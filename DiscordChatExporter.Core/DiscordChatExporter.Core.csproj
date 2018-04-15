@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net461</TargetFramework>
-        <Version>2.4</Version>
+        <Version>2.4.1</Version>
     </PropertyGroup>
 
     <ItemGroup>

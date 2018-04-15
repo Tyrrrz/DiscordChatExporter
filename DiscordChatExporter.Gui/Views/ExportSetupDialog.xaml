@@ -1,0 +1,78 @@
+﻿<UserControl
+    x:Class="DiscordChatExporter.Gui.Views.ExportSetupDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    Width="325"
+    DataContext="{Binding ExportSetupViewModel, Source={StaticResource Container}}">
+    <StackPanel>
+        <!--  File path  -->
+        <TextBox
+            Margin="16,16,16,8"
+            materialDesign:HintAssist.Hint="Output file"
+            materialDesign:HintAssist.IsFloating="True"
+            IsReadOnly="True"
+            Text="{Binding FilePath, UpdateSourceTrigger=PropertyChanged}" />
+
+        <!--  Format  -->
+        <ComboBox
+            Margin="16,8,16,8"
+            materialDesign:HintAssist.Hint="Export format"
+            materialDesign:HintAssist.IsFloating="True"
+            IsReadOnly="True"
+            ItemsSource="{Binding AvailableFormats}"
+            SelectedItem="{Binding SelectedFormat}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Converter={StaticResource ExportFormatToStringConverter}}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <!--  Date limits  -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <DatePicker
+                Grid.Row="0"
+                Grid.Column="0"
+                Margin="16,20,8,8"
+                materialDesign:HintAssist.Hint="From (optional)"
+                materialDesign:HintAssist.IsFloating="True"
+                SelectedDate="{Binding From}" />
+            <DatePicker
+                Grid.Row="0"
+                Grid.Column="1"
+                Margin="8,20,16,8"
+                materialDesign:HintAssist.Hint="To (optional)"
+                materialDesign:HintAssist.IsFloating="True"
+                SelectedDate="{Binding To}" />
+        </Grid>
+
+        <!--  Buttons  -->
+        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button
+                x:Name="BrowseButton"
+                Margin="8"
+                Click="BrowseButton_Click"
+                Content="BROWSE"
+                Style="{DynamicResource MaterialDesignFlatButton}" />
+            <Button
+                x:Name="ExportButton"
+                Margin="8"
+                Click="ExportButton_Click"
+                Command="{Binding ExportCommand}"
+                Content="EXPORT"
+                IsDefault="True"
+                Style="{DynamicResource MaterialDesignFlatButton}" />
+            <Button
+                Margin="8"
+                Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                Content="CANCEL"
+                IsCancel="True"
+                Style="{DynamicResource MaterialDesignFlatButton}" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

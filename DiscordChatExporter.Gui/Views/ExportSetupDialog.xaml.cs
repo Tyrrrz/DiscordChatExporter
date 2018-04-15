@@ -8,7 +8,7 @@ namespace DiscordChatExporter.Gui.Views
 {
     public partial class ExportSetupDialog
     {
-        private IExportSetupViewModel ViewModel => (IExportSetupViewModel) DataContext;
+        private IExportSetupViewModel ViewModel => (IExportSetupViewModel)DataContext;
 
         public ExportSetupDialog()
         {

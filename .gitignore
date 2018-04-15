@@ -259,6 +259,3 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
-
-# Ammy auto-generated XAML
-*.g.xaml

@@ -28,7 +28,7 @@ namespace DiscordChatExporter.Gui.Views
             // Dialog messages
             Messenger.Default.Register<ShowExportSetupMessage>(this,
                 m => DialogHost.Show(new ExportSetupDialog()).Forget());
-            Messenger.Default.Register<ShowSettingsMessage>(this, 
+            Messenger.Default.Register<ShowSettingsMessage>(this,
                 m => DialogHost.Show(new SettingsDialog()).Forget());
         }
     }

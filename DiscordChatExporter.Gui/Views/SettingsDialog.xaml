@@ -1,0 +1,45 @@
+﻿<UserControl
+    x:Class="DiscordChatExporter.Gui.Views.SettingsDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    Width="250"
+    DataContext="{Binding SettingsViewModel, Source={StaticResource Container}}">
+    <StackPanel>
+        <!--  Date format  -->
+        <TextBox
+            Margin="16,16,16,8"
+            materialDesign:HintAssist.Hint="Date format"
+            materialDesign:HintAssist.IsFloating="True"
+            Text="{Binding DateFormat}" />
+
+        <!--  Message group limit  -->
+        <TextBox
+            Margin="16,8,16,8"
+            materialDesign:HintAssist.Hint="Message group limit"
+            materialDesign:HintAssist.IsFloating="True"
+            Text="{Binding MessageGroupLimit}" />
+
+        <!--  Auto-updates  -->
+        <DockPanel LastChildFill="False">
+            <TextBlock
+                Margin="16,8,16,8"
+                DockPanel.Dock="Left"
+                Text="Auto-updates" />
+            <ToggleButton
+                Margin="16,8,16,8"
+                DockPanel.Dock="Right"
+                IsChecked="{Binding IsAutoUpdateEnabled}" />
+        </DockPanel>
+
+        <!--  Save button  -->
+        <Button
+            Margin="8"
+            HorizontalAlignment="Right"
+            Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+            Content="SAVE"
+            IsCancel="True"
+            IsDefault="True"
+            Style="{DynamicResource MaterialDesignFlatButton}" />
+    </StackPanel>
+</UserControl>

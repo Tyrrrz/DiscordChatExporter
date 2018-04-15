@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using CsvHelper;
 using DiscordChatExporter.Core.Models;
 using Tyrrrz.Extensions;
 
@@ -39,33 +37,44 @@ namespace DiscordChatExporter.Core.Services
 
         private async Task ExportAsCsvAsync(ChannelChatLog log, TextWriter output)
         {
-            using (var writer = new CsvHelper.CsvWriter(output, false))
+            using (var writer = new CsvWriter(output))
             {
-                // Headers
+                // Generation info
+                writer.WriteComment("https://github.com/Tyrrrz/DiscordChatExporter");
 
-                writer.WriteField("Name");
-                writer.WriteField("Discriminator");
+                // Guild and channel info
+                writer.WriteComment($"Guild: {log.Guild.Name}");
+                writer.WriteComment($"Channel: {log.Channel.Name}");
+                writer.WriteComment($"Topic: {log.Channel.Topic}");
+                writer.WriteComment($"Messages: {log.TotalMessageCount:N0}");
+
+                // Headers
+                writer.WriteField("Author");
                 writer.WriteField("Date");
                 writer.WriteField("Content");
                 writer.WriteField("Attachments");
                 await writer.NextRecordAsync();
 
-                // Chat
+                // Chat log
                 foreach (var group in log.MessageGroups)
                 {
+                    // Messages
                     foreach (var msg in group.Messages)
                     {
-                        writer.WriteField(msg.Author.Name, true);
-                        writer.WriteField(msg.Author.Discriminator.ToString().PadLeft(4, '0'));
+                        // Author
+                        writer.WriteField(msg.Author.FullName, true);
 
+                        // Date
                         var timeStampFormatted = msg.TimeStamp.ToString(_settingsService.DateFormat);
                         writer.WriteField(timeStampFormatted);
 
                         // Content
-                        writer.WriteField(string.IsNullOrWhiteSpace(msg.Content) ? null : FormatMessageContentCsv(msg), true);
+                        var contentFormatted = msg.Content.IsNotBlank() ? FormatMessageContentCsv(msg) : null;
+                        writer.WriteField(contentFormatted, true);
 
                         // Attachments
-                        writer.WriteField(msg.Attachments.Select(x => x.Url).JoinToString(","), true);
+                        var attachmentsFormatted = msg.Attachments.Select(a => a.Url).JoinToString(",");
+                        writer.WriteField(attachmentsFormatted, true);
 
                         await writer.NextRecordAsync();
                     }

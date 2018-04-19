@@ -31,7 +31,7 @@ namespace DiscordChatExporter.Core.Services
 
             // Encode URLs
             content = Regex.Replace(content,
-                @"((https?|ftp)://[-a-zA-Z0-9+&@#/%?=~_|!:,\.\[\]\(\);]*[-a-zA-Z0-9+&@#/%=~_|\[\])])(?=$|\W)",
+                @"(?:[^\\(]|^)((https?|ftp)://[-a-zA-Z0-9+&@#/%?=~_|!:,\.\[\]\(\);]*[-a-zA-Z0-9+&@#/%=~_|\[\])])(?=$|\W)",
                 m => $"\x1AL{Base64Encode(m.Groups[1].Value)}\x1AL");
 
             // Process bold (**text**)
@@ -70,9 +70,13 @@ namespace DiscordChatExporter.Core.Services
             // Custom emojis (<:name:id>)
             content = Regex.Replace(content, "&lt;(:.*?:)(\\d*)&gt;",
                 "<img class=\"emoji\" title=\"$1\" src=\"https://cdn.discordapp.com/emojis/$2.png\" />");
-            
+
             // Markdown links
-            // TODO: add links parsing here when `allowLinks` is true
+            if (allowLinks)
+            {
+                content = Regex.Replace(content, "\\[([^\\]]+)\\]\\(([^\\)]+)\\)", 
+                    "<a href=\"$2\">$1</a>");
+            }
 
             return content;
         }
@@ -146,8 +150,7 @@ namespace DiscordChatExporter.Core.Services
 
         private string EmbedAuthorToHtml(string name, string url, string icon_url)
         {
-
-            if (name != null)
+            if (name == null)
                 return null;
 
             string authorName = null;

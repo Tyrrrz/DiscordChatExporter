@@ -35,7 +35,7 @@ namespace DiscordChatExporter.Core.Models
         public IReadOnlyList<EmbedField> Fields { get; }
 
         public Embed(string title, string type, string description, 
-            string url, DateTime? timeStamp, Color color, 
+            string url, DateTime? timeStamp, Color? color, 
             EmbedFooter footer, EmbedImage image, EmbedImage thumbnail, 
             EmbedVideo video, EmbedProvider provider, EmbedAuthor author, 
             IReadOnlyList<EmbedField> fields)

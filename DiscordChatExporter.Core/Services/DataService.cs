@@ -8,6 +8,7 @@ using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Models;
 using Newtonsoft.Json.Linq;
 using Tyrrrz.Extensions;
+using System.Drawing;
 
 namespace DiscordChatExporter.Core.Services
 {
@@ -123,6 +124,83 @@ namespace DiscordChatExporter.Core.Services
                 attachments.Add(attachment);
             }
 
+            // Get embeds
+            var embeds = new List<Embed>();
+            foreach (var embedJson in token["embeds"].EmptyIfNull())
+            {
+                // var embedFileSize = embedJson["size"].Value<long>();
+                var embedTitle = embedJson["title"]?.Value<string>();
+                var embedType = embedJson["type"]?.Value<string>();
+                var embedDescription = embedJson["description"]?.Value<string>();
+                var embedUrl = embedJson["url"]?.Value<string>();
+                var embedTimeStamp = embedJson["timestamp"]?.Value<DateTime>();
+                var embedColor = embedJson["color"] != null
+                    ? Color.FromArgb(embedJson["color"].Value<int>())
+                    : (Color?)null;
+
+                var footerNode = embedJson["footer"];
+                var embedFooter = footerNode != null
+                    ? new EmbedFooter(
+                        footerNode["text"]?.Value<string>(),
+                        footerNode["icon_url"]?.Value<string>(),
+                        footerNode["proxy_icon_url"]?.Value<string>())
+                    : null;
+
+                var imageNode = embedJson["image"];
+                var embedImage = imageNode != null
+                    ? new EmbedImage(
+                        imageNode["url"]?.Value<string>(),
+                        imageNode["proxy_url"]?.Value<string>(),
+                        imageNode["height"]?.Value<int>(),
+                        imageNode["width"]?.Value<int>())
+                    : null;
+                    
+                var thumbnailNode = embedJson["thumbnail"];
+                var embedThumbnail = thumbnailNode != null
+                    ? new EmbedImage(
+                        thumbnailNode["url"]?.Value<string>(),
+                        thumbnailNode["proxy_url"]?.Value<string>(),
+                        thumbnailNode["height"]?.Value<int>(),
+                        thumbnailNode["width"]?.Value<int>())
+                    : null;
+                    
+                var videoNode = embedJson["video"];
+                var embedVideo = videoNode != null
+                    ? new EmbedVideo(
+                        videoNode["url"]?.Value<string>(),
+                        videoNode["height"]?.Value<int>(),
+                        videoNode["width"]?.Value<int>())
+                    : null;
+                    
+                var providerNode = embedJson["provider"];
+                var embedProvider = providerNode != null
+                    ? new EmbedProvider(
+                        providerNode["name"]?.Value<string>(),
+                        providerNode["url"]?.Value<string>())
+                    : null;
+
+                var authorNode = embedJson["author"];
+                var embedAuthor = authorNode != null
+                    ? new EmbedAuthor(
+                        authorNode["name"]?.Value<string>(),
+                        authorNode["url"]?.Value<string>(),
+                        authorNode["icon_url"]?.Value<string>(),
+                        authorNode["proxy_icon_url"]?.Value<string>())
+                    : null;
+                
+                var embedFields = new List<EmbedField>();
+                foreach (var fieldNode in embedJson["fields"].EmptyIfNull())
+                {
+                    embedFields.Add(new EmbedField(
+                        fieldNode["name"]?.Value<string>(),
+                        fieldNode["value"]?.Value<string>(),
+                        fieldNode["inline"]?.Value<bool>()));
+                }
+
+                var embed = new Embed(embedTitle, embedType, embedDescription, embedUrl, embedTimeStamp, embedColor, embedFooter, embedImage, embedThumbnail, embedVideo, embedProvider, embedAuthor, embedFields);
+                embeds.Add(embed);
+            }
+
             // Get user mentions
             var mentionedUsers = token["mentions"].Select(ParseUser).ToArray();
 
@@ -140,7 +218,7 @@ namespace DiscordChatExporter.Core.Services
                 .Select(i => _channelCache.GetOrDefault(i) ?? Channel.CreateDeletedChannel(id))
                 .ToArray();
 
-            return new Message(id, channelId, type, author, timeStamp, editedTimeStamp, content, attachments,
+            return new Message(id, channelId, type, author, timeStamp, editedTimeStamp, content, attachments, embeds,
                 mentionedUsers, mentionedRoles, mentionedChannels);
         }
 

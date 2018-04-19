@@ -197,7 +197,12 @@ namespace DiscordChatExporter.Core.Services
                         fieldNode["inline"]?.Value<bool>()));
                 }
 
-                var embed = new Embed(embedTitle, embedType, embedDescription, embedUrl, embedTimeStamp, embedColor, embedFooter, embedImage, embedThumbnail, embedVideo, embedProvider, embedAuthor, embedFields);
+                var embed = new Embed(
+                    embedTitle, embedType, embedDescription, 
+                    embedUrl, embedTimeStamp, embedColor, 
+                    embedFooter, embedImage, embedThumbnail, 
+                    embedVideo, embedProvider, embedAuthor, 
+                    embedFields);
                 embeds.Add(embed);
             }
 

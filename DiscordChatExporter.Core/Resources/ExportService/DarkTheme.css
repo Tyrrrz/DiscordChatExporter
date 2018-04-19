@@ -140,3 +140,34 @@ img.emoji {
 span.mention {
     font-weight: 600;
 }
+
+.embed-wrapper .embed-color-pill {
+    background-color: #4f545c
+}
+
+.embed {
+    background-color: rgba(46, 48, 54, .3);
+    border-color: rgba(46, 48, 54, .6)
+}
+
+.embed .embed-footer,
+.embed .embed-provider {
+    color: hsla(0, 0%, 100%, .6)
+}
+
+.embed .embed-author-name {
+    color: #fff!important
+}
+
+.embed div.embed-title {
+    color: #fff
+}
+
+.embed .embed-description,
+.embed .embed-fields {
+    color: hsla(0, 0%, 100%, .6)
+}
+
+.embed .embed-fields .embed-field-name {
+    color: #fff
+}

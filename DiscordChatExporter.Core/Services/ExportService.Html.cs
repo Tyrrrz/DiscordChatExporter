@@ -121,7 +121,7 @@ namespace DiscordChatExporter.Core.Services
             if (color != null)
                 backgroundColor = $"rgba({color?.R},{color?.G},{color?.B},1)";
 
-            return $"<div class='embed-color-pill' style='background-color: {backgroundColor}' />";
+            return $"<div class='embed-color-pill' style='background-color: {backgroundColor}'></div>";
         }
 
         private string EmbedTitleToHtml(string title, string url)

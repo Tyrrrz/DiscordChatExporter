@@ -31,7 +31,7 @@ namespace DiscordChatExporter.Core.Services
 
             // Encode URLs
             content = Regex.Replace(content,
-                @"(?:[^\\(]|^)((https?|ftp)://[-a-zA-Z0-9+&@#/%?=~_|!:,\.\[\]\(\);]*[-a-zA-Z0-9+&@#/%=~_|\[\])])(?=$|\W)",
+                @"(\b(?:(?:https?|ftp|file)://|www\.|ftp\.)(?:\([-a-zA-Z0-9+&@#/%?=~_|!:,\.\[\];]*\)|[-a-zA-Z0-9+&@#/%?=~_|!:,\.\[\];])*(?:\([-a-zA-Z0-9+&@#/%?=~_|!:,\.\[\];]*\)|[-a-zA-Z0-9+&@#/%=~_|$]))",
                 m => $"\x1AL{Base64Encode(m.Groups[1].Value)}\x1AL");
 
             // Process bold (**text**)
@@ -54,6 +54,12 @@ namespace DiscordChatExporter.Core.Services
             content = Regex.Replace(content, "\x1AI(.*?)\x1AI",
                 m => $"<span class=\"pre\">{Base64Decode(m.Groups[1].Value)}</span>");
 
+            if (allowLinks)
+            {
+                content = Regex.Replace(content, "\\[([^\\]]+)\\]\\(\x1AL(.*?)\x1AL\\)",
+                    m => $"<a href=\"{Base64Decode(m.Groups[2].Value)}\">{m.Groups[1].Value}</a>");
+            }
+
             // Decode and process URLs
             content = Regex.Replace(content, "\x1AL(.*?)\x1AL",
                 m => $"<a href=\"{Base64Decode(m.Groups[1].Value)}\">{Base64Decode(m.Groups[1].Value)}</a>");
@@ -70,13 +76,6 @@ namespace DiscordChatExporter.Core.Services
             // Custom emojis (<:name:id>)
             content = Regex.Replace(content, "&lt;(:.*?:)(\\d*)&gt;",
                 "<img class=\"emoji\" title=\"$1\" src=\"https://cdn.discordapp.com/emojis/$2.png\" />");
-
-            // Markdown links
-            if (allowLinks)
-            {
-                content = Regex.Replace(content, "\\[([^\\]]+)\\]\\(([^\\)]+)\\)", 
-                    "<a href=\"$2\">$1</a>");
-            }
 
             return content;
         }

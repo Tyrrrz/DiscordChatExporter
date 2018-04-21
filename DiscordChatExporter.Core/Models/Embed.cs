@@ -6,7 +6,7 @@ using System.Drawing;
 
 namespace DiscordChatExporter.Core.Models
 {
-    public class Embed
+    public class Embed : IMentionable
     {
         public string Title { get; }
 
@@ -34,11 +34,18 @@ namespace DiscordChatExporter.Core.Models
 
         public IReadOnlyList<EmbedField> Fields { get; }
 
+        public IReadOnlyList<User> MentionedUsers { get; }
+
+        public IReadOnlyList<Role> MentionedRoles { get; }
+
+        public IReadOnlyList<Channel> MentionedChannels { get; }
+
         public Embed(string title, string type, string description, 
             string url, DateTime? timeStamp, Color? color, 
             EmbedFooter footer, EmbedImage image, EmbedImage thumbnail, 
             EmbedVideo video, EmbedProvider provider, EmbedAuthor author, 
-            IReadOnlyList<EmbedField> fields)
+            IReadOnlyList<EmbedField> fields, IReadOnlyList<User> mentionedUsers,
+            IReadOnlyList<Role> mentionedRoles, IReadOnlyList<Channel> mentionedChannels)
         {
             Title = title;
             Type = type;
@@ -53,6 +60,9 @@ namespace DiscordChatExporter.Core.Models
             Provider = provider;
             Author = author;
             Fields = fields;
+            MentionedUsers = mentionedUsers;
+            MentionedRoles = mentionedRoles;
+            MentionedChannels = mentionedChannels;
         }
 
         public override string ToString()

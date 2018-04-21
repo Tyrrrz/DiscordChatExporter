@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DiscordChatExporter.Core.Models
 {
-    public class Message
+    public class Message : IMentionable
     {
         public string Id { get; }
 

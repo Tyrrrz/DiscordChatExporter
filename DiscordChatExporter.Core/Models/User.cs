@@ -2,7 +2,7 @@
 
 namespace DiscordChatExporter.Core.Models
 {
-    public class User
+    public partial class User
     {
         public string Id { get; }
 
@@ -31,6 +31,14 @@ namespace DiscordChatExporter.Core.Models
         public override string ToString()
         {
             return FullName;
+        }
+    }
+
+    public partial class User
+    {
+        public static User CreateUnknownUser(string id)
+        {
+            return new User(id, 0, "Unknown", null);
         }
     }
 }

@@ -19,5 +19,10 @@ namespace DiscordChatExporter.Core.Models
             IconUrl = iconUrl;
             ProxyIconUrl = proxyIconUrl;
         }
+
+        public override string ToString()
+        {
+            return Text;
+        }
     }
 }

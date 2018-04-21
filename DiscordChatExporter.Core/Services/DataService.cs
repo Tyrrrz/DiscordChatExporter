@@ -17,6 +17,7 @@ namespace DiscordChatExporter.Core.Services
         private const string ApiRoot = "https://discordapp.com/api/v6";
 
         private readonly HttpClient _httpClient = new HttpClient();
+        private readonly Dictionary<string, User> _userCache = new Dictionary<string, User>();
         private readonly Dictionary<string, Role> _roleCache = new Dictionary<string, Role>();
         private readonly Dictionary<string, Channel> _channelCache = new Dictionary<string, Channel>();
 
@@ -77,6 +78,113 @@ namespace DiscordChatExporter.Core.Services
             return new Channel(id, guildId, name, topic, type);
         }
 
+        private Embed ParseEmbed(JToken token)
+        {
+
+            // var embedFileSize = embedJson["size"].Value<long>();
+            var title = token["title"]?.Value<string>();
+            var type = token["type"]?.Value<string>();
+            var description = token["description"]?.Value<string>();
+            var url = token["url"]?.Value<string>();
+            var timestamp = token["timestamp"]?.Value<DateTime>();
+            var color = token["color"] != null
+                ? Color.FromArgb(token["color"].Value<int>())
+                : (Color?)null;
+
+            var footerNode = token["footer"];
+            var footer = footerNode != null
+                ? new EmbedFooter(
+                    footerNode["text"]?.Value<string>(),
+                    footerNode["icon_url"]?.Value<string>(),
+                    footerNode["proxy_icon_url"]?.Value<string>())
+                : null;
+
+            var imageNode = token["image"];
+            var image = imageNode != null
+                ? new EmbedImage(
+                    imageNode["url"]?.Value<string>(),
+                    imageNode["proxy_url"]?.Value<string>(),
+                    imageNode["height"]?.Value<int>(),
+                    imageNode["width"]?.Value<int>())
+                : null;
+
+            var thumbnailNode = token["thumbnail"];
+            var thumbnail = thumbnailNode != null
+                ? new EmbedImage(
+                    thumbnailNode["url"]?.Value<string>(),
+                    thumbnailNode["proxy_url"]?.Value<string>(),
+                    thumbnailNode["height"]?.Value<int>(),
+                    thumbnailNode["width"]?.Value<int>())
+                : null;
+
+            var videoNode = token["video"];
+            var video = videoNode != null
+                ? new EmbedVideo(
+                    videoNode["url"]?.Value<string>(),
+                    videoNode["height"]?.Value<int>(),
+                    videoNode["width"]?.Value<int>())
+                : null;
+
+            var providerNode = token["provider"];
+            var provider = providerNode != null
+                ? new EmbedProvider(
+                    providerNode["name"]?.Value<string>(),
+                    providerNode["url"]?.Value<string>())
+                : null;
+
+            var authorNode = token["author"];
+            var author = authorNode != null
+                ? new EmbedAuthor(
+                    authorNode["name"]?.Value<string>(),
+                    authorNode["url"]?.Value<string>(),
+                    authorNode["icon_url"]?.Value<string>(),
+                    authorNode["proxy_icon_url"]?.Value<string>())
+                : null;
+
+            var fields = new List<EmbedField>();
+            foreach (var fieldNode in token["fields"].EmptyIfNull())
+            {
+                fields.Add(new EmbedField(
+                    fieldNode["name"]?.Value<string>(),
+                    fieldNode["value"]?.Value<string>(),
+                    fieldNode["inline"]?.Value<bool>()));
+            }
+
+            var mentionableContent = description ?? "";
+            fields.ForEach(f => mentionableContent += f.Value);
+
+            // Get user mentions
+            var mentionedUsers = Regex.Matches(mentionableContent, "<@!?(\\d+)>")
+                .Cast<Match>()
+                .Select(m => m.Groups[1].Value)
+                .ExceptBlank()
+                .Select(i => _userCache.GetOrDefault(i) ?? User.CreateUnknownUser(i))
+                .ToArray();
+
+            // Get role mentions
+            var mentionedRoles = Regex.Matches(mentionableContent, "<@&(\\d+)>")
+                .Cast<Match>()
+                .Select(m => m.Groups[1].Value)
+                .ExceptBlank()
+                .Select(i => _roleCache.GetOrDefault(i) ?? Role.CreateDeletedRole(i))
+                .ToArray();
+
+            // Get channel mentions
+            var mentionedChannels = Regex.Matches(mentionableContent, "<#(\\d+)>")
+                .Cast<Match>()
+                .Select(m => m.Groups[1].Value)
+                .ExceptBlank()
+                .Select(i => _channelCache.GetOrDefault(i) ?? Channel.CreateDeletedChannel(i))
+                .ToArray();
+
+            return new Embed(
+                title, type, description,
+                url, timestamp, color,
+                footer, image, thumbnail,
+                video, provider, author,
+                fields, mentionedUsers, mentionedRoles, mentionedChannels);
+        }
+
         private Message ParseMessage(JToken token)
         {
             // Get basic data
@@ -125,86 +233,7 @@ namespace DiscordChatExporter.Core.Services
             }
 
             // Get embeds
-            var embeds = new List<Embed>();
-            foreach (var embedJson in token["embeds"].EmptyIfNull())
-            {
-                // var embedFileSize = embedJson["size"].Value<long>();
-                var embedTitle = embedJson["title"]?.Value<string>();
-                var embedType = embedJson["type"]?.Value<string>();
-                var embedDescription = embedJson["description"]?.Value<string>();
-                var embedUrl = embedJson["url"]?.Value<string>();
-                var embedTimeStamp = embedJson["timestamp"]?.Value<DateTime>();
-                var embedColor = embedJson["color"] != null
-                    ? Color.FromArgb(embedJson["color"].Value<int>())
-                    : (Color?)null;
-
-                var footerNode = embedJson["footer"];
-                var embedFooter = footerNode != null
-                    ? new EmbedFooter(
-                        footerNode["text"]?.Value<string>(),
-                        footerNode["icon_url"]?.Value<string>(),
-                        footerNode["proxy_icon_url"]?.Value<string>())
-                    : null;
-
-                var imageNode = embedJson["image"];
-                var embedImage = imageNode != null
-                    ? new EmbedImage(
-                        imageNode["url"]?.Value<string>(),
-                        imageNode["proxy_url"]?.Value<string>(),
-                        imageNode["height"]?.Value<int>(),
-                        imageNode["width"]?.Value<int>())
-                    : null;
-                    
-                var thumbnailNode = embedJson["thumbnail"];
-                var embedThumbnail = thumbnailNode != null
-                    ? new EmbedImage(
-                        thumbnailNode["url"]?.Value<string>(),
-                        thumbnailNode["proxy_url"]?.Value<string>(),
-                        thumbnailNode["height"]?.Value<int>(),
-                        thumbnailNode["width"]?.Value<int>())
-                    : null;
-                    
-                var videoNode = embedJson["video"];
-                var embedVideo = videoNode != null
-                    ? new EmbedVideo(
-                        videoNode["url"]?.Value<string>(),
-                        videoNode["height"]?.Value<int>(),
-                        videoNode["width"]?.Value<int>())
-                    : null;
-                    
-                var providerNode = embedJson["provider"];
-                var embedProvider = providerNode != null
-                    ? new EmbedProvider(
-                        providerNode["name"]?.Value<string>(),
-                        providerNode["url"]?.Value<string>())
-                    : null;
-
-                var authorNode = embedJson["author"];
-                var embedAuthor = authorNode != null
-                    ? new EmbedAuthor(
-                        authorNode["name"]?.Value<string>(),
-                        authorNode["url"]?.Value<string>(),
-                        authorNode["icon_url"]?.Value<string>(),
-                        authorNode["proxy_icon_url"]?.Value<string>())
-                    : null;
-                
-                var embedFields = new List<EmbedField>();
-                foreach (var fieldNode in embedJson["fields"].EmptyIfNull())
-                {
-                    embedFields.Add(new EmbedField(
-                        fieldNode["name"]?.Value<string>(),
-                        fieldNode["value"]?.Value<string>(),
-                        fieldNode["inline"]?.Value<bool>()));
-                }
-
-                var embed = new Embed(
-                    embedTitle, embedType, embedDescription, 
-                    embedUrl, embedTimeStamp, embedColor, 
-                    embedFooter, embedImage, embedThumbnail, 
-                    embedVideo, embedProvider, embedAuthor, 
-                    embedFields);
-                embeds.Add(embed);
-            }
+            var embeds = token["embeds"].EmptyIfNull().Select(ParseEmbed).ToArray();
 
             // Get user mentions
             var mentionedUsers = token["mentions"].Select(ParseUser).ToArray();
@@ -212,7 +241,7 @@ namespace DiscordChatExporter.Core.Services
             // Get role mentions
             var mentionedRoles = token["mention_roles"]
                 .Values<string>()
-                .Select(i => _roleCache.GetOrDefault(i) ?? Role.CreateDeletedRole(id))
+                .Select(i => _roleCache.GetOrDefault(i) ?? Role.CreateDeletedRole(i))
                 .ToArray();
 
             // Get channel mentions
@@ -220,7 +249,7 @@ namespace DiscordChatExporter.Core.Services
                 .Cast<Match>()
                 .Select(m => m.Groups[1].Value)
                 .ExceptBlank()
-                .Select(i => _channelCache.GetOrDefault(i) ?? Channel.CreateDeletedChannel(id))
+                .Select(i => _channelCache.GetOrDefault(i) ?? Channel.CreateDeletedChannel(i))
                 .ToArray();
 
             return new Message(id, channelId, type, author, timeStamp, editedTimeStamp, content, attachments, embeds,
@@ -276,6 +305,23 @@ namespace DiscordChatExporter.Core.Services
             return channel;
         }
 
+        public async Task<User> GetUserAsync(string token, string userId)
+        {
+            // Form request url
+            var url = $"{ApiRoot}/users/{userId}?token={token}";
+
+            // Get response
+            var content = await GetStringAsync(url);
+
+            // Parse
+            var user = ParseUser(JToken.Parse(content));
+
+            // Add user to cache
+            _userCache[user.Id] = user;
+
+            return user;
+        }
+
         public async Task<IReadOnlyList<Channel>> GetGuildChannelsAsync(string token, string guildId)
         {
             // Form request url
@@ -328,6 +374,44 @@ namespace DiscordChatExporter.Core.Services
             var channels = JArray.Parse(content).Select(ParseChannel).ToArray();
 
             return channels;
+        }
+
+        public async Task<IReadOnlyList<User>> GetGuildMembersAsync(string token, string guildId)
+        {
+            var result = new List<User>();
+            
+            var afterId = "";
+            while (true)
+            {
+                // Form request url
+                var url = $"{ApiRoot}/guilds/{guildId}/members?token={token}&limit=1000";
+                if (afterId.IsNotBlank())
+                    url += $"&before={afterId}";
+
+                // Get response
+                var content = await GetStringAsync(url);
+
+                // Parse
+                var users = JArray.Parse(content).Select(m => ParseUser(m["user"]));
+
+                // Add users to list
+                string currentUserId = null;
+                foreach (var user in users)
+                {
+                    // Add message
+                    result.Add(user);
+                    currentUserId = user.Id;
+                }
+
+                // If no users - break
+                if (currentUserId == null)
+                    break;
+
+                // Otherwise offset the next request
+                afterId = currentUserId;
+            }
+
+            return result;
         }
 
         public async Task<IReadOnlyList<Message>> GetChannelMessagesAsync(string token, string channelId,

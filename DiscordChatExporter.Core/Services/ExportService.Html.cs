@@ -12,7 +12,7 @@ namespace DiscordChatExporter.Core.Services
 {
     public partial class ExportService
     {
-        private string MarkdownToHtml(string content, bool allowLinks = false)
+        private string MarkdownToHtml(string content, IMentionable mentionable = null, bool allowLinks = false)
         {
             // A lot of these regexes were inspired by or taken from MarkdownSharp
 
@@ -73,6 +73,36 @@ namespace DiscordChatExporter.Core.Services
             // Meta mentions (@here)
             content = content.Replace("@here", "<span class=\"mention\">@here</span>");
 
+            if (mentionable != null)
+            {
+                // User mentions (<@id> and <@!id>)
+                foreach (var mentionedUser in mentionable.MentionedUsers)
+                {
+                    content = Regex.Replace(content, $"&lt;@!?{mentionedUser.Id}&gt;",
+                        $"<span class=\"mention\" title=\"{HtmlEncode(mentionedUser.FullName)}\">" +
+                        $"@{HtmlEncode(mentionedUser.Name)}" +
+                        "</span>");
+                }
+
+                // Role mentions (<@&id>)
+                foreach (var mentionedRole in mentionable.MentionedRoles)
+                {
+                    content = content.Replace($"&lt;@&amp;{mentionedRole.Id}&gt;",
+                        "<span class=\"mention\">" +
+                        $"@{HtmlEncode(mentionedRole.Name)}" +
+                        "</span>");
+                }
+
+                // Channel mentions (<#id>)
+                foreach (var mentionedChannel in mentionable.MentionedChannels)
+                {
+                    content = content.Replace($"&lt;#{mentionedChannel.Id}&gt;",
+                        "<span class=\"mention\">" +
+                        $"#{HtmlEncode(mentionedChannel.Name)}" +
+                        "</span>");
+                }
+            }
+
             // Custom emojis (<:name:id>)
             content = Regex.Replace(content, "&lt;(:.*?:)(\\d*)&gt;",
                 "<img class=\"emoji\" title=\"$1\" src=\"https://cdn.discordapp.com/emojis/$2.png\" />");
@@ -82,36 +112,7 @@ namespace DiscordChatExporter.Core.Services
 
         private string FormatMessageContentHtml(Message message)
         {
-            string content = MarkdownToHtml(message.Content);
-
-            // User mentions (<@id> and <@!id>)
-            foreach (var mentionedUser in message.MentionedUsers)
-            {
-                content = Regex.Replace(content, $"&lt;@!?{mentionedUser.Id}&gt;",
-                    $"<span class=\"mention\" title=\"{HtmlEncode(mentionedUser.FullName)}\">" +
-                    $"@{HtmlEncode(mentionedUser.Name)}" +
-                    "</span>");
-            }
-
-            // Role mentions (<@&id>)
-            foreach (var mentionedRole in message.MentionedRoles)
-            {
-                content = content.Replace($"&lt;@&amp;{mentionedRole.Id}&gt;",
-                    "<span class=\"mention\">" +
-                    $"@{HtmlEncode(mentionedRole.Name)}" +
-                    "</span>");
-            }
-
-            // Channel mentions (<#id>)
-            foreach (var mentionedChannel in message.MentionedChannels)
-            {
-                content = content.Replace($"&lt;#{mentionedChannel.Id}&gt;",
-                    "<span class=\"mention\">" +
-                    $"#{HtmlEncode(mentionedChannel.Name)}" +
-                    "</span>");
-            }
-
-            return content;
+            return MarkdownToHtml(message.Content, message);
         }
 
         // The code used to convert embeds to html was based heavily off of the Embed Visualizer project, from this file:
@@ -139,12 +140,12 @@ namespace DiscordChatExporter.Core.Services
             return computed;
         }
 
-        private string EmbedDescriptionToHtml(string content)
+        private string EmbedDescriptionToHtml(string content, IMentionable mentionable)
         {
             if (content == null)
                 return null;
 
-            return $"<div class='embed-description markup'>{MarkdownToHtml(content, true)}</div>";
+            return $"<div class='embed-description markup'>{MarkdownToHtml(content, mentionable, true)}</div>";
         }
 
         private string EmbedAuthorToHtml(string name, string url, string icon_url)
@@ -165,7 +166,7 @@ namespace DiscordChatExporter.Core.Services
             return $"<div class='embed-author'>{authorIcon}{authorName}</div>";
         }
 
-        private string EmbedFieldToHtml(string name, string value, bool? inline)
+        private string EmbedFieldToHtml(string name, string value, bool? inline, IMentionable mentionable)
         {
             if (name == null && value == null)
                 return null;
@@ -173,7 +174,7 @@ namespace DiscordChatExporter.Core.Services
             string cls = "embed-field" + (inline == true ? " embed-field-inline" : "");
 
             string fieldName = name != null ? $"<div class='embed-field-name'>{MarkdownToHtml(name)}</div>" : null;
-            string fieldValue = value != null ? $"<div class='embed-field-value markup'>{MarkdownToHtml(value, true)}</div>" : null;
+            string fieldValue = value != null ? $"<div class='embed-field-value markup'>{MarkdownToHtml(value, mentionable, true)}</div>" : null;
 
             return $"<div class='{cls}'>{fieldName}{fieldValue}</div>";
         }
@@ -217,12 +218,12 @@ namespace DiscordChatExporter.Core.Services
             return $"<div>{footerIcon}<span class='embed-footer'>{footerText}</span></div>";
         }
 
-        private string EmbedFieldsToHtml(IReadOnlyList<EmbedField> fields)
+        private string EmbedFieldsToHtml(IReadOnlyList<EmbedField> fields, IMentionable mentionable)
         {
             if (fields.Count == 0)
                 return null;
 
-            return $"<div class='embed-fields'>{string.Join("", fields.Select(f => EmbedFieldToHtml(f.Name, f.Value, f.Inline)))}</div>";
+            return $"<div class='embed-fields'>{string.Join("", fields.Select(f => EmbedFieldToHtml(f.Name, f.Value, f.Inline, mentionable)))}</div>";
         }
 
         private string FormatEmbedHtml(Embed embed)
@@ -236,8 +237,8 @@ namespace DiscordChatExporter.Core.Services
                         <div class='embed-content-inner'>
                           {EmbedAuthorToHtml(embed.Author?.Name, embed.Author?.Url, embed.Author?.IconUrl)}
                           {EmbedTitleToHtml(embed.Title, embed.Url)}
-                          {EmbedDescriptionToHtml(embed.Description)}
-                          {EmbedFieldsToHtml(embed.Fields)}
+                          {EmbedDescriptionToHtml(embed.Description, embed)}
+                          {EmbedFieldsToHtml(embed.Fields, embed)}
                         </div>
                         {EmbedThumbnailToHtml(embed.Thumbnail?.Url)}
                       </div>

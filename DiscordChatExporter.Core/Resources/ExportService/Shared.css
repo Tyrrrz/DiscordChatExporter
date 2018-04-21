@@ -120,6 +120,8 @@ img.msg-attachment {
 
 span.mention {
     font-weight: 600;
+    color: #7289da;
+    background-color: rgba(115, 139, 215, 0.1);
 }
 
 .emoji {

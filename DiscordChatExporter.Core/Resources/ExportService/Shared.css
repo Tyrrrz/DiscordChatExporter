@@ -1,8 +1,132 @@
+body {
+    font-family: Whitney, Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+div.pre {
+    font-family: Consolas, Courier New, Courier, Monospace;
+    margin-top: 4px;
+    padding: 8px;
+    white-space: pre-wrap;
+}
+
+span.pre {
+    font-family: Consolas, Courier New, Courier, Monospace;
+    padding-left: 2px;
+    padding-right: 2px;
+    white-space: pre-wrap;
+}
+
+div#info {
+    display: flex;
+    margin-bottom: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
+    max-width: 100%;
+}
+
+div#log {
+    max-width: 100%;
+}
+
+img.guild-icon {
+    max-height: 64px;
+    max-width: 64px;
+}
+
+div.info-right {
+    flex: 1;
+    margin-left: 10px;
+}
+
+div.guild-name {
+    font-size: 1.4em;
+}
+
+div.channel-name {
+    font-size: 1.2em;
+}
+
+div.channel-topic {
+    margin-top: 2px;
+}
+
+div.channel-messagecount {
+    margin-top: 2px;
+}
+
+div.msg {
+    display: flex;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding-bottom: 15px;
+    padding-top: 15px;
+}
+
+div.msg-left {
+    height: 40px;
+    width: 40px;
+}
+
+img.msg-avatar {
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+}
+
+div.msg-right {
+    flex: 1;
+    margin-left: 20px;
+    min-width: 50%;
+}
+
+span.msg-user {
+    font-size: 1em;
+}
+
+span.msg-date {
+    font-size: .75em;
+    margin-left: 5px;
+}
+
+span.msg-edited {
+    font-size: .8em;
+    margin-left: 5px;
+}
+
+div.msg-content {
+    font-size: .9375em;
+    padding-top: 5px;
+    word-wrap: break-word;
+}
+
+div.msg-attachment {
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+img.msg-attachment {
+    max-height: 500px;
+    max-width: 50%;
+}
+
+span.mention {
+    font-weight: 600;
+}
+
 .emoji {
     -o-object-fit: contain;
     object-fit: contain;
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
     margin: 0 .05em 0 .1em!important;
     vertical-align: -.4em
 }

@@ -8,10 +8,10 @@ namespace DiscordChatExporter.Core.Models
 {
     interface IMentionable
     {
-        IReadOnlyList<User> MentionedUsers { get; }
+        List<User> MentionedUsers { get; }
 
-        IReadOnlyList<Role> MentionedRoles { get; }
+        List<Role> MentionedRoles { get; }
 
-        IReadOnlyList<Channel> MentionedChannels { get; }
+        List<Channel> MentionedChannels { get; }
     }
 }

@@ -34,18 +34,18 @@ namespace DiscordChatExporter.Core.Models
 
         public IReadOnlyList<EmbedField> Fields { get; }
 
-        public IReadOnlyList<User> MentionedUsers { get; }
+        public List<User> MentionedUsers { get; }
 
-        public IReadOnlyList<Role> MentionedRoles { get; }
+        public List<Role> MentionedRoles { get; }
 
-        public IReadOnlyList<Channel> MentionedChannels { get; }
+        public List<Channel> MentionedChannels { get; }
 
         public Embed(string title, string type, string description, 
             string url, DateTime? timeStamp, Color? color, 
             EmbedFooter footer, EmbedImage image, EmbedImage thumbnail, 
             EmbedVideo video, EmbedProvider provider, EmbedAuthor author, 
-            IReadOnlyList<EmbedField> fields, IReadOnlyList<User> mentionedUsers,
-            IReadOnlyList<Role> mentionedRoles, IReadOnlyList<Channel> mentionedChannels)
+            List<EmbedField> fields, List<User> mentionedUsers,
+            List<Role> mentionedRoles, List<Channel> mentionedChannels)
         {
             Title = title;
             Type = type;

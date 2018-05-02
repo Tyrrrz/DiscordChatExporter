@@ -9,6 +9,7 @@ using DiscordChatExporter.Core.Models;
 using Newtonsoft.Json.Linq;
 using Tyrrrz.Extensions;
 using System.Drawing;
+using System.Numerics;
 
 namespace DiscordChatExporter.Core.Services
 {
@@ -159,7 +160,7 @@ namespace DiscordChatExporter.Core.Services
                 .Select(m => m.Groups[1].Value)
                 .ExceptBlank()
                 .Select(i => _userCache.GetOrDefault(i) ?? User.CreateUnknownUser(i))
-                .ToArray();
+                .ToList();
 
             // Get role mentions
             var mentionedRoles = Regex.Matches(mentionableContent, "<@&(\\d+)>")
@@ -167,7 +168,7 @@ namespace DiscordChatExporter.Core.Services
                 .Select(m => m.Groups[1].Value)
                 .ExceptBlank()
                 .Select(i => _roleCache.GetOrDefault(i) ?? Role.CreateDeletedRole(i))
-                .ToArray();
+                .ToList();
 
             // Get channel mentions
             var mentionedChannels = Regex.Matches(mentionableContent, "<#(\\d+)>")
@@ -175,7 +176,7 @@ namespace DiscordChatExporter.Core.Services
                 .Select(m => m.Groups[1].Value)
                 .ExceptBlank()
                 .Select(i => _channelCache.GetOrDefault(i) ?? Channel.CreateDeletedChannel(i))
-                .ToArray();
+                .ToList();
 
             return new Embed(
                 title, type, description,
@@ -236,13 +237,13 @@ namespace DiscordChatExporter.Core.Services
             var embeds = token["embeds"].EmptyIfNull().Select(ParseEmbed).ToArray();
 
             // Get user mentions
-            var mentionedUsers = token["mentions"].Select(ParseUser).ToArray();
+            var mentionedUsers = token["mentions"].Select(ParseUser).ToList();
 
             // Get role mentions
             var mentionedRoles = token["mention_roles"]
                 .Values<string>()
                 .Select(i => _roleCache.GetOrDefault(i) ?? Role.CreateDeletedRole(i))
-                .ToArray();
+                .ToList();
 
             // Get channel mentions
             var mentionedChannels = Regex.Matches(content, "<#(\\d+)>")
@@ -250,11 +251,45 @@ namespace DiscordChatExporter.Core.Services
                 .Select(m => m.Groups[1].Value)
                 .ExceptBlank()
                 .Select(i => _channelCache.GetOrDefault(i) ?? Channel.CreateDeletedChannel(i))
-                .ToArray();
+                .ToList();
 
             return new Message(id, channelId, type, author, timeStamp, editedTimeStamp, content, attachments, embeds,
                 mentionedUsers, mentionedRoles, mentionedChannels);
         }
+
+        /// <summary>
+        /// Attempts to query for users, channels, and roles if they havent been found yet, and set them in the mentionable
+        /// </summary>
+        private async Task FillMentionable(string token, string guildId, IMentionable mentionable)
+        {
+            for (int i = 0; i < mentionable.MentionedUsers.Count; i++)
+            {
+                var user = mentionable.MentionedUsers[i];
+                if (user.Name == "Unknown" && user.Discriminator == 0)
+                {
+                    try
+                    {
+                        mentionable.MentionedUsers[i] = _userCache.GetOrDefault(user.Id) ?? (await GetMemberAsync(token, guildId, user.Id));
+                    }
+                    catch (HttpErrorStatusCodeException e) { } // This likely means the user doesnt exist any more, so ignore
+                }
+            }
+
+            for (int i = 0; i < mentionable.MentionedChannels.Count; i++)
+            {
+                var channel = mentionable.MentionedChannels[i];
+                if (channel.Name == "deleted-channel" && channel.GuildId == null)
+                {
+                    try
+                    {
+                        mentionable.MentionedChannels[i] = _channelCache.GetOrDefault(channel.Id) ?? (await GetChannelAsync(token, channel.Id));
+                    }
+                    catch (HttpErrorStatusCodeException e) { } // This likely means the user doesnt exist any more, so ignore
+                }
+            }
+
+            // Roles are already gotten via GetGuildRolesAsync at the start
+        } 
 
         private async Task<string> GetStringAsync(string url)
         {
@@ -305,16 +340,16 @@ namespace DiscordChatExporter.Core.Services
             return channel;
         }
 
-        public async Task<User> GetUserAsync(string token, string userId)
+        public async Task<User> GetMemberAsync(string token, string guildId, string memberId)
         {
             // Form request url
-            var url = $"{ApiRoot}/users/{userId}?token={token}";
+            var url = $"{ApiRoot}/guilds/{guildId}/members/{memberId}?token={token}";
 
             // Get response
             var content = await GetStringAsync(url);
 
             // Parse
-            var user = ParseUser(JToken.Parse(content));
+            var user = ParseUser(JToken.Parse(content)["user"]);
 
             // Add user to cache
             _userCache[user.Id] = user;
@@ -338,6 +373,25 @@ namespace DiscordChatExporter.Core.Services
                 _channelCache[channel.Id] = channel;
 
             return channels;
+        }
+
+
+        public async Task<IReadOnlyList<Role>> GetGuildRolesAsync(string token, string guildId)
+        {
+            // Form request url
+            var url = $"{ApiRoot}/guilds/{guildId}/roles?token={token}";
+
+            // Get response
+            var content = await GetStringAsync(url);
+
+            // Parse
+            var roles = JArray.Parse(content).Select(ParseRole).ToArray();
+
+            // Add roles to cache
+            foreach (var role in roles)
+                _roleCache[role.Id] = role;
+
+            return roles;
         }
 
         public async Task<IReadOnlyList<Guild>> GetUserGuildsAsync(string token)
@@ -386,7 +440,7 @@ namespace DiscordChatExporter.Core.Services
                 // Form request url
                 var url = $"{ApiRoot}/guilds/{guildId}/members?token={token}&limit=1000";
                 if (afterId.IsNotBlank())
-                    url += $"&before={afterId}";
+                    url += $"&after={afterId}";
 
                 // Get response
                 var content = await GetStringAsync(url);
@@ -394,13 +448,18 @@ namespace DiscordChatExporter.Core.Services
                 // Parse
                 var users = JArray.Parse(content).Select(m => ParseUser(m["user"]));
 
+                // Add user to cache
+                foreach (var user in users)
+                    _userCache[user.Id] = user;
+
                 // Add users to list
                 string currentUserId = null;
                 foreach (var user in users)
                 {
-                    // Add message
+                    // Add user
                     result.Add(user);
-                    currentUserId = user.Id;
+                    if (currentUserId == null || BigInteger.Parse(user.Id) > BigInteger.Parse(currentUserId))
+                        currentUserId = user.Id;
                 }
 
                 // If no users - break
@@ -417,6 +476,14 @@ namespace DiscordChatExporter.Core.Services
         public async Task<IReadOnlyList<Message>> GetChannelMessagesAsync(string token, string channelId,
             DateTime? from, DateTime? to)
         {
+            Channel channel = await GetChannelAsync(token, channelId);
+
+            try
+            {
+                await GetGuildRolesAsync(token, channel.GuildId);
+            }
+            catch (HttpErrorStatusCodeException e) { } // This will be thrown if the user doesnt have the MANAGE_ROLES permission for the guild
+
             var result = new List<Message>();
 
             // We are going backwards from last message to first
@@ -461,6 +528,13 @@ namespace DiscordChatExporter.Core.Services
 
             // Messages appear newest first, we need to reverse
             result.Reverse();
+
+            foreach (var message in result)
+            {
+                await FillMentionable(token, channel.GuildId, message);
+                foreach (var embed in message.Embeds)
+                    await FillMentionable(token, channel.GuildId, embed);
+            }
 
             return result;
         }

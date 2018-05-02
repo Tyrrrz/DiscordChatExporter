@@ -23,18 +23,18 @@ namespace DiscordChatExporter.Core.Models
 
         public IReadOnlyList<Embed> Embeds { get; }
 
-        public IReadOnlyList<User> MentionedUsers { get; }
+        public List<User> MentionedUsers { get; }
 
-        public IReadOnlyList<Role> MentionedRoles { get; }
+        public List<Role> MentionedRoles { get; }
 
-        public IReadOnlyList<Channel> MentionedChannels { get; }
+        public List<Channel> MentionedChannels { get; }
 
         public Message(string id, string channelId, MessageType type,
             User author, DateTime timeStamp,
             DateTime? editedTimeStamp, string content,
             IReadOnlyList<Attachment> attachments, IReadOnlyList<Embed> embeds,
-            IReadOnlyList<User> mentionedUsers, IReadOnlyList<Role> mentionedRoles, 
-            IReadOnlyList<Channel> mentionedChannels)
+            List<User> mentionedUsers, List<Role> mentionedRoles, 
+            List<Channel> mentionedChannels)
         {
             Id = id;
             ChannelId = channelId;

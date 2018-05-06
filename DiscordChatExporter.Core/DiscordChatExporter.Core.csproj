@@ -6,8 +6,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <None Remove="Resources\ExportService\Shared.css" />
+    </ItemGroup>
+
+    <ItemGroup>
         <EmbeddedResource Include="Resources\ExportService\DarkTheme.css" />
         <EmbeddedResource Include="Resources\ExportService\LightTheme.css" />
+        <EmbeddedResource Include="Resources\ExportService\Shared.css" />
     </ItemGroup>
 
     <ItemGroup>

@@ -3,16 +3,18 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Models;
 using Tyrrrz.Extensions;
+using System.Drawing;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DiscordChatExporter.Core.Services
 {
     public partial class ExportService
     {
-        private string FormatMessageContentHtml(Message message)
+        private string MarkdownToHtml(string content, IMentionable mentionable = null, bool allowLinks = false)
         {
             // A lot of these regexes were inspired by or taken from MarkdownSharp
-
-            var content = message.Content;
 
             // HTML-encode content
             content = HtmlEncode(content);
@@ -29,7 +31,7 @@ namespace DiscordChatExporter.Core.Services
 
             // Encode URLs
             content = Regex.Replace(content,
-                @"((https?|ftp)://[-a-zA-Z0-9+&@#/%?=~_|!:,\.\[\]\(\);]*[-a-zA-Z0-9+&@#/%=~_|\[\])])(?=$|\W)",
+                @"(\b(?:(?:https?|ftp|file)://|www\.|ftp\.)(?:\([-a-zA-Z0-9+&@#/%?=~_|!:,\.\[\];]*\)|[-a-zA-Z0-9+&@#/%?=~_|!:,\.\[\];])*(?:\([-a-zA-Z0-9+&@#/%?=~_|!:,\.\[\];]*\)|[-a-zA-Z0-9+&@#/%=~_|$]))",
                 m => $"\x1AL{Base64Encode(m.Groups[1].Value)}\x1AL");
 
             // Process bold (**text**)
@@ -52,6 +54,12 @@ namespace DiscordChatExporter.Core.Services
             content = Regex.Replace(content, "\x1AI(.*?)\x1AI",
                 m => $"<span class=\"pre\">{Base64Decode(m.Groups[1].Value)}</span>");
 
+            if (allowLinks)
+            {
+                content = Regex.Replace(content, "\\[([^\\]]+)\\]\\(\x1AL(.*?)\x1AL\\)",
+                    m => $"<a href=\"{Base64Decode(m.Groups[2].Value)}\">{m.Groups[1].Value}</a>");
+            }
+
             // Decode and process URLs
             content = Regex.Replace(content, "\x1AL(.*?)\x1AL",
                 m => $"<a href=\"{Base64Decode(m.Groups[1].Value)}\">{Base64Decode(m.Groups[1].Value)}</a>");
@@ -65,31 +73,34 @@ namespace DiscordChatExporter.Core.Services
             // Meta mentions (@here)
             content = content.Replace("@here", "<span class=\"mention\">@here</span>");
 
-            // User mentions (<@id> and <@!id>)
-            foreach (var mentionedUser in message.MentionedUsers)
+            if (mentionable != null)
             {
-                content = Regex.Replace(content, $"&lt;@!?{mentionedUser.Id}&gt;",
-                    $"<span class=\"mention\" title=\"{HtmlEncode(mentionedUser.FullName)}\">" +
-                    $"@{HtmlEncode(mentionedUser.Name)}" +
-                    "</span>");
-            }
+                // User mentions (<@id> and <@!id>)
+                foreach (var mentionedUser in mentionable.MentionedUsers)
+                {
+                    content = Regex.Replace(content, $"&lt;@!?{mentionedUser.Id}&gt;",
+                        $"<span class=\"mention\" title=\"{HtmlEncode(mentionedUser.FullName)}\">" +
+                        $"@{HtmlEncode(mentionedUser.Name)}" +
+                        "</span>");
+                }
 
-            // Role mentions (<@&id>)
-            foreach (var mentionedRole in message.MentionedRoles)
-            {
-                content = content.Replace($"&lt;@&amp;{mentionedRole.Id}&gt;",
-                    "<span class=\"mention\">" +
-                    $"@{HtmlEncode(mentionedRole.Name)}" +
-                    "</span>");
-            }
+                // Role mentions (<@&id>)
+                foreach (var mentionedRole in mentionable.MentionedRoles)
+                {
+                    content = content.Replace($"&lt;@&amp;{mentionedRole.Id}&gt;",
+                        "<span class=\"mention\">" +
+                        $"@{HtmlEncode(mentionedRole.Name)}" +
+                        "</span>");
+                }
 
-            // Channel mentions (<#id>)
-            foreach (var mentionedChannel in message.MentionedChannels)
-            {
-                content = content.Replace($"&lt;#{mentionedChannel.Id}&gt;",
-                    "<span class=\"mention\">" +
-                    $"#{HtmlEncode(mentionedChannel.Name)}" +
-                    "</span>");
+                // Channel mentions (<#id>)
+                foreach (var mentionedChannel in mentionable.MentionedChannels)
+                {
+                    content = content.Replace($"&lt;#{mentionedChannel.Id}&gt;",
+                        "<span class=\"mention\">" +
+                        $"#{HtmlEncode(mentionedChannel.Name)}" +
+                        "</span>");
+                }
             }
 
             // Custom emojis (<:name:id>)
@@ -97,6 +108,145 @@ namespace DiscordChatExporter.Core.Services
                 "<img class=\"emoji\" title=\"$1\" src=\"https://cdn.discordapp.com/emojis/$2.png\" />");
 
             return content;
+        }
+
+        private string FormatMessageContentHtml(Message message)
+        {
+            return MarkdownToHtml(message.Content, message);
+        }
+
+        // The code used to convert embeds to html was based heavily off of the Embed Visualizer project, from this file:
+        // https://github.com/leovoel/embed-visualizer/blob/master/src/components/embed.jsx
+
+        private string EmbedColorPillToHtml(Color? color)
+        {
+            string backgroundColor = "";
+
+            if (color != null)
+                backgroundColor = $"rgba({color?.R},{color?.G},{color?.B},1)";
+
+            return $"<div class='embed-color-pill' style='background-color: {backgroundColor}'></div>";
+        }
+
+        private string EmbedTitleToHtml(string title, string url)
+        {
+            if (title == null)
+                return null;
+
+            string computed = $"<div class='embed-title'>{MarkdownToHtml(title)}</div>";
+            if (url != null)
+                computed = $"<a target='_blank' rel='noreferrer' href='{url}' class='embed-title'>{MarkdownToHtml(title)}</a>";
+
+            return computed;
+        }
+
+        private string EmbedDescriptionToHtml(string content, IMentionable mentionable)
+        {
+            if (content == null)
+                return null;
+
+            return $"<div class='embed-description markup'>{MarkdownToHtml(content, mentionable, true)}</div>";
+        }
+
+        private string EmbedAuthorToHtml(string name, string url, string icon_url)
+        {
+            if (name == null)
+                return null;
+
+            string authorName = null;
+            if (name != null)
+            {
+                authorName = $"<span class='embed-author-name'>{name}</span>";
+                if (url != null)
+                    authorName = $"<a target='_blank' rel='noreferrer' href='{url}' class='embed-author-name'>{name}</a>";
+            }
+
+            string authorIcon = icon_url != null ? $"<img src='{icon_url}' role='presentation' class='embed-author-icon' />" : null;
+
+            return $"<div class='embed-author'>{authorIcon}{authorName}</div>";
+        }
+
+        private string EmbedFieldToHtml(string name, string value, bool? inline, IMentionable mentionable)
+        {
+            if (name == null && value == null)
+                return null;
+
+            string cls = "embed-field" + (inline == true ? " embed-field-inline" : "");
+
+            string fieldName = name != null ? $"<div class='embed-field-name'>{MarkdownToHtml(name)}</div>" : null;
+            string fieldValue = value != null ? $"<div class='embed-field-value markup'>{MarkdownToHtml(value, mentionable, true)}</div>" : null;
+
+            return $"<div class='{cls}'>{fieldName}{fieldValue}</div>";
+        }
+
+        private string EmbedThumbnailToHtml(string url)
+        {
+            if (url == null)
+                return null;
+
+            return $@"
+              <img
+                  src = '{url}'
+                  role = 'presentation'
+                  class='embed-rich-thumb'
+                  style='max-width: 80px; max-height: 80px'
+              />";
+        }
+
+        private string EmbedImageToHtml(string url)
+        {
+            if (url == null)
+                return null;
+
+            return $"<a class='embed-thumbnail embed-thumbnail-rich'><img class='image' role='presentation' src='{url}' /></a>";
+        }
+
+        private string EmbedFooterToHtml(DateTime? timestamp, string text, string icon_url)
+        {
+            if (text == null && timestamp == null)
+                return null;
+
+            // format: ddd MMM Do, YYYY [at] h:mm A
+
+            string time = timestamp != null ? HtmlEncode(timestamp?.ToString(_settingsService.DateFormat)) : null;
+
+            string footerText = string.Join(" | ", new List<string> { text, time }.Where(s => s != null));
+            string footerIcon = text != null && icon_url != null
+                ? $"<img src='{icon_url}' class='embed-footer-icon' role='presentation' width='20' height='20' />"
+                : null;
+
+            return $"<div>{footerIcon}<span class='embed-footer'>{footerText}</span></div>";
+        }
+
+        private string EmbedFieldsToHtml(IReadOnlyList<EmbedField> fields, IMentionable mentionable)
+        {
+            if (fields.Count == 0)
+                return null;
+
+            return $"<div class='embed-fields'>{string.Join("", fields.Select(f => EmbedFieldToHtml(f.Name, f.Value, f.Inline, mentionable)))}</div>";
+        }
+
+        private string FormatEmbedHtml(Embed embed)
+        {
+            return $@"
+                <div class='accessory'>
+                  <div class='embed-wrapper'>
+                    {EmbedColorPillToHtml(embed.Color)}
+                    <div class='embed embed-rich'>
+                      <div class='embed-content'>
+                        <div class='embed-content-inner'>
+                          {EmbedAuthorToHtml(embed.Author?.Name, embed.Author?.Url, embed.Author?.IconUrl)}
+                          {EmbedTitleToHtml(embed.Title, embed.Url)}
+                          {EmbedDescriptionToHtml(embed.Description, embed)}
+                          {EmbedFieldsToHtml(embed.Fields, embed)}
+                        </div>
+                        {EmbedThumbnailToHtml(embed.Thumbnail?.Url)}
+                      </div>
+                      {EmbedImageToHtml(embed.Image?.Url)}
+                      {EmbedFooterToHtml(embed.TimeStamp, embed.Footer?.Text, embed.Footer?.IconUrl)}
+                    </div>
+                  </div>
+                </div>";
         }
 
         private async Task ExportAsHtmlAsync(ChannelChatLog log, TextWriter output, string css)
@@ -192,6 +342,13 @@ namespace DiscordChatExporter.Core.Services
                             await output.WriteLineAsync("</a>");
                             await output.WriteLineAsync("</div>");
                         }
+                    }
+
+                    // Embeds
+                    foreach (var embed in message.Embeds)
+                    {
+                        var contentFormatted = FormatEmbedHtml(embed);
+                        await output.WriteAsync(contentFormatted);
                     }
                 }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DiscordChatExporter.Core.Models
 {
-    public class Message
+    public class Message : IMentionable
     {
         public string Id { get; }
 
@@ -21,17 +21,20 @@ namespace DiscordChatExporter.Core.Models
 
         public IReadOnlyList<Attachment> Attachments { get; }
 
-        public IReadOnlyList<User> MentionedUsers { get; }
+        public IReadOnlyList<Embed> Embeds { get; }
 
-        public IReadOnlyList<Role> MentionedRoles { get; }
+        public List<User> MentionedUsers { get; }
 
-        public IReadOnlyList<Channel> MentionedChannels { get; }
+        public List<Role> MentionedRoles { get; }
+
+        public List<Channel> MentionedChannels { get; }
 
         public Message(string id, string channelId, MessageType type,
             User author, DateTime timeStamp,
             DateTime? editedTimeStamp, string content,
-            IReadOnlyList<Attachment> attachments, IReadOnlyList<User> mentionedUsers,
-            IReadOnlyList<Role> mentionedRoles, IReadOnlyList<Channel> mentionedChannels)
+            IReadOnlyList<Attachment> attachments, IReadOnlyList<Embed> embeds,
+            List<User> mentionedUsers, List<Role> mentionedRoles, 
+            List<Channel> mentionedChannels)
         {
             Id = id;
             ChannelId = channelId;
@@ -41,6 +44,7 @@ namespace DiscordChatExporter.Core.Models
             EditedTimeStamp = editedTimeStamp;
             Content = content;
             Attachments = attachments;
+            Embeds = embeds;
             MentionedUsers = mentionedUsers;
             MentionedRoles = mentionedRoles;
             MentionedChannels = mentionedChannels;

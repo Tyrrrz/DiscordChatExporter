@@ -22,25 +22,25 @@ namespace DiscordChatExporter.Core.Services
         {
             using (var output = File.CreateText(filePath))
             {
+                var sharedCss = Assembly.GetExecutingAssembly()
+                        .GetManifestResourceString("DiscordChatExporter.Core.Resources.ExportService.Shared.css");
+
                 if (format == ExportFormat.PlainText)
                 {
                     await ExportAsPlainTextAsync(log, output);
                 }
-
                 else if (format == ExportFormat.HtmlDark)
                 {
                     var css = Assembly.GetExecutingAssembly()
                         .GetManifestResourceString("DiscordChatExporter.Core.Resources.ExportService.DarkTheme.css");
-                    await ExportAsHtmlAsync(log, output, css);
+                    await ExportAsHtmlAsync(log, output, $"{sharedCss}\n{css}");
                 }
-
                 else if (format == ExportFormat.HtmlLight)
                 {
                     var css = Assembly.GetExecutingAssembly()
                         .GetManifestResourceString("DiscordChatExporter.Core.Resources.ExportService.LightTheme.css");
-                    await ExportAsHtmlAsync(log, output, css);
+                    await ExportAsHtmlAsync(log, output, $"{sharedCss}\n{css}");
                 }
-
                 else if (format == ExportFormat.Csv)
                 {
                     await ExportAsCsvAsync(log, output);

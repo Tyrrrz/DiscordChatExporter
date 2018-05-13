@@ -10,6 +10,7 @@ using Newtonsoft.Json.Linq;
 using Tyrrrz.Extensions;
 using System.Drawing;
 using System.Numerics;
+using DiscordChatExporter.Core.Models.Embeds;
 
 namespace DiscordChatExporter.Core.Services
 {
@@ -18,9 +19,6 @@ namespace DiscordChatExporter.Core.Services
         private const string ApiRoot = "https://discordapp.com/api/v6";
 
         private readonly HttpClient _httpClient = new HttpClient();
-        private readonly Dictionary<string, User> _userCache = new Dictionary<string, User>();
-        private readonly Dictionary<string, Role> _roleCache = new Dictionary<string, Role>();
-        private readonly Dictionary<string, Channel> _channelCache = new Dictionary<string, Channel>();
 
         private User ParseUser(JToken token)
         {
@@ -45,36 +43,30 @@ namespace DiscordChatExporter.Core.Services
             var id = token["id"].Value<string>();
             var name = token["name"].Value<string>();
             var iconHash = token["icon"].Value<string>();
-            var roles = token["roles"].Select(ParseRole).ToArray();
 
-            return new Guild(id, name, iconHash, roles);
+            return new Guild(id, name, iconHash);
         }
 
         private Channel ParseChannel(JToken token)
         {
             // Get basic data
             var id = token["id"].Value<string>();
-            var guildId = token["guild_id"]?.Value<string>();
             var type = (ChannelType) token["type"].Value<int>();
             var topic = token["topic"]?.Value<string>();
 
-            // Extract name based on type
-            string name;
-            if (type.IsEither(ChannelType.DirectTextChat, ChannelType.DirectGroupTextChat))
-            {
+            // Try to extract guild ID
+            var guildId = token["guild_id"]?.Value<string>();
+
+            // If the guild ID is blank, it's direct messages
+            if (guildId.IsBlank())
                 guildId = Guild.DirectMessages.Id;
 
-                // Try to get name if it's set
-                name = token["name"]?.Value<string>();
+            // Try to extract name
+            var name = token["name"]?.Value<string>();
 
-                // Otherwise use recipients as the name
-                if (name.IsBlank())
-                    name = token["recipients"].Select(ParseUser).Select(u => u.Name).JoinToString(", ");
-            }
-            else
-            {
-                name = token["name"].Value<string>();
-            }
+            // If the name is blank, it's direct messages
+            if (name.IsBlank())
+                name = token["recipients"].Select(ParseUser).Select(u => u.Name).JoinToString(", ");
 
             return new Channel(id, guildId, name, topic, type);
         }
@@ -159,15 +151,7 @@ namespace DiscordChatExporter.Core.Services
                 .Cast<Match>()
                 .Select(m => m.Groups[1].Value)
                 .ExceptBlank()
-                .Select(i => _userCache.GetOrDefault(i) ?? User.CreateUnknownUser(i))
-                .ToList();
-
-            // Get role mentions
-            var mentionedRoles = Regex.Matches(mentionableContent, "<@&(\\d+)>")
-                .Cast<Match>()
-                .Select(m => m.Groups[1].Value)
-                .ExceptBlank()
-                .Select(i => _roleCache.GetOrDefault(i) ?? Role.CreateDeletedRole(i))
+                .Select(i => User.CreateUnknownUser(i))
                 .ToList();
 
             // Get channel mentions
@@ -175,15 +159,21 @@ namespace DiscordChatExporter.Core.Services
                 .Cast<Match>()
                 .Select(m => m.Groups[1].Value)
                 .ExceptBlank()
-                .Select(i => _channelCache.GetOrDefault(i) ?? Channel.CreateDeletedChannel(i))
+                .Select(i => Channel.CreateDeletedChannel(i))
                 .ToList();
 
-            return new Embed(
-                title, type, description,
-                url, timestamp, color,
-                footer, image, thumbnail,
-                video, provider, author,
-                fields, mentionedUsers, mentionedRoles, mentionedChannels);
+            // Get role mentions
+            var mentionedRoles = Regex.Matches(mentionableContent, "<@&(\\d+)>")
+                .Cast<Match>()
+                .Select(m => m.Groups[1].Value)
+                .ExceptBlank()
+                .Select(i => Role.CreateDeletedRole(i))
+                .ToList();
+
+            var mentions = new MentionsContainer(mentionedUsers, mentionedChannels, mentionedRoles);
+
+            return new Embed(title, type, description, url, timestamp, color, footer, image, thumbnail, video, provider,
+                author, fields, mentions);
         }
 
         private Message ParseMessage(JToken token)
@@ -237,59 +227,27 @@ namespace DiscordChatExporter.Core.Services
             var embeds = token["embeds"].EmptyIfNull().Select(ParseEmbed).ToArray();
 
             // Get user mentions
-            var mentionedUsers = token["mentions"].Select(ParseUser).ToList();
-
-            // Get role mentions
-            var mentionedRoles = token["mention_roles"]
-                .Values<string>()
-                .Select(i => _roleCache.GetOrDefault(i) ?? Role.CreateDeletedRole(i))
-                .ToList();
+            var mentionedUsers = token["mentions"].Select(ParseUser).ToArray();
 
             // Get channel mentions
             var mentionedChannels = Regex.Matches(content, "<#(\\d+)>")
                 .Cast<Match>()
                 .Select(m => m.Groups[1].Value)
                 .ExceptBlank()
-                .Select(i => _channelCache.GetOrDefault(i) ?? Channel.CreateDeletedChannel(i))
+                .Select(i => Channel.CreateDeletedChannel(i))
                 .ToList();
 
+            // Get role mentions
+            var mentionedRoles = token["mention_roles"]
+                .Values<string>()
+                .Select(i => Role.CreateDeletedRole(i))
+                .ToList();
+
+            var mentions = new MentionsContainer(mentionedUsers, mentionedChannels, mentionedRoles);
+
             return new Message(id, channelId, type, author, timeStamp, editedTimeStamp, content, attachments, embeds,
-                mentionedUsers, mentionedRoles, mentionedChannels);
+                mentions);
         }
-
-        /// <summary>
-        /// Attempts to query for users, channels, and roles if they havent been found yet, and set them in the mentionable
-        /// </summary>
-        private async Task FillMentionable(string token, string guildId, IMentionable mentionable)
-        {
-            for (int i = 0; i < mentionable.MentionedUsers.Count; i++)
-            {
-                var user = mentionable.MentionedUsers[i];
-                if (user.Name == "Unknown" && user.Discriminator == 0)
-                {
-                    try
-                    {
-                        mentionable.MentionedUsers[i] = _userCache.GetOrDefault(user.Id) ?? (await GetMemberAsync(token, guildId, user.Id));
-                    }
-                    catch (HttpErrorStatusCodeException e) { } // This likely means the user doesnt exist any more, so ignore
-                }
-            }
-
-            for (int i = 0; i < mentionable.MentionedChannels.Count; i++)
-            {
-                var channel = mentionable.MentionedChannels[i];
-                if (channel.Name == "deleted-channel" && channel.GuildId == null)
-                {
-                    try
-                    {
-                        mentionable.MentionedChannels[i] = _channelCache.GetOrDefault(channel.Id) ?? (await GetChannelAsync(token, channel.Id));
-                    }
-                    catch (HttpErrorStatusCodeException e) { } // This likely means the user doesnt exist any more, so ignore
-                }
-            }
-
-            // Roles are already gotten via GetGuildRolesAsync at the start
-        } 
 
         private async Task<string> GetStringAsync(string url)
         {
@@ -316,10 +274,6 @@ namespace DiscordChatExporter.Core.Services
             // Parse
             var guild = ParseGuild(JToken.Parse(content));
 
-            // Add roles to cache
-            foreach (var role in guild.Roles)
-                _roleCache[role.Id] = role;
-
             return guild;
         }
 
@@ -333,9 +287,6 @@ namespace DiscordChatExporter.Core.Services
 
             // Parse
             var channel = ParseChannel(JToken.Parse(content));
-
-            // Add channel to cache
-            _channelCache[channel.Id] = channel;
 
             return channel;
         }
@@ -351,9 +302,6 @@ namespace DiscordChatExporter.Core.Services
             // Parse
             var user = ParseUser(JToken.Parse(content)["user"]);
 
-            // Add user to cache
-            _userCache[user.Id] = user;
-
             return user;
         }
 
@@ -367,10 +315,6 @@ namespace DiscordChatExporter.Core.Services
 
             // Parse
             var channels = JArray.Parse(content).Select(ParseChannel).ToArray();
-
-            // Add channels to cache
-            foreach (var channel in channels)
-                _channelCache[channel.Id] = channel;
 
             return channels;
         }
@@ -387,10 +331,6 @@ namespace DiscordChatExporter.Core.Services
             // Parse
             var roles = JArray.Parse(content).Select(ParseRole).ToArray();
 
-            // Add roles to cache
-            foreach (var role in roles)
-                _roleCache[role.Id] = role;
-
             return roles;
         }
 
@@ -402,16 +342,8 @@ namespace DiscordChatExporter.Core.Services
             // Get response
             var content = await GetStringAsync(url);
 
-            // Parse IDs
-            var guildIds = JArray.Parse(content).Select(t => t["id"].Value<string>());
-
-            // Get full guild infos
-            var guilds = new List<Guild>();
-            foreach (var guildId in guildIds)
-            {
-                var guild = await GetGuildAsync(token, guildId);
-                guilds.Add(guild);
-            }
+            // Parse
+            var guilds = JArray.Parse(content).Select(ParseGuild).ToArray();
 
             return guilds;
         }
@@ -448,10 +380,6 @@ namespace DiscordChatExporter.Core.Services
                 // Parse
                 var users = JArray.Parse(content).Select(m => ParseUser(m["user"]));
 
-                // Add user to cache
-                foreach (var user in users)
-                    _userCache[user.Id] = user;
-
                 // Add users to list
                 string currentUserId = null;
                 foreach (var user in users)
@@ -476,14 +404,6 @@ namespace DiscordChatExporter.Core.Services
         public async Task<IReadOnlyList<Message>> GetChannelMessagesAsync(string token, string channelId,
             DateTime? from, DateTime? to)
         {
-            Channel channel = await GetChannelAsync(token, channelId);
-
-            try
-            {
-                await GetGuildRolesAsync(token, channel.GuildId);
-            }
-            catch (HttpErrorStatusCodeException e) { } // This will be thrown if the user doesnt have the MANAGE_ROLES permission for the guild
-
             var result = new List<Message>();
 
             // We are going backwards from last message to first
@@ -528,13 +448,6 @@ namespace DiscordChatExporter.Core.Services
 
             // Messages appear newest first, we need to reverse
             result.Reverse();
-
-            foreach (var message in result)
-            {
-                await FillMentionable(token, channel.GuildId, message);
-                foreach (var embed in message.Embeds)
-                    await FillMentionable(token, channel.GuildId, embed);
-            }
 
             return result;
         }

@@ -1,0 +1,70 @@
+﻿<!-- https://github.com/Tyrrrz/DiscordChatExporter -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>{{Title}}</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <style>{{Style}}</style>
+</head>
+<body>
+    
+<div id="info">
+    <div class="info-left">
+        <img class="guild-icon" src="{{GuildIconUrl}}" />
+    </div>
+    <div class="info-right">
+        <div class="guild-name">{{GuildName}}</div>
+        <div class="channel-name">{{ChannelName}}</div>
+        <div class="channel-topic">{{ChannelTopic}}</div>
+        <div class="channel-messagecount">{{ChannelMessageCount}}</div>
+    </div>
+</div>
+
+<div id="log">
+    {% for group in log.MessageGroups %}
+    <div class="msg">
+        <div class="msg-left">
+            <img class="msg-avatar" src="{{AuthorAvatarUrl}}" />
+        </div>
+        <div class="msg-right">
+            <span class="msg-user" title="{{AuthorFullName}}">{{AuthorName}}</span>
+            <span class="msg-date">{{TimeStamp}}</span>
+
+            {% for message in group.Messages %}
+            {% if message.Content != null %}
+            <div class="msg-content">
+                {{message.Content}}
+
+                {% if message.EditedTimeStamp != null %}
+                <span class="msg-edited" title="{{message.EditedTimeStamp}}">(edited)</span>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {% for attachment in message.Attachments %}
+            <div class="msg-attachment">
+                <a href="{{attachment.Url}}">
+                    {% if attachment.Type == Image %}
+                    <img class="msg-attachment" src="{{attachment.Url}}" />
+                    {% else %}
+                    Attachment: {{attachment.FileName}} ({{attachment.FileSize}})
+                    {% endif %}
+                </a>
+            </div>
+            {% endfor %}
+
+            {% for embed in message.Embeds %}
+
+            {% endfor %}
+
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+</body>
+</html>

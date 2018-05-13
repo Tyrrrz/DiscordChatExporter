@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Tyrrrz.Extensions;
+﻿using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Models
 {
@@ -15,14 +14,11 @@ namespace DiscordChatExporter.Core.Models
             ? $"https://cdn.discordapp.com/icons/{Id}/{IconHash}.png"
             : "https://cdn.discordapp.com/embed/avatars/0.png";
 
-        public IReadOnlyList<Role> Roles { get; }
-
-        public Guild(string id, string name, string iconHash, IReadOnlyList<Role> roles)
+        public Guild(string id, string name, string iconHash)
         {
             Id = id;
             Name = name;
             IconHash = iconHash;
-            Roles = roles;
         }
 
         public override string ToString()
@@ -33,6 +29,6 @@ namespace DiscordChatExporter.Core.Models
 
     public partial class Guild
     {
-        public static Guild DirectMessages { get; } = new Guild("@me", "Direct Messages", null, new Role[0]);
+        public static Guild DirectMessages { get; } = new Guild("@me", "Direct Messages", null);
     }
 }

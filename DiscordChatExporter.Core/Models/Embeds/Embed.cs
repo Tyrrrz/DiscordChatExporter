@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-// https://discordapp.com/developers/docs/resources/channel#embed-object
-
-namespace DiscordChatExporter.Core.Models
+namespace DiscordChatExporter.Core.Models.Embeds
 {
-    public class Embed : IMentionable
+    // https://discordapp.com/developers/docs/resources/channel#embed-object
+
+    public class Embed
     {
         public string Title { get; }
 
@@ -34,18 +34,13 @@ namespace DiscordChatExporter.Core.Models
 
         public IReadOnlyList<EmbedField> Fields { get; }
 
-        public List<User> MentionedUsers { get; }
-
-        public List<Role> MentionedRoles { get; }
-
-        public List<Channel> MentionedChannels { get; }
+        public MentionsContainer Mentions { get; }
 
         public Embed(string title, string type, string description, 
             string url, DateTime? timeStamp, Color? color, 
             EmbedFooter footer, EmbedImage image, EmbedImage thumbnail, 
             EmbedVideo video, EmbedProvider provider, EmbedAuthor author, 
-            List<EmbedField> fields, List<User> mentionedUsers,
-            List<Role> mentionedRoles, List<Channel> mentionedChannels)
+            IReadOnlyList<EmbedField> fields, MentionsContainer mentions)
         {
             Title = title;
             Type = type;
@@ -60,9 +55,7 @@ namespace DiscordChatExporter.Core.Models
             Provider = provider;
             Author = author;
             Fields = fields;
-            MentionedUsers = mentionedUsers;
-            MentionedRoles = mentionedRoles;
-            MentionedChannels = mentionedChannels;
+            Mentions = mentions;
         }
 
         public override string ToString()

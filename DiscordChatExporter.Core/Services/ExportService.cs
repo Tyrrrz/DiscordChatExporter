@@ -1,11 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Net;
-using System.Reflection;
 using System.Threading.Tasks;
-using DiscordChatExporter.Core.Internal;
 using DiscordChatExporter.Core.Models;
-using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Services
 {
@@ -22,24 +18,17 @@ namespace DiscordChatExporter.Core.Services
         {
             using (var output = File.CreateText(filePath))
             {
-                var sharedCss = Assembly.GetExecutingAssembly()
-                        .GetManifestResourceString("DiscordChatExporter.Core.Resources.ExportService.Shared.css");
-
                 if (format == ExportFormat.PlainText)
                 {
                     await ExportAsPlainTextAsync(log, output);
                 }
                 else if (format == ExportFormat.HtmlDark)
                 {
-                    var css = Assembly.GetExecutingAssembly()
-                        .GetManifestResourceString("DiscordChatExporter.Core.Resources.ExportService.DarkTheme.css");
-                    await ExportAsHtmlAsync(log, output, $"{sharedCss}\n{css}");
+                    await ExportAsHtmlDarkAsync(log, output);
                 }
                 else if (format == ExportFormat.HtmlLight)
                 {
-                    var css = Assembly.GetExecutingAssembly()
-                        .GetManifestResourceString("DiscordChatExporter.Core.Resources.ExportService.LightTheme.css");
-                    await ExportAsHtmlAsync(log, output, $"{sharedCss}\n{css}");
+                    await ExportAsHtmlLightAsync(log, output);
                 }
                 else if (format == ExportFormat.Csv)
                 {
@@ -53,21 +42,7 @@ namespace DiscordChatExporter.Core.Services
 
     public partial class ExportService
     {
-        private static string Base64Encode(string str)
-        {
-            return str.GetBytes().ToBase64();
-        }
-
-        private static string Base64Decode(string str)
-        {
-            return str.FromBase64().GetString();
-        }
-
-        private static string HtmlEncode(string str)
-        {
-            return WebUtility.HtmlEncode(str);
-        }
-
+        // TODO: use bytesize
         private static string FormatFileSize(long fileSize)
         {
             string[] units = {"B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"};

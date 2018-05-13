@@ -17,16 +17,16 @@ namespace DiscordChatExporter.Core.Services
             content = content.Replace("\n", Environment.NewLine);
 
             // User mentions (<@id> and <@!id>)
-            foreach (var mentionedUser in message.MentionedUsers)
+            foreach (var mentionedUser in message.Mentions.Users)
                 content = Regex.Replace(content, $"<@!?{mentionedUser.Id}>", $"@{mentionedUser}");
 
-            // Role mentions (<@&id>)
-            foreach (var mentionedRole in message.MentionedRoles)
-                content = content.Replace($"<@&{mentionedRole.Id}>", $"@{mentionedRole.Name}");
-
             // Channel mentions (<#id>)
-            foreach (var mentionedChannel in message.MentionedChannels)
+            foreach (var mentionedChannel in message.Mentions.Channels)
                 content = content.Replace($"<#{mentionedChannel.Id}>", $"#{mentionedChannel.Name}");
+
+            // Role mentions (<@&id>)
+            foreach (var mentionedRole in message.Mentions.Roles)
+                content = content.Replace($"<@&{mentionedRole.Id}>", $"@{mentionedRole.Name}");
 
             // Custom emojis (<:name:id>)
             content = Regex.Replace(content, "<(:.*?:)\\d*>", "$1");

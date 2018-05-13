@@ -6,16 +6,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Remove="Resources\ExportService\Shared.css" />
+      <None Remove="Resources\ExportService.Html\Shared.css" />
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="Resources\ExportService\DarkTheme.css" />
-        <EmbeddedResource Include="Resources\ExportService\LightTheme.css" />
-        <EmbeddedResource Include="Resources\ExportService\Shared.css" />
+        <EmbeddedResource Include="Resources\ExportService.Html\DarkTheme.css" />
+        <EmbeddedResource Include="Resources\ExportService.Html\LightTheme.css" />
+        <EmbeddedResource Include="Resources\ExportService.Html\Shared.css" />
     </ItemGroup>
 
     <ItemGroup>
+        <Reference Include="mscorlib" />
         <Reference Include="System.Net.Http" />
     </ItemGroup>
 
@@ -25,6 +26,10 @@
         <PackageReference Include="Onova" Version="2.1.0" />
         <PackageReference Include="Tyrrrz.Extensions" Version="1.5.0" />
         <PackageReference Include="Tyrrrz.Settings" Version="1.3.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
     </ItemGroup>
 
 </Project>

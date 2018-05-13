@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
-
-// https://discordapp.com/developers/docs/resources/channel#embed-object-embed-field-structure
-
-namespace DiscordChatExporter.Core.Models
+namespace DiscordChatExporter.Core.Models.Embeds
 {
+    // https://discordapp.com/developers/docs/resources/channel#embed-object-embed-field-structure
+
     public class EmbedField
     {
         public string Name { get; }

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using DiscordChatExporter.Core.Models.Embeds;
 
 namespace DiscordChatExporter.Core.Models
 {
-    public class Message : IMentionable
+    public class Message
     {
         public string Id { get; }
 
@@ -23,18 +24,13 @@ namespace DiscordChatExporter.Core.Models
 
         public IReadOnlyList<Embed> Embeds { get; }
 
-        public List<User> MentionedUsers { get; }
-
-        public List<Role> MentionedRoles { get; }
-
-        public List<Channel> MentionedChannels { get; }
+        public MentionsContainer Mentions { get; }
 
         public Message(string id, string channelId, MessageType type,
             User author, DateTime timeStamp,
             DateTime? editedTimeStamp, string content,
             IReadOnlyList<Attachment> attachments, IReadOnlyList<Embed> embeds,
-            List<User> mentionedUsers, List<Role> mentionedRoles, 
-            List<Channel> mentionedChannels)
+            MentionsContainer mentions)
         {
             Id = id;
             ChannelId = channelId;
@@ -45,9 +41,7 @@ namespace DiscordChatExporter.Core.Models
             Content = content;
             Attachments = attachments;
             Embeds = embeds;
-            MentionedUsers = mentionedUsers;
-            MentionedRoles = mentionedRoles;
-            MentionedChannels = mentionedChannels;
+            Mentions = mentions;
         }
 
         public override string ToString()

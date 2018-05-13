@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
-
-// https://discordapp.com/developers/docs/resources/channel#embed-object-embed-author-structure
-
-namespace DiscordChatExporter.Core.Models
+namespace DiscordChatExporter.Core.Models.Embeds
 {
+    // https://discordapp.com/developers/docs/resources/channel#embed-object-embed-author-structure
+
     public class EmbedAuthor
     {
         public string Name { get; }

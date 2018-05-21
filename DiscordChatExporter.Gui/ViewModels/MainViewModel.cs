@@ -234,7 +234,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                 var log = new ChannelChatLog(SelectedGuild, channel, messageGroups, messages.Count);
 
                 // Export
-                await _exportService.ExportAsync(format, filePath, log);
+                _exportService.Export(format, filePath, log);
 
                 // Open
                 Process.Start(filePath);

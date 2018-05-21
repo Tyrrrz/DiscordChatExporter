@@ -3,253 +3,75 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Models;
 using Tyrrrz.Extensions;
-using System.Drawing;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using DiscordChatExporter.Core.Internal;
-using DiscordChatExporter.Core.Models.Embeds;
 
 namespace DiscordChatExporter.Core.Services
 {
     public partial class ExportService
     {
-        private string MarkdownToHtml(string markdown, MentionsContainer mentions = null, bool allowLinks = false)
+        private string FormatMentionsHtml(string content, MentionsContainer mentions)
         {
-            // HTML-encode content
-            markdown = markdown.HtmlEncode();
-
-            // Encode multiline codeblocks (```text```)
-            markdown = Regex.Replace(markdown,
-                @"```+(?:.*?\n)?(.+?)\n?```+",
-                m => $"\x1AM{m.Groups[1].Value.Base64Encode()}\x1AM");
-
-            // Encode inline codeblocks (`text`)
-            markdown = Regex.Replace(markdown,
-                @"`(.+?)`",
-                m => $"\x1AI{m.Groups[1].Value.Base64Decode()}\x1AI");
-
-            // Encode links
-            if (allowLinks)
-            {
-                markdown = Regex.Replace(markdown, @"\[(.*?)\]\((.*?)\)",
-                    m => $"\x1AL{m.Groups[1].Value.Base64Encode()}|{m.Groups[2].Value.Base64Encode()}\x1AL");
-            }
-
-            // Encode URLs
-            markdown = Regex.Replace(markdown,
-                @"(\b(?:(?:https?|ftp|file)://|www\.|ftp\.)(?:\([-a-zA-0-9+&@#/%?=~_|!:,\.\[\];]*\)|[-a-zA-Z0-9+&@#/%?=~_|!:,\.\[\];])*(?:\([-a-zA-Z0-9+&@#/%?=~_|!:,\.\[\];]*\)|[-a-zA-Z0-9+&@#/%=~_|$]))",
-                m => $"\x1AU{m.Groups[1].Value.Base64Encode()}\x1AU");
-
-            // Process bold (**text**)
-            markdown = Regex.Replace(markdown, @"(\*\*)(?=\S)(.+?[*_]*)(?<=\S)\1", "<b>$2</b>");
-
-            // Process underline (__text__)
-            markdown = Regex.Replace(markdown, @"(__)(?=\S)(.+?)(?<=\S)\1", "<u>$2</u>");
-
-            // Process italic (*text* or _text_)
-            markdown = Regex.Replace(markdown, @"(\*|_)(?=\S)(.+?)(?<=\S)\1", "<i>$2</i>");
-
-            // Process strike through (~~text~~)
-            markdown = Regex.Replace(markdown, @"(~~)(?=\S)(.+?)(?<=\S)\1", "<s>$2</s>");
-
-            // Decode and process multiline codeblocks
-            markdown = Regex.Replace(markdown, "\x1AM(.*?)\x1AM",
-                m => $"<div class=\"pre\">{m.Groups[1].Value.Base64Decode()}</div>");
-
-            // Decode and process inline codeblocks
-            markdown = Regex.Replace(markdown, "\x1AI(.*?)\x1AI",
-                m => $"<span class=\"pre\">{m.Groups[1].Value.Base64Decode()}</span>");
-
-            // Decode and process links
-            if (allowLinks)
-            {
-                markdown = Regex.Replace(markdown, "\x1AL(.*?)|(.*?)\x1AL",
-                    m => $"<a href=\"{m.Groups[2].Value.Base64Decode()}\">{m.Groups[1].Value.Base64Decode()}</a>");
-            }
-
-            // Decode and process URLs
-            markdown = Regex.Replace(markdown, "\x1AU(.*?)\x1AU",
-                m => $"<a href=\"{m.Groups[1].Value.Base64Decode()}\">{m.Groups[1].Value.Base64Decode()}</a>");
-
-            // New lines
-            markdown = markdown.Replace("\n", "<br />");
-
             // Meta mentions (@everyone)
-            markdown = markdown.Replace("@everyone", "<span class=\"mention\">@everyone</span>");
+            content = content.Replace("@everyone", "<span class=\"mention\">@everyone</span>");
 
             // Meta mentions (@here)
-            markdown = markdown.Replace("@here", "<span class=\"mention\">@here</span>");
+            content = content.Replace("@here", "<span class=\"mention\">@here</span>");
 
-            // Mentions
-            if (mentions != null)
+            // User mentions (<@id> and <@!id>)
+            foreach (var mentionedUser in mentions.Users)
             {
-                // User mentions (<@id> and <@!id>)
-                foreach (var mentionedUser in mentions.Users)
-                {
-                    markdown = Regex.Replace(markdown, $"&lt;@!?{mentionedUser.Id}&gt;",
-                        $"<span class=\"mention\" title=\"{mentionedUser.FullName.HtmlEncode()}\">" +
-                        $"@{mentionedUser.Name.HtmlEncode()}" +
-                        "</span>");
-                }
-
-                // Role mentions (<@&id>)
-                foreach (var mentionedRole in mentions.Roles)
-                {
-                    markdown = markdown.Replace($"&lt;@&amp;{mentionedRole.Id}&gt;",
-                        "<span class=\"mention\">" +
-                        $"@{mentionedRole.Name.HtmlEncode()}" +
-                        "</span>");
-                }
-
-                // Channel mentions (<#id>)
-                foreach (var mentionedChannel in mentions.Channels)
-                {
-                    markdown = markdown.Replace($"&lt;#{mentionedChannel.Id}&gt;",
-                        "<span class=\"mention\">" +
-                        $"#{mentionedChannel.Name.HtmlEncode()}" +
-                        "</span>");
-                }
+                content = Regex.Replace(content, $"&lt;@!?{mentionedUser.Id}&gt;",
+                    $"<span class=\"mention\" title=\"{mentionedUser.FullName.HtmlEncode()}\">" +
+                    $"@{mentionedUser.Name.HtmlEncode()}" +
+                    "</span>");
             }
 
+            // Role mentions (<@&id>)
+            foreach (var mentionedRole in mentions.Roles)
+            {
+                content = content.Replace($"&lt;@&amp;{mentionedRole.Id}&gt;",
+                    "<span class=\"mention\">" +
+                    $"@{mentionedRole.Name.HtmlEncode()}" +
+                    "</span>");
+            }
+
+            // Channel mentions (<#id>)
+            foreach (var mentionedChannel in mentions.Channels)
+            {
+                content = content.Replace($"&lt;#{mentionedChannel.Id}&gt;",
+                    "<span class=\"mention\">" +
+                    $"#{mentionedChannel.Name.HtmlEncode()}" +
+                    "</span>");
+            }
+
+            return content;
+        }
+
+        private string FormatEmojisHtml(string content)
+        {
             // Custom emojis (<:name:id>)
-            markdown = Regex.Replace(markdown, "&lt;(:.*?:)(\\d*)&gt;",
+            content = Regex.Replace(content, "&lt;(:.*?:)(\\d*)&gt;",
                 "<img class=\"emoji\" title=\"$1\" src=\"https://cdn.discordapp.com/emojis/$2.png\" />");
 
-            return markdown;
+            return content;
         }
 
         private string FormatMessageContentHtml(Message message)
         {
-            return MarkdownToHtml(message.Content, message.Mentions);
-        }
+            var content = message.Content;
 
-        // The code used to convert embeds to html was based heavily off of the Embed Visualizer project, from this file:
-        // https://github.com/leovoel/embed-visualizer/blob/master/src/components/embed.jsx
+            // Convert content markdown to HTML
+            content = MarkdownProcessor.ToHtml(content);
 
-        private string EmbedTitleToHtml(string title, string url)
-        {
-            if (title == null)
-                return null;
+            // Format mentions
+            content = FormatMentionsHtml(content, message.Mentions);
 
-            string computed = $"<div class='embed-title'>{MarkdownToHtml(title)}</div>";
-            if (url != null)
-                computed =
-                    $"<a target='_blank' rel='noreferrer' href='{url}' class='embed-title'>{MarkdownToHtml(title)}</a>";
+            // Format emojis
+            content = FormatEmojisHtml(content);
 
-            return computed;
-        }
-
-        private string EmbedDescriptionToHtml(string content, IMentionable mentionable)
-        {
-            if (content == null)
-                return null;
-
-            return $"<div class='embed-description markup'>{MarkdownToHtml(content, mentionable, true)}</div>";
-        }
-
-        private string EmbedAuthorToHtml(string name, string url, string icon_url)
-        {
-            if (name == null)
-                return null;
-
-            string authorName = null;
-            if (name != null)
-            {
-                authorName = $"<span class='embed-author-name'>{name}</span>";
-                if (url != null)
-                    authorName =
-                        $"<a target='_blank' rel='noreferrer' href='{url}' class='embed-author-name'>{name}</a>";
-            }
-
-            string authorIcon = icon_url != null
-                ? $"<img src='{icon_url}' role='presentation' class='embed-author-icon' />"
-                : null;
-
-            return $"<div class='embed-author'>{authorIcon}{authorName}</div>";
-        }
-
-        private string EmbedFieldToHtml(string name, string value, bool? inline, IMentionable mentionable)
-        {
-            if (name == null && value == null)
-                return null;
-
-            string cls = "embed-field" + (inline == true ? " embed-field-inline" : "");
-
-            string fieldName = name != null ? $"<div class='embed-field-name'>{MarkdownToHtml(name)}</div>" : null;
-            string fieldValue = value != null
-                ? $"<div class='embed-field-value markup'>{MarkdownToHtml(value, mentionable, true)}</div>"
-                : null;
-
-            return $"<div class='{cls}'>{fieldName}{fieldValue}</div>";
-        }
-
-        private string EmbedThumbnailToHtml(string url)
-        {
-            if (url == null)
-                return null;
-
-            return $@"
-              <img
-                  src = '{url}'
-                  role = 'presentation'
-                  class='embed-rich-thumb'
-                  style='max-width: 80px; max-height: 80px'
-              />";
-        }
-
-        private string EmbedImageToHtml(string url)
-        {
-            if (url == null)
-                return null;
-
-            return
-                $"<a class='embed-thumbnail embed-thumbnail-rich'><img class='image' role='presentation' src='{url}' /></a>";
-        }
-
-        private string EmbedFooterToHtml(DateTime? timestamp, string text, string icon_url)
-        {
-            if (text == null && timestamp == null)
-                return null;
-
-            // format: ddd MMM Do, YYYY [at] h:mm A
-
-            string time = timestamp != null ? HtmlEncode(timestamp?.ToString(_settingsService.DateFormat)) : null;
-
-            string footerText = string.Join(" | ", new List<string> {text, time}.Where(s => s != null));
-            string footerIcon = text != null && icon_url != null
-                ? $"<img src='{icon_url}' class='embed-footer-icon' role='presentation' width='20' height='20' />"
-                : null;
-
-            return $"<div>{footerIcon}<span class='embed-footer'>{footerText}</span></div>";
-        }
-
-        private string FormatEmbedHtml(Embed embed)
-        {
-            var fieldsFormatted = embed.Fields.NotNullAndAny()
-                ? $"<div class='embed-fields'>{string.Join("", embed.Fields.Select(f => EmbedFieldToHtml(f.Name, f.Value, f.Inline, embed.Mentions)))}</div>"
-                : "";
-
-            return $@"
-                <div class='accessory'>
-                  <div class='embed-wrapper'>
-                    {EmbedColorPillToHtml(embed.Color)}
-                    <div class='embed embed-rich'>
-                      <div class='embed-content'>
-                        <div class='embed-content-inner'>
-                          {EmbedAuthorToHtml(embed.Author?.Name, embed.Author?.Url, embed.Author?.IconUrl)}
-                          {EmbedTitleToHtml(embed.Title, embed.Url)}
-                          {EmbedDescriptionToHtml(embed.Description, embed)}
-                          {fieldsFormatted}
-                        </div>
-                        {EmbedThumbnailToHtml(embed.Thumbnail?.Url)}
-                      </div>
-                      {EmbedImageToHtml(embed.Image?.Url)}
-                      {EmbedFooterToHtml(embed.TimeStamp, embed.Footer?.Text, embed.Footer?.IconUrl)}
-                    </div>
-                  </div>
-                </div>";
+            return content;
         }
 
         private async Task ExportAsHtmlAsync(ChannelChatLog log, TextWriter output, string css)

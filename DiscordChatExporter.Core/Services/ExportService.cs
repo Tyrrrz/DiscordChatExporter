@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using DiscordChatExporter.Core.Internal;
 using DiscordChatExporter.Core.Models;
 using Scriban;
@@ -93,26 +94,38 @@ namespace DiscordChatExporter.Core.Services
                 var context = new TemplateContext();
                 context.MemberRenamer = m => m.Name;
 
-                // Add output
+                // Create script object
+                var scriptObject = new ScriptObject();
+                context.PushGlobal(scriptObject);
+
+                // Configure output
                 context.PushOutput(new TextWriterOutput(output));
 
                 // Import model
-                var scriptObject = new ScriptObject();
-                scriptObject.Import(log, null, context.MemberRenamer);
-                context.PushGlobal(scriptObject);
+                scriptObject.Import(log, context.MemberFilter, context.MemberRenamer);
+
+                // Import functions
+                scriptObject.Import(nameof(FormatDateTime), new Func<DateTime, string>(FormatDateTime));
+                scriptObject.Import(nameof(FormatFileSize), new Func<long, string>(FormatFileSize));
+
+                scriptObject.Import(nameof(FormatMessageContentPlainText),
+                    new Func<Message, string>(FormatMessageContentPlainText));
+                scriptObject.Import(nameof(FormatMessageContentCsv),
+                    new Func<Message, string>(FormatMessageContentCsv));
 
                 // Render template
                 template.Render(context);
             }
         }
-    }
 
-    public partial class ExportService
-    {
-        // TODO: use bytesize
-        private static string FormatFileSize(long fileSize)
+        private string FormatDateTime(DateTime dateTime)
         {
-            string[] units = {"B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"};
+            return dateTime.ToString(_settingsService.DateFormat);
+        }
+
+        private string FormatFileSize(long fileSize)
+        {
+            string[] units = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
             double size = fileSize;
             var unit = 0;
 
@@ -123,6 +136,63 @@ namespace DiscordChatExporter.Core.Services
             }
 
             return $"{size:0.#} {units[unit]}";
+        }
+
+        private string FormatMessageContentPlainText(Message message)
+        {
+            var content = message.Content;
+
+            // New lines
+            content = content.Replace("\n", Environment.NewLine);
+
+            // User mentions (<@id> and <@!id>)
+            foreach (var mentionedUser in message.Mentions.Users)
+                content = Regex.Replace(content, $"<@!?{mentionedUser.Id}>", $"@{mentionedUser}");
+
+            // Channel mentions (<#id>)
+            foreach (var mentionedChannel in message.Mentions.Channels)
+                content = content.Replace($"<#{mentionedChannel.Id}>", $"#{mentionedChannel.Name}");
+
+            // Role mentions (<@&id>)
+            foreach (var mentionedRole in message.Mentions.Roles)
+                content = content.Replace($"<@&{mentionedRole.Id}>", $"@{mentionedRole.Name}");
+
+            // Custom emojis (<:name:id>)
+            content = Regex.Replace(content, "<(:.*?:)\\d*>", "$1");
+
+            return content;
+        }
+
+        private string FormatMessageContentCsv(Message message)
+        {
+            var content = message.Content;
+
+            // New lines
+            content = content.Replace("\n", ", ");
+
+            // Escape quotes
+            content = content.Replace("\"", "\"\"");
+
+            // Escape commas and semicolons
+            if (content.Contains(",") || content.Contains(";"))
+                content = $"\"{content}\"";
+
+            // User mentions (<@id> and <@!id>)
+            foreach (var mentionedUser in message.Mentions.Users)
+                content = Regex.Replace(content, $"<@!?{mentionedUser.Id}>", $"@{mentionedUser}");
+
+            // Channel mentions (<#id>)
+            foreach (var mentionedChannel in message.Mentions.Channels)
+                content = content.Replace($"<#{mentionedChannel.Id}>", $"#{mentionedChannel.Name}");
+
+            // Role mentions (<@&id>)
+            foreach (var mentionedRole in message.Mentions.Roles)
+                content = content.Replace($"<@&{mentionedRole.Id}>", $"@{mentionedRole.Name}");
+
+            // Custom emojis (<:name:id>)
+            content = Regex.Replace(content, "<(:.*?:)\\d*>", "$1");
+
+            return content;
         }
     }
 }

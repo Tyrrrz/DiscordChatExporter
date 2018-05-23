@@ -1,17 +1,17 @@
-﻿==================================================
-Guild: {{Guild.Name}}
-Channel: {{Channel.Name}}
-Topic: {{Channel.Topic}}
-Messages: {{TotalMessageCount}}
-==================================================
+﻿==============================================================
+Guild:    {{ Guild.Name }}
+Channel:  {{ Channel.Name }}
+Topic:    {{ Channel.Topic }}
+Messages: {{ TotalMessageCount }}
+==============================================================
 
-{{~for group in MessageGroups~}}
-  {{~group.Author.FullName}} [{{group.TimeStamp}}]
-  {{~for message in group.Messages~}}
-    {{~message.Content}}
-    {{~for attachment in message.Attachments~}}
-      {{~attachment.Url}}
-    {{~end~}}
-  {{~end~}}
+{{~ for group in MessageGroups ~}}
+  {{~ group.Author.FullName }} [{{ group.TimeStamp | FormatDateTime }}]
+  {{~ for message in group.Messages ~}}
+    {{~ message | FormatMessageContentPlainText }}
+    {{~ for attachment in message.Attachments ~}}
+      {{~ attachment.Url }}
+    {{~ end ~}}
+  {{~ end ~}}
 
-{{~end~}}
+{{~ end ~}}

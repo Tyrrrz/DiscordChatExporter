@@ -6,6 +6,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <None Remove="Resources\ExportService.Csv\Template.csv" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="Resources\ExportService.Csv\Template.csv" />
         <EmbeddedResource Include="Resources\ExportService.Html\DarkTheme.css" />
         <EmbeddedResource Include="Resources\ExportService.Html\LightTheme.css" />
         <EmbeddedResource Include="Resources\ExportService.Html\Shared.css" />
@@ -18,7 +23,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="CsvHelper" Version="7.1.0" />
         <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
         <PackageReference Include="Onova" Version="2.1.0" />
         <PackageReference Include="Scriban" Version="1.2.0" />

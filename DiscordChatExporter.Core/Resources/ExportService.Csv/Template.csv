@@ -1,0 +1,13 @@
+﻿Author;Date;Content;Attachments
+
+{{- for group in MessageGroups -}}
+  {{- for message in group.Messages -}}
+    {{- message.Author.FullName }};
+
+    {{- message.TimeStamp | FormatDateTime }};
+
+    {{- message | FormatMessageContentCsv }};
+
+    {{- message.Attachments | array.map "Url" | array.join "," }};
+  {{~ end -}}
+{{- end -}}

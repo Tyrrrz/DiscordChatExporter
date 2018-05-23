@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using System.Threading.Tasks;
 using DiscordChatExporter.Core.Internal;
 using DiscordChatExporter.Core.Models;
 using Scriban;
@@ -11,46 +10,85 @@ namespace DiscordChatExporter.Core.Services
 {
     public partial class ExportService : IExportService
     {
-        private const string ResourceRootNamespace = "DiscordChatExporter.Core.Resources.ExportService";
-
         private readonly ISettingsService _settingsService;
-
-        private readonly Template _plainTextTemplate;
-        private readonly Template _htmlTemplate;
-        private readonly Template _csvTemplate;
-
-        private readonly string _htmlDarkCss;
-        private readonly string _htmlLightCss;
 
         public ExportService(ISettingsService settingsService)
         {
             _settingsService = settingsService;
+        }
 
-            // Templates
-            _plainTextTemplate = Template.Parse(Assembly.GetExecutingAssembly()
-                .GetManifestResourceString($"{ResourceRootNamespace}.PlainText.Template.txt"));
-            _htmlTemplate = Template.Parse(Assembly.GetExecutingAssembly()
-                .GetManifestResourceString($"{ResourceRootNamespace}.Html.Template.html"));
-            //_csvTemplate = Template.Parse(Assembly.GetExecutingAssembly()
-            //    .GetManifestResourceString($"{ResourceRootNamespace}.Csv.Template.csv"));
+        private Template GetTemplate(ExportFormat format)
+        {
+            // Resource root namespace for all templates
+            const string resourceRootNamespace = "DiscordChatExporter.Core.Resources.ExportService";
 
-            // HTML styles
-            var sharedCss = Assembly.GetExecutingAssembly()
-                .GetManifestResourceString($"{ResourceRootNamespace}.Html.Shared.css");
+            if (format == ExportFormat.PlainText)
+            {
+                // Get template code
+                var raw = Assembly.GetExecutingAssembly()
+                    .GetManifestResourceString($"{resourceRootNamespace}.PlainText.Template.txt");
 
-            _htmlDarkCss = Assembly.GetExecutingAssembly()
-                .GetManifestResourceString($"{ResourceRootNamespace}.Html.DarkTheme.css");
-            _htmlDarkCss = sharedCss + Environment.NewLine + _htmlDarkCss;
+                // Parse
+                return Template.Parse(raw);
+            }
 
-            _htmlLightCss = Assembly.GetExecutingAssembly()
-                .GetManifestResourceString($"{ResourceRootNamespace}.Html.LightTheme.css");
-            _htmlLightCss = sharedCss + Environment.NewLine + _htmlLightCss;
+            if (format == ExportFormat.HtmlDark)
+            {
+                // Get css
+                var sharedCss = Assembly.GetExecutingAssembly()
+                    .GetManifestResourceString($"{resourceRootNamespace}.Html.Shared.css");
+                var themeCss = Assembly.GetExecutingAssembly()
+                    .GetManifestResourceString($"{resourceRootNamespace}.Html.DarkTheme.css");
+                var css = sharedCss + Environment.NewLine + themeCss;
+
+                // Get template code
+                var raw = Assembly.GetExecutingAssembly()
+                    .GetManifestResourceString($"{resourceRootNamespace}.Html.Template.html");
+                
+                // Inject css
+                raw = raw.Replace("<style></style>", $"<style>{css}</style>");
+
+                // Parse
+                return Template.Parse(raw);
+            }
+
+            if (format == ExportFormat.HtmlLight)
+            {
+                // Get css
+                var sharedCss = Assembly.GetExecutingAssembly()
+                    .GetManifestResourceString($"{resourceRootNamespace}.Html.Shared.css");
+                var themeCss = Assembly.GetExecutingAssembly()
+                    .GetManifestResourceString($"{resourceRootNamespace}.Html.LightTheme.css");
+                var css = sharedCss + Environment.NewLine + themeCss;
+
+                // Get template code
+                var raw = Assembly.GetExecutingAssembly()
+                    .GetManifestResourceString($"{resourceRootNamespace}.Html.Template.html");
+
+                // Inject css
+                raw = raw.Replace("<style></style>", $"<style>{css}</style>");
+
+                // Parse
+                return Template.Parse(raw);
+            }
+
+            if (format == ExportFormat.Csv)
+            {
+                var raw = Assembly.GetExecutingAssembly()
+                    .GetManifestResourceString($"{resourceRootNamespace}.Csv.Template.csv");
+                return Template.Parse(raw);
+            }
+
+            throw new ArgumentOutOfRangeException(nameof(format));
         }
 
         public void Export(ExportFormat format, string filePath, ChannelChatLog log)
         {
             using (var output = File.CreateText(filePath))
             {
+                // Get template
+                var template = GetTemplate(format);
+
                 // Create template context
                 var context = new TemplateContext();
                 context.MemberRenamer = m => m.Name;
@@ -64,27 +102,7 @@ namespace DiscordChatExporter.Core.Services
                 context.PushGlobal(scriptObject);
 
                 // Render template
-                if (format == ExportFormat.PlainText)
-                {
-                    _plainTextTemplate.Render(context);
-                }
-
-                else if (format == ExportFormat.HtmlDark)
-                {
-                    context.Evaluate(_plainTextTemplate.Page);
-                }
-
-                else if (format == ExportFormat.HtmlLight)
-                {
-                    context.Evaluate(_plainTextTemplate.Page);
-                }
-
-                else if (format == ExportFormat.Csv)
-                {
-                    context.Evaluate(_plainTextTemplate.Page);
-                }
-
-                else throw new ArgumentOutOfRangeException(nameof(format));
+                template.Render(context);
             }
         }
     }

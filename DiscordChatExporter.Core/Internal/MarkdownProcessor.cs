@@ -11,13 +11,13 @@ namespace DiscordChatExporter.Core.Internal
 
             // Encode multiline codeblocks (```text```)
             output = Regex.Replace(output,
-                @"```+(?:.*?\n)?(.+?)\n?```+",
+                @"```+(?:[^`]*?\n)?([^`]+)\n?```+",
                 m => $"\x1AM{m.Groups[1].Value.Base64Encode()}\x1AM");
 
             // Encode inline codeblocks (`text`)
             output = Regex.Replace(output,
-                @"`(.+?)`",
-                m => $"\x1AI{m.Groups[1].Value.Base64Decode()}\x1AI");
+                @"`([^`]+)`",
+                m => $"\x1AI{m.Groups[1].Value.Base64Encode()}\x1AI");
 
             // Encode links
             if (allowLinks)
@@ -28,7 +28,7 @@ namespace DiscordChatExporter.Core.Internal
 
             // Encode URLs
             output = Regex.Replace(output,
-                @"(\b(?:(?:https?|ftp|file)://|www\.|ftp\.)(?:\([-a-zA-0-9+&@#/%?=~_|!:,\.\[\];]*\)|[-a-zA-Z0-9+&@#/%?=~_|!:,\.\[\];])*(?:\([-a-zA-Z0-9+&@#/%?=~_|!:,\.\[\];]*\)|[-a-zA-Z0-9+&@#/%=~_|$]))",
+                @"(\b(?:(?:https?|ftp|file)://|www\.|ftp\.)(?:\([-a-zA-Z0-9+&@#/%?=~_|!:,\.\[\];]*\)|[-a-zA-Z0-9+&@#/%?=~_|!:,\.\[\];])*(?:\([-a-zA-Z0-9+&@#/%?=~_|!:,\.\[\];]*\)|[-a-zA-Z0-9+&@#/%=~_|$]))",
                 m => $"\x1AU{m.Groups[1].Value.Base64Encode()}\x1AU");
 
             // Process bold (**text**)

@@ -6,7 +6,7 @@
 
     {{- message.TimeStamp | FormatDateTime }};
 
-    {{- message | FormatMessageContentCsv }};
+    {{- message | FormatMessageContent }};
 
     {{- message.Attachments | array.map "Url" | array.join "," }};
   {{~ end -}}

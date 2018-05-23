@@ -9,7 +9,7 @@ using Scriban.Runtime;
 
 namespace DiscordChatExporter.Core.Services
 {
-    public partial class ExportService : IExportService
+    public class ExportService : IExportService
     {
         private readonly ISettingsService _settingsService;
 
@@ -107,11 +107,8 @@ namespace DiscordChatExporter.Core.Services
                 // Import functions
                 scriptObject.Import(nameof(FormatDateTime), new Func<DateTime, string>(FormatDateTime));
                 scriptObject.Import(nameof(FormatFileSize), new Func<long, string>(FormatFileSize));
-
-                scriptObject.Import(nameof(FormatMessageContentPlainText),
-                    new Func<Message, string>(FormatMessageContentPlainText));
-                scriptObject.Import(nameof(FormatMessageContentCsv),
-                    new Func<Message, string>(FormatMessageContentCsv));
+                scriptObject.Import(nameof(FormatMessageContent),
+                    new Func<Message, string>(m => FormatMessageContent(format, m)));
 
                 // Render template
                 template.Render(context);
@@ -163,6 +160,53 @@ namespace DiscordChatExporter.Core.Services
             return content;
         }
 
+        private string FormatMessageContentHtml(Message message)
+        {
+            var content = message.Content;
+
+            // Convert content markdown to HTML
+            content = MarkdownProcessor.ToHtml(content);
+
+            // Meta mentions (@everyone)
+            content = content.Replace("@everyone", "<span class=\"mention\">@everyone</span>");
+
+            // Meta mentions (@here)
+            content = content.Replace("@here", "<span class=\"mention\">@here</span>");
+
+            // User mentions (<@id> and <@!id>)
+            foreach (var mentionedUser in message.Mentions.Users)
+            {
+                content = Regex.Replace(content, $"&lt;@!?{mentionedUser.Id}&gt;",
+                    $"<span class=\"mention\" title=\"{mentionedUser.FullName.HtmlEncode()}\">" +
+                    $"@{mentionedUser.Name.HtmlEncode()}" +
+                    "</span>");
+            }
+
+            // Role mentions (<@&id>)
+            foreach (var mentionedRole in message.Mentions.Roles)
+            {
+                content = content.Replace($"&lt;@&amp;{mentionedRole.Id}&gt;",
+                    "<span class=\"mention\">" +
+                    $"@{mentionedRole.Name.HtmlEncode()}" +
+                    "</span>");
+            }
+
+            // Channel mentions (<#id>)
+            foreach (var mentionedChannel in message.Mentions.Channels)
+            {
+                content = content.Replace($"&lt;#{mentionedChannel.Id}&gt;",
+                    "<span class=\"mention\">" +
+                    $"#{mentionedChannel.Name.HtmlEncode()}" +
+                    "</span>");
+            }
+
+            // Custom emojis (<:name:id>)
+            content = Regex.Replace(content, "&lt;(:.*?:)(\\d*)&gt;",
+                "<img class=\"emoji\" title=\"$1\" src=\"https://cdn.discordapp.com/emojis/$2.png\" />");
+
+            return content;
+        }
+
         private string FormatMessageContentCsv(Message message)
         {
             var content = message.Content;
@@ -193,6 +237,23 @@ namespace DiscordChatExporter.Core.Services
             content = Regex.Replace(content, "<(:.*?:)\\d*>", "$1");
 
             return content;
+        }
+
+        private string FormatMessageContent(ExportFormat format, Message message)
+        {
+            if (format == ExportFormat.PlainText)
+                return FormatMessageContentPlainText(message);
+
+            if (format == ExportFormat.HtmlDark)
+                return FormatMessageContentHtml(message);
+
+            if (format == ExportFormat.HtmlLight)
+                return FormatMessageContentHtml(message);
+
+            if (format == ExportFormat.Csv)
+                return FormatMessageContentCsv(message);
+
+            throw new ArgumentOutOfRangeException(nameof(format));
         }
     }
 }

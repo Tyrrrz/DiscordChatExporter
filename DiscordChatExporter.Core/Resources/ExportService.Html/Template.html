@@ -4,7 +4,7 @@
 <html lang="en">
 
 <head>
-    <title>{{Title}}</title>
+    <title>{{ Title }}</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <style></style>
@@ -13,57 +13,57 @@
     
 <div id="info">
     <div class="info-left">
-        <img class="guild-icon" src="{{GuildIconUrl}}" />
+        <img class="guild-icon" src="{{ Guild.IconUrl }}" />
     </div>
     <div class="info-right">
-        <div class="guild-name">{{GuildName}}</div>
-        <div class="channel-name">{{ChannelName}}</div>
-        <div class="channel-topic">{{ChannelTopic}}</div>
-        <div class="channel-messagecount">{{ChannelMessageCount}}</div>
+        <div class="guild-name">{{ Guild.Name }}</div>
+        <div class="channel-name">{{ Channel.Name }}</div>
+        <div class="channel-topic">{{ Channel.Topic }}</div>
+        <div class="channel-messagecount">{{ TotalMessageCount }} messages</div>
     </div>
 </div>
 
 <div id="log">
-    {% for group in log.MessageGroups %}
+    {{ for group in MessageGroups }}
     <div class="msg">
         <div class="msg-left">
-            <img class="msg-avatar" src="{{AuthorAvatarUrl}}" />
+            <img class="msg-avatar" src="{{ group.Author.AvatarUrl }}" />
         </div>
         <div class="msg-right">
-            <span class="msg-user" title="{{AuthorFullName}}">{{AuthorName}}</span>
-            <span class="msg-date">{{TimeStamp}}</span>
+            <span class="msg-user" title="{{ group.Author.FullName }}">{{ group.Author.Name }}</span>
+            <span class="msg-date">{{ group.TimeStamp | FormatDateTime }}</span>
 
-            {% for message in group.Messages %}
-            {% if message.Content != null %}
+            {{ for message in group.Messages }}
+            {{ if message.Content != empty }}
             <div class="msg-content">
-                {{message.Content}}
+                {{ message | FormatMessageContent }}
 
-                {% if message.EditedTimeStamp != null %}
-                <span class="msg-edited" title="{{message.EditedTimeStamp}}">(edited)</span>
-                {% endif %}
+                {{ if message.EditedTimeStamp != empty }}
+                <span class="msg-edited" title="{{ message.EditedTimeStamp }}">(edited)</span>
+                {{ end }}
             </div>
-            {% endif %}
+            {{ end }}
 
-            {% for attachment in message.Attachments %}
+            {{ for attachment in message.Attachments }}
             <div class="msg-attachment">
-                <a href="{{attachment.Url}}">
-                    {% if attachment.Type == Image %}
-                    <img class="msg-attachment" src="{{attachment.Url}}" />
-                    {% else %}
-                    Attachment: {{attachment.FileName}} ({{attachment.FileSize}})
-                    {% endif %}
+                <a href="{{ attachment.Url }}">
+                    {{ if attachment.IsImage }}
+                    <img class="msg-attachment" src="{{ attachment.Url }}" />
+                    {{ else }}
+                    Attachment: {{ attachment.FileName }} ({{ attachment.FileSize | FormatFileSize }})
+                    {{ end }}
                 </a>
             </div>
-            {% endfor %}
+            {{ end }}
 
-            {% for embed in message.Embeds %}
+            {{ for embed in message.Embeds }}
 
-            {% endfor %}
+            {{ end }}
 
-            {% endfor %}
+            {{ end }}
         </div>
     </div>
-    {% endfor %}
+    {{ end }}
 </div>
 
 </body>

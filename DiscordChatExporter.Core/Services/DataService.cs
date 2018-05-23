@@ -211,14 +211,12 @@ namespace DiscordChatExporter.Core.Services
             {
                 var attachmentId = attachmentJson["id"].Value<string>();
                 var attachmentUrl = attachmentJson["url"].Value<string>();
-                var attachmentType = attachmentJson["width"] != null
-                    ? AttachmentType.Image
-                    : AttachmentType.Other;
+                var attachmentIsImage = attachmentJson["width"] != null;
                 var attachmentFileName = attachmentJson["filename"].Value<string>();
                 var attachmentFileSize = attachmentJson["size"].Value<long>();
 
                 var attachment = new Attachment(
-                    attachmentId, attachmentType, attachmentUrl,
+                    attachmentId, attachmentIsImage, attachmentUrl,
                     attachmentFileName, attachmentFileSize);
                 attachments.Add(attachment);
             }

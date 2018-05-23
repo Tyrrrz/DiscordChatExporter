@@ -8,7 +8,7 @@ Messages: {{ TotalMessageCount }}
 {{~ for group in MessageGroups ~}}
   {{~ group.Author.FullName }} [{{ group.TimeStamp | FormatDateTime }}]
   {{~ for message in group.Messages ~}}
-    {{~ message | FormatMessageContentPlainText }}
+    {{~ message | FormatMessageContent }}
     {{~ for attachment in message.Attachments ~}}
       {{~ attachment.Url }}
     {{~ end ~}}

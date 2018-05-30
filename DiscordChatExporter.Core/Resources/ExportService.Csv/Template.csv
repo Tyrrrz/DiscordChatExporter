@@ -1,4 +1,4 @@
-﻿Author;Date;Content;Attachments
+﻿Author;Date;Content;Attachments;
 
 {{- for group in MessageGroups -}}
   {{- for message in group.Messages -}}

@@ -74,8 +74,11 @@ namespace DiscordChatExporter.Core.Services
 
             if (format == ExportFormat.Csv)
             {
+                // Get template code
                 var raw = Assembly.GetExecutingAssembly()
                     .GetManifestResourceString($"{resourceRootNamespace}.Csv.Template.csv");
+
+                // Parse
                 return Template.Parse(raw);
             }
 

@@ -71,6 +71,17 @@ namespace DiscordChatExporter.Core.Services
             return new Channel(id, guildId, name, topic, type);
         }
 
+        private Attachment ParseAttachment(JToken token)
+        {
+            var id = token["id"].Value<string>();
+            var url = token["url"].Value<string>();
+            var isImage = token["width"] != null;
+            var fileName = token["filename"].Value<string>();
+            var fileSize = token["size"].Value<long>();
+
+            return new Attachment(id, isImage, url, fileName, fileSize);
+        }
+
         private Embed ParseEmbed(JToken token)
         {
 
@@ -205,21 +216,8 @@ namespace DiscordChatExporter.Core.Services
             // Get author
             var author = ParseUser(token["author"]);
 
-            // Get attachment
-            var attachments = new List<Attachment>();
-            foreach (var attachmentJson in token["attachments"].EmptyIfNull())
-            {
-                var attachmentId = attachmentJson["id"].Value<string>();
-                var attachmentUrl = attachmentJson["url"].Value<string>();
-                var attachmentIsImage = attachmentJson["width"] != null;
-                var attachmentFileName = attachmentJson["filename"].Value<string>();
-                var attachmentFileSize = attachmentJson["size"].Value<long>();
-
-                var attachment = new Attachment(
-                    attachmentId, attachmentIsImage, attachmentUrl,
-                    attachmentFileName, attachmentFileSize);
-                attachments.Add(attachment);
-            }
+            // Get attachments
+            var attachments = token["attachments"].EmptyIfNull().Select(ParseAttachment).ToArray();
 
             // Get embeds
             var embeds = token["embeds"].EmptyIfNull().Select(ParseEmbed).ToArray();

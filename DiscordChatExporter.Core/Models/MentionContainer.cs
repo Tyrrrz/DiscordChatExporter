@@ -2,7 +2,7 @@
 
 namespace DiscordChatExporter.Core.Models
 {
-    public class MentionsContainer
+    public class MentionContainer
     {
         public IReadOnlyList<User> Users { get; }
 
@@ -10,7 +10,7 @@ namespace DiscordChatExporter.Core.Models
 
         public IReadOnlyList<Role> Roles { get; }
 
-        public MentionsContainer(IReadOnlyList<User> users, IReadOnlyList<Channel> channels, IReadOnlyList<Role> roles)
+        public MentionContainer(IReadOnlyList<User> users, IReadOnlyList<Channel> channels, IReadOnlyList<Role> roles)
         {
             Users = users;
             Channels = channels;

@@ -34,13 +34,13 @@ namespace DiscordChatExporter.Core.Models.Embeds
 
         public IReadOnlyList<EmbedField> Fields { get; }
 
-        public MentionsContainer Mentions { get; }
+        public MentionContainer Mentions { get; }
 
         public Embed(string title, string type, string description, 
             string url, DateTime? timeStamp, Color? color, 
             EmbedFooter footer, EmbedImage image, EmbedImage thumbnail, 
             EmbedVideo video, EmbedProvider provider, EmbedAuthor author, 
-            IReadOnlyList<EmbedField> fields, MentionsContainer mentions)
+            IReadOnlyList<EmbedField> fields, MentionContainer mentions)
         {
             Title = title;
             Type = type;

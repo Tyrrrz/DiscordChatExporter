@@ -170,7 +170,7 @@ namespace DiscordChatExporter.Core.Services
                 .Select(i => Role.CreateDeletedRole(i))
                 .ToList();
 
-            var mentions = new MentionsContainer(mentionedUsers, mentionedChannels, mentionedRoles);
+            var mentions = new MentionContainer(mentionedUsers, mentionedChannels, mentionedRoles);
 
             return new Embed(title, type, description, url, timestamp, color, footer, image, thumbnail, video, provider,
                 author, fields, mentions);
@@ -241,7 +241,7 @@ namespace DiscordChatExporter.Core.Services
                 .Select(i => Role.CreateDeletedRole(i))
                 .ToList();
 
-            var mentions = new MentionsContainer(mentionedUsers, mentionedChannels, mentionedRoles);
+            var mentions = new MentionContainer(mentionedUsers, mentionedChannels, mentionedRoles);
 
             return new Message(id, channelId, type, author, timeStamp, editedTimeStamp, content, attachments, embeds,
                 mentions);

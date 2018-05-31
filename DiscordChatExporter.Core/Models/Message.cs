@@ -24,13 +24,13 @@ namespace DiscordChatExporter.Core.Models
 
         public IReadOnlyList<Embed> Embeds { get; }
 
-        public MentionsContainer Mentions { get; }
+        public MentionContainer Mentions { get; }
 
         public Message(string id, string channelId, MessageType type,
             User author, DateTime timeStamp,
             DateTime? editedTimeStamp, string content,
             IReadOnlyList<Attachment> attachments, IReadOnlyList<Embed> embeds,
-            MentionsContainer mentions)
+            MentionContainer mentions)
         {
             Id = id;
             ChannelId = channelId;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
 using DiscordChatExporter.Core.Internal;
@@ -103,6 +104,8 @@ namespace DiscordChatExporter.Core.Services
             // Import template functions
             scriptObject.Import(nameof(FormatDateTime), new Func<DateTime, string>(FormatDateTime));
             scriptObject.Import(nameof(FormatFileSize), new Func<long, string>(FormatFileSize));
+            scriptObject.Import(nameof(FormatColor), new Func<Color, string>(FormatColor));
+            scriptObject.Import(nameof(FormatMarkdown), new Func<string, string>(FormatMarkdown));
             scriptObject.Import(nameof(FormatMessageContent),
                 new Func<Message, string>(m => FormatMessageContent(format, m)));
 

@@ -9,6 +9,7 @@
 </head>
 <body>
     
+{{~ # Info }}
 <div id="info">
     <div class="info-left">
         <img class="guild-icon" src="{{ Guild.IconUrl }}" />
@@ -21,46 +22,99 @@
     </div>
 </div>
 
+{{~ # Log }}
 <div id="log">
     {{ for group in MessageGroups }}
-    <div class="msg">
-        <div class="msg-left">
-            <img class="msg-avatar" src="{{ group.Author.AvatarUrl }}" />
-        </div>
-        <div class="msg-right">
-            <span class="msg-user" title="{{ group.Author.FullName }}">{{ group.Author.Name }}</span>
-            <span class="msg-date">{{ group.TimeStamp | FormatDateTime }}</span>
+        <div class="msg">
+            {{~ # Avatar }}
+            <div class="msg-left">
+                <img class="msg-avatar" src="{{ group.Author.AvatarUrl }}" />
+            </div>
+            {{~ # Author name and timestamp }}
+            <div class="msg-right">
+                <span class="msg-user" title="{{ group.Author.FullName }}">{{ group.Author.Name }}</span>
+                <span class="msg-date">{{ group.TimeStamp | FormatDateTime }}</span>
 
-            {{ for message in group.Messages }}
-            {{ if message.Content != empty }}
-            <div class="msg-content">
-                {{ message | FormatMessageContent }}
+                {{~ # Messages }}
+                {{ for message in group.Messages }}
+                    {{~ # Content }}
+                    {{ if message.Content != empty }}
+                        <div class="msg-content">
+                            {{ message | FormatMessageContent }}
 
-                {{ if message.EditedTimeStamp != empty }}
-                <span class="msg-edited" title="{{ message.EditedTimeStamp }}">(edited)</span>
+                            {{~ # Edited timestamp }}
+                            {{ if message.EditedTimeStamp != empty }}
+                                <span class="msg-edited" title="{{ message.EditedTimeStamp }}">(edited)</span>
+                            {{ end }}
+                        </div>
+                    {{ end }}
+
+                    {{~ # Attachments }}
+                    {{ for attachment in message.Attachments }}
+                        <div class="msg-attachment">
+                            <a href="{{ attachment.Url }}">
+                                {{~ # Image }}
+                                {{ if attachment.IsImage }}
+                                    <img class="msg-attachment" src="{{ attachment.Url }}" />
+                                {{~ # Non-image }}
+                                {{ else }}
+                                    Attachment: {{ attachment.FileName }} ({{ attachment.FileSize | FormatFileSize }})
+                                {{ end }}
+                            </a>
+                        </div>
+                    {{ end }}
+
+                    {{~ # Embeds }}
+                    {{ for embed in message.Embeds }}
+                        <div class="accessory">
+                            <div class='embed-color-pill' style='background-color: rgba({{ embed.Color | FormatColor }})'></div>
+                            <div class="embed-wrapper">
+                                <div class="embed embed-rich">
+                                    <div class="embed embed-content">
+                                        <div class="embed embed-content-inner">
+                                            {{~ # Author }}
+                                            {{ if embed.Author != empty }}
+                                                <div class="embed-author">
+                                                    {{ if embed.Author.IconUrl != empty }}
+                                                        <img class="embed-author-icon" src="{{ embed.Author.IconUrl }}" role="presentation" />
+                                                    {{ end }}
+                                                    {{ if embed.Author.Name != empty }}
+                                                        {{ if embed.Author.Url != empty }}
+                                                            <a class="embed-author-name" target="_blank" rel="noreferrer" href="{{ embed.Author.Url }}">{{ embed.Author.Name }}</a>
+                                                        {{ else }}
+                                                            <span class="embed-author-name">{{ embed.Author.Name }}</span>
+                                                        {{ end }}
+                                                    {{ end }}
+                                                </div>
+                                            {{ end }}
+
+                                            {{~ # Title }}
+                                            {{ if embed.Title != empty }}
+                                                {{ if embed.Url != empty }}
+                                                    <a class="embed-title" target="_blank" rel="noreferrer" href="{{ embed.Url }}">{{ embed.Title | FormatMarkdown }}</a>
+                                                {{ else }}
+                                                    <div class="embed-title">{{ embed.Title | FormatMarkdown }}</div>
+                                                {{ end }}
+                                            {{ end }}
+
+                                            {{~ # Description }}
+                                            {{ if embed.Content != empty }}
+                                                <div class="embed-description markup">{{ embed.Content | FormatMarkdown }}</div>
+                                            {{ end }}
+
+                                            {{~ # Fields }}
+                                            <div class="embed-fields">
+                                                
+                                            </div>
+                                        </div>
+                                    </div>    
+                                </div>
+                            </div>
+                        </div>
+                    {{ end }}
                 {{ end }}
             </div>
-            {{ end }}
-
-            {{ for attachment in message.Attachments }}
-            <div class="msg-attachment">
-                <a href="{{ attachment.Url }}">
-                    {{ if attachment.IsImage }}
-                    <img class="msg-attachment" src="{{ attachment.Url }}" />
-                    {{ else }}
-                    Attachment: {{ attachment.FileName }} ({{ attachment.FileSize | FormatFileSize }})
-                    {{ end }}
-                </a>
-            </div>
-            {{ end }}
-
-            {{ for embed in message.Embeds }}
-
-            {{ end }}
-
-            {{ end }}
         </div>
-    </div>
     {{ end }}
 </div>
 

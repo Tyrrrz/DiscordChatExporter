@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Text.RegularExpressions;
 using DiscordChatExporter.Core.Internal;
 using DiscordChatExporter.Core.Models;
@@ -25,6 +26,16 @@ namespace DiscordChatExporter.Core.Services
             }
 
             return $"{size:0.#} {units[unit]}";
+        }
+
+        private string FormatColor(Color color)
+        {
+            return $"{color.R},{color.G},{color.B},{color.A}";
+        }
+
+        private string FormatMarkdown(string markdown)
+        {
+            return MarkdownProcessor.ToHtml(markdown);
         }
 
         private string FormatMessageContentPlainText(Message message)
@@ -57,7 +68,7 @@ namespace DiscordChatExporter.Core.Services
             var content = message.Content;
 
             // Convert content markdown to HTML
-            content = MarkdownProcessor.ToHtml(content);
+            content = FormatMarkdown(content);
 
             // Meta mentions (@everyone)
             content = content.Replace("@everyone", "<span class=\"mention\">@everyone</span>");

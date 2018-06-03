@@ -20,7 +20,7 @@ namespace DiscordChatExporter.Core.Services
         private Template GetTemplate(ExportFormat format)
         {
             // Resource root namespace for all templates
-            const string resourceRootNamespace = "DiscordChatExporter.Core.Resources.ExportService";
+            const string resourceRootNamespace = "DiscordChatExporter.Core.Resources.ExportTemplates";
 
             if (format == ExportFormat.PlainText)
             {

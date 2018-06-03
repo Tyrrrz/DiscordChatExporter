@@ -6,16 +6,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Remove="Resources\ExportService.Csv\Template.csv" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <EmbeddedResource Include="Resources\ExportService.Csv\Template.csv" />
-        <EmbeddedResource Include="Resources\ExportService.Html\DarkTheme.css" />
-        <EmbeddedResource Include="Resources\ExportService.Html\LightTheme.css" />
-        <EmbeddedResource Include="Resources\ExportService.Html\Shared.css" />
-        <EmbeddedResource Include="Resources\ExportService.Html\Template.html" />
-        <EmbeddedResource Include="Resources\ExportService.PlainText\Template.txt" />
+        <EmbeddedResource Include="Resources\ExportTemplates\Csv\Template.csv" />
+        <EmbeddedResource Include="Resources\ExportTemplates\Html\DarkTheme.css" />
+        <EmbeddedResource Include="Resources\ExportTemplates\Html\LightTheme.css" />
+        <EmbeddedResource Include="Resources\ExportTemplates\Html\Shared.css" />
+        <EmbeddedResource Include="Resources\ExportTemplates\Html\Template.html" />
+        <EmbeddedResource Include="Resources\ExportTemplates\PlainText\Template.txt" />
     </ItemGroup>
 
     <ItemGroup>

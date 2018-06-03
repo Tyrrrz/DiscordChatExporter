@@ -2,7 +2,7 @@
 Guild:    {{ Guild.Name }}
 Channel:  {{ Channel.Name }}
 Topic:    {{ Channel.Topic }}
-Messages: {{ TotalMessageCount }}
+Messages: {{ TotalMessageCount | math.format "N0" }}
 ==============================================================
 
 {{~ for group in MessageGroups ~}}

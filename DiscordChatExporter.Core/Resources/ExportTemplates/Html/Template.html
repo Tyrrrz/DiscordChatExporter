@@ -19,7 +19,7 @@
         <div class="guild-name">{{ Guild.Name }}</div>
         <div class="channel-name">{{ Channel.Name }}</div>
         <div class="channel-topic">{{ Channel.Topic }}</div>
-        <div class="channel-messagecount">{{ TotalMessageCount }} messages</div>
+        <div class="channel-messagecount">{{ TotalMessageCount | math.format "N0" }} messages</div>
     </div>
 </div>
 

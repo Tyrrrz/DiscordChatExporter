@@ -40,7 +40,7 @@
                     {{~ # Content }}
                     {{ if message.Content }}
                         <div class="msg-content">
-                            {{ message | FormatMessageContent }}
+                            {{ message.Content | FormatContentHtml mentions: message.Mentions }}
 
                             {{~ # Edited timestamp }}
                             {{ if message.EditedTimeStamp }}
@@ -91,15 +91,15 @@
                                             {{~ # Title }}
                                             {{ if embed.Title }}
                                                 {{ if embed.Url }}
-                                                    <a class="embed-title" target="_blank" rel="noreferrer" href="{{ embed.Url }}">{{ embed.Title | FormatMarkdown }}</a>
+                                                    <a class="embed-title" target="_blank" rel="noreferrer" href="{{ embed.Url }}">{{ embed.Title | FormatContentHtml }}</a>
                                                 {{ else }}
-                                                    <div class="embed-title">{{ embed.Title | FormatMarkdown }}</div>
+                                                    <div class="embed-title">{{ embed.Title | FormatContentHtml }}</div>
                                                 {{ end }}
                                             {{ end }}
 
                                             {{~ # Description }}
                                             {{ if embed.Description }}
-                                                <div class="embed-description markup">{{ embed.Description | FormatMarkdown }}</div>
+                                                <div class="embed-description markup">{{ embed.Description | FormatContentHtml allowLinks: true mentions: embed.Mentions }}</div>
                                             {{ end }}
 
                                             {{~ # Fields }}
@@ -107,10 +107,10 @@
                                                 {{ for field in embed.Fields }}
                                                     <div class="embed-field {{ if field.Inline }} embed-field-inline {{ end }}">
                                                         {{ if field.Name }}
-                                                            <div class="embed-field-name">{{ field.Name | FormatMarkdown }}</div>
+                                                            <div class="embed-field-name">{{ field.Name | FormatContentHtml }}</div>
                                                         {{ end }}
                                                         {{ if field.Value }}
-                                                            <div class="embed-field-value markup">{{ field.Value | FormatMarkdown }}</div>
+                                                            <div class="embed-field-value markup">{{ field.Value | FormatContentHtml allowLinks: true mentions: embed.Mentions }}</div>
                                                         {{ end }}
                                                     </div>
                                                 {{ end }}

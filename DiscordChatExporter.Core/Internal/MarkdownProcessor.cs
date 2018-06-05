@@ -54,7 +54,7 @@ namespace DiscordChatExporter.Core.Internal
             // Decode and process links
             if (allowLinks)
             {
-                output = Regex.Replace(output, "\x1AL(.*?)|(.*?)\x1AL",
+                output = Regex.Replace(output, "\x1AL(.*?)\\|(.*?)\x1AL",
                     m => $"<a href=\"{m.Groups[2].Value.Base64Decode()}\">{m.Groups[1].Value.Base64Decode()}</a>");
             }
 

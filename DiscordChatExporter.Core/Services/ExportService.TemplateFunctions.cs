@@ -33,11 +33,6 @@ namespace DiscordChatExporter.Core.Services
             return $"{color.R},{color.G},{color.B},{color.A}";
         }
 
-        private string FormatMarkdown(string markdown)
-        {
-            return MarkdownProcessor.ToHtml(markdown);
-        }
-
         private string FormatMessageContentPlainText(Message message)
         {
             var content = message.Content;
@@ -63,12 +58,10 @@ namespace DiscordChatExporter.Core.Services
             return content;
         }
 
-        private string FormatMessageContentHtml(Message message)
+        private string FormatContentHtml(string content, bool allowLinks = false, MentionContainer mentions = null)
         {
-            var content = message.Content;
-
             // Convert content markdown to HTML
-            content = FormatMarkdown(content);
+            content = MarkdownProcessor.ToHtml(content, allowLinks);
 
             // Meta mentions (@everyone)
             content = content.Replace("@everyone", "<span class=\"mention\">@everyone</span>");
@@ -76,31 +69,34 @@ namespace DiscordChatExporter.Core.Services
             // Meta mentions (@here)
             content = content.Replace("@here", "<span class=\"mention\">@here</span>");
 
-            // User mentions (<@id> and <@!id>)
-            foreach (var mentionedUser in message.Mentions.Users)
+            if (mentions != null)
             {
-                content = Regex.Replace(content, $"&lt;@!?{mentionedUser.Id}&gt;",
-                    $"<span class=\"mention\" title=\"{mentionedUser.FullName.HtmlEncode()}\">" +
-                    $"@{mentionedUser.Name.HtmlEncode()}" +
-                    "</span>");
-            }
+                // User mentions (<@id> and <@!id>)
+                foreach (var mentionedUser in mentions.Users)
+                {
+                    content = Regex.Replace(content, $"&lt;@!?{mentionedUser.Id}&gt;",
+                        $"<span class=\"mention\" title=\"{mentionedUser.FullName.HtmlEncode()}\">" +
+                        $"@{mentionedUser.Name.HtmlEncode()}" +
+                        "</span>");
+                }
 
-            // Role mentions (<@&id>)
-            foreach (var mentionedRole in message.Mentions.Roles)
-            {
-                content = content.Replace($"&lt;@&amp;{mentionedRole.Id}&gt;",
-                    "<span class=\"mention\">" +
-                    $"@{mentionedRole.Name.HtmlEncode()}" +
-                    "</span>");
-            }
+                // Role mentions (<@&id>)
+                foreach (var mentionedRole in mentions.Roles)
+                {
+                    content = content.Replace($"&lt;@&amp;{mentionedRole.Id}&gt;",
+                        "<span class=\"mention\">" +
+                        $"@{mentionedRole.Name.HtmlEncode()}" +
+                        "</span>");
+                }
 
-            // Channel mentions (<#id>)
-            foreach (var mentionedChannel in message.Mentions.Channels)
-            {
-                content = content.Replace($"&lt;#{mentionedChannel.Id}&gt;",
-                    "<span class=\"mention\">" +
-                    $"#{mentionedChannel.Name.HtmlEncode()}" +
-                    "</span>");
+                // Channel mentions (<#id>)
+                foreach (var mentionedChannel in mentions.Channels)
+                {
+                    content = content.Replace($"&lt;#{mentionedChannel.Id}&gt;",
+                        "<span class=\"mention\">" +
+                        $"#{mentionedChannel.Name.HtmlEncode()}" +
+                        "</span>");
+                }
             }
 
             // Custom emojis (<:name:id>)
@@ -140,23 +136,6 @@ namespace DiscordChatExporter.Core.Services
             content = Regex.Replace(content, "<(:.*?:)\\d*>", "$1");
 
             return content;
-        }
-
-        private string FormatMessageContent(ExportFormat format, Message message)
-        {
-            if (format == ExportFormat.PlainText)
-                return FormatMessageContentPlainText(message);
-
-            if (format == ExportFormat.HtmlDark)
-                return FormatMessageContentHtml(message);
-
-            if (format == ExportFormat.HtmlLight)
-                return FormatMessageContentHtml(message);
-
-            if (format == ExportFormat.Csv)
-                return FormatMessageContentCsv(message);
-
-            throw new ArgumentOutOfRangeException(nameof(format));
         }
     }
 }

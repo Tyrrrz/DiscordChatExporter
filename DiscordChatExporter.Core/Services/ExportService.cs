@@ -105,9 +105,7 @@ namespace DiscordChatExporter.Core.Services
             scriptObject.Import(nameof(FormatDateTime), new Func<DateTime, string>(FormatDateTime));
             scriptObject.Import(nameof(FormatFileSize), new Func<long, string>(FormatFileSize));
             scriptObject.Import(nameof(FormatColor), new Func<Color, string>(FormatColor));
-            scriptObject.Import(nameof(FormatMarkdown), new Func<string, string>(FormatMarkdown));
-            scriptObject.Import(nameof(FormatMessageContent),
-                new Func<Message, string>(m => FormatMessageContent(format, m)));
+            scriptObject.Import(nameof(FormatContentHtml), new Func<string, bool, MentionContainer, string>(FormatContentHtml));
 
             // Add script object
             context.PushGlobal(scriptObject);

@@ -67,11 +67,11 @@
                     {{~ # Embeds }}
                     {{ for embed in message.Embeds }}
                         <div class="accessory">
-                            <div class="embed-color-pill" style="background-color: rgba({{ embed.Color | FormatColor }})"></div>
                             <div class="embed-wrapper">
+                                <div class="embed-color-pill" style="background-color: rgba({{ embed.Color | FormatColor }})"></div>
                                 <div class="embed embed-rich">
-                                    <div class="embed embed-content">
-                                        <div class="embed embed-content-inner">
+                                    <div class="embed-content">
+                                        <div class="embed-content-inner">
                                             {{~ # Author }}
                                             {{ if embed.Author }}
                                                 <div class="embed-author">
@@ -137,9 +137,7 @@
                                                 <img class="embed-footer-icon" src="{{ embed.Footer.IconUrl }}" role="presentation" width="20" height="20" />
                                             {{ end }}
                                             
-                                            <span class="embed-footer">
-                                                {{ [embed.Footer.Text, embed.Footer.Timestamp] | array.compact | array.join "|" }}
-                                            </span>
+                                            <span class="embed-footer">{{ [embed.Footer.Text, embed.Footer.Timestamp] | array.compact | array.join "|" }}</span>
                                         </div>
                                     {{ end }}
                                 </div>

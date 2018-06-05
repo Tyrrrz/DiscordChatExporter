@@ -95,6 +95,10 @@ namespace DiscordChatExporter.Core.Services
                 ? Color.FromArgb(token["color"].Value<int>())
                 : (Color?)null;
 
+            // Set alpha to 1
+            if (color != null)
+                color = Color.FromArgb(1, color.Value);
+
             var footerNode = token["footer"];
             var footer = footerNode != null
                 ? new EmbedFooter(

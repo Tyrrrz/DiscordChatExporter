@@ -4,7 +4,7 @@
   {{- for message in group.Messages -}}
     {{- message.Author.FullName }};
 
-    {{- message.TimeStamp | FormatDateTime }};
+    {{- message.TimeStamp | Format DateFormat }};
 
     {{- message | FormatMessageContent }};
 

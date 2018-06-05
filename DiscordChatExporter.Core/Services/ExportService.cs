@@ -6,6 +6,7 @@ using DiscordChatExporter.Core.Internal;
 using DiscordChatExporter.Core.Models;
 using Scriban;
 using Scriban.Runtime;
+using Scriban.Syntax;
 
 namespace DiscordChatExporter.Core.Services
 {
@@ -98,14 +99,14 @@ namespace DiscordChatExporter.Core.Services
             // Create script object
             var scriptObject = new ScriptObject();
 
+            // Import date format
+            scriptObject.SetValue("DateFormat", _settingsService.DateFormat, true);
+
             // Import model
             scriptObject.Import(log, context.MemberFilter, context.MemberRenamer);
 
             // Import template functions
-            scriptObject.Import(nameof(FormatDateTime), new Func<DateTime, string>(FormatDateTime));
-            scriptObject.Import(nameof(FormatFileSize), new Func<long, string>(FormatFileSize));
-            scriptObject.Import(nameof(FormatColor), new Func<Color, string>(FormatColor));
-            scriptObject.Import(nameof(FormatContentHtml), new Func<string, bool, MentionContainer, string>(FormatContentHtml));
+            scriptObject.Import(typeof(TemplateFunctions), context.MemberFilter, context.MemberRenamer);
 
             // Add script object
             context.PushGlobal(scriptObject);

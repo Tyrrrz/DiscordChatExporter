@@ -2,11 +2,11 @@
 Guild:    {{ Guild.Name }}
 Channel:  {{ Channel.Name }}
 Topic:    {{ Channel.Topic }}
-Messages: {{ TotalMessageCount | math.format "N0" }}
+Messages: {{ TotalMessageCount | Format "N0" }}
 ==============================================================
 
 {{~ for group in MessageGroups ~}}
-  {{~ group.Author.FullName }} [{{ group.TimeStamp | FormatDateTime }}]
+  {{~ group.Author.FullName }} [{{ group.TimeStamp | Format DateFormat }}]
   {{~ for message in group.Messages ~}}
     {{~ message | FormatMessageContent }}
     {{~ for attachment in message.Attachments ~}}

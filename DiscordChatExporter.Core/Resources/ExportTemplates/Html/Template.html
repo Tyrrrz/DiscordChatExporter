@@ -32,8 +32,8 @@
             </div>
             {{~ # Author name and timestamp }}
             <div class="msg-right">
-                <span class="msg-user" title="{{ group.Author.FullName }}">{{ group.Author.Name }}</span>
-                <span class="msg-date">{{ group.TimeStamp | Format DateFormat }}</span>
+                <span class="msg-user" title="{{ group.Author.FullName | HtmlEncode }}">{{ group.Author.Name | HtmlEncode }}</span>
+                <span class="msg-date">{{ group.TimeStamp | Format DateFormat | HtmlEncode }}</span>
 
                 {{~ # Messages }}
                 {{ for message in group.Messages }}
@@ -44,7 +44,7 @@
 
                             {{~ # Edited timestamp }}
                             {{ if message.EditedTimeStamp }}
-                                <span class="msg-edited" title="{{ message.EditedTimeStamp }}">(edited)</span>
+                                <span class="msg-edited" title="{{ message.EditedTimeStamp | Format DateFormat | HtmlEncode }}">(edited)</span>
                             {{ end }}
                         </div>
                     {{ end }}

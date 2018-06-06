@@ -11,6 +11,16 @@ namespace DiscordChatExporter.Core.Services
     {
         private static class TemplateFunctions
         {
+            public static string HtmlEncode(string str)
+            {
+                return str.HtmlEncode();
+            }
+
+            public static string HtmlDecode(string str)
+            {
+                return str.HtmlDecode();
+            }
+
             public static string Format(IFormattable obj, string format)
             {
                 return obj.ToString(format, CultureInfo.InvariantCulture);

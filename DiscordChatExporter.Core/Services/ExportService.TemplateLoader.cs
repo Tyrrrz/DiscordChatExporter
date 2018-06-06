@@ -9,7 +9,7 @@ namespace DiscordChatExporter.Core.Services
 {
     public partial class ExportService
     {
-        public class TemplateLoader : ITemplateLoader
+        private class TemplateLoader : ITemplateLoader
         {
             private const string ResourceRootNamespace = "DiscordChatExporter.Core.Resources.ExportTemplates";
 

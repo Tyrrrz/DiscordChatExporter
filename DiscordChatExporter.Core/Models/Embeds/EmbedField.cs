@@ -8,13 +8,13 @@ namespace DiscordChatExporter.Core.Models.Embeds
 
         public string Value { get; }
 
-        public bool? Inline { get; }
+        public bool IsInline { get; }
 
-        public EmbedField(string name, string value, bool? inline)
+        public EmbedField(string name, string value, bool isInline)
         {
             Name = name;
             Value = value;
-            Inline = inline;
+            IsInline = isInline;
         }
     }
 }

@@ -105,7 +105,7 @@
                                             {{~ # Fields }}
                                             <div class="embed-fields">
                                                 {{ for field in embed.Fields }}
-                                                    <div class="embed-field {{ if field.Inline }} embed-field-inline {{ end }}">
+                                                    <div class="embed-field {{ if field.IsInline }} embed-field-inline {{ end }}">
                                                         {{ if field.Name }}
                                                             <div class="embed-field-name">{{ field.Name | FormatContentHtml }}</div>
                                                         {{ end }}

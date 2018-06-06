@@ -24,13 +24,10 @@ namespace DiscordChatExporter.Core.Models
 
         public IReadOnlyList<Embed> Embeds { get; }
 
-        public MentionContainer Mentions { get; }
-
         public Message(string id, string channelId, MessageType type,
             User author, DateTime timeStamp,
             DateTime? editedTimeStamp, string content,
-            IReadOnlyList<Attachment> attachments, IReadOnlyList<Embed> embeds,
-            MentionContainer mentions)
+            IReadOnlyList<Attachment> attachments, IReadOnlyList<Embed> embeds)
         {
             Id = id;
             ChannelId = channelId;
@@ -41,7 +38,6 @@ namespace DiscordChatExporter.Core.Models
             Content = content;
             Attachments = attachments;
             Embeds = embeds;
-            Mentions = mentions;
         }
 
         public override string ToString()

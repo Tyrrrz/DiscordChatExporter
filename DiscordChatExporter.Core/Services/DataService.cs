@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Models;
@@ -18,7 +17,19 @@ namespace DiscordChatExporter.Core.Services
     {
         private const string ApiRoot = "https://discordapp.com/api/v6";
 
-        private readonly HttpClient _httpClient = new HttpClient();
+        private readonly HttpClient _httpClient;
+
+        private readonly Dictionary<string, User> _userCache;
+        private readonly Dictionary<string, Channel> _channelCache;
+        private readonly Dictionary<string, Role> _roleCache;
+
+        public DataService()
+        {
+            _httpClient = new HttpClient();
+            _userCache = new Dictionary<string, User>();
+            _channelCache = new Dictionary<string, Channel>();
+            _roleCache = new Dictionary<string, Role>();
+        }
 
         private User ParseUser(JToken token)
         {
@@ -82,10 +93,64 @@ namespace DiscordChatExporter.Core.Services
             return new Attachment(id, isImage, url, fileName, fileSize);
         }
 
+        private EmbedFooter ParseEmbedFooter(JToken token)
+        {
+            var text = token["text"]?.Value<string>();
+            var iconUrl = token["icon_url"]?.Value<string>();
+            var proxyIconUrl = token["proxy_icon_url"]?.Value<string>();
+
+            return new EmbedFooter(text, iconUrl, proxyIconUrl);
+        }
+
+        private EmbedImage ParseEmbedImage(JToken token)
+        {
+            var url = token["url"]?.Value<string>();
+            var proxyUrl = token["proxy_url"]?.Value<string>();
+            var height = token["height"]?.Value<int>();
+            var width = token["width"]?.Value<int>();
+
+            return new EmbedImage(url, proxyUrl, height, width);
+        }
+
+        private EmbedVideo ParseEmbedVideo(JToken token)
+        {
+            var url = token["url"]?.Value<string>();
+            var height = token["height"]?.Value<int>();
+            var width = token["width"]?.Value<int>();
+
+            return new EmbedVideo(url, height, width);
+        }
+
+        private EmbedProvider ParseEmbedProvider(JToken token)
+        {
+            var name = token["name"]?.Value<string>();
+            var url = token["url"]?.Value<string>();
+
+            return new EmbedProvider(name, url);
+        }
+
+        private EmbedAuthor ParseEmbedAuthor(JToken token)
+        {
+            var name = token["name"]?.Value<string>();
+            var url = token["url"]?.Value<string>();
+            var iconUrl = token["icon_url"]?.Value<string>();
+            var proxyIconUrl = token["proxy_icon_url"]?.Value<string>();
+
+            return new EmbedAuthor(name, url, iconUrl, proxyIconUrl);
+        }
+
+        private EmbedField ParseEmbedField(JToken token)
+        {
+            var name = token["name"]?.Value<string>();
+            var value = token["value"]?.Value<string>();
+            var isInline = token["inline"]?.Value<bool>() ?? false;
+
+            return new EmbedField(name, value, isInline);
+        }
+
         private Embed ParseEmbed(JToken token)
         {
-
-            // var embedFileSize = embedJson["size"].Value<long>();
+            // Get basic data
             var title = token["title"]?.Value<string>();
             var type = token["type"]?.Value<string>();
             var description = token["description"]?.Value<string>();
@@ -95,100 +160,33 @@ namespace DiscordChatExporter.Core.Services
                 ? Color.FromArgb(token["color"].Value<int>())
                 : (Color?)null;
 
-            // Set alpha to 1
+            // Set color alpha to 1
             if (color != null)
                 color = Color.FromArgb(1, color.Value);
 
-            var footerNode = token["footer"];
-            var footer = footerNode != null
-                ? new EmbedFooter(
-                    footerNode["text"]?.Value<string>(),
-                    footerNode["icon_url"]?.Value<string>(),
-                    footerNode["proxy_icon_url"]?.Value<string>())
-                : null;
+            // Get footer
+            var footer = token["footer"] != null ? ParseEmbedFooter(token["footer"]) : null;
 
-            var imageNode = token["image"];
-            var image = imageNode != null
-                ? new EmbedImage(
-                    imageNode["url"]?.Value<string>(),
-                    imageNode["proxy_url"]?.Value<string>(),
-                    imageNode["height"]?.Value<int>(),
-                    imageNode["width"]?.Value<int>())
-                : null;
+            // Get image
+            var image = token["image"] != null ? ParseEmbedImage(token["image"]) : null;
 
-            var thumbnailNode = token["thumbnail"];
-            var thumbnail = thumbnailNode != null
-                ? new EmbedImage(
-                    thumbnailNode["url"]?.Value<string>(),
-                    thumbnailNode["proxy_url"]?.Value<string>(),
-                    thumbnailNode["height"]?.Value<int>(),
-                    thumbnailNode["width"]?.Value<int>())
-                : null;
+            // Get thumbnail
+            var thumbnail = token["thumbnail"] != null ? ParseEmbedImage(token["thumbnail"]) : null;
 
-            var videoNode = token["video"];
-            var video = videoNode != null
-                ? new EmbedVideo(
-                    videoNode["url"]?.Value<string>(),
-                    videoNode["height"]?.Value<int>(),
-                    videoNode["width"]?.Value<int>())
-                : null;
+            // Get video
+            var video = token["video"] != null ? ParseEmbedVideo(token["video"]) : null;
 
-            var providerNode = token["provider"];
-            var provider = providerNode != null
-                ? new EmbedProvider(
-                    providerNode["name"]?.Value<string>(),
-                    providerNode["url"]?.Value<string>())
-                : null;
+            // Get provider
+            var provider = token["provider"] != null? ParseEmbedProvider(token["provider"]) : null;
 
-            var authorNode = token["author"];
-            var author = authorNode != null
-                ? new EmbedAuthor(
-                    authorNode["name"]?.Value<string>(),
-                    authorNode["url"]?.Value<string>(),
-                    authorNode["icon_url"]?.Value<string>(),
-                    authorNode["proxy_icon_url"]?.Value<string>())
-                : null;
+            // Get author
+            var author = token["author"] != null ? ParseEmbedAuthor(token["author"]) : null;
 
-            var fields = new List<EmbedField>();
-            foreach (var fieldNode in token["fields"].EmptyIfNull())
-            {
-                fields.Add(new EmbedField(
-                    fieldNode["name"]?.Value<string>(),
-                    fieldNode["value"]?.Value<string>(),
-                    fieldNode["inline"]?.Value<bool>()));
-            }
-
-            var mentionableContent = description ?? "";
-            fields.ForEach(f => mentionableContent += f.Value);
-
-            // Get user mentions
-            var mentionedUsers = Regex.Matches(mentionableContent, "<@!?(\\d+)>")
-                .Cast<Match>()
-                .Select(m => m.Groups[1].Value)
-                .ExceptBlank()
-                .Select(i => User.CreateUnknownUser(i))
-                .ToList();
-
-            // Get channel mentions
-            var mentionedChannels = Regex.Matches(mentionableContent, "<#(\\d+)>")
-                .Cast<Match>()
-                .Select(m => m.Groups[1].Value)
-                .ExceptBlank()
-                .Select(i => Channel.CreateDeletedChannel(i))
-                .ToList();
-
-            // Get role mentions
-            var mentionedRoles = Regex.Matches(mentionableContent, "<@&(\\d+)>")
-                .Cast<Match>()
-                .Select(m => m.Groups[1].Value)
-                .ExceptBlank()
-                .Select(i => Role.CreateDeletedRole(i))
-                .ToList();
-
-            var mentions = new MentionContainer(mentionedUsers, mentionedChannels, mentionedRoles);
+            // Get fields
+            var fields = token["fields"].EmptyIfNull().Select(ParseEmbedField).ToArray();
 
             return new Embed(title, type, description, url, timestamp, color, footer, image, thumbnail, video, provider,
-                author, fields, mentions);
+                author, fields);
         }
 
         private Message ParseMessage(JToken token)
@@ -226,27 +224,12 @@ namespace DiscordChatExporter.Core.Services
             // Get embeds
             var embeds = token["embeds"].EmptyIfNull().Select(ParseEmbed).ToArray();
 
-            // Get user mentions
+            // Get user mentions and cache them
             var mentionedUsers = token["mentions"].Select(ParseUser).ToArray();
+            foreach (var user in mentionedUsers)
+                _userCache[user.Id] = user;
 
-            // Get channel mentions
-            var mentionedChannels = Regex.Matches(content, "<#(\\d+)>")
-                .Cast<Match>()
-                .Select(m => m.Groups[1].Value)
-                .ExceptBlank()
-                .Select(i => Channel.CreateDeletedChannel(i))
-                .ToList();
-
-            // Get role mentions
-            var mentionedRoles = token["mention_roles"]
-                .Values<string>()
-                .Select(i => Role.CreateDeletedRole(i))
-                .ToList();
-
-            var mentions = new MentionContainer(mentionedUsers, mentionedChannels, mentionedRoles);
-
-            return new Message(id, channelId, type, author, timeStamp, editedTimeStamp, content, attachments, embeds,
-                mentions);
+            return new Message(id, channelId, type, author, timeStamp, editedTimeStamp, content, attachments, embeds);
         }
 
         private async Task<string> GetStringAsync(string url)
@@ -318,7 +301,6 @@ namespace DiscordChatExporter.Core.Services
 
             return channels;
         }
-
 
         public async Task<IReadOnlyList<Role>> GetGuildRolesAsync(string token, string guildId)
         {

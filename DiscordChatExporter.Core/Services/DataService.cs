@@ -49,14 +49,6 @@ namespace DiscordChatExporter.Core.Services
             return guild;
         }
 
-        public async Task<IReadOnlyList<Role>> GetGuildRolesAsync(string token, string guildId)
-        {
-            var response = await GetApiResponseAsync(token, "guilds", $"{guildId}/roles");
-            var roles = response.Select(ParseRole).ToArray();
-
-            return roles;
-        }
-
         public async Task<Channel> GetChannelAsync(string token, string channelId)
         {
             var response = await GetApiResponseAsync(token, "channels", channelId);
@@ -65,20 +57,20 @@ namespace DiscordChatExporter.Core.Services
             return channel;
         }
 
-        public async Task<IReadOnlyList<Channel>> GetGuildChannelsAsync(string token, string guildId)
-        {
-            var response = await GetApiResponseAsync(token, "guilds", $"{guildId}/channels");
-            var channels = response.Select(ParseChannel).ToArray();
-
-            return channels;
-        }
-
         public async Task<IReadOnlyList<Guild>> GetUserGuildsAsync(string token)
         {
             var response = await GetApiResponseAsync(token, "users", "@me/guilds", "limit=100");
             var guilds = response.Select(ParseGuild).ToArray();
 
             return guilds;
+        }
+
+        public async Task<IReadOnlyList<Channel>> GetGuildChannelsAsync(string token, string guildId)
+        {
+            var response = await GetApiResponseAsync(token, "guilds", $"{guildId}/channels");
+            var channels = response.Select(ParseChannel).ToArray();
+
+            return channels;
         }
 
         public async Task<IReadOnlyList<Channel>> GetDirectMessageChannelsAsync(string token)
@@ -136,6 +128,14 @@ namespace DiscordChatExporter.Core.Services
             return result;
         }
 
+        public async Task<IReadOnlyList<Role>> GetGuildRolesAsync(string token, string guildId)
+        {
+            var response = await GetApiResponseAsync(token, "guilds", $"{guildId}/roles");
+            var roles = response.Select(ParseRole).ToArray();
+
+            return roles;
+        }
+
         public async Task<IReadOnlyList<User>> GetGuildMembersAsync(string token, string guildId)
         {
             var result = new List<User>();
@@ -171,7 +171,7 @@ namespace DiscordChatExporter.Core.Services
             return result;
         }
 
-        public async Task<MentionContainer> GetGuildMentionablesAsync(string token, string guildId)
+        public async Task<GuildMentionables> GetGuildMentionablesAsync(string token, string guildId)
         {
             // Get guild members
             var users = await GetGuildMembersAsync(token, guildId);
@@ -182,21 +182,12 @@ namespace DiscordChatExporter.Core.Services
             // Get guild roles
             var roles = await GetGuildRolesAsync(token, guildId);
 
-            return new MentionContainer(users, channels, roles);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _httpClient.Dispose();
-            }
+            return new GuildMentionables(users, channels, roles);
         }
 
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            _httpClient.Dispose();
         }
     }
 }

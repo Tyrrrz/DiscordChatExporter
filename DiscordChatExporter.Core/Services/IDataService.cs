@@ -11,15 +11,15 @@ namespace DiscordChatExporter.Core.Services
 
         Task<Channel> GetChannelAsync(string token, string channelId);
 
-        Task<IReadOnlyList<Channel>> GetGuildChannelsAsync(string token, string guildId);
-
         Task<IReadOnlyList<Guild>> GetUserGuildsAsync(string token);
+
+        Task<IReadOnlyList<Channel>> GetGuildChannelsAsync(string token, string guildId);
 
         Task<IReadOnlyList<Channel>> GetDirectMessageChannelsAsync(string token);
 
         Task<IReadOnlyList<Message>> GetChannelMessagesAsync(string token, string channelId,
             DateTime? from, DateTime? to);
 
-        Task<MentionContainer> GetGuildMentionablesAsync(string token, string guildId);
+        Task<GuildMentionables> GetGuildMentionablesAsync(string token, string guildId);
     }
 }

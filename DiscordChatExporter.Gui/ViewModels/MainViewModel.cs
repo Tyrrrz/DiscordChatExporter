@@ -230,7 +230,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                 // Get mentionables
                 var mentionables = await _dataService.GetGuildMentionablesAsync(token, SelectedGuild.Id);
 
-                // Group them
+                // Group messages
                 var messageGroups = _messageGroupService.GroupMessages(messages);
 
                 // Create log

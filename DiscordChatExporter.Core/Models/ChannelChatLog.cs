@@ -12,16 +12,16 @@ namespace DiscordChatExporter.Core.Models
 
         public int TotalMessageCount { get; }
 
-        public MentionContainer Mentions { get; }
+        public GuildMentionables Mentionables { get; }
 
         public ChannelChatLog(Guild guild, Channel channel, IReadOnlyList<MessageGroup> messageGroups,
-            int totalMessageCount, MentionContainer mentions)
+            int totalMessageCount, GuildMentionables mentionables)
         {
             Guild = guild;
             Channel = channel;
             MessageGroups = messageGroups;
             TotalMessageCount = totalMessageCount;
-            Mentions = mentions;
+            Mentionables = mentionables;
         }
     }
 }

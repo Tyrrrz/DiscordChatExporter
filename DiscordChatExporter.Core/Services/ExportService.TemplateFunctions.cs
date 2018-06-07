@@ -73,7 +73,7 @@ namespace DiscordChatExporter.Core.Services
                 return content;
             }
 
-            public static string FormatContentHtml(string content, bool allowLinks = false, MentionContainer mentions = null)
+            public static string FormatContentHtml(string content, bool allowLinks = false, GuildMentionables mentions = null)
             {
                 // Convert content markdown to HTML
                 content = MarkdownProcessor.ToHtml(content, allowLinks);

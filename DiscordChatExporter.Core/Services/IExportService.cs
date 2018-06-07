@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using DiscordChatExporter.Core.Models;
+﻿using DiscordChatExporter.Core.Models;
 
 namespace DiscordChatExporter.Core.Services
 {

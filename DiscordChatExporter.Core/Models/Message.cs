@@ -4,6 +4,8 @@ using DiscordChatExporter.Core.Models.Embeds;
 
 namespace DiscordChatExporter.Core.Models
 {
+    // https://discordapp.com/developers/docs/resources/channel#message-object
+
     public class Message
     {
         public string Id { get; }
@@ -40,9 +42,6 @@ namespace DiscordChatExporter.Core.Models
             Embeds = embeds;
         }
 
-        public override string ToString()
-        {
-            return Content;
-        }
+        public override string ToString() => Content;
     }
 }

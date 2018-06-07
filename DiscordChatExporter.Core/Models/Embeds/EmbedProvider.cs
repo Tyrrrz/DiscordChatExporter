@@ -13,5 +13,7 @@ namespace DiscordChatExporter.Core.Models.Embeds
             Name = name;
             Url = url;
         }
+
+        public override string ToString() => Name;
     }
 }

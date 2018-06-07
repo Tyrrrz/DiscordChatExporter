@@ -19,19 +19,13 @@ namespace DiscordChatExporter.Core.Models
             Roles = roles;
         }
 
-        public User GetUser(string id)
-        {
-            return Users.FirstOrDefault(u => u.Id == id) ?? User.CreateUnknownUser(id);
-        }
+        public User GetUser(string id) =>
+            Users.FirstOrDefault(u => u.Id == id) ?? User.CreateUnknownUser(id);
 
-        public Channel GetChannel(string id)
-        {
-            return Channels.FirstOrDefault(c => c.Id == id) ?? Channel.CreateDeletedChannel(id);
-        }
+        public Channel GetChannel(string id) =>
+            Channels.FirstOrDefault(c => c.Id == id) ?? Channel.CreateDeletedChannel(id);
 
-        public Role GetRole(string id)
-        {
-            return Roles.FirstOrDefault(r => r.Id == id) ?? Role.CreateDeletedRole(id);
-        }
+        public Role GetRole(string id) =>
+            Roles.FirstOrDefault(r => r.Id == id) ?? Role.CreateDeletedRole(id);
     }
 }

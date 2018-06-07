@@ -16,5 +16,7 @@ namespace DiscordChatExporter.Core.Models.Embeds
             Value = value;
             IsInline = isInline;
         }
+
+        public override string ToString() => $"{Name} | {Value}";
     }
 }

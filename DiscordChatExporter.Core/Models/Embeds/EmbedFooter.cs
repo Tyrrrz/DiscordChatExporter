@@ -8,18 +8,12 @@ namespace DiscordChatExporter.Core.Models.Embeds
 
         public string IconUrl { get; }
 
-        public string ProxyIconUrl { get; }
-
-        public EmbedFooter(string text, string iconUrl, string proxyIconUrl)
+        public EmbedFooter(string text, string iconUrl)
         {
             Text = text;
             IconUrl = iconUrl;
-            ProxyIconUrl = proxyIconUrl;
         }
 
-        public override string ToString()
-        {
-            return Text;
-        }
+        public override string ToString() => Text;
     }
 }

@@ -23,5 +23,7 @@ namespace DiscordChatExporter.Core.Models
             TotalMessageCount = totalMessageCount;
             Mentionables = mentionables;
         }
+
+        public override string ToString() => $"{Guild.Name} | {Channel.Name} | {TotalMessageCount} messages";
     }
 }

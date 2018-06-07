@@ -2,6 +2,8 @@
 
 namespace DiscordChatExporter.Core.Models
 {
+    // https://discordapp.com/developers/docs/resources/guild#guild-object
+
     public partial class Guild
     {
         public string Id { get; }
@@ -21,10 +23,7 @@ namespace DiscordChatExporter.Core.Models
             IconHash = iconHash;
         }
 
-        public override string ToString()
-        {
-            return Name;
-        }
+        public override string ToString() => Name;
     }
 
     public partial class Guild

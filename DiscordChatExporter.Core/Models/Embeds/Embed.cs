@@ -10,8 +10,6 @@ namespace DiscordChatExporter.Core.Models.Embeds
     {
         public string Title { get; }
 
-        public string Type { get; }
-
         public string Description { get; }
 
         public string Url { get; }
@@ -34,14 +32,11 @@ namespace DiscordChatExporter.Core.Models.Embeds
 
         public IReadOnlyList<EmbedField> Fields { get; }
 
-        public Embed(string title, string type, string description, 
-            string url, DateTime? timeStamp, Color? color, 
-            EmbedFooter footer, EmbedImage image, EmbedImage thumbnail, 
-            EmbedVideo video, EmbedProvider provider, EmbedAuthor author, 
-            IReadOnlyList<EmbedField> fields)
+        public Embed(string title, string description, string url, DateTime? timeStamp, Color? color,
+            EmbedFooter footer, EmbedImage image, EmbedImage thumbnail, EmbedVideo video, EmbedProvider provider,
+            EmbedAuthor author, IReadOnlyList<EmbedField> fields)
         {
             Title = title;
-            Type = type;
             Description = description;
             Url = url;
             TimeStamp = timeStamp;
@@ -55,9 +50,6 @@ namespace DiscordChatExporter.Core.Models.Embeds
             Fields = fields;
         }
 
-        public override string ToString()
-        {
-            return Description;
-        }
+        public override string ToString() => Title;
     }
 }

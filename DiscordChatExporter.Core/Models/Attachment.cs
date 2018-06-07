@@ -1,5 +1,7 @@
 ﻿namespace DiscordChatExporter.Core.Models
 {
+    // https://discordapp.com/developers/docs/resources/channel#attachment-object
+
     public class Attachment
     {
         public string Id { get; }
@@ -20,5 +22,7 @@
             FileName = fileName;
             FileSize = fileSize;
         }
+
+        public override string ToString() => FileName;
     }
 }

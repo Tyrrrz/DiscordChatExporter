@@ -17,5 +17,7 @@ namespace DiscordChatExporter.Core.Models
             TimeStamp = timeStamp;
             Messages = messages;
         }
+
+        public override string ToString() => $"{Author.FullName} | {TimeStamp} | {Messages.Count} messages";
     }
 }

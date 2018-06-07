@@ -1,5 +1,7 @@
 ﻿namespace DiscordChatExporter.Core.Models
 {
+    // https://discordapp.com/developers/docs/topics/permissions#role-object
+
     public partial class Role
     {
         public string Id { get; }
@@ -12,17 +14,12 @@
             Name = name;
         }
 
-        public override string ToString()
-        {
-            return Name;
-        }
+        public override string ToString() => Name;
     }
 
     public partial class Role
     {
-        public static Role CreateDeletedRole(string id)
-        {
-            return new Role(id, "deleted-role");
-        }
+        public static Role CreateDeletedRole(string id) =>
+            new Role(id, "deleted-role");
     }
 }

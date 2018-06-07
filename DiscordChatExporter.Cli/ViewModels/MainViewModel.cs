@@ -40,11 +40,14 @@ namespace DiscordChatExporter.Cli.ViewModels
             // Get messages
             var messages = await _dataService.GetChannelMessagesAsync(token, channelId, from, to);
 
-            // Group them
+            // Get mentionables
+            var mentionables = await _dataService.GetGuildMentionablesAsync(token, guild.Id);
+
+            // Group messages
             var messageGroups = _messageGroupService.GroupMessages(messages);
 
             // Create log
-            var log = new ChannelChatLog(guild, channel, messageGroups, messages.Count);
+            var log = new ChannelChatLog(guild, channel, messageGroups, messages.Count, mentionables);
 
             // Export
             _exportService.Export(format, filePath, log);

@@ -20,14 +20,6 @@ namespace DiscordChatExporter.Core.Services
             return new User(id, discriminator, name, avatarHash);
         }
 
-        private Role ParseRole(JToken json)
-        {
-            var id = json["id"].Value<string>();
-            var name = json["name"].Value<string>();
-
-            return new Role(id, name);
-        }
-
         private Guild ParseGuild(JToken json)
         {
             var id = json["id"].Value<string>();
@@ -61,6 +53,14 @@ namespace DiscordChatExporter.Core.Services
             return new Channel(id, guildId, name, topic, type);
         }
 
+        private Role ParseRole(JToken json)
+        {
+            var id = json["id"].Value<string>();
+            var name = json["name"].Value<string>();
+
+            return new Role(id, name);
+        }
+
         private Attachment ParseAttachment(JToken json)
         {
             var id = json["id"].Value<string>();
@@ -74,21 +74,19 @@ namespace DiscordChatExporter.Core.Services
 
         private EmbedFooter ParseEmbedFooter(JToken json)
         {
-            var text = json["text"]?.Value<string>();
+            var text = json["text"].Value<string>();
             var iconUrl = json["icon_url"]?.Value<string>();
-            var proxyIconUrl = json["proxy_icon_url"]?.Value<string>();
 
-            return new EmbedFooter(text, iconUrl, proxyIconUrl);
+            return new EmbedFooter(text, iconUrl);
         }
 
         private EmbedImage ParseEmbedImage(JToken json)
         {
             var url = json["url"]?.Value<string>();
-            var proxyUrl = json["proxy_url"]?.Value<string>();
             var height = json["height"]?.Value<int>();
             var width = json["width"]?.Value<int>();
 
-            return new EmbedImage(url, proxyUrl, height, width);
+            return new EmbedImage(url, height, width);
         }
 
         private EmbedVideo ParseEmbedVideo(JToken json)
@@ -113,15 +111,14 @@ namespace DiscordChatExporter.Core.Services
             var name = json["name"]?.Value<string>();
             var url = json["url"]?.Value<string>();
             var iconUrl = json["icon_url"]?.Value<string>();
-            var proxyIconUrl = json["proxy_icon_url"]?.Value<string>();
 
-            return new EmbedAuthor(name, url, iconUrl, proxyIconUrl);
+            return new EmbedAuthor(name, url, iconUrl);
         }
 
         private EmbedField ParseEmbedField(JToken json)
         {
-            var name = json["name"]?.Value<string>();
-            var value = json["value"]?.Value<string>();
+            var name = json["name"].Value<string>();
+            var value = json["value"].Value<string>();
             var isInline = json["inline"]?.Value<bool>() ?? false;
 
             return new EmbedField(name, value, isInline);
@@ -131,7 +128,6 @@ namespace DiscordChatExporter.Core.Services
         {
             // Get basic data
             var title = json["title"]?.Value<string>();
-            var type = json["type"]?.Value<string>();
             var description = json["description"]?.Value<string>();
             var url = json["url"]?.Value<string>();
             var timestamp = json["timestamp"]?.Value<DateTime>();
@@ -164,7 +160,7 @@ namespace DiscordChatExporter.Core.Services
             // Get fields
             var fields = json["fields"].EmptyIfNull().Select(ParseEmbedField).ToArray();
 
-            return new Embed(title, type, description, url, timestamp, color, footer, image, thumbnail, video, provider,
+            return new Embed(title, description, url, timestamp, color, footer, image, thumbnail, video, provider,
                 author, fields);
         }
 

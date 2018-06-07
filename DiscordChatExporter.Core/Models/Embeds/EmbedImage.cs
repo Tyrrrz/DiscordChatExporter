@@ -6,16 +6,13 @@ namespace DiscordChatExporter.Core.Models.Embeds
     {
         public string Url { get; }
 
-        public string ProxyUrl { get; }
-
         public int? Height { get; }
 
         public int? Width { get; }
 
-        public EmbedImage(string url, string proxyUrl, int? height, int? width)
+        public EmbedImage(string url, int? height, int? width)
         {
             Url = url;
-            ProxyUrl = proxyUrl;
             Height = height;
             Width = width;
         }

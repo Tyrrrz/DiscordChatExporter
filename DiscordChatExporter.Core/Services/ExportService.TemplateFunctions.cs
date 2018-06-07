@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Drawing;
 using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 using DiscordChatExporter.Core.Internal;
 using DiscordChatExporter.Core.Models;
+using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Services
 {
@@ -53,17 +55,17 @@ namespace DiscordChatExporter.Core.Services
                 // New lines
                 content = content.Replace("\n", Environment.NewLine);
 
-                // User mentions (<@id> and <@!id>)
-                foreach (var mentionedUser in message.Mentions.Users)
-                    content = Regex.Replace(content, $"<@!?{mentionedUser.Id}>", $"@{mentionedUser}");
+                //// User mentions (<@id> and <@!id>)
+                //foreach (var mentionedUser in message.Mentions.Users)
+                //    content = Regex.Replace(content, $"<@!?{mentionedUser.Id}>", $"@{mentionedUser}");
 
-                // Channel mentions (<#id>)
-                foreach (var mentionedChannel in message.Mentions.Channels)
-                    content = content.Replace($"<#{mentionedChannel.Id}>", $"#{mentionedChannel.Name}");
+                //// Channel mentions (<#id>)
+                //foreach (var mentionedChannel in message.Mentions.Channels)
+                //    content = content.Replace($"<#{mentionedChannel.Id}>", $"#{mentionedChannel.Name}");
 
-                // Role mentions (<@&id>)
-                foreach (var mentionedRole in message.Mentions.Roles)
-                    content = content.Replace($"<@&{mentionedRole.Id}>", $"@{mentionedRole.Name}");
+                //// Role mentions (<@&id>)
+                //foreach (var mentionedRole in message.Mentions.Roles)
+                //    content = content.Replace($"<@&{mentionedRole.Id}>", $"@{mentionedRole.Name}");
 
                 // Custom emojis (<:name:id>)
                 content = Regex.Replace(content, "<(:.*?:)\\d*>", "$1");
@@ -85,29 +87,50 @@ namespace DiscordChatExporter.Core.Services
                 if (mentions != null)
                 {
                     // User mentions (<@id> and <@!id>)
-                    foreach (var mentionedUser in mentions.Users)
+                    var mentionedUserIds = Regex.Matches(content, "&lt;@!?(\\d+)&gt;")
+                        .Cast<Match>()
+                        .Select(m => m.Groups[1].Value)
+                        .ExceptBlank()
+                        .ToArray();
+
+                    foreach (var mentionedUserId in mentionedUserIds)
                     {
-                        content = Regex.Replace(content, $"&lt;@!?{mentionedUser.Id}&gt;",
+                        var mentionedUser = mentions.GetUser(mentionedUserId);
+                        content = Regex.Replace(content, $"&lt;@!?{mentionedUserId}&gt;",
                             $"<span class=\"mention\" title=\"{mentionedUser.FullName.HtmlEncode()}\">" +
                             $"@{mentionedUser.Name.HtmlEncode()}" +
                             "</span>");
                     }
 
-                    // Role mentions (<@&id>)
-                    foreach (var mentionedRole in mentions.Roles)
+                    // Channel mentions (<#id>)
+                    var mentionedChannelIds = Regex.Matches(content, "&lt;#(\\d+)&gt;")
+                        .Cast<Match>()
+                        .Select(m => m.Groups[1].Value)
+                        .ExceptBlank()
+                        .ToArray();
+
+                    foreach (var mentionedChannelId in mentionedChannelIds)
                     {
-                        content = content.Replace($"&lt;@&amp;{mentionedRole.Id}&gt;",
+                        var mentionedChannel = mentions.GetChannel(mentionedChannelId);
+                        content = content.Replace($"&lt;#{mentionedChannelId}&gt;",
                             "<span class=\"mention\">" +
-                            $"@{mentionedRole.Name.HtmlEncode()}" +
+                            $"#{mentionedChannel.Name.HtmlEncode()}" +
                             "</span>");
                     }
 
-                    // Channel mentions (<#id>)
-                    foreach (var mentionedChannel in mentions.Channels)
+                    // Role mentions (<@&id>)
+                    var mentionedRoleIds = Regex.Matches(content, "&lt;@&amp;(\\d+)&gt;")
+                        .Cast<Match>()
+                        .Select(m => m.Groups[1].Value)
+                        .ExceptBlank()
+                        .ToArray();
+
+                    foreach (var mentionedRoleId in mentionedRoleIds)
                     {
-                        content = content.Replace($"&lt;#{mentionedChannel.Id}&gt;",
+                        var mentionedRole = mentions.GetRole(mentionedRoleId);
+                        content = content.Replace($"&lt;@&amp;{mentionedRoleId}&gt;",
                             "<span class=\"mention\">" +
-                            $"#{mentionedChannel.Name.HtmlEncode()}" +
+                            $"@{mentionedRole.Name.HtmlEncode()}" +
                             "</span>");
                     }
                 }
@@ -133,17 +156,17 @@ namespace DiscordChatExporter.Core.Services
                 if (content.Contains(",") || content.Contains(";"))
                     content = $"\"{content}\"";
 
-                // User mentions (<@id> and <@!id>)
-                foreach (var mentionedUser in message.Mentions.Users)
-                    content = Regex.Replace(content, $"<@!?{mentionedUser.Id}>", $"@{mentionedUser}");
+                //// User mentions (<@id> and <@!id>)
+                //foreach (var mentionedUser in message.Mentions.Users)
+                //    content = Regex.Replace(content, $"<@!?{mentionedUser.Id}>", $"@{mentionedUser}");
 
-                // Channel mentions (<#id>)
-                foreach (var mentionedChannel in message.Mentions.Channels)
-                    content = content.Replace($"<#{mentionedChannel.Id}>", $"#{mentionedChannel.Name}");
+                //// Channel mentions (<#id>)
+                //foreach (var mentionedChannel in message.Mentions.Channels)
+                //    content = content.Replace($"<#{mentionedChannel.Id}>", $"#{mentionedChannel.Name}");
 
-                // Role mentions (<@&id>)
-                foreach (var mentionedRole in message.Mentions.Roles)
-                    content = content.Replace($"<@&{mentionedRole.Id}>", $"@{mentionedRole.Name}");
+                //// Role mentions (<@&id>)
+                //foreach (var mentionedRole in message.Mentions.Roles)
+                //    content = content.Replace($"<@&{mentionedRole.Id}>", $"@{mentionedRole.Name}");
 
                 // Custom emojis (<:name:id>)
                 content = Regex.Replace(content, "<(:.*?:)\\d*>", "$1");

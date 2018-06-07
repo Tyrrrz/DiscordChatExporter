@@ -40,7 +40,7 @@
                     {{~ # Content }}
                     {{ if message.Content }}
                         <div class="msg-content">
-                            {{ message.Content | FormatContentHtml mentions: message.Mentions }}
+                            {{ message.Content | FormatContentHtml mentions: Mentions }}
 
                             {{~ # Edited timestamp }}
                             {{ if message.EditedTimeStamp }}
@@ -99,7 +99,7 @@
 
                                             {{~ # Description }}
                                             {{ if embed.Description }}
-                                                <div class="embed-description markup">{{ embed.Description | FormatContentHtml allowLinks: true mentions: embed.Mentions }}</div>
+                                                <div class="embed-description markup">{{ embed.Description | FormatContentHtml allowLinks: true mentions: Mentions }}</div>
                                             {{ end }}
 
                                             {{~ # Fields }}
@@ -110,7 +110,7 @@
                                                             <div class="embed-field-name">{{ field.Name | FormatContentHtml }}</div>
                                                         {{ end }}
                                                         {{ if field.Value }}
-                                                            <div class="embed-field-value markup">{{ field.Value | FormatContentHtml allowLinks: true mentions: embed.Mentions }}</div>
+                                                            <div class="embed-field-value markup">{{ field.Value | FormatContentHtml allowLinks: true mentions: Mentions }}</div>
                                                         {{ end }}
                                                     </div>
                                                 {{ end }}

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Resources;
@@ -8,6 +9,14 @@ namespace DiscordChatExporter.Core.Internal
 {
     internal static class Extensions
     {
+        public static string ToSnowflake(this DateTime dateTime)
+        {
+            const long epoch = 62135596800000;
+            var unixTime = dateTime.ToUniversalTime().Ticks / TimeSpan.TicksPerMillisecond - epoch;
+            var value = ((ulong) unixTime - 1420070400000UL) << 22;
+            return value.ToString();
+        }
+
         public static string Base64Encode(this string str)
         {
             return str.GetBytes().ToBase64();

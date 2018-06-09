@@ -1,9 +1,9 @@
 ﻿using System.Reflection;
-using DiscordChatExporter.Core.Internal;
 using DiscordChatExporter.Core.Models;
 using Scriban;
 using Scriban.Parsing;
 using Scriban.Runtime;
+using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Services
 {

@@ -4,9 +4,9 @@
   {{- for message in group.Messages -}}
     {{- message.Author.FullName }};
 
-    {{- message.TimeStamp | Format DateFormat }};
+    {{- message.TimeStamp | FormatDate }};
 
-    {{- message | FormatMessageContent }};
+    {{- message.Content | FormatContent }};
 
     {{- message.Attachments | array.map "Url" | array.join "," }};
   {{~ end -}}

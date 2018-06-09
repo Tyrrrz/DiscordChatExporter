@@ -7,6 +7,9 @@ namespace DiscordChatExporter.Core.Services
 {
     public partial class ExportService : IExportService
     {
+        private static readonly MemberRenamerDelegate TemplateMemberRenamer = m => m.Name;
+        private static readonly MemberFilterDelegate TemplateMemberFilter = m => true;
+
         private readonly ISettingsService _settingsService;
 
         public ExportService(ISettingsService settingsService)
@@ -25,23 +28,13 @@ namespace DiscordChatExporter.Core.Services
 
             // Create template context
             var context = new TemplateContext();
-            context.MemberRenamer = m => m.Name;
             context.TemplateLoader = loader;
+            context.MemberRenamer = TemplateMemberRenamer;
+            context.MemberFilter = TemplateMemberFilter;
 
-            // Create script object
-            var scriptObject = new ScriptObject();
-
-            // Import date format
-            scriptObject.SetValue("DateFormat", _settingsService.DateFormat, true);
-
-            // Import model
-            scriptObject.Import(log, context.MemberFilter, context.MemberRenamer);
-
-            // Import template functions
-            scriptObject.Import(typeof(TemplateFunctions), context.MemberFilter, context.MemberRenamer);
-
-            // Add script object
-            context.PushGlobal(scriptObject);
+            // Create template model
+            var templateModel = new TemplateModel(format, log, _settingsService.DateFormat);
+            context.PushGlobal(templateModel.GetScriptObject());
 
             // Render output
             using (var output = File.CreateText(filePath))

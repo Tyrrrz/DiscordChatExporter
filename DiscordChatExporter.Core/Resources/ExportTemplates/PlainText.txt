@@ -6,9 +6,9 @@ Messages: {{ TotalMessageCount | Format "N0" }}
 ==============================================================
 
 {{~ for group in MessageGroups ~}}
-  {{~ group.Author.FullName }} [{{ group.TimeStamp | Format DateFormat }}]
+  {{~ group.Author.FullName }} [{{ group.TimeStamp | FormatDate }}]
   {{~ for message in group.Messages ~}}
-    {{~ message | FormatMessageContent }}
+    {{~ message.Content | FormatContent }}
     {{~ for attachment in message.Attachments ~}}
       {{~ attachment.Url }}
     {{~ end ~}}

@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>{{ Guild.Name }} - {{ Channel.Name }}</title>
+    <title>{{ Guild.Name | HtmlEncode }} - {{ Channel.Name | HtmlEncode }}</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <style>{{ css }}</style>
@@ -15,9 +15,9 @@
         <img class="guild-icon" src="{{ Guild.IconUrl }}" />
     </div>
     <div class="info-right">
-        <div class="guild-name">{{ Guild.Name }}</div>
-        <div class="channel-name">{{ Channel.Name }}</div>
-        <div class="channel-topic">{{ Channel.Topic }}</div>
+        <div class="guild-name">{{ Guild.Name | HtmlEncode }}</div>
+        <div class="channel-name">{{ Channel.Name | HtmlEncode }}</div>
+        <div class="channel-topic">{{ Channel.Topic | HtmlEncode }}</div>
         <div class="channel-messagecount">{{ TotalMessageCount | Format "N0" }} messages</div>
     </div>
 </div>
@@ -33,18 +33,18 @@
             {{~ # Author name and timestamp }}
             <div class="msg-right">
                 <span class="msg-user" title="{{ group.Author.FullName | HtmlEncode }}">{{ group.Author.Name | HtmlEncode }}</span>
-                <span class="msg-date">{{ group.TimeStamp | Format DateFormat | HtmlEncode }}</span>
+                <span class="msg-date">{{ group.TimeStamp | FormatDate | HtmlEncode }}</span>
 
                 {{~ # Messages }}
                 {{ for message in group.Messages }}
                     {{~ # Content }}
                     {{ if message.Content }}
                         <div class="msg-content">
-                            {{ message.Content | FormatContentHtml mentions: Mentions }}
+                            {{ message.Content | FormatContent }}
 
                             {{~ # Edited timestamp }}
                             {{ if message.EditedTimeStamp }}
-                                <span class="msg-edited" title="{{ message.EditedTimeStamp | Format DateFormat | HtmlEncode }}">(edited)</span>
+                                <span class="msg-edited" title="{{ message.EditedTimeStamp | FormatDate | HtmlEncode }}">(edited)</span>
                             {{ end }}
                         </div>
                     {{ end }}
@@ -80,9 +80,9 @@
                                                     {{ end }}
                                                     {{ if embed.Author.Name }}
                                                         {{ if embed.Author.Url }}
-                                                            <a class="embed-author-name" target="_blank" rel="noreferrer" href="{{ embed.Author.Url }}">{{ embed.Author.Name }}</a>
+                                                            <a class="embed-author-name" target="_blank" rel="noreferrer" href="{{ embed.Author.Url }}">{{ embed.Author.Name | HtmlEncode }}</a>
                                                         {{ else }}
-                                                            <span class="embed-author-name">{{ embed.Author.Name }}</span>
+                                                            <span class="embed-author-name">{{ embed.Author.Name | HtmlEncode }}</span>
                                                         {{ end }}
                                                     {{ end }}
                                                 </div>
@@ -91,15 +91,15 @@
                                             {{~ # Title }}
                                             {{ if embed.Title }}
                                                 {{ if embed.Url }}
-                                                    <a class="embed-title" target="_blank" rel="noreferrer" href="{{ embed.Url }}">{{ embed.Title | FormatContentHtml }}</a>
+                                                    <a class="embed-title" target="_blank" rel="noreferrer" href="{{ embed.Url }}">{{ embed.Title | FormatContent }}</a>
                                                 {{ else }}
-                                                    <div class="embed-title">{{ embed.Title | FormatContentHtml }}</div>
+                                                    <div class="embed-title">{{ embed.Title | FormatContent }}</div>
                                                 {{ end }}
                                             {{ end }}
 
                                             {{~ # Description }}
                                             {{ if embed.Description }}
-                                                <div class="embed-description markup">{{ embed.Description | FormatContentHtml allowLinks: true mentions: Mentions }}</div>
+                                                <div class="embed-description markup">{{ embed.Description | FormatContent true }}</div>
                                             {{ end }}
 
                                             {{~ # Fields }}
@@ -107,10 +107,10 @@
                                                 {{ for field in embed.Fields }}
                                                     <div class="embed-field {{ if field.IsInline }} embed-field-inline {{ end }}">
                                                         {{ if field.Name }}
-                                                            <div class="embed-field-name">{{ field.Name | FormatContentHtml }}</div>
+                                                            <div class="embed-field-name">{{ field.Name | FormatContent }}</div>
                                                         {{ end }}
                                                         {{ if field.Value }}
-                                                            <div class="embed-field-value markup">{{ field.Value | FormatContentHtml allowLinks: true mentions: Mentions }}</div>
+                                                            <div class="embed-field-value markup">{{ field.Value | FormatContent true }}</div>
                                                         {{ end }}
                                                     </div>
                                                 {{ end }}
@@ -137,7 +137,7 @@
                                                 <img class="embed-footer-icon" src="{{ embed.Footer.IconUrl }}" role="presentation" width="20" height="20" />
                                             {{ end }}
                                             
-                                            <span class="embed-footer">{{ [embed.Footer.Text, embed.Footer.Timestamp] | array.compact | array.join "|" }}</span>
+                                            <span class="embed-footer">{{ [embed.Footer.Text, embed.Footer.Timestamp] | array.compact | array.join "|" | HtmlEncode }}</span>
                                         </div>
                                     {{ end }}
                                 </div>

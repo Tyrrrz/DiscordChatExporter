@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Internal
@@ -22,16 +21,6 @@ namespace DiscordChatExporter.Core.Internal
         public static string Base64Decode(this string str)
         {
             return str.FromBase64().GetString();
-        }
-
-        public static string HtmlEncode(this string str)
-        {
-            return WebUtility.HtmlEncode(str);
-        }
-
-        public static string HtmlDecode(this string str)
-        {
-            return WebUtility.HtmlDecode(str);
         }
     }
 }

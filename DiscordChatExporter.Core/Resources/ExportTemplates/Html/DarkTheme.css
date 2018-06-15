@@ -57,7 +57,7 @@ a {
 
 .chatlog__embed-content-container {
     background-color: #2e30364d;
-    border-color: #2e303699;
+    border: 1px solid #2e303699;
 }
 
 .chatlog__embed-author-name {

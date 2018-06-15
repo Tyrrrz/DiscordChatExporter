@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Internal
@@ -22,5 +23,7 @@ namespace DiscordChatExporter.Core.Internal
         {
             return str.FromBase64().GetString();
         }
+
+        public static Color ResetAlpha(this Color color) => Color.FromArgb(1, color);
     }
 }

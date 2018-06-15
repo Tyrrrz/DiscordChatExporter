@@ -16,7 +16,7 @@ namespace DiscordChatExporter.Core.Models.Embeds
 
         public DateTime? TimeStamp { get; }
 
-        public Color? Color { get; }
+        public Color Color { get; }
 
         public EmbedFooter Footer { get; }
 
@@ -32,7 +32,7 @@ namespace DiscordChatExporter.Core.Models.Embeds
 
         public IReadOnlyList<EmbedField> Fields { get; }
 
-        public Embed(string title, string description, string url, DateTime? timeStamp, Color? color,
+        public Embed(string title, string description, string url, DateTime? timeStamp, Color color,
             EmbedFooter footer, EmbedImage image, EmbedImage thumbnail, EmbedVideo video, EmbedProvider provider,
             EmbedAuthor author, IReadOnlyList<EmbedField> fields)
         {

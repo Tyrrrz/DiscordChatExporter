@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
+using DiscordChatExporter.Core.Internal;
 using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.Core.Models.Embeds;
 using Newtonsoft.Json.Linq;
@@ -132,12 +133,8 @@ namespace DiscordChatExporter.Core.Services
             var url = json["url"]?.Value<string>();
             var timestamp = json["timestamp"]?.Value<DateTime>();
             var color = json["color"] != null
-                ? Color.FromArgb(json["color"].Value<int>())
-                : (Color?) null;
-
-            // Set color alpha to 1
-            if (color != null)
-                color = Color.FromArgb(1, color.Value);
+                ? Color.FromArgb(json["color"].Value<int>()).ResetAlpha()
+                : Color.FromArgb(79, 84, 92); // default color
 
             // Get footer
             var footer = json["footer"] != null ? ParseEmbedFooter(json["footer"]) : null;

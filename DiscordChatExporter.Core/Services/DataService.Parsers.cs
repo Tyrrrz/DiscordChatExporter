@@ -90,23 +90,6 @@ namespace DiscordChatExporter.Core.Services
             return new EmbedImage(url, height, width);
         }
 
-        private EmbedVideo ParseEmbedVideo(JToken json)
-        {
-            var url = json["url"]?.Value<string>();
-            var height = json["height"]?.Value<int>();
-            var width = json["width"]?.Value<int>();
-
-            return new EmbedVideo(url, height, width);
-        }
-
-        private EmbedProvider ParseEmbedProvider(JToken json)
-        {
-            var name = json["name"]?.Value<string>();
-            var url = json["url"]?.Value<string>();
-
-            return new EmbedProvider(name, url);
-        }
-
         private EmbedAuthor ParseEmbedAuthor(JToken json)
         {
             var name = json["name"]?.Value<string>();
@@ -132,24 +115,11 @@ namespace DiscordChatExporter.Core.Services
             var description = json["description"]?.Value<string>();
             var url = json["url"]?.Value<string>();
             var timestamp = json["timestamp"]?.Value<DateTime>();
+
+            // Get color
             var color = json["color"] != null
                 ? Color.FromArgb(json["color"].Value<int>()).ResetAlpha()
                 : Color.FromArgb(79, 84, 92); // default color
-
-            // Get footer
-            var footer = json["footer"] != null ? ParseEmbedFooter(json["footer"]) : null;
-
-            // Get image
-            var image = json["image"] != null ? ParseEmbedImage(json["image"]) : null;
-
-            // Get thumbnail
-            var thumbnail = json["thumbnail"] != null ? ParseEmbedImage(json["thumbnail"]) : null;
-
-            // Get video
-            var video = json["video"] != null ? ParseEmbedVideo(json["video"]) : null;
-
-            // Get provider
-            var provider = json["provider"] != null ? ParseEmbedProvider(json["provider"]) : null;
 
             // Get author
             var author = json["author"] != null ? ParseEmbedAuthor(json["author"]) : null;
@@ -157,8 +127,16 @@ namespace DiscordChatExporter.Core.Services
             // Get fields
             var fields = json["fields"].EmptyIfNull().Select(ParseEmbedField).ToArray();
 
-            return new Embed(title, description, url, timestamp, color, footer, image, thumbnail, video, provider,
-                author, fields);
+            // Get thumbnail
+            var thumbnail = json["thumbnail"] != null ? ParseEmbedImage(json["thumbnail"]) : null;
+
+            // Get image
+            var image = json["image"] != null ? ParseEmbedImage(json["image"]) : null;
+
+            // Get footer
+            var footer = json["footer"] != null ? ParseEmbedFooter(json["footer"]) : null;
+
+            return new Embed(title, description, url, timestamp, color, footer, image, thumbnail, author, fields);
         }
 
         private Message ParseMessage(JToken json)

@@ -18,23 +18,18 @@ namespace DiscordChatExporter.Core.Models.Embeds
 
         public Color Color { get; }
 
-        public EmbedFooter Footer { get; }
-
-        public EmbedImage Image { get; }
-
-        public EmbedImage Thumbnail { get; }
-
-        public EmbedVideo Video { get; }
-
-        public EmbedProvider Provider { get; }
-
         public EmbedAuthor Author { get; }
 
         public IReadOnlyList<EmbedField> Fields { get; }
 
-        public Embed(string title, string description, string url, DateTime? timeStamp, Color color,
-            EmbedFooter footer, EmbedImage image, EmbedImage thumbnail, EmbedVideo video, EmbedProvider provider,
-            EmbedAuthor author, IReadOnlyList<EmbedField> fields)
+        public EmbedImage Thumbnail { get; }
+
+        public EmbedImage Image { get; }
+
+        public EmbedFooter Footer { get; }
+
+        public Embed(string title, string description, string url, DateTime? timeStamp, Color color, EmbedFooter footer,
+            EmbedImage image, EmbedImage thumbnail, EmbedAuthor author, IReadOnlyList<EmbedField> fields)
         {
             Title = title;
             Description = description;
@@ -44,8 +39,6 @@ namespace DiscordChatExporter.Core.Models.Embeds
             Footer = footer;
             Image = image;
             Thumbnail = thumbnail;
-            Video = video;
-            Provider = provider;
             Author = author;
             Fields = fields;
         }

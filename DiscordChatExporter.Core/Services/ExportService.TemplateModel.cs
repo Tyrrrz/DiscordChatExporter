@@ -147,11 +147,11 @@ namespace DiscordChatExporter.Core.Services
 
                 // Decode and process multiline codeblocks
                 content = Regex.Replace(content, "\x1AM(.*?)\x1AM",
-                    m => $"<div class=\"pre\">{m.Groups[1].Value.Base64Decode()}</div>");
+                    m => $"<div class=\"pre-multiline\">{m.Groups[1].Value.Base64Decode()}</div>");
 
                 // Decode and process inline codeblocks
                 content = Regex.Replace(content, "\x1AI(.*?)\x1AI",
-                    m => $"<span class=\"pre\">{m.Groups[1].Value.Base64Decode()}</span>");
+                    m => $"<span class=\"pre-inline\">{m.Groups[1].Value.Base64Decode()}</span>");
 
                 // Decode and process links
                 if (allowLinks)

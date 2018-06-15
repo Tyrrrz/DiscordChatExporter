@@ -1,7 +1,7 @@
 ﻿{{ 
-    sharedCss = include "Html.Shared.css"
-    themeCss = include "Html.LightTheme.css"
-    css = sharedCss + "\n" + themeCss
+    $SharedStyleSheet = include "Html.Shared.css"
+    $ThemeStyleSheet = include "Html.LightTheme.css"
+    StyleSheet = $SharedStyleSheet + "\n" + $ThemeStyleSheet
 }}
 
 {{ include "Html.Core.html" }}

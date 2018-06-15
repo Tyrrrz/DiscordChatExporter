@@ -1,45 +1,51 @@
-﻿body {
-    background-color: #FFFFFF;
-    color: #737F8D;
+﻿/* === GENERAL === */
+
+body {
+    background-color: #fff;
+    color: #737f8d;
 }
 
 a {
-    color: #00B0F4;
+    color: #00b0f4;
 }
 
-div.pre {
-    background-color: #F9F9F9;
-    color: rgb(101, 123, 131);
+.pre-multiline {
+    background-color: #f9f9f9;
+    color: #657b83;
 }
 
-span.pre {
-    background-color: #F9F9F9;
+.pre-inline {
+    background-color: #f9f9f9;
 }
 
-div.guild-name {
-    color: #2F3136;
+/* === INFO === */
+
+.info__guild-name {
+    color: #2f3136;
 }
 
-div.channel-name {
-    color: #2F3136;
+.info__channel-name {
+    color: #2f3136;
 }
 
-div.channel-topic {
-    color: #2F3136;
+.info__channel-topic {
+    color: #2f3136;
 }
 
-div.msg {
-    border-top: 1px solid #ECEEEF;
+/* === CHATLOG === */
+
+.chatlog__message-group {
+    border-top: 1px solid #eceeef;
 }
 
-span.msg-user {
-    color: #2F3136;
+.chatlog__author-name {
+    color: #2f3136;
 }
 
-span.msg-date {
-    color: #99AAB5;
+.chatlog__timestamp {
+    color: #99aab5;
 }
 
-span.msg-edited {
-    color: #99AAB5;
+.chatlog__edited-timestamp {
+    color: #99aab5;
 }

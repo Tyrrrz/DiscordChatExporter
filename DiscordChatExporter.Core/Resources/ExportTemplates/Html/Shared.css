@@ -100,6 +100,8 @@ a:hover {
 
 .chatlog__author-avatar-container {
     flex: 0;
+    width: 40px;
+    height: 40px;
 }
 
 .chatlog__author-avatar {
@@ -169,7 +171,6 @@ a:hover {
 .chatlog__embed-content {
     width: 100%;
     display: flex;
-    margin-bottom: 10px;
 }
 
 .chatlog__embed-text {
@@ -218,7 +219,6 @@ a:hover {
     flex-direction: row;
     flex-wrap: wrap;
     margin-top: -10px;
-    margin-bottom: 10px;
 }
 
 .chatlog__embed-field {
@@ -268,7 +268,7 @@ a:hover {
 }
 
 .chatlog__embed-footer {
-    display: block;
+    margin-top: 10px;
 }
 
 .chatlog__embed-footer-icon {

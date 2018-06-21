@@ -61,7 +61,11 @@ a {
 }
 
 .chatlog__embed-author-name {
-    color: #ffffff !important;
+    color: #ffffff;
+}
+
+.chatlog__embed-author-name-link {
+    color: #ffffff;
 }
 
 .chatlog__embed-title {

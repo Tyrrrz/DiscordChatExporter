@@ -78,22 +78,26 @@
                                                     <img class="chatlog__embed-author-icon" src="{{ embed.Author.IconUrl }}" />
                                                 {{ end }}
                                                 {{ if embed.Author.Name }}
-                                                    {{ if embed.Author.Url }}
-                                                        <span class="chatlog__embed-author-name"><a href="{{ embed.Author.Url }}">{{ embed.Author.Name | HtmlEncode }}</a></span>
-                                                    {{ else }}
-                                                        <span class="chatlog__embed-author-name">{{ embed.Author.Name | HtmlEncode }}</span>
-                                                    {{ end }}
+                                                    <span class="chatlog__embed-author-name">
+                                                        {{ if embed.Author.Url }}
+                                                            <a class="chatlog__embed-author-name-link" href="{{ embed.Author.Url }}">{{ embed.Author.Name | HtmlEncode }}</a>
+                                                        {{ else }}
+                                                            {{ embed.Author.Name | HtmlEncode }}
+                                                        {{ end }}
+                                                    </span>
                                                 {{ end }}
                                             </div>
                                         {{ end }}
 
                                         {{~ # Title }}
                                         {{ if embed.Title }}
-                                            {{ if embed.Url }}
-                                            <div class="chatlog__embed-title"><a href="{{ embed.Url }}">{{ embed.Title | FormatContent }}</a></div>
-                                            {{ else }}
-                                                <div class="chatlog__embed-title">{{ embed.Title | FormatContent }}</div>
-                                            {{ end }}
+                                            <div class="chatlog__embed-title">
+                                                {{ if embed.Url }}
+                                                    <a class="chatlog__embed-title-link" href="{{ embed.Url }}">{{ embed.Title | FormatContent }}</a>
+                                                {{ else }}
+                                                    {{ embed.Title | FormatContent }}
+                                                {{ end }}
+                                            </div>
                                         {{ end }}
 
                                         {{~ # Description }}
@@ -102,7 +106,7 @@
                                         {{ end }}
 
                                         {{~ # Fields }}
-                                        <div class="chatlog__embed-fields flex">
+                                        <div class="chatlog__embed-fields">
                                             {{ for field in embed.Fields }}
                                                 <div class="chatlog__embed-field {{ if field.IsInline }} chatlog__embed-field--inline {{ end }}">
                                                     {{ if field.Name }}
@@ -118,13 +122,15 @@
 
                                     {{~ # Thumbnail }}
                                     {{ if embed.Thumbnail }}
-                                        <img class="chatlog__embed-thumbnail" src="{{ embed.Thumbnail.Url }}" />
+                                        <a class="chatlog__embed-thumbnail-link" href="{{ embed.Thumbnail.Url }}">
+                                            <img class="chatlog__embed-thumbnail" src="{{ embed.Thumbnail.Url }}" />
+                                        </a>
                                     {{ end }}
                                 </div>    
 
                                 {{~ # Image }} 
                                 {{ if embed.Image }}
-                                    <a class="chatlog__embed-image-link">
+                                    <a class="chatlog__embed-image-link" href="{{ embed.Image.Url }}">
                                         <img class="chatlog__embed-image" src="{{ embed.Image.Url }}" />
                                     </a>
                                 {{ end }}

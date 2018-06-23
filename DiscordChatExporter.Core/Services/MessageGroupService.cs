@@ -28,15 +28,15 @@ namespace DiscordChatExporter.Core.Services
                     groupFirst != null &&
                     (
                         message.Author.Id != groupFirst.Author.Id ||
-                        (message.TimeStamp - groupFirst.TimeStamp).TotalHours > 1 ||
-                        message.TimeStamp.Hour != groupFirst.TimeStamp.Hour ||
+                        (message.Timestamp - groupFirst.Timestamp).TotalHours > 1 ||
+                        message.Timestamp.Hour != groupFirst.Timestamp.Hour ||
                         groupBuffer.Count >= _settingsService.MessageGroupLimit
                     );
 
                 // If condition is true - flush buffer
                 if (breakCondition)
                 {
-                    var group = new MessageGroup(groupFirst.Author, groupFirst.TimeStamp, groupBuffer.ToArray());
+                    var group = new MessageGroup(groupFirst.Author, groupFirst.Timestamp, groupBuffer.ToArray());
                     result.Add(group);
                     groupBuffer.Clear();
                 }
@@ -49,7 +49,7 @@ namespace DiscordChatExporter.Core.Services
             if (groupBuffer.Any())
             {
                 var groupFirst = groupBuffer.First();
-                var group = new MessageGroup(groupFirst.Author, groupFirst.TimeStamp, groupBuffer.ToArray());
+                var group = new MessageGroup(groupFirst.Author, groupFirst.Timestamp, groupBuffer.ToArray());
                 result.Add(group);
             }
 

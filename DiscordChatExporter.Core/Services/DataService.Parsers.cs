@@ -62,34 +62,6 @@ namespace DiscordChatExporter.Core.Services
             return new Role(id, name);
         }
 
-        private Attachment ParseAttachment(JToken json)
-        {
-            var id = json["id"].Value<string>();
-            var url = json["url"].Value<string>();
-            var isImage = json["width"] != null;
-            var fileName = json["filename"].Value<string>();
-            var fileSize = json["size"].Value<long>();
-
-            return new Attachment(id, isImage, url, fileName, fileSize);
-        }
-
-        private EmbedFooter ParseEmbedFooter(JToken json)
-        {
-            var text = json["text"].Value<string>();
-            var iconUrl = json["icon_url"]?.Value<string>();
-
-            return new EmbedFooter(text, iconUrl);
-        }
-
-        private EmbedImage ParseEmbedImage(JToken json)
-        {
-            var url = json["url"]?.Value<string>();
-            var height = json["height"]?.Value<int>();
-            var width = json["width"]?.Value<int>();
-
-            return new EmbedImage(url, height, width);
-        }
-
         private EmbedAuthor ParseEmbedAuthor(JToken json)
         {
             var name = json["name"]?.Value<string>();
@@ -106,6 +78,34 @@ namespace DiscordChatExporter.Core.Services
             var isInline = json["inline"]?.Value<bool>() ?? false;
 
             return new EmbedField(name, value, isInline);
+        }
+
+        private Attachment ParseAttachment(JToken json)
+        {
+            var id = json["id"].Value<string>();
+            var url = json["url"].Value<string>();
+            var isImage = json["width"] != null;
+            var fileName = json["filename"].Value<string>();
+            var fileSize = json["size"].Value<long>();
+
+            return new Attachment(id, isImage, url, fileName, fileSize);
+        }
+
+        private EmbedImage ParseEmbedImage(JToken json)
+        {
+            var url = json["url"]?.Value<string>();
+            var height = json["height"]?.Value<int>();
+            var width = json["width"]?.Value<int>();
+
+            return new EmbedImage(url, height, width);
+        }
+
+        private EmbedFooter ParseEmbedFooter(JToken json)
+        {
+            var text = json["text"].Value<string>();
+            var iconUrl = json["icon_url"]?.Value<string>();
+
+            return new EmbedFooter(text, iconUrl);
         }
 
         private Embed ParseEmbed(JToken json)
@@ -136,7 +136,7 @@ namespace DiscordChatExporter.Core.Services
             // Get footer
             var footer = json["footer"] != null ? ParseEmbedFooter(json["footer"]) : null;
 
-            return new Embed(title, description, url, timestamp, color, footer, image, thumbnail, author, fields);
+            return new Embed(title, url, timestamp, color, author, description, fields, thumbnail, image, footer);
         }
 
         private Message ParseMessage(JToken json)

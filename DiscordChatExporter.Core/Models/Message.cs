@@ -16,9 +16,9 @@ namespace DiscordChatExporter.Core.Models
 
         public User Author { get; }
 
-        public DateTime TimeStamp { get; }
+        public DateTime Timestamp { get; }
 
-        public DateTime? EditedTimeStamp { get; }
+        public DateTime? EditedTimestamp { get; }
 
         public string Content { get; }
 
@@ -27,16 +27,16 @@ namespace DiscordChatExporter.Core.Models
         public IReadOnlyList<Embed> Embeds { get; }
 
         public Message(string id, string channelId, MessageType type,
-            User author, DateTime timeStamp,
-            DateTime? editedTimeStamp, string content,
+            User author, DateTime timestamp,
+            DateTime? editedTimestamp, string content,
             IReadOnlyList<Attachment> attachments, IReadOnlyList<Embed> embeds)
         {
             Id = id;
             ChannelId = channelId;
             Type = type;
             Author = author;
-            TimeStamp = timeStamp;
-            EditedTimeStamp = editedTimeStamp;
+            Timestamp = timestamp;
+            EditedTimestamp = editedTimestamp;
             Content = content;
             Attachments = attachments;
             Embeds = embeds;

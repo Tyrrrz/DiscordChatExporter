@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace DiscordChatExporter.Core.Models
 {
-    public class GuildMentionables
+    public class Mentionables
     {
         public IReadOnlyList<User> Users { get; }
 
@@ -11,7 +11,7 @@ namespace DiscordChatExporter.Core.Models
 
         public IReadOnlyList<Role> Roles { get; }
 
-        public GuildMentionables(IReadOnlyList<User> users, IReadOnlyList<Channel> channels,
+        public Mentionables(IReadOnlyList<User> users, IReadOnlyList<Channel> channels,
             IReadOnlyList<Role> roles)
         {
             Users = users;

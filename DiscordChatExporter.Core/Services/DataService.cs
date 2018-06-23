@@ -103,7 +103,7 @@ namespace DiscordChatExporter.Core.Services
                 foreach (var message in messages)
                 {
                     // Break when the message is older than from date
-                    if (from != null && message.TimeStamp < from)
+                    if (from != null && message.Timestamp < from)
                     {
                         currentMessageId = null;
                         break;
@@ -166,23 +166,25 @@ namespace DiscordChatExporter.Core.Services
 
                 // Otherwise offset the next request
                 afterId = currentUserId;
+
+                await Task.Delay(200);
             }
 
             return result;
         }
 
-        public async Task<GuildMentionables> GetGuildMentionablesAsync(string token, string guildId)
+        public async Task<Mentionables> GetMentionablesAsync(string token, string guildId, string channelId)
         {
-            // Get guild members
-            var users = await GetGuildMembersAsync(token, guildId);
-
-            // Get guild channels
-            var channels = await GetGuildChannelsAsync(token, guildId);
-
-            // Get guild roles
-            var roles = await GetGuildRolesAsync(token, guildId);
-
-            return new GuildMentionables(users, channels, roles);
+            // Direct message channel
+            if (guildId == Guild.DirectMessages.Id)
+            {
+                return new Mentionables(Array.Empty<User>(), Array.Empty<Channel>(), Array.Empty<Role>());
+            }
+            // Normal channel
+            else
+            {
+                return new Mentionables(Array.Empty<User>(), Array.Empty<Channel>(), Array.Empty<Role>());
+            }
         }
 
         public void Dispose()

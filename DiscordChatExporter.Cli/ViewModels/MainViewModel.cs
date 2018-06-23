@@ -38,10 +38,10 @@ namespace DiscordChatExporter.Cli.ViewModels
             }
 
             // Get messages
-            var messages = await _dataService.GetChannelMessagesAsync(token, channelId, from, to);
+            var messages = await _dataService.GetChannelMessagesAsync(token, channel.Id, from, to);
 
             // Get mentionables
-            var mentionables = await _dataService.GetGuildMentionablesAsync(token, guild.Id);
+            var mentionables = await _dataService.GetMentionablesAsync(token, guild.Id, channel.Id);
 
             // Group messages
             var messageGroups = _messageGroupService.GroupMessages(messages);

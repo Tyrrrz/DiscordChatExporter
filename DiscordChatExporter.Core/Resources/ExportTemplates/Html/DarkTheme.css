@@ -11,6 +11,7 @@ a {
 
 .pre-multiline {
     background-color: #2F3136;
+    border-color: #282b30;
     color: #839496;
 }
 
@@ -19,8 +20,8 @@ a {
 }
 
 .mention {
-    color: #7289da;
     background-color: #738bd71a;
+    color: #7289da;
 }
 
 /* === INFO === */
@@ -40,7 +41,7 @@ a {
 /* === CHATLOG === */
 
 .chatlog__message-group {
-    border-top: 1px solid #ffffff0a;
+    border-color: #ffffff0a;
 }
 
 .chatlog__author-name {
@@ -57,7 +58,7 @@ a {
 
 .chatlog__embed-content-container {
     background-color: #2e30364d;
-    border: 1px solid #2e303699;
+    border-color: #2e303699;
 }
 
 .chatlog__embed-author-name {

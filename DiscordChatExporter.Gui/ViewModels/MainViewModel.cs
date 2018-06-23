@@ -222,13 +222,16 @@ namespace DiscordChatExporter.Gui.ViewModels
             // Get last used token
             var token = _settingsService.LastToken;
 
+            // Get guild
+            var guild = SelectedGuild;
+
             try
             {
                 // Get messages
                 var messages = await _dataService.GetChannelMessagesAsync(token, channel.Id, from, to);
 
                 // Get mentionables
-                var mentionables = await _dataService.GetGuildMentionablesAsync(token, SelectedGuild.Id);
+                var mentionables = await _dataService.GetMentionablesAsync(token, guild.Id, channel.Id);
 
                 // Group messages
                 var messageGroups = _messageGroupService.GroupMessages(messages);

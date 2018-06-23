@@ -10,15 +10,15 @@ namespace DiscordChatExporter.Core.Models.Embeds
     {
         public string Title { get; }
 
-        public string Description { get; }
-
         public string Url { get; }
 
-        public DateTime? TimeStamp { get; }
+        public DateTime? Timestamp { get; }
 
         public Color Color { get; }
 
         public EmbedAuthor Author { get; }
+
+        public string Description { get; }
 
         public IReadOnlyList<EmbedField> Fields { get; }
 
@@ -28,19 +28,19 @@ namespace DiscordChatExporter.Core.Models.Embeds
 
         public EmbedFooter Footer { get; }
 
-        public Embed(string title, string description, string url, DateTime? timeStamp, Color color, EmbedFooter footer,
-            EmbedImage image, EmbedImage thumbnail, EmbedAuthor author, IReadOnlyList<EmbedField> fields)
+        public Embed(string title, string url, DateTime? timestamp, Color color, EmbedAuthor author, string description,
+            IReadOnlyList<EmbedField> fields, EmbedImage thumbnail, EmbedImage image, EmbedFooter footer)
         {
             Title = title;
-            Description = description;
             Url = url;
-            TimeStamp = timeStamp;
+            Timestamp = timestamp;
             Color = color;
-            Footer = footer;
-            Image = image;
-            Thumbnail = thumbnail;
             Author = author;
+            Description = description;
             Fields = fields;
+            Thumbnail = thumbnail;
+            Image = image;
+            Footer = footer;
         }
 
         public override string ToString() => Title;

@@ -18,16 +18,18 @@ img {
 }
 
 .pre-multiline {
-    font-family: "Consolas", "Courier New", Courier, Monospace;
     margin-top: 4px;
-    white-space: pre-wrap;
     padding: 8px;
+    border: 2px solid;
+    border-radius: 5px;
+    font-family: "Consolas", "Courier New", Courier, Monospace;
+    white-space: pre-wrap;
 }
 
 .pre-inline {
+    padding: 2px;
+    border-radius: 3px;
     font-family: "Consolas", "Courier New", Courier, Monospace;
-    padding-left: 2px;
-    padding-right: 2px;
     white-space: pre-wrap;
 }
 
@@ -100,6 +102,7 @@ img {
     margin-right: 10px;
     padding-top: 15px;
     padding-bottom: 15px;
+    border-top: 1px solid;
 }
 
 .chatlog__author-avatar-container {
@@ -116,6 +119,7 @@ img {
 
 .chatlog__messages {
     flex: 1;
+    min-width: 50%;
     margin-left: 20px;
 }
 
@@ -147,6 +151,7 @@ img {
 .chatlog__attachment-thumbnail {
     max-width: 50%;
     max-height: 500px;
+    border-radius: 3px;
 }
 
 .chatlog__embed {
@@ -169,6 +174,7 @@ img {
     padding-top: 8px;
     padding-right: 10px;
     padding-bottom: 8px;
+    border: 1px solid;
     border-top-right-radius: 3px;
     border-bottom-right-radius: 3px;
 }
@@ -248,9 +254,14 @@ img {
     border-radius: 3px;
 }
 
-.chatlog__embed-image {
+.chatlog__embed-image-container {
+    margin-top: 10px;
+}
+
+.chatlog__embed-image {    
     max-width: 500px;
     max-height: 400px;
+    border-radius: 3px;
 }
 
 .chatlog__embed-footer {
@@ -258,10 +269,11 @@ img {
 }
 
 .chatlog__embed-footer-icon {
-    margin-right: 10px;
-    width: 18px;
-    height: 18px;
-    border-radius: 3px;
+    margin-right: 4px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    vertical-align: middle;
 }
 
 .chatlog__embed-footer-text {

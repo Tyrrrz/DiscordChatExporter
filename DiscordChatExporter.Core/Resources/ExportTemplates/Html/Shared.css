@@ -1,7 +1,7 @@
 /* === GENERAL === */
 
 body {
-    font-family: Whitney, Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-family: "Whitney", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 16px;
 }
 
@@ -13,26 +13,30 @@ a:hover {
     text-decoration: underline;
 }
 
+img {
+    object-fit: contain;
+}
+
 .pre-multiline {
-    font-family: Consolas, Courier New, Courier, Monospace;
+    font-family: "Consolas", "Courier New", Courier, Monospace;
     margin-top: 4px;
     white-space: pre-wrap;
     padding: 8px;
 }
 
 .pre-inline {
-    font-family: Consolas, Courier New, Courier, Monospace;
+    font-family: "Consolas", "Courier New", Courier, Monospace;
     padding-left: 2px;
     padding-right: 2px;
     white-space: pre-wrap;
 }
 
 .emoji {
-    object-fit: contain;
+    margin-left: 1px;
+    margin-right: 1px;
     width: 24px;
     height: 24px;
     vertical-align: -.4em;
-    margin: 0 .05em 0 .1em !important;
 }
 
 .emoji-jumboable {
@@ -48,10 +52,10 @@ a:hover {
 
 .info {
     display: flex;
+    max-width: 100%;
     margin-bottom: 10px;
     margin-left: 5px;
     margin-right: 5px;
-    max-width: 100%;
 }
 
 .info__guild-icon-container {
@@ -59,8 +63,8 @@ a:hover {
 }
 
 .info__guild-icon {
-    max-height: 64px;
     max-width: 64px;
+    max-height: 64px;
 }
 
 .info__metadata {
@@ -94,8 +98,8 @@ a:hover {
     display: flex;
     margin-left: 10px;
     margin-right: 10px;
-    padding-bottom: 15px;
     padding-top: 15px;
+    padding-bottom: 15px;
 }
 
 .chatlog__author-avatar-container {
@@ -113,7 +117,6 @@ a:hover {
 .chatlog__messages {
     flex: 1;
     margin-left: 20px;
-    min-width: 50%;
 }
 
 .chatlog__author-name {
@@ -121,51 +124,53 @@ a:hover {
 }
 
 .chatlog__timestamp {
-    font-size: .75em;
     margin-left: 5px;
+    font-size: .75em;
 }
 
 .chatlog__content {
-    font-size: .9375em;
     padding-top: 5px;
+    font-size: .9375em;
     word-wrap: break-word;
 }
 
 .chatlog__edited-timestamp {
-    font-size: .8em;
     margin-left: 5px;
+    font-size: .8em;
 }
 
 .chatlog__attachment {
-    margin-bottom: 5px;
     margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .chatlog__attachment-thumbnail {
-    max-height: 500px;
     max-width: 50%;
+    max-height: 500px;
 }
 
 .chatlog__embed {
-    position: relative;
-    margin-top: 5px;
-    max-width: 520px;
     display: flex;
+    max-width: 520px;
+    margin-top: 5px;
 }
 
 .chatlog__embed-color-pill {
-    width: 4px;
-    border-radius: 3px 0 0 3px;
     flex-shrink: 0;
+    width: 4px;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
 }
 
 .chatlog__embed-content-container {
-    box-sizing: border-box;
-    border-radius: 0 3px 3px 0;
-    flex-direction: column;
-    position: relative;
     display: flex;
-    padding: 8px 10px;
+    flex-direction: column;
+    padding-left: 10px;
+    padding-top: 8px;
+    padding-right: 10px;
+    padding-bottom: 8px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
 }
 
 .chatlog__embed-content {
@@ -184,87 +189,68 @@ a:hover {
 }
 
 .chatlog__embed-author-icon {
-    margin-right: 9px;
     width: 20px;
     height: 20px;
-    object-fit: contain;
+    margin-right: 9px;
     border-radius: 50%;
 }
 
 .chatlog__embed-author-name {
-    display: inline-block;
-    font-size: 14px;
+    font-size: .875em;
     font-weight: 600;
 }
 
 .chatlog__embed-title {
     margin-bottom: 4px;
-    font-size: 14px;
+    font-size: .875em;
     font-weight: 600;
 }
 
 .chatlog__embed-description {
-    display: block;
     font-weight: 500;
-    margin-bottom: 10px;
-    letter-spacing: 0;
-    white-space: pre-line;
-    margin-top: 0 !important;
-    font-size: 14px !important;
-    line-height: 16px !important;
+    font-size: 14px;
 }
 
 .chatlog__embed-fields {
     display: flex;
-    flex-direction: row;
     flex-wrap: wrap;
-    margin-top: -10px;
 }
 
 .chatlog__embed-field {
     flex: 0;
-    padding-top: 10px;
     min-width: 100%;
     max-width: 506px;
+    padding-top: 10px;
 }
 
 .chatlog__embed-field--inline {
     flex: 1;
-    min-width: 150px;
     flex-basis: auto;
+    min-width: 150px;
 }
 
 .chatlog__embed-field-name {
-    font-size: 14px;
     margin-bottom: 4px;
+    font-size: .875em;
     font-weight: 600;
 }
 
 .chatlog__embed-field-value {
-    font-size: 14px;
+    font-size: .875em;
     font-weight: 500;
 }
 
 .chatlog__embed-thumbnail {
-    max-height: 80px;
-    max-width: 80px;
-    border-radius: 3px;
-    width: auto;
-    object-fit: contain;
-    flex-shrink: 0;
+    flex: 0;
     margin-left: 20px;
-}
-
-.chatlog__embed-image-link {
-    position: relative;
-    display: inline-block;
-    margin-bottom: 10px;
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 3px;
 }
 
 .chatlog__embed-image {
     max-width: 500px;
     max-height: 400px;
-    margin: 0;
 }
 
 .chatlog__embed-footer {
@@ -273,16 +259,12 @@ a:hover {
 
 .chatlog__embed-footer-icon {
     margin-right: 10px;
-    height: 18px;
     width: 18px;
-    object-fit: contain;
-    float: left;
-    border-radius: 2.45px;
+    height: 18px;
+    border-radius: 3px;
 }
 
 .chatlog__embed-footer-text {
-    display: inline-block;
     font-weight: 600;
-    font-size: 12px;
-    letter-spacing: 0;
+    font-size: .75em;
 }

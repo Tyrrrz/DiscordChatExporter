@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Linq;
 using DiscordChatExporter.Core.Internal;
 using DiscordChatExporter.Core.Models;
-using DiscordChatExporter.Core.Models.Embeds;
 using Newtonsoft.Json.Linq;
 using Tyrrrz.Extensions;
 

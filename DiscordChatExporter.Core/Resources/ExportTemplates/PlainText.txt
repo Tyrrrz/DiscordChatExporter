@@ -1,7 +1,7 @@
 ﻿==============================================================
-Guild:    {{ Context.Guild.Name }}
-Channel:  {{ Context.Channel.Name }}
-Topic:    {{ Context.Channel.Topic }}
+Guild:    {{ Guild.Name }}
+Channel:  {{ Channel.Name }}
+Topic:    {{ Channel.Topic }}
 Messages: {{ TotalMessageCount | Format "N0" }}
 ==============================================================
 

@@ -222,6 +222,9 @@ namespace DiscordChatExporter.Gui.ViewModels
             // Get last used token
             var token = _settingsService.LastToken;
 
+            // Get guild
+            var guild = SelectedGuild;
+
             try
             {
                 // Get messages
@@ -230,21 +233,11 @@ namespace DiscordChatExporter.Gui.ViewModels
                 // Group messages
                 var messageGroups = _messageGroupService.GroupMessages(messages);
 
-                // Get context
-                var guild = SelectedGuild;
-                var guildChannels = guild != Guild.DirectMessages
-                    ? _guildChannelsMap[guild]
-                    : Array.Empty<Channel>();
-                var guildRoles = guild != Guild.DirectMessages
-                    ? await _dataService.GetGuildRolesAsync(token, guild.Id)
-                    : Array.Empty<Role>();
-                var participants = messageGroups.Select(g => g.Author)
-                    .Concat(messageGroups.SelectMany(g => g.Messages.SelectMany(m => m.MentionedUsers)))
-                    .Distinct(u => u.Id).ToArray();
-                var context = new ChannelChatLogContext(guild, guildChannels, guildRoles, channel, participants);
+                // Get mentionables
+                var mentionables = await _dataService.GetMentionablesAsync(token, guild.Id, messages);
 
                 // Create log
-                var log = new ChannelChatLog(context, messageGroups);
+                var log = new ChatLog(guild, channel, messageGroups, mentionables);
 
                 // Export
                 _exportService.Export(format, filePath, log);

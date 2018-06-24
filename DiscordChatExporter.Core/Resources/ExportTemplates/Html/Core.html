@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>{{ Context.Guild.Name | HtmlEncode }} - {{ Context.Channel.Name | HtmlEncode }}</title>
+    <title>{{ Guild.Name | HtmlEncode }} - {{ Channel.Name | HtmlEncode }}</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <style>{{ StyleSheet }}</style>
@@ -12,12 +12,12 @@
 {{~ # Info }}
 <div class="info">
     <div class="info__guild-icon-container">
-        <img class="info__guild-icon" src="{{ Context.Guild.IconUrl }}" />
+        <img class="info__guild-icon" src="{{ Guild.IconUrl }}" />
     </div>
     <div class="info__metadata">
-        <div class="info__guild-name">{{ Context.Guild.Name | HtmlEncode }}</div>
-        <div class="info__channel-name">{{ Context.Channel.Name | HtmlEncode }}</div>
-        <div class="info__channel-topic">{{ Context.Channel.Topic | HtmlEncode }}</div>
+        <div class="info__guild-name">{{ Guild.Name | HtmlEncode }}</div>
+        <div class="info__channel-name">{{ Channel.Name | HtmlEncode }}</div>
+        <div class="info__channel-topic">{{ Channel.Topic | HtmlEncode }}</div>
         <div class="info__channel-message-count">{{ TotalMessageCount | Format "N0" }} messages</div>
     </div>
 </div>

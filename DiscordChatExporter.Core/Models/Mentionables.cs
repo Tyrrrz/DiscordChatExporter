@@ -11,8 +11,7 @@ namespace DiscordChatExporter.Core.Models
 
         public IReadOnlyList<Role> Roles { get; }
 
-        public Mentionables(IReadOnlyList<User> users, IReadOnlyList<Channel> channels,
-            IReadOnlyList<Role> roles)
+        public Mentionables(IReadOnlyList<User> users, IReadOnlyList<Channel> channels, IReadOnlyList<Role> roles)
         {
             Users = users;
             Channels = channels;

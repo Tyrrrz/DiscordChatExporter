@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using DiscordChatExporter.Core.Models.Embeds;
 
 namespace DiscordChatExporter.Core.Models
 {

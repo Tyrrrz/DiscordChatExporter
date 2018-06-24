@@ -64,6 +64,14 @@ namespace DiscordChatExporter.Core.Services
             return guilds;
         }
 
+        public async Task<IReadOnlyList<Channel>> GetDirectMessageChannelsAsync(string token)
+        {
+            var response = await GetApiResponseAsync(token, "users", "@me/channels");
+            var channels = response.Select(ParseChannel).ToArray();
+
+            return channels;
+        }
+
         public async Task<IReadOnlyList<Channel>> GetGuildChannelsAsync(string token, string guildId)
         {
             var response = await GetApiResponseAsync(token, "guilds", $"{guildId}/channels");
@@ -72,12 +80,12 @@ namespace DiscordChatExporter.Core.Services
             return channels;
         }
 
-        public async Task<IReadOnlyList<Channel>> GetDirectMessageChannelsAsync(string token)
+        public async Task<IReadOnlyList<Role>> GetGuildRolesAsync(string token, string guildId)
         {
-            var response = await GetApiResponseAsync(token, "users", "@me/channels");
-            var channels = response.Select(ParseChannel).ToArray();
+            var response = await GetApiResponseAsync(token, "guilds", $"{guildId}/roles");
+            var roles = response.Select(ParseRole).ToArray();
 
-            return channels;
+            return roles;
         }
 
         public async Task<IReadOnlyList<Message>> GetChannelMessagesAsync(string token, string channelId,
@@ -127,12 +135,31 @@ namespace DiscordChatExporter.Core.Services
             return result;
         }
 
-        public async Task<IReadOnlyList<Role>> GetGuildRolesAsync(string token, string guildId)
+        public async Task<Mentionables> GetMentionablesAsync(string token, string guildId,
+            IEnumerable<Message> messages)
         {
-            var response = await GetApiResponseAsync(token, "guilds", $"{guildId}/roles");
-            var roles = response.Select(ParseRole).ToArray();
+            // Get channels and roles
+            var channels = guildId != Guild.DirectMessages.Id
+                ? await GetGuildChannelsAsync(token, guildId)
+                : Array.Empty<Channel>();
+            var roles = guildId != Guild.DirectMessages.Id
+                ? await GetGuildRolesAsync(token, guildId)
+                : Array.Empty<Role>();
 
-            return roles;
+            // Get users
+            var userMap = new Dictionary<string, User>();
+            foreach (var message in messages)
+            {
+                // Author
+                userMap[message.Author.Id] = message.Author;
+
+                // Mentioned users
+                foreach (var mentionedUser in message.MentionedUsers)
+                    userMap[mentionedUser.Id] = mentionedUser;
+            }
+            var users = userMap.Values.ToArray();
+
+            return new Mentionables(users, channels, roles);
         }
 
         public void Dispose()

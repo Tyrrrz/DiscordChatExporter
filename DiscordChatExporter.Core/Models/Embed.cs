@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace DiscordChatExporter.Core.Models.Embeds
+namespace DiscordChatExporter.Core.Models
 {
     // https://discordapp.com/developers/docs/resources/channel#embed-object
 

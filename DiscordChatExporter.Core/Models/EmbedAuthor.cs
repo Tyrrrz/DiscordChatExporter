@@ -1,4 +1,4 @@
-namespace DiscordChatExporter.Core.Models.Embeds
+namespace DiscordChatExporter.Core.Models
 {
     // https://discordapp.com/developers/docs/resources/channel#embed-object-embed-author-structure
 

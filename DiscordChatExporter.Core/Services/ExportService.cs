@@ -17,7 +17,7 @@ namespace DiscordChatExporter.Core.Services
             _settingsService = settingsService;
         }
 
-        public void Export(ExportFormat format, string filePath, ChannelChatLog log)
+        public void Export(ExportFormat format, string filePath, ChatLog log)
         {
             // Create template loader
             var loader = new TemplateLoader();

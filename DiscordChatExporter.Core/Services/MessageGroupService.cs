@@ -13,7 +13,7 @@ namespace DiscordChatExporter.Core.Services
             _settingsService = settingsService;
         }
 
-        public IReadOnlyList<MessageGroup> GroupMessages(IReadOnlyList<Message> messages)
+        public IReadOnlyList<MessageGroup> GroupMessages(IEnumerable<Message> messages)
         {
             var result = new List<MessageGroup>();
 

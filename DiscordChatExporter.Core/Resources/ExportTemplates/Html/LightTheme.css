@@ -1,0 +1,51 @@
+﻿/* === GENERAL === */
+
+body {
+    background-color: #fff;
+    color: #737f8d;
+}
+
+a {
+    color: #00b0f4;
+}
+
+.pre-multiline {
+    background-color: #f9f9f9;
+    color: #657b83;
+}
+
+.pre-inline {
+    background-color: #f9f9f9;
+}
+
+/* === INFO === */
+
+.info__guild-name {
+    color: #2f3136;
+}
+
+.info__channel-name {
+    color: #2f3136;
+}
+
+.info__channel-topic {
+    color: #2f3136;
+}
+
+/* === CHATLOG === */
+
+.chatlog__message-group {
+    border-top: 1px solid #eceeef;
+}
+
+.chatlog__author-name {
+    color: #2f3136;
+}
+
+.chatlog__timestamp {
+    color: #99aab5;
+}
+
+.chatlog__edited-timestamp {
+    color: #99aab5;
+}

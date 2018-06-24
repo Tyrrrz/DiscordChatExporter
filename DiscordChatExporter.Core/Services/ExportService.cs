@@ -1,16 +1,15 @@
-﻿using System;
-using System.IO;
-using System.Net;
-using System.Reflection;
-using System.Threading.Tasks;
-using DiscordChatExporter.Core.Internal;
+﻿using System.IO;
 using DiscordChatExporter.Core.Models;
-using Tyrrrz.Extensions;
+using Scriban;
+using Scriban.Runtime;
 
 namespace DiscordChatExporter.Core.Services
 {
     public partial class ExportService : IExportService
     {
+        private static readonly MemberRenamerDelegate TemplateMemberRenamer = m => m.Name;
+        private static readonly MemberFilterDelegate TemplateMemberFilter = m => true;
+
         private readonly ISettingsService _settingsService;
 
         public ExportService(ISettingsService settingsService)
@@ -18,69 +17,36 @@ namespace DiscordChatExporter.Core.Services
             _settingsService = settingsService;
         }
 
-        public async Task ExportAsync(ExportFormat format, string filePath, ChannelChatLog log)
+        public void Export(ExportFormat format, string filePath, ChatLog log)
         {
+            // Create template loader
+            var loader = new TemplateLoader();
+
+            // Get template
+            var templateCode = loader.Load(format);
+            var template = Template.Parse(templateCode);
+
+            // Create template context
+            var context = new TemplateContext
+            {
+                TemplateLoader = loader,
+                MemberRenamer = TemplateMemberRenamer,
+                MemberFilter = TemplateMemberFilter
+            };
+
+            // Create template model
+            var templateModel = new TemplateModel(format, log, _settingsService.DateFormat);
+            context.PushGlobal(templateModel.GetScriptObject());
+
+            // Render output
             using (var output = File.CreateText(filePath))
             {
-                var sharedCss = Assembly.GetExecutingAssembly()
-                        .GetManifestResourceString("DiscordChatExporter.Core.Resources.ExportService.Shared.css");
+                // Configure output
+                context.PushOutput(new TextWriterOutput(output));
 
-                if (format == ExportFormat.PlainText)
-                {
-                    await ExportAsPlainTextAsync(log, output);
-                }
-                else if (format == ExportFormat.HtmlDark)
-                {
-                    var css = Assembly.GetExecutingAssembly()
-                        .GetManifestResourceString("DiscordChatExporter.Core.Resources.ExportService.DarkTheme.css");
-                    await ExportAsHtmlAsync(log, output, $"{sharedCss}\n{css}");
-                }
-                else if (format == ExportFormat.HtmlLight)
-                {
-                    var css = Assembly.GetExecutingAssembly()
-                        .GetManifestResourceString("DiscordChatExporter.Core.Resources.ExportService.LightTheme.css");
-                    await ExportAsHtmlAsync(log, output, $"{sharedCss}\n{css}");
-                }
-                else if (format == ExportFormat.Csv)
-                {
-                    await ExportAsCsvAsync(log, output);
-                }
-
-                else throw new ArgumentOutOfRangeException(nameof(format));
+                // Render template
+                template.Render(context);
             }
-        }
-    }
-
-    public partial class ExportService
-    {
-        private static string Base64Encode(string str)
-        {
-            return str.GetBytes().ToBase64();
-        }
-
-        private static string Base64Decode(string str)
-        {
-            return str.FromBase64().GetString();
-        }
-
-        private static string HtmlEncode(string str)
-        {
-            return WebUtility.HtmlEncode(str);
-        }
-
-        private static string FormatFileSize(long fileSize)
-        {
-            string[] units = {"B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"};
-            double size = fileSize;
-            var unit = 0;
-
-            while (size >= 1024)
-            {
-                size /= 1024;
-                ++unit;
-            }
-
-            return $"{size:0.#} {units[unit]}";
         }
     }
 }

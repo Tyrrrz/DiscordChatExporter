@@ -38,16 +38,19 @@ namespace DiscordChatExporter.Cli.ViewModels
             }
 
             // Get messages
-            var messages = await _dataService.GetChannelMessagesAsync(token, channelId, from, to);
+            var messages = await _dataService.GetChannelMessagesAsync(token, channel.Id, from, to);
 
-            // Group them
+            // Group messages
             var messageGroups = _messageGroupService.GroupMessages(messages);
 
+            // Get mentionables
+            var mentionables = await _dataService.GetMentionablesAsync(token, guild.Id, messages);
+
             // Create log
-            var log = new ChannelChatLog(guild, channel, messageGroups, messages.Count);
+            var log = new ChatLog(guild, channel, messageGroups, mentionables);
 
             // Export
-            await _exportService.ExportAsync(format, filePath, log);
+            _exportService.Export(format, filePath, log);
         }
     }
 }

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 
 namespace DiscordChatExporter.Core.Models
 {
-    public class Message : IMentionable
+    // https://discordapp.com/developers/docs/resources/channel#message-object
+
+    public class Message
     {
         public string Id { get; }
 
@@ -13,9 +15,9 @@ namespace DiscordChatExporter.Core.Models
 
         public User Author { get; }
 
-        public DateTime TimeStamp { get; }
+        public DateTime Timestamp { get; }
 
-        public DateTime? EditedTimeStamp { get; }
+        public DateTime? EditedTimestamp { get; }
 
         public string Content { get; }
 
@@ -23,36 +25,24 @@ namespace DiscordChatExporter.Core.Models
 
         public IReadOnlyList<Embed> Embeds { get; }
 
-        public List<User> MentionedUsers { get; }
+        public IReadOnlyList<User> MentionedUsers { get; }
 
-        public List<Role> MentionedRoles { get; }
-
-        public List<Channel> MentionedChannels { get; }
-
-        public Message(string id, string channelId, MessageType type,
-            User author, DateTime timeStamp,
-            DateTime? editedTimeStamp, string content,
-            IReadOnlyList<Attachment> attachments, IReadOnlyList<Embed> embeds,
-            List<User> mentionedUsers, List<Role> mentionedRoles, 
-            List<Channel> mentionedChannels)
+        public Message(string id, string channelId, MessageType type, User author, DateTime timestamp,
+            DateTime? editedTimestamp, string content, IReadOnlyList<Attachment> attachments,
+            IReadOnlyList<Embed> embeds, IReadOnlyList<User> mentionedUsers)
         {
             Id = id;
             ChannelId = channelId;
             Type = type;
             Author = author;
-            TimeStamp = timeStamp;
-            EditedTimeStamp = editedTimeStamp;
+            Timestamp = timestamp;
+            EditedTimestamp = editedTimestamp;
             Content = content;
             Attachments = attachments;
             Embeds = embeds;
             MentionedUsers = mentionedUsers;
-            MentionedRoles = mentionedRoles;
-            MentionedChannels = mentionedChannels;
         }
 
-        public override string ToString()
-        {
-            return Content;
-        }
+        public override string ToString() => Content;
     }
 }

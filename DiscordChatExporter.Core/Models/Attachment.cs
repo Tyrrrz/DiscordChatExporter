@@ -1,10 +1,12 @@
 ﻿namespace DiscordChatExporter.Core.Models
 {
+    // https://discordapp.com/developers/docs/resources/channel#attachment-object
+
     public class Attachment
     {
         public string Id { get; }
 
-        public AttachmentType Type { get; }
+        public bool IsImage { get; }
 
         public string Url { get; }
 
@@ -12,13 +14,15 @@
 
         public long FileSize { get; }
 
-        public Attachment(string id, AttachmentType type, string url, string fileName, long fileSize)
+        public Attachment(string id, bool isImage, string url, string fileName, long fileSize)
         {
             Id = id;
-            Type = type;
+            IsImage = isImage;
             Url = url;
             FileName = fileName;
             FileSize = fileSize;
         }
+
+        public override string ToString() => FileName;
     }
 }

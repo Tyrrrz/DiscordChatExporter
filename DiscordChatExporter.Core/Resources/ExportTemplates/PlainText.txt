@@ -1,0 +1,17 @@
+﻿==============================================================
+Guild:    {{ Guild.Name }}
+Channel:  {{ Channel.Name }}
+Topic:    {{ Channel.Topic }}
+Messages: {{ TotalMessageCount | Format "N0" }}
+==============================================================
+
+{{~ for group in MessageGroups ~}}
+  {{~ group.Author.FullName }} [{{ group.TimeStamp | FormatDate }}]
+  {{~ for message in group.Messages ~}}
+    {{~ message.Content | FormatContent }}
+    {{~ for attachment in message.Attachments ~}}
+      {{~ attachment.Url }}
+    {{~ end ~}}
+  {{~ end ~}}
+
+{{~ end ~}}

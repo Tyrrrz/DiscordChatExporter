@@ -2,72 +2,47 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-// https://discordapp.com/developers/docs/resources/channel#embed-object
-
 namespace DiscordChatExporter.Core.Models
 {
-    public class Embed : IMentionable
+    // https://discordapp.com/developers/docs/resources/channel#embed-object
+
+    public class Embed
     {
         public string Title { get; }
 
-        public string Type { get; }
-
-        public string Description { get; }
-
         public string Url { get; }
 
-        public DateTime? TimeStamp { get; }
+        public DateTime? Timestamp { get; }
 
-        public Color? Color { get; }
-
-        public EmbedFooter Footer { get; }
-
-        public EmbedImage Image { get; }
-
-        public EmbedImage Thumbnail { get; }
-
-        public EmbedVideo Video { get; }
-
-        public EmbedProvider Provider { get; }
+        public Color Color { get; }
 
         public EmbedAuthor Author { get; }
 
+        public string Description { get; }
+
         public IReadOnlyList<EmbedField> Fields { get; }
 
-        public List<User> MentionedUsers { get; }
+        public EmbedImage Thumbnail { get; }
 
-        public List<Role> MentionedRoles { get; }
+        public EmbedImage Image { get; }
 
-        public List<Channel> MentionedChannels { get; }
+        public EmbedFooter Footer { get; }
 
-        public Embed(string title, string type, string description, 
-            string url, DateTime? timeStamp, Color? color, 
-            EmbedFooter footer, EmbedImage image, EmbedImage thumbnail, 
-            EmbedVideo video, EmbedProvider provider, EmbedAuthor author, 
-            List<EmbedField> fields, List<User> mentionedUsers,
-            List<Role> mentionedRoles, List<Channel> mentionedChannels)
+        public Embed(string title, string url, DateTime? timestamp, Color color, EmbedAuthor author, string description,
+            IReadOnlyList<EmbedField> fields, EmbedImage thumbnail, EmbedImage image, EmbedFooter footer)
         {
             Title = title;
-            Type = type;
-            Description = description;
             Url = url;
-            TimeStamp = timeStamp;
+            Timestamp = timestamp;
             Color = color;
-            Footer = footer;
-            Image = image;
-            Thumbnail = thumbnail;
-            Video = video;
-            Provider = provider;
             Author = author;
+            Description = description;
             Fields = fields;
-            MentionedUsers = mentionedUsers;
-            MentionedRoles = mentionedRoles;
-            MentionedChannels = mentionedChannels;
+            Thumbnail = thumbnail;
+            Image = image;
+            Footer = footer;
         }
 
-        public override string ToString()
-        {
-            return Description;
-        }
+        public override string ToString() => Title;
     }
 }

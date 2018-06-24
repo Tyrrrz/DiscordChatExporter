@@ -1,5 +1,7 @@
 ﻿namespace DiscordChatExporter.Core.Models
 {
+    // https://discordapp.com/developers/docs/resources/channel#message-object-message-types
+
     public enum MessageType
     {
         Default,

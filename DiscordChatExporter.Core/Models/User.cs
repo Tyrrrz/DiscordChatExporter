@@ -2,6 +2,8 @@
 
 namespace DiscordChatExporter.Core.Models
 {
+    // https://discordapp.com/developers/docs/topics/permissions#role-object
+
     public partial class User
     {
         public string Id { get; }
@@ -28,17 +30,12 @@ namespace DiscordChatExporter.Core.Models
             AvatarHash = avatarHash;
         }
 
-        public override string ToString()
-        {
-            return FullName;
-        }
+        public override string ToString() => FullName;
     }
 
     public partial class User
     {
-        public static User CreateUnknownUser(string id)
-        {
-            return new User(id, 0, "Unknown", null);
-        }
+        public static User CreateUnknownUser(string id) =>
+            new User(id, 0, "Unknown", null);
     }
 }

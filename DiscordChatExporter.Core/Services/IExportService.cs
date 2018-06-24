@@ -1,10 +1,9 @@
-﻿using System.Threading.Tasks;
-using DiscordChatExporter.Core.Models;
+﻿using DiscordChatExporter.Core.Models;
 
 namespace DiscordChatExporter.Core.Services
 {
     public interface IExportService
     {
-        Task ExportAsync(ExportFormat format, string filePath, ChannelChatLog log);
+        void Export(ExportFormat format, string filePath, ChatLog log);
     }
 }

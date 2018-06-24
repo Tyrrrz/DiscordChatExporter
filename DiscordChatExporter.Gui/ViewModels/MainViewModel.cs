@@ -72,7 +72,7 @@ namespace DiscordChatExporter.Gui.ViewModels
             set
             {
                 Set(ref _selectedGuild, value);
-                AvailableChannels = value != null ? _guildChannelsMap[value] : new Channel[0];
+                AvailableChannels = value != null ? _guildChannelsMap[value] : Array.Empty<Channel>();
                 ShowExportSetupCommand.RaiseCanExecuteChanged();
             }
         }
@@ -222,19 +222,25 @@ namespace DiscordChatExporter.Gui.ViewModels
             // Get last used token
             var token = _settingsService.LastToken;
 
+            // Get guild
+            var guild = SelectedGuild;
+
             try
             {
                 // Get messages
                 var messages = await _dataService.GetChannelMessagesAsync(token, channel.Id, from, to);
 
-                // Group them
+                // Group messages
                 var messageGroups = _messageGroupService.GroupMessages(messages);
 
+                // Get mentionables
+                var mentionables = await _dataService.GetMentionablesAsync(token, guild.Id, messages);
+
                 // Create log
-                var log = new ChannelChatLog(SelectedGuild, channel, messageGroups, messages.Count);
+                var log = new ChatLog(guild, channel, messageGroups, mentionables);
 
                 // Export
-                await _exportService.ExportAsync(format, filePath, log);
+                _exportService.Export(format, filePath, log);
 
                 // Open
                 Process.Start(filePath);

@@ -144,8 +144,8 @@ namespace DiscordChatExporter.Core.Services
             // Get basic data
             var id = json["id"].Value<string>();
             var channelId = json["channel_id"].Value<string>();
-            var timeStamp = json["timestamp"].Value<DateTime>();
-            var editedTimeStamp = json["edited_timestamp"]?.Value<DateTime?>();
+            var timestamp = json["timestamp"].Value<DateTime>();
+            var editedTimestamp = json["edited_timestamp"]?.Value<DateTime?>();
             var content = json["content"].Value<string>();
             var type = (MessageType) json["type"].Value<int>();
 
@@ -174,7 +174,7 @@ namespace DiscordChatExporter.Core.Services
             // Get embeds
             var embeds = json["embeds"].EmptyIfNull().Select(ParseEmbed).ToArray();
 
-            return new Message(id, channelId, type, author, timeStamp, editedTimeStamp, content, attachments, embeds);
+            return new Message(id, channelId, type, author, timestamp, editedTimestamp, content, attachments, embeds);
         }
     }
 }

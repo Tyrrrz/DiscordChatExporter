@@ -174,7 +174,7 @@ namespace DiscordChatExporter.Core.Services
             var embeds = json["embeds"].EmptyIfNull().Select(ParseEmbed).ToArray();
 
             // Get mentioned users
-            var mentionedUsers = json["mentioned_users"].EmptyIfNull().Select(ParseUser).ToArray();
+            var mentionedUsers = json["mentions"].EmptyIfNull().Select(ParseUser).ToArray();
 
             return new Message(id, channelId, type, author, timestamp, editedTimestamp, content, attachments, embeds,
                 mentionedUsers);

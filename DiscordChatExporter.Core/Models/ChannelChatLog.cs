@@ -1,29 +1,22 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace DiscordChatExporter.Core.Models
 {
     public class ChannelChatLog
     {
-        public Guild Guild { get; }
-
-        public Channel Channel { get; }
+        public ChannelChatLogContext Context { get; }
 
         public IReadOnlyList<MessageGroup> MessageGroups { get; }
 
-        public int TotalMessageCount { get; }
+        public int TotalMessageCount => MessageGroups.Sum(g => g.Messages.Count);
 
-        public Mentionables Mentionables { get; }
-
-        public ChannelChatLog(Guild guild, Channel channel, IReadOnlyList<MessageGroup> messageGroups,
-            int totalMessageCount, Mentionables mentionables)
+        public ChannelChatLog(ChannelChatLogContext context, IReadOnlyList<MessageGroup> messageGroups)
         {
-            Guild = guild;
-            Channel = channel;
+            Context = context;
             MessageGroups = messageGroups;
-            TotalMessageCount = totalMessageCount;
-            Mentionables = mentionables;
         }
 
-        public override string ToString() => $"{Guild.Name} | {Channel.Name} | {TotalMessageCount} messages";
+        public override string ToString() => $"{Context.Guild.Name} | {Context.Channel.Name}";
     }
 }

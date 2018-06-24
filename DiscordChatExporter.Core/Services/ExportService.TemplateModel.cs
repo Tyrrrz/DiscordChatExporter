@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
@@ -19,12 +20,15 @@ namespace DiscordChatExporter.Core.Services
             private readonly ChannelChatLog _log;
             private readonly string _dateFormat;
 
+            private IReadOnlyList<User> MentionableUsers => _log.Context.Participants;
+            private IReadOnlyList<Channel> MentionableChannels => _log.Context.GuildChannels;
+            private IReadOnlyList<Role> MentionableRoles => _log.Context.GuildRoles;
+
             public TemplateModel(ExportFormat format, ChannelChatLog log, string dateFormat)
             {
                 _format = format;
                 _log = log;
                 _dateFormat = dateFormat;
-
             }
 
             private string HtmlEncode(string str) => WebUtility.HtmlEncode(str);
@@ -70,7 +74,9 @@ namespace DiscordChatExporter.Core.Services
 
                 foreach (var mentionedUserId in mentionedUserIds)
                 {
-                    var mentionedUser = _log.Mentionables.GetUser(mentionedUserId);
+                    var mentionedUser = MentionableUsers.FirstOrDefault(u => u.Id == mentionedUserId) ??
+                                        User.CreateUnknownUser(mentionedUserId);
+
                     content = Regex.Replace(content, $"<@!?{mentionedUserId}>", $"@{mentionedUser.FullName}");
                 }
 
@@ -83,7 +89,9 @@ namespace DiscordChatExporter.Core.Services
 
                 foreach (var mentionedChannelId in mentionedChannelIds)
                 {
-                    var mentionedChannel = _log.Mentionables.GetChannel(mentionedChannelId);
+                    var mentionedChannel = MentionableChannels.FirstOrDefault(c => c.Id == mentionedChannelId) ??
+                                           Channel.CreateDeletedChannel(mentionedChannelId);
+
                     content = content.Replace($"<#{mentionedChannelId}>", $"#{mentionedChannel.Name}");
                 }
 
@@ -96,7 +104,9 @@ namespace DiscordChatExporter.Core.Services
 
                 foreach (var mentionedRoleId in mentionedRoleIds)
                 {
-                    var mentionedRole = _log.Mentionables.GetRole(mentionedRoleId);
+                    var mentionedRole = MentionableRoles.FirstOrDefault(r => r.Id == mentionedRoleId) ??
+                                        Role.CreateDeletedRole(mentionedRoleId);
+
                     content = content.Replace($"<@&{mentionedRoleId}>", $"@{mentionedRole.Name}");
                 }
 
@@ -182,7 +192,9 @@ namespace DiscordChatExporter.Core.Services
 
                 foreach (var mentionedUserId in mentionedUserIds)
                 {
-                    var mentionedUser = _log.Mentionables.GetUser(mentionedUserId);
+                    var mentionedUser = MentionableUsers.FirstOrDefault(u => u.Id == mentionedUserId) ??
+                                        User.CreateUnknownUser(mentionedUserId);
+
                     content = Regex.Replace(content, $"&lt;@!?{mentionedUserId}&gt;",
                         $"<span class=\"mention\" title=\"{HtmlEncode(mentionedUser.FullName)}\">" +
                         $"@{HtmlEncode(mentionedUser.Name)}" +
@@ -198,7 +210,9 @@ namespace DiscordChatExporter.Core.Services
 
                 foreach (var mentionedChannelId in mentionedChannelIds)
                 {
-                    var mentionedChannel = _log.Mentionables.GetChannel(mentionedChannelId);
+                    var mentionedChannel = MentionableChannels.FirstOrDefault(c => c.Id == mentionedChannelId) ??
+                                           Channel.CreateDeletedChannel(mentionedChannelId);
+
                     content = content.Replace($"&lt;#{mentionedChannelId}&gt;",
                         "<span class=\"mention\">" +
                         $"#{HtmlEncode(mentionedChannel.Name)}" +
@@ -214,7 +228,9 @@ namespace DiscordChatExporter.Core.Services
 
                 foreach (var mentionedRoleId in mentionedRoleIds)
                 {
-                    var mentionedRole = _log.Mentionables.GetRole(mentionedRoleId);
+                    var mentionedRole = MentionableRoles.FirstOrDefault(r => r.Id == mentionedRoleId) ??
+                                        Role.CreateDeletedRole(mentionedRoleId);
+
                     content = content.Replace($"&lt;@&amp;{mentionedRoleId}&gt;",
                         "<span class=\"mention\">" +
                         $"@{HtmlEncode(mentionedRole.Name)}" +
@@ -249,7 +265,9 @@ namespace DiscordChatExporter.Core.Services
 
                 foreach (var mentionedUserId in mentionedUserIds)
                 {
-                    var mentionedUser = _log.Mentionables.GetUser(mentionedUserId);
+                    var mentionedUser = MentionableUsers.FirstOrDefault(u => u.Id == mentionedUserId) ??
+                                        User.CreateUnknownUser(mentionedUserId);
+
                     content = Regex.Replace(content, $"<@!?{mentionedUserId}>", $"@{mentionedUser.FullName}");
                 }
 
@@ -262,7 +280,9 @@ namespace DiscordChatExporter.Core.Services
 
                 foreach (var mentionedChannelId in mentionedChannelIds)
                 {
-                    var mentionedChannel = _log.Mentionables.GetChannel(mentionedChannelId);
+                    var mentionedChannel = MentionableChannels.FirstOrDefault(c => c.Id == mentionedChannelId) ??
+                                           Channel.CreateDeletedChannel(mentionedChannelId);
+
                     content = content.Replace($"<#{mentionedChannelId}>", $"#{mentionedChannel.Name}");
                 }
 
@@ -275,7 +295,9 @@ namespace DiscordChatExporter.Core.Services
 
                 foreach (var mentionedRoleId in mentionedRoleIds)
                 {
-                    var mentionedRole = _log.Mentionables.GetRole(mentionedRoleId);
+                    var mentionedRole = MentionableRoles.FirstOrDefault(r => r.Id == mentionedRoleId) ??
+                                        Role.CreateDeletedRole(mentionedRoleId);
+
                     content = content.Replace($"<@&{mentionedRoleId}>", $"@{mentionedRole.Name}");
                 }
 

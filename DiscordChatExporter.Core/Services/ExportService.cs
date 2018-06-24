@@ -27,10 +27,12 @@ namespace DiscordChatExporter.Core.Services
             var template = Template.Parse(templateCode);
 
             // Create template context
-            var context = new TemplateContext();
-            context.TemplateLoader = loader;
-            context.MemberRenamer = TemplateMemberRenamer;
-            context.MemberFilter = TemplateMemberFilter;
+            var context = new TemplateContext
+            {
+                TemplateLoader = loader,
+                MemberRenamer = TemplateMemberRenamer,
+                MemberFilter = TemplateMemberFilter
+            };
 
             // Create template model
             var templateModel = new TemplateModel(format, log, _settingsService.DateFormat);

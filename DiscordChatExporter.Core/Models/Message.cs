@@ -26,10 +26,12 @@ namespace DiscordChatExporter.Core.Models
 
         public IReadOnlyList<Embed> Embeds { get; }
 
+        public IReadOnlyList<User> MentionedUsers { get; }
+
         public Message(string id, string channelId, MessageType type,
             User author, DateTime timestamp,
             DateTime? editedTimestamp, string content,
-            IReadOnlyList<Attachment> attachments, IReadOnlyList<Embed> embeds)
+            IReadOnlyList<Attachment> attachments, IReadOnlyList<Embed> embeds, IReadOnlyList<User> mentionedUsers)
         {
             Id = id;
             ChannelId = channelId;
@@ -40,6 +42,7 @@ namespace DiscordChatExporter.Core.Models
             Content = content;
             Attachments = attachments;
             Embeds = embeds;
+            MentionedUsers = mentionedUsers;
         }
 
         public override string ToString() => Content;

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Numerics;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Models;
@@ -134,57 +133,6 @@ namespace DiscordChatExporter.Core.Services
             var roles = response.Select(ParseRole).ToArray();
 
             return roles;
-        }
-
-        public async Task<IReadOnlyList<User>> GetGuildMembersAsync(string token, string guildId)
-        {
-            var result = new List<User>();
-
-            var afterId = "0";
-            while (true)
-            {
-                // Get response
-                var response = await GetApiResponseAsync(token, "guilds", $"{guildId}/members",
-                    "limit=100", $"after={afterId}");
-
-                // Parse
-                var users = response.Select(m => ParseUser(m["user"]));
-
-                // Add users to list
-                string currentUserId = null;
-                foreach (var user in users)
-                {
-                    // Add user
-                    result.Add(user);
-                    if (currentUserId == null || BigInteger.Parse(user.Id) > BigInteger.Parse(currentUserId))
-                        currentUserId = user.Id;
-                }
-
-                // If no users - break
-                if (currentUserId == null)
-                    break;
-
-                // Otherwise offset the next request
-                afterId = currentUserId;
-
-                await Task.Delay(200);
-            }
-
-            return result;
-        }
-
-        public async Task<Mentionables> GetMentionablesAsync(string token, string guildId, string channelId)
-        {
-            // Direct message channel
-            if (guildId == Guild.DirectMessages.Id)
-            {
-                return new Mentionables(Array.Empty<User>(), Array.Empty<Channel>(), Array.Empty<Role>());
-            }
-            // Normal channel
-            else
-            {
-                return new Mentionables(Array.Empty<User>(), Array.Empty<Channel>(), Array.Empty<Role>());
-            }
         }
 
         public void Dispose()

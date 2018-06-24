@@ -72,7 +72,7 @@ namespace DiscordChatExporter.Gui.ViewModels
             set
             {
                 Set(ref _selectedGuild, value);
-                AvailableChannels = value != null ? _guildChannelsMap[value] : new Channel[0];
+                AvailableChannels = value != null ? _guildChannelsMap[value] : Array.Empty<Channel>();
                 ShowExportSetupCommand.RaiseCanExecuteChanged();
             }
         }
@@ -222,22 +222,29 @@ namespace DiscordChatExporter.Gui.ViewModels
             // Get last used token
             var token = _settingsService.LastToken;
 
-            // Get guild
-            var guild = SelectedGuild;
-
             try
             {
                 // Get messages
                 var messages = await _dataService.GetChannelMessagesAsync(token, channel.Id, from, to);
 
-                // Get mentionables
-                var mentionables = await _dataService.GetMentionablesAsync(token, guild.Id, channel.Id);
-
                 // Group messages
                 var messageGroups = _messageGroupService.GroupMessages(messages);
 
+                // Get context
+                var guild = SelectedGuild;
+                var guildChannels = guild != Guild.DirectMessages
+                    ? _guildChannelsMap[guild]
+                    : Array.Empty<Channel>();
+                var guildRoles = guild != Guild.DirectMessages
+                    ? await _dataService.GetGuildRolesAsync(token, guild.Id)
+                    : Array.Empty<Role>();
+                var participants = messageGroups.Select(g => g.Author)
+                    .Concat(messageGroups.SelectMany(g => g.Messages.SelectMany(m => m.MentionedUsers)))
+                    .Distinct(u => u.Id).ToArray();
+                var context = new ChannelChatLogContext(guild, guildChannels, guildRoles, channel, participants);
+
                 // Create log
-                var log = new ChannelChatLog(SelectedGuild, channel, messageGroups, messages.Count, mentionables);
+                var log = new ChannelChatLog(context, messageGroups);
 
                 // Export
                 _exportService.Export(format, filePath, log);

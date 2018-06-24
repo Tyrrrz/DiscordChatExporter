@@ -6,14 +6,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="Resources\ExportTemplates\Csv.csv" />
+        <EmbeddedResource Include="Resources\ExportTemplates\PlainText.txt" />
+        <EmbeddedResource Include="Resources\ExportTemplates\HtmlDark.html" />
         <EmbeddedResource Include="Resources\ExportTemplates\HtmlLight.html" />
         <EmbeddedResource Include="Resources\ExportTemplates\Html\Core.html" />
+        <EmbeddedResource Include="Resources\ExportTemplates\Html\Shared.css" />
         <EmbeddedResource Include="Resources\ExportTemplates\Html\DarkTheme.css" />
         <EmbeddedResource Include="Resources\ExportTemplates\Html\LightTheme.css" />
-        <EmbeddedResource Include="Resources\ExportTemplates\Html\Shared.css" />
-        <EmbeddedResource Include="Resources\ExportTemplates\HtmlDark.html" />
-        <EmbeddedResource Include="Resources\ExportTemplates\PlainText.txt" />
+        <EmbeddedResource Include="Resources\ExportTemplates\Csv.csv" />
     </ItemGroup>
 
     <ItemGroup>

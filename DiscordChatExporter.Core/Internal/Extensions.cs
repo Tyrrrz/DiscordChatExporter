@@ -14,15 +14,9 @@ namespace DiscordChatExporter.Core.Internal
             return value.ToString();
         }
 
-        public static string Base64Encode(this string str)
-        {
-            return str.GetBytes().ToBase64();
-        }
+        public static string Base64Encode(this string str) => str.GetBytes().ToBase64();
 
-        public static string Base64Decode(this string str)
-        {
-            return str.FromBase64().GetString();
-        }
+        public static string Base64Decode(this string str) => str.FromBase64().GetString();
 
         public static Color ResetAlpha(this Color color) => Color.FromArgb(1, color);
     }

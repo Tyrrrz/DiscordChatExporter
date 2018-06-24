@@ -27,10 +27,9 @@ namespace DiscordChatExporter.Core.Models
 
         public IReadOnlyList<User> MentionedUsers { get; }
 
-        public Message(string id, string channelId, MessageType type,
-            User author, DateTime timestamp,
-            DateTime? editedTimestamp, string content,
-            IReadOnlyList<Attachment> attachments, IReadOnlyList<Embed> embeds, IReadOnlyList<User> mentionedUsers)
+        public Message(string id, string channelId, MessageType type, User author, DateTime timestamp,
+            DateTime? editedTimestamp, string content, IReadOnlyList<Attachment> attachments,
+            IReadOnlyList<Embed> embeds, IReadOnlyList<User> mentionedUsers)
         {
             Id = id;
             ChannelId = channelId;

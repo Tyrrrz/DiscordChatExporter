@@ -21,8 +21,8 @@ namespace DiscordChatExporter.Cli.ViewModels
             _exportService = exportService;
         }
 
-        public async Task ExportAsync(string token, string channelId, string filePath, ExportFormat format, DateTime? from,
-            DateTime? to)
+        public async Task ExportAsync(string token, string channelId, string filePath, ExportFormat format,
+            DateTime? from, DateTime? to)
         {
             // Get channel and guild
             var channel = await _dataService.GetChannelAsync(token, channelId);
@@ -37,8 +37,12 @@ namespace DiscordChatExporter.Cli.ViewModels
                     .Replace(Path.GetInvalidFileNameChars(), '_');
             }
 
+            // Create progress handler
+            // TODO
+            var progressHandler = new Progress<double>(p => { });
+
             // Get messages
-            var messages = await _dataService.GetChannelMessagesAsync(token, channel.Id, from, to);
+            var messages = await _dataService.GetChannelMessagesAsync(token, channel.Id, from, to, progressHandler);
 
             // Group messages
             var messageGroups = _messageGroupService.GroupMessages(messages);

@@ -165,6 +165,16 @@
                             </div>
                         </div>
                     {{ end }}
+
+                    {{~ # Reactions }}
+                    <div class="chatlog__reactions">
+                        {{ for reaction in message.Reactions}}
+                            <div class="chatlog__reaction">
+                                <div class="chatlog__reaction-emoji">{{ reaction.Emoji | FormatContent }}</div>
+                                <div class="chatlog__reaction-count">{{ reaction.Count }}</div>
+                            </div>
+                        {{ end }}
+                    </div>
                 {{ end }}
             </div>
         </div>

@@ -280,3 +280,25 @@ img {
     font-weight: 600;
     font-size: .75em;
 }
+
+.chatlog__reactions {
+    display: flex;
+}
+
+.chatlog__reaction {
+    margin: 2px;
+    border-radius: 3px;
+    display: block;
+    padding-right: 6px;
+}
+
+.chatlog__reaction-emoji {
+    display: inline;
+    margin-left: 3px;
+    padding-right: 3px;
+    font-size: large;
+}
+
+.chatlog__reaction-count {
+    display: inline;
+}

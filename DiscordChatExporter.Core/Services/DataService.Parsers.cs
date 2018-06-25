@@ -138,6 +138,16 @@ namespace DiscordChatExporter.Core.Services
             return new Embed(title, url, timestamp, color, author, description, fields, thumbnail, image, footer);
         }
 
+        private Reaction ParseReaction(JToken json)
+        {
+            var count = json["count"].Value<int>();
+            var me = json["me"].Value<bool>();
+            var id = json["emoji"]["id"]?.ToString();
+            var name = json["emoji"]["name"].ToString();
+
+            return new Reaction(count, me, id, name);
+        }
+
         private Message ParseMessage(JToken json)
         {
             // Get basic data
@@ -173,11 +183,15 @@ namespace DiscordChatExporter.Core.Services
             // Get embeds
             var embeds = json["embeds"].EmptyIfNull().Select(ParseEmbed).ToArray();
 
+            // Get reactions
+            var reactions = json["reactions"].EmptyIfNull().Select(ParseReaction).ToArray();
+
             // Get mentioned users
             var mentionedUsers = json["mentions"].EmptyIfNull().Select(ParseUser).ToArray();
 
+
             return new Message(id, channelId, type, author, timestamp, editedTimestamp, content, attachments, embeds,
-                mentionedUsers);
+                reactions, mentionedUsers);
         }
     }
 }

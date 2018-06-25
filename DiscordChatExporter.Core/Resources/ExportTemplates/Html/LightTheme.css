@@ -49,3 +49,7 @@ a {
 .chatlog__edited-timestamp {
     color: #99aab5;
 }
+
+.chatlog__reaction {
+    background-color: rgba(79, 84, 92, 0.0588235);
+}

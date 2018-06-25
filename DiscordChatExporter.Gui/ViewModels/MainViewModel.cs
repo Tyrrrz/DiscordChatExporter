@@ -26,10 +26,11 @@ namespace DiscordChatExporter.Gui.ViewModels
 
         private bool _isBusy;
         private double _progress;
-        private string _token;
+        private string _tokenValue;
         private IReadOnlyList<Guild> _availableGuilds;
         private Guild _selectedGuild;
         private IReadOnlyList<Channel> _availableChannels;
+        private AuthTokenType _tokenType;
 
         public bool IsBusy
         {
@@ -56,15 +57,24 @@ namespace DiscordChatExporter.Gui.ViewModels
             }
         }
 
-        public string Token
+        public IReadOnlyList<AuthTokenType> AvailableTokenTypes =>
+            Enum.GetValues(typeof(AuthTokenType)).Cast<AuthTokenType>().ToArray();
+
+        public AuthTokenType TokenType
         {
-            get => _token;
+            get => _tokenType;
+            set => Set(ref _tokenType, value);
+        }
+
+        public string TokenValue
+        {
+            get => _tokenValue;
             set
             {
                 // Remove invalid chars
                 value = value?.Trim('"');
 
-                Set(ref _token, value);
+                Set(ref _tokenValue, value);
                 PullDataCommand.RaiseCanExecuteChanged();
             }
         }
@@ -117,7 +127,7 @@ namespace DiscordChatExporter.Gui.ViewModels
             // Commands
             ViewLoadedCommand = new RelayCommand(ViewLoaded);
             ViewClosedCommand = new RelayCommand(ViewClosed);
-            PullDataCommand = new RelayCommand(PullData, () => Token.IsNotBlank() && !IsBusy);
+            PullDataCommand = new RelayCommand(PullData, () => TokenValue.IsNotBlank() && !IsBusy);
             ShowSettingsCommand = new RelayCommand(ShowSettings);
             ShowAboutCommand = new RelayCommand(ShowAbout);
             ShowExportSetupCommand = new RelayCommand<Channel>(ShowExportSetup, _ => !IsBusy);
@@ -132,8 +142,12 @@ namespace DiscordChatExporter.Gui.ViewModels
             // Load settings
             _settingsService.Load();
 
-            // Set last token
-            Token = _settingsService.LastToken;
+            // Get last token
+            if (_settingsService.LastToken != null)
+            {
+                TokenType = _settingsService.LastToken.Type;
+                TokenValue = _settingsService.LastToken.Value;
+            }
 
             // Check and prepare update
             try
@@ -170,7 +184,7 @@ namespace DiscordChatExporter.Gui.ViewModels
             IsBusy = true;
 
             // Copy token so it doesn't get mutated
-            var token = Token;
+            var token = new AuthToken(TokenType, TokenValue);
 
             // Save token
             _settingsService.LastToken = token;

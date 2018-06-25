@@ -34,7 +34,8 @@ namespace DiscordChatExporter.Gui.ViewModels
             }
         }
 
-        public IReadOnlyList<ExportFormat> AvailableFormats { get; }
+        public IReadOnlyList<ExportFormat> AvailableFormats =>
+            Enum.GetValues(typeof(ExportFormat)).Cast<ExportFormat>().ToArray();
 
         public ExportFormat SelectedFormat
         {
@@ -68,9 +69,6 @@ namespace DiscordChatExporter.Gui.ViewModels
         public ExportSetupViewModel(ISettingsService settingsService)
         {
             _settingsService = settingsService;
-
-            // Defaults
-            AvailableFormats = Enum.GetValues(typeof(ExportFormat)).Cast<ExportFormat>().ToArray();
 
             // Commands
             ExportCommand = new RelayCommand(Export, () => FilePath.IsNotBlank());

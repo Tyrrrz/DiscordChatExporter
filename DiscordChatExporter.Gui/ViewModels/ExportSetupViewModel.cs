@@ -44,9 +44,9 @@ namespace DiscordChatExporter.Gui.ViewModels
                 Set(ref _format, value);
 
                 // Replace extension in path
-                var newExt = value.GetFileExtension();
-                if (FilePath != null && !FilePath.EndsWith(newExt))
-                    FilePath = FilePath.SubstringUntilLast(".") + "." + newExt;
+                var ext = value.GetFileExtension();
+                if (FilePath != null)
+                    FilePath = Path.ChangeExtension(FilePath, ext);
             }
         }
 

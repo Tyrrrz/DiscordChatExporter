@@ -20,7 +20,7 @@ namespace DiscordChatExporter.Core.Services
         Task<IReadOnlyList<Role>> GetGuildRolesAsync(string token, string guildId);
 
         Task<IReadOnlyList<Message>> GetChannelMessagesAsync(string token, string channelId,
-            DateTime? from, DateTime? to);
+            DateTime? from = null, DateTime? to = null, IProgress<double> progress = null);
 
         Task<Mentionables> GetMentionablesAsync(string token, string guildId,
             IEnumerable<Message> messages);

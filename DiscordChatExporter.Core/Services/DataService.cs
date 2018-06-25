@@ -14,7 +14,8 @@ namespace DiscordChatExporter.Core.Services
     {
         private readonly HttpClient _httpClient = new HttpClient();
 
-        private async Task<JToken> GetApiResponseAsync(string token, string resource, string endpoint, params string[] parameters)
+        private async Task<JToken> GetApiResponseAsync(string token, string resource, string endpoint,
+            params string[] parameters)
         {
             // Format URL
             const string apiRoot = "https://discordapp.com/api/v6";
@@ -89,48 +90,72 @@ namespace DiscordChatExporter.Core.Services
         }
 
         public async Task<IReadOnlyList<Message>> GetChannelMessagesAsync(string token, string channelId,
-            DateTime? from, DateTime? to)
+            DateTime? from = null, DateTime? to = null, IProgress<double> progress = null)
         {
             var result = new List<Message>();
 
-            // We are going backwards from last message to first
-            // collecting everything between them in batches
-            var beforeId = to?.ToSnowflake() ?? DateTime.MaxValue.ToSnowflake();
-            while (true)
+            // Report indeterminate progress
+            progress?.Report(-1);
+
+            // Get the snowflakes for the selected range
+            var firstId = from != null ? from.Value.ToSnowflake() : "0";
+            var lastId = to != null ? to.Value.ToSnowflake() : DateTime.MaxValue.ToSnowflake();
+
+            // Get the last message
+            var response = await GetApiResponseAsync(token, "channels", $"{channelId}/messages",
+                "limit=1", $"before={lastId}");
+            var lastMessage = response.Select(ParseMessage).FirstOrDefault();
+
+            // If the last message doesn't exist or it's outside of range - return
+            if (lastMessage == null || lastMessage.Timestamp < from)
             {
-                // Get response
-                var response = await GetApiResponseAsync(token, "channels", $"{channelId}/messages",
-                    "limit=100", $"before={beforeId}");
-
-                // Parse
-                var messages = response.Select(ParseMessage);
-
-                // Add messages to list
-                string currentMessageId = null;
-                foreach (var message in messages)
-                {
-                    // Break when the message is older than from date
-                    if (from != null && message.Timestamp < from)
-                    {
-                        currentMessageId = null;
-                        break;
-                    }
-
-                    // Add message
-                    result.Add(message);
-                    currentMessageId = message.Id;
-                }
-
-                // If no messages - break
-                if (currentMessageId == null)
-                    break;
-
-                // Otherwise offset the next request
-                beforeId = currentMessageId;
+                progress?.Report(1);
+                return result;
             }
 
-            // Messages appear newest first, we need to reverse
-            result.Reverse();
+            // Get other messages
+            var offsetId = firstId;
+            while (true)
+            {
+                // Get message batch
+                response = await GetApiResponseAsync(token, "channels", $"{channelId}/messages",
+                    "limit=100", $"after={offsetId}");
+
+                // Parse
+                var messages = response
+                    .Select(ParseMessage)
+                    .Reverse() // reverse because messages appear newest first
+                    .ToArray();
+
+                // Break if there are no messages (can happen if messages are deleted during execution)
+                if (!messages.Any())
+                    break;
+
+                // Trim messages to range (until last message)
+                var messagesInRange = messages
+                    .TakeWhile(m => m.Id != lastMessage.Id && m.Timestamp < lastMessage.Timestamp)
+                    .ToArray();
+
+                // Add to result
+                result.AddRange(messagesInRange);
+
+                // Break if messages were trimmed (which means the last message was encountered)
+                if (messagesInRange.Length != messages.Length)
+                    break;
+
+                // Report progress (based on the time range of parsed messages compared to total)
+                progress?.Report((result.Last().Timestamp - result.First().Timestamp).TotalSeconds /
+                                 (lastMessage.Timestamp - result.First().Timestamp).TotalSeconds);
+
+                // Move offset
+                offsetId = result.Last().Id;
+            }
+
+            // Add last message
+            result.Add(lastMessage);
+
+            // Report progress
+            progress?.Report(1);
 
             return result;
         }
@@ -157,6 +182,7 @@ namespace DiscordChatExporter.Core.Services
                 foreach (var mentionedUser in message.MentionedUsers)
                     userMap[mentionedUser.Id] = mentionedUser;
             }
+
             var users = userMap.Values.ToArray();
 
             return new Mentionables(users, channels, roles);

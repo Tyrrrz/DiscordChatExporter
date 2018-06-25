@@ -25,6 +25,7 @@ namespace DiscordChatExporter.Gui.ViewModels
         private readonly Dictionary<Guild, IReadOnlyList<Channel>> _guildChannelsMap;
 
         private bool _isBusy;
+        private double _progress;
         private string _token;
         private IReadOnlyList<Guild> _availableGuilds;
         private Guild _selectedGuild;
@@ -42,6 +43,18 @@ namespace DiscordChatExporter.Gui.ViewModels
         }
 
         public bool IsDataAvailable => AvailableGuilds.NotNullAndAny();
+
+        public bool IsProgressIndeterminate => Progress <= 0;
+
+        public double Progress
+        {
+            get => _progress;
+            private set
+            {
+                Set(ref _progress, value);
+                RaisePropertyChanged(() => IsProgressIndeterminate);
+            }
+        }
 
         public string Token
         {
@@ -225,10 +238,13 @@ namespace DiscordChatExporter.Gui.ViewModels
             // Get guild
             var guild = SelectedGuild;
 
+            // Create progress handler
+            var progressHandler = new Progress<double>(p => Progress = p);
+
             try
             {
                 // Get messages
-                var messages = await _dataService.GetChannelMessagesAsync(token, channel.Id, from, to);
+                var messages = await _dataService.GetChannelMessagesAsync(token, channel.Id, from, to, progressHandler);
 
                 // Group messages
                 var messageGroups = _messageGroupService.GroupMessages(messages);
@@ -253,6 +269,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                 MessengerInstance.Send(new ShowNotificationMessage("You don't have access to this channel"));
             }
 
+            Progress = 0;
             IsBusy = false;
         }
     }

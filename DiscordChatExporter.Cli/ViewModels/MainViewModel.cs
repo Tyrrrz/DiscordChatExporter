@@ -21,8 +21,8 @@ namespace DiscordChatExporter.Cli.ViewModels
             _exportService = exportService;
         }
 
-        public async Task ExportAsync(string token, string channelId, string filePath, ExportFormat format, DateTime? from,
-            DateTime? to)
+        public async Task ExportAsync(string token, string channelId, string filePath, ExportFormat format,
+            DateTime? from, DateTime? to)
         {
             // Get channel and guild
             var channel = await _dataService.GetChannelAsync(token, channelId);

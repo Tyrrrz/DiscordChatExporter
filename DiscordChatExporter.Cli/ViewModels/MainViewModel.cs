@@ -37,12 +37,8 @@ namespace DiscordChatExporter.Cli.ViewModels
                     .Replace(Path.GetInvalidFileNameChars(), '_');
             }
 
-            // Create progress handler
-            // TODO
-            var progressHandler = new Progress<double>(p => { });
-
             // Get messages
-            var messages = await _dataService.GetChannelMessagesAsync(token, channel.Id, from, to, progressHandler);
+            var messages = await _dataService.GetChannelMessagesAsync(token, channel.Id, from, to);
 
             // Group messages
             var messageGroups = _messageGroupService.GroupMessages(messages);

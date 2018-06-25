@@ -90,7 +90,7 @@ namespace DiscordChatExporter.Core.Services
         }
 
         public async Task<IReadOnlyList<Message>> GetChannelMessagesAsync(string token, string channelId,
-            DateTime? from, DateTime? to, IProgress<double> progress)
+            DateTime? from = null, DateTime? to = null, IProgress<double> progress = null)
         {
             var result = new List<Message>();
 
@@ -106,7 +106,7 @@ namespace DiscordChatExporter.Core.Services
                 "limit=1", $"before={lastId}");
             var lastMessage = response.Select(ParseMessage).FirstOrDefault();
 
-            // If the last message doesn't exist or it's outside range - return
+            // If the last message doesn't exist or it's outside of range - return
             if (lastMessage == null || lastMessage.Timestamp < from)
             {
                 progress?.Report(1);
@@ -115,35 +115,40 @@ namespace DiscordChatExporter.Core.Services
 
             // Get other messages
             var offsetId = firstId;
-            while (offsetId != null)
+            while (true)
             {
                 // Get message batch
                 response = await GetApiResponseAsync(token, "channels", $"{channelId}/messages",
                     "limit=100", $"after={offsetId}");
 
                 // Parse
-                var messages = response.Select(ParseMessage).Reverse();
+                var messages = response
+                    .Select(ParseMessage)
+                    .Reverse() // reverse because messages appear newest first
+                    .ToArray();
 
-                // Loop through messages
-                foreach (var message in messages)
-                {
-                    // If reached last message - break and stop
-                    if (message.Id == lastMessage.Id)
-                    {
-                        offsetId = null;
-                        break;
-                    }
+                // Break if there are no messages (can happen if messages are deleted during execution)
+                if (!messages.Any())
+                    break;
 
-                    // Add message
-                    result.Add(message);
+                // Trim messages to range (until last message)
+                var messagesInRange = messages
+                    .TakeWhile(m => m.Id != lastMessage.Id && m.Timestamp < lastMessage.Timestamp)
+                    .ToArray();
 
-                    // Move offset
-                    offsetId = message.Id;
+                // Add to result
+                result.AddRange(messagesInRange);
 
-                    // Report progress based on timespan of messages parsed
-                    progress?.Report((message.Timestamp - result.First().Timestamp).TotalSeconds /
-                                     (lastMessage.Timestamp - result.First().Timestamp).TotalSeconds);
-                }
+                // Break if messages were trimmed (which means the last message was encountered)
+                if (messagesInRange.Length != messages.Length)
+                    break;
+
+                // Report progress (based on the time range of parsed messages compared to total)
+                progress?.Report((result.Last().Timestamp - result.First().Timestamp).TotalSeconds /
+                                 (lastMessage.Timestamp - result.First().Timestamp).TotalSeconds);
+
+                // Move offset
+                offsetId = result.Last().Id;
             }
 
             // Add last message

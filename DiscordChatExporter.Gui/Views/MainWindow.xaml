@@ -126,27 +126,28 @@
                                         <materialDesign:TransitioningContent.OpeningEffect>
                                             <materialDesign:TransitionEffect Kind="SlideInFromLeft" Duration="0:0:0.3" />
                                         </materialDesign:TransitioningContent.OpeningEffect>
-                                        <Border
+                                        <Grid
                                             Margin="-8"
                                             Background="Transparent"
-                                            Cursor="Hand">
-                                            <Image
+                                            Cursor="Hand"
+                                            ToolTip="{Binding Name}">
+                                            <!--  Guild icon placeholder  -->
+                                            <Ellipse
                                                 Width="48"
                                                 Height="48"
                                                 Margin="12,4,12,4"
-                                                Source="{Binding IconUrl}"
-                                                ToolTip="{Binding Name}">
-                                                <Image.OpacityMask>
-                                                    <RadialGradientBrush>
-                                                        <RadialGradientBrush.GradientStops>
-                                                            <GradientStop Offset="0" Color="#FF000000" />
-                                                            <GradientStop Offset="0.96" Color="#FF000000" />
-                                                            <GradientStop Offset="1" Color="#00000000" />
-                                                        </RadialGradientBrush.GradientStops>
-                                                    </RadialGradientBrush>
-                                                </Image.OpacityMask>
-                                            </Image>
-                                        </Border>
+                                                Fill="{DynamicResource DividerBrush}" />
+
+                                            <!--  Guild icon  -->
+                                            <Ellipse
+                                                Width="48"
+                                                Height="48"
+                                                Margin="12,4,12,4">
+                                                <Ellipse.Fill>
+                                                    <ImageBrush ImageSource="{Binding IconUrl}" />
+                                                </Ellipse.Fill>
+                                            </Ellipse>
+                                        </Grid>
                                     </materialDesign:TransitioningContent>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>

@@ -268,6 +268,10 @@ namespace DiscordChatExporter.Gui.ViewModels
             {
                 MessengerInstance.Send(new ShowNotificationMessage("You don't have access to this channel"));
             }
+            catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+            {
+                MessengerInstance.Send(new ShowNotificationMessage("This channel doesn't exist"));
+            }
 
             Progress = 0;
             IsBusy = false;

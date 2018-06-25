@@ -1,26 +1,20 @@
-﻿using System;
-
-namespace DiscordChatExporter.Core.Models
+﻿namespace DiscordChatExporter.Core.Models
 {
+    // https://discordapp.com/developers/docs/resources/channel#reaction-object
+
     public class Reaction
     {
         public int Count { get; }
 
-        public bool Me { get; }
+        public string EmojiId { get; }
 
-        public string Id { get; }
+        public string EmojiName { get; }
 
-        public string Name { get; }
-
-        public string Emoji { get; }
-
-        public Reaction(int count, bool me, string id, string name) 
+        public Reaction(int count, string emojiId, string emojiName) 
         {
             Count = count;
-            Me = me;
-            Id = id;
-            Name = name;
-            Emoji = (id == "" ? name : $"<:{name}:{id}>");
+            EmojiId = emojiId;
+            EmojiName = emojiName;
         }
     }
 }

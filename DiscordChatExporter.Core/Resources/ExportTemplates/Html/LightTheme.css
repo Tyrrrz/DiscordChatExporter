@@ -51,5 +51,9 @@ a {
 }
 
 .chatlog__reaction {
-    background-color: rgba(79, 84, 92, 0.0588235);
+    background-color: #4f545c0f;
+}
+
+.chatlog__reaction-count {
+    color: #99aab5;
 }

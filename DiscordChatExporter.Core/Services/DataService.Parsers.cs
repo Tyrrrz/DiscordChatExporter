@@ -141,11 +141,10 @@ namespace DiscordChatExporter.Core.Services
         private Reaction ParseReaction(JToken json)
         {
             var count = json["count"].Value<int>();
-            var me = json["me"].Value<bool>();
-            var id = json["emoji"]["id"]?.ToString();
-            var name = json["emoji"]["name"].ToString();
+            var emojiId = json["emoji"]["id"]?.Value<string>();
+            var emojiName = json["emoji"]["name"].Value<string>();
 
-            return new Reaction(count, me, id, name);
+            return new Reaction(count, emojiId, emojiName);
         }
 
         private Message ParseMessage(JToken json)

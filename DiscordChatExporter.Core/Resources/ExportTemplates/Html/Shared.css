@@ -38,10 +38,15 @@ img {
     margin-right: 1px;
     width: 24px;
     height: 24px;
-    vertical-align: -.4em;
+    vertical-align: middle;
 }
 
-.emoji-jumboable {
+.emoji--small {
+    width: 16px;
+    height: 16px;
+}
+
+.emoji--large {
     width: 32px;
     height: 32px;
 }
@@ -286,23 +291,21 @@ img {
 }
 
 .chatlog__reactions {
-    display: flex;
+    display: flex;    
 }
 
 .chatlog__reaction {
-    margin: 2px;
+    margin: 6px 2px 2px 2px;
+    padding: 2px 6px 2px 2px;
     border-radius: 3px;
-    display: block;
-    padding-right: 6px;
 }
 
 .chatlog__reaction-emoji {
-    display: inline;
     margin-left: 3px;
-    padding-right: 3px;
-    font-size: large;
+    vertical-align: middle;
 }
 
 .chatlog__reaction-count {
-    display: inline;
+    font-size: .875em;
+    vertical-align: middle;
 }

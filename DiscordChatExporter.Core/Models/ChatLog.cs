@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DiscordChatExporter.Core.Models
@@ -9,17 +10,23 @@ namespace DiscordChatExporter.Core.Models
 
         public Channel Channel { get; }
 
+        public DateTime? From { get; }
+
+        public DateTime? To { get; }
+
         public IReadOnlyList<MessageGroup> MessageGroups { get; }
 
         public int TotalMessageCount => MessageGroups.Sum(g => g.Messages.Count);
 
         public Mentionables Mentionables { get; }
 
-        public ChatLog(Guild guild, Channel channel, IReadOnlyList<MessageGroup> messageGroups,
-            Mentionables mentionables)
+        public ChatLog(Guild guild, Channel channel, DateTime? from, DateTime? to,
+            IReadOnlyList<MessageGroup> messageGroups, Mentionables mentionables)
         {
             Guild = guild;
             Channel = channel;
+            From = from;
+            To = to;
             MessageGroups = messageGroups;
             Mentionables = mentionables;
         }

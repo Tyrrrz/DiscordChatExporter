@@ -47,7 +47,7 @@ namespace DiscordChatExporter.Cli.ViewModels
             var mentionables = await _dataService.GetMentionablesAsync(token, guild.Id, messages);
 
             // Create log
-            var log = new ChatLog(guild, channel, messageGroups, mentionables);
+            var log = new ChatLog(guild, channel, from, to, messageGroups, mentionables);
 
             // Export
             _exportService.Export(format, filePath, log);

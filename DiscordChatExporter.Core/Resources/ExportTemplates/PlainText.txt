@@ -3,6 +3,7 @@ Guild:    {{ Guild.Name }}
 Channel:  {{ Channel.Name }}
 Topic:    {{ Channel.Topic }}
 Messages: {{ TotalMessageCount | Format "N0" }}
+Range:    {{ if From }}{{ From | FormatDate }} {{ end }}{{ if From || To }}->{{ end }}{{ if To }} {{ To | FormatDate }}{{ end }}
 ==============================================================
 
 {{~ for group in MessageGroups ~}}

@@ -65,8 +65,8 @@ img {
 }
 
 .info__guild-icon {
-    max-width: 64px;
-    max-height: 64px;
+    max-width: 88px;
+    max-height: 88px;
 }
 
 .info__metadata {
@@ -87,6 +87,10 @@ img {
 }
 
 .info__channel-message-count {
+    margin-top: 2px;
+}
+
+.info__channel-date-range {
     margin-top: 2px;
 }
 

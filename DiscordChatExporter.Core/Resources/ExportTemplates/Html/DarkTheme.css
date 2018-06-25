@@ -9,14 +9,13 @@ a {
     color: #0096cf;
 }
 
-.pre-multiline {
-    background-color: #2F3136;
-    border-color: #282b30;
-    color: #839496;
+.pre {
+    background-color: #2f3136;
 }
 
-.pre-inline {
-    background-color: #2f3136;
+.pre--multiline {
+    border-color: #282b30;
+    color: #839496;
 }
 
 .mention {

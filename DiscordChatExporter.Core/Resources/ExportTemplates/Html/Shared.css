@@ -17,20 +17,21 @@ img {
     object-fit: contain;
 }
 
-.pre-multiline {
-    margin-top: 4px;
-    padding: 8px;
-    border: 2px solid;
-    border-radius: 5px;
+.pre {
     font-family: "Consolas", "Courier New", Courier, Monospace;
     white-space: pre-wrap;
 }
 
-.pre-inline {
+.pre--multiline {
+    margin-top: 4px;
+    padding: 8px;
+    border: 2px solid;
+    border-radius: 5px;    
+}
+
+.pre--inline {
     padding: 2px;
     border-radius: 3px;
-    font-family: "Consolas", "Courier New", Courier, Monospace;
-    white-space: pre-wrap;
 }
 
 .emoji {

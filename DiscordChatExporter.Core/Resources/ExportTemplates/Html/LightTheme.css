@@ -9,13 +9,12 @@ a {
     color: #00b0f4;
 }
 
-.pre-multiline {
+.pre {
     background-color: #f9f9f9;
-    color: #657b83;
 }
 
-.pre-inline {
-    background-color: #f9f9f9;
+.pre--multiline {
+    color: #657b83;
 }
 
 /* === INFO === */

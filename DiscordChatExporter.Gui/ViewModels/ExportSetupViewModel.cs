@@ -93,6 +93,12 @@ namespace DiscordChatExporter.Gui.ViewModels
             // Save format
             _settingsService.LastExportFormat = SelectedFormat;
 
+            // Clamp 'from' and 'to' values
+            if (From > To)
+                From = To;
+            if (To < From)
+                To = From;
+
             // Start export
             MessengerInstance.Send(new StartExportMessage(Channel, FilePath, SelectedFormat, From, To));
         }

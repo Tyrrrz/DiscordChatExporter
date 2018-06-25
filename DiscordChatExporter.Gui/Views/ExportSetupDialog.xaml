@@ -36,18 +36,22 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <DatePicker
+                x:Name="FromDatePicker"
                 Grid.Row="0"
                 Grid.Column="0"
                 Margin="16,20,8,8"
                 materialDesign:HintAssist.Hint="From (optional)"
                 materialDesign:HintAssist.IsFloating="True"
+                DisplayDateEnd="{Binding SelectedDate, ElementName=ToDatePicker}"
                 SelectedDate="{Binding From}" />
             <DatePicker
+                x:Name="ToDatePicker"
                 Grid.Row="0"
                 Grid.Column="1"
                 Margin="8,20,16,8"
                 materialDesign:HintAssist.Hint="To (optional)"
                 materialDesign:HintAssist.IsFloating="True"
+                DisplayDateStart="{Binding SelectedDate, ElementName=FromDatePicker}"
                 SelectedDate="{Binding To}" />
         </Grid>
 

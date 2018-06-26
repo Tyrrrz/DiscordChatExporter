@@ -61,6 +61,18 @@ namespace DiscordChatExporter.Core.Services
             return new Role(id, name);
         }
 
+        private Attachment ParseAttachment(JToken json)
+        {
+            var id = json["id"].Value<string>();
+            var url = json["url"].Value<string>();
+            var width = json["width"]?.Value<int>();
+            var height = json["height"]?.Value<int>();
+            var fileName = json["filename"].Value<string>();
+            var fileSize = json["size"].Value<long>();
+
+            return new Attachment(id, width, height, url, fileName, fileSize);
+        }
+
         private EmbedAuthor ParseEmbedAuthor(JToken json)
         {
             var name = json["name"]?.Value<string>();
@@ -79,24 +91,13 @@ namespace DiscordChatExporter.Core.Services
             return new EmbedField(name, value, isInline);
         }
 
-        private Attachment ParseAttachment(JToken json)
-        {
-            var id = json["id"].Value<string>();
-            var url = json["url"].Value<string>();
-            var isImage = json["width"] != null;
-            var fileName = json["filename"].Value<string>();
-            var fileSize = json["size"].Value<long>();
-
-            return new Attachment(id, isImage, url, fileName, fileSize);
-        }
-
         private EmbedImage ParseEmbedImage(JToken json)
         {
             var url = json["url"]?.Value<string>();
-            var height = json["height"]?.Value<int>();
             var width = json["width"]?.Value<int>();
+            var height = json["height"]?.Value<int>();
 
-            return new EmbedImage(url, height, width);
+            return new EmbedImage(url, width, height);
         }
 
         private EmbedFooter ParseEmbedFooter(JToken json)
@@ -187,7 +188,6 @@ namespace DiscordChatExporter.Core.Services
 
             // Get mentioned users
             var mentionedUsers = json["mentions"].EmptyIfNull().Select(ParseUser).ToArray();
-
 
             return new Message(id, channelId, type, author, timestamp, editedTimestamp, content, attachments, embeds,
                 reactions, mentionedUsers);

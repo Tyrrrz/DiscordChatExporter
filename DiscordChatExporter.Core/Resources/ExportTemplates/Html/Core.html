@@ -27,11 +27,11 @@
         {{ if From || To }}
             <div class="info__channel-date-range">
                 {{ if From && To }}
-                    Between {{ From | FormatDate }} and {{ To | FormatDate }}
+                    Between {{ From | FormatDate | HtmlEncode }} and {{ To | FormatDate | HtmlEncode }}
                 {{ else if From }}
-                    After {{ From | FormatDate }}
+                    After {{ From | FormatDate | HtmlEncode }}
                 {{ else if To }}
-                    Before {{ To | FormatDate }}
+                    Before {{ To | FormatDate | HtmlEncode }}
                 {{ end }}
             </div>
         {{ end }}

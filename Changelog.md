@@ -1,3 +1,15 @@
+### v2.5 (28-Jun-2018)
+
+- Added support for embeds and webhooks (HTML only).
+- Implemented progress reporting when downloading messages.
+- Added support for reactions (HTML only).
+- Selected date range is now shown in the export (HTML and PlainText).
+- Added placeholders for guild icons to display while the icons are loading.
+- Added support for jumbo emojis (custom emojis only).
+- Added basic retry policy for 429 error responses.
+- Added validation for from/to dates in the UI which prevents choosing invalid date ranges.
+- Added an error message when trying to export a deleted channel.
+
 ### v2.4.1 (15-Apr-2018)
 
 - Added CSV export format.

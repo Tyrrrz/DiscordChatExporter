@@ -7,6 +7,7 @@ using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Models;
 using Newtonsoft.Json.Linq;
 using DiscordChatExporter.Core.Internal;
+using Polly;
 
 namespace DiscordChatExporter.Core.Services
 {
@@ -25,20 +26,28 @@ namespace DiscordChatExporter.Core.Services
             foreach (var parameter in parameters)
                 url += $"&{parameter}";
 
+            // Create request policy
+            var policy = Policy
+                .Handle<HttpErrorStatusCodeException>(e => (int) e.StatusCode == 429)
+                .WaitAndRetryAsync(10, i => TimeSpan.FromSeconds(0.4));
+
             // Send request
-            using (var response = await _httpClient.GetAsync(url))
+            return await policy.ExecuteAsync(async () =>
             {
-                // Check status code
-                // We throw our own exception here because default one doesn't have status code
-                if (!response.IsSuccessStatusCode)
-                    throw new HttpErrorStatusCodeException(response.StatusCode);
+                using (var response = await _httpClient.GetAsync(url))
+                {
+                    // Check status code
+                    // We throw our own exception here because default one doesn't have status code
+                    if (!response.IsSuccessStatusCode)
+                        throw new HttpErrorStatusCodeException(response.StatusCode, response.ReasonPhrase);
 
-                // Get content
-                var raw = await response.Content.ReadAsStringAsync();
+                    // Get content
+                    var raw = await response.Content.ReadAsStringAsync();
 
-                // Parse
-                return JToken.Parse(raw);
-            }
+                    // Parse
+                    return JToken.Parse(raw);
+                }
+            });
         }
 
         public async Task<Guild> GetGuildAsync(string token, string guildId)

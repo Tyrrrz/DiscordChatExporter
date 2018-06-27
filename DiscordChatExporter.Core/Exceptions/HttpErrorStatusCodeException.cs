@@ -7,9 +7,13 @@ namespace DiscordChatExporter.Core.Exceptions
     {
         public HttpStatusCode StatusCode { get; }
 
-        public HttpErrorStatusCodeException(HttpStatusCode statusCode)
+        public string ReasonPhrase { get; }
+
+        public HttpErrorStatusCodeException(HttpStatusCode statusCode, string reasonPhrase)
+            : base($"Error HTTP status code: {statusCode} - {reasonPhrase}")
         {
             StatusCode = statusCode;
+            ReasonPhrase = reasonPhrase;
         }
     }
 }

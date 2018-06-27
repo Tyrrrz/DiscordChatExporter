@@ -45,9 +45,9 @@
             {{~ # Avatar }}
             <div class="chatlog__author-avatar-container">
                 <img class="chatlog__author-avatar" src="{{ group.Author.AvatarUrl }}" />
-            </div>
-            {{~ # Author name and timestamp }}
+            </div>            
             <div class="chatlog__messages">
+                {{~ # Author name and timestamp }}
                 <span class="chatlog__author-name" title="{{ group.Author.FullName | HtmlEncode }}">{{ group.Author.Name | HtmlEncode }}</span>
                 <span class="chatlog__timestamp">{{ group.Timestamp | FormatDate | HtmlEncode }}</span>
 
@@ -93,6 +93,7 @@
                                                 {{ if embed.Author.IconUrl }}
                                                     <img class="chatlog__embed-author-icon" src="{{ embed.Author.IconUrl }}" />
                                                 {{ end }}
+
                                                 {{ if embed.Author.Name }}
                                                     <span class="chatlog__embed-author-name">
                                                         {{ if embed.Author.Url }}
@@ -187,8 +188,10 @@
                         {{ for reaction in message.Reactions }}
                             <div class="chatlog__reaction">
                                 <span class="chatlog__reaction-emoji">
+                                    {{~ # Custom emoji }}
                                     {{ if reaction.EmojiId }}
                                         <img class="emoji emoji--small" title="{{ reaction.EmojiName }}" src="https://cdn.discordapp.com/emojis/{{ reaction.EmojiId }}.png" />
+                                    {{~ # Default emoji }}
                                     {{ else }}
                                         {{ reaction.EmojiName }}
                                     {{ end }}

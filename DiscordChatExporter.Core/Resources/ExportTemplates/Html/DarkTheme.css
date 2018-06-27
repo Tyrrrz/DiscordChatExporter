@@ -76,12 +76,12 @@ a {
     color: #ffffff99;
 }
 
-.chatlog__embed-fields {
-    color: #ffffff99;
-}
-
 .chatlog__embed-field-name {
     color: #ffffff;
+}
+
+.chatlog__embed-field-value {
+    color: #ffffff99;
 }
 
 .chatlog__embed-footer {

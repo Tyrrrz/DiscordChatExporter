@@ -221,8 +221,10 @@ namespace DiscordChatExporter.Core.Services
                 }
 
                 // Custom emojis (<:name:id>)
+                var isJumboable = Regex.Replace(content, "&lt;(:.*?:)(\\d*)&gt;", "").IsBlank();
+                var emojiClass = isJumboable ? "emoji emoji--large" : "emoji";
                 content = Regex.Replace(content, "&lt;(:.*?:)(\\d*)&gt;",
-                    "<img class=\"emoji\" title=\"$1\" src=\"https://cdn.discordapp.com/emojis/$2.png\" />");
+                    $"<img class=\"{emojiClass}\" title=\"$1\" src=\"https://cdn.discordapp.com/emojis/$2.png\" />");
 
                 return content;
             }

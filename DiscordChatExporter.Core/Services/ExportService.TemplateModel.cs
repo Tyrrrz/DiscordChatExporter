@@ -28,8 +28,6 @@ namespace DiscordChatExporter.Core.Services
 
             private string HtmlEncode(string str) => WebUtility.HtmlEncode(str);
 
-            private string HtmlDecode(string str) => WebUtility.HtmlDecode(str);
-
             private string Format(IFormattable obj, string format) =>
                 obj.ToString(format, CultureInfo.InvariantCulture);
 
@@ -312,8 +310,6 @@ namespace DiscordChatExporter.Core.Services
                 scriptObject.Import(_log, TemplateMemberFilter, TemplateMemberRenamer);
 
                 // Import functions
-                scriptObject.Import(nameof(HtmlEncode), new Func<string, string>(HtmlEncode));
-                scriptObject.Import(nameof(HtmlDecode), new Func<string, string>(HtmlDecode));
                 scriptObject.Import(nameof(Format), new Func<IFormattable, string, string>(Format));
                 scriptObject.Import(nameof(FormatDate), new Func<DateTime, string>(FormatDate));
                 scriptObject.Import(nameof(FormatFileSize), new Func<long, string>(FormatFileSize));

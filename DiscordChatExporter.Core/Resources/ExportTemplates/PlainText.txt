@@ -1,4 +1,5 @@
-﻿==============================================================
+﻿{{~ # Info ~}}
+==============================================================
 Guild:    {{ Guild.Name }}
 Channel:  {{ Channel.Name }}
 Topic:    {{ Channel.Topic }}
@@ -6,13 +7,19 @@ Messages: {{ TotalMessageCount | Format "N0" }}
 Range:    {{ if From }}{{ From | FormatDate }} {{ end }}{{ if From || To }}->{{ end }}{{ if To }} {{ To | FormatDate }}{{ end }}
 ==============================================================
 
+{{~ # Log ~}}
 {{~ for group in MessageGroups ~}}
-  {{~ group.Author.FullName }} [{{ group.Timestamp | FormatDate }}]
+  {{~ # Author name and timestamp ~}}
+  {{~ }}[{{ group.Timestamp | FormatDate }}] {{ group.Author.FullName }}
+  {{~ # Messages ~}}
   {{~ for message in group.Messages ~}}
+    {{~ # Content ~}}
     {{~ message.Content | FormatContent }}
+    {{~ # Attachments ~}}
     {{~ for attachment in message.Attachments ~}}
       {{~ attachment.Url }}
     {{~ end ~}}
   {{~ end ~}}
+
 
 {{~ end ~}}

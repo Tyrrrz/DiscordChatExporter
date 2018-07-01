@@ -1,3 +1,9 @@
+### v2.5.1 (01-Jul-2018)
+
+- Fixed a bug that would prevent timestamps from rendering properly in CSV and PlainText exports.
+- Fixed incorrect layout in CSV export.
+- Improved readability of PlainText export.
+
 ### v2.5 (28-Jun-2018)
 
 - Added support for embeds and webhooks (HTML only).

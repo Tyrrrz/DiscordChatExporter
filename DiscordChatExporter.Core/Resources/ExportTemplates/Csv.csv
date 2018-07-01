@@ -1,10 +1,9 @@
 ﻿Author;Date;Content;Attachments;
-
-{{- for group in MessageGroups -}}
+{{~ for group in MessageGroups -}}
   {{- for message in group.Messages -}}
     {{- message.Author.FullName }};
 
-    {{- message.TimeStamp | FormatDate }};
+    {{- message.Timestamp | FormatDate }};
 
     {{- message.Content | FormatContent }};
 

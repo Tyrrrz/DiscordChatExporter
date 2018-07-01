@@ -7,7 +7,7 @@ Range:    {{ if From }}{{ From | FormatDate }} {{ end }}{{ if From || To }}->{{ 
 ==============================================================
 
 {{~ for group in MessageGroups ~}}
-  {{~ group.Author.FullName }} [{{ group.TimeStamp | FormatDate }}]
+  {{~ group.Author.FullName }} [{{ group.Timestamp | FormatDate }}]
   {{~ for message in group.Messages ~}}
     {{~ message.Content | FormatContent }}
     {{~ for attachment in message.Attachments ~}}

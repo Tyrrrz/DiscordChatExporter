@@ -19,7 +19,9 @@ namespace DiscordChatExporter.Core.Models
         public string DefaultAvatarHash => $"{Discriminator % 5}";
 
         public string AvatarUrl => AvatarHash.IsNotBlank()
-            ? $"https://cdn.discordapp.com/avatars/{Id}/{AvatarHash}.png"
+            ? (AvatarHash.Substring(0, 2) == "a_"
+            ? $"https://cdn.discordapp.com/avatars/{Id}/{AvatarHash}.gif"
+            : $"https://cdn.discordapp.com/avatars/{Id}/{AvatarHash}.png")
             : $"https://cdn.discordapp.com/embed/avatars/{DefaultAvatarHash}.png";
 
         public User(string id, int discriminator, string name, string avatarHash)

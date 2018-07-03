@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>{{ Guild.Name | html.escape }} - {{ Channel.Name | html.escape }}</title>
+    <title>{{ Model.Guild.Name | html.escape }} - {{ Model.Channel.Name | html.escape }}</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <style>
@@ -14,26 +14,26 @@
 {{~ # Info ~}}
 <div class="info">
     <div class="info__guild-icon-container">
-        <img class="info__guild-icon" src="{{ Guild.IconUrl }}" />
+        <img class="info__guild-icon" src="{{ Model.Guild.IconUrl }}" />
     </div>
     <div class="info__metadata">
-        <div class="info__guild-name">{{ Guild.Name | html.escape }}</div>
-        <div class="info__channel-name">{{ Channel.Name | html.escape }}</div>
+        <div class="info__guild-name">{{ Model.Guild.Name | html.escape }}</div>
+        <div class="info__channel-name">{{ Model.Channel.Name | html.escape }}</div>
         
-        {{~ if Channel.Topic ~}}
-            <div class="info__channel-topic">{{ Channel.Topic | html.escape }}</div>
+        {{~ if Model.Channel.Topic ~}}
+            <div class="info__channel-topic">{{ Model.Channel.Topic | html.escape }}</div>
         {{~ end ~}}
 
-        <div class="info__channel-message-count">{{ TotalMessageCount | Format "N0" }} messages</div>
+        <div class="info__channel-message-count">{{ Model.TotalMessageCount | Format "N0" }} messages</div>
         
-        {{~ if From || To ~}}
+        {{~ if Model.From || Model.To ~}}
             <div class="info__channel-date-range">
-                {{~ if From && To ~}}
-                    Between {{ From | FormatDate | html.escape }} and {{ To | FormatDate | html.escape }}
-                {{~ else if From ~}}
-                    After {{ From | FormatDate | html.escape }}
-                {{~ else if To ~}}
-                    Before {{ To | FormatDate | html.escape }}
+                {{~ if Model.From && Model.To ~}}
+                    Between {{ Model.From | FormatDate | html.escape }} and {{ Model.To | FormatDate | html.escape }}
+                {{~ else if Model.From ~}}
+                    After {{ Model.From | FormatDate | html.escape }}
+                {{~ else if Model.To ~}}
+                    Before {{ Model.To | FormatDate | html.escape }}
                 {{~ end ~}}
             </div>
         {{~ end ~}}
@@ -42,7 +42,7 @@
 
 {{~ # Log ~}}
 <div class="chatlog">
-    {{~ for group in MessageGroups ~}}
+    {{~ for group in Model.MessageGroups ~}}
         <div class="chatlog__message-group">
             {{~ # Avatar ~}}
             <div class="chatlog__author-avatar-container">

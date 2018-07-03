@@ -1,5 +1,5 @@
 ﻿Author;Date;Content;Attachments;
-{{~ for group in MessageGroups -}}
+{{~ for group in Model.MessageGroups -}}
   {{- for message in group.Messages -}}
     {{- message.Author.FullName }};
 

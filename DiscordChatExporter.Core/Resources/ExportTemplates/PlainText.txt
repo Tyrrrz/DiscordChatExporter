@@ -1,14 +1,14 @@
 ﻿{{~ # Info ~}}
 ==============================================================
-Guild:    {{ Guild.Name }}
-Channel:  {{ Channel.Name }}
-Topic:    {{ Channel.Topic }}
-Messages: {{ TotalMessageCount | Format "N0" }}
-Range:    {{ if From }}{{ From | FormatDate }} {{ end }}{{ if From || To }}->{{ end }}{{ if To }} {{ To | FormatDate }}{{ end }}
+Guild:    {{ Model.Guild.Name }}
+Channel:  {{ Model.Channel.Name }}
+Topic:    {{ Model.Channel.Topic }}
+Messages: {{ Model.TotalMessageCount | Format "N0" }}
+Range:    {{ if Model.From }}{{ Model.From | FormatDate }} {{ end }}{{ if Model.From || Model.To }}->{{ end }}{{ if Model.To }} {{ Model.To | FormatDate }}{{ end }}
 ==============================================================
 
 {{~ # Log ~}}
-{{~ for group in MessageGroups ~}}
+{{~ for group in Model.MessageGroups ~}}
   {{~ # Author name and timestamp ~}}
   {{~ }}[{{ group.Timestamp | FormatDate }}] {{ group.Author.FullName }}
   {{~ # Messages ~}}

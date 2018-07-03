@@ -307,7 +307,7 @@ namespace DiscordChatExporter.Core.Services
                 var scriptObject = new ScriptObject();
 
                 // Import chat log
-                scriptObject.Import(_log, TemplateMemberFilter, TemplateMemberRenamer);
+                scriptObject.SetValue("Model", _log, true);
 
                 // Import functions
                 scriptObject.Import(nameof(Format), new Func<IFormattable, string, string>(Format));

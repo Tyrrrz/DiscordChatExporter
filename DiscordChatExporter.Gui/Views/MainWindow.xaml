@@ -56,16 +56,21 @@
                                 <!--  Token type  -->
                                 <ToggleButton
                                     Grid.Column="0"
-                                    Background="Transparent"
-                                    Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                    Margin="6"
                                     IsChecked="{Binding IsBotToken}"
-                                    Style="{StaticResource MaterialDesignActionToggleButton}"
-                                    ToolTip="Toggle between bot token and user (self-bot) token">
+                                    Style="{StaticResource MaterialDesignFlatActionToggleButton}"
+                                    ToolTip="Switch between user token and bot token">
                                     <ToggleButton.Content>
-                                        <materialDesign:PackIcon Kind="Account" />
+                                        <materialDesign:PackIcon
+                                            Width="24"
+                                            Height="24"
+                                            Kind="Account" />
                                     </ToggleButton.Content>
                                     <materialDesign:ToggleButtonAssist.OnContent>
-                                        <materialDesign:PackIcon Kind="Robot" />
+                                        <materialDesign:PackIcon
+                                            Width="24"
+                                            Height="24"
+                                            Kind="Robot" />
                                     </materialDesign:ToggleButtonAssist.OnContent>
                                 </ToggleButton>
 
@@ -73,7 +78,7 @@
                                 <TextBox
                                     x:Name="TokenValueTextBox"
                                     Grid.Column="1"
-                                    Margin="6"
+                                    Margin="2,6,6,7"
                                     materialDesign:HintAssist.Hint="Token"
                                     materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
                                     materialDesign:TextFieldAssist.TextBoxViewMargin="0,0,2,0"

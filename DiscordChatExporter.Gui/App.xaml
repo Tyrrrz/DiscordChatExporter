@@ -96,6 +96,21 @@
                 <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
             </Style>
 
+            <Style
+                x:Key="MaterialDesignFlatActionToggleButton"
+                BasedOn="{StaticResource MaterialDesignActionToggleButton}"
+                TargetType="{x:Type ToggleButton}">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryHueMidBrush}" />
+
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource MaterialDesignFlatButtonClick}" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource MaterialDesignFlatButtonClick}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
             <!--  Converters  -->
             <converters:ExportFormatToStringConverter x:Key="ExportFormatToStringConverter" />
 

@@ -48,15 +48,31 @@
                             Margin="6,6,0,6">
                             <Grid>
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
+
+                                <!--  Token type  -->
+                                <ToggleButton
+                                    Grid.Column="0"
+                                    Background="Transparent"
+                                    Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                    IsChecked="{Binding IsBotToken}"
+                                    Style="{StaticResource MaterialDesignActionToggleButton}"
+                                    ToolTip="Toggle between bot token and user (self-bot) token">
+                                    <ToggleButton.Content>
+                                        <materialDesign:PackIcon Kind="Account" />
+                                    </ToggleButton.Content>
+                                    <materialDesign:ToggleButtonAssist.OnContent>
+                                        <materialDesign:PackIcon Kind="Robot" />
+                                    </materialDesign:ToggleButtonAssist.OnContent>
+                                </ToggleButton>
 
                                 <!--  Token value  -->
                                 <TextBox
                                     x:Name="TokenValueTextBox"
-                                    Grid.Column="0"
+                                    Grid.Column="1"
                                     Margin="6"
                                     materialDesign:HintAssist.Hint="Token"
                                     materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
@@ -64,14 +80,6 @@
                                     BorderThickness="0"
                                     FontSize="16"
                                     Text="{Binding TokenValue, UpdateSourceTrigger=PropertyChanged}" />
-
-                                <!--  Token type  -->
-                                <ComboBox
-                                    Grid.Column="1"
-                                    Margin="4"
-                                    IsReadOnly="True"
-                                    ItemsSource="{Binding AvailableTokenTypes}"
-                                    SelectedItem="{Binding TokenType}" />
 
                                 <!--  Pull data button  -->
                                 <Button

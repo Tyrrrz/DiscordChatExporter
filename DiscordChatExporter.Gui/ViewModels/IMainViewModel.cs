@@ -12,8 +12,7 @@ namespace DiscordChatExporter.Gui.ViewModels
         bool IsProgressIndeterminate { get; }
         double Progress { get; }
 
-        IReadOnlyList<AuthTokenType> AvailableTokenTypes { get; }
-        AuthTokenType TokenType { get; set; }
+        bool IsBotToken { get; set; }
         string TokenValue { get; set; }
 
         IReadOnlyList<Guild> AvailableGuilds { get; }

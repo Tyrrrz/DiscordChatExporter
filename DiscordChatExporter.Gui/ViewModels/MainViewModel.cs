@@ -26,11 +26,11 @@ namespace DiscordChatExporter.Gui.ViewModels
 
         private bool _isBusy;
         private double _progress;
+        private bool _isBotToken;
         private string _tokenValue;
         private IReadOnlyList<Guild> _availableGuilds;
         private Guild _selectedGuild;
         private IReadOnlyList<Channel> _availableChannels;
-        private AuthTokenType _tokenType;
 
         public bool IsBusy
         {
@@ -57,13 +57,10 @@ namespace DiscordChatExporter.Gui.ViewModels
             }
         }
 
-        public IReadOnlyList<AuthTokenType> AvailableTokenTypes =>
-            Enum.GetValues(typeof(AuthTokenType)).Cast<AuthTokenType>().ToArray();
-
-        public AuthTokenType TokenType
+        public bool IsBotToken
         {
-            get => _tokenType;
-            set => Set(ref _tokenType, value);
+            get => _isBotToken;
+            set => Set(ref _isBotToken, value);
         }
 
         public string TokenValue
@@ -145,7 +142,7 @@ namespace DiscordChatExporter.Gui.ViewModels
             // Get last token
             if (_settingsService.LastToken != null)
             {
-                TokenType = _settingsService.LastToken.Type;
+                IsBotToken = _settingsService.LastToken.Type == AuthTokenType.Bot;
                 TokenValue = _settingsService.LastToken.Value;
             }
 
@@ -184,7 +181,7 @@ namespace DiscordChatExporter.Gui.ViewModels
             IsBusy = true;
 
             // Copy token so it doesn't get mutated
-            var token = new AuthToken(TokenType, TokenValue);
+            var token = new AuthToken(IsBotToken ? AuthTokenType.Bot : AuthTokenType.SelfBot, TokenValue);
 
             // Save token
             _settingsService.LastToken = token;

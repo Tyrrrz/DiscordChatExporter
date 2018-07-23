@@ -1,18 +1,25 @@
-﻿==============================================================
-Guild:    {{ Guild.Name }}
-Channel:  {{ Channel.Name }}
-Topic:    {{ Channel.Topic }}
-Messages: {{ TotalMessageCount | Format "N0" }}
-Range:    {{ if From }}{{ From | FormatDate }} {{ end }}{{ if From || To }}->{{ end }}{{ if To }} {{ To | FormatDate }}{{ end }}
+﻿{{~ # Info ~}}
+==============================================================
+Guild:    {{ Model.Guild.Name }}
+Channel:  {{ Model.Channel.Name }}
+Topic:    {{ Model.Channel.Topic }}
+Messages: {{ Model.TotalMessageCount | Format "N0" }}
+Range:    {{ if Model.From }}{{ Model.From | FormatDate }} {{ end }}{{ if Model.From || Model.To }}->{{ end }}{{ if Model.To }} {{ Model.To | FormatDate }}{{ end }}
 ==============================================================
 
-{{~ for group in MessageGroups ~}}
-  {{~ group.Author.FullName }} [{{ group.TimeStamp | FormatDate }}]
+{{~ # Log ~}}
+{{~ for group in Model.MessageGroups ~}}
+  {{~ # Author name and timestamp ~}}
+  {{~ }}[{{ group.Timestamp | FormatDate }}] {{ group.Author.FullName }}
+  {{~ # Messages ~}}
   {{~ for message in group.Messages ~}}
+    {{~ # Content ~}}
     {{~ message.Content | FormatContent }}
+    {{~ # Attachments ~}}
     {{~ for attachment in message.Attachments ~}}
       {{~ attachment.Url }}
     {{~ end ~}}
   {{~ end ~}}
+
 
 {{~ end ~}}

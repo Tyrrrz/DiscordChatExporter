@@ -6,11 +6,11 @@ namespace DiscordChatExporter.Core.Models
     {
         public string Url { get; }
 
-        public int? Height { get; }
-
         public int? Width { get; }
 
-        public EmbedImage(string url, int? height, int? width)
+        public int? Height { get; }
+
+        public EmbedImage(string url, int? width, int? height)
         {
             Url = url;
             Height = height;

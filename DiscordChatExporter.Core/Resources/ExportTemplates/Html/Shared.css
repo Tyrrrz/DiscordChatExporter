@@ -17,31 +17,36 @@ img {
     object-fit: contain;
 }
 
-.pre-multiline {
+.pre {
+    font-family: "Consolas", "Courier New", Courier, Monospace;
+    white-space: pre-wrap;
+}
+
+.pre--multiline {
     margin-top: 4px;
     padding: 8px;
     border: 2px solid;
-    border-radius: 5px;
-    font-family: "Consolas", "Courier New", Courier, Monospace;
-    white-space: pre-wrap;
+    border-radius: 5px;    
 }
 
-.pre-inline {
+.pre--inline {
     padding: 2px;
     border-radius: 3px;
-    font-family: "Consolas", "Courier New", Courier, Monospace;
-    white-space: pre-wrap;
 }
 
 .emoji {
-    margin-left: 1px;
-    margin-right: 1px;
     width: 24px;
     height: 24px;
-    vertical-align: -.4em;
+    margin: 0 1px;
+    vertical-align: middle;
 }
 
-.emoji-jumboable {
+.emoji--small {
+    width: 16px;
+    height: 16px;
+}
+
+.emoji--large {
     width: 32px;
     height: 32px;
 }
@@ -55,9 +60,7 @@ img {
 .info {
     display: flex;
     max-width: 100%;
-    margin-bottom: 10px;
-    margin-left: 5px;
-    margin-right: 5px;
+    margin: 0 5px 10px 5px;    
 }
 
 .info__guild-icon-container {
@@ -102,10 +105,8 @@ img {
 
 .chatlog__message-group {
     display: flex;
-    margin-left: 10px;
-    margin-right: 10px;
-    padding-top: 15px;
-    padding-bottom: 15px;
+    margin: 0 10px;
+    padding: 15px 0;
     border-top: 1px solid;
 }
 
@@ -148,8 +149,7 @@ img {
 }
 
 .chatlog__attachment {
-    margin-top: 5px;
-    margin-bottom: 5px;
+    margin: 5px 0;
 }
 
 .chatlog__attachment-thumbnail {
@@ -174,10 +174,7 @@ img {
 .chatlog__embed-content-container {
     display: flex;
     flex-direction: column;
-    padding-left: 10px;
-    padding-top: 8px;
-    padding-right: 10px;
-    padding-bottom: 8px;
+    padding: 8px 10px;
     border: 1px solid;
     border-top-right-radius: 3px;
     border-bottom-right-radius: 3px;
@@ -283,4 +280,24 @@ img {
 .chatlog__embed-footer-text {
     font-weight: 600;
     font-size: .75em;
+}
+
+.chatlog__reactions {
+    display: flex;    
+}
+
+.chatlog__reaction {
+    margin: 6px 2px 2px 2px;
+    padding: 2px 6px 2px 2px;
+    border-radius: 3px;
+}
+
+.chatlog__reaction-emoji {
+    margin-left: 3px;
+    vertical-align: middle;
+}
+
+.chatlog__reaction-count {
+    font-size: .875em;
+    vertical-align: middle;
 }

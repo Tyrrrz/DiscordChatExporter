@@ -28,8 +28,6 @@ namespace DiscordChatExporter.Core.Services
 
             private string HtmlEncode(string str) => WebUtility.HtmlEncode(str);
 
-            private string HtmlDecode(string str) => WebUtility.HtmlDecode(str);
-
             private string Format(IFormattable obj, string format) =>
                 obj.ToString(format, CultureInfo.InvariantCulture);
 
@@ -146,11 +144,11 @@ namespace DiscordChatExporter.Core.Services
 
                 // Decode and process multiline codeblocks
                 content = Regex.Replace(content, "\x1AM(.*?)\x1AM",
-                    m => $"<div class=\"pre-multiline\">{m.Groups[1].Value.Base64Decode()}</div>");
+                    m => $"<div class=\"pre pre--multiline\">{m.Groups[1].Value.Base64Decode()}</div>");
 
                 // Decode and process inline codeblocks
                 content = Regex.Replace(content, "\x1AI(.*?)\x1AI",
-                    m => $"<span class=\"pre-inline\">{m.Groups[1].Value.Base64Decode()}</span>");
+                    m => $"<span class=\"pre pre--inline\">{m.Groups[1].Value.Base64Decode()}</span>");
 
                 // Decode and process links
                 if (allowLinks)
@@ -221,8 +219,10 @@ namespace DiscordChatExporter.Core.Services
                 }
 
                 // Custom emojis (<:name:id>)
+                var isJumboable = Regex.Replace(content, "&lt;(:.*?:)(\\d*)&gt;", "").IsBlank();
+                var emojiClass = isJumboable ? "emoji emoji--large" : "emoji";
                 content = Regex.Replace(content, "&lt;(:.*?:)(\\d*)&gt;",
-                    "<img class=\"emoji\" title=\"$1\" src=\"https://cdn.discordapp.com/emojis/$2.png\" />");
+                    $"<img class=\"{emojiClass}\" title=\"$1\" src=\"https://cdn.discordapp.com/emojis/$2.png\" />");
 
                 return content;
             }
@@ -307,11 +307,9 @@ namespace DiscordChatExporter.Core.Services
                 var scriptObject = new ScriptObject();
 
                 // Import chat log
-                scriptObject.Import(_log, TemplateMemberFilter, TemplateMemberRenamer);
+                scriptObject.SetValue("Model", _log, true);
 
                 // Import functions
-                scriptObject.Import(nameof(HtmlEncode), new Func<string, string>(HtmlEncode));
-                scriptObject.Import(nameof(HtmlDecode), new Func<string, string>(HtmlDecode));
                 scriptObject.Import(nameof(Format), new Func<IFormattable, string, string>(Format));
                 scriptObject.Import(nameof(FormatDate), new Func<DateTime, string>(FormatDate));
                 scriptObject.Import(nameof(FormatFileSize), new Func<long, string>(FormatFileSize));

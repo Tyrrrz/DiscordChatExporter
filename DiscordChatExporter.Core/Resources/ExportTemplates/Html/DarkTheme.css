@@ -9,14 +9,13 @@ a {
     color: #0096cf;
 }
 
-.pre-multiline {
-    background-color: #2F3136;
-    border-color: #282b30;
-    color: #839496;
+.pre {
+    background-color: #2f3136;
 }
 
-.pre-inline {
-    background-color: #2f3136;
+.pre--multiline {
+    border-color: #282b30;
+    color: #839496;
 }
 
 .mention {
@@ -77,14 +76,22 @@ a {
     color: #ffffff99;
 }
 
-.chatlog__embed-fields {
-    color: #ffffff99;
-}
-
 .chatlog__embed-field-name {
     color: #ffffff;
 }
 
+.chatlog__embed-field-value {
+    color: #ffffff99;
+}
+
 .chatlog__embed-footer {
     color: #ffffff99;
+}
+
+.chatlog__reaction {
+    background-color: #ffffff0a;
+}
+
+.chatlog__reaction-count {
+    color: #ffffff4d;
 }

@@ -41,6 +41,7 @@ DiscordChatExporter can be used to export message history from a [Discord](https
 - [MaterialDesignInXamlToolkit](https://github.com/ButchersBoy/MaterialDesignInXamlToolkit)
 - [Newtonsoft.Json](http://www.newtonsoft.com/json)
 - [Scriban](https://github.com/lunet-io/scriban)
+- [Polly](https://github.com/App-vNext/Polly)
 - [Onova](https://github.com/Tyrrrz/Onova)
 - [FluentCommandLineParser](https://github.com/fclp/fluent-command-line-parser)
 - [Tyrrrz.Extensions](https://github.com/Tyrrrz/Extensions)

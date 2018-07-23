@@ -7,9 +7,6 @@ namespace DiscordChatExporter.Core.Services
 {
     public partial class ExportService : IExportService
     {
-        private static readonly MemberRenamerDelegate TemplateMemberRenamer = m => m.Name;
-        private static readonly MemberFilterDelegate TemplateMemberFilter = m => true;
-
         private readonly ISettingsService _settingsService;
 
         public ExportService(ISettingsService settingsService)
@@ -30,8 +27,10 @@ namespace DiscordChatExporter.Core.Services
             var context = new TemplateContext
             {
                 TemplateLoader = loader,
-                MemberRenamer = TemplateMemberRenamer,
-                MemberFilter = TemplateMemberFilter
+                MemberRenamer = m => m.Name,
+                MemberFilter = m => true,
+                LoopLimit = int.MaxValue,
+                StrictVariables = true
             };
 
             // Create template model

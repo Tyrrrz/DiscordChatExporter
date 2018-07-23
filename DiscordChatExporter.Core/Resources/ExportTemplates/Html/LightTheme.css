@@ -1,7 +1,7 @@
 ﻿/* === GENERAL === */
 
 body {
-    background-color: #fff;
+    background-color: #ffffff;
     color: #737f8d;
 }
 
@@ -9,13 +9,18 @@ a {
     color: #00b0f4;
 }
 
-.pre-multiline {
+.pre {
     background-color: #f9f9f9;
+}
+
+.pre--multiline {
+    border-color: #f3f3f3;
     color: #657b83;
 }
 
-.pre-inline {
-    background-color: #f9f9f9;
+.mention {
+    background-color: #f1f3fb;
+    color: #7289da;
 }
 
 /* === INFO === */
@@ -35,7 +40,7 @@ a {
 /* === CHATLOG === */
 
 .chatlog__message-group {
-    border-top: 1px solid #eceeef;
+    border-color: #eceeef;
 }
 
 .chatlog__author-name {
@@ -47,5 +52,46 @@ a {
 }
 
 .chatlog__edited-timestamp {
+    color: #99aab5;
+}
+
+.chatlog__embed-content-container {
+    background-color: #f9f9f94d;
+    border-color: #cccccc4d;
+}
+
+.chatlog__embed-author-name {
+    color: #4f545c;
+}
+
+.chatlog__embed-author-name-link {
+    color: #4f545c;
+}
+
+.chatlog__embed-title {
+    color: #4f545c;
+}
+
+.chatlog__embed-description {
+    color: #737f8d;
+}
+
+.chatlog__embed-field-name {
+    color: #36393e;
+}
+
+.chatlog__embed-field-value {
+    color: #737f8d;
+}
+
+.chatlog__embed-footer {
+    color: #4f535b99;
+}
+
+.chatlog__reaction {
+    background-color: #4f545c0f;
+}
+
+.chatlog__reaction-count {
     color: #99aab5;
 }

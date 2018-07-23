@@ -25,11 +25,13 @@ namespace DiscordChatExporter.Core.Models
 
         public IReadOnlyList<Embed> Embeds { get; }
 
+        public IReadOnlyList<Reaction> Reactions { get; }
+
         public IReadOnlyList<User> MentionedUsers { get; }
 
         public Message(string id, string channelId, MessageType type, User author, DateTime timestamp,
             DateTime? editedTimestamp, string content, IReadOnlyList<Attachment> attachments,
-            IReadOnlyList<Embed> embeds, IReadOnlyList<User> mentionedUsers)
+            IReadOnlyList<Embed> embeds, IReadOnlyList<Reaction> reactions, IReadOnlyList<User> mentionedUsers)
         {
             Id = id;
             ChannelId = channelId;
@@ -40,6 +42,7 @@ namespace DiscordChatExporter.Core.Models
             Content = content;
             Attachments = attachments;
             Embeds = embeds;
+            Reactions = reactions;
             MentionedUsers = mentionedUsers;
         }
 

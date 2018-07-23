@@ -1,4 +1,5 @@
-﻿using Tyrrrz.Extensions;
+﻿using System;
+using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Models
 {
@@ -14,13 +15,32 @@ namespace DiscordChatExporter.Core.Models
 
         public string FullName => $"{Name}#{Discriminator:0000}";
 
-        public string AvatarHash { get; }
-
         public string DefaultAvatarHash => $"{Discriminator % 5}";
 
-        public string AvatarUrl => AvatarHash.IsNotBlank()
-            ? $"https://cdn.discordapp.com/avatars/{Id}/{AvatarHash}.png"
-            : $"https://cdn.discordapp.com/embed/avatars/{DefaultAvatarHash}.png";
+        public string AvatarHash { get; }
+
+        public bool IsAvatarAnimated =>
+            AvatarHash.IsNotBlank() && AvatarHash.StartsWith("a_", StringComparison.Ordinal);
+
+        public string AvatarUrl
+        {
+            get
+            {
+                // Custom avatar
+                if (AvatarHash.IsNotBlank())
+                {
+                    // Animated
+                    if (IsAvatarAnimated)
+                        return $"https://cdn.discordapp.com/avatars/{Id}/{AvatarHash}.gif";
+
+                    // Non-animated
+                    return $"https://cdn.discordapp.com/avatars/{Id}/{AvatarHash}.png";
+                }
+
+                // Default avatar
+                return $"https://cdn.discordapp.com/embed/avatars/{DefaultAvatarHash}.png";
+            }
+        }
 
         public User(string id, int discriminator, string name, string avatarHash)
         {

@@ -20,29 +20,6 @@ namespace DiscordChatExporter.Core.Services
         private async Task<JToken> GetApiResponseAsync(AuthToken token, string resource, string endpoint,
             params string[] parameters)
         {
-            // Format URL
-            const string apiRoot = "https://discordapp.com/api/v6";
-            var url = $"{apiRoot}/{resource}/{endpoint}";
-
-            // Add parameters
-            foreach (var parameter in parameters)
-            {
-                var key = parameter.SubstringUntil("=");
-                var value = parameter.SubstringAfter("=");
-                url = url.SetQueryParameter(key, value);
-            }
-
-            // Add token parameter if it's a selfbot
-            if (token.Type == AuthTokenType.SelfBot)
-                url = url.SetQueryParameter("token", token.Value);
-
-            // Create request
-            var request = new HttpRequestMessage(HttpMethod.Get, url);
-
-            // Add token header if it's a bot
-            if (token.Type == AuthTokenType.Bot)
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bot", token.Value);
-
             // Create request policy
             var policy = Policy
                 .Handle<HttpErrorStatusCodeException>(e => (int) e.StatusCode == 429)
@@ -51,18 +28,40 @@ namespace DiscordChatExporter.Core.Services
             // Send request
             return await policy.ExecuteAsync(async () =>
             {
-                using (var response = await _httpClient.GetAsync(url))
+                // Create request
+                const string apiRoot = "https://discordapp.com/api/v6";
+                using (var request = new HttpRequestMessage(HttpMethod.Get, $"{apiRoot}/{resource}/{endpoint}"))
                 {
-                    // Check status code
-                    // We throw our own exception here because default one doesn't have status code
-                    if (!response.IsSuccessStatusCode)
-                        throw new HttpErrorStatusCodeException(response.StatusCode, response.ReasonPhrase);
+                    // Add header for the bot token
+                    if (token.Type == AuthTokenType.Bot)
+                        request.Headers.Authorization = new AuthenticationHeaderValue("Bot", token.Value);
 
-                    // Get content
-                    var raw = await response.Content.ReadAsStringAsync();
+                    // Add url parameter for the self-bot token
+                    if (token.Type == AuthTokenType.SelfBot)
+                        request.RequestUri = request.RequestUri.SetQueryParameter("token", token.Value);
 
-                    // Parse
-                    return JToken.Parse(raw);
+                    // Add parameters
+                    foreach (var parameter in parameters)
+                    {
+                        var key = parameter.SubstringUntil("=");
+                        var value = parameter.SubstringAfter("=");
+                        request.RequestUri = request.RequestUri.SetQueryParameter(key, value);
+                    }
+
+                    // Get response
+                    using (var response = await _httpClient.SendAsync(request))
+                    {
+                        // Check status code
+                        // We throw our own exception here because default one doesn't have status code
+                        if (!response.IsSuccessStatusCode)
+                            throw new HttpErrorStatusCodeException(response.StatusCode, response.ReasonPhrase);
+
+                        // Get content
+                        var raw = await response.Content.ReadAsStringAsync();
+
+                        // Parse
+                        return JToken.Parse(raw);
+                    }
                 }
             });
         }

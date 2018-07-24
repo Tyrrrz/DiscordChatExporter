@@ -5,7 +5,9 @@ namespace DiscordChatExporter.Cli
 {
     public class CliOptions
     {
-        public string Token { get; set; }
+        public string TokenValue { get; set; }
+
+        public bool IsBotToken { get; set; }
 
         public string ChannelId { get; set; }
 

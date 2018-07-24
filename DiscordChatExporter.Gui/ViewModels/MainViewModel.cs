@@ -181,8 +181,9 @@ namespace DiscordChatExporter.Gui.ViewModels
             IsBusy = true;
 
             // Create token
-            var tokenType = IsBotToken ? AuthTokenType.Bot : AuthTokenType.User;
-            var token = new AuthToken(tokenType, TokenValue);
+            var token = new AuthToken(
+                IsBotToken ? AuthTokenType.Bot : AuthTokenType.User,
+                TokenValue);
 
             // Save token
             _settingsService.LastToken = token;

@@ -18,6 +18,7 @@ namespace DiscordChatExporter.Cli
             Console.WriteLine($"=== Discord Chat Exporter (Command Line Interface) v{version} ===");
             Console.WriteLine();
             Console.WriteLine("[-t] [--token]       Discord authorization token.");
+            Console.WriteLine("[-b] [--bot]         Whether this is a bot token.");
             Console.WriteLine("[-c] [--channel]     Discord channel ID.");
             Console.WriteLine("[-f] [--format]      Export format. Optional.");
             Console.WriteLine("[-o] [--output]      Output file path. Optional.");
@@ -28,20 +29,27 @@ namespace DiscordChatExporter.Cli
             Console.WriteLine();
             Console.WriteLine($"Available export formats: {availableFormats.JoinToString(", ")}");
             Console.WriteLine();
-            Console.WriteLine("# To get authorization token:");
+            Console.WriteLine("# To get user token:");
             Console.WriteLine(" - Open Discord app");
             Console.WriteLine(" - Log in if you haven't");
-            Console.WriteLine(" - Press Ctrl+Shift+I");
-            Console.WriteLine(" - Navigate to Application tab");
+            Console.WriteLine(" - Press Ctrl+Shift+I to show developer tools");
+            Console.WriteLine(" - Navigate to the Application tab");
             Console.WriteLine(" - Expand Storage > Local Storage > https://discordapp.com");
-            Console.WriteLine(" - Find \"token\" under key and copy the value");
+            Console.WriteLine(" - Find the \"token\" key and copy its value");
+            Console.WriteLine();
+            Console.WriteLine("# To get bot token:");
+            Console.WriteLine(" - Go to Discord developer portal");
+            Console.WriteLine(" - Log in if you haven't");
+            Console.WriteLine(" - Open your application's settings");
+            Console.WriteLine(" - Navigate to the Bot section on the left");
+            Console.WriteLine(" - Under Token click Copy");
             Console.WriteLine();
             Console.WriteLine("# To get channel ID:");
             Console.WriteLine(" - Open Discord app");
             Console.WriteLine(" - Log in if you haven't");
             Console.WriteLine(" - Go to any channel you want to export");
-            Console.WriteLine(" - Press Ctrl+Shift+I");
-            Console.WriteLine(" - Navigate to Console tab");
+            Console.WriteLine(" - Press Ctrl+Shift+I to show developer tools");
+            Console.WriteLine(" - Navigate to the Console tab");
             Console.WriteLine(" - Type \"document.URL\" and press Enter");
             Console.WriteLine(" - Copy the long sequence of numbers after last slash");
         }
@@ -52,7 +60,8 @@ namespace DiscordChatExporter.Cli
 
             var settings = Container.SettingsService;
 
-            argsParser.Setup(o => o.Token).As('t', "token").Required();
+            argsParser.Setup(o => o.TokenValue).As('t', "token").Required();
+            argsParser.Setup(o => o.IsBotToken).As('b', "bot").SetDefault(false);
             argsParser.Setup(o => o.ChannelId).As('c', "channel").Required();
             argsParser.Setup(o => o.ExportFormat).As('f', "format").SetDefault(ExportFormat.HtmlDark);
             argsParser.Setup(o => o.FilePath).As('o', "output").SetDefault(null);
@@ -92,10 +101,15 @@ namespace DiscordChatExporter.Cli
             settings.DateFormat = options.DateFormat;
             settings.MessageGroupLimit = options.MessageGroupLimit;
 
+            // Create token
+            var token = new AuthToken(
+                options.IsBotToken ? AuthTokenType.Bot : AuthTokenType.User,
+                options.TokenValue);
+
             // Export
             var vm = Container.MainViewModel;
             vm.ExportAsync(
-                options.Token,
+                token,
                 options.ChannelId,
                 options.FilePath,
                 options.ExportFormat,

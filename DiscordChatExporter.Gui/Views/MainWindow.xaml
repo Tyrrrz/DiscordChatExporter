@@ -217,33 +217,6 @@
 
                 <!--  Usage instructions  -->
                 <Grid Margin="32,32,8,8" Visibility="{Binding IsDataAvailable, Converter={StaticResource InvertBoolToVisibilityConverter}}">
-                    <!--  Bot token  -->
-                    <StackPanel Visibility="{Binding IsBotToken, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <TextBlock FontSize="18" Text="DiscordChatExporter needs your bot token to work." />
-                        <TextBlock
-                            Margin="0,8,0,0"
-                            FontSize="16"
-                            Text="To obtain it, follow these steps:" />
-                        <TextBlock Margin="8,0,0,0" FontSize="14">
-                            <Run Text="1. Go to Discord developer portal" />
-                            <LineBreak />
-                            <Run Text="2. Log in if you haven't" />
-                            <LineBreak />
-                            <Run Text="3. Open your application's settings" />
-                            <LineBreak />
-                            <Run Text="4. Navigate to the" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Bot" />
-                            <Run Text="section on the left" />
-                            <LineBreak />
-                            <Run Text="5. Under" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Token" />
-                            <Run Text="click" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Copy" />
-                            <LineBreak />
-                            <Run Text="6. Paste the value in the textbox above" />
-                        </TextBlock>
-                    </StackPanel>
-
                     <!--  User token  -->
                     <StackPanel Visibility="{Binding IsBotToken, Converter={StaticResource InvertBoolToVisibilityConverter}}">
                         <TextBlock FontSize="18" Text="DiscordChatExporter needs your user token to work." />
@@ -272,6 +245,33 @@
                             <Run Text="key and copy its value" />
                             <LineBreak />
                             <Run Text="7. Paste the value in the textbox above" />
+                        </TextBlock>
+                    </StackPanel>
+
+                    <!--  Bot token  -->
+                    <StackPanel Visibility="{Binding IsBotToken, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock FontSize="18" Text="DiscordChatExporter needs your bot token to work." />
+                        <TextBlock
+                            Margin="0,8,0,0"
+                            FontSize="16"
+                            Text="To obtain it, follow these steps:" />
+                        <TextBlock Margin="8,0,0,0" FontSize="14">
+                            <Run Text="1. Go to Discord developer portal" />
+                            <LineBreak />
+                            <Run Text="2. Log in if you haven't" />
+                            <LineBreak />
+                            <Run Text="3. Open your application's settings" />
+                            <LineBreak />
+                            <Run Text="4. Navigate to the" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Bot" />
+                            <Run Text="section on the left" />
+                            <LineBreak />
+                            <Run Text="5. Under" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Token" />
+                            <Run Text="click" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Copy" />
+                            <LineBreak />
+                            <Run Text="6. Paste the value in the textbox above" />
                         </TextBlock>
                     </StackPanel>
                 </Grid>

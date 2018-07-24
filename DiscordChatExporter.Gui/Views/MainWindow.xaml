@@ -258,17 +258,18 @@
                             <LineBreak />
                             <Run Text="3. Press" />
                             <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Ctrl+Shift+I" />
+                            <Run Text="to show developer tools" />
                             <LineBreak />
-                            <Run Text="4. Navigate to" />
+                            <Run Text="4. Navigate to the" />
                             <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Application" />
                             <Run Text="tab" />
                             <LineBreak />
                             <Run Text="5. Expand" />
                             <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Storage &gt; Local Storage &gt; https://discordapp.com" />
                             <LineBreak />
-                            <Run Text="6. Find" />
+                            <Run Text="6. Find the" />
                             <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="&quot;token&quot;" />
-                            <Run Text="under key and copy the value" />
+                            <Run Text="key and copy its value" />
                             <LineBreak />
                             <Run Text="7. Paste the value in the textbox above" />
                         </TextBlock>

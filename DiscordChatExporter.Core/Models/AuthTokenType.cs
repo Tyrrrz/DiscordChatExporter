@@ -2,7 +2,7 @@
 {
     public enum AuthTokenType
     {
-        Bot,
-        SelfBot
+        User,
+        Bot
     }
 }

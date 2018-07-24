@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Models;
 using Newtonsoft.Json.Linq;
 using DiscordChatExporter.Core.Internal;
 using Polly;
+using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Services
 {
@@ -15,17 +17,9 @@ namespace DiscordChatExporter.Core.Services
     {
         private readonly HttpClient _httpClient = new HttpClient();
 
-        private async Task<JToken> GetApiResponseAsync(string token, string resource, string endpoint,
+        private async Task<JToken> GetApiResponseAsync(AuthToken token, string resource, string endpoint,
             params string[] parameters)
         {
-            // Format URL
-            const string apiRoot = "https://discordapp.com/api/v6";
-            var url = $"{apiRoot}/{resource}/{endpoint}?token={token}";
-
-            // Add parameters
-            foreach (var parameter in parameters)
-                url += $"&{parameter}";
-
             // Create request policy
             var policy = Policy
                 .Handle<HttpErrorStatusCodeException>(e => (int) e.StatusCode == 429)
@@ -34,23 +28,45 @@ namespace DiscordChatExporter.Core.Services
             // Send request
             return await policy.ExecuteAsync(async () =>
             {
-                using (var response = await _httpClient.GetAsync(url))
+                // Create request
+                const string apiRoot = "https://discordapp.com/api/v6";
+                using (var request = new HttpRequestMessage(HttpMethod.Get, $"{apiRoot}/{resource}/{endpoint}"))
                 {
-                    // Check status code
-                    // We throw our own exception here because default one doesn't have status code
-                    if (!response.IsSuccessStatusCode)
-                        throw new HttpErrorStatusCodeException(response.StatusCode, response.ReasonPhrase);
+                    // Add url parameter for the user token
+                    if (token.Type == AuthTokenType.User)
+                        request.RequestUri = request.RequestUri.SetQueryParameter("token", token.Value);
 
-                    // Get content
-                    var raw = await response.Content.ReadAsStringAsync();
+                    // Add header for the bot token
+                    if (token.Type == AuthTokenType.Bot)
+                        request.Headers.Authorization = new AuthenticationHeaderValue("Bot", token.Value);
 
-                    // Parse
-                    return JToken.Parse(raw);
+                    // Add parameters
+                    foreach (var parameter in parameters)
+                    {
+                        var key = parameter.SubstringUntil("=");
+                        var value = parameter.SubstringAfter("=");
+                        request.RequestUri = request.RequestUri.SetQueryParameter(key, value);
+                    }
+
+                    // Get response
+                    using (var response = await _httpClient.SendAsync(request))
+                    {
+                        // Check status code
+                        // We throw our own exception here because default one doesn't have status code
+                        if (!response.IsSuccessStatusCode)
+                            throw new HttpErrorStatusCodeException(response.StatusCode, response.ReasonPhrase);
+
+                        // Get content
+                        var raw = await response.Content.ReadAsStringAsync();
+
+                        // Parse
+                        return JToken.Parse(raw);
+                    }
                 }
             });
         }
 
-        public async Task<Guild> GetGuildAsync(string token, string guildId)
+        public async Task<Guild> GetGuildAsync(AuthToken token, string guildId)
         {
             var response = await GetApiResponseAsync(token, "guilds", guildId);
             var guild = ParseGuild(response);
@@ -58,7 +74,7 @@ namespace DiscordChatExporter.Core.Services
             return guild;
         }
 
-        public async Task<Channel> GetChannelAsync(string token, string channelId)
+        public async Task<Channel> GetChannelAsync(AuthToken token, string channelId)
         {
             var response = await GetApiResponseAsync(token, "channels", channelId);
             var channel = ParseChannel(response);
@@ -66,7 +82,7 @@ namespace DiscordChatExporter.Core.Services
             return channel;
         }
 
-        public async Task<IReadOnlyList<Guild>> GetUserGuildsAsync(string token)
+        public async Task<IReadOnlyList<Guild>> GetUserGuildsAsync(AuthToken token)
         {
             var response = await GetApiResponseAsync(token, "users", "@me/guilds", "limit=100");
             var guilds = response.Select(ParseGuild).ToArray();
@@ -74,7 +90,7 @@ namespace DiscordChatExporter.Core.Services
             return guilds;
         }
 
-        public async Task<IReadOnlyList<Channel>> GetDirectMessageChannelsAsync(string token)
+        public async Task<IReadOnlyList<Channel>> GetDirectMessageChannelsAsync(AuthToken token)
         {
             var response = await GetApiResponseAsync(token, "users", "@me/channels");
             var channels = response.Select(ParseChannel).ToArray();
@@ -82,7 +98,7 @@ namespace DiscordChatExporter.Core.Services
             return channels;
         }
 
-        public async Task<IReadOnlyList<Channel>> GetGuildChannelsAsync(string token, string guildId)
+        public async Task<IReadOnlyList<Channel>> GetGuildChannelsAsync(AuthToken token, string guildId)
         {
             var response = await GetApiResponseAsync(token, "guilds", $"{guildId}/channels");
             var channels = response.Select(ParseChannel).ToArray();
@@ -90,7 +106,7 @@ namespace DiscordChatExporter.Core.Services
             return channels;
         }
 
-        public async Task<IReadOnlyList<Role>> GetGuildRolesAsync(string token, string guildId)
+        public async Task<IReadOnlyList<Role>> GetGuildRolesAsync(AuthToken token, string guildId)
         {
             var response = await GetApiResponseAsync(token, "guilds", $"{guildId}/roles");
             var roles = response.Select(ParseRole).ToArray();
@@ -98,7 +114,7 @@ namespace DiscordChatExporter.Core.Services
             return roles;
         }
 
-        public async Task<IReadOnlyList<Message>> GetChannelMessagesAsync(string token, string channelId,
+        public async Task<IReadOnlyList<Message>> GetChannelMessagesAsync(AuthToken token, string channelId,
             DateTime? from = null, DateTime? to = null, IProgress<double> progress = null)
         {
             var result = new List<Message>();
@@ -169,7 +185,7 @@ namespace DiscordChatExporter.Core.Services
             return result;
         }
 
-        public async Task<Mentionables> GetMentionablesAsync(string token, string guildId,
+        public async Task<Mentionables> GetMentionablesAsync(AuthToken token, string guildId,
             IEnumerable<Message> messages)
         {
             // Get channels and roles

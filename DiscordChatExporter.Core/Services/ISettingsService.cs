@@ -9,7 +9,7 @@ namespace DiscordChatExporter.Core.Services
         string DateFormat { get; set; }
         int MessageGroupLimit { get; set; }
 
-        string LastToken { get; set; }
+        AuthToken LastToken { get; set; }
         ExportFormat LastExportFormat { get; set; }
 
         void Load();

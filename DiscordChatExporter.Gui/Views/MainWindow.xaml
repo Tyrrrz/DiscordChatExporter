@@ -9,7 +9,7 @@
     Height="550"
     Background="{DynamicResource MaterialDesignPaper}"
     DataContext="{Binding MainViewModel, Source={StaticResource Container}}"
-    FocusManager.FocusedElement="{Binding ElementName=TokenTextBox}"
+    FocusManager.FocusedElement="{Binding ElementName=TokenValueTextBox}"
     FontFamily="{DynamicResource MaterialDesignFont}"
     Icon="/DiscordChatExporter;component/favicon.ico"
     SnapsToDevicePixels="True"
@@ -48,27 +48,47 @@
                             Margin="6,6,0,6">
                             <Grid>
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
-                                <!--  Token  -->
-                                <TextBox
-                                    x:Name="TokenTextBox"
-                                    Grid.Row="0"
+                                <!--  Token type  -->
+                                <ToggleButton
                                     Grid.Column="0"
                                     Margin="6"
+                                    IsChecked="{Binding IsBotToken}"
+                                    Style="{StaticResource MaterialDesignFlatActionToggleButton}"
+                                    ToolTip="Switch between user token and bot token">
+                                    <ToggleButton.Content>
+                                        <materialDesign:PackIcon
+                                            Width="24"
+                                            Height="24"
+                                            Kind="Account" />
+                                    </ToggleButton.Content>
+                                    <materialDesign:ToggleButtonAssist.OnContent>
+                                        <materialDesign:PackIcon
+                                            Width="24"
+                                            Height="24"
+                                            Kind="Robot" />
+                                    </materialDesign:ToggleButtonAssist.OnContent>
+                                </ToggleButton>
+
+                                <!--  Token value  -->
+                                <TextBox
+                                    x:Name="TokenValueTextBox"
+                                    Grid.Column="1"
+                                    Margin="2,6,6,7"
                                     materialDesign:HintAssist.Hint="Token"
                                     materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
                                     materialDesign:TextFieldAssist.TextBoxViewMargin="0,0,2,0"
                                     BorderThickness="0"
                                     FontSize="16"
-                                    Text="{Binding Token, UpdateSourceTrigger=PropertyChanged}" />
+                                    Text="{Binding TokenValue, UpdateSourceTrigger=PropertyChanged}" />
 
                                 <!--  Pull data button  -->
                                 <Button
-                                    Grid.Row="0"
-                                    Grid.Column="1"
+                                    Grid.Column="2"
                                     Margin="0,6,6,6"
                                     Padding="4"
                                     Command="{Binding PullDataCommand}"
@@ -99,8 +119,8 @@
                     <ProgressBar
                         Background="Transparent"
                         IsIndeterminate="{Binding IsProgressIndeterminate}"
-                        Value="{Binding Progress, Mode=OneWay}"
-                        Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"
+                        Value="{Binding Progress, Mode=OneWay}" />
                 </StackPanel>
             </Border>
 
@@ -196,34 +216,65 @@
                 </DockPanel>
 
                 <!--  Usage instructions  -->
-                <StackPanel Margin="32,32,8,8" Visibility="{Binding IsDataAvailable, Converter={StaticResource InvertBoolToVisibilityConverter}}">
-                    <TextBlock FontSize="18" Text="DiscordChatExporter needs your authorization token to work." />
-                    <TextBlock
-                        Margin="0,8,0,0"
-                        FontSize="16"
-                        Text="To obtain it, follow these steps:" />
-                    <TextBlock Margin="8,0,0,0" FontSize="14">
-                        <Run Text="1. Open the Discord app" />
-                        <LineBreak />
-                        <Run Text="2. Log in if you haven't" />
-                        <LineBreak />
-                        <Run Text="3. Press" />
-                        <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Ctrl+Shift+I" />
-                        <LineBreak />
-                        <Run Text="4. Navigate to" />
-                        <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Application" />
-                        <Run Text="tab" />
-                        <LineBreak />
-                        <Run Text="5. Expand" />
-                        <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Storage &gt; Local Storage &gt; https://discordapp.com" />
-                        <LineBreak />
-                        <Run Text="6. Find" />
-                        <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="&quot;token&quot;" />
-                        <Run Text="under key and copy the value" />
-                        <LineBreak />
-                        <Run Text="7. Paste the value in the textbox above" />
-                    </TextBlock>
-                </StackPanel>
+                <Grid Margin="32,32,8,8" Visibility="{Binding IsDataAvailable, Converter={StaticResource InvertBoolToVisibilityConverter}}">
+                    <!--  User token  -->
+                    <StackPanel Visibility="{Binding IsBotToken, Converter={StaticResource InvertBoolToVisibilityConverter}}">
+                        <TextBlock FontSize="18" Text="DiscordChatExporter needs your user token to work." />
+                        <TextBlock
+                            Margin="0,8,0,0"
+                            FontSize="16"
+                            Text="To obtain it, follow these steps:" />
+                        <TextBlock Margin="8,0,0,0" FontSize="14">
+                            <Run Text="1. Open the Discord app" />
+                            <LineBreak />
+                            <Run Text="2. Log in if you haven't" />
+                            <LineBreak />
+                            <Run Text="3. Press" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Ctrl+Shift+I" />
+                            <Run Text="to show developer tools" />
+                            <LineBreak />
+                            <Run Text="4. Navigate to the" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Application" />
+                            <Run Text="tab" />
+                            <LineBreak />
+                            <Run Text="5. Expand" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Storage &gt; Local Storage &gt; https://discordapp.com" />
+                            <LineBreak />
+                            <Run Text="6. Find the" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="&quot;token&quot;" />
+                            <Run Text="key and copy its value" />
+                            <LineBreak />
+                            <Run Text="7. Paste the value in the textbox above" />
+                        </TextBlock>
+                    </StackPanel>
+
+                    <!--  Bot token  -->
+                    <StackPanel Visibility="{Binding IsBotToken, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock FontSize="18" Text="DiscordChatExporter needs your bot token to work." />
+                        <TextBlock
+                            Margin="0,8,0,0"
+                            FontSize="16"
+                            Text="To obtain it, follow these steps:" />
+                        <TextBlock Margin="8,0,0,0" FontSize="14">
+                            <Run Text="1. Go to Discord developer portal" />
+                            <LineBreak />
+                            <Run Text="2. Log in if you haven't" />
+                            <LineBreak />
+                            <Run Text="3. Open your application's settings" />
+                            <LineBreak />
+                            <Run Text="4. Navigate to the" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Bot" />
+                            <Run Text="section on the left" />
+                            <LineBreak />
+                            <Run Text="5. Under" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Token" />
+                            <Run Text="click" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Copy" />
+                            <LineBreak />
+                            <Run Text="6. Paste the value in the textbox above" />
+                        </TextBlock>
+                    </StackPanel>
+                </Grid>
                 <materialDesign:Snackbar x:Name="Snackbar" />
             </Grid>
         </DockPanel>

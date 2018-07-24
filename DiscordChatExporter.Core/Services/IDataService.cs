@@ -7,22 +7,22 @@ namespace DiscordChatExporter.Core.Services
 {
     public interface IDataService
     {
-        Task<Guild> GetGuildAsync(string token, string guildId);
+        Task<Guild> GetGuildAsync(AuthToken token, string guildId);
 
-        Task<Channel> GetChannelAsync(string token, string channelId);
+        Task<Channel> GetChannelAsync(AuthToken token, string channelId);
 
-        Task<IReadOnlyList<Guild>> GetUserGuildsAsync(string token);
+        Task<IReadOnlyList<Guild>> GetUserGuildsAsync(AuthToken token);
 
-        Task<IReadOnlyList<Channel>> GetDirectMessageChannelsAsync(string token);
+        Task<IReadOnlyList<Channel>> GetDirectMessageChannelsAsync(AuthToken token);
 
-        Task<IReadOnlyList<Channel>> GetGuildChannelsAsync(string token, string guildId);
+        Task<IReadOnlyList<Channel>> GetGuildChannelsAsync(AuthToken token, string guildId);
 
-        Task<IReadOnlyList<Role>> GetGuildRolesAsync(string token, string guildId);
+        Task<IReadOnlyList<Role>> GetGuildRolesAsync(AuthToken token, string guildId);
 
-        Task<IReadOnlyList<Message>> GetChannelMessagesAsync(string token, string channelId,
+        Task<IReadOnlyList<Message>> GetChannelMessagesAsync(AuthToken token, string channelId,
             DateTime? from = null, DateTime? to = null, IProgress<double> progress = null);
 
-        Task<Mentionables> GetMentionablesAsync(string token, string guildId,
+        Task<Mentionables> GetMentionablesAsync(AuthToken token, string guildId,
             IEnumerable<Message> messages);
     }
 }

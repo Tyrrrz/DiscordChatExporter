@@ -6,7 +6,7 @@ namespace DiscordChatExporter.Cli.ViewModels
 {
     public interface IMainViewModel
     {
-        Task ExportAsync(string token, string channelId, string filePath, ExportFormat format, DateTime? from,
+        Task ExportAsync(AuthToken token, string channelId, string filePath, ExportFormat format, DateTime? from,
             DateTime? to);
     }
 }

@@ -1,3 +1,8 @@
+### v2.6 (25-Jul-2018)
+
+- Added support for bot tokens as an alternative to user tokens. For GUI, use the button in the top-left to switch between user and bot token. For CLI, pass the `--bot` switch to indicate that the given token is a bot token.
+- Added support for animated avatars.
+
 ### v2.5.1 (01-Jul-2018)
 
 - Fixed a bug that would prevent timestamps from rendering properly in CSV and PlainText exports.

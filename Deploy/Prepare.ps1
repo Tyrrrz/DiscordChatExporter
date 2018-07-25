@@ -8,4 +8,4 @@ $files | Compress-Archive -DestinationPath "$PSScriptRoot\bin\DiscordChatExporte
 # CLI
 $files = @()
 $files += Get-ChildItem -Path "$PSScriptRoot\..\DiscordChatExporter.Cli\bin\Release\net461\*" -Include "*.exe", "*.dll", "*.config"
-$files | Compress-Archive -DestinationPath "$PSScriptRoot\bin\DiscordChatExporter.Cli.zip" -Force
+$files | Compress-Archive -DestinationPath "$PSScriptRoot\bin\DiscordChatExporter.CLI.zip" -Force

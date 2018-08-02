@@ -5,14 +5,8 @@ using DiscordChatExporter.Core.Models;
 namespace DiscordChatExporter.Cli.Options
 {
     [Verb("export", HelpText = "Export channel chat log to a file.")]
-    public class ExportChatOptions
+    public class ExportChatOptions : AuthorizedOptions
     {
-        [Option('t', "token", Required = true, HelpText = "Authorization token.")]
-        public string TokenValue { get; set; }
-
-        [Option('b', "bot", Default = false, HelpText = "Whether this authorization token belongs to a bot.")]
-        public bool IsBotToken { get; set; }
-
         [Option('c', "channel", Required = true, HelpText = "Channel ID.")]
         public string ChannelId { get; set; }
 

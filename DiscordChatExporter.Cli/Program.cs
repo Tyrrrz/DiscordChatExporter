@@ -17,6 +17,7 @@ namespace DiscordChatExporter.Cli
         {
             yield return typeof(ExportChatOptions);
             yield return typeof(GetChannelsOptions);
+            yield return typeof(GetDirectMessageChannelsOptions);
             yield return typeof(GetGuildsOptions);
             yield return typeof(UpdateAppOptions);
         }
@@ -77,8 +78,22 @@ namespace DiscordChatExporter.Cli
             // Create token
             var token = CreateToken(options.IsBotToken, options.TokenValue);
 
-            // Get guilds
+            // Get channels
             var channels = Container.DataService.GetGuildChannelsAsync(token, options.GuildId)
+                .GetAwaiter().GetResult();
+
+            // Print result
+            foreach (var channel in channels.Where(c => c.Type.IsEither(ChannelType.GuildTextChat)).OrderBy(c => c.Name))
+                Console.WriteLine($"{channel.Id} | {channel.Name}");
+        }
+
+        private static void GetDirectMessageChannels(GetDirectMessageChannelsOptions options)
+        {
+            // Create token
+            var token = CreateToken(options.IsBotToken, options.TokenValue);
+
+            // Get channels
+            var channels = Container.DataService.GetDirectMessageChannelsAsync(token)
                 .GetAwaiter().GetResult();
 
             // Print result
@@ -125,6 +140,7 @@ namespace DiscordChatExporter.Cli
 
             parsedArgs.WithParsed<ExportChatOptions>(ExportChat);
             parsedArgs.WithParsed<GetChannelsOptions>(GetChannels);
+            parsedArgs.WithParsed<GetDirectMessageChannelsOptions>(GetDirectMessageChannels);
             parsedArgs.WithParsed<GetGuildsOptions>(GetGuilds);
             parsedArgs.WithParsed<UpdateAppOptions>(UpdateApp);
         }

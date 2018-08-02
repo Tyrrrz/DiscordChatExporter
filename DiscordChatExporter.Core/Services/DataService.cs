@@ -33,9 +33,9 @@ namespace DiscordChatExporter.Core.Services
                 using (var request = new HttpRequestMessage(HttpMethod.Get, $"{apiRoot}/{resource}/{endpoint}"))
                 {
                     // Set authorization header
-                    request.Headers.Authorization = token.Type == AuthTokenType.User
-                        ? new AuthenticationHeaderValue(token.Value)
-                        : new AuthenticationHeaderValue("Bot", token.Value);
+                    request.Headers.Authorization = token.Type == AuthTokenType.Bot
+                        ? new AuthenticationHeaderValue("Bot", token.Value)
+                        : new AuthenticationHeaderValue(token.Value);
 
                     // Add parameters
                     foreach (var parameter in parameters)

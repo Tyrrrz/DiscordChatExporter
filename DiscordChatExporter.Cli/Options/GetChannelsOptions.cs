@@ -1,19 +1,17 @@
-﻿using PowerArgs;
+﻿using CommandLine;
 
 namespace DiscordChatExporter.Cli.Options
 {
+    [Verb("channels", HelpText = "Get the list of channels in the given guild.")]
     public class GetChannelsOptions
     {
-        [ArgShortcut("-t"), ArgShortcut("--token"), ArgShortcut(ArgShortcutPolicy.ShortcutsOnly), ArgRequired,
-         ArgDescription("Authorization token")]
+        [Option('t', "token", Required = true, HelpText = "Authorization token.")]
         public string TokenValue { get; set; }
 
-        [ArgShortcut("-b"), ArgShortcut("--bot"), ArgShortcut(ArgShortcutPolicy.ShortcutsOnly), ArgDefaultValue(false),
-         ArgDescription("Whether the token is a bot token")]
+        [Option('b', "bot", Default = false, HelpText = "Whether this authorization token belongs to a bot.")]
         public bool IsBotToken { get; set; }
 
-        [ArgShortcut("-g"), ArgShortcut("--guild"), ArgShortcut(ArgShortcutPolicy.ShortcutsOnly), ArgRequired,
-         ArgDescription("Guild ID")]
+        [Option('g', "guild", Required = true, HelpText = "Guild ID.")]
         public string GuildId { get; set; }
     }
 }

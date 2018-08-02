@@ -1,7 +1,9 @@
-﻿namespace DiscordChatExporter.Cli.Options
+﻿using CommandLine;
+
+namespace DiscordChatExporter.Cli.Options
 {
+    [Verb("update", HelpText = "Updates this application to the latest version.")]
     public class UpdateAppOptions
     {
-        // No options at the moment
     }
 }

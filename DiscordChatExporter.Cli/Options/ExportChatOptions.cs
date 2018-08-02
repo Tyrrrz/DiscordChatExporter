@@ -1,45 +1,37 @@
 ﻿using System;
+using CommandLine;
 using DiscordChatExporter.Core.Models;
-using PowerArgs;
 
 namespace DiscordChatExporter.Cli.Options
 {
+    [Verb("export", HelpText = "Export channel chat log to a file.")]
     public class ExportChatOptions
     {
-        [ArgShortcut("-t"), ArgShortcut("--token"), ArgShortcut(ArgShortcutPolicy.ShortcutsOnly), ArgRequired,
-         ArgDescription("Authorization token")]
+        [Option('t', "token", Required = true, HelpText = "Authorization token.")]
         public string TokenValue { get; set; }
 
-        [ArgShortcut("-b"), ArgShortcut("--bot"), ArgShortcut(ArgShortcutPolicy.ShortcutsOnly), ArgDefaultValue(false),
-         ArgDescription("Whether the token is a bot token")]
+        [Option('b', "bot", Default = false, HelpText = "Whether this authorization token belongs to a bot.")]
         public bool IsBotToken { get; set; }
 
-        [ArgShortcut("-c"), ArgShortcut("--channel"), ArgShortcut(ArgShortcutPolicy.ShortcutsOnly), ArgRequired,
-         ArgDescription("Channel ID")]
+        [Option('c', "channel", Required = true, HelpText = "Channel ID.")]
         public string ChannelId { get; set; }
 
-        [ArgShortcut("-f"), ArgShortcut("--format"), ArgShortcut(ArgShortcutPolicy.ShortcutsOnly),
-         ArgDefaultValue(ExportFormat.HtmlDark), ArgDescription("Export format")]
+        [Option('f', "format", Default = ExportFormat.HtmlDark, HelpText = "Output file format.")]
         public ExportFormat ExportFormat { get; set; }
 
-        [ArgShortcut("-o"), ArgShortcut("--output"), ArgShortcut(ArgShortcutPolicy.ShortcutsOnly),
-         ArgDefaultValue(null), ArgDescription("Output file path")]
+        [Option('o', "output", Default = null, HelpText = "Output file path.")]
         public string FilePath { get; set; }
 
-        [ArgShortcut("--from"), ArgShortcut(ArgShortcutPolicy.ShortcutsOnly), ArgDefaultValue(null),
-         ArgDescription("Only messages sent after this date")]
+        [Option("from", Default = null, HelpText = "Limit to messages sent after this date.")]
         public DateTime? From { get; set; }
 
-        [ArgShortcut("--to"), ArgShortcut(ArgShortcutPolicy.ShortcutsOnly), ArgDefaultValue(null),
-         ArgDescription("Only messages sent before this date")]
+        [Option("to", Default = null, HelpText = "Limit to messages sent before this date.")]
         public DateTime? To { get; set; }
 
-        [ArgShortcut("--dateformat"), ArgShortcut(ArgShortcutPolicy.ShortcutsOnly), ArgDefaultValue(null),
-         ArgDescription("Date format used in the output")]
+        [Option("dateformat", Default = null, HelpText = "Date format used in output.")]
         public string DateFormat { get; set; }
 
-        [ArgShortcut("--grouplimit"), ArgShortcut(ArgShortcutPolicy.ShortcutsOnly), ArgDefaultValue(-1),
-         ArgDescription("Maximum number of messages in one group")]
+        [Option("grouplimit", Default = 0, HelpText = "Message group limit.")]
         public int MessageGroupLimit { get; set; }
     }
 }

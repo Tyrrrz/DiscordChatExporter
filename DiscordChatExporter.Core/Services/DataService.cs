@@ -32,13 +32,10 @@ namespace DiscordChatExporter.Core.Services
                 const string apiRoot = "https://discordapp.com/api/v6";
                 using (var request = new HttpRequestMessage(HttpMethod.Get, $"{apiRoot}/{resource}/{endpoint}"))
                 {
-                    // Add url parameter for the user token
-                    if (token.Type == AuthTokenType.User)
-                        request.RequestUri = request.RequestUri.SetQueryParameter("token", token.Value);
-
-                    // Add header for the bot token
-                    if (token.Type == AuthTokenType.Bot)
-                        request.Headers.Authorization = new AuthenticationHeaderValue("Bot", token.Value);
+                    // Set authorization header
+                    request.Headers.Authorization = token.Type == AuthTokenType.User
+                        ? new AuthenticationHeaderValue(token.Value)
+                        : new AuthenticationHeaderValue("Bot", token.Value);
 
                     // Add parameters
                     foreach (var parameter in parameters)

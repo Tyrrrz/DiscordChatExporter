@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CommandLine;
@@ -12,15 +11,6 @@ namespace DiscordChatExporter.Cli
     public static class Program
     {
         private static readonly Container Container = new Container();
-
-        private static IEnumerable<Type> GetVerbTypes()
-        {
-            yield return typeof(ExportChatOptions);
-            yield return typeof(GetChannelsOptions);
-            yield return typeof(GetDirectMessageChannelsOptions);
-            yield return typeof(GetGuildsOptions);
-            yield return typeof(UpdateAppOptions);
-        }
 
         private static AuthToken CreateToken(bool isBotToken, string tokenValue) =>
             new AuthToken(isBotToken ? AuthTokenType.Bot : AuthTokenType.User, tokenValue);
@@ -136,8 +126,20 @@ namespace DiscordChatExporter.Cli
 
         public static void Main(string[] args)
         {
-            var parsedArgs = Parser.Default.ParseArguments(args, GetVerbTypes().ToArray());
+            // Get all verb types
+            var verbTypes = new[]
+            {
+                typeof(ExportChatOptions),
+                typeof(GetChannelsOptions),
+                typeof(GetDirectMessageChannelsOptions),
+                typeof(GetGuildsOptions),
+                typeof(UpdateAppOptions)
+            };
 
+            // Parse command line arguments
+            var parsedArgs = Parser.Default.ParseArguments(args, verbTypes);
+
+            // Execute commands
             parsedArgs.WithParsed<ExportChatOptions>(ExportChat);
             parsedArgs.WithParsed<GetChannelsOptions>(GetChannels);
             parsedArgs.WithParsed<GetDirectMessageChannelsOptions>(GetDirectMessageChannels);

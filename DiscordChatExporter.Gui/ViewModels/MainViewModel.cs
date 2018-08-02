@@ -256,6 +256,7 @@ namespace DiscordChatExporter.Gui.ViewModels
 
             try
             {
+                // TODO: extract this to make it reusable across implementations
                 // Get messages
                 var messages = await _dataService.GetChannelMessagesAsync(token, channel.Id, from, to, progressHandler);
 

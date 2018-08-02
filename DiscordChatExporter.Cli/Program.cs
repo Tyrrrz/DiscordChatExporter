@@ -52,7 +52,7 @@ namespace DiscordChatExporter.Cli
             // TODO: extract this to make it reusable across implementations
             // Get messages
             var messages = Container.DataService
-                .GetChannelMessagesAsync(token, channel.Id, options.From, options.To)
+                .GetChannelMessagesAsync(token, channel.Id, options.After, options.Before)
                 .GetAwaiter().GetResult();
 
             // Group messages
@@ -63,7 +63,7 @@ namespace DiscordChatExporter.Cli
                 .GetAwaiter().GetResult();
 
             // Create log
-            var log = new ChatLog(guild, channel, options.From, options.To, messageGroups, mentionables);
+            var log = new ChatLog(guild, channel, options.After, options.Before, messageGroups, mentionables);
 
             // Export
             Container.ExportService.Export(options.ExportFormat, filePath, log);

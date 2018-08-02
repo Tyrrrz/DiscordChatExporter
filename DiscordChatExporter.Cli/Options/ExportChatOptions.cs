@@ -22,11 +22,11 @@ namespace DiscordChatExporter.Cli.Options
         [Option('o', "output", Default = null, HelpText = "Output file path.")]
         public string FilePath { get; set; }
 
-        [Option("from", Default = null, HelpText = "Limit to messages sent after this date.")]
-        public DateTime? From { get; set; }
+        [Option("after", Default = null, HelpText = "Limit to messages sent after this date.")]
+        public DateTime? After { get; set; }
 
-        [Option("to", Default = null, HelpText = "Limit to messages sent before this date.")]
-        public DateTime? To { get; set; }
+        [Option("before", Default = null, HelpText = "Limit to messages sent before this date.")]
+        public DateTime? Before { get; set; }
 
         [Option("dateformat", Default = null, HelpText = "Date format used in output.")]
         public string DateFormat { get; set; }

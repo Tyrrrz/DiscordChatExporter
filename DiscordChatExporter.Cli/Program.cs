@@ -29,7 +29,7 @@ namespace DiscordChatExporter.Cli
             // Configure settings
             if (options.DateFormat.IsNotBlank())
                 Container.SettingsService.DateFormat = options.DateFormat;
-            if (options.MessageGroupLimit >= 0)
+            if (options.MessageGroupLimit > 0)
                 Container.SettingsService.MessageGroupLimit = options.MessageGroupLimit;
 
             // Create token
@@ -68,7 +68,7 @@ namespace DiscordChatExporter.Cli
             // Export
             Container.ExportService.Export(options.ExportFormat, filePath, log);
 
-            // Notify user
+            // Print result
             Console.WriteLine($"Exported chat to [{filePath}]");
         }
 
@@ -81,7 +81,7 @@ namespace DiscordChatExporter.Cli
             var channels = Container.DataService.GetGuildChannelsAsync(token, options.GuildId)
                 .GetAwaiter().GetResult();
 
-            // Print
+            // Print result
             foreach (var channel in channels.OrderBy(c => c.Name))
                 Console.WriteLine($"{channel.Id} | {channel.Name}");
         }
@@ -95,7 +95,7 @@ namespace DiscordChatExporter.Cli
             var guilds = Container.DataService.GetUserGuildsAsync(token)
                 .GetAwaiter().GetResult();
 
-            // Print
+            // Print result
             foreach (var guild in guilds.OrderBy(g => g.Name))
                 Console.WriteLine($"{guild.Id} | {guild.Name}");
         }

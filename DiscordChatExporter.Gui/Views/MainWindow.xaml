@@ -234,17 +234,25 @@
                             <Run Text="to show developer tools" />
                             <LineBreak />
                             <Run Text="4. Navigate to the" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Application" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Network" />
                             <Run Text="tab" />
                             <LineBreak />
-                            <Run Text="5. Expand" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Storage &gt; Local Storage &gt; https://discordapp.com" />
+                            <Run Text="5. Filter the requests to" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="XHR" />
+                            <Run Text="only" />
                             <LineBreak />
-                            <Run Text="6. Find the" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="&quot;token&quot;" />
-                            <Run Text="key and copy its value" />
+                            <Run Text="6. Go to any channel or server" />
                             <LineBreak />
-                            <Run Text="7. Paste the value in the textbox above" />
+                            <Run Text="7. Find a request that starts with" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="&quot;messages&quot;" />
+                            <LineBreak />
+                            <Run Text="8. Click on" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Headers" />
+                            <Run Text="tab" />
+                            <LineBreak />
+                            <Run Text="9. Look for" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="&quot;authorization&quot;" />
+                            <Run Text="among request headers and copy its value" />
                         </TextBlock>
                     </StackPanel>
 
@@ -270,8 +278,6 @@
                             <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Token" />
                             <Run Text="click" />
                             <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Copy" />
-                            <LineBreak />
-                            <Run Text="6. Paste the value in the textbox above" />
                         </TextBlock>
                     </StackPanel>
                 </Grid>

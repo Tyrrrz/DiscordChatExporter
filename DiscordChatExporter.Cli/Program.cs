@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using CommandLine;
 using DiscordChatExporter.Cli.Verbs;
 using DiscordChatExporter.Cli.Verbs.Options;
@@ -7,22 +8,33 @@ namespace DiscordChatExporter.Cli
 {
     public static class Program
     {
-        private static void ShowTokenHelp()
+        private static void PrintTokenHelp()
         {
             Console.WriteLine("# To get user token:");
-            Console.WriteLine(" - Open Discord app");
-            Console.WriteLine(" - Log in if you haven't");
-            Console.WriteLine(" - Press Ctrl+Shift+I to show developer tools");
-            Console.WriteLine(" - Navigate to the Application tab");
-            Console.WriteLine(" - Expand Storage > Local Storage > https://discordapp.com");
-            Console.WriteLine(" - Find the \"token\" key and copy its value");
+            Console.WriteLine(" 1. Open Discord app");
+            Console.WriteLine(" 2. Log in if you haven't");
+            Console.WriteLine(" 3. Press Ctrl+Shift+I to show developer tools");
+            Console.WriteLine(" 4. Navigate to the Network tab");
+            Console.WriteLine(" 5. Filter the requests to XHR only");
+            Console.WriteLine(" 6. Go to any channel or server");
+            Console.WriteLine(" 7. Find a request that starts with \"messages\"");
+            Console.WriteLine(" 8. Click on Headers tab");
+            Console.WriteLine(" 9. Look for \"authorization\" among request headers and copy its value");
             Console.WriteLine();
             Console.WriteLine("# To get bot token:");
-            Console.WriteLine(" - Go to Discord developer portal");
-            Console.WriteLine(" - Log in if you haven't");
-            Console.WriteLine(" - Open your application's settings");
-            Console.WriteLine(" - Navigate to the Bot section on the left");
-            Console.WriteLine(" - Under Token click Copy");
+            Console.WriteLine(" 1. Go to Discord developer portal");
+            Console.WriteLine(" 2. Log in if you haven't");
+            Console.WriteLine(" 3. Open your application's settings");
+            Console.WriteLine(" 4. Navigate to the Bot section on the left");
+            Console.WriteLine(" 5. Under Token click Copy");
+            Console.WriteLine();
+            Console.WriteLine("# To get guild or channel ID:");
+            Console.WriteLine(" 1. Open Discord app");
+            Console.WriteLine(" 2. Log in if you haven't");
+            Console.WriteLine(" 3. Open Settings");
+            Console.WriteLine(" 4. Go to Appearance section");
+            Console.WriteLine(" 5. Enable Developer Mode");
+            Console.WriteLine(" 6. Right click on the desired guild or channel and click Copy ID");
         }
 
         public static void Main(string[] args)
@@ -47,9 +59,17 @@ namespace DiscordChatExporter.Cli
             parsedArgs.WithParsed<GetGuildsOptions>(o => new GetGuildsVerb(o).Execute());
             parsedArgs.WithParsed<UpdateAppOptions>(o => new UpdateAppVerb(o).Execute());
 
-            // Show token help if error
-            if (parsedArgs.Tag == ParserResultType.NotParsed)
-                ShowTokenHelp();
+            // Show token help if help requested or no verb specified
+            parsedArgs.WithNotParsed(errs =>
+            {
+                var err = errs.First();
+
+                if (err.Tag == ErrorType.NoVerbSelectedError)
+                    PrintTokenHelp();
+
+                if (err.Tag == ErrorType.HelpVerbRequestedError && args.Length == 1)
+                    PrintTokenHelp();
+            });
         }
     }
 }

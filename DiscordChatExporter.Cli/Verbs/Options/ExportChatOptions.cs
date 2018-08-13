@@ -2,10 +2,10 @@
 using CommandLine;
 using DiscordChatExporter.Core.Models;
 
-namespace DiscordChatExporter.Cli.Options
+namespace DiscordChatExporter.Cli.Verbs.Options
 {
     [Verb("export", HelpText = "Export channel chat log to a file.")]
-    public class ExportChatOptions : AuthorizedOptions
+    public class ExportChatOptions : TokenOptions
     {
         [Option('c', "channel", Required = true, HelpText = "Channel ID.")]
         public string ChannelId { get; set; }

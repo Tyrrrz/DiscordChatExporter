@@ -2,6 +2,7 @@
 using DiscordChatExporter.Core.Models;
 using Scriban;
 using Scriban.Runtime;
+using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Services
 {
@@ -36,6 +37,11 @@ namespace DiscordChatExporter.Core.Services
             // Create template model
             var templateModel = new TemplateModel(format, log, _settingsService.DateFormat);
             context.PushGlobal(templateModel.GetScriptObject());
+
+            // Create directory
+            var dirPath = Path.GetDirectoryName(filePath);
+            if (dirPath.IsNotBlank())
+                Directory.CreateDirectory(dirPath);
 
             // Render output
             using (var output = File.CreateText(filePath))

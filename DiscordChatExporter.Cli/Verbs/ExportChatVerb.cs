@@ -38,9 +38,9 @@ namespace DiscordChatExporter.Cli.Verbs
 
             // Generate file path if not set
             var filePath = Options.FilePath;
-            if (filePath.IsBlank())
+            if (filePath == null || filePath.EndsWith("/") || filePath.EndsWith("\\"))
             {
-                filePath = $"{guild.Name} - {channel.Name}.{Options.ExportFormat.GetFileExtension()}"
+                filePath += $"{guild.Name} - {channel.Name}.{Options.ExportFormat.GetFileExtension()}"
                     .Replace(Path.GetInvalidFileNameChars(), '_');
             }
 

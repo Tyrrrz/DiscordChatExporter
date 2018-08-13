@@ -4,8 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:DiscordChatExporter.Gui.Converters"
     xmlns:local="clr-namespace:DiscordChatExporter.Gui"
-    Exit="App_Exit"
-    Startup="App_Startup"
     StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>

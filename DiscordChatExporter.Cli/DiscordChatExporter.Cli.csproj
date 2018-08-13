@@ -10,8 +10,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="CommandLineParser" Version="2.2.1" />
         <PackageReference Include="CommonServiceLocator" Version="2.0.3" />
-        <PackageReference Include="FluentCommandLineParser" Version="1.4.3" />
         <PackageReference Include="MvvmLightLibs" Version="5.4.1" />
         <PackageReference Include="Tyrrrz.Extensions" Version="1.5.1" />
     </ItemGroup>

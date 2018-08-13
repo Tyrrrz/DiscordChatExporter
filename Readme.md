@@ -32,7 +32,7 @@ DiscordChatExporter can be used to export message history from a [Discord](https
 - [Scriban](https://github.com/lunet-io/scriban)
 - [Polly](https://github.com/App-vNext/Polly)
 - [Onova](https://github.com/Tyrrrz/Onova)
-- [FluentCommandLineParser](https://github.com/fclp/fluent-command-line-parser)
+- [CommandLineParser](https://github.com/commandlineparser/commandline)
 - [Tyrrrz.Extensions](https://github.com/Tyrrrz/Extensions)
 - [Tyrrrz.WpfExtensions](https://github.com/Tyrrrz/WpfExtensions)
 - [Tyrrrz.Settings](https://github.com/Tyrrrz/Settings)

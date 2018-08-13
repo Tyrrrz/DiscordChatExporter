@@ -1,5 +1,4 @@
 ﻿using CommonServiceLocator;
-using DiscordChatExporter.Cli.ViewModels;
 using DiscordChatExporter.Core.Services;
 using GalaSoft.MvvmLight.Ioc;
 
@@ -7,15 +6,7 @@ namespace DiscordChatExporter.Cli
 {
     public class Container
     {
-        public IMainViewModel MainViewModel => Resolve<IMainViewModel>();
-        public ISettingsService SettingsService => Resolve<ISettingsService>();
-
-        private T Resolve<T>(string key = null)
-        {
-            return ServiceLocator.Current.GetInstance<T>(key);
-        }
-
-        public void Init()
+        public Container()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
             SimpleIoc.Default.Reset();
@@ -25,13 +16,12 @@ namespace DiscordChatExporter.Cli
             SimpleIoc.Default.Register<IExportService, ExportService>();
             SimpleIoc.Default.Register<IMessageGroupService, MessageGroupService>();
             SimpleIoc.Default.Register<ISettingsService, SettingsService>();
-
-            // View models
-            SimpleIoc.Default.Register<IMainViewModel, MainViewModel>(true);
+            SimpleIoc.Default.Register<IUpdateService, UpdateService>();
         }
 
-        public void Cleanup()
+        public T Resolve<T>(string key = null)
         {
+            return ServiceLocator.Current.GetInstance<T>(key);
         }
     }
 }

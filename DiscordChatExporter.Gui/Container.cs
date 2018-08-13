@@ -11,12 +11,7 @@ namespace DiscordChatExporter.Gui
         public IMainViewModel MainViewModel => Resolve<IMainViewModel>();
         public ISettingsViewModel SettingsViewModel => Resolve<ISettingsViewModel>();
 
-        private T Resolve<T>(string key = null)
-        {
-            return ServiceLocator.Current.GetInstance<T>(key);
-        }
-
-        public void Init()
+        public Container()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
             SimpleIoc.Default.Reset();
@@ -34,8 +29,9 @@ namespace DiscordChatExporter.Gui
             SimpleIoc.Default.Register<ISettingsViewModel, SettingsViewModel>(true);
         }
 
-        public void Cleanup()
+        private T Resolve<T>(string key = null)
         {
+            return ServiceLocator.Current.GetInstance<T>(key);
         }
     }
 }

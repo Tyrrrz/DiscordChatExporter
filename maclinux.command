@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #shellcheck disable=SC2154,SC2086,SC2046,SC2003,SC2034
 #################################################
-#Discord Chat Exporter macOS/Linux CLI Shell 1.0#
+#  Discord Chat Exporter macOS/Linux CLI Shell  #
 # Tested on High Sierra, Debian 9 and Ubuntu 18 #
 #        Using DiscordChatExporter 2.6.         #
 #################################################
@@ -14,10 +14,10 @@ clear
 
 # Display Menu
 cat <<-'ENDCAT'
-===============================================
-Discord Chat Exporter macOS/Linux CLI Shell 1.0
-     github.com/Tyrrrz/DiscordChatExporter
-===============================================
+===========================================
+Discord Chat Exporter macOS/Linux CLI Shell
+   github.com/Tyrrrz/DiscordChatExporter
+===========================================
 For additional export options, run "mono DiscordChatExporter.Cli.exe".
 
 [1] Export using User Token

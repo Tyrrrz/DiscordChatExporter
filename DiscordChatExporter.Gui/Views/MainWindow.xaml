@@ -233,26 +233,23 @@
                             <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Ctrl+Shift+I" />
                             <Run Text="to show developer tools" />
                             <LineBreak />
-                            <Run Text="4. Navigate to the" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Network" />
+                            <Run Text="4. Press" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Ctrl+R" />
+                            <Run Text="to trigger reload" />
+                            <LineBreak />
+                            <Run Text="5. Navigate to the" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Application" />
                             <Run Text="tab" />
                             <LineBreak />
-                            <Run Text="5. Filter the requests to" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="XHR" />
-                            <Run Text="only" />
+                            <Run Text="6. Select" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Local Storage" />
+                            <Run Text="&gt;" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="https://discordapp.com" />
+                            <Run Text="on the left" />
                             <LineBreak />
-                            <Run Text="6. Go to any channel or server" />
-                            <LineBreak />
-                            <Run Text="7. Find a request that starts with" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="&quot;messages&quot;" />
-                            <LineBreak />
-                            <Run Text="8. Click on" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Headers" />
-                            <Run Text="tab" />
-                            <LineBreak />
-                            <Run Text="9. Look for" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="&quot;authorization&quot;" />
-                            <Run Text="among request headers and copy its value" />
+                            <Run Text="7. Find" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="token" />
+                            <Run Text="under key and copy the value" />
                         </TextBlock>
                     </StackPanel>
 

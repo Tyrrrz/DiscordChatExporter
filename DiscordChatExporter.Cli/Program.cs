@@ -14,12 +14,10 @@ namespace DiscordChatExporter.Cli
             Console.WriteLine(" 1. Open Discord app");
             Console.WriteLine(" 2. Log in if you haven't");
             Console.WriteLine(" 3. Press Ctrl+Shift+I to show developer tools");
-            Console.WriteLine(" 4. Navigate to the Network tab");
-            Console.WriteLine(" 5. Filter the requests to XHR only");
-            Console.WriteLine(" 6. Go to any channel or server");
-            Console.WriteLine(" 7. Find a request that starts with \"messages\"");
-            Console.WriteLine(" 8. Click on Headers tab");
-            Console.WriteLine(" 9. Look for \"authorization\" among request headers and copy its value");
+            Console.WriteLine(" 4. Press Ctrl+R to trigger reload");
+            Console.WriteLine(" 5. Navigate to the Application tab");
+            Console.WriteLine(" 6. Select \"Local Storage\" > \"https://discordapp.com\" on the left");
+            Console.WriteLine(" 7. Find \"token\" under key and copy the value");
             Console.WriteLine();
             Console.WriteLine("# To get bot token:");
             Console.WriteLine(" 1. Go to Discord developer portal");

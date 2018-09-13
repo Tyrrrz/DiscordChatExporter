@@ -1,9 +1,9 @@
 ### v2.7 (14-Sep-2018)
 
 - Updated instructions on how to obtain the user token.
-- Expanded CLI with new commands: `channels` (get a list of channels in a guild), `dms` (get a list of DM channels), `guilds` (get a list of guilds), on top of `export` (export chatlog).
+- Expanded CLI with new commands: `channels` (get a list of channels in a guild), `dm` (get a list of DM channels), `guilds` (get a list of guilds), on top of `export` (export chatlog).
 - Improved help text and error messages in CLI.
-- In CLI, if the provided output file path is a directory, a file name will be generated and appended to it automatically.
+- In CLI, the file name will be automatically generated if the provided output file path is a directory.
 
 ### v2.6 (25-Jul-2018)
 

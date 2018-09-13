@@ -44,7 +44,7 @@ namespace DiscordChatExporter.Cli
                 typeof(GetChannelsOptions),
                 typeof(GetDirectMessageChannelsOptions),
                 typeof(GetGuildsOptions),
-                typeof(UpdateAppOptions)
+                //typeof(UpdateAppOptions)
             };
 
             // Parse command line arguments

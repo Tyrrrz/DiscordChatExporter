@@ -1,3 +1,10 @@
+### v2.7 (14-Sep-2018)
+
+- Updated instructions on how to obtain the user token.
+- Expanded CLI with new commands: `channels` (get a list of channels in a guild), `dms` (get a list of DM channels), `guilds` (get a list of guilds), on top of `export` (export chatlog).
+- Improved help text and error messages in CLI.
+- In CLI, if the provided output file path is a directory, a file name will be generated and appended to it automatically.
+
 ### v2.6 (25-Jul-2018)
 
 - Added support for bot tokens as an alternative to user tokens. For GUI, use the button in the top-left to switch between user and bot token. For CLI, pass the `--bot` switch to indicate that the given token is a bot token.

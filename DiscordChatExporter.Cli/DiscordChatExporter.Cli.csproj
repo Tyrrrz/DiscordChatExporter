@@ -3,7 +3,7 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net461</TargetFramework>
-        <Version>2.6</Version>
+        <Version>2.7</Version>
         <Company>Tyrrrz</Company>
         <Copyright>Copyright (c) 2017-2018 Alexey Golub</Copyright>
         <ApplicationIcon>..\favicon.ico</ApplicationIcon>

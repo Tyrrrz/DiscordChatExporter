@@ -19,6 +19,7 @@
 # $OS for OS detection (Linux/Mac/UNKNOWN), $unameOut for uname command output
 # $distro, $distroversion for distro detection
 # $LINUX_DEPS, $MAC_DEPS, $FILE_DEPS for Dependencies
+# $latestversion
 #
 # Cron-related
 # $CRONTIME that has $Minute $Hour $Day $Month $Week, all on cron format
@@ -558,6 +559,7 @@ clear
     echo ""
     echo "Channel ID:"
     read -r Channel
+    echo ""
     echo "Exporting..."
     if ! mono "DiscordChatExporter.Cli.exe" export -t ${Token//\"} $ISBOTYES -c $Channel -f $Format; then
             echo "[Quick Export] Something went wrong."
@@ -604,8 +606,9 @@ elif [[ "$REPLY" == 2 ]]; then
     read -r beforedate
     clear
     echo "Date format used in output"
-    echo "More info about date formats at:"
+    echo "More info about date formats:"
     echo "https://github.com/Tyrrrz/DiscordChatExporter/wiki/Troubleshooting"
+    echo ""
     echo "Leave it blank to default (dd-MMM-yyyy hh:mm tt)"
     read -r dateformat
     clear
@@ -667,7 +670,7 @@ When finished, press ENTER, then Control+D
 ENDCAT
 cat > batchexport.tmp
 echo ""
-echo "====================================="
+echo "=========================================="
 echo "Exporting..."
 while read -r Channel
 do
@@ -714,7 +717,18 @@ if [[ "$REPLY" == 1 ]]; then
     echo "Guild ID:"
     read -r guildid
     clear
-  mono DiscordChatExporter.Cli.exe channels -t ${Token//\"} $ISBOTYES -g $guildid
+    echo "Filename:"
+    echo "Leave it blank so the output file isn't created"
+    read -r Filename
+    if [[ -n $Filename ]]; then
+      mono DiscordChatExporter.Cli.exe channels -t ${Token//\"} $ISBOTYES -g $guildid &> "$Filename.txt"
+      clear
+      cat "$Filename.txt"
+      exit
+    elif [[ -z $Filename ]]; then
+      mono DiscordChatExporter.Cli.exe channels -t ${Token//\"} $ISBOTYES -g $guildid
+      exit
+    fi
   exit
 elif [[ "$REPLY" == 2 ]]; then
   clear
@@ -726,7 +740,18 @@ echo "Token:"
 read -r Token
 echo ""
 clear
-mono DiscordChatExporter.Cli.exe dm -t ${Token//\"}
+echo "Filename:"
+echo "Leave it blank so the output file isn't created"
+read -r Filename
+if [[ -n $Filename ]]; then
+  mono DiscordChatExporter.Cli.exe dm -t ${Token//\"} &> "$Filename.txt"
+  clear
+  cat "$Filename.txt"
+  exit
+elif [[ -z $Filename ]]; then
+  mono DiscordChatExporter.Cli.exe dm -t ${Token//\"}
+  exit
+fi
 exit
 elif [[ "$REPLY" == 3 ]]; then
   clear
@@ -742,7 +767,18 @@ read -r -p ""
   ISBOTYES=-b
   fi
   clear
-mono DiscordChatExporter.Cli.exe guilds -t ${Token//\"} $ISBOTYES
+  echo "Filename:"
+  echo "Leave it blank so the output file isn't created"
+  read -r Filename
+  if [[ -n $Filename ]]; then
+    mono DiscordChatExporter.Cli.exe guilds -t ${Token//\"} $ISBOTYES &> "$Filename.txt"
+    clear
+    cat "$Filename.txt"
+    exit
+  elif [[ -z $Filename ]]; then
+    mono DiscordChatExporter.Cli.exe guilds -t ${Token//\"} $ISBOTYES
+    exit
+  fi
 exit
 else
 echo "Exiting..."
@@ -797,6 +833,7 @@ while true ; do
   echo "[0] Quit"
   read -r -p ""
     if [[ "$REPLY" == 1 ]]; then
+      clear
       echo "Current Token is: ${Token//\"}"
       echo "Insert New Value:"
       read -r Token
@@ -839,7 +876,7 @@ elif [[ "$REPLY" == 7 ]]; then
   if [[ "$OS" == "Mac" ]]; then
     echo "Using Crontab is not recommended on macOS"
     echo "Please follow the proper instructions here:"
-    echo "https://github.com/Tyrrrz/DiscordChatExporter/wiki"
+    echo "https://github.com/Tyrrrz/DiscordChatExporter/wiki/Scheduling-exports-on-macOS"
     echo "Proceed at your own risk."
   fi
  # If cron.sh exists on script's directory
@@ -847,7 +884,7 @@ elif [[ "$REPLY" == 7 ]]; then
  echo "cron.sh already exists. Have you run this tool before?"
  echo "To schedule more exports: duplicate and/or edit cron.sh accordingly, then run 'crontab -e' as root and edit the file."
  echo "More info about editing cron.sh here:"
- echo "https://github.com/Tyrrrz/DiscordChatExporter/wiki"
+ echo "https://github.com/Tyrrrz/DiscordChatExporter/wiki/Scheduling-Exports-with-Mono-&-Crontab"
  echo "Exiting..."
  exit
  fi
@@ -864,7 +901,7 @@ We don't take any responsibility and we aren't liable for any damage caused thro
 If you're not sure how to use Crontab, exit with CONTROL+C.
 
 More info and examples here:
-https://github.com/Tyrrrz/DiscordChatExporter/wiki
+https://github.com/Tyrrrz/DiscordChatExporter/wiki/Scheduling-Exports-with-Mono-&-Crontab
 
 Crontab time format:
 

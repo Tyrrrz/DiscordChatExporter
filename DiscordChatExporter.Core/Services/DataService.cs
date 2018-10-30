@@ -65,6 +65,10 @@ namespace DiscordChatExporter.Core.Services
 
         public async Task<Guild> GetGuildAsync(AuthToken token, string guildId)
         {
+            // Special case for direct messages pseudo-guild
+            if (guildId == Guild.DirectMessages.Id)
+                return Guild.DirectMessages;
+
             var response = await GetApiResponseAsync(token, "guilds", guildId);
             var guild = ParseGuild(response);
 

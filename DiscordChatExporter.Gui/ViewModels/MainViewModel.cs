@@ -19,7 +19,7 @@ namespace DiscordChatExporter.Gui.ViewModels
         private readonly ISettingsService _settingsService;
         private readonly IUpdateService _updateService;
         private readonly IDataService _dataService;
-        private readonly IMessageGroupService _messageGroupService;
+        private readonly IChatLogService _chatLogService;
         private readonly IExportService _exportService;
 
         private readonly Dictionary<Guild, IReadOnlyList<Channel>> _guildChannelsMap;
@@ -111,12 +111,12 @@ namespace DiscordChatExporter.Gui.ViewModels
         public RelayCommand<Channel> ShowExportSetupCommand { get; }
 
         public MainViewModel(ISettingsService settingsService, IUpdateService updateService, IDataService dataService,
-            IMessageGroupService messageGroupService, IExportService exportService)
+            IChatLogService chatLogService, IExportService exportService)
         {
             _settingsService = settingsService;
             _updateService = updateService;
             _dataService = dataService;
-            _messageGroupService = messageGroupService;
+            _chatLogService = chatLogService;
             _exportService = exportService;
 
             _guildChannelsMap = new Dictionary<Guild, IReadOnlyList<Channel>>();
@@ -256,21 +256,11 @@ namespace DiscordChatExporter.Gui.ViewModels
 
             try
             {
-                // TODO: extract this to make it reusable across implementations
-                // Get messages
-                var messages = await _dataService.GetChannelMessagesAsync(token, channel.Id, from, to, progressHandler);
-
-                // Group messages
-                var messageGroups = _messageGroupService.GroupMessages(messages);
-
-                // Get mentionables
-                var mentionables = await _dataService.GetMentionablesAsync(token, guild.Id, messages);
-
-                // Create log
-                var log = new ChatLog(guild, channel, from, to, messageGroups, mentionables);
+                // Get chat log
+                var chatLog = await _chatLogService.GetChatLogAsync(token, guild, channel, from, to, progressHandler);
 
                 // Export
-                _exportService.Export(format, filePath, log);
+                _exportService.Export(format, filePath, chatLog);
 
                 // Open
                 Process.Start(filePath);

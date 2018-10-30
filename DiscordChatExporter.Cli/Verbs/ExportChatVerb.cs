@@ -20,8 +20,7 @@ namespace DiscordChatExporter.Cli.Verbs
             // Get services
             var container = new Container();
             var settingsService = container.Resolve<ISettingsService>();
-            var dataService = container.Resolve<IDataService>();
-            var messageGroupService = container.Resolve<IMessageGroupService>();
+            var chatLogService = container.Resolve<IChatLogService>();
             var exportService = container.Resolve<IExportService>();
 
             // Configure settings
@@ -30,37 +29,20 @@ namespace DiscordChatExporter.Cli.Verbs
             if (Options.MessageGroupLimit > 0)
                 settingsService.MessageGroupLimit = Options.MessageGroupLimit;
 
-            // Get channel and guild
-            var channel = await dataService.GetChannelAsync(Options.GetToken(), Options.ChannelId);
-            var guild = channel.GuildId == Guild.DirectMessages.Id
-                ? Guild.DirectMessages
-                : await dataService.GetGuildAsync(Options.GetToken(), channel.GuildId);
+            // Get chat log
+            var chatLog = await chatLogService.GetChatLogAsync(Options.GetToken(), Options.ChannelId, 
+                Options.After, Options.Before);
 
             // Generate file path if not set
             var filePath = Options.FilePath;
             if (filePath == null || filePath.EndsWith("/") || filePath.EndsWith("\\"))
             {
-                filePath += $"{guild.Name} - {channel.Name}.{Options.ExportFormat.GetFileExtension()}"
+                filePath += $"{chatLog.Guild.Name} - {chatLog.Channel.Name}.{Options.ExportFormat.GetFileExtension()}"
                     .Replace(Path.GetInvalidFileNameChars(), '_');
             }
 
-            // TODO: extract this to make it reusable across implementations
-            // Get messages
-            var messages =
-                await dataService.GetChannelMessagesAsync(Options.GetToken(), channel.Id,
-                    Options.After, Options.Before);
-
-            // Group messages
-            var messageGroups = messageGroupService.GroupMessages(messages);
-
-            // Get mentionables
-            var mentionables = await dataService.GetMentionablesAsync(Options.GetToken(), guild.Id, messages);
-
-            // Create log
-            var log = new ChatLog(guild, channel, Options.After, Options.Before, messageGroups, mentionables);
-
             // Export
-            exportService.Export(Options.ExportFormat, filePath, log);
+            exportService.Export(Options.ExportFormat, filePath, chatLog);
 
             // Print result
             Console.WriteLine($"Exported chat to [{filePath}]");

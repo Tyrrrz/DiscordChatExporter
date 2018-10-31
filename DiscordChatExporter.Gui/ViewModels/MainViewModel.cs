@@ -260,7 +260,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                 var chatLog = await _chatLogService.GetChatLogAsync(token, guild, channel, from, to, progressHandler);
 
                 // Export
-                _exportService.Export(chatLog, filePath, format);
+                _exportService.ExportChatLog(chatLog, filePath, format);
 
                 // Open
                 Process.Start(filePath);

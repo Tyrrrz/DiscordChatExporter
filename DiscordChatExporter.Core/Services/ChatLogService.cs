@@ -24,10 +24,13 @@ namespace DiscordChatExporter.Core.Services
             // Group messages
             var messageGroups = _messageGroupService.GroupMessages(messages);
 
+            // Get total message count
+            var totalMessageCount = messages.Count;
+
             // Get mentionables
             var mentionables = await _dataService.GetMentionablesAsync(token, guild.Id, messages);
 
-            return new ChatLog(guild, channel, from, to, messageGroups, mentionables);
+            return new ChatLog(guild, channel, from, to, messageGroups, totalMessageCount, mentionables);
         }
 
         public async Task<ChatLog> GetChatLogAsync(AuthToken token, string channelId,

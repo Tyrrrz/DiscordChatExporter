@@ -16,18 +16,19 @@ namespace DiscordChatExporter.Core.Models
 
         public IReadOnlyList<MessageGroup> MessageGroups { get; }
 
-        public int TotalMessageCount => MessageGroups.Sum(g => g.Messages.Count);
+        public long TotalMessageCount { get; }
 
         public Mentionables Mentionables { get; }
 
         public ChatLog(Guild guild, Channel channel, DateTime? from, DateTime? to,
-            IReadOnlyList<MessageGroup> messageGroups, Mentionables mentionables)
+            IReadOnlyList<MessageGroup> messageGroups, long totalMessageCount, Mentionables mentionables)
         {
             Guild = guild;
             Channel = channel;
             From = from;
             To = to;
             MessageGroups = messageGroups;
+            TotalMessageCount = totalMessageCount;
             Mentionables = mentionables;
         }
 

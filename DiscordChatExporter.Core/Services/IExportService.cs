@@ -4,6 +4,6 @@ namespace DiscordChatExporter.Core.Services
 {
     public interface IExportService
     {
-        void Export(ExportFormat format, string filePath, ChatLog log);
+        void Export(ChatLog chatLog, string filePath, ExportFormat format);
     }
 }

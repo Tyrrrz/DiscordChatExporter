@@ -15,7 +15,7 @@ namespace DiscordChatExporter.Core.Services
             _settingsService = settingsService;
         }
 
-        public void Export(ExportFormat format, string filePath, ChatLog log)
+        public void Export(ChatLog chatLog, string filePath, ExportFormat format)
         {
             // Create template loader
             var loader = new TemplateLoader();
@@ -35,7 +35,7 @@ namespace DiscordChatExporter.Core.Services
             };
 
             // Create template model
-            var templateModel = new TemplateModel(format, log, _settingsService.DateFormat);
+            var templateModel = new TemplateModel(format, chatLog, _settingsService.DateFormat);
             context.PushGlobal(templateModel.GetScriptObject());
 
             // Create directory

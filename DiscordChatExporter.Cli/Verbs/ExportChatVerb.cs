@@ -42,7 +42,7 @@ namespace DiscordChatExporter.Cli.Verbs
             }
 
             // Export
-            exportService.Export(Options.ExportFormat, filePath, chatLog);
+            exportService.Export(chatLog, filePath, Options.ExportFormat);
 
             // Print result
             Console.WriteLine($"Exported chat to [{filePath}]");

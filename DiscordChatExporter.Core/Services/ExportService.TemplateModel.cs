@@ -273,9 +273,6 @@ namespace DiscordChatExporter.Core.Services
 
             private string FormatContentCsv(string content)
             {
-                // New lines
-                content = content.Replace("\n", ", ");
-
                 // Escape quotes
                 content = content.Replace("\"", "\"\"");
 

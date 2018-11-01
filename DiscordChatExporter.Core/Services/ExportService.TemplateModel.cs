@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
@@ -18,12 +19,55 @@ namespace DiscordChatExporter.Core.Services
             private readonly ExportFormat _format;
             private readonly ChatLog _log;
             private readonly string _dateFormat;
+            private readonly int _messageGroupLimit;
 
-            public TemplateModel(ExportFormat format, ChatLog log, string dateFormat)
+            public TemplateModel(ExportFormat format, ChatLog log, string dateFormat, int messageGroupLimit)
             {
                 _format = format;
                 _log = log;
                 _dateFormat = dateFormat;
+                _messageGroupLimit = messageGroupLimit;
+            }
+
+            private IEnumerable<MessageGroup> GroupMessages(IEnumerable<Message> messages)
+            {
+                // Group adjacent messages by timestamp and author
+                var groupBuffer = new List<Message>();
+                foreach (var message in messages)
+                {
+                    var groupFirst = groupBuffer.FirstOrDefault();
+
+                    // Group break condition
+                    var breakCondition =
+                        groupFirst != null &&
+                        (
+                            message.Author.Id != groupFirst.Author.Id ||
+                            (message.Timestamp - groupFirst.Timestamp).TotalHours > 1 ||
+                            message.Timestamp.Hour != groupFirst.Timestamp.Hour ||
+                            groupBuffer.Count >= _messageGroupLimit
+                        );
+
+                    // If condition is true - flush buffer
+                    if (breakCondition)
+                    {
+                        var group = new MessageGroup(groupFirst.Author, groupFirst.Timestamp, groupBuffer.ToArray());
+                        groupBuffer.Clear();
+
+                        yield return group;
+                    }
+
+                    // Add message to buffer
+                    groupBuffer.Add(message);
+                }
+
+                // Add what's remaining in buffer
+                if (groupBuffer.Any())
+                {
+                    var groupFirst = groupBuffer.First();
+                    var group = new MessageGroup(groupFirst.Author, groupFirst.Timestamp, groupBuffer.ToArray());
+
+                    yield return group;
+                }
             }
 
             private string HtmlEncode(string str) => WebUtility.HtmlEncode(str);
@@ -310,6 +354,7 @@ namespace DiscordChatExporter.Core.Services
                 scriptObject.SetValue("Model", _log, true);
 
                 // Import functions
+                scriptObject.Import(nameof(GroupMessages), new Func<IEnumerable<Message>, IEnumerable<MessageGroup>>(GroupMessages));
                 scriptObject.Import(nameof(Format), new Func<IFormattable, string, string>(Format));
                 scriptObject.Import(nameof(FormatDate), new Func<DateTime, string>(FormatDate));
                 scriptObject.Import(nameof(FormatFileSize), new Func<long, string>(FormatFileSize));

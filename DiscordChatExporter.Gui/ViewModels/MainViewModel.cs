@@ -19,7 +19,6 @@ namespace DiscordChatExporter.Gui.ViewModels
         private readonly ISettingsService _settingsService;
         private readonly IUpdateService _updateService;
         private readonly IDataService _dataService;
-        private readonly IChatLogService _chatLogService;
         private readonly IExportService _exportService;
 
         private readonly Dictionary<Guild, IReadOnlyList<Channel>> _guildChannelsMap;
@@ -111,12 +110,11 @@ namespace DiscordChatExporter.Gui.ViewModels
         public RelayCommand<Channel> ShowExportSetupCommand { get; }
 
         public MainViewModel(ISettingsService settingsService, IUpdateService updateService, IDataService dataService,
-            IChatLogService chatLogService, IExportService exportService)
+            IExportService exportService)
         {
             _settingsService = settingsService;
             _updateService = updateService;
             _dataService = dataService;
-            _chatLogService = chatLogService;
             _exportService = exportService;
 
             _guildChannelsMap = new Dictionary<Guild, IReadOnlyList<Channel>>();
@@ -257,7 +255,7 @@ namespace DiscordChatExporter.Gui.ViewModels
             try
             {
                 // Get chat log
-                var chatLog = await _chatLogService.GetChatLogAsync(token, guild, channel, from, to, progressHandler);
+                var chatLog = await _dataService.GetChatLogAsync(token, guild, channel, from, to, progressHandler);
 
                 // Export
                 _exportService.ExportChatLog(chatLog, filePath, format);

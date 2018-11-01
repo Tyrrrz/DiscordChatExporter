@@ -20,7 +20,7 @@ namespace DiscordChatExporter.Cli.Verbs
             // Get services
             var container = new Container();
             var settingsService = container.Resolve<ISettingsService>();
-            var chatLogService = container.Resolve<IChatLogService>();
+            var dataService = container.Resolve<IDataService>();
             var exportService = container.Resolve<IExportService>();
 
             // Configure settings
@@ -30,7 +30,7 @@ namespace DiscordChatExporter.Cli.Verbs
                 settingsService.MessageGroupLimit = Options.MessageGroupLimit;
 
             // Get chat log
-            var chatLog = await chatLogService.GetChatLogAsync(Options.GetToken(), Options.ChannelId, 
+            var chatLog = await dataService.GetChatLogAsync(Options.GetToken(), Options.ChannelId, 
                 Options.After, Options.Before);
 
             // Generate file path if not set

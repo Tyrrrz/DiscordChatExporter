@@ -3,12 +3,12 @@
 Guild:    {{ Model.Guild.Name }}
 Channel:  {{ Model.Channel.Name }}
 Topic:    {{ Model.Channel.Topic }}
-Messages: {{ Model.TotalMessageCount | Format "N0" }}
+Messages: {{ Model.Messages | array.size | Format "N0" }}
 Range:    {{ if Model.From }}{{ Model.From | FormatDate }} {{ end }}{{ if Model.From || Model.To }}->{{ end }}{{ if Model.To }} {{ Model.To | FormatDate }}{{ end }}
 ==============================================================
 
 {{~ # Log ~}}
-{{~ for group in Model.MessageGroups ~}}
+{{~ for group in Model.Messages | GroupMessages ~}}
   {{~ # Author name and timestamp ~}}
   {{~ }}[{{ group.Timestamp | FormatDate }}] {{ group.Author.FullName }}
   {{~ # Messages ~}}

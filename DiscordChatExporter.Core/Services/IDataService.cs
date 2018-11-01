@@ -24,5 +24,11 @@ namespace DiscordChatExporter.Core.Services
 
         Task<Mentionables> GetMentionablesAsync(AuthToken token, string guildId,
             IEnumerable<Message> messages);
+
+        Task<ChatLog> GetChatLogAsync(AuthToken token, Guild guild, Channel channel,
+            DateTime? from = null, DateTime? to = null, IProgress<double> progress = null);
+
+        Task<ChatLog> GetChatLogAsync(AuthToken token, string channelId,
+            DateTime? from = null, DateTime? to = null, IProgress<double> progress = null);
     }
 }

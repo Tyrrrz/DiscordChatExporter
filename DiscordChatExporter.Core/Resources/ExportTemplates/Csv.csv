@@ -1,12 +1,10 @@
 ﻿Author;Date;Content;Attachments;
-{{~ for group in Model.MessageGroups -}}
-  {{- for message in group.Messages -}}
-    {{- message.Author.FullName }};
+{{~ for message in Model.Messages -}}
+  {{- message.Author.FullName }};
 
-    {{- message.Timestamp | FormatDate }};
+  {{- message.Timestamp | FormatDate }};
 
-    {{- message.Content | FormatContent }};
+  {{- message.Content | FormatContent }};
 
-    {{- message.Attachments | array.map "Url" | array.join "," }};
-  {{~ end -}}
-{{- end -}}
+  {{- message.Attachments | array.map "Url" | array.join "," }};
+{{~ end -}}

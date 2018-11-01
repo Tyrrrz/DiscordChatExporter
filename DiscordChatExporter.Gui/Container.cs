@@ -17,10 +17,8 @@ namespace DiscordChatExporter.Gui
             SimpleIoc.Default.Reset();
 
             // Services
-            SimpleIoc.Default.Register<IChatLogService, ChatLogService>();
             SimpleIoc.Default.Register<IDataService, DataService>();
             SimpleIoc.Default.Register<IExportService, ExportService>();
-            SimpleIoc.Default.Register<IMessageGroupService, MessageGroupService>();
             SimpleIoc.Default.Register<ISettingsService, SettingsService>();
             SimpleIoc.Default.Register<IUpdateService, UpdateService>();
 

@@ -214,6 +214,33 @@ namespace DiscordChatExporter.Core.Services
             return new Mentionables(users, channels, roles);
         }
 
+        public async Task<ChatLog> GetChatLogAsync(AuthToken token, Guild guild, Channel channel,
+            DateTime? from = null, DateTime? to = null, IProgress<double> progress = null)
+        {
+            // Get messages
+            var messages = await GetChannelMessagesAsync(token, channel.Id, from, to, progress);
+
+            // Get mentionables
+            var mentionables = await GetMentionablesAsync(token, guild.Id, messages);
+
+            return new ChatLog(guild, channel, from, to, messages, mentionables);
+        }
+
+        public async Task<ChatLog> GetChatLogAsync(AuthToken token, string channelId,
+            DateTime? from = null, DateTime? to = null, IProgress<double> progress = null)
+        {
+            // Get channel
+            var channel = await GetChannelAsync(token, channelId);
+
+            // Get guild
+            var guild = channel.GuildId == Guild.DirectMessages.Id
+                ? Guild.DirectMessages
+                : await GetGuildAsync(token, channel.GuildId);
+
+            // Get the chat log
+            return await GetChatLogAsync(token, guild, channel, from, to, progress);
+        }
+
         public void Dispose()
         {
             _httpClient.Dispose();

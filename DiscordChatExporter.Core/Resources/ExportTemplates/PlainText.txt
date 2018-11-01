@@ -8,18 +8,14 @@ Range:    {{ if Model.From }}{{ Model.From | FormatDate }} {{ end }}{{ if Model.
 ==============================================================
 
 {{~ # Log ~}}
-{{~ for group in Model.Messages | GroupMessages ~}}
+{{~ for message in Model.Messages ~}}
   {{~ # Author name and timestamp ~}}
-  {{~ }}[{{ group.Timestamp | FormatDate }}] {{ group.Author.FullName }}
-  {{~ # Messages ~}}
-  {{~ for message in group.Messages ~}}
-    {{~ # Content ~}}
-    {{~ message.Content | FormatContent }}
-    {{~ # Attachments ~}}
-    {{~ for attachment in message.Attachments ~}}
-      {{~ attachment.Url }}
-    {{~ end ~}}
+  {{~ }}[{{ message.Timestamp | FormatDate }}] {{ message.Author.FullName }}
+  {{~ # Content ~}}
+  {{~ message.Content | FormatContent }}
+  {{~ # Attachments ~}}
+  {{~ for attachment in message.Attachments ~}}
+    {{~ attachment.Url }}
   {{~ end ~}}
-
 
 {{~ end ~}}

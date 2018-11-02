@@ -55,5 +55,40 @@ namespace DiscordChatExporter.Core.Services
                 template.Render(context);
             }
         }
+
+        public void ExportChatLog(ChatLog chatLog, string filePath, ExportFormat format,
+            int maxMessageCountPerPartition)
+        {
+            // If there are fewer messages in chat log than the limit - just process it without partitioning
+            if (chatLog.Messages.Count <= maxMessageCountPerPartition)
+            {
+                // Export and return
+                ExportChatLog(chatLog, filePath, format);
+                return;
+            }
+
+            // Split file path into components
+            var fileNameWithoutExt = Path.GetFileNameWithoutExtension(filePath);
+            var fileExt = Path.GetExtension(filePath);
+            var dirPath = Path.GetDirectoryName(filePath);
+
+            // Get partitions
+            var partitions = chatLog.SplitIntoPartitions(maxMessageCountPerPartition);
+
+            // Export each partition separately
+            var partitionNumber = 1;
+            foreach (var partition in partitions)
+            {
+                // Compose new file name
+                var partitionFilePath = $"{fileNameWithoutExt}-{partitionNumber}.{fileExt}";
+
+                // Compose full file path
+                if (dirPath.IsNotBlank())
+                    partitionFilePath = Path.Combine(dirPath, partitionFilePath);
+
+                // Export
+                ExportChatLog(partition, partitionFilePath, format);
+            }
+        }
     }
 }

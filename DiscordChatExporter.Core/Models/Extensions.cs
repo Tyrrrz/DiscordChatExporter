@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace DiscordChatExporter.Core.Models
 {
@@ -30,6 +31,37 @@ namespace DiscordChatExporter.Core.Models
                 return "Comma Seperated Values (CSV)";
 
             throw new ArgumentOutOfRangeException(nameof(format));
+        }
+
+        public static IReadOnlyList<ChatLog> SplitIntoPartitions(this ChatLog chatLog, int maxMessageCountPerPartition)
+        {
+            // If chat log has fewer messages than the limit - just return chat log in a list
+            if (chatLog.Messages.Count <= maxMessageCountPerPartition)
+                return new[] {chatLog};
+
+            var result = new List<ChatLog>();
+
+            // Loop through messages
+            var messageBuffer = new List<Message>();
+            foreach (var message in chatLog.Messages)
+            {
+                // Add message to buffer
+                messageBuffer.Add(message);
+
+                // If reached the limit - split and clear buffer
+                if (messageBuffer.Count >= maxMessageCountPerPartition)
+                {
+                    // Add to result
+                    var chatLogPartition = new ChatLog(chatLog.Guild, chatLog.Channel, chatLog.From, chatLog.To,
+                        messageBuffer, chatLog.Mentionables);
+                    result.Add(chatLogPartition);
+
+                    // Clear buffer
+                    messageBuffer.Clear();
+                }
+            }
+
+            return result;
         }
     }
 }

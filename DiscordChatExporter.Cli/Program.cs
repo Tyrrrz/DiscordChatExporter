@@ -43,8 +43,7 @@ namespace DiscordChatExporter.Cli
                 typeof(ExportChatOptions),
                 typeof(GetChannelsOptions),
                 typeof(GetDirectMessageChannelsOptions),
-                typeof(GetGuildsOptions),
-                //typeof(UpdateAppOptions)
+                typeof(GetGuildsOptions)
             };
 
             // Parse command line arguments
@@ -55,7 +54,6 @@ namespace DiscordChatExporter.Cli
             parsedArgs.WithParsed<GetChannelsOptions>(o => new GetChannelsVerb(o).Execute());
             parsedArgs.WithParsed<GetDirectMessageChannelsOptions>(o => new GetDirectMessageChannelsVerb(o).Execute());
             parsedArgs.WithParsed<GetGuildsOptions>(o => new GetGuildsVerb(o).Execute());
-            parsedArgs.WithParsed<UpdateAppOptions>(o => new UpdateAppVerb(o).Execute());
 
             // Show token help if help requested or no verb specified
             parsedArgs.WithNotParsed(errs =>

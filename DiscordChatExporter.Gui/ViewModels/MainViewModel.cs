@@ -260,9 +260,6 @@ namespace DiscordChatExporter.Gui.ViewModels
                 // Export
                 _exportService.ExportChatLog(chatLog, filePath, format);
 
-                // Open
-                Process.Start(filePath);
-
                 // Notify completion
                 MessengerInstance.Send(new ShowNotificationMessage("Export complete"));
             }

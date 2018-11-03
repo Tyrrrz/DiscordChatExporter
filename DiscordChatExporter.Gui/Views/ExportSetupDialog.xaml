@@ -60,7 +60,7 @@
             Margin="16,8,16,8"
             materialDesign:HintAssist.Hint="Messages per partition (optional)"
             materialDesign:HintAssist.IsFloating="True"
-            Text="{Binding PartitionLimit}" />
+            Text="{Binding PartitionLimit, TargetNullValue=''}" />
 
         <!--  Buttons  -->
         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">

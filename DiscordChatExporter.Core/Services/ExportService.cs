@@ -52,8 +52,8 @@ namespace DiscordChatExporter.Core.Services
                 // Configure output
                 context.PushOutput(new TextWriterOutput(output));
 
-                // Render template
-                template.Render(context);
+                // Render output
+                context.Evaluate(template.Page);
             }
         }
 

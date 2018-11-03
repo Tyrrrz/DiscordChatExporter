@@ -84,17 +84,17 @@ namespace DiscordChatExporter.Core.Services
         }
 
         public void ExportChatLog(ChatLog chatLog, string filePath, ExportFormat format,
-            int? maxMessageCountPerPartition = null)
+            int? partitionLimit = null)
         {
             // If partitioning is disabled or there are fewer messages in chat log than the limit - process it without partitioning
-            if (maxMessageCountPerPartition == null || chatLog.Messages.Count <= maxMessageCountPerPartition)
+            if (partitionLimit == null || chatLog.Messages.Count <= partitionLimit)
             {
                 ExportChatLogSingle(chatLog, filePath, format);
             }
             // Otherwise split into partitions and export separately
             else
             {
-                var partitions = chatLog.SplitIntoPartitions(maxMessageCountPerPartition.Value);
+                var partitions = chatLog.SplitIntoPartitions(partitionLimit.Value);
                 ExportChatLogPartitions(partitions, filePath, format);
             }
         }

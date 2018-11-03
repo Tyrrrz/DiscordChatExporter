@@ -12,7 +12,7 @@ namespace DiscordChatExporter.Core.Services
 
         public AuthToken LastToken { get; set; }
         public ExportFormat LastExportFormat { get; set; } = ExportFormat.HtmlDark;
-        public int? LastMaxMessageCountPerPartition { get; set; }
+        public int? LastPartitionLimit { get; set; }
 
         public SettingsService()
         {

@@ -129,7 +129,7 @@ namespace DiscordChatExporter.Gui.ViewModels
 
             // Messages
             MessengerInstance.Register<StartExportMessage>(this,
-                m => Export(m.Channel, m.FilePath, m.Format, m.From, m.To, m.MaxMessageCountPerPartition));
+                m => Export(m.Channel, m.FilePath, m.Format, m.From, m.To, m.PartitionLimit));
         }
 
         private async void ViewLoaded()
@@ -240,7 +240,7 @@ namespace DiscordChatExporter.Gui.ViewModels
         }
 
         private async void Export(Channel channel, string filePath, ExportFormat format, 
-            DateTime? from, DateTime? to, int? maxMessageCountPerPartition)
+            DateTime? from, DateTime? to, int? partitionLimit)
         {
             IsBusy = true;
 
@@ -259,7 +259,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                 var chatLog = await _dataService.GetChatLogAsync(token, guild, channel, from, to, progressHandler);
 
                 // Export
-                _exportService.ExportChatLog(chatLog, filePath, format, maxMessageCountPerPartition);
+                _exportService.ExportChatLog(chatLog, filePath, format, partitionLimit);
 
                 // Notify completion
                 MessengerInstance.Send(new ShowNotificationMessage("Export complete"));

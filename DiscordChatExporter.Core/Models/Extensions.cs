@@ -34,10 +34,10 @@ namespace DiscordChatExporter.Core.Models
             throw new ArgumentOutOfRangeException(nameof(format));
         }
 
-        public static IReadOnlyList<ChatLog> SplitIntoPartitions(this ChatLog chatLog, int maxMessageCountPerPartition)
+        public static IReadOnlyList<ChatLog> SplitIntoPartitions(this ChatLog chatLog, int partitionLimit)
         {
             // If chat log has fewer messages than the limit - just return chat log in a list
-            if (chatLog.Messages.Count <= maxMessageCountPerPartition)
+            if (chatLog.Messages.Count <= partitionLimit)
                 return new[] {chatLog};
 
             var result = new List<ChatLog>();
@@ -50,7 +50,7 @@ namespace DiscordChatExporter.Core.Models
                 buffer.Add(message);
 
                 // If reached the limit - split and reset buffer
-                if (buffer.Count >= maxMessageCountPerPartition)
+                if (buffer.Count >= partitionLimit)
                 {
                     // Add to result
                     var chatLogPartition = new ChatLog(chatLog.Guild, chatLog.Channel, chatLog.From, chatLog.To, buffer,

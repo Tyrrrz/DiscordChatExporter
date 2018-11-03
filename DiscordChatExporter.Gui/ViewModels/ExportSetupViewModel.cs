@@ -19,7 +19,7 @@ namespace DiscordChatExporter.Gui.ViewModels
         private ExportFormat _format;
         private DateTime? _from;
         private DateTime? _to;
-        private int? _maxMessageCountPerPartition;
+        private int? _partitionLimit;
 
         public Guild Guild { get; private set; }
 
@@ -64,10 +64,10 @@ namespace DiscordChatExporter.Gui.ViewModels
             set => Set(ref _to, value);
         }
 
-        public int? MaxMessageCountPerPartition
+        public int? PartitionLimit
         {
-            get => _maxMessageCountPerPartition;
-            set => Set(ref _maxMessageCountPerPartition, value);
+            get => _partitionLimit;
+            set => Set(ref _partitionLimit, value);
         }
 
         // Commands
@@ -90,7 +90,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                     .Replace(Path.GetInvalidFileNameChars(), '_');
                 From = null;
                 To = null;
-                MaxMessageCountPerPartition = _settingsService.LastMaxMessageCountPerPartition;
+                PartitionLimit = _settingsService.LastPartitionLimit;
             });
         }
 
@@ -98,7 +98,7 @@ namespace DiscordChatExporter.Gui.ViewModels
         {
             // Persist preferences
             _settingsService.LastExportFormat = SelectedFormat;
-            _settingsService.LastMaxMessageCountPerPartition = MaxMessageCountPerPartition;
+            _settingsService.LastPartitionLimit = PartitionLimit;
 
             // Clamp 'from' and 'to' values
             if (From > To)
@@ -107,7 +107,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                 To = From;
 
             // Start export
-            MessengerInstance.Send(new StartExportMessage(Channel, FilePath, SelectedFormat, From, To, MaxMessageCountPerPartition));
+            MessengerInstance.Send(new StartExportMessage(Channel, FilePath, SelectedFormat, From, To, PartitionLimit));
         }
     }
 }

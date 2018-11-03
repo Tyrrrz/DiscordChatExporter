@@ -90,14 +90,15 @@ namespace DiscordChatExporter.Gui.ViewModels
                     .Replace(Path.GetInvalidFileNameChars(), '_');
                 From = null;
                 To = null;
-                MaxMessageCountPerPartition = null;
+                MaxMessageCountPerPartition = _settingsService.LastMaxMessageCountPerPartition;
             });
         }
 
         private void Export()
         {
-            // Save format
+            // Persist preferences
             _settingsService.LastExportFormat = SelectedFormat;
+            _settingsService.LastMaxMessageCountPerPartition = MaxMessageCountPerPartition;
 
             // Clamp 'from' and 'to' values
             if (From > To)

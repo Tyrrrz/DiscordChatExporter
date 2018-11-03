@@ -259,10 +259,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                 var chatLog = await _dataService.GetChatLogAsync(token, guild, channel, from, to, progressHandler);
 
                 // Export
-                if (maxMessageCountPerPartition == null)
-                    _exportService.ExportChatLog(chatLog, filePath, format);
-                else
-                    _exportService.ExportChatLog(chatLog, filePath, format, maxMessageCountPerPartition.Value);
+                _exportService.ExportChatLog(chatLog, filePath, format, maxMessageCountPerPartition);
 
                 // Notify completion
                 MessengerInstance.Send(new ShowNotificationMessage("Export complete"));

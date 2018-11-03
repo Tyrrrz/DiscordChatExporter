@@ -42,15 +42,7 @@ namespace DiscordChatExporter.Cli.Verbs
             }
 
             // Export
-            if (Options.MaxMessageCountPerPartition.HasValue)
-            {
-                exportService.ExportChatLog(chatLog, filePath, Options.ExportFormat,
-                    Options.MaxMessageCountPerPartition.Value);
-            }
-            else
-            {
-                exportService.ExportChatLog(chatLog, filePath, Options.ExportFormat);
-            }
+            exportService.ExportChatLog(chatLog, filePath, Options.ExportFormat, Options.MaxMessageCountPerPartition);
 
             // Print result
             Console.WriteLine($"Exported chat to [{filePath}]");

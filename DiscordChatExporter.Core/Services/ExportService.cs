@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using DiscordChatExporter.Core.Models;
 using Scriban;
 using Scriban.Runtime;
@@ -15,7 +16,7 @@ namespace DiscordChatExporter.Core.Services
             _settingsService = settingsService;
         }
 
-        public void ExportChatLog(ChatLog chatLog, string filePath, ExportFormat format)
+        private void ExportChatLogSingle(ChatLog chatLog, string filePath, ExportFormat format)
         {
             // Create template loader
             var loader = new TemplateLoader();
@@ -56,24 +57,12 @@ namespace DiscordChatExporter.Core.Services
             }
         }
 
-        public void ExportChatLog(ChatLog chatLog, string filePath, ExportFormat format,
-            int maxMessageCountPerPartition)
+        private void ExportChatLogPartitions(IReadOnlyList<ChatLog> partitions, string filePath, ExportFormat format)
         {
-            // If there are fewer messages in chat log than the limit - just process it without partitioning
-            if (chatLog.Messages.Count <= maxMessageCountPerPartition)
-            {
-                // Export and return
-                ExportChatLog(chatLog, filePath, format);
-                return;
-            }
-
             // Split file path into components
+            var dirPath = Path.GetDirectoryName(filePath);
             var fileNameWithoutExt = Path.GetFileNameWithoutExtension(filePath);
             var fileExt = Path.GetExtension(filePath);
-            var dirPath = Path.GetDirectoryName(filePath);
-
-            // Get partitions
-            var partitions = chatLog.SplitIntoPartitions(maxMessageCountPerPartition);
 
             // Export each partition separately
             var partitionNumber = 1;
@@ -87,10 +76,26 @@ namespace DiscordChatExporter.Core.Services
                     partitionFilePath = Path.Combine(dirPath, partitionFilePath);
 
                 // Export
-                ExportChatLog(partition, partitionFilePath, format);
+                ExportChatLogSingle(partition, partitionFilePath, format);
 
                 // Increment partition number
                 partitionNumber++;
+            }
+        }
+
+        public void ExportChatLog(ChatLog chatLog, string filePath, ExportFormat format,
+            int? maxMessageCountPerPartition = null)
+        {
+            // If partitioning is disabled or there are fewer messages in chat log than the limit - process it without partitioning
+            if (maxMessageCountPerPartition == null || chatLog.Messages.Count <= maxMessageCountPerPartition)
+            {
+                ExportChatLogSingle(chatLog, filePath, format);
+            }
+            // Otherwise split into partitions and export separately
+            else
+            {
+                var partitions = chatLog.SplitIntoPartitions(maxMessageCountPerPartition.Value);
+                ExportChatLogPartitions(partitions, filePath, format);
             }
         }
     }

@@ -19,6 +19,7 @@ namespace DiscordChatExporter.Gui.ViewModels
         private ExportFormat _format;
         private DateTime? _from;
         private DateTime? _to;
+        private int? _partitionLimit;
 
         public Guild Guild { get; private set; }
 
@@ -63,6 +64,12 @@ namespace DiscordChatExporter.Gui.ViewModels
             set => Set(ref _to, value);
         }
 
+        public int? PartitionLimit
+        {
+            get => _partitionLimit;
+            set => Set(ref _partitionLimit, value);
+        }
+
         // Commands
         public RelayCommand ExportCommand { get; }
 
@@ -83,13 +90,15 @@ namespace DiscordChatExporter.Gui.ViewModels
                     .Replace(Path.GetInvalidFileNameChars(), '_');
                 From = null;
                 To = null;
+                PartitionLimit = _settingsService.LastPartitionLimit;
             });
         }
 
         private void Export()
         {
-            // Save format
+            // Persist preferences
             _settingsService.LastExportFormat = SelectedFormat;
+            _settingsService.LastPartitionLimit = PartitionLimit;
 
             // Clamp 'from' and 'to' values
             if (From > To)
@@ -98,7 +107,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                 To = From;
 
             // Start export
-            MessengerInstance.Send(new StartExportMessage(Channel, FilePath, SelectedFormat, From, To));
+            MessengerInstance.Send(new StartExportMessage(Channel, FilePath, SelectedFormat, From, To, PartitionLimit));
         }
     }
 }

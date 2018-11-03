@@ -15,14 +15,17 @@ namespace DiscordChatExporter.Gui.Messages
 
         public DateTime? To { get; }
 
+        public int? PartitionLimit { get; }
+
         public StartExportMessage(Channel channel, string filePath, ExportFormat format,
-            DateTime? from, DateTime? to)
+            DateTime? from, DateTime? to, int? partitionLimit)
         {
             Channel = channel;
             FilePath = filePath;
             Format = format;
             From = from;
             To = to;
+            PartitionLimit = partitionLimit;
         }
     }
 }

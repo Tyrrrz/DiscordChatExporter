@@ -1,3 +1,12 @@
+### v2.8 (03-Nov-2018)
+
+- Added support for partitioning which lets you split the output into multiple files by setting the partition message limit (`-p` parameter for CLI).
+- Exported file will no longer open automatically on completion.
+- Reduced amount of memory used during exporting.
+- Disabled message grouping in PlainText export.
+- Improved encoding of newlines in CSV export.
+- Improved error messages in the GUI app during crashes.
+
 ### v2.7 (14-Sep-2018)
 
 - Updated instructions on how to obtain the user token.

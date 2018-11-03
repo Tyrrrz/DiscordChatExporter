@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DiscordChatExporter.Core.Models
 {
@@ -42,23 +43,32 @@ namespace DiscordChatExporter.Core.Models
             var result = new List<ChatLog>();
 
             // Loop through messages
-            var messageBuffer = new List<Message>();
+            var buffer = new List<Message>();
             foreach (var message in chatLog.Messages)
             {
                 // Add message to buffer
-                messageBuffer.Add(message);
+                buffer.Add(message);
 
-                // If reached the limit - split and clear buffer
-                if (messageBuffer.Count >= maxMessageCountPerPartition)
+                // If reached the limit - split and reset buffer
+                if (buffer.Count >= maxMessageCountPerPartition)
                 {
                     // Add to result
-                    var chatLogPartition = new ChatLog(chatLog.Guild, chatLog.Channel, chatLog.From, chatLog.To,
-                        messageBuffer, chatLog.Mentionables);
+                    var chatLogPartition = new ChatLog(chatLog.Guild, chatLog.Channel, chatLog.From, chatLog.To, buffer,
+                        chatLog.Mentionables);
                     result.Add(chatLogPartition);
 
-                    // Clear buffer
-                    messageBuffer.Clear();
+                    // Reset the buffer instead of clearing to avoid mutations on existing references
+                    buffer = new List<Message>();
                 }
+            }
+
+            // Add what's remaining in buffer
+            if (buffer.Any())
+            {
+                // Add to result
+                var chatLogPartition = new ChatLog(chatLog.Guild, chatLog.Channel, chatLog.From, chatLog.To, buffer,
+                    chatLog.Mentionables);
+                result.Add(chatLogPartition);
             }
 
             return result;

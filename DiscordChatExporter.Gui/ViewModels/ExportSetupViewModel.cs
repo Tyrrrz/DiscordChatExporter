@@ -19,6 +19,7 @@ namespace DiscordChatExporter.Gui.ViewModels
         private ExportFormat _format;
         private DateTime? _from;
         private DateTime? _to;
+        private int? _maxMessageCountPerPartition;
 
         public Guild Guild { get; private set; }
 
@@ -63,6 +64,12 @@ namespace DiscordChatExporter.Gui.ViewModels
             set => Set(ref _to, value);
         }
 
+        public int? MaxMessageCountPerPartition
+        {
+            get => _maxMessageCountPerPartition;
+            set => Set(ref _maxMessageCountPerPartition, value);
+        }
+
         // Commands
         public RelayCommand ExportCommand { get; }
 
@@ -83,6 +90,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                     .Replace(Path.GetInvalidFileNameChars(), '_');
                 From = null;
                 To = null;
+                MaxMessageCountPerPartition = null;
             });
         }
 
@@ -98,7 +106,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                 To = From;
 
             // Start export
-            MessengerInstance.Send(new StartExportMessage(Channel, FilePath, SelectedFormat, From, To));
+            MessengerInstance.Send(new StartExportMessage(Channel, FilePath, SelectedFormat, From, To, MaxMessageCountPerPartition));
         }
     }
 }

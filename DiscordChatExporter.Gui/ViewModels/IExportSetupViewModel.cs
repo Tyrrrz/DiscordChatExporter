@@ -14,6 +14,7 @@ namespace DiscordChatExporter.Gui.ViewModels
         ExportFormat SelectedFormat { get; set; }
         DateTime? From { get; set; }
         DateTime? To { get; set; }
+        int? MaxMessageCountPerPartition { get; set; }
 
         RelayCommand ExportCommand { get; }
     }

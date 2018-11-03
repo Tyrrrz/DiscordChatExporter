@@ -55,6 +55,13 @@
                 SelectedDate="{Binding To}" />
         </Grid>
 
+        <!--  Partitioning  -->
+        <TextBox
+            Margin="16,8,16,8"
+            materialDesign:HintAssist.Hint="Messages per partition (optional)"
+            materialDesign:HintAssist.IsFloating="True"
+            Text="{Binding MaxMessageCountPerPartition}" />
+
         <!--  Buttons  -->
         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
             <Button

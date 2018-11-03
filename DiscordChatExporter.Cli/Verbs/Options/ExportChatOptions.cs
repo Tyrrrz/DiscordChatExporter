@@ -22,6 +22,9 @@ namespace DiscordChatExporter.Cli.Verbs.Options
         [Option("before", Default = null, HelpText = "Limit to messages sent before this date.")]
         public DateTime? Before { get; set; }
 
+        [Option('p', "partition", Default = null, HelpText = "Split output into partitions limited to this number of messages.")]
+        public int? MaxMessageCountPerPartition { get; set; }
+
         [Option("dateformat", Default = null, HelpText = "Date format used in output.")]
         public string DateFormat { get; set; }
 

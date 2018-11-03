@@ -80,7 +80,7 @@ namespace DiscordChatExporter.Core.Services
             foreach (var partition in partitions)
             {
                 // Compose new file name
-                var partitionFilePath = $"{fileNameWithoutExt}-{partitionNumber}.{fileExt}";
+                var partitionFilePath = $"{fileNameWithoutExt}-{partitionNumber}{fileExt}";
 
                 // Compose full file path
                 if (dirPath.IsNotBlank())
@@ -88,6 +88,9 @@ namespace DiscordChatExporter.Core.Services
 
                 // Export
                 ExportChatLog(partition, partitionFilePath, format);
+
+                // Increment partition number
+                partitionNumber++;
             }
         }
     }

@@ -36,5 +36,4 @@ DiscordChatExporter can be used to export message history from a [Discord](https
 - [Onova](https://github.com/Tyrrrz/Onova)
 - [CommandLineParser](https://github.com/commandlineparser/commandline)
 - [Tyrrrz.Extensions](https://github.com/Tyrrrz/Extensions)
-- [Tyrrrz.WpfExtensions](https://github.com/Tyrrrz/WpfExtensions)
 - [Tyrrrz.Settings](https://github.com/Tyrrrz/Settings)

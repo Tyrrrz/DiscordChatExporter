@@ -1,14 +1,17 @@
 ﻿<Window
-    x:Class="DiscordChatExporter.Gui.Views.MainWindow"
+    x:Class="DiscordChatExporter.Gui.Views.RootView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-    Title="DiscordChatExporter"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:s="https://github.com/canton7/Stylet"
+    xmlns:viewModels="clr-namespace:DiscordChatExporter.Gui.ViewModels"
     Width="600"
     Height="550"
+    MinWidth="325"
+    d:DataContext="{d:DesignInstance Type=viewModels:RootViewModel}"
     Background="{DynamicResource MaterialDesignPaper}"
-    DataContext="{Binding MainViewModel, Source={StaticResource Container}}"
     FocusManager.FocusedElement="{Binding ElementName=TokenValueTextBox}"
     FontFamily="{DynamicResource MaterialDesignFont}"
     Icon="/DiscordChatExporter;component/favicon.ico"
@@ -19,22 +22,15 @@
     TextOptions.TextFormattingMode="Ideal"
     TextOptions.TextRenderingMode="Auto"
     UseLayoutRounding="True"
-    WindowStartupLocation="CenterScreen">
-    <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding ViewLoadedCommand}" />
-        </i:EventTrigger>
-        <i:EventTrigger EventName="Closed">
-            <i:InvokeCommandAction Command="{Binding ViewClosedCommand}" />
-        </i:EventTrigger>
-    </i:Interaction.Triggers>
-    <materialDesign:DialogHost SnackbarMessageQueue="{Binding ElementName=Snackbar}">
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <materialDesign:DialogHost SnackbarMessageQueue="{Binding Notifications}">
         <DockPanel>
             <!--  Toolbar  -->
             <Border
                 Background="{DynamicResource PrimaryHueMidBrush}"
                 DockPanel.Dock="Top"
-                IsEnabled="{Binding IsBusy, Converter={StaticResource InvertBoolConverter}}"
+                IsEnabled="{Binding IsEnabled}"
                 TextElement.Foreground="{DynamicResource SecondaryInverseTextBrush}">
                 <StackPanel>
                     <Grid>
@@ -45,7 +41,7 @@
                         <materialDesign:Card
                             Grid.Row="0"
                             Grid.Column="0"
-                            Margin="6,6,0,6">
+                            Margin="12,12,0,12">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -91,7 +87,7 @@
                                     Grid.Column="2"
                                     Margin="0,6,6,6"
                                     Padding="4"
-                                    Command="{Binding PullDataCommand}"
+                                    Command="{s:Action PopulateGuildsAndChannels}"
                                     IsDefault="True"
                                     Style="{DynamicResource MaterialDesignFlatButton}">
                                     <materialDesign:PackIcon
@@ -109,8 +105,8 @@
                             Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"
                             PlacementMode="LeftAndAlignTopEdges">
                             <StackPanel>
-                                <Button Command="{Binding ShowSettingsCommand}" Content="Settings" />
-                                <Button Command="{Binding ShowAboutCommand}" Content="About" />
+                                <Button Command="{s:Action ShowSettings}" Content="Settings" />
+                                <Button Command="{s:Action ShowAbout}" Content="About" />
                             </StackPanel>
                         </materialDesign:PopupBox>
                     </Grid>
@@ -119,7 +115,6 @@
                     <ProgressBar
                         Background="Transparent"
                         IsIndeterminate="{Binding IsProgressIndeterminate}"
-                        Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"
                         Value="{Binding Progress, Mode=OneWay}" />
                 </StackPanel>
             </Border>
@@ -128,8 +123,8 @@
             <Grid>
                 <DockPanel
                     Background="{DynamicResource MaterialDesignCardBackground}"
-                    IsEnabled="{Binding IsBusy, Converter={StaticResource InvertBoolConverter}}"
-                    Visibility="{Binding IsDataAvailable, Converter={StaticResource BoolToVisibilityConverter}}">
+                    IsEnabled="{Binding IsEnabled}"
+                    Visibility="{Binding AvailableGuilds, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
 
                     <!--  Guilds  -->
                     <Border
@@ -194,7 +189,8 @@
                                             Orientation="Horizontal">
                                             <StackPanel.InputBindings>
                                                 <MouseBinding
-                                                    Command="{Binding DataContext.ShowExportSetupCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                    s:View.ActionTarget="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
+                                                    Command="{s:Action ExportChannel}"
                                                     CommandParameter="{Binding}"
                                                     MouseAction="LeftClick" />
                                             </StackPanel.InputBindings>
@@ -216,10 +212,10 @@
                 </DockPanel>
 
                 <!--  Usage instructions  -->
-                <Grid Margin="32,32,8,8" Visibility="{Binding IsDataAvailable, Converter={StaticResource InvertBoolToVisibilityConverter}}">
+                <Grid Margin="32,32,8,8" Visibility="{Binding AvailableGuilds, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}">
                     <!--  User token  -->
-                    <StackPanel Visibility="{Binding IsBotToken, Converter={StaticResource InvertBoolToVisibilityConverter}}">
-                        <TextBlock FontSize="18" Text="DiscordChatExporter needs your user token to work." />
+                    <StackPanel Visibility="{Binding IsBotToken, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}">
+                        <TextBlock FontSize="18" Text="DiscordChatExporter needs your user token to work" />
                         <TextBlock
                             Margin="0,8,0,0"
                             FontSize="16"
@@ -254,8 +250,8 @@
                     </StackPanel>
 
                     <!--  Bot token  -->
-                    <StackPanel Visibility="{Binding IsBotToken, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <TextBlock FontSize="18" Text="DiscordChatExporter needs your bot token to work." />
+                    <StackPanel Visibility="{Binding IsBotToken, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
+                        <TextBlock FontSize="18" Text="DiscordChatExporter needs your bot token to work" />
                         <TextBlock
                             Margin="0,8,0,0"
                             FontSize="16"
@@ -278,7 +274,8 @@
                         </TextBlock>
                     </StackPanel>
                 </Grid>
-                <materialDesign:Snackbar x:Name="Snackbar" />
+
+                <materialDesign:Snackbar MessageQueue="{Binding Notifications}" />
             </Grid>
         </DockPanel>
     </materialDesign:DialogHost>

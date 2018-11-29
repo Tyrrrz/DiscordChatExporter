@@ -3,7 +3,7 @@ using Tyrrrz.Settings;
 
 namespace DiscordChatExporter.Core.Services
 {
-    public class SettingsService : SettingsManager, ISettingsService
+    public class SettingsService : SettingsManager
     {
         public bool IsAutoUpdateEnabled { get; set; } = true;
 

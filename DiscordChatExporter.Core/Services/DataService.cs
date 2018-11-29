@@ -13,7 +13,7 @@ using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Services
 {
-    public partial class DataService : IDataService, IDisposable
+    public partial class DataService : IDisposable
     {
         private readonly HttpClient _httpClient = new HttpClient();
 

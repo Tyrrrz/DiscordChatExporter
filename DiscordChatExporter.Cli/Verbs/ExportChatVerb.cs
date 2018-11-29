@@ -18,10 +18,9 @@ namespace DiscordChatExporter.Cli.Verbs
         public override async Task ExecuteAsync()
         {
             // Get services
-            var container = new Container();
-            var settingsService = container.Resolve<ISettingsService>();
-            var dataService = container.Resolve<IDataService>();
-            var exportService = container.Resolve<IExportService>();
+            var settingsService = Container.Instance.Get<SettingsService>();
+            var dataService = Container.Instance.Get<DataService>();
+            var exportService = Container.Instance.Get<ExportService>();
 
             // Configure settings
             if (Options.DateFormat.IsNotBlank())

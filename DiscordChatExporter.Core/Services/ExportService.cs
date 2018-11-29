@@ -7,11 +7,11 @@ using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Services
 {
-    public partial class ExportService : IExportService
+    public partial class ExportService
     {
-        private readonly ISettingsService _settingsService;
+        private readonly SettingsService _settingsService;
 
-        public ExportService(ISettingsService settingsService)
+        public ExportService(SettingsService settingsService)
         {
             _settingsService = settingsService;
         }

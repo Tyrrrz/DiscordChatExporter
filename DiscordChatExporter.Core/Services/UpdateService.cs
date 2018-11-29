@@ -5,23 +5,20 @@ using Onova.Services;
 
 namespace DiscordChatExporter.Core.Services
 {
-    public class UpdateService : IUpdateService
+    public class UpdateService
     {
-        private readonly ISettingsService _settingsService;
-        private readonly IUpdateManager _manager;
+        private readonly SettingsService _settingsService;
+
+        private readonly IUpdateManager _updateManager = new UpdateManager(
+            new GithubPackageResolver("Tyrrrz", "DiscordChatExporter", "DiscordChatExporter.zip"),
+            new ZipPackageExtractor());
 
         private Version _updateVersion;
-        private bool _updateFinalized;
+        private bool _updaterLaunched;
 
-        public bool NeedRestart { get; set; }
-
-        public UpdateService(ISettingsService settingsService)
+        public UpdateService(SettingsService settingsService)
         {
             _settingsService = settingsService;
-
-            _manager = new UpdateManager(
-                new GithubPackageResolver("Tyrrrz", "DiscordChatExporter", "DiscordChatExporter.zip"),
-                new ZipPackageExtractor());
         }
 
         public async Task<Version> CheckPrepareUpdateAsync()
@@ -31,33 +28,33 @@ namespace DiscordChatExporter.Core.Services
                 return null;
 
             // Cleanup leftover files
-            _manager.Cleanup();
+            _updateManager.Cleanup();
 
             // Check for updates
-            var check = await _manager.CheckForUpdatesAsync();
+            var check = await _updateManager.CheckForUpdatesAsync();
             if (!check.CanUpdate)
                 return null;
 
             // Prepare the update
-            if (!_manager.IsUpdatePrepared(check.LastVersion))
-                await _manager.PrepareUpdateAsync(check.LastVersion);
+            if (!_updateManager.IsUpdatePrepared(check.LastVersion))
+                await _updateManager.PrepareUpdateAsync(check.LastVersion);
 
             return _updateVersion = check.LastVersion;
         }
 
-        public void FinalizeUpdate()
+        public void FinalizeUpdate(bool needRestart)
         {
             // Check if an update is pending
             if (_updateVersion == null)
                 return;
 
-            // Check if the update has already been finalized
-            if (_updateFinalized)
+            // Check if the updater has already been launched
+            if (_updaterLaunched)
                 return;
 
             // Launch the updater
-            _manager.LaunchUpdater(_updateVersion, NeedRestart);
-            _updateFinalized = true;
+            _updateManager.LaunchUpdater(_updateVersion, needRestart);
+            _updaterLaunched = true;
         }
     }
 }

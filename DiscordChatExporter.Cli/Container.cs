@@ -1,26 +1,24 @@
-﻿using CommonServiceLocator;
-using DiscordChatExporter.Core.Services;
-using GalaSoft.MvvmLight.Ioc;
+﻿using DiscordChatExporter.Core.Services;
+using StyletIoC;
 
 namespace DiscordChatExporter.Cli
 {
-    public class Container
+    public static class Container
     {
-        public Container()
-        {
-            ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
-            SimpleIoc.Default.Reset();
+        public static IContainer Instance { get; }
 
-            // Services
-            SimpleIoc.Default.Register<IDataService, DataService>();
-            SimpleIoc.Default.Register<IExportService, ExportService>();
-            SimpleIoc.Default.Register<ISettingsService, SettingsService>();
-            SimpleIoc.Default.Register<IUpdateService, UpdateService>();
-        }
-
-        public T Resolve<T>(string key = null)
+        static Container()
         {
-            return ServiceLocator.Current.GetInstance<T>(key);
+            var builder = new StyletIoCBuilder();
+
+            // Autobind services in the .Core assembly
+            builder.Autobind(typeof(DataService).Assembly);
+
+            // Bind settings as singleton
+            builder.Bind<SettingsService>().ToSelf().InSingletonScope();
+
+            // Set instance
+            Instance = builder.BuildContainer();
         }
     }
 }

@@ -1,12 +1,12 @@
 ﻿using DiscordChatExporter.Core.Services;
-using GalaSoft.MvvmLight;
+using DiscordChatExporter.Gui.ViewModels.Framework;
 using Tyrrrz.Extensions;
 
-namespace DiscordChatExporter.Gui.ViewModels
+namespace DiscordChatExporter.Gui.ViewModels.Dialogs
 {
-    public class SettingsViewModel : ViewModelBase, ISettingsViewModel
+    public class SettingsViewModel : DialogScreen
     {
-        private readonly ISettingsService _settingsService;
+        private readonly SettingsService _settingsService;
 
         public bool IsAutoUpdateEnabled
         {
@@ -26,7 +26,7 @@ namespace DiscordChatExporter.Gui.ViewModels
             set => _settingsService.MessageGroupLimit = value.ClampMin(0);
         }
 
-        public SettingsViewModel(ISettingsService settingsService)
+        public SettingsViewModel(SettingsService settingsService)
         {
             _settingsService = settingsService;
         }

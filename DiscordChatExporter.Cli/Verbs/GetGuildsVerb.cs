@@ -16,8 +16,7 @@ namespace DiscordChatExporter.Cli.Verbs
         public override async Task ExecuteAsync()
         {
             // Get data service
-            var container = new Container();
-            var dataService = container.Resolve<IDataService>();
+            var dataService = Container.Instance.Get<DataService>();
 
             // Get guilds
             var guilds = await dataService.GetUserGuildsAsync(Options.GetToken());

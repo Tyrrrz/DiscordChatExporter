@@ -2,16 +2,19 @@
     x:Class="DiscordChatExporter.Gui.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converters="clr-namespace:DiscordChatExporter.Gui.Converters"
     xmlns:local="clr-namespace:DiscordChatExporter.Gui"
-    DispatcherUnhandledException="App_OnDispatcherUnhandledException"
-    StartupUri="Views/MainWindow.xaml">
+    xmlns:s="https://github.com/canton7/Stylet">
     <Application.Resources>
-        <ResourceDictionary>
+        <s:ApplicationLoader>
+            <!--  Bootstrapper  -->
+            <s:ApplicationLoader.Bootstrapper>
+                <local:Bootstrapper />
+            </s:ApplicationLoader.Bootstrapper>
+
+            <!--  Merged dictionaries  -->
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/Tyrrrz.WpfExtensions;component/ConvertersDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <!--  Colors  -->
@@ -110,11 +113,6 @@
                 </Style.Triggers>
             </Style>
 
-            <!--  Converters  -->
-            <converters:ExportFormatToStringConverter x:Key="ExportFormatToStringConverter" />
-
-            <!--  Container  -->
-            <local:Container x:Key="Container" />
-        </ResourceDictionary>
+        </s:ApplicationLoader>
     </Application.Resources>
 </Application>

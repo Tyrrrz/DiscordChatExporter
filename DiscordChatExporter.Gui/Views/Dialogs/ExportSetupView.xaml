@@ -8,7 +8,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:s="https://github.com/canton7/Stylet"
-    MinWidth="325"
+    Width="375"
     d:DataContext="{d:DesignInstance Type=dialogs:ExportSetupViewModel}"
     SnapsToDevicePixels="True"
     TextElement.FontSize="13"
@@ -18,9 +18,45 @@
     TextOptions.TextRenderingMode="Auto"
     mc:Ignorable="d">
     <StackPanel>
+        <!--  Guild/channel info  -->
+        <Grid Margin="8,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!--  Guild icon  -->
+            <Ellipse
+                Grid.Column="0"
+                Width="32"
+                Height="32">
+                <Ellipse.Fill>
+                    <ImageBrush ImageSource="{Binding Guild.IconUrl}" />
+                </Ellipse.Fill>
+            </Ellipse>
+
+            <!--  Guild and channel name  -->
+            <TextBlock
+                Grid.Column="1"
+                Margin="8,0,0,0"
+                VerticalAlignment="Center"
+                FontSize="17"
+                TextTrimming="CharacterEllipsis">
+                <Run
+                    Foreground="{DynamicResource SecondaryTextBrush}"
+                    Text="{Binding Guild.Name, Mode=OneWay}"
+                    ToolTip="{Binding Guild.Name, Mode=OneWay}" />
+                <Run Text="/" />
+                <Run
+                    Foreground="{DynamicResource PrimaryTextBrush}"
+                    Text="{Binding Channel.Name, Mode=OneWay}"
+                    ToolTip="{Binding Channel.Name, Mode=OneWay}" />
+            </TextBlock>
+        </Grid>
+
         <!--  Format  -->
         <ComboBox
-            Margin="16,16,16,8"
+            Margin="8"
             materialDesign:HintAssist.Hint="Export format"
             materialDesign:HintAssist.IsFloating="True"
             IsReadOnly="True"
@@ -42,7 +78,7 @@
             <DatePicker
                 Grid.Row="0"
                 Grid.Column="0"
-                Margin="16,20,8,8"
+                Margin="8"
                 materialDesign:HintAssist.Hint="From (optional)"
                 materialDesign:HintAssist.IsFloating="True"
                 DisplayDateEnd="{Binding To}"
@@ -50,7 +86,7 @@
             <DatePicker
                 Grid.Row="0"
                 Grid.Column="1"
-                Margin="8,20,16,8"
+                Margin="8"
                 materialDesign:HintAssist.Hint="To (optional)"
                 materialDesign:HintAssist.IsFloating="True"
                 DisplayDateStart="{Binding From}"
@@ -59,7 +95,7 @@
 
         <!--  Partitioning  -->
         <TextBox
-            Margin="16,8,16,8"
+            Margin="8"
             materialDesign:HintAssist.Hint="Messages per partition (optional)"
             materialDesign:HintAssist.IsFloating="True"
             Text="{Binding PartitionLimit, TargetNullValue=''}" />

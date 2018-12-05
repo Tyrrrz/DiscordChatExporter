@@ -24,7 +24,7 @@
     UseLayoutRounding="True"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
-    <materialDesign:DialogHost SnackbarMessageQueue="{Binding Notifications}">
+    <materialDesign:DialogHost CloseOnClickAway="True" SnackbarMessageQueue="{Binding Notifications}">
         <DockPanel>
             <!--  Toolbar  -->
             <Border
@@ -189,7 +189,6 @@
                                             Orientation="Horizontal">
                                             <StackPanel.InputBindings>
                                                 <MouseBinding
-                                                    s:View.ActionTarget="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
                                                     Command="{s:Action ExportChannel}"
                                                     CommandParameter="{Binding}"
                                                     MouseAction="LeftClick" />

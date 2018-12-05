@@ -7,7 +7,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:s="https://github.com/canton7/Stylet"
-    MinWidth="250"
+    Width="300"
     d:DataContext="{d:DesignInstance Type=dialogs:SettingsViewModel}"
     SnapsToDevicePixels="True"
     TextElement.FontSize="13"
@@ -17,16 +17,22 @@
     TextOptions.TextRenderingMode="Auto"
     mc:Ignorable="d">
     <StackPanel>
+        <TextBlock
+            Margin="16"
+            FontSize="17"
+            Foreground="{DynamicResource PrimaryTextBrush}"
+            Text="Settings" />
+
         <!--  Date format  -->
         <TextBox
-            Margin="16,16,16,8"
+            Margin="16,8"
             materialDesign:HintAssist.Hint="Date format"
             materialDesign:HintAssist.IsFloating="True"
             Text="{Binding DateFormat}" />
 
         <!--  Message group limit  -->
         <TextBox
-            Margin="16,8,16,8"
+            Margin="16,8"
             materialDesign:HintAssist.Hint="Message group limit"
             materialDesign:HintAssist.IsFloating="True"
             Text="{Binding MessageGroupLimit}" />
@@ -34,11 +40,11 @@
         <!--  Auto-updates  -->
         <DockPanel LastChildFill="False">
             <TextBlock
-                Margin="16,8,16,8"
+                Margin="16,8"
                 DockPanel.Dock="Left"
                 Text="Auto-updates" />
             <ToggleButton
-                Margin="16,8,16,8"
+                Margin="16,8"
                 DockPanel.Dock="Right"
                 IsChecked="{Binding IsAutoUpdateEnabled}" />
         </DockPanel>

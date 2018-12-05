@@ -98,6 +98,10 @@
                 <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
             </Style>
 
+            <Style BasedOn="{StaticResource MaterialDesignDatePicker}" TargetType="{x:Type DatePicker}">
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+            </Style>
+
             <Style
                 x:Key="MaterialDesignFlatActionToggleButton"
                 BasedOn="{StaticResource MaterialDesignActionToggleButton}"

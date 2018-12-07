@@ -57,7 +57,7 @@
         <!--  Format  -->
         <ComboBox
             Margin="16,8"
-            materialDesign:HintAssist.Hint="Export format"
+            materialDesign:HintAssist.Hint="Format"
             materialDesign:HintAssist.IsFloating="True"
             IsReadOnly="True"
             ItemsSource="{Binding AvailableFormats}"
@@ -82,7 +82,8 @@
                 materialDesign:HintAssist.Hint="From (optional)"
                 materialDesign:HintAssist.IsFloating="True"
                 DisplayDateEnd="{Binding To}"
-                SelectedDate="{Binding From}" />
+                SelectedDate="{Binding From}"
+                ToolTip="If this is set, only messages sent after this date will be exported" />
             <DatePicker
                 Grid.Row="0"
                 Grid.Column="1"
@@ -90,7 +91,8 @@
                 materialDesign:HintAssist.Hint="To (optional)"
                 materialDesign:HintAssist.IsFloating="True"
                 DisplayDateStart="{Binding From}"
-                SelectedDate="{Binding To}" />
+                SelectedDate="{Binding To}"
+                ToolTip="If this is set, only messages sent before this date will be exported" />
         </Grid>
 
         <!--  Partitioning  -->
@@ -98,7 +100,8 @@
             Margin="16,8"
             materialDesign:HintAssist.Hint="Messages per partition (optional)"
             materialDesign:HintAssist.IsFloating="True"
-            Text="{Binding PartitionLimit, TargetNullValue=''}" />
+            Text="{Binding PartitionLimit, TargetNullValue=''}"
+            ToolTip="If this is set, the exported file will be split into multiple partitions, each containing no more than specified number of messages" />
 
         <!--  Buttons  -->
         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">

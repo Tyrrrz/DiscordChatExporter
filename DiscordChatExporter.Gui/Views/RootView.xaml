@@ -25,112 +25,185 @@
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <materialDesign:DialogHost CloseOnClickAway="True" SnackbarMessageQueue="{Binding Notifications}">
-        <DockPanel>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
             <!--  Toolbar  -->
-            <Border
+            <Grid
+                Grid.Row="0"
                 Background="{DynamicResource PrimaryHueMidBrush}"
-                DockPanel.Dock="Top"
                 IsEnabled="{Binding IsEnabled}"
                 TextElement.Foreground="{DynamicResource SecondaryInverseTextBrush}">
-                <StackPanel>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <materialDesign:Card
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="12,12,0,12">
                     <Grid>
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <materialDesign:Card
-                            Grid.Row="0"
+
+                        <!--  Token type  -->
+                        <ToggleButton
                             Grid.Column="0"
-                            Margin="12,12,0,12">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
+                            Margin="6"
+                            IsChecked="{Binding IsBotToken}"
+                            Style="{StaticResource MaterialDesignFlatActionToggleButton}"
+                            ToolTip="Switch between user token and bot token">
+                            <ToggleButton.Content>
+                                <materialDesign:PackIcon
+                                    Width="24"
+                                    Height="24"
+                                    Kind="Account" />
+                            </ToggleButton.Content>
+                            <materialDesign:ToggleButtonAssist.OnContent>
+                                <materialDesign:PackIcon
+                                    Width="24"
+                                    Height="24"
+                                    Kind="Robot" />
+                            </materialDesign:ToggleButtonAssist.OnContent>
+                        </ToggleButton>
 
-                                <!--  Token type  -->
-                                <ToggleButton
-                                    Grid.Column="0"
-                                    Margin="6"
-                                    IsChecked="{Binding IsBotToken}"
-                                    Style="{StaticResource MaterialDesignFlatActionToggleButton}"
-                                    ToolTip="Switch between user token and bot token">
-                                    <ToggleButton.Content>
-                                        <materialDesign:PackIcon
-                                            Width="24"
-                                            Height="24"
-                                            Kind="Account" />
-                                    </ToggleButton.Content>
-                                    <materialDesign:ToggleButtonAssist.OnContent>
-                                        <materialDesign:PackIcon
-                                            Width="24"
-                                            Height="24"
-                                            Kind="Robot" />
-                                    </materialDesign:ToggleButtonAssist.OnContent>
-                                </ToggleButton>
-
-                                <!--  Token value  -->
-                                <TextBox
-                                    x:Name="TokenValueTextBox"
-                                    Grid.Column="1"
-                                    Margin="2,6,6,7"
-                                    materialDesign:HintAssist.Hint="Token"
-                                    materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
-                                    materialDesign:TextFieldAssist.TextBoxViewMargin="0,0,2,0"
-                                    BorderThickness="0"
-                                    FontSize="16"
-                                    Text="{Binding TokenValue, UpdateSourceTrigger=PropertyChanged}" />
-
-                                <!--  Pull data button  -->
-                                <Button
-                                    Grid.Column="2"
-                                    Margin="0,6,6,6"
-                                    Padding="4"
-                                    Command="{s:Action PopulateGuildsAndChannels}"
-                                    IsDefault="True"
-                                    Style="{DynamicResource MaterialDesignFlatButton}">
-                                    <materialDesign:PackIcon
-                                        Width="24"
-                                        Height="24"
-                                        Kind="ArrowRight" />
-                                </Button>
-                            </Grid>
-                        </materialDesign:Card>
-
-                        <!--  Menu  -->
-                        <materialDesign:PopupBox
-                            Grid.Row="0"
+                        <!--  Token value  -->
+                        <TextBox
+                            x:Name="TokenValueTextBox"
                             Grid.Column="1"
-                            Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"
-                            PlacementMode="LeftAndAlignTopEdges">
-                            <StackPanel>
-                                <Button Command="{s:Action ShowSettings}" Content="Settings" />
-                                <Button Command="{s:Action ShowAbout}" Content="About" />
-                            </StackPanel>
-                        </materialDesign:PopupBox>
-                    </Grid>
+                            Margin="2,6,6,7"
+                            materialDesign:HintAssist.Hint="Token"
+                            materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                            materialDesign:TextFieldAssist.TextBoxViewMargin="0,0,2,0"
+                            BorderThickness="0"
+                            FontSize="16"
+                            Text="{Binding TokenValue, UpdateSourceTrigger=PropertyChanged}" />
 
-                    <!--  Progress bar  -->
-                    <ProgressBar
-                        Background="Transparent"
-                        IsIndeterminate="{Binding IsProgressIndeterminate}"
-                        Value="{Binding Progress, Mode=OneWay}" />
-                </StackPanel>
-            </Border>
+                        <!--  Pull data button  -->
+                        <Button
+                            Grid.Column="2"
+                            Margin="0,6,6,6"
+                            Padding="4"
+                            Command="{s:Action PopulateGuildsAndChannels}"
+                            IsDefault="True"
+                            Style="{DynamicResource MaterialDesignFlatButton}">
+                            <materialDesign:PackIcon
+                                Width="24"
+                                Height="24"
+                                Kind="ArrowRight" />
+                        </Button>
+                    </Grid>
+                </materialDesign:Card>
+
+                <!--  Menu  -->
+                <materialDesign:PopupBox
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"
+                    PlacementMode="LeftAndAlignTopEdges">
+                    <StackPanel>
+                        <Button Command="{s:Action ShowSettings}" Content="Settings" />
+                        <Button Command="{s:Action ShowAbout}" Content="About" />
+                    </StackPanel>
+                </materialDesign:PopupBox>
+            </Grid>
+
+            <!--  Progress bar  -->
+            <ProgressBar
+                Grid.Row="1"
+                Background="{DynamicResource PrimaryHueMidBrush}"
+                IsIndeterminate="{Binding IsProgressIndeterminate}"
+                Value="{Binding Progress, Mode=OneWay}" />
 
             <!--  Content  -->
-            <Grid>
-                <DockPanel
+            <Grid Grid.Row="2">
+                <!--  Placeholder usage instructions  -->
+                <Grid Margin="32,32,8,8" Visibility="{Binding AvailableGuilds, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}">
+                    <!--  For user token  -->
+                    <StackPanel Visibility="{Binding IsBotToken, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}">
+                        <TextBlock FontSize="18" Text="Please provide your user token to authorize" />
+                        <TextBlock Margin="8,8,0,0" FontSize="14">
+                            <Run Text="1. Open Discord" />
+                            <LineBreak />
+                            <Run Text="2. Press" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Ctrl+Shift+I" />
+                            <Run Text="to show developer tools" />
+                            <LineBreak />
+                            <Run Text="3. Press" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Ctrl+R" />
+                            <Run Text="to reload" />
+                            <LineBreak />
+                            <Run Text="4. Navigate to the" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Application" />
+                            <Run Text="tab" />
+                            <LineBreak />
+                            <Run Text="5. Select" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Local Storage" />
+                            <Run Text="&gt;" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="https://discordapp.com" />
+                            <Run Text="on the left" />
+                            <LineBreak />
+                            <Run Text="6. Find" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="token" />
+                            <Run Text="under key and copy the value" />
+                        </TextBlock>
+                        <TextBlock Margin="0,24,0,0" FontSize="14">
+                            <Run Text="To authorize using bot token instead click" />
+                            <InlineUIContainer>
+                                <materialDesign:PackIcon Margin="2,0,0,-2" Kind="Account" />
+                            </InlineUIContainer>
+                        </TextBlock>
+                    </StackPanel>
+
+                    <!--  For bot token  -->
+                    <StackPanel Visibility="{Binding IsBotToken, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
+                        <TextBlock FontSize="18" Text="Please provide your bot token to authorize" />
+                        <TextBlock Margin="8,8,0,0" FontSize="14">
+                            <Run Text="1. Open Discord developer portal" />
+                            <LineBreak />
+                            <Run Text="2. Open your application's settings" />
+                            <LineBreak />
+                            <Run Text="3. Navigate to the" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Bot" />
+                            <Run Text="section on the left" />
+                            <LineBreak />
+                            <Run Text="4. Under" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Token" />
+                            <Run Text="click" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Copy" />
+                        </TextBlock>
+                        <TextBlock Margin="0,24,0,0" FontSize="14">
+                            <Run Text="To authorize using user token instead click" />
+                            <InlineUIContainer>
+                                <materialDesign:PackIcon Margin="2,0,0,-2" Kind="Robot" />
+                            </InlineUIContainer>
+                        </TextBlock>
+                    </StackPanel>
+                </Grid>
+
+                <!--  Guilds and channels  -->
+                <Grid
                     Background="{DynamicResource MaterialDesignCardBackground}"
                     IsEnabled="{Binding IsEnabled}"
                     Visibility="{Binding AvailableGuilds, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
                     <!--  Guilds  -->
                     <Border
+                        Grid.Column="0"
                         BorderBrush="{DynamicResource DividerBrush}"
-                        BorderThickness="0,0,1,0"
-                        DockPanel.Dock="Left">
+                        BorderThickness="0,0,1,0">
                         <ListBox
                             ItemsSource="{Binding AvailableGuilds}"
                             ScrollViewer.VerticalScrollBarVisibility="Hidden"
@@ -171,7 +244,7 @@
                     </Border>
 
                     <!--  Channels  -->
-                    <Border>
+                    <Border Grid.Column="1">
                         <ListBox
                             HorizontalContentAlignment="Stretch"
                             ItemsSource="{Binding AvailableChannels}"
@@ -208,74 +281,11 @@
                             </ListBox.ItemTemplate>
                         </ListBox>
                     </Border>
-                </DockPanel>
-
-                <!--  Usage instructions  -->
-                <Grid Margin="32,32,8,8" Visibility="{Binding AvailableGuilds, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}">
-                    <!--  User token  -->
-                    <StackPanel Visibility="{Binding IsBotToken, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}">
-                        <TextBlock FontSize="18" Text="DiscordChatExporter needs your user token to work" />
-                        <TextBlock
-                            Margin="0,8,0,0"
-                            FontSize="16"
-                            Text="To obtain it, follow these steps:" />
-                        <TextBlock Margin="8,0,0,0" FontSize="14">
-                            <Run Text="1. Open the Discord app" />
-                            <LineBreak />
-                            <Run Text="2. Log in if you haven't" />
-                            <LineBreak />
-                            <Run Text="3. Press" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Ctrl+Shift+I" />
-                            <Run Text="to show developer tools" />
-                            <LineBreak />
-                            <Run Text="4. Press" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Ctrl+R" />
-                            <Run Text="to trigger reload" />
-                            <LineBreak />
-                            <Run Text="5. Navigate to the" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Application" />
-                            <Run Text="tab" />
-                            <LineBreak />
-                            <Run Text="6. Select" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Local Storage" />
-                            <Run Text="&gt;" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="https://discordapp.com" />
-                            <Run Text="on the left" />
-                            <LineBreak />
-                            <Run Text="7. Find" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="token" />
-                            <Run Text="under key and copy the value" />
-                        </TextBlock>
-                    </StackPanel>
-
-                    <!--  Bot token  -->
-                    <StackPanel Visibility="{Binding IsBotToken, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
-                        <TextBlock FontSize="18" Text="DiscordChatExporter needs your bot token to work" />
-                        <TextBlock
-                            Margin="0,8,0,0"
-                            FontSize="16"
-                            Text="To obtain it, follow these steps:" />
-                        <TextBlock Margin="8,0,0,0" FontSize="14">
-                            <Run Text="1. Go to Discord developer portal" />
-                            <LineBreak />
-                            <Run Text="2. Log in if you haven't" />
-                            <LineBreak />
-                            <Run Text="3. Open your application's settings" />
-                            <LineBreak />
-                            <Run Text="4. Navigate to the" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Bot" />
-                            <Run Text="section on the left" />
-                            <LineBreak />
-                            <Run Text="5. Under" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Token" />
-                            <Run Text="click" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Copy" />
-                        </TextBlock>
-                    </StackPanel>
                 </Grid>
 
+                <!--  Notifications snackbar  -->
                 <materialDesign:Snackbar MessageQueue="{Binding Notifications}" />
             </Grid>
-        </DockPanel>
+        </Grid>
     </materialDesign:DialogHost>
 </Window>

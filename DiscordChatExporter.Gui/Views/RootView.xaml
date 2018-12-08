@@ -156,9 +156,9 @@
                             <Run Text="under key and copy the value" />
                         </TextBlock>
                         <TextBlock Margin="0,24,0,0" FontSize="14">
-                            <Run Text="To authorize using bot token instead click" />
+                            <Run Text="To authorize using bot token instead, click" />
                             <InlineUIContainer>
-                                <materialDesign:PackIcon Margin="2,0,0,-2" Kind="Account" />
+                                <materialDesign:PackIcon Margin="1,0,0,-3" Kind="Account" />
                             </InlineUIContainer>
                         </TextBlock>
                     </StackPanel>
@@ -181,9 +181,9 @@
                             <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Copy" />
                         </TextBlock>
                         <TextBlock Margin="0,24,0,0" FontSize="14">
-                            <Run Text="To authorize using user token instead click" />
+                            <Run Text="To authorize using user token instead, click" />
                             <InlineUIContainer>
-                                <materialDesign:PackIcon Margin="2,0,0,-2" Kind="Robot" />
+                                <materialDesign:PackIcon Margin="1,0,0,-1" Kind="Robot" />
                             </InlineUIContainer>
                         </TextBlock>
                     </StackPanel>

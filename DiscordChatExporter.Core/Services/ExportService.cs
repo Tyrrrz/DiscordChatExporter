@@ -69,7 +69,7 @@ namespace DiscordChatExporter.Core.Services
             foreach (var partition in partitions)
             {
                 // Compose new file name
-                var partitionFilePath = $"{fileNameWithoutExt}-{partitionNumber}{fileExt}";
+                var partitionFilePath = $"{fileNameWithoutExt} [{partitionNumber} of {partitions.Count}]{fileExt}";
 
                 // Compose full file path
                 if (dirPath.IsNotBlank())

@@ -35,7 +35,7 @@ namespace DiscordChatExporter.Cli.Verbs
             // Loop through channels
             foreach (var channel in channels)
             {
-                bool channelAccess = await dataService.GetApiResponseAsync(Options.GetToken(), "channels", channel.Id);
+                bool channelAccess = await dataService.CheckAutorizationAsync(Options.GetToken(), "channels", channel.Id);
                 if (channelAccess)
                 {
                     // Get chat log
@@ -48,7 +48,7 @@ namespace DiscordChatExporter.Cli.Verbs
                         filePath += $"{chatLog.Guild.Name} - {chatLog.Channel.Name}.{Options.ExportFormat.GetFileExtension()}"
                             .Replace(Path.GetInvalidFileNameChars(), '_');
                     }
-
+                    Console.WriteLine(chatLog);
                     // Export
                     exportService.ExportChatLog(chatLog, filePath, Options.ExportFormat, Options.PartitionLimit);
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using DiscordChatExporter.Core.Helpers;
 using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.Core.Services;
 using DiscordChatExporter.Gui.ViewModels.Framework;
@@ -59,10 +59,10 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
                 To = From;
 
             // Generate default file name
-            var ext = SelectedFormat.GetFileExtension();
-            var defaultFileName = $"{Guild.Name} - {Channel.Name}.{ext}".Replace(Path.GetInvalidFileNameChars(), '_');
+            var defaultFileName = ExportHelper.GetDefaultExportFileName(SelectedFormat, Guild, Channel, From, To);
 
             // Prompt for output file path
+            var ext = SelectedFormat.GetFileExtension();
             var filter = $"{ext.ToUpperInvariant()} files|*.{ext}";
             FilePath = _dialogManager.PromptSaveFilePath(filter, defaultFileName);
 

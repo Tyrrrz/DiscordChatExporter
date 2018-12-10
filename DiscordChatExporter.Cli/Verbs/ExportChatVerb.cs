@@ -1,8 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Threading.Tasks;
 using DiscordChatExporter.Cli.Verbs.Options;
-using DiscordChatExporter.Core.Models;
+using DiscordChatExporter.Core.Helpers;
 using DiscordChatExporter.Core.Services;
 using Tyrrrz.Extensions;
 
@@ -32,12 +31,16 @@ namespace DiscordChatExporter.Cli.Verbs
             var chatLog = await dataService.GetChatLogAsync(Options.GetToken(), Options.ChannelId, 
                 Options.After, Options.Before);
 
-            // Generate file path if not set
+            // Generate file path if not set or is a directory
             var filePath = Options.FilePath;
             if (filePath == null || filePath.EndsWith("/") || filePath.EndsWith("\\"))
             {
-                filePath += $"{chatLog.Guild.Name} - {chatLog.Channel.Name}.{Options.ExportFormat.GetFileExtension()}"
-                    .Replace(Path.GetInvalidFileNameChars(), '_');
+                // Generate default file name
+                var defaultFileName = ExportHelper.GetDefaultExportFileName(Options.ExportFormat, chatLog.Guild,
+                    chatLog.Channel, Options.After, Options.Before);
+
+                // Append the file name to the file path
+                filePath += defaultFileName;
             }
 
             // Export

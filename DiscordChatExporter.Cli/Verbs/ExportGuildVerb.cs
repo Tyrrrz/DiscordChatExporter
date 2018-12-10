@@ -33,10 +33,9 @@ namespace DiscordChatExporter.Cli.Verbs
             var channels = await dataService.GetGuildChannelsAsync(Options.GetToken(), Options.GuildId);
 
             // Loop through channels
-            foreach (var channel in channels.Where(c => c.Type.IsEither(ChannelType.GuildTextChat))
-                .OrderBy(c => c.Name))
+            foreach (var channel in channels)
             {
-                bool channelAccess = await dataService.GetAccessAsync(Options.GetToken(), "channels", channel.Id);
+                bool channelAccess = await dataService.GetApiResponseAsync(Options.GetToken(), "channels", channel.Id);
                 if (channelAccess)
                 {
                     // Get chat log

@@ -7,7 +7,6 @@
         <Company>Tyrrrz</Company>
         <Copyright>Copyright (c) 2017-2018 Alexey Golub</Copyright>
         <ApplicationIcon>..\favicon.ico</ApplicationIcon>
-        <NoWin32Manifest>true</NoWin32Manifest>
     </PropertyGroup>
 
     <ItemGroup>

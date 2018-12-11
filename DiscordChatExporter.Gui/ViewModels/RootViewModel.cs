@@ -121,25 +121,26 @@ namespace DiscordChatExporter.Gui.ViewModels
 
         public async void PopulateGuildsAndChannels()
         {
-            IsEnabled = false;
-            Progress = -1;
-
-            // Sanitize token
-            TokenValue = TokenValue.Trim('"');
-
-            // Create token
-            var token = new AuthToken(
-                IsBotToken ? AuthTokenType.Bot : AuthTokenType.User,
-                TokenValue);
-
-            // Save token
-            _settingsService.LastToken = token;
-
-            // Clear existing
-            _guildChannelsMap.Clear();
-
             try
             {
+                // Set busy state and indeterminate progress
+                IsEnabled = false;
+                Progress = -1;
+
+                // Sanitize token
+                TokenValue = TokenValue.Trim('"');
+
+                // Create token
+                var token = new AuthToken(
+                    IsBotToken ? AuthTokenType.Bot : AuthTokenType.User,
+                    TokenValue);
+
+                // Save token
+                _settingsService.LastToken = token;
+
+                // Clear guild to channel map
+                _guildChannelsMap.Clear();
+
                 // Get DM channels
                 {
                     var channels = await _dataService.GetDirectMessageChannelsAsync(token);
@@ -158,6 +159,12 @@ namespace DiscordChatExporter.Gui.ViewModels
                             .ToArray();
                     }
                 }
+
+                // Update available guilds
+                AvailableGuilds = _guildChannelsMap.Keys.ToArray();
+
+                // Select the first guild
+                SelectedGuild = AvailableGuilds.FirstOrDefault();
             }
             catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
             {
@@ -167,61 +174,64 @@ namespace DiscordChatExporter.Gui.ViewModels
             {
                 Notifications.Enqueue("Forbidden – account may be locked by 2FA");
             }
-
-            AvailableGuilds = _guildChannelsMap.Keys.ToArray();
-            SelectedGuild = AvailableGuilds.FirstOrDefault();
-
-            Progress = 0;
-            IsEnabled = true;
+            finally
+            {
+                // Reset busy state and progress
+                Progress = 0;
+                IsEnabled = true;
+            }            
         }
 
         public bool CanExportChannel => IsEnabled;
 
         public async void ExportChannel(Channel channel)
         {
-            IsEnabled = false;
-            Progress = -1;
-
-            // Get last used token
-            var token = _settingsService.LastToken;
-
-            // Create dialog
-            var dialog = _viewModelFactory.CreateExportSetupViewModel();
-            dialog.Guild = SelectedGuild;
-            dialog.Channel = channel;
-
-            // Show dialog
-            if (await _dialogManager.ShowDialogAsync(dialog) == true)
+            try
             {
+                // Set busy state and indeterminate progress
+                IsEnabled = false;
+                Progress = -1;
+
+                // Get last used token
+                var token = _settingsService.LastToken;
+
+                // Create dialog
+                var dialog = _viewModelFactory.CreateExportSetupViewModel();
+                dialog.Guild = SelectedGuild;
+                dialog.Channel = channel;
+
+                // Show dialog, if canceled - return
+                if (await _dialogManager.ShowDialogAsync(dialog) != true)
+                    return;
+
+                // Create progress handler
+                var progressHandler = new Progress<double>(p => Progress = p);
+
+                // Get chat log
+                var chatLog = await _dataService.GetChatLogAsync(token, dialog.Guild, dialog.Channel,
+                    dialog.From, dialog.To, progressHandler);
+
                 // Export
-                try
-                {
-                    // Create progress handler
-                    var progressHandler = new Progress<double>(p => Progress = p);
+                _exportService.ExportChatLog(chatLog, dialog.FilePath, dialog.SelectedFormat,
+                    dialog.PartitionLimit);
 
-                    // Get chat log
-                    var chatLog = await _dataService.GetChatLogAsync(token, dialog.Guild, dialog.Channel,
-                        dialog.From, dialog.To, progressHandler);
-
-                    // Export
-                    _exportService.ExportChatLog(chatLog, dialog.FilePath, dialog.SelectedFormat,
-                        dialog.PartitionLimit);
-
-                    // Notify completion
-                    Notifications.Enqueue("Export complete");
-                }
-                catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
-                {
-                    Notifications.Enqueue("You don't have access to this channel");
-                }
-                catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
-                {
-                    Notifications.Enqueue("This channel doesn't exist");
-                }
+                // Notify completion
+                Notifications.Enqueue("Export complete");
             }
-
-            Progress = 0;
-            IsEnabled = true;
+            catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
+            {
+                Notifications.Enqueue("You don't have access to this channel");
+            }
+            catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+            {
+                Notifications.Enqueue("This channel doesn't exist");
+            }
+            finally
+            {
+                // Reset busy state and progress
+                Progress = 0;
+                IsEnabled = true;
+            }
         }
     }
 }

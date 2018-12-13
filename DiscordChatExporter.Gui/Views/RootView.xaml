@@ -15,6 +15,7 @@
     FocusManager.FocusedElement="{Binding ElementName=TokenValueTextBox}"
     FontFamily="{DynamicResource MaterialDesignFont}"
     Icon="/DiscordChatExporter;component/favicon.ico"
+    RenderOptions.BitmapScalingMode="HighQuality"
     SnapsToDevicePixels="True"
     TextElement.FontSize="13"
     TextElement.FontWeight="Regular"
@@ -24,7 +25,7 @@
     UseLayoutRounding="True"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
-    <materialDesign:DialogHost CloseOnClickAway="True" SnackbarMessageQueue="{Binding Notifications}">
+    <materialDesign:DialogHost SnackbarMessageQueue="{Binding Notifications}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -43,6 +44,8 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
+
+                <!--  Token and pull data button  -->
                 <materialDesign:Card
                     Grid.Row="0"
                     Grid.Column="0"
@@ -103,17 +106,18 @@
                     </Grid>
                 </materialDesign:Card>
 
-                <!--  Menu  -->
-                <materialDesign:PopupBox
-                    Grid.Row="0"
+                <!--  Settings button  -->
+                <Button
                     Grid.Column="1"
-                    Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"
-                    PlacementMode="LeftAndAlignTopEdges">
-                    <StackPanel>
-                        <Button Command="{s:Action ShowSettings}" Content="Settings" />
-                        <Button Command="{s:Action ShowAbout}" Content="About" />
-                    </StackPanel>
-                </materialDesign:PopupBox>
+                    Margin="6"
+                    Padding="4"
+                    Command="{s:Action ShowSettings}"
+                    Style="{DynamicResource MaterialDesignFlatDarkButton}">
+                    <materialDesign:PackIcon
+                        Width="24"
+                        Height="24"
+                        Kind="Settings" />
+                </Button>
             </Grid>
 
             <!--  Progress bar  -->
@@ -125,7 +129,7 @@
 
             <!--  Content  -->
             <Grid Grid.Row="2">
-                <!--  Placeholder usage instructions  -->
+                <!--  Placeholder / usage instructions  -->
                 <Grid Margin="32,32,8,8" Visibility="{Binding AvailableGuilds, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}">
                     <!--  For user token  -->
                     <StackPanel Visibility="{Binding IsBotToken, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}">
@@ -207,37 +211,51 @@
                         <ListBox
                             ItemsSource="{Binding AvailableGuilds}"
                             ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                            SelectedItem="{Binding SelectedGuild}"
-                            VirtualizingStackPanel.IsVirtualizing="False">
+                            SelectedItem="{Binding SelectedGuild}">
+                            <ListBox.ItemContainerStyle>
+                                <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
+                                    <Style.Triggers>
+                                        <EventTrigger RoutedEvent="Loaded">
+                                            <EventTrigger.Actions>
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <DoubleAnimation
+                                                            Storyboard.TargetProperty="Opacity"
+                                                            From="0"
+                                                            To="1"
+                                                            Duration="0:0:0.4" />
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </EventTrigger.Actions>
+                                        </EventTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <materialDesign:TransitioningContent>
-                                        <materialDesign:TransitioningContent.OpeningEffect>
-                                            <materialDesign:TransitionEffect Kind="SlideInFromLeft" Duration="0:0:0.3" />
-                                        </materialDesign:TransitioningContent.OpeningEffect>
-                                        <Grid
-                                            Margin="-8"
-                                            Background="Transparent"
-                                            Cursor="Hand"
-                                            ToolTip="{Binding Name}">
-                                            <!--  Guild icon placeholder  -->
-                                            <Ellipse
-                                                Width="48"
-                                                Height="48"
-                                                Margin="12,4,12,4"
-                                                Fill="{DynamicResource DividerBrush}" />
+                                    <Grid
+                                        Margin="-8"
+                                        Background="Transparent"
+                                        Cursor="Hand"
+                                        ToolTip="{Binding Name}">
+                                        <!--  Guild icon placeholder  -->
+                                        <Ellipse
+                                            Width="48"
+                                            Height="48"
+                                            Margin="12,4,12,4"
+                                            Fill="{DynamicResource DividerBrush}" />
 
-                                            <!--  Guild icon  -->
-                                            <Ellipse
-                                                Width="48"
-                                                Height="48"
-                                                Margin="12,4,12,4">
-                                                <Ellipse.Fill>
-                                                    <ImageBrush ImageSource="{Binding IconUrl}" />
-                                                </Ellipse.Fill>
-                                            </Ellipse>
-                                        </Grid>
-                                    </materialDesign:TransitioningContent>
+                                        <!--  Guild icon  -->
+                                        <Ellipse
+                                            Width="48"
+                                            Height="48"
+                                            Margin="12,4,12,4">
+                                            <Ellipse.Fill>
+                                                <ImageBrush ImageSource="{Binding IconUrl}" />
+                                            </Ellipse.Fill>
+                                        </Ellipse>
+                                    </Grid>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
@@ -245,38 +263,50 @@
 
                     <!--  Channels  -->
                     <Border Grid.Column="1">
-                        <ListBox
-                            HorizontalContentAlignment="Stretch"
-                            ItemsSource="{Binding AvailableChannels}"
-                            VirtualizingStackPanel.IsVirtualizing="False">
+                        <ListBox HorizontalContentAlignment="Stretch" ItemsSource="{Binding AvailableChannels}">
+                            <ListBox.ItemContainerStyle>
+                                <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
+                                    <Style.Triggers>
+                                        <EventTrigger RoutedEvent="Loaded">
+                                            <EventTrigger.Actions>
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <DoubleAnimation
+                                                            Storyboard.TargetProperty="Opacity"
+                                                            From="0"
+                                                            To="1"
+                                                            Duration="0:0:0.4" />
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </EventTrigger.Actions>
+                                        </EventTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <materialDesign:TransitioningContent>
-                                        <materialDesign:TransitioningContent.OpeningEffect>
-                                            <materialDesign:TransitionEffect Kind="SlideInFromLeft" Duration="0:0:0.3" />
-                                        </materialDesign:TransitioningContent.OpeningEffect>
-                                        <StackPanel
-                                            Margin="-8"
-                                            Background="Transparent"
-                                            Cursor="Hand"
-                                            Orientation="Horizontal">
-                                            <StackPanel.InputBindings>
-                                                <MouseBinding
-                                                    Command="{s:Action ExportChannel}"
-                                                    CommandParameter="{Binding}"
-                                                    MouseAction="LeftClick" />
-                                            </StackPanel.InputBindings>
-                                            <materialDesign:PackIcon
-                                                Margin="16,7,0,6"
-                                                VerticalAlignment="Center"
-                                                Kind="Pound" />
-                                            <TextBlock
-                                                Margin="3,8,8,8"
-                                                VerticalAlignment="Center"
-                                                FontSize="14"
-                                                Text="{Binding Name}" />
-                                        </StackPanel>
-                                    </materialDesign:TransitioningContent>
+                                    <StackPanel
+                                        Margin="-8"
+                                        Background="Transparent"
+                                        Cursor="Hand"
+                                        Orientation="Horizontal">
+                                        <StackPanel.InputBindings>
+                                            <MouseBinding
+                                                Command="{s:Action ExportChannel}"
+                                                CommandParameter="{Binding}"
+                                                MouseAction="LeftClick" />
+                                        </StackPanel.InputBindings>
+                                        <materialDesign:PackIcon
+                                            Margin="16,7,0,6"
+                                            VerticalAlignment="Center"
+                                            Kind="Pound" />
+                                        <TextBlock
+                                            Margin="3,8,8,8"
+                                            VerticalAlignment="Center"
+                                            FontSize="14"
+                                            Text="{Binding Name}" />
+                                    </StackPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>

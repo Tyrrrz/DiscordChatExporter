@@ -77,11 +77,6 @@
                 Color="{DynamicResource InverseTextColor}" />
 
             <!--  Styles  -->
-            <Style TargetType="{x:Type Image}">
-                <Setter Property="RenderOptions.BitmapScalingMode" Value="HighQuality" />
-                <Setter Property="RenderOptions.EdgeMode" Value="Aliased" />
-            </Style>
-
             <Style BasedOn="{StaticResource MaterialDesignLinearProgressBar}" TargetType="{x:Type ProgressBar}">
                 <Setter Property="BorderThickness" Value="0" />
                 <Setter Property="Foreground" Value="{DynamicResource SecondaryAccentBrush}" />
@@ -103,6 +98,17 @@
             </Style>
 
             <Style
+                x:Key="MaterialDesignFlatDarkButton"
+                BasedOn="{StaticResource MaterialDesignFlatButton}"
+                TargetType="{x:Type Button}">
+                <Style.Resources>
+                    <SolidColorBrush x:Key="MaterialDesignFlatButtonClick" Color="#4C4C4C" />
+                </Style.Resources>
+
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryHueMidForegroundBrush}" />
+            </Style>
+
+            <Style
                 x:Key="MaterialDesignFlatActionToggleButton"
                 BasedOn="{StaticResource MaterialDesignActionToggleButton}"
                 TargetType="{x:Type ToggleButton}">
@@ -116,7 +122,6 @@
                     </Trigger>
                 </Style.Triggers>
             </Style>
-
         </s:ApplicationLoader>
     </Application.Resources>
 </Application>

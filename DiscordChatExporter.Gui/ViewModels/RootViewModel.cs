@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -110,11 +109,6 @@ namespace DiscordChatExporter.Gui.ViewModels
 
             // Show dialog
             await _dialogManager.ShowDialogAsync(dialog);
-        }
-
-        public void ShowAbout()
-        {
-            Process.Start("https://github.com/Tyrrrz/DiscordChatExporter");
         }
 
         public bool CanPopulateGuildsAndChannels => IsEnabled && TokenValue.IsNotBlank();

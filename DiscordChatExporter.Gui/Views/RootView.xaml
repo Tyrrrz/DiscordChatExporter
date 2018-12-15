@@ -11,18 +11,9 @@
     Height="550"
     MinWidth="325"
     d:DataContext="{d:DesignInstance Type=viewModels:RootViewModel}"
-    Background="{DynamicResource MaterialDesignPaper}"
     FocusManager.FocusedElement="{Binding ElementName=TokenValueTextBox}"
-    FontFamily="{DynamicResource MaterialDesignFont}"
     Icon="/DiscordChatExporter;component/favicon.ico"
-    RenderOptions.BitmapScalingMode="HighQuality"
-    SnapsToDevicePixels="True"
-    TextElement.FontSize="13"
-    TextElement.FontWeight="Regular"
-    TextElement.Foreground="{DynamicResource SecondaryTextBrush}"
-    TextOptions.TextFormattingMode="Ideal"
-    TextOptions.TextRenderingMode="Auto"
-    UseLayoutRounding="True"
+    Style="{DynamicResource MaterialDesignRoot}"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <materialDesign:DialogHost SnackbarMessageQueue="{Binding Notifications}">
@@ -212,26 +203,6 @@
                             ItemsSource="{Binding AvailableGuilds}"
                             ScrollViewer.VerticalScrollBarVisibility="Hidden"
                             SelectedItem="{Binding SelectedGuild}">
-                            <ListBox.ItemContainerStyle>
-                                <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
-                                    <Style.Triggers>
-                                        <EventTrigger RoutedEvent="Loaded">
-                                            <EventTrigger.Actions>
-                                                <BeginStoryboard>
-                                                    <Storyboard>
-                                                        <DoubleAnimation
-                                                            Storyboard.TargetProperty="Opacity"
-                                                            From="0"
-                                                            To="1"
-                                                            Duration="0:0:0.4" />
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </EventTrigger.Actions>
-                                        </EventTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ListBox.ItemContainerStyle>
-
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Grid
@@ -264,26 +235,6 @@
                     <!--  Channels  -->
                     <Border Grid.Column="1">
                         <ListBox HorizontalContentAlignment="Stretch" ItemsSource="{Binding AvailableChannels}">
-                            <ListBox.ItemContainerStyle>
-                                <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
-                                    <Style.Triggers>
-                                        <EventTrigger RoutedEvent="Loaded">
-                                            <EventTrigger.Actions>
-                                                <BeginStoryboard>
-                                                    <Storyboard>
-                                                        <DoubleAnimation
-                                                            Storyboard.TargetProperty="Opacity"
-                                                            From="0"
-                                                            To="1"
-                                                            Duration="0:0:0.4" />
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </EventTrigger.Actions>
-                                        </EventTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ListBox.ItemContainerStyle>
-
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel

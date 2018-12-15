@@ -10,13 +10,7 @@
     xmlns:s="https://github.com/canton7/Stylet"
     Width="380"
     d:DataContext="{d:DesignInstance Type=dialogs:ExportSetupViewModel}"
-    RenderOptions.BitmapScalingMode="HighQuality"
-    SnapsToDevicePixels="True"
-    TextElement.FontSize="13"
-    TextElement.FontWeight="Regular"
-    TextElement.Foreground="{DynamicResource SecondaryTextBrush}"
-    TextOptions.TextFormattingMode="Ideal"
-    TextOptions.TextRenderingMode="Auto"
+    Style="{DynamicResource MaterialDesignRoot}"
     mc:Ignorable="d">
     <StackPanel>
         <!--  Guild/channel info  -->

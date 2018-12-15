@@ -78,7 +78,6 @@
 
             <!--  Styles  -->
             <Style x:Key="MaterialDesignRoot" TargetType="{x:Type Control}">
-                <Setter Property="Background" Value="{DynamicResource MaterialDesignPaper}" />
                 <Setter Property="FontFamily" Value="{DynamicResource MaterialDesignFont}" />
                 <Setter Property="RenderOptions.BitmapScalingMode" Value="HighQuality" />
                 <Setter Property="SnapsToDevicePixels" Value="True" />

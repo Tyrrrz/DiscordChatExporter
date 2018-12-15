@@ -11,6 +11,7 @@
     Height="550"
     MinWidth="325"
     d:DataContext="{d:DesignInstance Type=viewModels:RootViewModel}"
+    Background="{DynamicResource MaterialDesignPaper}"
     FocusManager.FocusedElement="{Binding ElementName=TokenValueTextBox}"
     Icon="/DiscordChatExporter;component/favicon.ico"
     Style="{DynamicResource MaterialDesignRoot}"

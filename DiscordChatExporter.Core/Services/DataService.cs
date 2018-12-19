@@ -226,12 +226,9 @@ namespace DiscordChatExporter.Core.Services
             return new ChatLog(guild, channel, from, to, messages, mentionables);
         }
 
-        public async Task<ChatLog> GetChatLogAsync(AuthToken token, string channelId,
+        public async Task<ChatLog> GetChatLogAsync(AuthToken token, Channel channel,
             DateTime? from = null, DateTime? to = null, IProgress<double> progress = null)
         {
-            // Get channel
-            var channel = await GetChannelAsync(token, channelId);
-
             // Get guild
             var guild = channel.GuildId == Guild.DirectMessages.Id
                 ? Guild.DirectMessages
@@ -239,6 +236,16 @@ namespace DiscordChatExporter.Core.Services
 
             // Get the chat log
             return await GetChatLogAsync(token, guild, channel, from, to, progress);
+        }
+
+        public async Task<ChatLog> GetChatLogAsync(AuthToken token, string channelId,
+            DateTime? from = null, DateTime? to = null, IProgress<double> progress = null)
+        {
+            // Get channel
+            var channel = await GetChannelAsync(token, channelId);
+
+            // Get the chat log
+            return await GetChatLogAsync(token, channel, from, to, progress);
         }
 
         public void Dispose()

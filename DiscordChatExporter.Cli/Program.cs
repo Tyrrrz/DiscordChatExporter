@@ -38,6 +38,7 @@ namespace DiscordChatExporter.Cli
             var verbTypes = new[]
             {
                 typeof(ExportChatOptions),
+                typeof(ExportGuildOptions),
                 typeof(GetChannelsOptions),
                 typeof(GetDirectMessageChannelsOptions),
                 typeof(GetGuildsOptions)
@@ -48,6 +49,7 @@ namespace DiscordChatExporter.Cli
 
             // Execute commands
             parsedArgs.WithParsed<ExportChatOptions>(o => new ExportChatVerb(o).Execute());
+            parsedArgs.WithParsed<ExportGuildOptions>(o => new ExportGuildVerb(o).Execute());
             parsedArgs.WithParsed<GetChannelsOptions>(o => new GetChannelsVerb(o).Execute());
             parsedArgs.WithParsed<GetDirectMessageChannelsOptions>(o => new GetDirectMessageChannelsVerb(o).Execute());
             parsedArgs.WithParsed<GetGuildsOptions>(o => new GetGuildsVerb(o).Execute());

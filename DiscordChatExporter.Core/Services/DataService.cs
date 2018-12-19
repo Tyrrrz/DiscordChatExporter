@@ -17,7 +17,7 @@ namespace DiscordChatExporter.Core.Services
     {
         private readonly HttpClient _httpClient = new HttpClient();
 
-        private async Task<JToken> GetApiResponseAsync(AuthToken token, string resource, string endpoint, 
+        private async Task<JToken> GetApiResponseAsync(AuthToken token, string resource, string endpoint,
             params string[] parameters)
         {
             // Create request policy

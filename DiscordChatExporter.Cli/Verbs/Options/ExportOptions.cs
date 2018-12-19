@@ -4,7 +4,7 @@ using DiscordChatExporter.Core.Models;
 
 namespace DiscordChatExporter.Cli.Verbs.Options
 {
-    public class ExportOptions : TokenOptions
+    public abstract class ExportOptions : TokenOptions
     {
         [Option('f', "format", Default = ExportFormat.HtmlDark, HelpText = "Output file format.")]
         public ExportFormat ExportFormat { get; set; }

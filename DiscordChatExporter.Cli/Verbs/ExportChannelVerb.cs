@@ -7,9 +7,9 @@ using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Cli.Verbs
 {
-    public class ExportChatVerb : Verb<ExportChatOptions>
+    public class ExportChannelVerb : Verb<ExportChannelOptions>
     {
-        public ExportChatVerb(ExportChatOptions options)
+        public ExportChannelVerb(ExportChannelOptions options)
             : base(options)
         {
         }

@@ -3,7 +3,7 @@ using DiscordChatExporter.Core.Models;
 
 namespace DiscordChatExporter.Cli.Verbs.Options
 {
-    public class TokenOptions
+    public abstract class TokenOptions
     {
         [Option('t', "token", Required = true, HelpText = "Authorization token.")]
         public string TokenValue { get; set; }

@@ -2,7 +2,7 @@
 
 namespace DiscordChatExporter.Cli.Verbs.Options
 {
-    [Verb("exportguild", HelpText = "Export all available channels within a given guild.")]
+    [Verb("exportguild", HelpText = "Export all channels within a given guild.")]
     public class ExportGuildOptions : ExportOptions
     {
         [Option('g', "guild", Required = true, HelpText = "Guild ID.")]

@@ -1,4 +1,4 @@
-﻿    using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -61,43 +61,6 @@ namespace DiscordChatExporter.Core.Services
                     }
                 }
             });
-        }
-
-        public async Task<bool> CheckAutorizationAsync(AuthToken token, string resource, string endpoint)
-        {
-            // Create request policy
-            var policy = Policy
-                .Handle<HttpErrorStatusCodeException>(e => (int)e.StatusCode == 429)
-                .WaitAndRetryAsync(10, i => TimeSpan.FromSeconds(0.4));
-
-            // Send request
-            try {
-                await policy.ExecuteAsync(async () =>
-                {
-                    // Create request
-                    const string apiRoot = "https://discordapp.com/api/v6";
-                    using (var request = new HttpRequestMessage(HttpMethod.Get, $"{apiRoot}/{resource}/{endpoint}"))
-                    {
-                        // Set authorization header
-                        request.Headers.Authorization = token.Type == AuthTokenType.Bot
-                                ? new AuthenticationHeaderValue("Bot", token.Value)
-                                : new AuthenticationHeaderValue(token.Value);
-                        // Get response
-                        using (var response = await _httpClient.SendAsync(request))
-                        {
-                            // Check status code
-                            // We throw our own exception here because default one doesn't have status code
-                            if (!response.IsSuccessStatusCode)
-                                throw new HttpErrorStatusCodeException(response.StatusCode, response.ReasonPhrase);
-                        }
-                    }
-                });
-            }
-            catch (HttpErrorStatusCodeException ex) when ((int)ex.StatusCode == 403)
-            {
-                return false;
-            }
-            return true;
         }
 
         public async Task<Guild> GetGuildAsync(AuthToken token, string guildId)

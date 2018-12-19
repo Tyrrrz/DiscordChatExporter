@@ -31,11 +31,8 @@ namespace DiscordChatExporter.Cli.Verbs
             if (Options.MessageGroupLimit > 0)
                 settingsService.MessageGroupLimit = Options.MessageGroupLimit;
 
-            // Get guild
-            var guild = await dataService.GetGuildAsync(Options.GetToken(), Options.GuildId);
-
             // Get channels
-            var channels = await dataService.GetGuildChannelsAsync(Options.GetToken(), guild.Id);
+            var channels = await dataService.GetGuildChannelsAsync(Options.GetToken(), Options.GuildId);
 
             // Loop through channels
             foreach (var channel in channels.Where(c => c.Type.IsEither(ChannelType.GuildTextChat))
@@ -47,7 +44,7 @@ namespace DiscordChatExporter.Cli.Verbs
                     Console.WriteLine($"Exporting chat from [{channel.Name}]...");
 
                     // Get chat log
-                    var chatLog = await dataService.GetChatLogAsync(Options.GetToken(), guild, channel,
+                    var chatLog = await dataService.GetChatLogAsync(Options.GetToken(), channel,
                         Options.After, Options.Before);
 
                     // Generate file path if not set or is a directory

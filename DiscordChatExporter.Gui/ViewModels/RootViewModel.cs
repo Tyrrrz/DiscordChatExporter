@@ -137,9 +137,13 @@ namespace DiscordChatExporter.Gui.ViewModels
 
                 // Get DM channels
                 {
-                    var channels = await _dataService.GetDirectMessageChannelsAsync(token);
                     var guild = Guild.DirectMessages;
-                    _guildChannelsMap[guild] = channels.OrderBy(c => c.Name).ToArray();
+                    var channels = await _dataService.GetDirectMessageChannelsAsync(token);
+
+                    // Order channels
+                    channels = channels.OrderBy(c => c.Name).ToArray();
+
+                    _guildChannelsMap[guild] = channels;
                 }
 
                 // Get guild channels
@@ -148,9 +152,11 @@ namespace DiscordChatExporter.Gui.ViewModels
                     foreach (var guild in guilds)
                     {
                         var channels = await _dataService.GetGuildChannelsAsync(token, guild.Id);
-                        _guildChannelsMap[guild] = channels.Where(c => c.Type == ChannelType.GuildTextChat)
-                            .OrderBy(c => c.Name)
-                            .ToArray();
+
+                        // Filter and order channels
+                        channels = channels.Where(c => c.Type == ChannelType.GuildTextChat).OrderBy(c => c.Name).ToArray();
+
+                        _guildChannelsMap[guild] = channels;
                     }
                 }
 

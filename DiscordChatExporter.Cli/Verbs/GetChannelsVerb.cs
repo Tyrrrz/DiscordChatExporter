@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using DiscordChatExporter.Cli.Verbs.Options;
 using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.Core.Services;
-using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Cli.Verbs
 {
@@ -23,9 +22,11 @@ namespace DiscordChatExporter.Cli.Verbs
             // Get channels
             var channels = await dataService.GetGuildChannelsAsync(Options.GetToken(), Options.GuildId);
 
+            // Filter and order channels
+            channels = channels.Where(c => c.Type == ChannelType.GuildTextChat).OrderBy(c => c.Name).ToArray();
+
             // Print result
-            foreach (var channel in channels.Where(c => c.Type.IsEither(ChannelType.GuildTextChat))
-                .OrderBy(c => c.Name))
+            foreach (var channel in channels)
                 Console.WriteLine($"{channel.Id} | {channel.Name}");
         }
     }

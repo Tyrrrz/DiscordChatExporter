@@ -21,8 +21,11 @@ namespace DiscordChatExporter.Cli.Verbs
             // Get guilds
             var guilds = await dataService.GetUserGuildsAsync(Options.GetToken());
 
+            // Order guilds
+            guilds = guilds.OrderBy(g => g.Name).ToArray();
+
             // Print result
-            foreach (var guild in guilds.OrderBy(g => g.Name))
+            foreach (var guild in guilds)
                 Console.WriteLine($"{guild.Id} | {guild.Name}");
         }
     }

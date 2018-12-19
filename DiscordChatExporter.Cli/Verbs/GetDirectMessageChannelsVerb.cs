@@ -21,8 +21,11 @@ namespace DiscordChatExporter.Cli.Verbs
             // Get channels
             var channels = await dataService.GetDirectMessageChannelsAsync(Options.GetToken());
 
+            // Order channels
+            channels = channels.OrderBy(c => c.Name).ToArray();
+
             // Print result
-            foreach (var channel in channels.OrderBy(c => c.Name))
+            foreach (var channel in channels)
                 Console.WriteLine($"{channel.Id} | {channel.Name}");
         }
     }

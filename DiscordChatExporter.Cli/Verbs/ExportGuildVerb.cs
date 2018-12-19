@@ -34,9 +34,11 @@ namespace DiscordChatExporter.Cli.Verbs
             // Get channels
             var channels = await dataService.GetGuildChannelsAsync(Options.GetToken(), Options.GuildId);
 
+            // Filter and order channels
+            channels = channels.Where(c => c.Type == ChannelType.GuildTextChat).OrderBy(c => c.Name).ToArray();
+
             // Loop through channels
-            foreach (var channel in channels.Where(c => c.Type.IsEither(ChannelType.GuildTextChat))
-                .OrderBy(c => c.Name))
+            foreach (var channel in channels)
             {
                 try
                 {

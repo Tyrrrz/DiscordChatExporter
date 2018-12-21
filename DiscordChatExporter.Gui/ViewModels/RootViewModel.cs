@@ -56,12 +56,14 @@ namespace DiscordChatExporter.Gui.ViewModels
             _exportService = exportService;
 
             // Set title
-            var version = Assembly.GetExecutingAssembly().GetName().Version;
+            var version = Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
             DisplayName = $"DiscordChatExporter v{version}";            
         }
 
         protected override async void OnViewLoaded()
         {
+            base.OnViewLoaded();
+
             // Load settings
             _settingsService.Load();
 
@@ -95,6 +97,8 @@ namespace DiscordChatExporter.Gui.ViewModels
 
         protected override void OnClose()
         {
+            base.OnClose();
+
             // Save settings
             _settingsService.Save();
 

@@ -171,7 +171,7 @@ namespace DiscordChatExporter.Gui.ViewModels
 
                 // Guilds
                 {
-                    //  Get guilds
+                    // Get guilds
                     var guilds = await _dataService.GetUserGuildsAsync(token);
                     foreach (var guild in guilds)
                     {
@@ -189,8 +189,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                         foreach (var channel in textChannels)
                         {
                             // Get category
-                            var category = categoryChannels.FirstOrDefault(c => c.Id == channel.ParentId)?.Name ??
-                                           "<no category>";
+                            var category = categoryChannels.FirstOrDefault(c => c.Id == channel.ParentId)?.Name;
 
                             // Create channel view model
                             var channelViewModel = _viewModelFactory.CreateChannelViewModel();

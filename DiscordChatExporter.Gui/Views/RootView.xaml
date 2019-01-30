@@ -210,7 +210,7 @@
                                         Margin="-8"
                                         Background="Transparent"
                                         Cursor="Hand"
-                                        ToolTip="{Binding Name}">
+                                        ToolTip="{Binding Model.Name}">
                                         <!--  Guild icon placeholder  -->
                                         <Ellipse
                                             Width="48"
@@ -224,7 +224,7 @@
                                             Height="48"
                                             Margin="12,4,12,4">
                                             <Ellipse.Fill>
-                                                <ImageBrush ImageSource="{Binding IconUrl}" />
+                                                <ImageBrush ImageSource="{Binding Model.IconUrl}" />
                                             </Ellipse.Fill>
                                         </Ellipse>
                                     </Grid>
@@ -235,7 +235,7 @@
 
                     <!--  Channels  -->
                     <Border Grid.Column="1">
-                        <ListBox HorizontalContentAlignment="Stretch" ItemsSource="{Binding AvailableChannels}">
+                        <ListBox HorizontalContentAlignment="Stretch" ItemsSource="{Binding SelectedGuild.Channels}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel
@@ -256,8 +256,11 @@
                                         <TextBlock
                                             Margin="3,8,8,8"
                                             VerticalAlignment="Center"
-                                            FontSize="14"
-                                            Text="{Binding Name}" />
+                                            FontSize="14">
+                                            <Run Text="{Binding Category, Mode=OneWay}" Foreground="{DynamicResource SecondaryTextBrush}" />
+                                            <Run Text="/" Foreground="{DynamicResource SecondaryTextBrush}" />
+                                            <Run Text="{Binding Model.Name, Mode=OneWay}" Foreground="{DynamicResource PrimaryTextBrush}" />
+                                        </TextBlock>
                                     </StackPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>

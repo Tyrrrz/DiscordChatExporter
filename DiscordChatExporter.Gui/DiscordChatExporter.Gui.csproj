@@ -57,6 +57,8 @@
     </Compile>
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Converters\ExportFormatToStringConverter.cs" />
+    <Compile Include="ViewModels\Components\ChannelViewModel.cs" />
+    <Compile Include="ViewModels\Components\GuildViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\ExportSetupViewModel.cs" />
     <Compile Include="ViewModels\Framework\DialogManager.cs" />
     <Compile Include="ViewModels\Framework\DialogScreen.cs" />

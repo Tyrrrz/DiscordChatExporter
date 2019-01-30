@@ -4,6 +4,7 @@ using System.Linq;
 using DiscordChatExporter.Core.Helpers;
 using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.Core.Services;
+using DiscordChatExporter.Gui.ViewModels.Components;
 using DiscordChatExporter.Gui.ViewModels.Framework;
 using Tyrrrz.Extensions;
 
@@ -14,9 +15,9 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
         private readonly DialogManager _dialogManager;
         private readonly SettingsService _settingsService;
 
-        public Guild Guild { get; set; }
+        public GuildViewModel Guild { get; set; }
 
-        public Channel Channel { get; set; }
+        public ChannelViewModel Channel { get; set; }
 
         public string FilePath { get; set; }
 
@@ -59,7 +60,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
                 To = From;
 
             // Generate default file name
-            var defaultFileName = ExportHelper.GetDefaultExportFileName(SelectedFormat, Guild, Channel, From, To);
+            var defaultFileName = ExportHelper.GetDefaultExportFileName(SelectedFormat, Guild.Model, Channel.Model, From, To);
 
             // Prompt for output file path
             var ext = SelectedFormat.GetFileExtension();

@@ -33,6 +33,7 @@ namespace DiscordChatExporter.Core.Services
         {
             // Get basic data
             var id = json["id"].Value<string>();
+            var parentId = json["parent_id"]?.Value<string>();
             var type = (ChannelType) json["type"].Value<int>();
             var topic = json["topic"]?.Value<string>();
 
@@ -50,7 +51,7 @@ namespace DiscordChatExporter.Core.Services
             if (name.IsBlank())
                 name = json["recipients"].Select(ParseUser).Select(u => u.Name).JoinToString(", ");
 
-            return new Channel(id, guildId, name, topic, type);
+            return new Channel(id, parentId, guildId, name, topic, type);
         }
 
         private Role ParseRole(JToken json)

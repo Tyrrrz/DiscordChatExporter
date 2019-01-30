@@ -26,7 +26,7 @@
                 Width="32"
                 Height="32">
                 <Ellipse.Fill>
-                    <ImageBrush ImageSource="{Binding Guild.IconUrl}" />
+                    <ImageBrush ImageSource="{Binding Guild.Model.IconUrl}" />
                 </Ellipse.Fill>
             </Ellipse>
 
@@ -39,13 +39,13 @@
                 TextTrimming="CharacterEllipsis">
                 <Run
                     Foreground="{DynamicResource SecondaryTextBrush}"
-                    Text="{Binding Guild.Name, Mode=OneWay}"
-                    ToolTip="{Binding Guild.Name, Mode=OneWay}" />
+                    Text="{Binding Channel.Category, Mode=OneWay}"
+                    ToolTip="{Binding Channel.Category, Mode=OneWay}" />
                 <Run Text="/" />
                 <Run
                     Foreground="{DynamicResource PrimaryTextBrush}"
-                    Text="{Binding Channel.Name, Mode=OneWay}"
-                    ToolTip="{Binding Channel.Name, Mode=OneWay}" />
+                    Text="{Binding Channel.Model.Name, Mode=OneWay}"
+                    ToolTip="{Binding Channel.Model.Name, Mode=OneWay}" />
             </TextBlock>
         </Grid>
 

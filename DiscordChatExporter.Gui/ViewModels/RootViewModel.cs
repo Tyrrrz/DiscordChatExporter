@@ -6,6 +6,7 @@ using System.Reflection;
 using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.Core.Services;
+using DiscordChatExporter.Gui.ViewModels.Components;
 using DiscordChatExporter.Gui.ViewModels.Framework;
 using MaterialDesignThemes.Wpf;
 using Stylet;
@@ -22,9 +23,6 @@ namespace DiscordChatExporter.Gui.ViewModels
         private readonly DataService _dataService;
         private readonly ExportService _exportService;
 
-        private readonly Dictionary<Guild, IReadOnlyList<Channel>> _guildChannelsMap =
-            new Dictionary<Guild, IReadOnlyList<Channel>>();
-
         public SnackbarMessageQueue Notifications { get; } = new SnackbarMessageQueue(TimeSpan.FromSeconds(5));
 
         public bool IsEnabled { get; private set; } = true;
@@ -37,12 +35,9 @@ namespace DiscordChatExporter.Gui.ViewModels
 
         public string TokenValue { get; set; }
 
-        public IReadOnlyList<Guild> AvailableGuilds { get; private set; }
+        public IReadOnlyList<GuildViewModel> AvailableGuilds { get; private set; }
 
-        public Guild SelectedGuild { get; set; }
-
-        public IReadOnlyList<Channel> AvailableChannels =>
-            SelectedGuild != null ? _guildChannelsMap[SelectedGuild] : Array.Empty<Channel>();
+        public GuildViewModel SelectedGuild { get; set; }
 
         public RootViewModel(IViewModelFactory viewModelFactory, DialogManager dialogManager,
             SettingsService settingsService, UpdateService updateService, DataService dataService,
@@ -136,38 +131,92 @@ namespace DiscordChatExporter.Gui.ViewModels
                 // Save token
                 _settingsService.LastToken = token;
 
-                // Clear guild to channel map
-                _guildChannelsMap.Clear();
+                // Prepare available guild list
+                var availableGuilds = new List<GuildViewModel>();
 
-                // Get DM channels
+                // Direct Messages
                 {
+                    // Get fake guild
                     var guild = Guild.DirectMessages;
+
+                    // Get channels
                     var channels = await _dataService.GetDirectMessageChannelsAsync(token);
 
-                    // Order channels
-                    channels = channels.OrderBy(c => c.Name).ToArray();
+                    // Create channel view models
+                    var channelViewModels = new List<ChannelViewModel>();
+                    foreach (var channel in channels)
+                    {
+                        // Get fake category
+                        var category = channel.Type == ChannelType.DirectTextChat ? "Private" : "Group";
 
-                    _guildChannelsMap[guild] = channels;
+                        // Create channel view model
+                        var channelViewModel = _viewModelFactory.CreateChannelViewModel();
+                        channelViewModel.Model = channel;
+                        channelViewModel.Category = category;
+
+                        // Add to list
+                        channelViewModels.Add(channelViewModel);
+                    }
+
+                    // Create guild view model
+                    var guildViewModel = _viewModelFactory.CreateGuildViewModel();
+                    guildViewModel.Model = guild;
+                    guildViewModel.Channels = channelViewModels.OrderBy(c => c.Category)
+                        .ThenBy(c => c.Model.Name)
+                        .ToArray();
+
+                    // Add to list
+                    availableGuilds.Add(guildViewModel);
                 }
 
-                // Get guild channels
+                // Guilds
                 {
+                    //  Get guilds
                     var guilds = await _dataService.GetUserGuildsAsync(token);
                     foreach (var guild in guilds)
                     {
+                        // Get channels
                         var channels = await _dataService.GetGuildChannelsAsync(token, guild.Id);
 
-                        // Filter and order channels
-                        channels = channels.Where(c => c.Type == ChannelType.GuildTextChat).OrderBy(c => c.Name).ToArray();
+                        // Get category channels
+                        var categoryChannels = channels.Where(c => c.Type == ChannelType.Category).ToArray();
 
-                        _guildChannelsMap[guild] = channels;
+                        // Get text channels
+                        var textChannels = channels.Where(c => c.Type == ChannelType.GuildTextChat).ToArray();
+
+                        // Create channel view models
+                        var channelViewModels = new List<ChannelViewModel>();
+                        foreach (var channel in textChannels)
+                        {
+                            // Get category
+                            var category = categoryChannels.FirstOrDefault(c => c.Id == channel.ParentId)?.Name ??
+                                           "<no category>";
+
+                            // Create channel view model
+                            var channelViewModel = _viewModelFactory.CreateChannelViewModel();
+                            channelViewModel.Model = channel;
+                            channelViewModel.Category = category;
+
+                            // Add to list
+                            channelViewModels.Add(channelViewModel);
+                        }
+
+                        // Create guild view model
+                        var guildViewModel = _viewModelFactory.CreateGuildViewModel();
+                        guildViewModel.Model = guild;
+                        guildViewModel.Channels = channelViewModels.OrderBy(c => c.Category)
+                            .ThenBy(c => c.Model.Name)
+                            .ToArray();
+
+                        // Add to list
+                        availableGuilds.Add(guildViewModel);
                     }
                 }
 
-                // Update available guilds
-                AvailableGuilds = _guildChannelsMap.Keys.ToArray();
+                // Update available guild list
+                AvailableGuilds = availableGuilds;
 
-                // Select the first guild
+                // Pre-select first guild
                 SelectedGuild = AvailableGuilds.FirstOrDefault();
             }
             catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
@@ -188,7 +237,7 @@ namespace DiscordChatExporter.Gui.ViewModels
 
         public bool CanExportChannel => IsEnabled;
 
-        public async void ExportChannel(Channel channel)
+        public async void ExportChannel(ChannelViewModel channel)
         {
             try
             {
@@ -212,7 +261,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                 var progressHandler = new Progress<double>(p => Progress = p);
 
                 // Get chat log
-                var chatLog = await _dataService.GetChatLogAsync(token, dialog.Guild, dialog.Channel,
+                var chatLog = await _dataService.GetChatLogAsync(token, dialog.Guild.Model, dialog.Channel.Model,
                     dialog.From, dialog.To, progressHandler);
 
                 // Export

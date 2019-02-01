@@ -60,7 +60,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
                 To = From;
 
             // Generate default file name
-            var defaultFileName = ExportHelper.GetDefaultExportFileName(SelectedFormat, Guild.Model, Channel.Model, From, To);
+            var defaultFileName = ExportHelper.GetDefaultExportFileName(SelectedFormat, Guild, Channel, From, To);
 
             // Prompt for output file path
             var ext = SelectedFormat.GetFileExtension();

@@ -260,8 +260,8 @@ namespace DiscordChatExporter.Gui.ViewModels
                 var progressHandler = new Progress<double>(p => Progress = p);
 
                 // Get chat log
-                var chatLog = await _dataService.GetChatLogAsync(token, dialog.Guild.Model, dialog.Channel.Model,
-                    dialog.From, dialog.To, progressHandler);
+                var chatLog = await _dataService.GetChatLogAsync(token, dialog.Guild, dialog.Channel, dialog.From,
+                    dialog.To, progressHandler);
 
                 // Export
                 _exportService.ExportChatLog(chatLog, dialog.FilePath, dialog.SelectedFormat,

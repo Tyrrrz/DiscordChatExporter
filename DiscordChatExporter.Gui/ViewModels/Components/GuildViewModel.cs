@@ -4,10 +4,15 @@ using Stylet;
 
 namespace DiscordChatExporter.Gui.ViewModels.Components
 {
-    public class GuildViewModel : PropertyChangedBase
+    public partial class GuildViewModel : PropertyChangedBase
     {
         public Guild Model { get; set; }
 
         public IReadOnlyList<ChannelViewModel> Channels { get; set; }
+    }
+
+    public partial class GuildViewModel
+    {
+        public static implicit operator Guild(GuildViewModel viewModel) => viewModel.Model;
     }
 }

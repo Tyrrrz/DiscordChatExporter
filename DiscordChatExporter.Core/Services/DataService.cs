@@ -8,7 +8,7 @@ using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Models;
 using Newtonsoft.Json.Linq;
 using DiscordChatExporter.Core.Internal;
-using Polly;
+using Failsafe;
 using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Services
@@ -20,13 +20,14 @@ namespace DiscordChatExporter.Core.Services
         private async Task<JToken> GetApiResponseAsync(AuthToken token, string resource, string endpoint,
             params string[] parameters)
         {
-            // Create request policy
-            var policy = Policy
-                .Handle<HttpErrorStatusCodeException>(e => (int) e.StatusCode == 429)
-                .WaitAndRetryAsync(10, i => TimeSpan.FromSeconds(0.4));
+            // Create retry policy
+            var retry = Retry.Create()
+                .Catch<HttpErrorStatusCodeException>(false, e => (int) e.StatusCode == 429)
+                .WithMaxTryCount(10)
+                .WithDelay(TimeSpan.FromSeconds(0.4));
 
             // Send request
-            return await policy.ExecuteAsync(async () =>
+            return await retry.ExecuteAsync(async () =>
             {
                 // Create request
                 const string apiRoot = "https://discordapp.com/api/v6";

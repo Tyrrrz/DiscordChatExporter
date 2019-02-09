@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using DiscordChatExporter.Core.Exceptions;
+using DiscordChatExporter.Core.Helpers;
 using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.Core.Services;
 using DiscordChatExporter.Gui.ViewModels.Components;
 using DiscordChatExporter.Gui.ViewModels.Framework;
+using Gress;
 using MaterialDesignThemes.Wpf;
 using Stylet;
 using Tyrrrz.Extensions;
@@ -23,13 +26,13 @@ namespace DiscordChatExporter.Gui.ViewModels
         private readonly DataService _dataService;
         private readonly ExportService _exportService;
 
-        public SnackbarMessageQueue Notifications { get; } = new SnackbarMessageQueue(TimeSpan.FromSeconds(5));
+        public ISnackbarMessageQueue Notifications { get; } = new SnackbarMessageQueue(TimeSpan.FromSeconds(5));
 
-        public bool IsEnabled { get; private set; } = true;
+        public IProgressManager ProgressManager { get; } = new ProgressManager();
 
-        public bool IsProgressIndeterminate => Progress < 0;
+        public bool IsBusy { get; private set; }
 
-        public double Progress { get; private set; }
+        public bool IsProgressIndeterminate { get; private set; }
 
         public bool IsBotToken { get; set; }
 
@@ -38,6 +41,8 @@ namespace DiscordChatExporter.Gui.ViewModels
         public IReadOnlyList<GuildViewModel> AvailableGuilds { get; private set; }
 
         public GuildViewModel SelectedGuild { get; set; }
+
+        public IReadOnlyList<ChannelViewModel> SelectedChannels { get; set; }
 
         public RootViewModel(IViewModelFactory viewModelFactory, DialogManager dialogManager,
             SettingsService settingsService, UpdateService updateService, DataService dataService,
@@ -52,7 +57,14 @@ namespace DiscordChatExporter.Gui.ViewModels
 
             // Set title
             var version = Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
-            DisplayName = $"DiscordChatExporter v{version}";            
+            DisplayName = $"DiscordChatExporter v{version}";
+
+            // Update busy state when progress manager changes
+            ProgressManager.Bind(o => o.IsActive, (sender, args) => IsBusy = ProgressManager.IsActive);
+            ProgressManager.Bind(o => o.IsActive,
+                (sender, args) => IsProgressIndeterminate = ProgressManager.IsActive && ProgressManager.Progress <= 0);
+            ProgressManager.Bind(o => o.Progress,
+                (sender, args) => IsProgressIndeterminate = ProgressManager.IsActive && ProgressManager.Progress <= 0);
         }
 
         protected override async void OnViewLoaded()
@@ -110,16 +122,15 @@ namespace DiscordChatExporter.Gui.ViewModels
             await _dialogManager.ShowDialogAsync(dialog);
         }
 
-        public bool CanPopulateGuildsAndChannels => IsEnabled && TokenValue.IsNotBlank();
+        public bool CanPopulateGuildsAndChannels => !IsBusy && TokenValue.IsNotBlank();
 
         public async void PopulateGuildsAndChannels()
         {
+            // Create progress operation
+            var operation = ProgressManager.CreateOperation();
+
             try
             {
-                // Set busy state and indeterminate progress
-                IsEnabled = false;
-                Progress = -1;
-
                 // Sanitize token
                 TokenValue = TokenValue.Trim('"');
 
@@ -134,7 +145,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                 // Prepare available guild list
                 var availableGuilds = new List<GuildViewModel>();
 
-                // Direct Messages
+                // Get direct messages
                 {
                     // Get fake guild
                     var guild = Guild.DirectMessages;
@@ -150,66 +161,57 @@ namespace DiscordChatExporter.Gui.ViewModels
                         var category = channel.Type == ChannelType.DirectTextChat ? "Private" : "Group";
 
                         // Create channel view model
-                        var channelViewModel = _viewModelFactory.CreateChannelViewModel();
-                        channelViewModel.Model = channel;
-                        channelViewModel.Category = category;
+                        var channelViewModel = _viewModelFactory.CreateChannelViewModel(channel, category);
 
                         // Add to list
                         channelViewModels.Add(channelViewModel);
                     }
 
                     // Create guild view model
-                    var guildViewModel = _viewModelFactory.CreateGuildViewModel();
-                    guildViewModel.Model = guild;
-                    guildViewModel.Channels = channelViewModels.OrderBy(c => c.Category)
-                        .ThenBy(c => c.Model.Name)
-                        .ToArray();
+                    var guildViewModel = _viewModelFactory.CreateGuildViewModel(guild,
+                        channelViewModels.OrderBy(c => c.Category)
+                            .ThenBy(c => c.Model.Name)
+                            .ToArray());
 
                     // Add to list
                     availableGuilds.Add(guildViewModel);
                 }
 
-                // Guilds
+                // Get guilds
+                var guilds = await _dataService.GetUserGuildsAsync(token);
+                foreach (var guild in guilds)
                 {
-                    // Get guilds
-                    var guilds = await _dataService.GetUserGuildsAsync(token);
-                    foreach (var guild in guilds)
+                    // Get channels
+                    var channels = await _dataService.GetGuildChannelsAsync(token, guild.Id);
+
+                    // Get category channels
+                    var categoryChannels = channels.Where(c => c.Type == ChannelType.Category).ToArray();
+
+                    // Get text channels
+                    var textChannels = channels.Where(c => c.Type == ChannelType.GuildTextChat).ToArray();
+
+                    // Create channel view models
+                    var channelViewModels = new List<ChannelViewModel>();
+                    foreach (var channel in textChannels)
                     {
-                        // Get channels
-                        var channels = await _dataService.GetGuildChannelsAsync(token, guild.Id);
+                        // Get category
+                        var category = categoryChannels.FirstOrDefault(c => c.Id == channel.ParentId)?.Name;
 
-                        // Get category channels
-                        var categoryChannels = channels.Where(c => c.Type == ChannelType.Category).ToArray();
-
-                        // Get text channels
-                        var textChannels = channels.Where(c => c.Type == ChannelType.GuildTextChat).ToArray();
-
-                        // Create channel view models
-                        var channelViewModels = new List<ChannelViewModel>();
-                        foreach (var channel in textChannels)
-                        {
-                            // Get category
-                            var category = categoryChannels.FirstOrDefault(c => c.Id == channel.ParentId)?.Name;
-
-                            // Create channel view model
-                            var channelViewModel = _viewModelFactory.CreateChannelViewModel();
-                            channelViewModel.Model = channel;
-                            channelViewModel.Category = category;
-
-                            // Add to list
-                            channelViewModels.Add(channelViewModel);
-                        }
-
-                        // Create guild view model
-                        var guildViewModel = _viewModelFactory.CreateGuildViewModel();
-                        guildViewModel.Model = guild;
-                        guildViewModel.Channels = channelViewModels.OrderBy(c => c.Category)
-                            .ThenBy(c => c.Model.Name)
-                            .ToArray();
+                        // Create channel view model
+                        var channelViewModel = _viewModelFactory.CreateChannelViewModel(channel, category);
 
                         // Add to list
-                        availableGuilds.Add(guildViewModel);
+                        channelViewModels.Add(channelViewModel);
                     }
+
+                    // Create guild view model
+                    var guildViewModel = _viewModelFactory.CreateGuildViewModel(guild,
+                        channelViewModels.OrderBy(c => c.Category)
+                            .ThenBy(c => c.Model.Name)
+                            .ToArray());
+
+                    // Add to list
+                    availableGuilds.Add(guildViewModel);
                 }
 
                 // Update available guild list
@@ -228,61 +230,73 @@ namespace DiscordChatExporter.Gui.ViewModels
             }
             finally
             {
-                // Reset busy state and progress
-                Progress = 0;
-                IsEnabled = true;
-            }            
+                // Dispose progress operation
+                operation.Dispose();
+            }
         }
 
-        public bool CanExportChannel => IsEnabled;
+        public bool CanExportChannels => !IsBusy && SelectedChannels.NotNullAndAny();
 
-        public async void ExportChannel(ChannelViewModel channel)
+        public async void ExportChannels()
         {
-            try
+            // Get last used token
+            var token = _settingsService.LastToken;
+
+            // Create dialog
+            var dialog = _viewModelFactory.CreateExportSetupViewModel(SelectedGuild, SelectedChannels);
+
+            // Show dialog, if canceled - return
+            if (await _dialogManager.ShowDialogAsync(dialog) != true)
+                return;
+
+            // Create a progress operation for each channel to export
+            var operations = ProgressManager.CreateOperations(dialog.Channels.Count);
+
+            // Export channels
+            for (var i = 0; i < dialog.Channels.Count; i++)
             {
-                // Set busy state and indeterminate progress
-                IsEnabled = false;
-                Progress = -1;
+                // Get operation and channel
+                var operation = operations[i];
+                var channel = dialog.Channels[i];
 
-                // Get last used token
-                var token = _settingsService.LastToken;
+                try
+                {
+                    // Generate file path if necessary
+                    var filePath = dialog.OutputPath;
+                    if (ExportHelper.IsDirectoryPath(filePath))
+                    {
+                        // Generate default file name
+                        var fileName = ExportHelper.GetDefaultExportFileName(dialog.SelectedFormat, dialog.Guild,
+                            channel, dialog.From, dialog.To);
 
-                // Create dialog
-                var dialog = _viewModelFactory.CreateExportSetupViewModel();
-                dialog.Guild = SelectedGuild;
-                dialog.Channel = channel;
+                        // Combine paths
+                        filePath = Path.Combine(filePath, fileName);
+                    }
 
-                // Show dialog, if canceled - return
-                if (await _dialogManager.ShowDialogAsync(dialog) != true)
-                    return;
+                    // Get chat log
+                    var chatLog = await _dataService.GetChatLogAsync(token, dialog.Guild, channel, 
+                        dialog.From, dialog.To, operation);
 
-                // Create progress handler
-                var progressHandler = new Progress<double>(p => Progress = p);
+                    // Export
+                    _exportService.ExportChatLog(chatLog, filePath, dialog.SelectedFormat,
+                        dialog.PartitionLimit);
 
-                // Get chat log
-                var chatLog = await _dataService.GetChatLogAsync(token, dialog.Guild, dialog.Channel, dialog.From,
-                    dialog.To, progressHandler);
-
-                // Export
-                _exportService.ExportChatLog(chatLog, dialog.FilePath, dialog.SelectedFormat,
-                    dialog.PartitionLimit);
-
-                // Notify completion
-                Notifications.Enqueue("Export complete");
-            }
-            catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
-            {
-                Notifications.Enqueue("You don't have access to this channel");
-            }
-            catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
-            {
-                Notifications.Enqueue("This channel doesn't exist");
-            }
-            finally
-            {
-                // Reset busy state and progress
-                Progress = 0;
-                IsEnabled = true;
+                    // Notify completion
+                    Notifications.Enqueue($"Channel [{channel.Model.Name}] successfully exported");
+                }
+                catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    Notifications.Enqueue($"You don't have access to channel [{channel.Model.Name}]");
+                }
+                catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+                {
+                    Notifications.Enqueue($"Channel [{channel.Model.Name}] doesn't exist");
+                }
+                finally
+                {
+                    // Dispose progress operation
+                    operation.Dispose();
+                }
             }
         }
     }

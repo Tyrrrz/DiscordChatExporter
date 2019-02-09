@@ -1,12 +1,19 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using DiscordChatExporter.Core.Models;
+using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Helpers
 {
     public static class ExportHelper
     {
+        public static bool IsDirectoryPath(string path)
+            => path.Last() == Path.DirectorySeparatorChar ||
+               path.Last() == Path.AltDirectorySeparatorChar ||
+               Path.GetExtension(path).IsBlank();
+
         public static string GetDefaultExportFileName(ExportFormat format, Guild guild, Channel channel,
             DateTime? from = null, DateTime? to = null)
         {

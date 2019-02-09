@@ -121,9 +121,6 @@ namespace DiscordChatExporter.Core.Services
         {
             var result = new List<Message>();
 
-            // Report indeterminate progress
-            progress?.Report(-1);
-
             // Get the snowflakes for the selected range
             var firstId = from != null ? from.Value.ToSnowflake() : "0";
             var lastId = to != null ? to.Value.ToSnowflake() : DateTime.MaxValue.ToSnowflake();

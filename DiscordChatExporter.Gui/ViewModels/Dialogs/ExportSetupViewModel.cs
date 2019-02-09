@@ -17,9 +17,11 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
 
         public GuildViewModel Guild { get; set; }
 
-        public ChannelViewModel Channel { get; set; }
+        public IReadOnlyList<ChannelViewModel> Channels { get; set; }
 
-        public string FilePath { get; set; }
+        public bool IsSingleChannel => Channels.Count == 1;
+
+        public string OutputPath { get; set; }
 
         public IReadOnlyList<ExportFormat> AvailableFormats =>
             Enum.GetValues(typeof(ExportFormat)).Cast<ExportFormat>().ToArray();
@@ -59,18 +61,33 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             if (To < From)
                 To = From;
 
-            // Generate default file name
-            var defaultFileName = ExportHelper.GetDefaultExportFileName(SelectedFormat, Guild, Channel, From, To);
+            // If single channel - prompt file path
+            if (IsSingleChannel)
+            {
+                // Get single channel
+                var channel = Channels.Single();
 
-            // Prompt for output file path
-            var ext = SelectedFormat.GetFileExtension();
-            var filter = $"{ext.ToUpperInvariant()} files|*.{ext}";
-            FilePath = _dialogManager.PromptSaveFilePath(filter, defaultFileName);
+                // Generate default file name
+                var defaultFileName = ExportHelper.GetDefaultExportFileName(SelectedFormat, Guild, channel, From, To);
+
+                // Generate filter
+                var ext = SelectedFormat.GetFileExtension();
+                var filter = $"{ext.ToUpperInvariant()} files|*.{ext}";
+
+                // Prompt user
+                OutputPath = _dialogManager.PromptSaveFilePath(filter, defaultFileName);
+            }
+            // If multiple channels - prompt dir path
+            else
+            {
+                // Prompt user
+                OutputPath = _dialogManager.PromptDirectoryPath();
+            }
 
             // If canceled - return
-            if (FilePath.IsBlank())
+            if (OutputPath.IsBlank())
                 return;
-            
+
             // Close dialog
             Close(true);
         }

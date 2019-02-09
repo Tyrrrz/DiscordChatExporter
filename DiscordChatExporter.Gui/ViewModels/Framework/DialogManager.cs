@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
+using Ookii.Dialogs.Wpf;
 using Stylet;
 
 namespace DiscordChatExporter.Gui.ViewModels.Framework
@@ -53,6 +54,18 @@ namespace DiscordChatExporter.Gui.ViewModels.Framework
 
             // Show dialog and return result
             return dialog.ShowDialog() == true ? dialog.FileName : null;
+        }
+
+        public string PromptDirectoryPath(string initialDirPath = "")
+        {
+            // Create dialog
+            var dialog = new VistaFolderBrowserDialog
+            {
+                SelectedPath = initialDirPath
+            };
+
+            // Show dialog and return result
+            return dialog.ShowDialog() == true ? dialog.SelectedPath : null;
         }
     }
 }

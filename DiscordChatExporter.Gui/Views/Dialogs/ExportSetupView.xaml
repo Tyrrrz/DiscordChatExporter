@@ -30,22 +30,33 @@
                 </Ellipse.Fill>
             </Ellipse>
 
-            <!--  Guild and channel name  -->
+            <!--  Placeholder (for multiple channels)  -->
             <TextBlock
                 Grid.Column="1"
                 Margin="8,0,0,0"
                 VerticalAlignment="Center"
                 FontSize="19"
-                TextTrimming="CharacterEllipsis">
+                Text="Multiple channels"
+                TextTrimming="CharacterEllipsis"
+                Visibility="{Binding IsSingleChannel, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}" />
+
+            <!--  Category and channel name (for single channel)  -->
+            <TextBlock
+                Grid.Column="1"
+                Margin="8,0,0,0"
+                VerticalAlignment="Center"
+                FontSize="19"
+                TextTrimming="CharacterEllipsis"
+                Visibility="{Binding IsSingleChannel, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
                 <Run
                     Foreground="{DynamicResource SecondaryTextBrush}"
-                    Text="{Binding Channel.Category, Mode=OneWay}"
-                    ToolTip="{Binding Channel.Category, Mode=OneWay}" />
+                    Text="{Binding Channels[0].Category, Mode=OneWay}"
+                    ToolTip="{Binding Channels[0].Category, Mode=OneWay}" />
                 <Run Text="/" />
                 <Run
                     Foreground="{DynamicResource PrimaryTextBrush}"
-                    Text="{Binding Channel.Model.Name, Mode=OneWay}"
-                    ToolTip="{Binding Channel.Model.Name, Mode=OneWay}" />
+                    Text="{Binding Channels[0].Model.Name, Mode=OneWay}"
+                    ToolTip="{Binding Channels[0].Model.Name, Mode=OneWay}" />
             </TextBlock>
         </Grid>
 

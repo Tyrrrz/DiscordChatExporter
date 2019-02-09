@@ -2,7 +2,9 @@
     x:Class="DiscordChatExporter.Gui.Views.RootView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="clr-namespace:DiscordChatExporter.Gui.Behaviors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:s="https://github.com/canton7/Stylet"
@@ -30,7 +32,6 @@
             <Grid
                 Grid.Row="0"
                 Background="{DynamicResource PrimaryHueMidBrush}"
-                IsEnabled="{Binding IsEnabled}"
                 TextElement.Foreground="{DynamicResource SecondaryInverseTextBrush}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -117,7 +118,7 @@
                 Grid.Row="1"
                 Background="{DynamicResource PrimaryHueMidBrush}"
                 IsIndeterminate="{Binding IsProgressIndeterminate}"
-                Value="{Binding Progress, Mode=OneWay}" />
+                Value="{Binding ProgressManager.Progress, Mode=OneWay}" />
 
             <!--  Content  -->
             <Grid Grid.Row="2">
@@ -186,10 +187,7 @@
                 </Grid>
 
                 <!--  Guilds and channels  -->
-                <Grid
-                    Background="{DynamicResource MaterialDesignCardBackground}"
-                    IsEnabled="{Binding IsEnabled}"
-                    Visibility="{Binding AvailableGuilds, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
+                <Grid Background="{DynamicResource MaterialDesignCardBackground}" Visibility="{Binding AvailableGuilds, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
@@ -203,7 +201,8 @@
                         <ListBox
                             ItemsSource="{Binding AvailableGuilds}"
                             ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                            SelectedItem="{Binding SelectedGuild}">
+                            SelectedItem="{Binding SelectedGuild}"
+                            SelectionMode="Single">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Grid
@@ -235,7 +234,13 @@
 
                     <!--  Channels  -->
                     <Border Grid.Column="1">
-                        <ListBox HorizontalContentAlignment="Stretch" ItemsSource="{Binding SelectedGuild.Channels}">
+                        <ListBox
+                            HorizontalContentAlignment="Stretch"
+                            ItemsSource="{Binding SelectedGuild.Channels}"
+                            SelectionMode="Extended">
+                            <i:Interaction.Behaviors>
+                                <behaviors:ChannelViewModelMultiSelectionListBoxBehavior SelectedItems="{Binding SelectedChannels}" />
+                            </i:Interaction.Behaviors>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel
@@ -243,12 +248,6 @@
                                         Background="Transparent"
                                         Cursor="Hand"
                                         Orientation="Horizontal">
-                                        <StackPanel.InputBindings>
-                                            <MouseBinding
-                                                Command="{s:Action ExportChannel}"
-                                                CommandParameter="{Binding}"
-                                                MouseAction="LeftClick" />
-                                        </StackPanel.InputBindings>
                                         <materialDesign:PackIcon
                                             Margin="16,7,0,6"
                                             VerticalAlignment="Center"
@@ -257,9 +256,9 @@
                                             Margin="3,8,8,8"
                                             VerticalAlignment="Center"
                                             FontSize="14">
-                                            <Run Text="{Binding Category, Mode=OneWay}" Foreground="{DynamicResource SecondaryTextBrush}" />
-                                            <Run Text="/" Foreground="{DynamicResource SecondaryTextBrush}" />
-                                            <Run Text="{Binding Model.Name, Mode=OneWay}" Foreground="{DynamicResource PrimaryTextBrush}" />
+                                            <Run Foreground="{DynamicResource SecondaryTextBrush}" Text="{Binding Category, Mode=OneWay}" />
+                                            <Run Text="/" />
+                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Model.Name, Mode=OneWay}" />
                                         </TextBlock>
                                     </StackPanel>
                                 </DataTemplate>
@@ -267,6 +266,20 @@
                         </ListBox>
                     </Border>
                 </Grid>
+
+                <!--  Export button  -->
+                <Button
+                    Margin="32,24"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Command="{s:Action ExportChannels}"
+                    Style="{StaticResource MaterialDesignFloatingActionAccentButton}"
+                    Visibility="{Binding IsEnabled, RelativeSource={RelativeSource Self}, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
+                    <materialDesign:PackIcon
+                        Width="32"
+                        Height="32"
+                        Kind="Download" />
+                </Button>
 
                 <!--  Notifications snackbar  -->
                 <materialDesign:Snackbar MessageQueue="{Binding Notifications}" />

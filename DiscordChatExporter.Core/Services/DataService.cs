@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -22,6 +23,7 @@ namespace DiscordChatExporter.Core.Services
         {
             // Create retry policy
             var retry = Retry.Create()
+                .Catch<HttpErrorStatusCodeException>(false, e => e.StatusCode == HttpStatusCode.ServiceUnavailable)
                 .Catch<HttpErrorStatusCodeException>(false, e => (int) e.StatusCode == 429)
                 .WithMaxTryCount(10)
                 .WithDelay(TimeSpan.FromSeconds(0.4));

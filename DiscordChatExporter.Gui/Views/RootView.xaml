@@ -234,10 +234,7 @@
 
                     <!--  Channels  -->
                     <Border Grid.Column="1">
-                        <ListBox
-                            HorizontalContentAlignment="Stretch"
-                            ItemsSource="{Binding SelectedGuild.Channels}"
-                            SelectionMode="Extended">
+                        <ListBox ItemsSource="{Binding SelectedGuild.Channels}" SelectionMode="Extended">
                             <i:Interaction.Behaviors>
                                 <behaviors:ChannelViewModelMultiSelectionListBoxBehavior SelectedItems="{Binding SelectedChannels}" />
                             </i:Interaction.Behaviors>
@@ -246,7 +243,6 @@
                                     <StackPanel
                                         Margin="-8"
                                         Background="Transparent"
-                                        Cursor="Hand"
                                         Orientation="Horizontal">
                                         <materialDesign:PackIcon
                                             Margin="16,7,0,6"

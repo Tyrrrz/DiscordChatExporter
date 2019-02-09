@@ -36,9 +36,11 @@
                 Margin="8,0,0,0"
                 VerticalAlignment="Center"
                 FontSize="19"
-                Text="Multiple channels"
                 TextTrimming="CharacterEllipsis"
-                Visibility="{Binding IsSingleChannel, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}" />
+                Visibility="{Binding IsSingleChannel, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}">
+                <Run Text="{Binding Channels.Count, Mode=OneWay}" />
+                <Run Text="channels selected" />
+            </TextBlock>
 
             <!--  Category and channel name (for single channel)  -->
             <TextBlock
@@ -48,10 +50,7 @@
                 FontSize="19"
                 TextTrimming="CharacterEllipsis"
                 Visibility="{Binding IsSingleChannel, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
-                <Run
-                    Foreground="{DynamicResource SecondaryTextBrush}"
-                    Text="{Binding Channels[0].Category, Mode=OneWay}"
-                    ToolTip="{Binding Channels[0].Category, Mode=OneWay}" />
+                <Run Text="{Binding Channels[0].Category, Mode=OneWay}" ToolTip="{Binding Channels[0].Category, Mode=OneWay}" />
                 <Run Text="/" />
                 <Run
                     Foreground="{DynamicResource PrimaryTextBrush}"

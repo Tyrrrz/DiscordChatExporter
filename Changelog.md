@@ -1,3 +1,18 @@
+### v2.9 (09-Feb-2019)
+
+- Added categories to channel list in GUI. Channels are now also grouped by category.
+- Added ability to export multiple channels at once in GUI by selecting them with shift or ctrl keys.
+- Added CLI command to export all available channels in a guild (`exportguild`).
+- Added CLI command to export all direct message channels (`exportdm`).
+- Added retry policy for 503 status code errors to prevent random crashes.
+- Changed how channels are exported in GUI. Now you need to select them first and then click a button to export. You can also double click a single channel to export it as before.
+- Improved default file name generation by adding date ranges and channel ID to the file name.
+- Improved naming of files exported with partitioning.
+- Improved usage instructions.
+- Improved GUI layout and styling.
+- Fixed an issue where dialogs would sometimes appear over other windows.
+- Fixed an issue where launching DiscordChatExporter from Windows Start Menu would make it crash.
+
 ### v2.8 (03-Nov-2018)
 
 - Added support for partitioning which lets you split the output into multiple files by setting the partition message limit (`-p` parameter for CLI).

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -49,17 +50,12 @@ namespace DiscordChatExporter.Cli.Verbs
                     var chatLog = await dataService.GetChatLogAsync(Options.GetToken(), channel,
                         Options.After, Options.Before);
 
-                    // Generate file path if not set or is a directory
-                    var filePath = Options.FilePath;
-                    if (filePath == null || filePath.EndsWith("/") || filePath.EndsWith("\\"))
-                    {
-                        // Generate default file name
-                        var defaultFileName = ExportHelper.GetDefaultExportFileName(Options.ExportFormat, chatLog.Guild,
-                            chatLog.Channel, Options.After, Options.Before);
+                    // Generate default file name
+                    var fileName = ExportHelper.GetDefaultExportFileName(Options.ExportFormat, chatLog.Guild,
+                        chatLog.Channel, Options.After, Options.Before);
 
-                        // Append the file name to the file path
-                        filePath += defaultFileName;
-                    }
+                    // Generate file path
+                    var filePath = Path.Combine(Options.OutputPath ?? "", fileName);
 
                     // Export
                     exportService.ExportChatLog(chatLog, filePath, Options.ExportFormat, Options.PartitionLimit);

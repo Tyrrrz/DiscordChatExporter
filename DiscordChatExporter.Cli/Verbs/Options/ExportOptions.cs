@@ -9,8 +9,8 @@ namespace DiscordChatExporter.Cli.Verbs.Options
         [Option('f', "format", Default = ExportFormat.HtmlDark, HelpText = "Output file format.")]
         public ExportFormat ExportFormat { get; set; }
 
-        [Option('o', "output", Default = null, HelpText = "Output file path.")]
-        public string FilePath { get; set; }
+        [Option('o', "output", Default = null, HelpText = "Output file or directory path.")]
+        public string OutputPath { get; set; }
 
         [Option("after", Default = null, HelpText = "Limit to messages sent after this date.")]
         public DateTime? After { get; set; }

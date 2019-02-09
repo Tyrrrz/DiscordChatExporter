@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using DiscordChatExporter.Cli.Verbs.Options;
 using DiscordChatExporter.Core.Helpers;
@@ -32,15 +33,15 @@ namespace DiscordChatExporter.Cli.Verbs
                 Options.After, Options.Before);
 
             // Generate file path if not set or is a directory
-            var filePath = Options.FilePath;
-            if (filePath == null || filePath.EndsWith("/") || filePath.EndsWith("\\"))
+            var filePath = Options.OutputPath;
+            if (filePath.IsBlank() || ExportHelper.IsDirectoryPath(filePath))
             {
                 // Generate default file name
-                var defaultFileName = ExportHelper.GetDefaultExportFileName(Options.ExportFormat, chatLog.Guild,
+                var fileName = ExportHelper.GetDefaultExportFileName(Options.ExportFormat, chatLog.Guild,
                     chatLog.Channel, Options.After, Options.Before);
 
-                // Append the file name to the file path
-                filePath += defaultFileName;
+                // Combine paths
+                filePath = Path.Combine(filePath ?? "", fileName);
             }
 
             // Export

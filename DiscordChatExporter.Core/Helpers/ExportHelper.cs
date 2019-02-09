@@ -20,7 +20,7 @@ namespace DiscordChatExporter.Core.Helpers
             var result = new StringBuilder();
 
             // Append guild and channel names
-            result.Append($"{guild.Name} - {channel.Name}");
+            result.Append($"{guild.Name} - {channel.Name} [{channel.Id}]");
 
             // Append date range
             if (from != null || to != null)

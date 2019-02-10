@@ -41,10 +41,15 @@ namespace DiscordChatExporter.Core.Services
                         : new AuthenticationHeaderValue(token.Value);
 
                     // Add parameters
-                    foreach (var parameter in parameters)
+                    foreach (var parameter in parameters.ExceptBlank())
                     {
                         var key = parameter.SubstringUntil("=");
                         var value = parameter.SubstringAfter("=");
+
+                        // Skip empty values
+                        if (value.IsBlank())
+                            continue;
+
                         request.RequestUri = request.RequestUri.SetQueryParameter(key, value);
                     }
 
@@ -123,13 +128,9 @@ namespace DiscordChatExporter.Core.Services
         {
             var result = new List<Message>();
 
-            // Get the snowflakes for the selected range
-            var firstId = from != null ? from.Value.ToSnowflake() : "0";
-            var lastId = to != null ? to.Value.ToSnowflake() : DateTime.MaxValue.ToSnowflake();
-
             // Get the last message
             var response = await GetApiResponseAsync(token, "channels", $"{channelId}/messages",
-                "limit=1", $"before={lastId}");
+                "limit=1", $"before={to?.ToSnowflake()}");
             var lastMessage = response.Select(ParseMessage).FirstOrDefault();
 
             // If the last message doesn't exist or it's outside of range - return
@@ -140,7 +141,7 @@ namespace DiscordChatExporter.Core.Services
             }
 
             // Get other messages
-            var offsetId = firstId;
+            var offsetId = from?.ToSnowflake() ?? "0";
             while (true)
             {
                 // Get message batch

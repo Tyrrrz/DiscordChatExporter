@@ -1,3 +1,7 @@
+### v2.9.1 (10-Feb-2019)
+
+- Fixed an issue where some of the last messages in a channel would sometimes not get exported.
+
 ### v2.9 (09-Feb-2019)
 
 - Added categories to channel list in GUI. Channels are now also grouped by category.

@@ -279,7 +279,7 @@
                     VerticalAlignment="Bottom"
                     Command="{s:Action ExportChannels}"
                     Style="{StaticResource MaterialDesignFloatingActionAccentButton}"
-                    Visibility="{Binding IsEnabled, RelativeSource={RelativeSource Self}, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
+                    Visibility="{Binding CanExportChannels, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
                     <materialDesign:PackIcon
                         Width="32"
                         Height="32"

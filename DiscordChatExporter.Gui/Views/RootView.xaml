@@ -246,18 +246,26 @@
                             </i:Interaction.Behaviors>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel
-                                        Margin="-8"
-                                        Background="Transparent"
-                                        Orientation="Horizontal">
-                                        <StackPanel.InputBindings>
+                                    <Grid Margin="-8" Background="Transparent">
+                                        <Grid.InputBindings>
                                             <MouseBinding Command="{s:Action ExportChannels}" MouseAction="LeftDoubleClick" />
-                                        </StackPanel.InputBindings>
+                                        </Grid.InputBindings>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!--  Channel icon  -->
                                         <materialDesign:PackIcon
+                                            Grid.Column="0"
                                             Margin="16,7,0,6"
                                             VerticalAlignment="Center"
                                             Kind="Pound" />
+
+                                        <!--  Channel category / name  -->
                                         <TextBlock
+                                            Grid.Column="1"
                                             Margin="3,8,8,8"
                                             VerticalAlignment="Center"
                                             FontSize="14">
@@ -265,7 +273,17 @@
                                             <Run Text="/" />
                                             <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Model.Name, Mode=OneWay}" />
                                         </TextBlock>
-                                    </StackPanel>
+
+                                        <!--  Is selected checkmark  -->
+                                        <materialDesign:PackIcon
+                                            Grid.Column="2"
+                                            Width="24"
+                                            Height="24"
+                                            Margin="8,0"
+                                            VerticalAlignment="Center"
+                                            Kind="Check"
+                                            Visibility="{Binding IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}, Converter={x:Static s:BoolToVisibilityConverter.Instance}, Mode=OneWay}" />
+                                    </Grid>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>

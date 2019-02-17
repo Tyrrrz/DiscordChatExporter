@@ -5,7 +5,7 @@
         <TargetFramework>net461</TargetFramework>
         <Version>2.9.1</Version>
         <Company>Tyrrrz</Company>
-        <Copyright>Copyright (c) 2017-2018 Alexey Golub</Copyright>
+        <Copyright>Copyright (c) Alexey Golub</Copyright>
         <ApplicationIcon>..\favicon.ico</ApplicationIcon>
     </PropertyGroup>
 

@@ -3,6 +3,7 @@ using System.Linq;
 using CommandLine;
 using DiscordChatExporter.Cli.Verbs;
 using DiscordChatExporter.Cli.Verbs.Options;
+using DiscordChatExporter.Core.Markdown;
 
 namespace DiscordChatExporter.Cli
 {
@@ -34,6 +35,9 @@ namespace DiscordChatExporter.Cli
 
         public static void Main(string[] args)
         {
+            //var spans = new MarkdownParser().Process("one *two three __four__* _five_ ***six***");
+            var spans = new MarkdownParser().Process("**six __seven__ eight** nine**");
+
             // Get all verb types
             var verbTypes = new[]
             {

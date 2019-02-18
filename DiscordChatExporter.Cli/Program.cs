@@ -35,8 +35,10 @@ namespace DiscordChatExporter.Cli
 
         public static void Main(string[] args)
         {
-            //var spans = new MarkdownParser().Process("one *two three __four__* _five_ ***six***");
-            var spans = new MarkdownParser().Process("**six __seven__ eight** nine**");
+            var spans1 = new MarkdownParser().Process("one *two three __four__* _five_ ***six***");
+            var spans2 = new MarkdownParser().Process("**six __seven__ eight** nine**");
+            var spans3 = new MarkdownParser().Process("**six**");
+            var spans4 = new MarkdownParser().Process("**six __seven eight**");
 
             // Get all verb types
             var verbTypes = new[]

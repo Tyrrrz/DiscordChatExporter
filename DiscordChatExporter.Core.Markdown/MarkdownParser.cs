@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Sprache;
 
 namespace DiscordChatExporter.Core.Markdown
@@ -15,41 +16,29 @@ namespace DiscordChatExporter.Core.Markdown
         private static readonly Parser<string> MultilineCodeBlockToken = Parse.String("```").Text();
         private static readonly Parser<string> SpoilerToken = Parse.String("||").Text();
 
-        private static readonly Parser<string> AnyToken = BoldToken
-            .Or(UnderlineToken)
-            .Or(ItalicToken)
-            .Or(ItalicAltToken)
-            .Or(StrikethroughToken);
+        private static Parser<string> NonGreedyText<T, V>(Parser<T> otherParser, Parser<V> otherParser2) =>
+            Parse.AnyChar.Except(otherParser).Except(otherParser2).AtLeastOnce().Text();
+
+        private static Parser<Node> FormattedContainerNode(Parser<string> token, TextFormatting formatting) =>
+            from open in token
+            from children in Parse.Ref(() => AnyFormattedContainerNode).Or(NonGreedyText(AnyFormattedContainerNode, token).Select(s => new TextNode(s))).Except(token).AtLeastOnce()
+            from close in token
+            select new FormattedContainerNode(formatting, children.ToArray());
 
         private static readonly Parser<Node> BoldFormattedContainerNode =
-            from open in BoldToken
-            from children in Parse.Ref(() => AnyNode).AtLeastOnce()
-            from close in BoldToken
-            select new FormattedContainerNode(TextFormatting.Bold, children.ToArray());
+            FormattedContainerNode(BoldToken, TextFormatting.Bold);
 
         private static readonly Parser<Node> ItalicFormattedContainerNode =
-            from open in ItalicToken
-            from children in Parse.Ref(() => AnyNode).AtLeastOnce()
-            from close in ItalicToken
-            select new FormattedContainerNode(TextFormatting.Italic, children.ToArray());
+            FormattedContainerNode(ItalicToken, TextFormatting.Italic);
 
         private static readonly Parser<Node> ItalicAltFormattedContainerNode =
-            from open in ItalicAltToken
-            from children in Parse.Ref(() => AnyNode).AtLeastOnce()
-            from close in ItalicAltToken
-            select new FormattedContainerNode(TextFormatting.Italic, children.ToArray());
+            FormattedContainerNode(ItalicAltToken, TextFormatting.Italic);
 
         private static readonly Parser<Node> UnderlineFormattedContainerNode =
-            from open in UnderlineToken
-            from children in Parse.Ref(() => AnyNode).AtLeastOnce()
-            from close in UnderlineToken
-            select new FormattedContainerNode(TextFormatting.Underline, children.ToArray());
+            FormattedContainerNode(UnderlineToken, TextFormatting.Underline);
 
         private static readonly Parser<Node> StrikethroughFormattedContainerNode =
-            from open in StrikethroughToken
-            from children in Parse.Ref(() => AnyNode).AtLeastOnce()
-            from close in StrikethroughToken
-            select new FormattedContainerNode(TextFormatting.Strikethrough, children.ToArray());
+            FormattedContainerNode(StrikethroughToken, TextFormatting.Strikethrough);
 
         private static readonly Parser<Node> AnyFormattedContainerNode =
             BoldFormattedContainerNode
@@ -62,6 +51,34 @@ namespace DiscordChatExporter.Core.Markdown
             Parse.AnyChar.Except(AnyFormattedContainerNode).AtLeastOnce().Text().Select(s => new TextNode(s));
 
         private static readonly Parser<Node> AnyNode = AnyFormattedContainerNode.Or(TextNode);
+
+        private static IEnumerable<Node> MergeNodes(IEnumerable<Node> nodes)
+        {
+            var buffer = new StringBuilder();
+            foreach (var node in nodes)
+            {
+                if (node is TextNode textNode)
+                {
+                    buffer.Append(textNode.Text);
+                }
+                else
+                {
+                    if (buffer.Length > 0)
+                    {
+                        yield return new TextNode(buffer.ToString());
+                        buffer.Clear();
+                    }
+
+                    yield return node;
+                }
+            }
+
+            if (buffer.Length > 0)
+            {
+                yield return new TextNode(buffer.ToString());
+                buffer.Clear();
+            }
+        }
 
         public IReadOnlyList<Node> Process(string input) => AnyNode.Many().Parse(input).ToArray();
     }

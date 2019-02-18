@@ -6,18 +6,12 @@ using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Markdown.Internal
 {
-    internal static class MarkdownGrammar
+    // The following parsing logic is intentionally built in such way to make it resemble Discord's own
+    // parsing as closely as possible, including its numerous flaws and inconsistencies
+    internal static class Grammar
     {
-        private const string BoldToken = "**";
-        private const string ItalicToken = "*";
-        private const string ItalicAltToken = "_";
-        private const string UnderlineToken = "__";
-        private const string StrikethroughToken = "~~";
-        private const string SpoilerToken = "||";
-        private const string InlineCodeBlockToken = "`";
-        private const string MultilineCodeBlockToken = "```";
-
-        private static Parser<string> NodeContent(string token) =>
+        // Parses the text contained within two instances of the given token
+        private static Parser<string> ContentWithinTokens(string token) =>
             Parse.RegexMatch(
                 $"{Regex.Escape(token)}" + // open token
                 "(.+?)" + // any non-empty content inside
@@ -26,40 +20,49 @@ namespace DiscordChatExporter.Core.Markdown.Internal
                 .Select(m => m.Groups[1].Value) // get 1st group value
                 .Where(s => s.IsNotBlank()); // non-blank results
 
+        /* Formatting */
+
         private static readonly Parser<Node> BoldFormattedNode =
-            NodeContent(BoldToken).Select(s => new FormattedNode(TextFormatting.Bold, BuildTree(s)));
+            ContentWithinTokens("**").Select(s => new FormattedNode(TextFormatting.Bold, BuildTree(s)));
 
         private static readonly Parser<Node> ItalicFormattedNode =
-            NodeContent(ItalicToken).Select(s => new FormattedNode(TextFormatting.Italic, BuildTree(s)));
+            ContentWithinTokens("*").Select(s => new FormattedNode(TextFormatting.Italic, BuildTree(s)));
 
         private static readonly Parser<Node> ItalicAltFormattedNode =
-            NodeContent(ItalicAltToken).Select(s => new FormattedNode(TextFormatting.Italic, BuildTree(s)));
+            ContentWithinTokens("_").Select(s => new FormattedNode(TextFormatting.Italic, BuildTree(s)));
 
         private static readonly Parser<Node> UnderlineFormattedNode =
-            NodeContent(UnderlineToken).Select(s => new FormattedNode(TextFormatting.Underline, BuildTree(s)));
+            ContentWithinTokens("__").Select(s => new FormattedNode(TextFormatting.Underline, BuildTree(s)));
 
         private static readonly Parser<Node> StrikethroughFormattedNode =
-            NodeContent(StrikethroughToken).Select(s => new FormattedNode(TextFormatting.Strikethrough, BuildTree(s)));
+            ContentWithinTokens("~~").Select(s => new FormattedNode(TextFormatting.Strikethrough, BuildTree(s)));
 
         private static readonly Parser<Node> SpoilerFormattedNode =
-            NodeContent(SpoilerToken).Select(s => new FormattedNode(TextFormatting.Spoiler, BuildTree(s)));
+            ContentWithinTokens("||").Select(s => new FormattedNode(TextFormatting.Spoiler, BuildTree(s)));
+
+        /* Code blocks */
 
         private static readonly Parser<Node> InlineCodeBlockNode =
-            NodeContent(InlineCodeBlockToken).Select(s => new InlineCodeBlockNode(s));
+            ContentWithinTokens("`").Select(s => new InlineCodeBlockNode(s));
 
         private static readonly Parser<Node> MultilineCodeBlockNode =
-            NodeContent(MultilineCodeBlockToken).Select(s => new InlineCodeBlockNode(s)); // temporary
+            ContentWithinTokens("```").Select(s => new InlineCodeBlockNode(s)); // temporary
 
+        // Functional node is any node apart from text
+        // It's important that italic goes after bold and underline due to token conflicts
         private static readonly Parser<Node> FunctionalNode = BoldFormattedNode
             .Or(UnderlineFormattedNode).Or(ItalicFormattedNode).Or(ItalicAltFormattedNode)
-            .Or(StrikethroughFormattedNode).Or(SpoilerFormattedNode).Or(InlineCodeBlockNode)
-            .Or(MultilineCodeBlockNode);
+            .Or(StrikethroughFormattedNode).Or(SpoilerFormattedNode)
+            .Or(InlineCodeBlockNode).Or(MultilineCodeBlockNode);
 
+        // Text node is created for text spans that don't match with any functional nodes
         private static readonly Parser<Node> TextNode =
             Parse.AnyChar.Except(FunctionalNode).AtLeastOnce().Text().Select(s => new TextNode(s));
 
+        // Any node
         private static readonly Parser<Node> AnyNode = FunctionalNode.Or(TextNode);
 
+        // Entry point
         public static IReadOnlyList<Node> BuildTree(string input) => AnyNode.Many().Parse(input).ToArray();
     }
 }

@@ -5,6 +5,6 @@ namespace DiscordChatExporter.Core.Markdown
 {
     public class MarkdownParser
     {
-        public IReadOnlyList<Node> Parse(string input) => MarkdownGrammar.BuildTree(input);
+        public IReadOnlyList<Node> Parse(string input) => Grammar.BuildTree(input);
     }
 }

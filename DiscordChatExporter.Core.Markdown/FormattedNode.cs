@@ -2,14 +2,16 @@
 
 namespace DiscordChatExporter.Core.Markdown
 {
-    public class FormattedContainerNode : ContainerNode
+    public class FormattedNode : Node
     {
         public TextFormatting Formatting { get; }
 
-        public FormattedContainerNode(TextFormatting formatting, IReadOnlyList<Node> children)
-            : base(children)
+        public IReadOnlyList<Node> Children { get; }
+
+        public FormattedNode(TextFormatting formatting, IReadOnlyList<Node> children)
         {
             Formatting = formatting;
+            Children = children;
         }
 
         public override string ToString() => $"<{Formatting}> ({Children.Count} direct children)";

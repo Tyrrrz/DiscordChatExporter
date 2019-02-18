@@ -2,10 +2,10 @@
 {
     public enum TextFormatting
     {
-        Normal,
         Bold,
         Italic,
         Underline,
-        Strikethrough
+        Strikethrough,
+        Spoiler
     }
 }

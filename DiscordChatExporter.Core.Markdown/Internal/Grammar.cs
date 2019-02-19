@@ -89,11 +89,11 @@ namespace DiscordChatExporter.Core.Markdown.Internal
         private static readonly Parser<Node> AutoLinkNode = Parse.RegexMatch("(https?://.*?)(?=\\s|$)")
             .Select(m => m.Groups[1].Value).Select(s => new LinkNode(s));
 
-        private static readonly Parser<Node> LinkNode = TitledLinkNode.Or(AutoLinkNode);
+        private static readonly Parser<Node> AnyLinkNode = TitledLinkNode.Or(AutoLinkNode);
 
         // Functional node is any node apart from plain text
         private static readonly Parser<Node> FunctionalNode =
-            AnyFormattedNode.Or(AnyCodeBlockNode).Or(AnyMentionNode).Or(EmojiNode).Or(LinkNode);
+            AnyFormattedNode.Or(AnyCodeBlockNode).Or(AnyMentionNode).Or(EmojiNode).Or(AnyLinkNode);
 
         // Text node is created for text spans that don't match with any functional nodes
         private static readonly Parser<Node> TextNode =

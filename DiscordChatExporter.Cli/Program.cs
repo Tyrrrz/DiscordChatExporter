@@ -36,7 +36,30 @@ namespace DiscordChatExporter.Cli
         public static void Main(string[] args)
         {
             var tree = new MarkdownParser().Parse(
-                "*one* **two** _three_ *four* ***five*** https://six.com `https://seven.com` ```**no**``` [test](https://asd.com) **https://bold.link.com** @everyone @noteveryone @here <@123456> <:lul:12345>");
+                @"```csharp
+public static void Main()
+{
+}
+```
+
+```this may be
+a really weird
+poem.
+```
+
+```
+printf('It's also okay not to have languages here');
+```
+
+```
+this
+is
+code
+```
+
+```
+you can use single `backticks` here```
+");
 
             // Get all verb types
             var verbTypes = new[]

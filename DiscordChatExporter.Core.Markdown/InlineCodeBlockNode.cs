@@ -2,13 +2,13 @@
 {
     public class InlineCodeBlockNode : Node
     {
-        public string Text { get; }
+        public string Code { get; }
 
-        public InlineCodeBlockNode(string text)
+        public InlineCodeBlockNode(string code)
         {
-            Text = text;
+            Code = code;
         }
 
-        public override string ToString() => $"<Code> {Text}";
+        public override string ToString() => $"<Code> {Code}";
     }
 }

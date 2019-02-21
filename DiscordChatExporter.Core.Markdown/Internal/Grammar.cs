@@ -11,12 +11,12 @@ namespace DiscordChatExporter.Core.Markdown.Internal
     {
         // Parses the text contained within two instances of the given token
         private static Parser<string> ContentWithinTokens(string token) =>
-            Parse.RegexMatch(
+            Parse.RegexMatch(new Regex(
                 $"{Regex.Escape(token)}" + // open token
                 "(.+?)" + // any non-empty content inside
                 $"{Regex.Escape(token)}" + // close token
-                $"(?=[^{Regex.Escape(token.Last().ToString())}]|$)") // followed by a different char than last or EOL
-                .Select(m => m.Groups[1].Value); // get 1st group value
+                $"(?=[^{Regex.Escape(token.Last().ToString())}]|$)", // followed by a different char than last or EOL
+                RegexOptions.Singleline)).Select(m => m.Groups[1].Value); // get 1st group value
 
         /* Formatting */
 
@@ -48,7 +48,10 @@ namespace DiscordChatExporter.Core.Markdown.Internal
             ContentWithinTokens("`").Select(s => new InlineCodeBlockNode(s));
 
         private static readonly Parser<Node> MultilineCodeBlockNode =
-            ContentWithinTokens("```").Select(s => new InlineCodeBlockNode(s)); // temporary
+            ContentWithinTokens("```").Select(s =>
+                Parse.RegexMatch(new Regex("^(?:(\\S*?)?(?:\\s*?\\n))?(.+)", RegexOptions.Singleline))
+                    .Select(m => new MultilineCodeBlockNode(m.Groups[1].Value, m.Groups[2].Value))
+                    .Parse(s));
 
         private static readonly Parser<Node> AnyCodeBlockNode = MultilineCodeBlockNode.Or(InlineCodeBlockNode); // inline should be after multiline
 

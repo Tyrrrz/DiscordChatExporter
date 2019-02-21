@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿{{~ include "HtmlShared.Functions.sbn" ~}}
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -6,7 +8,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <style>
-        {{ StyleSheet }}
+        {{ include "HtmlShared.Main.css" }}
+    </style>
+    <style>
+        {{ ThemeStyleSheet }}
     </style>
 </head>
 <body>
@@ -58,7 +63,7 @@
                     {{~ # Content ~}}
                     {{~ if message.Content ~}}
                         <div class="chatlog__content">
-                            {{ message.Content | FormatContent }}
+                            {{ message.Content | RenderMarkdownHtml }}
 
                             {{~ # Edited timestamp ~}}
                             {{~ if message.EditedTimestamp ~}}
@@ -112,16 +117,16 @@
                                         {{~ if embed.Title ~}}
                                             <div class="chatlog__embed-title">
                                                 {{~ if embed.Url ~}}
-                                                    <a class="chatlog__embed-title-link" href="{{ embed.Url }}">{{ embed.Title | FormatContent }}</a>
+                                                    <a class="chatlog__embed-title-link" href="{{ embed.Url }}">{{ embed.Title | RenderMarkdownHtml }}</a>
                                                 {{~ else ~}}
-                                                    {{ embed.Title | FormatContent }}
+                                                    {{ embed.Title | RenderMarkdownHtml }}
                                                 {{~ end ~}}
                                             </div>
                                         {{~ end ~}}
 
                                         {{~ # Description ~}}
                                         {{~ if embed.Description ~}}
-                                            <div class="chatlog__embed-description">{{ embed.Description | FormatContent true }}</div>
+                                            <div class="chatlog__embed-description">{{ embed.Description | RenderMarkdownHtml }}</div>
                                         {{~ end ~}}
 
                                         {{~ # Fields ~}}
@@ -130,10 +135,10 @@
                                                 {{~ for field in embed.Fields ~}}
                                                     <div class="chatlog__embed-field {{ if field.IsInline }} chatlog__embed-field--inline {{ end }}">
                                                         {{~ if field.Name ~}}
-                                                            <div class="chatlog__embed-field-name">{{ field.Name | FormatContent }}</div>
+                                                            <div class="chatlog__embed-field-name">{{ field.Name | RenderMarkdownHtml }}</div>
                                                         {{~ end ~}}
                                                         {{~ if field.Value ~}}
-                                                            <div class="chatlog__embed-field-value">{{ field.Value | FormatContent true }}</div>
+                                                            <div class="chatlog__embed-field-value">{{ field.Value | RenderMarkdownHtml }}</div>
                                                         {{~ end ~}}
                                                     </div>
                                                 {{~ end ~}}

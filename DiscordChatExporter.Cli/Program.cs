@@ -3,7 +3,6 @@ using System.Linq;
 using CommandLine;
 using DiscordChatExporter.Cli.Verbs;
 using DiscordChatExporter.Cli.Verbs.Options;
-using DiscordChatExporter.Core.Markdown;
 
 namespace DiscordChatExporter.Cli
 {
@@ -35,32 +34,6 @@ namespace DiscordChatExporter.Cli
 
         public static void Main(string[] args)
         {
-            var tree = new MarkdownParser().Parse(
-                @"```csharp
-public static void Main()
-{
-}
-```
-
-```this may be
-a really weird
-poem.
-```
-
-```
-printf('It's also okay not to have languages here');
-```
-
-```
-this
-is
-code
-```
-
-```
-you can use single `backticks` here```
-");
-
             // Get all verb types
             var verbTypes = new[]
             {

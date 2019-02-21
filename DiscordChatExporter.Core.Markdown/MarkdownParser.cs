@@ -3,8 +3,8 @@ using DiscordChatExporter.Core.Markdown.Internal;
 
 namespace DiscordChatExporter.Core.Markdown
 {
-    public class MarkdownParser
+    public static class MarkdownParser
     {
-        public IReadOnlyList<Node> Parse(string input) => Grammar.BuildTree(input);
+        public static IReadOnlyList<Node> Parse(string input) => Grammar.BuildTree(input);
     }
 }

@@ -16,7 +16,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\DiscordChatExporter.Core.Markdown\DiscordChatExporter.Core.Markdown.csproj" />
         <ProjectReference Include="..\DiscordChatExporter.Core\DiscordChatExporter.Core.csproj" />
     </ItemGroup>
 

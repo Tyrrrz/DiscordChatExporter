@@ -64,7 +64,7 @@ namespace DiscordChatExporter.Core.Markdown.Internal
 
         // The first word is a language identifier if it's the only word followed by a newline, the rest is code
         private static readonly Parser<Node> MultilineCodeBlockNode =
-            Parse.RegexMatch(new Regex("```(?:(\\S*?)?(?:\\s*?\\n))?(.+)```", RegexOptions.Singleline))
+            Parse.RegexMatch(new Regex("```(?:(\\w*?)?(?:\\s*?\\n))?(.+)```", RegexOptions.Singleline))
                 .Select(m => new MultilineCodeBlockNode(m.Groups[1].Value, m.Groups[2].Value));
 
         private static readonly Parser<Node> AnyCodeBlockNode = MultilineCodeBlockNode.Or(InlineCodeBlockNode); // inline should be after multiline

@@ -9,8 +9,6 @@ namespace DiscordChatExporter.Core.Markdown.Internal
     // parsing as closely as possible, including its numerous flaws and inconsistencies
     internal static class Grammar
     {
-        // TODO: escape char \
-
         /* Formatting */
 
         // May contain italics inside, so capture until the last double asterisk that isn't followed by an asterisk
@@ -24,7 +22,7 @@ namespace DiscordChatExporter.Core.Markdown.Internal
         // TODO: one *two **three** __four__* _five_ ***six***
         // Cannot have whitespace right after opening or right before closing token
         private static readonly Parser<Node> ItalicFormattedNode =
-            Parse.RegexMatch(new Regex("\\*(?!\\s)(.+?)(?<!\\s)\\*(?!\\*)", RegexOptions.Singleline))
+            Parse.RegexMatch(new Regex("\\*(?!\\s)(.+?)(?<!\\s)\\*", RegexOptions.Singleline))
                 .Select(m => m.Groups[1].Value)
                 .Select(s => new FormattedNode(TextFormatting.Italic, BuildTree(s)));
 
@@ -74,19 +72,24 @@ namespace DiscordChatExporter.Core.Markdown.Internal
         /* Mentions */
 
         // TODO: check boundaries
+        // @everyone
         private static readonly Parser<Node> EveryoneMentionNode = Parse.RegexMatch("(?<=\\s|^)@everyone(?=\\s|$)")
             .Select(s => new MentionNode("everyone", MentionType.Meta));
 
         // TODO: check boundaries
+        // @here
         private static readonly Parser<Node> HereMentionNode = Parse.RegexMatch("(?<=\\s|^)@here(?=\\s|$)")
             .Select(s => new MentionNode("here", MentionType.Meta));
 
+        // <@123456> or <@!123456>
         private static readonly Parser<Node> UserMentionNode = Parse.RegexMatch("<@!?(\\d+)>")
             .Select(m => m.Groups[1].Value).Select(s => new MentionNode(s, MentionType.User));
 
+        // <#123456>
         private static readonly Parser<Node> ChannelMentionNode = Parse.RegexMatch("<#(\\d+)>")
             .Select(m => m.Groups[1].Value).Select(s => new MentionNode(s, MentionType.Channel));
 
+        // <@&123456>
         private static readonly Parser<Node> RoleMentionNode = Parse.RegexMatch("<@&(\\d+)>")
             .Select(m => m.Groups[1].Value).Select(s => new MentionNode(s, MentionType.Role));
 
@@ -95,7 +98,9 @@ namespace DiscordChatExporter.Core.Markdown.Internal
 
         /* Emojis */
 
-        private static readonly Parser<Node> EmojiNode = Parse.RegexMatch("<:(.+):(\\d+)>")
+        // <:lul:123456> or <a:lul:123456>
+        // TODO: animated
+        private static readonly Parser<Node> EmojiNode = Parse.RegexMatch("<a?:(.+):(\\d+)>")
             .Select(m => new EmojiNode(m.Groups[2].Value, m.Groups[1].Value));
 
         private static readonly Parser<Node> AnyEmojiNode = EmojiNode;
@@ -103,34 +108,43 @@ namespace DiscordChatExporter.Core.Markdown.Internal
         /* Links */
 
         // TODO: check boundaries
+        // [title](link)
         private static readonly Parser<Node> TitledLinkNode = Parse.RegexMatch("\\[(.+)\\]\\((.+)\\)")
             .Select(m => new LinkNode(m.Groups[2].Value, m.Groups[1].Value));
 
         // TODO: check boundaries
+        // http://blablabla/blabla
         private static readonly Parser<Node> AutoLinkNode = Parse.RegexMatch("(https?://.*?)(?=\\s|$)")
             .Select(m => m.Groups[1].Value).Select(s => new LinkNode(s));
 
         private static readonly Parser<Node> AnyLinkNode = TitledLinkNode.Or(AutoLinkNode);
 
-        /* Functional (everything above) */
-
-        private static readonly Parser<Node> AnyFunctionalNode =
-            AnyFormattedNode.Or(AnyCodeBlockNode).Or(AnyMentionNode).Or(AnyEmojiNode).Or(AnyLinkNode);
-
         /* Text */
 
-        // Shrug is an exception and doesn't get formatted
+        // Shrug is an exception and needs to be exempt from formatting
         private static readonly Parser<Node> ShrugTextNode =
             Parse.String("¯\\_(ツ)_/¯").Text().Select(s => new TextNode(s));
 
-        // Fallback text node is for any node that is not functional
-        private static readonly Parser<Node> FallbackTextNode =
-            Parse.AnyChar.Except(AnyFunctionalNode).AtLeastOnce().Text().Select(s => new TextNode(s));
+        // Backslash escapes any following non-whitespace character except for digits and latin letters
+        private static readonly Parser<Node> EscapedTextNode =
+            Parse.RegexMatch("\\\\([^a-zA-Z0-9\\s])")
+                .Select(m => m.Groups[1].Value)
+                .Select(s => new TextNode(s));
 
-        private static readonly Parser<Node> AnyTextNode = ShrugTextNode.Or(FallbackTextNode);
+        private static readonly Parser<Node> AnyTextNode = ShrugTextNode.Or(EscapedTextNode); // escaped should be after shrug
+
+        /* Aggregator and fallback */
+
+        // Any node recognized by above patterns
+        private static readonly Parser<Node> AnyRecognizedNode = AnyFormattedNode.Or(AnyCodeBlockNode)
+            .Or(AnyMentionNode).Or(AnyEmojiNode).Or(AnyLinkNode).Or(AnyTextNode);
+
+        // Any node not recognized by above patterns (treated as plain text)
+        private static readonly Parser<Node> FallbackNode =
+            Parse.AnyChar.Except(AnyRecognizedNode).AtLeastOnce().Text().Select(s => new TextNode(s));
 
         // Any node
-        private static readonly Parser<Node> AnyNode = AnyTextNode.Or(AnyFunctionalNode); // functional should be after text
+        private static readonly Parser<Node> AnyNode = AnyRecognizedNode.Or(FallbackNode);
 
         // Entry point
         public static IReadOnlyList<Node> BuildTree(string input) => AnyNode.Many().Parse(input).ToArray();

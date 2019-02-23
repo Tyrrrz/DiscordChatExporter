@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using Sprache;
+using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Markdown.Internal
 {
@@ -97,9 +98,8 @@ namespace DiscordChatExporter.Core.Markdown.Internal
         /* Emojis */
 
         // <:lul:123456> or <a:lul:123456>
-        // TODO: animated
-        private static readonly Parser<Node> EmojiNode = Parse.RegexMatch("<a?:(.+):(\\d+)>")
-            .Select(m => new EmojiNode(m.Groups[2].Value, m.Groups[1].Value));
+        private static readonly Parser<Node> EmojiNode = Parse.RegexMatch("<(a)?:(.+):(\\d+)>")
+            .Select(m => new EmojiNode(m.Groups[3].Value, m.Groups[2].Value, m.Groups[1].Value.IsNotBlank()));
 
         private static readonly Parser<Node> AnyEmojiNode = EmojiNode;
 

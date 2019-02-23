@@ -6,10 +6,13 @@
 
         public string Name { get; }
 
-        public EmojiNode(string id, string name)
+        public bool IsAnimated { get; }
+
+        public EmojiNode(string id, string name, bool isAnimated)
         {
             Id = id;
             Name = name;
+            IsAnimated = isAnimated;
         }
 
         public override string ToString() => $"<Emoji> {Name}";

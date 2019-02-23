@@ -117,7 +117,14 @@ namespace DiscordChatExporter.Core.Markdown.Internal
         private static readonly Parser<Node> AutoLinkNode = Parse.RegexMatch("(https?://.*?)(?=\\s|$)")
             .Select(m => m.Groups[1].Value).Select(s => new LinkNode(s));
 
-        private static readonly Parser<Node> AnyLinkNode = TitledLinkNode.Or(AutoLinkNode);
+        // <http://blablabla/blabla>
+        private static readonly Parser<Node> HiddenLinkNode =
+            from open in Parse.Char('<')
+            from link in AutoLinkNode
+            from close in Parse.Char('>')
+            select link;
+
+        private static readonly Parser<Node> AnyLinkNode = TitledLinkNode.Or(HiddenLinkNode).Or(AutoLinkNode); // auto should be after hidden
 
         /* Text */
 

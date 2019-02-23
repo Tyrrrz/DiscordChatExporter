@@ -105,15 +105,14 @@ namespace DiscordChatExporter.Core.Markdown.Internal
 
         /* Links */
 
-        // TODO: check boundaries
         // [title](link)
         private static readonly Parser<Node> TitledLinkNode = Parse.RegexMatch("\\[(.+)\\]\\((.+)\\)")
             .Select(m => new LinkNode(m.Groups[2].Value, m.Groups[1].Value));
 
-        // TODO: check boundaries
-        // http://blablabla/blabla
-        private static readonly Parser<Node> AutoLinkNode = Parse.RegexMatch("(https?://.*?)(?=\\s|$)")
-            .Select(m => m.Groups[1].Value).Select(s => new LinkNode(s));
+        // http://blablabla/blabla without spaces in the middle and stop at the first punctuation mark
+        private static readonly Parser<Node> AutoLinkNode = Parse.RegexMatch("(https?://\\S*[^\\.,;\"\'\\s])")
+            .Select(m => m.Groups[1].Value)
+            .Select(s => new LinkNode(s));
 
         // <http://blablabla/blabla>
         private static readonly Parser<Node> HiddenLinkNode =

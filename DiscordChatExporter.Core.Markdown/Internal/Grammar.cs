@@ -71,14 +71,12 @@ namespace DiscordChatExporter.Core.Markdown.Internal
 
         /* Mentions */
 
-        // TODO: check boundaries
         // @everyone
-        private static readonly Parser<Node> EveryoneMentionNode = Parse.RegexMatch("(?<=\\s|^)@everyone(?=\\s|$)")
+        private static readonly Parser<Node> EveryoneMentionNode = Parse.RegexMatch("@everyone")
             .Select(s => new MentionNode("everyone", MentionType.Meta));
 
-        // TODO: check boundaries
         // @here
-        private static readonly Parser<Node> HereMentionNode = Parse.RegexMatch("(?<=\\s|^)@here(?=\\s|$)")
+        private static readonly Parser<Node> HereMentionNode = Parse.RegexMatch("@here")
             .Select(s => new MentionNode("here", MentionType.Meta));
 
         // <@123456> or <@!123456>

@@ -14,6 +14,11 @@ namespace DiscordChatExporter.Core.Markdown
             Children = children;
         }
 
+        public FormattedNode(TextFormatting formatting, Node child)
+            : this(formatting, new[] {child})
+        {
+        }
+
         public override string ToString() => $"<{Formatting}> ({Children.Count} direct children)";
     }
 }

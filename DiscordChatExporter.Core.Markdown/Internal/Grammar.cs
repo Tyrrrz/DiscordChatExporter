@@ -18,7 +18,6 @@ namespace DiscordChatExporter.Core.Markdown.Internal
                 .Select(m => m.Groups[1].Value)
                 .Select(s => new FormattedNode(TextFormatting.Bold, BuildTree(s)));
 
-        // TODO: ***s**a**b***
         // Capture until the earliest single asterisk not preceded or followed by an asterisk
         // Can't have whitespace right after opening or right before closing asterisk
         private static readonly Parser<Node> ItalicFormattedNode =
@@ -26,9 +25,17 @@ namespace DiscordChatExporter.Core.Markdown.Internal
                 .Select(m => m.Groups[1].Value)
                 .Select(s => new FormattedNode(TextFormatting.Italic, BuildTree(s)));
 
-        // Can't have underscores right in between word characters
+        // Can't have underscores inside
+        // Can't have word characters right after closing underscore
         private static readonly Parser<Node> ItalicAltFormattedNode =
-            Parse.RegexMatch(new Regex("(?<!\\w)_(.+?)_(?!\\w)", RegexOptions.Singleline))
+            Parse.RegexMatch(new Regex("_([^_]+?)_(?!\\w)", RegexOptions.Singleline))
+                .Select(m => m.Groups[1].Value)
+                .Select(s => new FormattedNode(TextFormatting.Italic, BuildTree(s)));
+
+        // Treated as a separate entity for simplicity
+        // Capture until the earliest triple asterisk not preceded or followed by an asterisk
+        private static readonly Parser<Node> ItalicBoldFormattedNode =
+            Parse.RegexMatch(new Regex("\\*(\\*\\*(?:.+?)\\*\\*)\\*(?!\\*)", RegexOptions.Singleline))
                 .Select(m => m.Groups[1].Value)
                 .Select(s => new FormattedNode(TextFormatting.Italic, BuildTree(s)));
 
@@ -37,6 +44,13 @@ namespace DiscordChatExporter.Core.Markdown.Internal
             Parse.RegexMatch(new Regex("__(.+?)__(?!_)", RegexOptions.Singleline))
                 .Select(m => m.Groups[1].Value)
                 .Select(s => new FormattedNode(TextFormatting.Underline, BuildTree(s)));
+
+        // Treated as a separate entity for simplicity
+        // Capture until the earliest triple underscore not preceded or followed by an underscore
+        private static readonly Parser<Node> ItalicUnderlineFormattedNode =
+            Parse.RegexMatch(new Regex("_(__(?:.+?)__)_(?!_)", RegexOptions.Singleline))
+                .Select(m => m.Groups[1].Value)
+                .Select(s => new FormattedNode(TextFormatting.Italic, BuildTree(s)));
 
         // Strikethrough is safe
         private static readonly Parser<Node> StrikethroughFormattedNode =
@@ -50,8 +64,11 @@ namespace DiscordChatExporter.Core.Markdown.Internal
                 .Select(m => m.Groups[1].Value)
                 .Select(s => new FormattedNode(TextFormatting.Spoiler, BuildTree(s)));
 
-        private static readonly Parser<Node> AnyFormattedNode = BoldFormattedNode
-            .Or(UnderlineFormattedNode).Or(ItalicFormattedNode).Or(ItalicAltFormattedNode) // italic should be after bold & underline
+        // Aggregator, order matters
+        private static readonly Parser<Node> AnyFormattedNode = 
+            ItalicBoldFormattedNode.Or(ItalicUnderlineFormattedNode)
+            .Or(ItalicFormattedNode).Or(BoldFormattedNode)
+            .Or(UnderlineFormattedNode).Or(ItalicAltFormattedNode)
             .Or(StrikethroughFormattedNode).Or(SpoilerFormattedNode);
 
         /* Code blocks */
@@ -67,7 +84,8 @@ namespace DiscordChatExporter.Core.Markdown.Internal
             Parse.RegexMatch(new Regex("```(?:(\\w*?)?(?:\\s*?\\n))?(.+)```", RegexOptions.Singleline))
                 .Select(m => new MultilineCodeBlockNode(m.Groups[1].Value, m.Groups[2].Value));
 
-        private static readonly Parser<Node> AnyCodeBlockNode = MultilineCodeBlockNode.Or(InlineCodeBlockNode); // inline should be after multiline
+        // Aggregator, order matters
+        private static readonly Parser<Node> AnyCodeBlockNode = MultilineCodeBlockNode.Or(InlineCodeBlockNode);
 
         /* Mentions */
 
@@ -91,6 +109,7 @@ namespace DiscordChatExporter.Core.Markdown.Internal
         private static readonly Parser<Node> RoleMentionNode = Parse.RegexMatch("<@&(\\d+)>")
             .Select(m => m.Groups[1].Value).Select(s => new MentionNode(s, MentionType.Role));
 
+        // Aggregator, order matters
         private static readonly Parser<Node> AnyMentionNode = EveryoneMentionNode.Or(HereMentionNode)
             .Or(UserMentionNode).Or(ChannelMentionNode).Or(RoleMentionNode);
 
@@ -100,6 +119,7 @@ namespace DiscordChatExporter.Core.Markdown.Internal
         private static readonly Parser<Node> EmojiNode = Parse.RegexMatch("<(a)?:(.+):(\\d+)>")
             .Select(m => new EmojiNode(m.Groups[3].Value, m.Groups[2].Value, m.Groups[1].Value.IsNotBlank()));
 
+        // Aggregator, order matters
         private static readonly Parser<Node> AnyEmojiNode = EmojiNode;
 
         /* Links */
@@ -120,7 +140,8 @@ namespace DiscordChatExporter.Core.Markdown.Internal
             from close in Parse.Char('>')
             select link;
 
-        private static readonly Parser<Node> AnyLinkNode = TitledLinkNode.Or(HiddenLinkNode).Or(AutoLinkNode); // auto should be after hidden
+        // Aggregator, order matters
+        private static readonly Parser<Node> AnyLinkNode = TitledLinkNode.Or(HiddenLinkNode).Or(AutoLinkNode); 
 
         /* Text */
 
@@ -134,7 +155,8 @@ namespace DiscordChatExporter.Core.Markdown.Internal
                 .Select(m => m.Groups[1].Value)
                 .Select(s => new TextNode(s));
 
-        private static readonly Parser<Node> AnyTextNode = ShrugTextNode.Or(EscapedTextNode); // escaped should be after shrug
+        // Aggregator, order matters
+        private static readonly Parser<Node> AnyTextNode = ShrugTextNode.Or(EscapedTextNode);
 
         /* Aggregator and fallback */
 

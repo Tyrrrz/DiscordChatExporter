@@ -67,7 +67,7 @@ namespace DiscordChatExporter.Core.Markdown.Internal
         // Aggregator, order matters
         private static readonly Parser<Node> AnyFormattedNode = 
             ItalicBoldFormattedNode.Or(ItalicUnderlineFormattedNode)
-            .Or(ItalicFormattedNode).Or(BoldFormattedNode)
+            .Or(BoldFormattedNode).Or(ItalicFormattedNode)
             .Or(UnderlineFormattedNode).Or(ItalicAltFormattedNode)
             .Or(StrikethroughFormattedNode).Or(SpoilerFormattedNode);
 

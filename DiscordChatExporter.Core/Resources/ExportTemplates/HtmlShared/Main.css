@@ -17,6 +17,11 @@ img {
     object-fit: contain;
 }
 
+.markdown {
+    white-space: pre-wrap;
+    line-height: 1.3;
+}
+
 .spoiler {
     border-radius: 3px;
 }
@@ -145,11 +150,6 @@ img {
     padding-top: 5px;
     font-size: .9375em;
     word-wrap: break-word;
-}
-
-.chatlog__content-markdown {
-    white-space: pre-wrap;
-    line-height: 1.3;
 }
 
 .chatlog__edited-timestamp {

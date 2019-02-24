@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Net;
 
 namespace DiscordChatExporter.Core.Internal
 {
@@ -14,5 +15,7 @@ namespace DiscordChatExporter.Core.Internal
         }
 
         public static Color ResetAlpha(this Color color) => Color.FromArgb(1, color);
+
+        public static string HtmlEncode(this string value) => WebUtility.HtmlEncode(value);
     }
 }

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using DiscordChatExporter.Core.Internal;
 using DiscordChatExporter.Core.Markdown;
 using DiscordChatExporter.Core.Models;
 using Scriban.Runtime;
@@ -146,13 +147,12 @@ namespace DiscordChatExporter.Core.Services
             {
                 var buffer = new StringBuilder();
 
-                // TODO: html encode
                 // TODO: move this to templates
                 foreach (var node in nodes)
                 {
                     if (node is TextNode textNode)
                     {
-                        buffer.Append(textNode.Text);
+                        buffer.Append(textNode.Text.HtmlEncode());
                     }
 
                     else if (node is FormattedNode formattedNode)
@@ -177,7 +177,7 @@ namespace DiscordChatExporter.Core.Services
 
                     else if (node is InlineCodeBlockNode inlineCodeBlockNode)
                     {
-                        buffer.Append($"<span class=\"pre pre--inline\">{inlineCodeBlockNode.Code}</span>");
+                        buffer.Append($"<span class=\"pre pre--inline\">{inlineCodeBlockNode.Code.HtmlEncode()}</span>");
                     }
 
                     else if (node is MultilineCodeBlockNode multilineCodeBlockNode)
@@ -186,32 +186,33 @@ namespace DiscordChatExporter.Core.Services
                             ? "language-" + multilineCodeBlockNode.Language
                             : null;
 
-                        buffer.Append($"<div class=\"pre pre--multiline {languageCssClass}\">{multilineCodeBlockNode.Code}</div>");
+                        buffer.Append(
+                            $"<div class=\"pre pre--multiline {languageCssClass}\">{multilineCodeBlockNode.Code.HtmlEncode()}</div>");
                     }
 
                     else if (node is MentionNode mentionNode)
                     {
                         if (mentionNode.Type == MentionType.Meta)
                         {
-                            buffer.Append($"<span class=\"mention\">@{mentionNode.Id}</span>");
+                            buffer.Append($"<span class=\"mention\">@{mentionNode.Id.HtmlEncode()}</span>");
                         }
 
                         else if (mentionNode.Type == MentionType.User)
                         {
                             var user = _log.Mentionables.GetUser(mentionNode.Id);
-                            buffer.Append($"<span class=\"mention\" title=\"{user.FullName}\">@{user.Name}</span>");
+                            buffer.Append($"<span class=\"mention\" title=\"{user.FullName}\">@{user.Name.HtmlEncode()}</span>");
                         }
 
                         else if (mentionNode.Type == MentionType.Channel)
                         {
                             var channel = _log.Mentionables.GetChannel(mentionNode.Id);
-                            buffer.Append($"<span class=\"mention\">#{channel.Name}</span>");
+                            buffer.Append($"<span class=\"mention\">#{channel.Name.HtmlEncode()}</span>");
                         }
 
                         else if (mentionNode.Type == MentionType.Role)
                         {
                             var role = _log.Mentionables.GetRole(mentionNode.Id);
-                            buffer.Append($"<span class=\"mention\">@{role.Name}</span>");
+                            buffer.Append($"<span class=\"mention\">@{role.Name.HtmlEncode()}</span>");
                         }
                     }
 
@@ -222,7 +223,7 @@ namespace DiscordChatExporter.Core.Services
 
                     else if (node is LinkNode linkNode)
                     {
-                        buffer.Append($"<a href=\"{linkNode.Url}\">{linkNode.Title}</a>");
+                        buffer.Append($"<a href=\"{linkNode.Url}\">{linkNode.Title.HtmlEncode()}</a>");
                     }
                 }
 

@@ -63,7 +63,7 @@
                     {{~ # Content ~}}
                     {{~ if message.Content ~}}
                         <div class="chatlog__content">
-                            {{ message.Content | RenderMarkdownHtml }}
+                            <span class="chatlog__content-markdown">{{ message.Content | RenderMarkdownHtml }}</span>
 
                             {{~ # Edited timestamp ~}}
                             {{~ if message.EditedTimestamp ~}}

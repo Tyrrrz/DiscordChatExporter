@@ -7,6 +7,7 @@ using System.Text;
 using DiscordChatExporter.Core.Markdown;
 using DiscordChatExporter.Core.Models;
 using Scriban.Runtime;
+using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Services
 {
@@ -91,26 +92,6 @@ namespace DiscordChatExporter.Core.Services
 
             private string FormatColor(Color color) => $"{color.R},{color.G},{color.B},{color.A}";
 
-            private string GetFormattingTagHtml(TextFormatting formatting)
-            {
-                if (formatting == TextFormatting.Bold)
-                    return "b";
-
-                if (formatting == TextFormatting.Italic)
-                    return "i";
-
-                if (formatting == TextFormatting.Underline)
-                    return "u";
-
-                if (formatting == TextFormatting.Strikethrough)
-                    return "s";
-
-                if (formatting == TextFormatting.Spoiler)
-                    return "span"; // todo
-
-                throw new ArgumentOutOfRangeException(nameof(formatting), formatting, null);
-            }
-
             private string RenderMarkdownHtml(IEnumerable<Node> nodes)
             {
                 var buffer = new StringBuilder();
@@ -126,8 +107,22 @@ namespace DiscordChatExporter.Core.Services
 
                     else if (node is FormattedNode formattedNode)
                     {
-                        var tag = GetFormattingTagHtml(formattedNode.Formatting);
-                        buffer.Append($"<{tag}>{RenderMarkdownHtml(formattedNode.Children)}</{tag}>");
+                        var innerHtml = RenderMarkdownHtml(formattedNode.Children);
+
+                        if (formattedNode.Formatting == TextFormatting.Bold)
+                            buffer.Append($"<strong>{innerHtml}</strong>");
+
+                        else if (formattedNode.Formatting == TextFormatting.Italic)
+                            buffer.Append($"<em>{innerHtml}</em>");
+
+                        else if (formattedNode.Formatting == TextFormatting.Underline)
+                            buffer.Append($"<u>{innerHtml}</u>");
+
+                        else if (formattedNode.Formatting == TextFormatting.Strikethrough)
+                            buffer.Append($"<s>{innerHtml}</s>");
+
+                        else if (formattedNode.Formatting == TextFormatting.Spoiler)
+                            buffer.Append($"<span class=\"spoiler\">{innerHtml}</span>");
                     }
 
                     else if (node is InlineCodeBlockNode inlineCodeBlockNode)
@@ -137,8 +132,11 @@ namespace DiscordChatExporter.Core.Services
 
                     else if (node is MultilineCodeBlockNode multilineCodeBlockNode)
                     {
-                        // TODO: add language
-                        buffer.Append($"<div class=\"pre pre--multiline\">{multilineCodeBlockNode.Code}</div>");
+                        var languageCssClass = multilineCodeBlockNode.Language.IsNotBlank()
+                            ? "language-" + multilineCodeBlockNode.Language
+                            : null;
+
+                        buffer.Append($"<div class=\"pre pre--multiline {languageCssClass}\">{multilineCodeBlockNode.Code}</div>");
                     }
 
                     else if (node is MentionNode mentionNode)

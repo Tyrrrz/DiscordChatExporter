@@ -6,8 +6,7 @@ using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Markdown.Internal
 {
-    // The following parsing logic is intentionally built in such way to make it resemble Discord's own
-    // parsing as closely as possible, including its numerous flaws and inconsistencies
+    // The following parsing logic is meant to replicate Discord's markdown grammar as close as possible
     internal static class Grammar
     {
         /* Formatting */

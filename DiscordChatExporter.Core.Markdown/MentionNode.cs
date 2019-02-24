@@ -6,7 +6,8 @@
 
         public MentionType Type { get; }
 
-        public MentionNode(string id, MentionType type)
+        public MentionNode(string lexeme, string id, MentionType type)
+            : base(lexeme)
         {
             Id = id;
             Type = type;

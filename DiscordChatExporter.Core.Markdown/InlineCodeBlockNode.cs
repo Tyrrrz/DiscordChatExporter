@@ -4,7 +4,8 @@
     {
         public string Code { get; }
 
-        public InlineCodeBlockNode(string code)
+        public InlineCodeBlockNode(string lexeme, string code)
+            : base(lexeme)
         {
             Code = code;
         }

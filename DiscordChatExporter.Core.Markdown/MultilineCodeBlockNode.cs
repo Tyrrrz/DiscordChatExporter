@@ -6,15 +6,11 @@
 
         public string Code { get; }
 
-        public MultilineCodeBlockNode(string language, string code)
+        public MultilineCodeBlockNode(string lexeme, string language, string code)
+            : base(lexeme)
         {
             Language = language;
             Code = code;
-        }
-
-        public MultilineCodeBlockNode(string code)
-            : this(null, code)
-        {
         }
 
         public override string ToString() => $"<Code {Language}> {Code}";

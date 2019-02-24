@@ -6,13 +6,14 @@
 
         public string Title { get; }
 
-        public LinkNode(string url, string title)
+        public LinkNode(string lexeme, string url, string title)
+            : base(lexeme)
         {
             Url = url;
             Title = title;
         }
 
-        public LinkNode(string url) : this(url, url)
+        public LinkNode(string lexeme, string url) : this(lexeme, url, url)
         {
         }
 

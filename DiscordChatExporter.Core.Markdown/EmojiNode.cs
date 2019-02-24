@@ -8,7 +8,8 @@
 
         public bool IsAnimated { get; }
 
-        public EmojiNode(string id, string name, bool isAnimated)
+        public EmojiNode(string lexeme, string id, string name, bool isAnimated)
+            : base(lexeme)
         {
             Id = id;
             Name = name;

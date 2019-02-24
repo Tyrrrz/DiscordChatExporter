@@ -92,6 +92,56 @@ namespace DiscordChatExporter.Core.Services
 
             private string FormatColor(Color color) => $"{color.R},{color.G},{color.B},{color.A}";
 
+            private string RenderMarkdownPlainText(IEnumerable<Node> nodes)
+            {
+                var buffer = new StringBuilder();
+
+                foreach (var node in nodes)
+                {
+                    if (node is FormattedNode formattedNode)
+                    {
+                        var innerText = RenderMarkdownPlainText(formattedNode.Children);
+                        buffer.Append($"{formattedNode.Token}{innerText}{formattedNode.Token}");
+                    }
+
+                    else if (node is MentionNode mentionNode && mentionNode.Type != MentionType.Meta)
+                    {
+                        if (mentionNode.Type == MentionType.User)
+                        {
+                            var user = _log.Mentionables.GetUser(mentionNode.Id);
+                            buffer.Append($"@{user.Name}");
+                        }
+
+                        else if (mentionNode.Type == MentionType.Channel)
+                        {
+                            var channel = _log.Mentionables.GetChannel(mentionNode.Id);
+                            buffer.Append($"#{channel.Name}");
+                        }
+
+                        else if (mentionNode.Type == MentionType.Role)
+                        {
+                            var role = _log.Mentionables.GetRole(mentionNode.Id);
+                            buffer.Append($"@{role.Name}");
+                        }
+                    }
+
+                    else if (node is EmojiNode emojiNode)
+                    {
+                        buffer.Append($":{emojiNode.Name}:");
+                    }
+
+                    else
+                    {
+                        buffer.Append(node.Lexeme);
+                    }
+                }
+
+                return buffer.ToString();
+            }
+
+            private string RenderMarkdownPlainText(string input)
+                => RenderMarkdownPlainText(MarkdownParser.Parse(input));
+
             private string RenderMarkdownHtml(IEnumerable<Node> nodes)
             {
                 var buffer = new StringBuilder();
@@ -155,7 +205,7 @@ namespace DiscordChatExporter.Core.Services
                         else if (mentionNode.Type == MentionType.Channel)
                         {
                             var channel = _log.Mentionables.GetChannel(mentionNode.Id);
-                            buffer.Append($"<span class=\"mention\">@{channel.Name}</span>");
+                            buffer.Append($"<span class=\"mention\">#{channel.Name}</span>");
                         }
 
                         else if (mentionNode.Type == MentionType.Role)
@@ -179,7 +229,8 @@ namespace DiscordChatExporter.Core.Services
                 return buffer.ToString();
             }
 
-            private string RenderMarkdownHtml(string input) => RenderMarkdownHtml(MarkdownParser.Parse(input));
+            private string RenderMarkdownHtml(string input) 
+                => RenderMarkdownHtml(MarkdownParser.Parse(input));
 
             public ScriptObject GetScriptObject()
             {
@@ -195,6 +246,7 @@ namespace DiscordChatExporter.Core.Services
                 scriptObject.Import(nameof(FormatDate), new Func<DateTime, string>(FormatDate));
                 scriptObject.Import(nameof(FormatFileSize), new Func<long, string>(FormatFileSize));
                 scriptObject.Import(nameof(FormatColor), new Func<Color, string>(FormatColor));
+                scriptObject.Import(nameof(RenderMarkdownPlainText), new Func<string, string>(RenderMarkdownPlainText));
                 scriptObject.Import(nameof(RenderMarkdownHtml), new Func<string, string>(RenderMarkdownHtml));
 
                 return scriptObject;

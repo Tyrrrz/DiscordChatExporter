@@ -12,28 +12,27 @@ namespace DiscordChatExporter.Core.Markdown.Internal
     {
         /* Formatting */
 
-        // May contain italics inside, so capture until the last double asterisk that isn't followed by an asterisk
+        // Capture until the earliest double asterisk not followed by an asterisk
         private static readonly Parser<Node> BoldFormattedNode =
             Parse.RegexMatch(new Regex("\\*\\*(.+?)\\*\\*(?!\\*)", RegexOptions.Singleline))
                 .Select(m => m.Groups[1].Value)
                 .Select(s => new FormattedNode(TextFormatting.Bold, BuildTree(s)));
 
-        // TODO: *asd**
         // TODO: ***s**a**b***
-        // TODO: one *two **three** __four__* _five_ ***six***
-        // Cannot have whitespace right after opening or right before closing token
+        // Capture until the earliest single asterisk not preceded or followed by an asterisk
+        // Can't have whitespace right after opening or right before closing asterisk
         private static readonly Parser<Node> ItalicFormattedNode =
-            Parse.RegexMatch(new Regex("\\*(?!\\s)(.+?)(?<!\\s)\\*", RegexOptions.Singleline))
+            Parse.RegexMatch(new Regex("\\*(?!\\s)(.+?)(?<!\\s|\\*)\\*(?!\\*)", RegexOptions.Singleline))
                 .Select(m => m.Groups[1].Value)
                 .Select(s => new FormattedNode(TextFormatting.Italic, BuildTree(s)));
 
-        // Opening/closing token cannot come after/before word characters
+        // Can't have underscores right in between word characters
         private static readonly Parser<Node> ItalicAltFormattedNode =
             Parse.RegexMatch(new Regex("(?<!\\w)_(.+?)_(?!\\w)", RegexOptions.Singleline))
                 .Select(m => m.Groups[1].Value)
                 .Select(s => new FormattedNode(TextFormatting.Italic, BuildTree(s)));
 
-        // May contain italics inside, so capture until the last double underline that isn't followed by an underline
+        // Capture until the earliest double underscore not followed by an underscore
         private static readonly Parser<Node> UnderlineFormattedNode =
             Parse.RegexMatch(new Regex("__(.+?)__(?!_)", RegexOptions.Singleline))
                 .Select(m => m.Groups[1].Value)
@@ -109,12 +108,12 @@ namespace DiscordChatExporter.Core.Markdown.Internal
         private static readonly Parser<Node> TitledLinkNode = Parse.RegexMatch("\\[(.+)\\]\\((.+)\\)")
             .Select(m => new LinkNode(m.Groups[2].Value, m.Groups[1].Value));
 
-        // http://blablabla/blabla without spaces in the middle and stop at the first punctuation mark
-        private static readonly Parser<Node> AutoLinkNode = Parse.RegexMatch("(https?://\\S*[^\\.,;\"\'\\s])")
+        // Starts with http:// or https://, stops at the last non-whitespace character followed by whitespace or punctuation character
+        private static readonly Parser<Node> AutoLinkNode = Parse.RegexMatch("(https?://\\S*[^\\.,:;\"\'\\s])")
             .Select(m => m.Groups[1].Value)
             .Select(s => new LinkNode(s));
 
-        // <http://blablabla/blabla>
+        // Autolink surrounded by angular brackets
         private static readonly Parser<Node> HiddenLinkNode =
             from open in Parse.Char('<')
             from link in AutoLinkNode

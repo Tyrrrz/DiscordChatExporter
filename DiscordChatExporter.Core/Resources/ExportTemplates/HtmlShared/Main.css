@@ -133,6 +133,7 @@ img {
 
 .chatlog__author-name {
     font-size: 1em;
+    font-weight: 500;
 }
 
 .chatlog__timestamp {
@@ -152,7 +153,7 @@ img {
 }
 
 .chatlog__edited-timestamp {
-    margin-left: 5px;
+    margin-left: 3px;
     font-size: .8em;
 }
 

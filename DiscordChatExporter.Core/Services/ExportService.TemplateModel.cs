@@ -221,7 +221,7 @@ namespace DiscordChatExporter.Core.Services
 
                     else if (node is LinkNode linkNode)
                     {
-                        buffer.Append($"<a href=\"{linkNode.Url}\">{linkNode.Title.HtmlEncode()}</a>");
+                        buffer.Append($"<a href=\"{Uri.EscapeUriString(linkNode.Url)}\">{linkNode.Title.HtmlEncode()}</a>");
                     }
                 }
 

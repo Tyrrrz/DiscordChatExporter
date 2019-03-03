@@ -126,21 +126,13 @@ namespace DiscordChatExporter.Core.Markdown.Internal
         private static readonly Parser<Node> TitledLinkNode = Parse.RegexMatch("\\[(.+)\\]\\((.+)\\)")
             .Select(m => new LinkNode(m.Value, m.Groups[2].Value, m.Groups[1].Value));
 
-        // Matches text that represents a link
-        private static readonly Parser<Match> AutoLinkMatch = Parse.RegexMatch("(https?://\\S*[^\\.,:;\"\'\\s])");
-
         // Starts with http:// or https://, stops at the last non-whitespace character followed by whitespace or punctuation character
-        private static readonly Parser<Node> AutoLinkNode =
-            AutoLinkMatch.Select(m => new LinkNode(m.Value, m.Groups[1].Value));
+        private static readonly Parser<Node> AutoLinkNode = Parse.RegexMatch("(https?://\\S*[^\\.,:;\"\'\\s])")
+            .Select(m => new LinkNode(m.Value, m.Groups[1].Value));
 
         // Autolink surrounded by angular brackets
-        private static readonly Parser<Node> HiddenLinkNode =
-            from open in Parse.Char('<')
-            from linkMatch in AutoLinkMatch
-            from close in Parse.Char('>')
-            let url = linkMatch.Groups[1].Value
-            let lexeme = $"{open}{url}{close}"
-            select new LinkNode(lexeme, url);
+        private static readonly Parser<Node> HiddenLinkNode = Parse.RegexMatch("<(https?://\\S*[^\\.,:;\"\'\\s])>")
+            .Select(m => new LinkNode(m.Value, m.Groups[1].Value));
 
         // Combinator, order matters
         private static readonly Parser<Node> AnyLinkNode = TitledLinkNode.Or(HiddenLinkNode).Or(AutoLinkNode); 
@@ -156,7 +148,7 @@ namespace DiscordChatExporter.Core.Markdown.Internal
             from slash in Parse.Char('\\')
             from high in Parse.AnyChar.Where(char.IsHighSurrogate)
             from low in Parse.AnyChar
-            let lexeme = $"\\{high}{low}"
+            let lexeme = $"{slash}{high}{low}"
             let text = $"{high}{low}"
             select new TextNode(lexeme, text);
 

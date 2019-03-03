@@ -34,6 +34,7 @@ DiscordChatExporter can be used to export message history from a [Discord](https
 - [Scriban](https://github.com/lunet-io/scriban)
 - [CommandLineParser](https://github.com/commandlineparser/commandline)
 - [Ookii.Dialogs](https://github.com/caioproiete/ookii-dialogs-wpf)
+- [ByteSize](https://github.com/omar/ByteSize)
 - [Failsafe](https://github.com/Tyrrrz/Failsafe)
 - [Gress](https://github.com/Tyrrrz/Gress)
 - [Onova](https://github.com/Tyrrrz/Onova)

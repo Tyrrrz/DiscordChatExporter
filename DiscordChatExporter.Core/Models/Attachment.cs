@@ -1,4 +1,6 @@
-﻿namespace DiscordChatExporter.Core.Models
+﻿using ByteSizeLib;
+
+namespace DiscordChatExporter.Core.Models
 {
     // https://discordapp.com/developers/docs/resources/channel#attachment-object
 
@@ -16,9 +18,9 @@
 
         public string FileName { get; }
 
-        public long FileSize { get; }
+        public ByteSize FileSize { get; }
 
-        public Attachment(string id, int? width, int? height, string url, string fileName, long fileSize)
+        public Attachment(string id, int? width, int? height, string url, string fileName, ByteSize fileSize)
         {
             Id = id;
             Url = url;

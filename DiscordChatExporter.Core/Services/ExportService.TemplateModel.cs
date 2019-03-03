@@ -77,21 +77,6 @@ namespace DiscordChatExporter.Core.Services
 
             private string FormatDate(DateTime dateTime) => Format(dateTime, _dateFormat);
 
-            private string FormatFileSize(long fileSize)
-            {
-                string[] units = {"B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"};
-                double size = fileSize;
-                var unit = 0;
-
-                while (size >= 1024)
-                {
-                    size /= 1024;
-                    ++unit;
-                }
-
-                return $"{size:0.#} {units[unit]}";
-            }
-
             private string FormatMarkdownPlainText(IEnumerable<Node> nodes)
             {
                 var buffer = new StringBuilder();
@@ -250,7 +235,6 @@ namespace DiscordChatExporter.Core.Services
                 scriptObject.Import(nameof(GroupMessages), new Func<IEnumerable<Message>, IEnumerable<MessageGroup>>(GroupMessages));
                 scriptObject.Import(nameof(Format), new Func<IFormattable, string, string>(Format));
                 scriptObject.Import(nameof(FormatDate), new Func<DateTime, string>(FormatDate));
-                scriptObject.Import(nameof(FormatFileSize), new Func<long, string>(FormatFileSize));
                 scriptObject.Import(nameof(FormatMarkdown), new Func<string, string>(FormatMarkdown));
 
                 return scriptObject;

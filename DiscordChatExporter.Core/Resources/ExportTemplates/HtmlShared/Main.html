@@ -196,13 +196,7 @@
                             {{~ for reaction in message.Reactions ~}}
                                 <div class="chatlog__reaction">
                                     <span class="chatlog__reaction-emoji">
-                                        {{~ # Custom emoji ~}}
-                                        {{~ if reaction.EmojiId ~}}
-                                            <img class="emoji emoji--small" title="{{ reaction.EmojiName }}" src="https://cdn.discordapp.com/emojis/{{ reaction.EmojiId }}.png" />
-                                        {{~ # Default emoji ~}}
-                                        {{~ else ~}}
-                                            {{ reaction.EmojiName }}
-                                        {{~ end ~}}
+                                        <img class="emoji emoji--small" title="{{ reaction.Emoji.Name }}" src="{{ reaction.Emoji.ImageUrl }}" />
                                     </span>
                                     <span class="chatlog__reaction-count">{{ reaction.Count }}</span>
                                 </div>

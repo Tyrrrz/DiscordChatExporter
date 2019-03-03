@@ -6,15 +6,12 @@
     {
         public int Count { get; }
 
-        public string EmojiId { get; }
+        public Emoji Emoji { get; }
 
-        public string EmojiName { get; }
-
-        public Reaction(int count, string emojiId, string emojiName) 
+        public Reaction(int count, Emoji emoji)
         {
             Count = count;
-            EmojiId = emojiId;
-            EmojiName = emojiName;
+            Emoji = emoji;
         }
     }
 }

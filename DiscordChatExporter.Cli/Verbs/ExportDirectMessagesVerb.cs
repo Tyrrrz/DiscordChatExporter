@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using DiscordChatExporter.Cli.Internal;
 using DiscordChatExporter.Cli.Verbs.Options;
 using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Helpers;
@@ -42,25 +43,24 @@ namespace DiscordChatExporter.Cli.Verbs
             {
                 try
                 {
-                    // Print current channel name
-                    Console.WriteLine($"Exporting chat from [{channel.Name}]...");
+                    // Track progress
+                    Console.Write($"Exporting channel [{channel.Name}]... ");
+                    using (var progress = new InlineProgress())
+                    {
+                        // Get chat log
+                        var chatLog = await dataService.GetChatLogAsync(Options.GetToken(), channel,
+                            Options.After, Options.Before, progress);
 
-                    // Get chat log
-                    var chatLog = await dataService.GetChatLogAsync(Options.GetToken(), channel,
-                        Options.After, Options.Before);
+                        // Generate default file name
+                        var fileName = ExportHelper.GetDefaultExportFileName(Options.ExportFormat, chatLog.Guild,
+                            chatLog.Channel, Options.After, Options.Before);
 
-                    // Generate default file name
-                    var fileName = ExportHelper.GetDefaultExportFileName(Options.ExportFormat, chatLog.Guild,
-                        chatLog.Channel, Options.After, Options.Before);
+                        // Generate file path
+                        var filePath = Path.Combine(Options.OutputPath ?? "", fileName);
 
-                    // Generate file path
-                    var filePath = Path.Combine(Options.OutputPath ?? "", fileName);
-
-                    // Export
-                    exportService.ExportChatLog(chatLog, filePath, Options.ExportFormat, Options.PartitionLimit);
-
-                    // Print result
-                    Console.WriteLine($"Exported chat to [{filePath}]");
+                        // Export
+                        exportService.ExportChatLog(chatLog, filePath, Options.ExportFormat, Options.PartitionLimit);
+                    }
                 }
                 catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
                 {

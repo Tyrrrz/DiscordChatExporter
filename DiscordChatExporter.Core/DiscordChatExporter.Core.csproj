@@ -5,11 +5,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Remove="Resources\ExportTemplates\HtmlShared\Functions.sbn" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <EmbeddedResource Include="Resources\ExportTemplates\HtmlShared\Functions.sbn" />
         <EmbeddedResource Include="Resources\ExportTemplates\PlainText\Template.txt" />
         <EmbeddedResource Include="Resources\ExportTemplates\HtmlDark\Template.html" />
         <EmbeddedResource Include="Resources\ExportTemplates\HtmlLight\Template.html" />

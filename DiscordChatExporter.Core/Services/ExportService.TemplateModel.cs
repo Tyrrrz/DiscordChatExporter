@@ -243,7 +243,7 @@ namespace DiscordChatExporter.Core.Services
                 // Create instance
                 var scriptObject = new ScriptObject();
 
-                // Import model and constants
+                // Import model
                 scriptObject.SetValue("Model", _log, true);
 
                 // Import functions

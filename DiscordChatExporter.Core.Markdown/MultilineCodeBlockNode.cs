@@ -13,6 +13,6 @@
             Code = code;
         }
 
-        public override string ToString() => $"<Code {Language}> {Code}";
+        public override string ToString() => $"<Code [{Language}]> {Code}";
     }
 }

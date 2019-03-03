@@ -13,6 +13,6 @@
             Type = type;
         }
 
-        public override string ToString() => $"<Mention {Type}> {Id}";
+        public override string ToString() => $"<{Type} mention> {Id}";
     }
 }

@@ -55,7 +55,7 @@ namespace DiscordChatExporter.Core.Markdown.Internal
             Parse.RegexMatch(new Regex("\\|\\|(.+?)\\|\\|", RegexOptions.Singleline))
                 .Select(m => new FormattedNode(m.Value, "||", TextFormatting.Spoiler, BuildTree(m.Groups[1].Value)));
 
-        // Aggregator, order matters
+        // Combinator, order matters
         private static readonly Parser<Node> AnyFormattedNode = 
             ItalicBoldFormattedNode.Or(ItalicUnderlineFormattedNode)
             .Or(BoldFormattedNode).Or(ItalicFormattedNode)
@@ -74,7 +74,7 @@ namespace DiscordChatExporter.Core.Markdown.Internal
             Parse.RegexMatch(new Regex("```(?:(\\w*?)?(?:\\s*?\\n))?(.+)```", RegexOptions.Singleline))
                 .Select(m => new MultilineCodeBlockNode(m.Value, m.Groups[1].Value, m.Groups[2].Value));
 
-        // Aggregator, order matters
+        // Combinator, order matters
         private static readonly Parser<Node> AnyCodeBlockNode = MultilineCodeBlockNode.Or(InlineCodeBlockNode);
 
         /* Mentions */
@@ -95,18 +95,30 @@ namespace DiscordChatExporter.Core.Markdown.Internal
         private static readonly Parser<Node> RoleMentionNode = Parse.RegexMatch("<@&(\\d+)>")
             .Select(m => new MentionNode(m.Value, m.Groups[1].Value, MentionType.Role));
 
-        // Aggregator, order matters
+        // Combinator, order matters
         private static readonly Parser<Node> AnyMentionNode =
             MetaMentionNode.Or(UserMentionNode).Or(ChannelMentionNode).Or(RoleMentionNode);
 
         /* Emojis */
 
+        // Matches all standard unicode emojis
+        private static readonly Parser<Node> StandardEmojiNode = Parse.RegexMatch(
+                "([\\u2700-\\u27bf]|" +
+                "(?:\\ud83c[\\udde6-\\uddff]){2}|" +
+                "[\\ud800-\\udbff][\\udc00-\\udfff]|" +
+                "[\\u0023-\\u0039]\\u20e3|" +
+                "\\u3299|\\u3297|\\u303d|\\u3030|\\u24c2|\\ud83c[\\udd70-\\udd71]|\\ud83c[\\udd7e-\\udd7f]|\\ud83c\\udd8e|\\ud83c[\\udd91-\\udd9a]|\\ud83c[\\udde6-\\uddff]|" +
+                "[\\ud83c[\\ude01-\\ude02]|\\ud83c\\ude1a|\\ud83c\\ude2f|[\\ud83c[\\ude32-\\ude3a]|[\\ud83c[\\ude50-\\ude51]|\\u203c|\\u2049|[\\u25aa-\\u25ab]|" +
+                "\\u25b6|\\u25c0|[\\u25fb-\\u25fe]|\\u00a9|\\u00ae|\\u2122|\\u2139|\\ud83c\\udc04|[\\u2600-\\u26FF]|\\u2b05|\\u2b06|\\u2b07|\\u2b1b|\\u2b1c|\\u2b50|" +
+                "\\u2b55|\\u231a|\\u231b|\\u2328|\\u23cf|[\\u23e9-\\u23f3]|[\\u23f8-\\u23fa]|\\ud83c\\udccf|\\u2934|\\u2935|[\\u2190-\\u21ff])")
+            .Select(m => new EmojiNode(m.Value, m.Groups[1].Value));
+
         // <:lul:123456> or <a:lul:123456>
-        private static readonly Parser<Node> EmojiNode = Parse.RegexMatch("<(a)?:(.+):(\\d+)>")
+        private static readonly Parser<Node> CustomEmojiNode = Parse.RegexMatch("<(a)?:(.+):(\\d+)>")
             .Select(m => new EmojiNode(m.Value, m.Groups[3].Value, m.Groups[2].Value, m.Groups[1].Value.IsNotBlank()));
 
-        // Aggregator, order matters
-        private static readonly Parser<Node> AnyEmojiNode = EmojiNode;
+        // Combinator, order matters
+        private static readonly Parser<Node> AnyEmojiNode = StandardEmojiNode.Or(CustomEmojiNode);
 
         /* Links */
 
@@ -114,15 +126,23 @@ namespace DiscordChatExporter.Core.Markdown.Internal
         private static readonly Parser<Node> TitledLinkNode = Parse.RegexMatch("\\[(.+)\\]\\((.+)\\)")
             .Select(m => new LinkNode(m.Value, m.Groups[2].Value, m.Groups[1].Value));
 
+        // Matches text that represents a link
+        private static readonly Parser<Match> AutoLinkMatch = Parse.RegexMatch("(https?://\\S*[^\\.,:;\"\'\\s])");
+
         // Starts with http:// or https://, stops at the last non-whitespace character followed by whitespace or punctuation character
-        private static readonly Parser<Node> AutoLinkNode = Parse.RegexMatch("(https?://\\S*[^\\.,:;\"\'\\s])")
-            .Select(m => new LinkNode(m.Value, m.Groups[1].Value));
+        private static readonly Parser<Node> AutoLinkNode =
+            AutoLinkMatch.Select(m => new LinkNode(m.Value, m.Groups[1].Value));
 
         // Autolink surrounded by angular brackets
-        private static readonly Parser<Node> HiddenLinkNode = Parse.RegexMatch("<(https?://\\S*[^\\.,:;\"\'\\s])>")
-            .Select(m => new LinkNode(m.Value, m.Groups[1].Value));
+        private static readonly Parser<Node> HiddenLinkNode =
+            from open in Parse.Char('<')
+            from linkMatch in AutoLinkMatch
+            from close in Parse.Char('>')
+            let url = linkMatch.Groups[1].Value
+            let lexeme = $"{open}{url}{close}"
+            select new LinkNode(lexeme, url);
 
-        // Aggregator, order matters
+        // Combinator, order matters
         private static readonly Parser<Node> AnyLinkNode = TitledLinkNode.Or(HiddenLinkNode).Or(AutoLinkNode); 
 
         /* Text */
@@ -131,12 +151,21 @@ namespace DiscordChatExporter.Core.Markdown.Internal
         private static readonly Parser<Node> ShrugTextNode =
             Parse.String("¯\\_(ツ)_/¯").Text().Select(s => new TextNode(s));
 
+        // Backslash escapes any following unicode surrogate pair
+        private static readonly Parser<Node> EscapedSurrogateTextNode =
+            from slash in Parse.Char('\\')
+            from high in Parse.AnyChar.Where(char.IsHighSurrogate)
+            from low in Parse.AnyChar
+            let lexeme = $"\\{high}{low}"
+            let text = $"{high}{low}"
+            select new TextNode(lexeme, text);
+
         // Backslash escapes any following non-whitespace character except for digits and latin letters
         private static readonly Parser<Node> EscapedTextNode =
             Parse.RegexMatch("\\\\([^a-zA-Z0-9\\s])").Select(m => new TextNode(m.Value, m.Groups[1].Value));
 
-        // Aggregator, order matters
-        private static readonly Parser<Node> AnyTextNode = ShrugTextNode.Or(EscapedTextNode);
+        // Combinator, order matters
+        private static readonly Parser<Node> AnyTextNode = ShrugTextNode.Or(EscapedSurrogateTextNode).Or(EscapedTextNode);
 
         /* Aggregator and fallback */
 

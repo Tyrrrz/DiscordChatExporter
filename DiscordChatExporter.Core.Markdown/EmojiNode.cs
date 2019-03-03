@@ -16,6 +16,11 @@
             IsAnimated = isAnimated;
         }
 
+        public EmojiNode(string lexeme, string name)
+            : this(lexeme, null, name, false)
+        {
+        }
+
         public override string ToString() => $"<Emoji> {Name}";
     }
 }

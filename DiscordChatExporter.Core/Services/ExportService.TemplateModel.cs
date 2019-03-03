@@ -201,12 +201,14 @@ namespace DiscordChatExporter.Core.Services
 
                     else if (node is EmojiNode emojiNode)
                     {
-                        buffer.Append($"<img class=\"emoji\" title=\"{emojiNode.Name}\" src=\"https://cdn.discordapp.com/emojis/{emojiNode.Id}.png\" />");
+                        var emoji = new Emoji(emojiNode.Id, emojiNode.Name, emojiNode.IsAnimated);
+                        buffer.Append($"<img class=\"emoji\" title=\"{emoji.Name}\" src=\"{emoji.ImageUrl}\" />");
                     }
 
                     else if (node is LinkNode linkNode)
                     {
-                        buffer.Append($"<a href=\"{Uri.EscapeUriString(linkNode.Url)}\">{linkNode.Title.HtmlEncode()}</a>");
+                        var escapedUrl = Uri.EscapeUriString(linkNode.Url);
+                        buffer.Append($"<a href=\"{escapedUrl}\">{linkNode.Title.HtmlEncode()}</a>");
                     }
                 }
 

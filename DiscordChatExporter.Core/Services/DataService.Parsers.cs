@@ -140,13 +140,21 @@ namespace DiscordChatExporter.Core.Services
             return new Embed(title, url, timestamp, color, author, description, fields, thumbnail, image, footer);
         }
 
+        private Emoji ParseEmoji(JToken json)
+        {
+            var id = json["id"]?.Value<string>();
+            var name = json["name"]?.Value<string>();
+            var isAnimated = json["animated"]?.Value<bool>() ?? false;
+
+            return new Emoji(id, name, isAnimated);
+        }
+
         private Reaction ParseReaction(JToken json)
         {
             var count = json["count"].Value<int>();
-            var emojiId = json["emoji"]["id"]?.Value<string>();
-            var emojiName = json["emoji"]["name"].Value<string>();
+            var emoji = ParseEmoji(json["emoji"]);
 
-            return new Reaction(count, emojiId, emojiName);
+            return new Reaction(count, emoji);
         }
 
         private Message ParseMessage(JToken json)

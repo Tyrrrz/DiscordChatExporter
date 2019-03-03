@@ -8,6 +8,5 @@ function Replace-TextInFile {
     [IO.File]::WriteAllText($filePath, $content, [Text.Encoding]::UTF8)
 }
 
-Replace-TextInFile "$PSScriptRoot\DiscordChatExporter.Core\DiscordChatExporter.Core.csproj" '(?<=<Version>)(.*?)(?=</Version>)' $newVersion
 Replace-TextInFile "$PSScriptRoot\DiscordChatExporter.Cli\DiscordChatExporter.Cli.csproj" '(?<=<Version>)(.*?)(?=</Version>)' $newVersion
 Replace-TextInFile "$PSScriptRoot\DiscordChatExporter.Gui\Properties\AssemblyInfo.cs" '(?<=Assembly.*?Version\(")(.*?)(?="\)\])' $newVersion

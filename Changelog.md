@@ -1,3 +1,14 @@
+### v2.10 (03-Mar-2019)
+
+- [HTML] Reworked the entire markdown parsing engine which fixes numerous rendering inconsistencies (over 15 issues fixed).
+- [HTML] Added support for animated emojis.
+- [HTML] Standard emojis are now rendered using Twemoji, the same image set that Discord uses.
+- [HTML] Fixed an issue where video attachments would render incorrectly.
+- [HTML] Minor fixes in styling.
+- [GUI] Aggregated export progress is now shown in the taskbar.
+- [GUI] Checkmarks are now displayed next to channels that are selected.
+- [CLI] Added progress reporting when exporting chat logs.
+
 ### v2.9.1 (10-Feb-2019)
 
 - Fixed an issue where some of the last messages in a channel would sometimes not get exported.

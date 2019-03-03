@@ -77,7 +77,7 @@ namespace DiscordChatExporter.Core.Services
 
             private string FormatDate(DateTime dateTime) => Format(dateTime, _dateFormat);
 
-            private string FormatMarkdownPlainText(IEnumerable<Node> nodes)
+            private string FormatMarkdownPlainText(IReadOnlyList<Node> nodes)
             {
                 var buffer = new StringBuilder();
 
@@ -127,7 +127,7 @@ namespace DiscordChatExporter.Core.Services
             private string FormatMarkdownPlainText(string input)
                 => FormatMarkdownPlainText(MarkdownParser.Parse(input));
 
-            private string FormatMarkdownHtml(IEnumerable<Node> nodes)
+            private string FormatMarkdownHtml(IReadOnlyList<Node> nodes, int depth = 0)
             {
                 var buffer = new StringBuilder();
 
@@ -140,7 +140,7 @@ namespace DiscordChatExporter.Core.Services
 
                     else if (node is FormattedNode formattedNode)
                     {
-                        var innerHtml = FormatMarkdownHtml(formattedNode.Children);
+                        var innerHtml = FormatMarkdownHtml(formattedNode.Children, depth + 1);
 
                         if (formattedNode.Formatting == TextFormatting.Bold)
                             buffer.Append($"<strong>{innerHtml}</strong>");
@@ -165,6 +165,7 @@ namespace DiscordChatExporter.Core.Services
 
                     else if (node is MultilineCodeBlockNode multilineCodeBlockNode)
                     {
+                        // Set language class for syntax highlighting
                         var languageCssClass = multilineCodeBlockNode.Language.IsNotBlank()
                             ? "language-" + multilineCodeBlockNode.Language
                             : null;
@@ -201,8 +202,15 @@ namespace DiscordChatExporter.Core.Services
 
                     else if (node is EmojiNode emojiNode)
                     {
-                        var emoji = new Emoji(emojiNode.Id, emojiNode.Name, emojiNode.IsAnimated);
-                        buffer.Append($"<img class=\"emoji\" title=\"{emoji.Name}\" src=\"{emoji.ImageUrl}\" />");
+                        // Get emoji image URL
+                        var emojiImageUrl = new Emoji(emojiNode.Id, emojiNode.Name, emojiNode.IsAnimated).ImageUrl;
+
+                        // Emoji can be jumboable if it's the only top-level node
+                        var jumboableCssClass = depth == 0 && nodes.Count == 1
+                            ? "emoji--large"
+                            : null;
+
+                        buffer.Append($"<img class=\"emoji {jumboableCssClass}\" title=\"{emojiNode.Name}\" src=\"{emojiImageUrl}\" />");
                     }
 
                     else if (node is LinkNode linkNode)

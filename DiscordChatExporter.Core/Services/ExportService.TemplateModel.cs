@@ -91,8 +91,6 @@ namespace DiscordChatExporter.Core.Services
                 return $"{size:0.#} {units[unit]}";
             }
 
-            private string FormatColor(Color color) => $"{color.R},{color.G},{color.B},{color.A}";
-
             private string RenderMarkdownPlainText(IEnumerable<Node> nodes)
             {
                 var buffer = new StringBuilder();
@@ -238,7 +236,7 @@ namespace DiscordChatExporter.Core.Services
                 // Create instance
                 var scriptObject = new ScriptObject();
 
-                // Import chat log
+                // Import model and constants
                 scriptObject.SetValue("Model", _log, true);
 
                 // Import functions
@@ -246,7 +244,6 @@ namespace DiscordChatExporter.Core.Services
                 scriptObject.Import(nameof(Format), new Func<IFormattable, string, string>(Format));
                 scriptObject.Import(nameof(FormatDate), new Func<DateTime, string>(FormatDate));
                 scriptObject.Import(nameof(FormatFileSize), new Func<long, string>(FormatFileSize));
-                scriptObject.Import(nameof(FormatColor), new Func<Color, string>(FormatColor));
                 scriptObject.Import(nameof(RenderMarkdownPlainText), new Func<string, string>(RenderMarkdownPlainText));
                 scriptObject.Import(nameof(RenderMarkdownHtml), new Func<string, string>(RenderMarkdownHtml));
 

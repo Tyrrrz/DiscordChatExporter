@@ -90,7 +90,7 @@
                     {{~ # Embeds ~}}
                     {{~ for embed in message.Embeds ~}}
                         <div class="chatlog__embed">
-                            <div class="chatlog__embed-color-pill" style="background-color: rgba({{ embed.Color | FormatColor }})"></div>
+                            <div class="chatlog__embed-color-pill" style="background-color: rgba({{ embed.Color.R }},{{ embed.Color.G }},{{ embed.Color.B }},{{ embed.Color.A }})"></div>
                             <div class="chatlog__embed-content-container">
                                 <div class="chatlog__embed-content">
                                     <div class="chatlog__embed-text">

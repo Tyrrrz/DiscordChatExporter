@@ -47,20 +47,20 @@ img {
 }
 
 .emoji {
-    width: 24px;
-    height: 24px;
+    width: 1.45em;
+    height: 1.45em;
     margin: 0 1px;
-    vertical-align: middle;
+    vertical-align: -0.4em;
 }
 
 .emoji--small {
-    width: 16px;
-    height: 16px;
+    width: 1rem;
+    height: 1rem;
 }
 
 .emoji--large {
-    width: 32px;
-    height: 32px;
+    width: 2rem;
+    height: 2rem;
 }
 
 /* === INFO === */
@@ -292,21 +292,19 @@ img {
 }
 
 .chatlog__reactions {
-    display: flex;    
+    display: flex;
 }
 
 .chatlog__reaction {
+    display: flex;
+    align-items: center;
     margin: 6px 2px 2px 2px;
-    padding: 2px 6px 2px 2px;
+    padding: 3px 6px;
     border-radius: 3px;
 }
 
-.chatlog__reaction-emoji {
-    margin-left: 3px;
-    vertical-align: middle;
-}
-
 .chatlog__reaction-count {
+    min-width: 9px;
+    margin-left: 6px;
     font-size: .875em;
-    vertical-align: middle;
 }

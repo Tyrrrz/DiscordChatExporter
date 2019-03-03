@@ -36,8 +36,7 @@ namespace DiscordChatExporter.Core.Services
             };
 
             // Create template model
-            var templateModel = new TemplateModel(chatLog,
-                _settingsService.DateFormat,
+            var templateModel = new TemplateModel(format, chatLog, _settingsService.DateFormat,
                 _settingsService.MessageGroupLimit);
 
             context.PushGlobal(templateModel.GetScriptObject());

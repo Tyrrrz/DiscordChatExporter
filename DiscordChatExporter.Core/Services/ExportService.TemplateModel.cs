@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -16,12 +15,14 @@ namespace DiscordChatExporter.Core.Services
     {
         private class TemplateModel
         {
+            private readonly ExportFormat _format;
             private readonly ChatLog _log;
             private readonly string _dateFormat;
             private readonly int _messageGroupLimit;
 
-            public TemplateModel(ChatLog log, string dateFormat, int messageGroupLimit)
+            public TemplateModel(ExportFormat format, ChatLog log, string dateFormat, int messageGroupLimit)
             {
+                _format = format;
                 _log = log;
                 _dateFormat = dateFormat;
                 _messageGroupLimit = messageGroupLimit;
@@ -91,7 +92,7 @@ namespace DiscordChatExporter.Core.Services
                 return $"{size:0.#} {units[unit]}";
             }
 
-            private string RenderMarkdownPlainText(IEnumerable<Node> nodes)
+            private string FormatMarkdownPlainText(IEnumerable<Node> nodes)
             {
                 var buffer = new StringBuilder();
 
@@ -99,7 +100,7 @@ namespace DiscordChatExporter.Core.Services
                 {
                     if (node is FormattedNode formattedNode)
                     {
-                        var innerText = RenderMarkdownPlainText(formattedNode.Children);
+                        var innerText = FormatMarkdownPlainText(formattedNode.Children);
                         buffer.Append($"{formattedNode.Token}{innerText}{formattedNode.Token}");
                     }
 
@@ -138,14 +139,13 @@ namespace DiscordChatExporter.Core.Services
                 return buffer.ToString();
             }
 
-            private string RenderMarkdownPlainText(string input)
-                => RenderMarkdownPlainText(MarkdownParser.Parse(input));
+            private string FormatMarkdownPlainText(string input)
+                => FormatMarkdownPlainText(MarkdownParser.Parse(input));
 
-            private string RenderMarkdownHtml(IEnumerable<Node> nodes)
+            private string FormatMarkdownHtml(IEnumerable<Node> nodes)
             {
                 var buffer = new StringBuilder();
 
-                // TODO: move this to templates
                 foreach (var node in nodes)
                 {
                     if (node is TextNode textNode)
@@ -155,7 +155,7 @@ namespace DiscordChatExporter.Core.Services
 
                     else if (node is FormattedNode formattedNode)
                     {
-                        var innerHtml = RenderMarkdownHtml(formattedNode.Children);
+                        var innerHtml = FormatMarkdownHtml(formattedNode.Children);
 
                         if (formattedNode.Formatting == TextFormatting.Bold)
                             buffer.Append($"<strong>{innerHtml}</strong>");
@@ -228,8 +228,15 @@ namespace DiscordChatExporter.Core.Services
                 return buffer.ToString();
             }
 
-            private string RenderMarkdownHtml(string input) 
-                => RenderMarkdownHtml(MarkdownParser.Parse(input));
+            private string FormatMarkdownHtml(string input) 
+                => FormatMarkdownHtml(MarkdownParser.Parse(input));
+
+            private string FormatMarkdown(string input)
+            {
+                return _format == ExportFormat.HtmlDark || _format == ExportFormat.HtmlLight
+                    ? FormatMarkdownHtml(input)
+                    : FormatMarkdownPlainText(input);
+            }
 
             public ScriptObject GetScriptObject()
             {
@@ -244,8 +251,7 @@ namespace DiscordChatExporter.Core.Services
                 scriptObject.Import(nameof(Format), new Func<IFormattable, string, string>(Format));
                 scriptObject.Import(nameof(FormatDate), new Func<DateTime, string>(FormatDate));
                 scriptObject.Import(nameof(FormatFileSize), new Func<long, string>(FormatFileSize));
-                scriptObject.Import(nameof(RenderMarkdownPlainText), new Func<string, string>(RenderMarkdownPlainText));
-                scriptObject.Import(nameof(RenderMarkdownHtml), new Func<string, string>(RenderMarkdownHtml));
+                scriptObject.Import(nameof(FormatMarkdown), new Func<string, string>(FormatMarkdown));
 
                 return scriptObject;
             }

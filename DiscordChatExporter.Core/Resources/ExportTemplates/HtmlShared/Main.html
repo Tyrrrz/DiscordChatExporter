@@ -63,7 +63,7 @@
                     {{~ # Content ~}}
                     {{~ if message.Content ~}}
                         <div class="chatlog__content">
-                            <span class="markdown">{{ message.Content | RenderMarkdownHtml }}</span>
+                            <span class="markdown">{{ message.Content | FormatMarkdown }}</span>
 
                             {{~ # Edited timestamp ~}}
                             {{~ if message.EditedTimestamp ~}}
@@ -117,16 +117,16 @@
                                         {{~ if embed.Title ~}}
                                             <div class="chatlog__embed-title">
                                                 {{~ if embed.Url ~}}
-                                                    <a class="chatlog__embed-title-link" href="{{ embed.Url }}"><span class="markdown">{{ embed.Title | RenderMarkdownHtml }}</span></a>
+                                                    <a class="chatlog__embed-title-link" href="{{ embed.Url }}"><span class="markdown">{{ embed.Title | FormatMarkdown }}</span></a>
                                                 {{~ else ~}}
-                                                    <span class="markdown">{{ embed.Title | RenderMarkdownHtml }}</span>
+                                                    <span class="markdown">{{ embed.Title | FormatMarkdown }}</span>
                                                 {{~ end ~}}
                                             </div>
                                         {{~ end ~}}
 
                                         {{~ # Description ~}}
                                         {{~ if embed.Description ~}}
-                                        <div class="chatlog__embed-description"><span class="markdown">{{ embed.Description | RenderMarkdownHtml }}</span></div>
+                                        <div class="chatlog__embed-description"><span class="markdown">{{ embed.Description | FormatMarkdown }}</span></div>
                                         {{~ end ~}}
 
                                         {{~ # Fields ~}}
@@ -135,10 +135,10 @@
                                                 {{~ for field in embed.Fields ~}}
                                                     <div class="chatlog__embed-field {{ if field.IsInline }} chatlog__embed-field--inline {{ end }}">
                                                         {{~ if field.Name ~}}
-                                                            <div class="chatlog__embed-field-name"><span class="markdown">{{ field.Name | RenderMarkdownHtml }}</span></div>
+                                                            <div class="chatlog__embed-field-name"><span class="markdown">{{ field.Name | FormatMarkdown }}</span></div>
                                                         {{~ end ~}}
                                                         {{~ if field.Value ~}}
-                                                            <div class="chatlog__embed-field-value"><span class="markdown">{{ field.Value | RenderMarkdownHtml }}</span></div>
+                                                            <div class="chatlog__embed-field-value"><span class="markdown">{{ field.Value | FormatMarkdown }}</span></div>
                                                         {{~ end ~}}
                                                     </div>
                                                 {{~ end ~}}

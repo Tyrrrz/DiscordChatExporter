@@ -2,18 +2,17 @@
 
     <PropertyGroup>
         <TargetFramework>net461</TargetFramework>
-        <Version>2.9.1</Version>
     </PropertyGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="Resources\ExportTemplates\PlainText.txt" />
-        <EmbeddedResource Include="Resources\ExportTemplates\HtmlDark.html" />
-        <EmbeddedResource Include="Resources\ExportTemplates\HtmlLight.html" />
-        <EmbeddedResource Include="Resources\ExportTemplates\Html\Core.html" />
-        <EmbeddedResource Include="Resources\ExportTemplates\Html\Shared.css" />
-        <EmbeddedResource Include="Resources\ExportTemplates\Html\DarkTheme.css" />
-        <EmbeddedResource Include="Resources\ExportTemplates\Html\LightTheme.css" />
-        <EmbeddedResource Include="Resources\ExportTemplates\Csv.csv" />
+        <EmbeddedResource Include="Resources\ExportTemplates\PlainText\Template.txt" />
+        <EmbeddedResource Include="Resources\ExportTemplates\HtmlDark\Template.html" />
+        <EmbeddedResource Include="Resources\ExportTemplates\HtmlLight\Template.html" />
+        <EmbeddedResource Include="Resources\ExportTemplates\HtmlShared\Main.html" />
+        <EmbeddedResource Include="Resources\ExportTemplates\HtmlShared\Main.css" />
+        <EmbeddedResource Include="Resources\ExportTemplates\HtmlDark\Theme.css" />
+        <EmbeddedResource Include="Resources\ExportTemplates\HtmlLight\Theme.css" />
+        <EmbeddedResource Include="Resources\ExportTemplates\Csv\Template.csv" />
     </ItemGroup>
 
     <ItemGroup>
@@ -27,6 +26,10 @@
         <PackageReference Include="Scriban" Version="1.2.9" />
         <PackageReference Include="Tyrrrz.Extensions" Version="1.5.1" />
         <PackageReference Include="Tyrrrz.Settings" Version="1.3.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DiscordChatExporter.Core.Markdown\DiscordChatExporter.Core.Markdown.csproj" />
     </ItemGroup>
 
 </Project>

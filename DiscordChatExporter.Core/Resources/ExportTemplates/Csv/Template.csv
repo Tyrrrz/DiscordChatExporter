@@ -4,7 +4,7 @@
 
   {{- }}"{{ message.Timestamp | FormatDate }}";
 
-  {{- }}"{{ message.Content | FormatContent }}";
+  {{- }}"{{ message.Content | FormatMarkdown | string.replace "\"" "\"\"" }}";
 
   {{- }}"{{ message.Attachments | array.map "Url" | array.join "," }}";
 {{~ end -}}

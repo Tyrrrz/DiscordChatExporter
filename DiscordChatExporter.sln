@@ -16,6 +16,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscordChatExporter.Core", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscordChatExporter.Cli", "DiscordChatExporter.Cli\DiscordChatExporter.Cli.csproj", "{D08624B6-3081-4BCB-91F8-E9832FACC6CE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordChatExporter.Core.Markdown", "DiscordChatExporter.Core.Markdown\DiscordChatExporter.Core.Markdown.csproj", "{14D02A08-E820-4012-B805-663B9A3D73E9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,10 @@ Global
 		{D08624B6-3081-4BCB-91F8-E9832FACC6CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D08624B6-3081-4BCB-91F8-E9832FACC6CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D08624B6-3081-4BCB-91F8-E9832FACC6CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14D02A08-E820-4012-B805-663B9A3D73E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14D02A08-E820-4012-B805-663B9A3D73E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14D02A08-E820-4012-B805-663B9A3D73E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14D02A08-E820-4012-B805-663B9A3D73E9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

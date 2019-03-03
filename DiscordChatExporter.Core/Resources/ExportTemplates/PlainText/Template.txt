@@ -12,7 +12,7 @@ Range:    {{ if Model.From }}{{ Model.From | FormatDate }} {{ end }}{{ if Model.
   {{~ # Author name and timestamp ~}}
   {{~ }}[{{ message.Timestamp | FormatDate }}] {{ message.Author.FullName }}
   {{~ # Content ~}}
-  {{~ message.Content | FormatContent }}
+  {{~ message.Content | FormatMarkdown }}
   {{~ # Attachments ~}}
   {{~ for attachment in message.Attachments ~}}
     {{~ attachment.Url }}

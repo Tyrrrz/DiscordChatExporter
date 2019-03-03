@@ -20,7 +20,7 @@ namespace DiscordChatExporter.Core.Services
 
             public string GetPath(ExportFormat format)
             {
-                return $"{ResourceRootNamespace}.{format}.{format.GetFileExtension()}";
+                return $"{ResourceRootNamespace}.{format}.Template.{format.GetFileExtension()}";
             }
 
             public string Load(TemplateContext context, SourceSpan callerSpan, string templatePath)

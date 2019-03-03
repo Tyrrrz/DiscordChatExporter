@@ -6,7 +6,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <style>
-        {{ StyleSheet }}
+        {{ include "HtmlShared.Main.css" }}
+    </style>
+    <style>
+        {{ ThemeStyleSheet }}
     </style>
 </head>
 <body>
@@ -58,7 +61,7 @@
                     {{~ # Content ~}}
                     {{~ if message.Content ~}}
                         <div class="chatlog__content">
-                            {{ message.Content | FormatContent }}
+                            <span class="markdown">{{ message.Content | FormatMarkdown }}</span>
 
                             {{~ # Edited timestamp ~}}
                             {{~ if message.EditedTimestamp ~}}
@@ -85,7 +88,7 @@
                     {{~ # Embeds ~}}
                     {{~ for embed in message.Embeds ~}}
                         <div class="chatlog__embed">
-                            <div class="chatlog__embed-color-pill" style="background-color: rgba({{ embed.Color | FormatColor }})"></div>
+                            <div class="chatlog__embed-color-pill" style="background-color: rgba({{ embed.Color.R }},{{ embed.Color.G }},{{ embed.Color.B }},{{ embed.Color.A }})"></div>
                             <div class="chatlog__embed-content-container">
                                 <div class="chatlog__embed-content">
                                     <div class="chatlog__embed-text">
@@ -112,16 +115,16 @@
                                         {{~ if embed.Title ~}}
                                             <div class="chatlog__embed-title">
                                                 {{~ if embed.Url ~}}
-                                                    <a class="chatlog__embed-title-link" href="{{ embed.Url }}">{{ embed.Title | FormatContent }}</a>
+                                                    <a class="chatlog__embed-title-link" href="{{ embed.Url }}"><span class="markdown">{{ embed.Title | FormatMarkdown }}</span></a>
                                                 {{~ else ~}}
-                                                    {{ embed.Title | FormatContent }}
+                                                    <span class="markdown">{{ embed.Title | FormatMarkdown }}</span>
                                                 {{~ end ~}}
                                             </div>
                                         {{~ end ~}}
 
                                         {{~ # Description ~}}
                                         {{~ if embed.Description ~}}
-                                            <div class="chatlog__embed-description">{{ embed.Description | FormatContent true }}</div>
+                                        <div class="chatlog__embed-description"><span class="markdown">{{ embed.Description | FormatMarkdown }}</span></div>
                                         {{~ end ~}}
 
                                         {{~ # Fields ~}}
@@ -130,10 +133,10 @@
                                                 {{~ for field in embed.Fields ~}}
                                                     <div class="chatlog__embed-field {{ if field.IsInline }} chatlog__embed-field--inline {{ end }}">
                                                         {{~ if field.Name ~}}
-                                                            <div class="chatlog__embed-field-name">{{ field.Name | FormatContent }}</div>
+                                                            <div class="chatlog__embed-field-name"><span class="markdown">{{ field.Name | FormatMarkdown }}</span></div>
                                                         {{~ end ~}}
                                                         {{~ if field.Value ~}}
-                                                            <div class="chatlog__embed-field-value">{{ field.Value | FormatContent true }}</div>
+                                                            <div class="chatlog__embed-field-value"><span class="markdown">{{ field.Value | FormatMarkdown }}</span></div>
                                                         {{~ end ~}}
                                                     </div>
                                                 {{~ end ~}}

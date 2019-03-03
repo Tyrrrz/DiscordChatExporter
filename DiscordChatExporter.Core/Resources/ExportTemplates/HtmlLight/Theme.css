@@ -2,11 +2,15 @@
 
 body {
     background-color: #ffffff;
-    color: #737f8d;
+    color: #747f8d;
 }
 
 a {
     color: #00b0f4;
+}
+
+.spoiler {
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
 .pre {
@@ -56,8 +60,8 @@ a {
 }
 
 .chatlog__embed-content-container {
-    background-color: #f9f9f94d;
-    border-color: #cccccc4d;
+    background-color: rgba(249, 249, 249, 0.3);
+    border-color: rgba(204, 204, 204, 0.3);
 }
 
 .chatlog__embed-author-name {
@@ -85,11 +89,11 @@ a {
 }
 
 .chatlog__embed-footer {
-    color: #4f535b99;
+    color: rgba(79, 83, 91, 0.4);
 }
 
 .chatlog__reaction {
-    background-color: #4f545c0f;
+    background-color: rgba(79, 84, 92, 0.06);
 }
 
 .chatlog__reaction-count {

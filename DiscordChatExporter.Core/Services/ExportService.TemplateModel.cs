@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
 using System.Linq;
-using System.Net;
-using System.Text.RegularExpressions;
+using System.Text;
 using DiscordChatExporter.Core.Internal;
+using DiscordChatExporter.Core.Markdown;
 using DiscordChatExporter.Core.Models;
 using Scriban.Runtime;
 using Tyrrrz.Extensions;
@@ -73,8 +72,6 @@ namespace DiscordChatExporter.Core.Services
                 }
             }
 
-            private string HtmlEncode(string str) => WebUtility.HtmlEncode(str);
-
             private string Format(IFormattable obj, string format) =>
                 obj.ToString(format, CultureInfo.InvariantCulture);
 
@@ -95,254 +92,150 @@ namespace DiscordChatExporter.Core.Services
                 return $"{size:0.#} {units[unit]}";
             }
 
-            private string FormatColor(Color color)
+            private string FormatMarkdownPlainText(IEnumerable<Node> nodes)
             {
-                return $"{color.R},{color.G},{color.B},{color.A}";
+                var buffer = new StringBuilder();
+
+                foreach (var node in nodes)
+                {
+                    if (node is FormattedNode formattedNode)
+                    {
+                        var innerText = FormatMarkdownPlainText(formattedNode.Children);
+                        buffer.Append($"{formattedNode.Token}{innerText}{formattedNode.Token}");
+                    }
+
+                    else if (node is MentionNode mentionNode && mentionNode.Type != MentionType.Meta)
+                    {
+                        if (mentionNode.Type == MentionType.User)
+                        {
+                            var user = _log.Mentionables.GetUser(mentionNode.Id);
+                            buffer.Append($"@{user.Name}");
+                        }
+
+                        else if (mentionNode.Type == MentionType.Channel)
+                        {
+                            var channel = _log.Mentionables.GetChannel(mentionNode.Id);
+                            buffer.Append($"#{channel.Name}");
+                        }
+
+                        else if (mentionNode.Type == MentionType.Role)
+                        {
+                            var role = _log.Mentionables.GetRole(mentionNode.Id);
+                            buffer.Append($"@{role.Name}");
+                        }
+                    }
+
+                    else if (node is EmojiNode emojiNode)
+                    {
+                        buffer.Append($":{emojiNode.Name}:");
+                    }
+
+                    else
+                    {
+                        buffer.Append(node.Lexeme);
+                    }
+                }
+
+                return buffer.ToString();
             }
 
-            private string FormatContentPlainText(string content)
+            private string FormatMarkdownPlainText(string input)
+                => FormatMarkdownPlainText(MarkdownParser.Parse(input));
+
+            private string FormatMarkdownHtml(IEnumerable<Node> nodes)
             {
-                // New lines
-                content = content.Replace("\n", Environment.NewLine);
+                var buffer = new StringBuilder();
 
-                // User mentions (<@id> and <@!id>)
-                var mentionedUserIds = Regex.Matches(content, "<@!?(\\d+)>")
-                    .Cast<Match>()
-                    .Select(m => m.Groups[1].Value)
-                    .ExceptBlank()
-                    .ToArray();
-
-                foreach (var mentionedUserId in mentionedUserIds)
+                foreach (var node in nodes)
                 {
-                    var mentionedUser = _log.Mentionables.GetUser(mentionedUserId);
-                    content = Regex.Replace(content, $"<@!?{mentionedUserId}>", $"@{mentionedUser.FullName}");
+                    if (node is TextNode textNode)
+                    {
+                        buffer.Append(textNode.Text.HtmlEncode());
+                    }
+
+                    else if (node is FormattedNode formattedNode)
+                    {
+                        var innerHtml = FormatMarkdownHtml(formattedNode.Children);
+
+                        if (formattedNode.Formatting == TextFormatting.Bold)
+                            buffer.Append($"<strong>{innerHtml}</strong>");
+
+                        else if (formattedNode.Formatting == TextFormatting.Italic)
+                            buffer.Append($"<em>{innerHtml}</em>");
+
+                        else if (formattedNode.Formatting == TextFormatting.Underline)
+                            buffer.Append($"<u>{innerHtml}</u>");
+
+                        else if (formattedNode.Formatting == TextFormatting.Strikethrough)
+                            buffer.Append($"<s>{innerHtml}</s>");
+
+                        else if (formattedNode.Formatting == TextFormatting.Spoiler)
+                            buffer.Append($"<span class=\"spoiler\">{innerHtml}</span>");
+                    }
+
+                    else if (node is InlineCodeBlockNode inlineCodeBlockNode)
+                    {
+                        buffer.Append($"<span class=\"pre pre--inline\">{inlineCodeBlockNode.Code.HtmlEncode()}</span>");
+                    }
+
+                    else if (node is MultilineCodeBlockNode multilineCodeBlockNode)
+                    {
+                        var languageCssClass = multilineCodeBlockNode.Language.IsNotBlank()
+                            ? "language-" + multilineCodeBlockNode.Language
+                            : null;
+
+                        buffer.Append(
+                            $"<div class=\"pre pre--multiline {languageCssClass}\">{multilineCodeBlockNode.Code.HtmlEncode()}</div>");
+                    }
+
+                    else if (node is MentionNode mentionNode)
+                    {
+                        if (mentionNode.Type == MentionType.Meta)
+                        {
+                            buffer.Append($"<span class=\"mention\">@{mentionNode.Id.HtmlEncode()}</span>");
+                        }
+
+                        else if (mentionNode.Type == MentionType.User)
+                        {
+                            var user = _log.Mentionables.GetUser(mentionNode.Id);
+                            buffer.Append($"<span class=\"mention\" title=\"{user.FullName}\">@{user.Name.HtmlEncode()}</span>");
+                        }
+
+                        else if (mentionNode.Type == MentionType.Channel)
+                        {
+                            var channel = _log.Mentionables.GetChannel(mentionNode.Id);
+                            buffer.Append($"<span class=\"mention\">#{channel.Name.HtmlEncode()}</span>");
+                        }
+
+                        else if (mentionNode.Type == MentionType.Role)
+                        {
+                            var role = _log.Mentionables.GetRole(mentionNode.Id);
+                            buffer.Append($"<span class=\"mention\">@{role.Name.HtmlEncode()}</span>");
+                        }
+                    }
+
+                    else if (node is EmojiNode emojiNode)
+                    {
+                        buffer.Append($"<img class=\"emoji\" title=\"{emojiNode.Name}\" src=\"https://cdn.discordapp.com/emojis/{emojiNode.Id}.png\" />");
+                    }
+
+                    else if (node is LinkNode linkNode)
+                    {
+                        buffer.Append($"<a href=\"{Uri.EscapeUriString(linkNode.Url)}\">{linkNode.Title.HtmlEncode()}</a>");
+                    }
                 }
 
-                // Channel mentions (<#id>)
-                var mentionedChannelIds = Regex.Matches(content, "<#(\\d+)>")
-                    .Cast<Match>()
-                    .Select(m => m.Groups[1].Value)
-                    .ExceptBlank()
-                    .ToArray();
-
-                foreach (var mentionedChannelId in mentionedChannelIds)
-                {
-                    var mentionedChannel = _log.Mentionables.GetChannel(mentionedChannelId);
-                    content = content.Replace($"<#{mentionedChannelId}>", $"#{mentionedChannel.Name}");
-                }
-
-                // Role mentions (<@&id>)
-                var mentionedRoleIds = Regex.Matches(content, "<@&(\\d+)>")
-                    .Cast<Match>()
-                    .Select(m => m.Groups[1].Value)
-                    .ExceptBlank()
-                    .ToArray();
-
-                foreach (var mentionedRoleId in mentionedRoleIds)
-                {
-                    var mentionedRole = _log.Mentionables.GetRole(mentionedRoleId);
-                    content = content.Replace($"<@&{mentionedRoleId}>", $"@{mentionedRole.Name}");
-                }
-
-                // Custom emojis (<:name:id>)
-                content = Regex.Replace(content, "<(:.*?:)\\d*>", "$1");
-
-                return content;
+                return buffer.ToString();
             }
 
-            private string FormatContentHtml(string content, bool allowLinks = false)
+            private string FormatMarkdownHtml(string input) 
+                => FormatMarkdownHtml(MarkdownParser.Parse(input));
+
+            private string FormatMarkdown(string input)
             {
-                // HTML-encode content
-                content = HtmlEncode(content);
-
-                // Encode multiline codeblocks (```text```)
-                content = Regex.Replace(content,
-                    @"```+(?:[^`]*?\n)?([^`]+)\n?```+",
-                    m => $"\x1AM{m.Groups[1].Value.Base64Encode()}\x1AM");
-
-                // Encode inline codeblocks (`text`)
-                content = Regex.Replace(content,
-                    @"`([^`]+)`",
-                    m => $"\x1AI{m.Groups[1].Value.Base64Encode()}\x1AI");
-
-                // Encode links
-                if (allowLinks)
-                {
-                    content = Regex.Replace(content, @"\[(.*?)\]\((.*?)\)",
-                        m => $"\x1AL{m.Groups[1].Value.Base64Encode()}|{m.Groups[2].Value.Base64Encode()}\x1AL");
-                }
-
-                // Encode URLs
-                content = Regex.Replace(content,
-                    @"(\b(?:(?:https?|ftp|file)://|www\.|ftp\.)(?:\([-a-zA-Z0-9+&@#/%?=~_|!:,\.\[\];]*\)|[-a-zA-Z0-9+&@#/%?=~_|!:,\.\[\];])*(?:\([-a-zA-Z0-9+&@#/%?=~_|!:,\.\[\];]*\)|[-a-zA-Z0-9+&@#/%=~_|$]))",
-                    m => $"\x1AU{m.Groups[1].Value.Base64Encode()}\x1AU");
-
-                // Process bold (**text**)
-                content = Regex.Replace(content, @"(\*\*)(?=\S)(.+?[*_]*)(?<=\S)\1", "<b>$2</b>");
-
-                // Process underline (__text__)
-                content = Regex.Replace(content, @"(__)(?=\S)(.+?)(?<=\S)\1", "<u>$2</u>");
-
-                // Process italic (*text* or _text_)
-                content = Regex.Replace(content, @"(\*|_)(?=\S)(.+?)(?<=\S)\1", "<i>$2</i>");
-
-                // Process strike through (~~text~~)
-                content = Regex.Replace(content, @"(~~)(?=\S)(.+?)(?<=\S)\1", "<s>$2</s>");
-
-                // Decode and process multiline codeblocks
-                content = Regex.Replace(content, "\x1AM(.*?)\x1AM",
-                    m => $"<div class=\"pre pre--multiline\">{m.Groups[1].Value.Base64Decode()}</div>");
-
-                // Decode and process inline codeblocks
-                content = Regex.Replace(content, "\x1AI(.*?)\x1AI",
-                    m => $"<span class=\"pre pre--inline\">{m.Groups[1].Value.Base64Decode()}</span>");
-
-                // Decode and process links
-                if (allowLinks)
-                {
-                    content = Regex.Replace(content, "\x1AL(.*?)\\|(.*?)\x1AL",
-                        m => $"<a href=\"{m.Groups[2].Value.Base64Decode()}\">{m.Groups[1].Value.Base64Decode()}</a>");
-                }
-
-                // Decode and process URLs
-                content = Regex.Replace(content, "\x1AU(.*?)\x1AU",
-                    m => $"<a href=\"{m.Groups[1].Value.Base64Decode()}\">{m.Groups[1].Value.Base64Decode()}</a>");
-
-                // Process new lines
-                content = content.Replace("\n", "<br />");
-
-                // Meta mentions (@everyone)
-                content = content.Replace("@everyone", "<span class=\"mention\">@everyone</span>");
-
-                // Meta mentions (@here)
-                content = content.Replace("@here", "<span class=\"mention\">@here</span>");
-
-                // User mentions (<@id> and <@!id>)
-                var mentionedUserIds = Regex.Matches(content, "&lt;@!?(\\d+)&gt;")
-                    .Cast<Match>()
-                    .Select(m => m.Groups[1].Value)
-                    .ExceptBlank()
-                    .ToArray();
-
-                foreach (var mentionedUserId in mentionedUserIds)
-                {
-                    var mentionedUser = _log.Mentionables.GetUser(mentionedUserId);
-                    content = Regex.Replace(content, $"&lt;@!?{mentionedUserId}&gt;",
-                        $"<span class=\"mention\" title=\"{HtmlEncode(mentionedUser.FullName)}\">" +
-                        $"@{HtmlEncode(mentionedUser.Name)}" +
-                        "</span>");
-                }
-
-                // Channel mentions (<#id>)
-                var mentionedChannelIds = Regex.Matches(content, "&lt;#(\\d+)&gt;")
-                    .Cast<Match>()
-                    .Select(m => m.Groups[1].Value)
-                    .ExceptBlank()
-                    .ToArray();
-
-                foreach (var mentionedChannelId in mentionedChannelIds)
-                {
-                    var mentionedChannel = _log.Mentionables.GetChannel(mentionedChannelId);
-                    content = content.Replace($"&lt;#{mentionedChannelId}&gt;",
-                        "<span class=\"mention\">" +
-                        $"#{HtmlEncode(mentionedChannel.Name)}" +
-                        "</span>");
-                }
-
-                // Role mentions (<@&id>)
-                var mentionedRoleIds = Regex.Matches(content, "&lt;@&amp;(\\d+)&gt;")
-                    .Cast<Match>()
-                    .Select(m => m.Groups[1].Value)
-                    .ExceptBlank()
-                    .ToArray();
-
-                foreach (var mentionedRoleId in mentionedRoleIds)
-                {
-                    var mentionedRole = _log.Mentionables.GetRole(mentionedRoleId);
-                    content = content.Replace($"&lt;@&amp;{mentionedRoleId}&gt;",
-                        "<span class=\"mention\">" +
-                        $"@{HtmlEncode(mentionedRole.Name)}" +
-                        "</span>");
-                }
-
-                // Custom emojis (<:name:id>)
-                var isJumboable = Regex.Replace(content, "&lt;(:.*?:)(\\d*)&gt;", "").IsBlank();
-                var emojiClass = isJumboable ? "emoji emoji--large" : "emoji";
-                content = Regex.Replace(content, "&lt;(:.*?:)(\\d*)&gt;",
-                    $"<img class=\"{emojiClass}\" title=\"$1\" src=\"https://cdn.discordapp.com/emojis/$2.png\" />");
-
-                return content;
-            }
-
-            private string FormatContentCsv(string content)
-            {
-                // Escape quotes
-                content = content.Replace("\"", "\"\"");
-
-                // Escape commas and semicolons
-                if (content.Contains(",") || content.Contains(";"))
-                    content = $"\"{content}\"";
-
-                // User mentions (<@id> and <@!id>)
-                var mentionedUserIds = Regex.Matches(content, "<@!?(\\d+)>")
-                    .Cast<Match>()
-                    .Select(m => m.Groups[1].Value)
-                    .ExceptBlank()
-                    .ToArray();
-
-                foreach (var mentionedUserId in mentionedUserIds)
-                {
-                    var mentionedUser = _log.Mentionables.GetUser(mentionedUserId);
-                    content = Regex.Replace(content, $"<@!?{mentionedUserId}>", $"@{mentionedUser.FullName}");
-                }
-
-                // Channel mentions (<#id>)
-                var mentionedChannelIds = Regex.Matches(content, "<#(\\d+)>")
-                    .Cast<Match>()
-                    .Select(m => m.Groups[1].Value)
-                    .ExceptBlank()
-                    .ToArray();
-
-                foreach (var mentionedChannelId in mentionedChannelIds)
-                {
-                    var mentionedChannel = _log.Mentionables.GetChannel(mentionedChannelId);
-                    content = content.Replace($"<#{mentionedChannelId}>", $"#{mentionedChannel.Name}");
-                }
-
-                // Role mentions (<@&id>)
-                var mentionedRoleIds = Regex.Matches(content, "<@&(\\d+)>")
-                    .Cast<Match>()
-                    .Select(m => m.Groups[1].Value)
-                    .ExceptBlank()
-                    .ToArray();
-
-                foreach (var mentionedRoleId in mentionedRoleIds)
-                {
-                    var mentionedRole = _log.Mentionables.GetRole(mentionedRoleId);
-                    content = content.Replace($"<@&{mentionedRoleId}>", $"@{mentionedRole.Name}");
-                }
-
-                // Custom emojis (<:name:id>)
-                content = Regex.Replace(content, "<(:.*?:)\\d*>", "$1");
-
-                return content;
-            }
-
-            private string FormatContent(string content, bool allowLinks = false)
-            {
-                if (_format == ExportFormat.PlainText)
-                    return FormatContentPlainText(content);
-
-                if (_format == ExportFormat.HtmlDark)
-                    return FormatContentHtml(content, allowLinks);
-
-                if (_format == ExportFormat.HtmlLight)
-                    return FormatContentHtml(content, allowLinks);
-
-                if (_format == ExportFormat.Csv)
-                    return FormatContentCsv(content);
-
-                throw new ArgumentOutOfRangeException(nameof(_format));
+                return _format == ExportFormat.HtmlDark || _format == ExportFormat.HtmlLight
+                    ? FormatMarkdownHtml(input)
+                    : FormatMarkdownPlainText(input);
             }
 
             public ScriptObject GetScriptObject()
@@ -350,7 +243,7 @@ namespace DiscordChatExporter.Core.Services
                 // Create instance
                 var scriptObject = new ScriptObject();
 
-                // Import chat log
+                // Import model
                 scriptObject.SetValue("Model", _log, true);
 
                 // Import functions
@@ -358,8 +251,7 @@ namespace DiscordChatExporter.Core.Services
                 scriptObject.Import(nameof(Format), new Func<IFormattable, string, string>(Format));
                 scriptObject.Import(nameof(FormatDate), new Func<DateTime, string>(FormatDate));
                 scriptObject.Import(nameof(FormatFileSize), new Func<long, string>(FormatFileSize));
-                scriptObject.Import(nameof(FormatColor), new Func<Color, string>(FormatColor));
-                scriptObject.Import(nameof(FormatContent), new Func<string, bool, string>(FormatContent));
+                scriptObject.Import(nameof(FormatMarkdown), new Func<string, string>(FormatMarkdown));
 
                 return scriptObject;
             }

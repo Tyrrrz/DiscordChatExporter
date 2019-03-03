@@ -2,11 +2,15 @@
 
 body {
     background-color: #36393e;
-    color: #ffffffb3;
+    color: #dcddde;
 }
 
 a {
     color: #0096cf;
+}
+
+.spoiler {
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .pre {
@@ -19,7 +23,6 @@ a {
 }
 
 .mention {
-    background-color: #738bd71a;
     color: #7289da;
 }
 
@@ -40,7 +43,7 @@ a {
 /* === CHATLOG === */
 
 .chatlog__message-group {
-    border-color: #ffffff0a;
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 .chatlog__author-name {
@@ -48,16 +51,16 @@ a {
 }
 
 .chatlog__timestamp {
-    color: #ffffff33;
+    color: rgba(255, 255, 255, 0.2);
 }
 
 .chatlog__edited-timestamp {
-    color: #ffffff33;
+    color: rgba(255, 255, 255, 0.2);
 }
 
 .chatlog__embed-content-container {
-    background-color: #2e30364d;
-    border-color: #2e303699;
+    background-color: rgba(46, 48, 54, 0.3);
+    border-color: rgba(46, 48, 54, 0.6);
 }
 
 .chatlog__embed-author-name {
@@ -73,7 +76,7 @@ a {
 }
 
 .chatlog__embed-description {
-    color: #ffffff99;
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .chatlog__embed-field-name {
@@ -81,17 +84,17 @@ a {
 }
 
 .chatlog__embed-field-value {
-    color: #ffffff99;
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .chatlog__embed-footer {
-    color: #ffffff99;
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .chatlog__reaction {
-    background-color: #ffffff0a;
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 .chatlog__reaction-count {
-    color: #ffffff4d;
+    color: rgba(255, 255, 255, 0.3);
 }

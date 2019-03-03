@@ -112,7 +112,7 @@ namespace DiscordChatExporter.Core.Services
 
                     else if (node is EmojiNode emojiNode)
                     {
-                        buffer.Append($":{emojiNode.Name}:");
+                        buffer.Append(emojiNode.IsCustomEmoji ? $":{emojiNode.Name}:" : node.Lexeme);
                     }
 
                     else

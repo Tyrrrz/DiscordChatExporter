@@ -210,7 +210,7 @@ namespace DiscordChatExporter.Core.Services
                             ? "emoji--large"
                             : null;
 
-                        buffer.Append($"<img class=\"emoji {jumboableCssClass}\" title=\"{emojiNode.Name}\" src=\"{emojiImageUrl}\" />");
+                        buffer.Append($"<img class=\"emoji {jumboableCssClass}\" alt=\"{emojiNode.Name}\" title=\"{emojiNode.Name}\" src=\"{emojiImageUrl}\" />");
                     }
 
                     else if (node is LinkNode linkNode)

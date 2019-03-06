@@ -195,7 +195,7 @@
                         <div class="chatlog__reactions">
                             {{~ for reaction in message.Reactions ~}}
                                 <div class="chatlog__reaction">
-                                    <img class="emoji emoji--small" title="{{ reaction.Emoji.Name }}" src="{{ reaction.Emoji.ImageUrl }}" />
+                                    <img class="emoji emoji--small" alt="{{ reaction.Emoji.Name }}" title="{{ reaction.Emoji.Name }}" src="{{ reaction.Emoji.ImageUrl }}" />
                                     <span class="chatlog__reaction-count">{{ reaction.Count }}</span>
                                 </div>
                             {{~ end ~}}

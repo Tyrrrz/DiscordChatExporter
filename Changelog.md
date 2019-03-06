@@ -1,3 +1,9 @@
+### v2.10.1 (06-Mar-2019)
+
+- [HTML] Fixed an issue where multiple emojis on a single line would get rendered as one emoji.
+- [HTML] Fixed an issue where an open square bracket character would incorrectly render as an emoji.
+- [HTML] Added alt text to emoji images so that they will be rendered using default font when Twemoji images are not available.
+
 ### v2.10 (03-Mar-2019)
 
 - [HTML] Reworked the entire markdown parsing engine which fixes numerous rendering inconsistencies (over 15 issues fixed).

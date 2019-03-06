@@ -71,7 +71,7 @@ namespace DiscordChatExporter.Core.Markdown.Internal
 
         // The first word is a language identifier if it's the only word followed by a newline, the rest is code
         private static readonly Parser<Node> MultilineCodeBlockNode =
-            Parse.RegexMatch(new Regex("```(?:(\\w*?)?(?:\\s*?\\n))?(.+)```", RegexOptions.Singleline))
+            Parse.RegexMatch(new Regex("```(?:(\\w*?)?(?:\\s*?\\n))?(.+?)```", RegexOptions.Singleline))
                 .Select(m => new MultilineCodeBlockNode(m.Value, m.Groups[1].Value, m.Groups[2].Value));
 
         // Combinator, order matters
@@ -114,7 +114,7 @@ namespace DiscordChatExporter.Core.Markdown.Internal
             .Select(m => new EmojiNode(m.Value, m.Groups[1].Value));
 
         // <:lul:123456> or <a:lul:123456>
-        private static readonly Parser<Node> CustomEmojiNode = Parse.RegexMatch("<(a)?:(.+):(\\d+)>")
+        private static readonly Parser<Node> CustomEmojiNode = Parse.RegexMatch("<(a)?:(.+?):(\\d+)>")
             .Select(m => new EmojiNode(m.Value, m.Groups[3].Value, m.Groups[2].Value, m.Groups[1].Value.IsNotBlank()));
 
         // Combinator, order matters
@@ -123,7 +123,7 @@ namespace DiscordChatExporter.Core.Markdown.Internal
         /* Links */
 
         // [title](link)
-        private static readonly Parser<Node> TitledLinkNode = Parse.RegexMatch("\\[(.+)\\]\\((.+)\\)")
+        private static readonly Parser<Node> TitledLinkNode = Parse.RegexMatch("\\[(.+?)\\]\\((.+?)\\)")
             .Select(m => new LinkNode(m.Value, m.Groups[2].Value, m.Groups[1].Value));
 
         // Starts with http:// or https://, stops at the last non-whitespace character followed by whitespace or punctuation character

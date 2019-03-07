@@ -34,23 +34,19 @@ namespace DiscordChatExporter.Core.Services
                 var buffer = new List<Message>();
                 foreach (var message in messages)
                 {
-                    // Get first message of the group
-                    var groupFirstMessage = buffer.FirstOrDefault();
-
                     // Group break condition
                     var breakCondition =
-                        groupFirstMessage != null &&
+                        buffer.Any() &&
                         (
-                            message.Author.Id != groupFirstMessage.Author.Id || // when author changes
-                            (message.Timestamp - groupFirstMessage.Timestamp).TotalHours > 1 || // when difference in timestamps is an hour or more
-                            message.Timestamp.Hour != groupFirstMessage.Timestamp.Hour || // when the timestamp's hour changes
+                            message.Author.Id != buffer.First().Author.Id || // when author changes
+                            (message.Timestamp - buffer.Last().Timestamp).TotalMinutes > 7 || // when more than 7 minutes passed since last message
                             buffer.Count >= _messageGroupLimit // when group is full
                         );
 
                     // If condition is true - flush buffer
                     if (breakCondition)
                     {
-                        var group = new MessageGroup(groupFirstMessage.Author, groupFirstMessage.Timestamp, buffer);
+                        var group = new MessageGroup(buffer.First().Author, buffer.First().Timestamp, buffer);
 
                         // Reset the buffer instead of clearing to avoid mutations on existing references
                         buffer = new List<Message>();
@@ -65,8 +61,7 @@ namespace DiscordChatExporter.Core.Services
                 // Add what's remaining in buffer
                 if (buffer.Any())
                 {
-                    var groupFirstMessage = buffer.First();
-                    var group = new MessageGroup(groupFirstMessage.Author, groupFirstMessage.Timestamp, buffer);
+                    var group = new MessageGroup(buffer.First().Author, buffer.First().Timestamp, buffer);
 
                     yield return group;
                 }

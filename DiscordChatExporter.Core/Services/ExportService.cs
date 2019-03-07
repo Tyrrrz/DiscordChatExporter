@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using DiscordChatExporter.Core.Internal;
 using DiscordChatExporter.Core.Models;
 using Scriban;
 using Scriban.Runtime;
@@ -82,34 +84,6 @@ namespace DiscordChatExporter.Core.Services
             }
         }
 
-        private IReadOnlyList<ChatLog> SplitIntoPartitions(ChatLog chatLog, int partitionLimit)
-        {
-            var result = new List<ChatLog>();
-
-            // Loop through all messages with an increment of partition limit
-            for (var i = 0; i < chatLog.Messages.Count; i += partitionLimit)
-            {
-                // Calculate how many messages left in total
-                var remainingMessageCount = chatLog.Messages.Count - i;
-
-                // Decide how many messages are going into this partition
-                // Each partition will have the same number of messages except the last one that might have fewer (all remaining messages)
-                var partitionMessageCount = partitionLimit.ClampMax(remainingMessageCount);
-
-                // Get messages that belong to this partition
-                var partitionMessages = new List<Message>();
-                for (var j = i; j < i + partitionMessageCount; j++)
-                    partitionMessages.Add(chatLog.Messages[j]);
-
-                // Create a partition and add to list
-                var partition = new ChatLog(chatLog.Guild, chatLog.Channel, chatLog.From, chatLog.To, partitionMessages,
-                    chatLog.Mentionables);
-                result.Add(partition);
-            }
-
-            return result;
-        }
-
         public void ExportChatLog(ChatLog chatLog, string filePath, ExportFormat format,
             int? partitionLimit = null)
         {
@@ -121,7 +95,11 @@ namespace DiscordChatExporter.Core.Services
             // Otherwise split into partitions and export separately
             else
             {
-                var partitions = SplitIntoPartitions(chatLog, partitionLimit.Value);
+                // Create partitions by grouping up to X adjacent messages into separate chat logs
+                var partitions = chatLog.Messages.GroupAdjacentWhile(g => g.Count < partitionLimit.Value)
+                    .Select(g => new ChatLog(chatLog.Guild, chatLog.Channel, chatLog.From, chatLog.To, g, chatLog.Mentionables))
+                    .ToArray();
+
                 ExportChatLogPartitioned(partitions, filePath, format);
             }
         }

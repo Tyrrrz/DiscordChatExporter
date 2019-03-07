@@ -27,45 +27,21 @@ namespace DiscordChatExporter.Core.Services
             }
 
             private IEnumerable<MessageGroup> GroupMessages(IEnumerable<Message> messages)
-            {
-                // Group adjacent messages by timestamp and author
-                var buffer = new List<Message>();
-                foreach (var message in messages)
+                => messages.GroupAdjacentWhile((buffer, message) =>
                 {
-                    // Group break condition
-                    var breakCondition =
-                        buffer.Any() &&
-                        (
-                            message.Author.Id != buffer.First().Author.Id || // when author changes
-                            (message.Timestamp - buffer.Last().Timestamp).TotalMinutes > 7 // when more than 7 minutes passed since last message
-                        );
+                    // Break group if the author changed
+                    if (buffer.Last().Author.Id != message.Author.Id)
+                        return false;
 
-                    // If condition is true - flush buffer
-                    if (breakCondition)
-                    {
-                        var group = new MessageGroup(buffer.First().Author, buffer.First().Timestamp, buffer);
+                    // Break group if last message was more than 7 minutes ago
+                    if ((message.Timestamp - buffer.Last().Timestamp).TotalMinutes > 7)
+                        return false;
 
-                        // Reset the buffer instead of clearing to avoid mutations on existing references
-                        buffer = new List<Message>();
+                    return true;
+                }).Select(g => new MessageGroup(g.First().Author, g.First().Timestamp, g));
 
-                        yield return group;
-                    }
-
-                    // Add message to buffer
-                    buffer.Add(message);
-                }
-
-                // Add what's remaining in buffer
-                if (buffer.Any())
-                {
-                    var group = new MessageGroup(buffer.First().Author, buffer.First().Timestamp, buffer);
-
-                    yield return group;
-                }
-            }
-
-            private string Format(IFormattable obj, string format) =>
-                obj.ToString(format, CultureInfo.InvariantCulture);
+            private string Format(IFormattable obj, string format)
+                => obj.ToString(format, CultureInfo.InvariantCulture);
 
             private string FormatDate(DateTime dateTime) => Format(dateTime, _dateFormat);
 

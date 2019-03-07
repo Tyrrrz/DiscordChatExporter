@@ -23,8 +23,5 @@ namespace DiscordChatExporter.Cli.Verbs.Options
 
         [Option("dateformat", Default = null, HelpText = "Date format used in output.")]
         public string DateFormat { get; set; }
-
-        [Option("grouplimit", Default = 0, HelpText = "Message group limit.")]
-        public int MessageGroupLimit { get; set; }
     }
 }

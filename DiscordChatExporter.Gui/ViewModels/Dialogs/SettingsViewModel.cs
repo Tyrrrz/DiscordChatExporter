@@ -1,6 +1,5 @@
 ﻿using DiscordChatExporter.Core.Services;
 using DiscordChatExporter.Gui.ViewModels.Framework;
-using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Gui.ViewModels.Dialogs
 {
@@ -18,12 +17,6 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
         {
             get => _settingsService.DateFormat;
             set => _settingsService.DateFormat = value;
-        }
-
-        public int MessageGroupLimit
-        {
-            get => _settingsService.MessageGroupLimit;
-            set => _settingsService.MessageGroupLimit = value.ClampMin(0);
         }
 
         public SettingsViewModel(SettingsService settingsService)

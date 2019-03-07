@@ -8,7 +8,6 @@ namespace DiscordChatExporter.Core.Services
         public bool IsAutoUpdateEnabled { get; set; } = true;
 
         public string DateFormat { get; set; } = "dd-MMM-yy hh:mm tt";
-        public int MessageGroupLimit { get; set; } = 20;
 
         public AuthToken LastToken { get; set; }
         public ExportFormat LastExportFormat { get; set; } = ExportFormat.HtmlDark;

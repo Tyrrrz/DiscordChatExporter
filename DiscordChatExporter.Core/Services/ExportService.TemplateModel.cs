@@ -18,14 +18,12 @@ namespace DiscordChatExporter.Core.Services
             private readonly ExportFormat _format;
             private readonly ChatLog _log;
             private readonly string _dateFormat;
-            private readonly int _messageGroupLimit;
 
-            public TemplateModel(ExportFormat format, ChatLog log, string dateFormat, int messageGroupLimit)
+            public TemplateModel(ExportFormat format, ChatLog log, string dateFormat)
             {
                 _format = format;
                 _log = log;
                 _dateFormat = dateFormat;
-                _messageGroupLimit = messageGroupLimit;
             }
 
             private IEnumerable<MessageGroup> GroupMessages(IEnumerable<Message> messages)
@@ -39,8 +37,7 @@ namespace DiscordChatExporter.Core.Services
                         buffer.Any() &&
                         (
                             message.Author.Id != buffer.First().Author.Id || // when author changes
-                            (message.Timestamp - buffer.Last().Timestamp).TotalMinutes > 7 || // when more than 7 minutes passed since last message
-                            buffer.Count >= _messageGroupLimit // when group is full
+                            (message.Timestamp - buffer.Last().Timestamp).TotalMinutes > 7 // when more than 7 minutes passed since last message
                         );
 
                     // If condition is true - flush buffer

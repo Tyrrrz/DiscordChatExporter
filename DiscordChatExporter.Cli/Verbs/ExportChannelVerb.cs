@@ -26,8 +26,6 @@ namespace DiscordChatExporter.Cli.Verbs
             // Configure settings
             if (Options.DateFormat.IsNotBlank())
                 settingsService.DateFormat = Options.DateFormat;
-            if (Options.MessageGroupLimit > 0)
-                settingsService.MessageGroupLimit = Options.MessageGroupLimit;
 
             // Track progress
             Console.Write($"Exporting channel [{Options.ChannelId}]... ");

@@ -1,3 +1,9 @@
+### v2.10.2 (10-Mar-2019)
+
+- [HTML] Updated message grouping algorithm to make it the same as in Discord. Removed "message group limit" setting and parameter.
+- [HTML] Added small margin at the end of the chatlog so it doesn't look like it was truncated.
+- [CLI] Fixed an issue where the app would crash if stdout was redirected. Progress will not be reported in such cases.
+
 ### v2.10.1 (06-Mar-2019)
 
 - [HTML] Fixed an issue where multiple emojis on a single line would get rendered as one emoji.

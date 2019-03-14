@@ -1,3 +1,8 @@
+### v2.11 (14-Mar-2019)
+
+- [HTML] Added syntax highlighting for multiline code blocks via Highlight.js.
+- Added retry policy for all 5xx status codes to prevent random crashes.
+
 ### v2.10.2 (10-Mar-2019)
 
 - [HTML] Updated message grouping algorithm to make it the same as in Discord. Removed "message group limit" setting and parameter.

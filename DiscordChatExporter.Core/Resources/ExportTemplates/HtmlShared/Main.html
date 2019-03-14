@@ -2,15 +2,29 @@
 <html lang="en">
 
 <head>
+    {{~ # Metadata ~}}
     <title>{{ Model.Guild.Name | html.escape }} - {{ Model.Channel.Name | html.escape }}</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
+
+    {{~ # Styles ~}}
     <style>
         {{ include "HtmlShared.Main.css" }}
     </style>
     <style>
         {{ ThemeStyleSheet }}
     </style>
+
+    {{~ # Syntax highlighting ~}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/{{HighlightJsStyleName}}.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.pre--multiline').forEach((block) => {
+                hljs.highlightBlock(block);
+            });
+        });
+    </script>
 </head>
 <body>
     

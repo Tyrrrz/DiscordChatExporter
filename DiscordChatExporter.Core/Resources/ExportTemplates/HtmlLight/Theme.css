@@ -14,12 +14,12 @@ a {
 }
 
 .pre {
-    background-color: #f9f9f9;
+    background-color: #f9f9f9 !important;
 }
 
 .pre--multiline {
-    border-color: #f3f3f3;
-    color: #657b83;
+    border-color: #f3f3f3 !important;
+    color: #657b83 !important;
 }
 
 .mention {

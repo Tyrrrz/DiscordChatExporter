@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Onova;
+using Onova.Exceptions;
 using Onova.Services;
 
 namespace DiscordChatExporter.Core.Services
 {
-    public class UpdateService
+    public class UpdateService : IDisposable
     {
         private readonly SettingsService _settingsService;
 
@@ -23,38 +24,56 @@ namespace DiscordChatExporter.Core.Services
 
         public async Task<Version> CheckPrepareUpdateAsync()
         {
-            // If auto-update is disabled - don't check for updates
-            if (!_settingsService.IsAutoUpdateEnabled)
-                return null;
+            try
+            {
+                // If auto-update is disabled - don't check for updates
+                if (!_settingsService.IsAutoUpdateEnabled)
+                    return null;
 
-            // Cleanup leftover files
-            _updateManager.Cleanup();
+                // Check for updates
+                var check = await _updateManager.CheckForUpdatesAsync();
+                if (!check.CanUpdate)
+                    return null;
 
-            // Check for updates
-            var check = await _updateManager.CheckForUpdatesAsync();
-            if (!check.CanUpdate)
-                return null;
-
-            // Prepare the update
-            if (!_updateManager.IsUpdatePrepared(check.LastVersion))
+                // Prepare the update
                 await _updateManager.PrepareUpdateAsync(check.LastVersion);
 
-            return _updateVersion = check.LastVersion;
+                return _updateVersion = check.LastVersion;
+            }
+            catch (UpdaterAlreadyLaunchedException)
+            {
+                return null;
+            }
+            catch (LockFileNotAcquiredException)
+            {
+                return null;
+            }
         }
 
         public void FinalizeUpdate(bool needRestart)
         {
-            // Check if an update is pending
-            if (_updateVersion == null)
-                return;
+            try
+            {
+                // Check if an update is pending
+                if (_updateVersion == null)
+                    return;
 
-            // Check if the updater has already been launched
-            if (_updaterLaunched)
-                return;
+                // Check if the updater has already been launched
+                if (_updaterLaunched)
+                    return;
 
-            // Launch the updater
-            _updateManager.LaunchUpdater(_updateVersion, needRestart);
-            _updaterLaunched = true;
+                // Launch the updater
+                _updateManager.LaunchUpdater(_updateVersion, needRestart);
+                _updaterLaunched = true;
+            }
+            catch (UpdaterAlreadyLaunchedException)
+            {
+            }
+            catch (LockFileNotAcquiredException)
+            {
+            }
         }
+
+        public void Dispose() => _updateManager.Dispose();
     }
 }

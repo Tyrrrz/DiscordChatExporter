@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using DiscordChatExporter.Core.Internal;
 using DiscordChatExporter.Core.Models;
 using Scriban;
@@ -18,7 +19,7 @@ namespace DiscordChatExporter.Core.Services
             _settingsService = settingsService;
         }
 
-        private void ExportChatLogSingle(ChatLog chatLog, string filePath, ExportFormat format)
+        private async Task ExportChatLogSingleAsync(ChatLog chatLog, string filePath, ExportFormat format)
         {
             // Create template loader
             var loader = new TemplateLoader();
@@ -39,7 +40,6 @@ namespace DiscordChatExporter.Core.Services
 
             // Create template model
             var templateModel = new TemplateModel(format, chatLog, _settingsService.DateFormat);
-
             context.PushGlobal(templateModel.GetScriptObject());
 
             // Create directory
@@ -54,11 +54,11 @@ namespace DiscordChatExporter.Core.Services
                 context.PushOutput(new TextWriterOutput(output));
 
                 // Render output
-                context.Evaluate(template.Page);
+                await context.EvaluateAsync(template.Page);
             }
         }
 
-        private void ExportChatLogPartitioned(IReadOnlyList<ChatLog> partitions, string filePath, ExportFormat format)
+        private async Task ExportChatLogPartitionedAsync(IReadOnlyList<ChatLog> partitions, string filePath, ExportFormat format)
         {
             // Split file path into components
             var dirPath = Path.GetDirectoryName(filePath);
@@ -77,20 +77,20 @@ namespace DiscordChatExporter.Core.Services
                     partitionFilePath = Path.Combine(dirPath, partitionFilePath);
 
                 // Export
-                ExportChatLogSingle(partition, partitionFilePath, format);
+                await ExportChatLogSingleAsync(partition, partitionFilePath, format);
 
                 // Increment partition number
                 partitionNumber++;
             }
         }
 
-        public void ExportChatLog(ChatLog chatLog, string filePath, ExportFormat format,
+        public async Task ExportChatLogAsync(ChatLog chatLog, string filePath, ExportFormat format,
             int? partitionLimit = null)
         {
             // If partitioning is disabled or there are fewer messages in chat log than the limit - process it without partitioning
             if (partitionLimit == null || partitionLimit <= 0 || chatLog.Messages.Count <= partitionLimit)
             {
-                ExportChatLogSingle(chatLog, filePath, format);
+                await ExportChatLogSingleAsync(chatLog, filePath, format);
             }
             // Otherwise split into partitions and export separately
             else
@@ -100,7 +100,7 @@ namespace DiscordChatExporter.Core.Services
                     .Select(g => new ChatLog(chatLog.Guild, chatLog.Channel, chatLog.From, chatLog.To, g, chatLog.Mentionables))
                     .ToArray();
 
-                ExportChatLogPartitioned(partitions, filePath, format);
+                await ExportChatLogPartitionedAsync(partitions, filePath, format);
             }
         }
     }

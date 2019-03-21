@@ -48,7 +48,7 @@ namespace DiscordChatExporter.Cli.Verbs
                 }
 
                 // Export
-                exportService.ExportChatLog(chatLog, filePath, Options.ExportFormat, Options.PartitionLimit);
+                await exportService.ExportChatLogAsync(chatLog, filePath, Options.ExportFormat, Options.PartitionLimit);
             }
         }
     }

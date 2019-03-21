@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Threading.Tasks;
 using DiscordChatExporter.Core.Models;
 using Scriban;
 using Scriban.Parsing;
@@ -26,6 +27,11 @@ namespace DiscordChatExporter.Core.Services
             public string Load(TemplateContext context, SourceSpan callerSpan, string templatePath)
             {
                 return Assembly.GetExecutingAssembly().GetManifestResourceString(templatePath);
+            }
+
+            public ValueTask<string> LoadAsync(TemplateContext context, SourceSpan callerSpan, string templatePath)
+            {
+                return new ValueTask<string>(Load(context, callerSpan, templatePath));
             }
 
             public string Load(ExportFormat format)

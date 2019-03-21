@@ -278,7 +278,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                         dialog.From, dialog.To, operation);
 
                     // Export
-                    _exportService.ExportChatLog(chatLog, filePath, dialog.SelectedFormat,
+                    await _exportService.ExportChatLogAsync(chatLog, filePath, dialog.SelectedFormat,
                         dialog.PartitionLimit);
 
                     // Notify completion

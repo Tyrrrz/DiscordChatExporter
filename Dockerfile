@@ -1,13 +1,12 @@
-FROM mono:5
-WORKDIR /root/build
-COPY DiscordChatExporter.sln favicon.ico ./
-COPY DiscordChatExporter.Core DiscordChatExporter.Core
+FROM microsoft/dotnet:2.1-sdk AS build
+WORKDIR /src
 COPY DiscordChatExporter.Core.Markdown DiscordChatExporter.Core.Markdown
+COPY DiscordChatExporter.Core DiscordChatExporter.Core
 COPY DiscordChatExporter.Cli DiscordChatExporter.Cli
-RUN msbuild ./DiscordChatExporter.Cli/DiscordChatExporter.Cli.csproj /t:Restore
-RUN msbuild ./DiscordChatExporter.Cli/DiscordChatExporter.Cli.csproj /p:Configuration=Release
+COPY DiscordChatExporter.sln favicon.ico ./
+RUN dotnet build DiscordChatExporter.Cli -c Release -f netcoreapp2.1
 
-FROM mono:5
-COPY --from=0 /root/build/DiscordChatExporter.Cli/bin/Release/net461 /root/bin
-WORKDIR /a
-ENTRYPOINT ["mono", "/root/bin/DiscordChatExporter.Cli.exe"]
+FROM build AS app
+WORKDIR /app
+COPY --from=build /src/DiscordChatExporter.Cli/bin/Release/netcoreapp2.1 ./
+ENTRYPOINT ["dotnet", "DiscordChatExporter.Cli.dll"]

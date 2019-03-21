@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net461</TargetFramework>
+        <TargetFrameworks>net46;netcoreapp2.1</TargetFrameworks>
         <Version>2.11</Version>
         <Company>Tyrrrz</Company>
         <Copyright>Copyright (c) Alexey Golub</Copyright>

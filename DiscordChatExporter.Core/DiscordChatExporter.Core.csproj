@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net461</TargetFramework>
+        <TargetFrameworks>net46;netstandard2.0</TargetFrameworks>
     </PropertyGroup>
 
     <ItemGroup>
@@ -13,10 +13,6 @@
         <EmbeddedResource Include="Resources\ExportTemplates\HtmlDark\Theme.css" />
         <EmbeddedResource Include="Resources\ExportTemplates\HtmlLight\Theme.css" />
         <EmbeddedResource Include="Resources\ExportTemplates\Csv\Template.csv" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Reference Include="mscorlib" />
     </ItemGroup>
 
     <ItemGroup>

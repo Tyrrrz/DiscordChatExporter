@@ -1,5 +1,4 @@
 ﻿using System;
-using ByteSizeLib;
 
 namespace DiscordChatExporter.Core.Models
 {
@@ -23,9 +22,9 @@ namespace DiscordChatExporter.Core.Models
                                FileName.EndsWith(".gif", StringComparison.OrdinalIgnoreCase) ||
                                FileName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase);
 
-        public ByteSize FileSize { get; }
+        public FileSize FileSize { get; }
 
-        public Attachment(string id, int? width, int? height, string url, string fileName, ByteSize fileSize)
+        public Attachment(string id, int? width, int? height, string url, string fileName, FileSize fileSize)
         {
             Id = id;
             Url = url;

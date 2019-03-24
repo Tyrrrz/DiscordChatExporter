@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
-using ByteSizeLib;
 using DiscordChatExporter.Core.Internal;
 using DiscordChatExporter.Core.Models;
 using Newtonsoft.Json.Linq;
@@ -72,7 +71,7 @@ namespace DiscordChatExporter.Core.Services
             var fileName = json["filename"].Value<string>();
             var fileSizeBytes = json["size"].Value<long>();
 
-            var fileSize = ByteSize.FromBytes(fileSizeBytes);
+            var fileSize = new FileSize(fileSizeBytes);
 
             return new Attachment(id, width, height, url, fileName, fileSize);
         }

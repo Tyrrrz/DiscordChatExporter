@@ -7,6 +7,7 @@
         <Company>Tyrrrz</Company>
         <Copyright>Copyright (c) Alexey Golub</Copyright>
         <ApplicationIcon>..\favicon.ico</ApplicationIcon>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     </PropertyGroup>
 
     <ItemGroup>

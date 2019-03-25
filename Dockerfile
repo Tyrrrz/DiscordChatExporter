@@ -17,13 +17,13 @@ COPY DiscordChatExporter.Core.Markdown DiscordChatExporter.Core.Markdown
 COPY DiscordChatExporter.Core DiscordChatExporter.Core
 COPY DiscordChatExporter.Cli DiscordChatExporter.Cli
 
-RUN dotnet build DiscordChatExporter.Cli -c Release -f netcoreapp2.1
+RUN dotnet publish DiscordChatExporter.Cli -c Release -f netcoreapp2.1
 
 # Run
 FROM microsoft/dotnet:2.1-runtime AS run
 WORKDIR /app
 
-COPY --from=build /src/DiscordChatExporter.Cli/bin/Release/netcoreapp2.1 ./
+COPY --from=build /src/DiscordChatExporter.Cli/bin/Release/netcoreapp2.1/publish ./
 
 ENTRYPOINT ["dotnet", "DiscordChatExporter.Cli.dll"]
 CMD ["-o", "out/"]

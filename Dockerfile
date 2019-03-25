@@ -25,5 +25,5 @@ WORKDIR /app
 
 COPY --from=build /src/DiscordChatExporter.Cli/bin/Release/netcoreapp2.1/publish ./
 
-ENTRYPOINT ["dotnet", "DiscordChatExporter.Cli.dll"]
-CMD ["-o", "out"]
+WORKDIR /app/out
+ENTRYPOINT ["dotnet", "/app/DiscordChatExporter.Cli.dll"]

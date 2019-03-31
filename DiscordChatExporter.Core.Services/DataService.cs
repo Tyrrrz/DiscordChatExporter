@@ -4,11 +4,11 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Models;
-using Newtonsoft.Json.Linq;
-using DiscordChatExporter.Core.Internal;
+using DiscordChatExporter.Core.Services.Exceptions;
+using DiscordChatExporter.Core.Services.Internal;
 using Failsafe;
+using Newtonsoft.Json.Linq;
 using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Services
@@ -40,13 +40,13 @@ namespace DiscordChatExporter.Core.Services
                         : new AuthenticationHeaderValue(token.Value);
 
                     // Add parameters
-                    foreach (var parameter in parameters.ExceptBlank())
+                    foreach (var parameter in parameters)
                     {
                         var key = parameter.SubstringUntil("=");
                         var value = parameter.SubstringAfter("=");
 
                         // Skip empty values
-                        if (value.IsBlank())
+                        if (value.IsEmpty())
                             continue;
 
                         request.RequestUri = request.RequestUri.SetQueryParameter(key, value);

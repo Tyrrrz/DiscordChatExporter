@@ -13,11 +13,12 @@
     <ItemGroup>
         <PackageReference Include="CommandLineParser" Version="2.3.0" />
         <PackageReference Include="Stylet" Version="1.1.22" />
-        <PackageReference Include="Tyrrrz.Extensions" Version="1.5.1" />
+        <PackageReference Include="Tyrrrz.Extensions" Version="1.6.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\DiscordChatExporter.Core\DiscordChatExporter.Core.csproj" />
+      <ProjectReference Include="..\DiscordChatExporter.Core.Models\DiscordChatExporter.Core.Models.csproj" />
+      <ProjectReference Include="..\DiscordChatExporter.Core.Services\DiscordChatExporter.Core.Services.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DiscordChatExporter.Core.Helpers;
 using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.Core.Services;
+using DiscordChatExporter.Core.Services.Helpers;
 using DiscordChatExporter.Gui.ViewModels.Components;
 using DiscordChatExporter.Gui.ViewModels.Framework;
-using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Gui.ViewModels.Dialogs
 {
@@ -85,7 +84,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             }
 
             // If canceled - return
-            if (OutputPath.IsBlank())
+            if (OutputPath == null)
                 return;
 
             // Close dialog

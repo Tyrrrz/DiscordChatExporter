@@ -9,7 +9,7 @@
 
     {{~ # Styles ~}}
     <style>
-        {{ include "HtmlShared.Main.css" }}
+        {{ include "HtmlShared.css" }}
     </style>
     <style>
         {{ ThemeStyleSheet }}
@@ -41,7 +41,7 @@
             <div class="info__channel-topic">{{ Model.Channel.Topic | html.escape }}</div>
         {{~ end ~}}
 
-        <div class="info__channel-message-count">{{ Model.Messages | array.size | Format "N0" }} messages</div>
+        <div class="info__channel-message-count">{{ Model.Messages | array.size | object.format "N0" }} messages</div>
         
         {{~ if Model.From || Model.To ~}}
             <div class="info__channel-date-range">

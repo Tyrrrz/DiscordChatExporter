@@ -3,16 +3,15 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using DiscordChatExporter.Core.Models;
-using Tyrrrz.Extensions;
 
-namespace DiscordChatExporter.Core.Helpers
+namespace DiscordChatExporter.Core.Services.Helpers
 {
     public static class ExportHelper
     {
-        public static bool IsDirectoryPath(string path)
-            => path.Last() == Path.DirectorySeparatorChar ||
-               path.Last() == Path.AltDirectorySeparatorChar ||
-               Path.GetExtension(path).IsBlank();
+        public static bool IsDirectoryPath(string path) =>
+            path.Last() == Path.DirectorySeparatorChar ||
+            path.Last() == Path.AltDirectorySeparatorChar ||
+            Path.GetExtension(path) == null;
 
         public static string GetDefaultExportFileName(ExportFormat format, Guild guild, Channel channel,
             DateTime? from = null, DateTime? to = null)

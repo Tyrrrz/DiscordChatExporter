@@ -19,7 +19,7 @@ namespace DiscordChatExporter.Core.Models
             get
             {
                 // Custom emoji
-                if (Id.IsNotBlank())
+                if (Id != null)
                 {
                     // Animated
                     if (IsAnimated)

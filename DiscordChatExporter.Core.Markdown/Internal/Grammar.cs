@@ -115,7 +115,7 @@ namespace DiscordChatExporter.Core.Markdown.Internal
 
         // <:lul:123456> or <a:lul:123456>
         private static readonly Parser<Node> CustomEmojiNode = Parse.RegexMatch("<(a)?:(.+?):(\\d+)>")
-            .Select(m => new EmojiNode(m.Value, m.Groups[3].Value, m.Groups[2].Value, m.Groups[1].Value.IsNotBlank()));
+            .Select(m => new EmojiNode(m.Value, m.Groups[3].Value, m.Groups[2].Value, !m.Groups[1].Value.IsEmpty()));
 
         // Combinator, order matters
         private static readonly Parser<Node> AnyEmojiNode = StandardEmojiNode.Or(CustomEmojiNode);

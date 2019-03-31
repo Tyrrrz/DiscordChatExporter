@@ -10,13 +10,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Readme.md = Readme.md
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscordChatExporter.Core.Markdown", "DiscordChatExporter.Core.Markdown\DiscordChatExporter.Core.Markdown.csproj", "{14D02A08-E820-4012-B805-663B9A3D73E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordChatExporter.Core.Models", "DiscordChatExporter.Core.Models\DiscordChatExporter.Core.Models.csproj", "{67A9D184-4656-4CE1-9D75-BDDCBCAFB200}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordChatExporter.Core.Render", "DiscordChatExporter.Core.Render\DiscordChatExporter.Core.Render.csproj", "{D33F7443-4EEB-4E53-99BE-6045A62FC8C8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscordChatExporter.Core.Services", "DiscordChatExporter.Core.Services\DiscordChatExporter.Core.Services.csproj", "{707C0CD0-A7E0-4CAB-8DB9-07A45CB87377}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordChatExporter.Gui", "DiscordChatExporter.Gui\DiscordChatExporter.Gui.csproj", "{732A67AF-93DE-49DF-B10F-FD74710B7863}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscordChatExporter.Core", "DiscordChatExporter.Core\DiscordChatExporter.Core.csproj", "{707C0CD0-A7E0-4CAB-8DB9-07A45CB87377}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscordChatExporter.Cli", "DiscordChatExporter.Cli\DiscordChatExporter.Cli.csproj", "{D08624B6-3081-4BCB-91F8-E9832FACC6CE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordChatExporter.Core.Markdown", "DiscordChatExporter.Core.Markdown\DiscordChatExporter.Core.Markdown.csproj", "{14D02A08-E820-4012-B805-663B9A3D73E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,6 +44,14 @@ Global
 		{14D02A08-E820-4012-B805-663B9A3D73E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14D02A08-E820-4012-B805-663B9A3D73E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14D02A08-E820-4012-B805-663B9A3D73E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D33F7443-4EEB-4E53-99BE-6045A62FC8C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D33F7443-4EEB-4E53-99BE-6045A62FC8C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D33F7443-4EEB-4E53-99BE-6045A62FC8C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D33F7443-4EEB-4E53-99BE-6045A62FC8C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67A9D184-4656-4CE1-9D75-BDDCBCAFB200}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67A9D184-4656-4CE1-9D75-BDDCBCAFB200}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67A9D184-4656-4CE1-9D75-BDDCBCAFB200}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67A9D184-4656-4CE1-9D75-BDDCBCAFB200}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

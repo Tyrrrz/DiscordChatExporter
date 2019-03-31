@@ -97,9 +97,13 @@
     <Resource Include="..\favicon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DiscordChatExporter.Core\DiscordChatExporter.Core.csproj">
+    <ProjectReference Include="..\DiscordChatExporter.Core.Models\DiscordChatExporter.Core.Models.csproj">
+      <Project>{67a9d184-4656-4ce1-9d75-bddcbcafb200}</Project>
+      <Name>DiscordChatExporter.Core.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscordChatExporter.Core.Services\DiscordChatExporter.Core.Services.csproj">
       <Project>{707c0cd0-a7e0-4cab-8db9-07a45cb87377}</Project>
-      <Name>DiscordChatExporter.Core</Name>
+      <Name>DiscordChatExporter.Core.Services</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -143,7 +147,7 @@
       <Version>2.0.20525</Version>
     </PackageReference>
     <PackageReference Include="Tyrrrz.Extensions">
-      <Version>1.5.1</Version>
+      <Version>1.6.0</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

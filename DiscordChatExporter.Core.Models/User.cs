@@ -1,5 +1,4 @@
 ﻿using System;
-using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Models
 {
@@ -20,14 +19,14 @@ namespace DiscordChatExporter.Core.Models
         public string AvatarHash { get; }
 
         public bool IsAvatarAnimated =>
-            AvatarHash.IsNotBlank() && AvatarHash.StartsWith("a_", StringComparison.Ordinal);
+            AvatarHash != null && AvatarHash.StartsWith("a_", StringComparison.Ordinal);
 
         public string AvatarUrl
         {
             get
             {
                 // Custom avatar
-                if (AvatarHash.IsNotBlank())
+                if (AvatarHash != null)
                 {
                     // Animated
                     if (IsAvatarAnimated)

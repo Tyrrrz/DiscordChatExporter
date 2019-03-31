@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace DiscordChatExporter.Core.Exceptions
+namespace DiscordChatExporter.Core.Services.Exceptions
 {
     public class HttpErrorStatusCodeException : Exception
     {

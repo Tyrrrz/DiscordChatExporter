@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
-using DiscordChatExporter.Core.Internal;
 using DiscordChatExporter.Core.Models;
+using DiscordChatExporter.Core.Services.Internal;
 using Newtonsoft.Json.Linq;
 using Tyrrrz.Extensions;
 
@@ -41,14 +41,14 @@ namespace DiscordChatExporter.Core.Services
             var guildId = json["guild_id"]?.Value<string>();
 
             // If the guild ID is blank, it's direct messages
-            if (guildId.IsBlank())
+            if (guildId == null)
                 guildId = Guild.DirectMessages.Id;
 
             // Try to extract name
             var name = json["name"]?.Value<string>();
 
             // If the name is blank, it's direct messages
-            if (name.IsBlank())
+            if (name == null)
                 name = json["recipients"].Select(ParseUser).Select(u => u.Name).JoinToString(", ");
 
             return new Channel(id, parentId, guildId, name, topic, type);

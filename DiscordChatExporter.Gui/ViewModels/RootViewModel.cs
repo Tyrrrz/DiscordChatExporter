@@ -4,10 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using DiscordChatExporter.Core.Exceptions;
-using DiscordChatExporter.Core.Helpers;
 using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.Core.Services;
+using DiscordChatExporter.Core.Services.Exceptions;
+using DiscordChatExporter.Core.Services.Helpers;
 using DiscordChatExporter.Gui.ViewModels.Components;
 using DiscordChatExporter.Gui.ViewModels.Framework;
 using Gress;
@@ -62,9 +62,9 @@ namespace DiscordChatExporter.Gui.ViewModels
             // Update busy state when progress manager changes
             ProgressManager.Bind(o => o.IsActive, (sender, args) => IsBusy = ProgressManager.IsActive);
             ProgressManager.Bind(o => o.IsActive,
-                (sender, args) => IsProgressIndeterminate = ProgressManager.IsActive && ProgressManager.Progress <= 0);
+                (sender, args) => IsProgressIndeterminate = ProgressManager.IsActive && ProgressManager.Progress.IsEither(0, 1));
             ProgressManager.Bind(o => o.Progress,
-                (sender, args) => IsProgressIndeterminate = ProgressManager.IsActive && ProgressManager.Progress <= 0);
+                (sender, args) => IsProgressIndeterminate = ProgressManager.IsActive && ProgressManager.Progress.IsEither(0, 1));
         }
 
         protected override async void OnViewLoaded()
@@ -122,7 +122,7 @@ namespace DiscordChatExporter.Gui.ViewModels
             await _dialogManager.ShowDialogAsync(dialog);
         }
 
-        public bool CanPopulateGuildsAndChannels => !IsBusy && TokenValue.IsNotBlank();
+        public bool CanPopulateGuildsAndChannels => !IsBusy && TokenValue != null && !TokenValue.IsWhiteSpace();
 
         public async void PopulateGuildsAndChannels()
         {
@@ -235,7 +235,7 @@ namespace DiscordChatExporter.Gui.ViewModels
             }
         }
 
-        public bool CanExportChannels => !IsBusy && SelectedChannels.NotNullAndAny();
+        public bool CanExportChannels => !IsBusy && SelectedChannels != null && SelectedChannels.Any();
 
         public async void ExportChannels()
         {

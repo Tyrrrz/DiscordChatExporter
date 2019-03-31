@@ -1,10 +1,10 @@
-﻿using System;
+﻿using DiscordChatExporter.Core.Models;
+using System;
 using System.Collections.Generic;
-using DiscordChatExporter.Core.Models;
 
-namespace DiscordChatExporter.Core.Services
+namespace DiscordChatExporter.Core.Render
 {
-    public partial class ExportService
+    public partial class HtmlChatLogRenderer
     {
         private class MessageGroup
         {

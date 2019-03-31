@@ -1,6 +1,4 @@
-﻿using Tyrrrz.Extensions;
-
-namespace DiscordChatExporter.Core.Models
+﻿namespace DiscordChatExporter.Core.Models
 {
     // https://discordapp.com/developers/docs/resources/guild#guild-object
 
@@ -12,7 +10,7 @@ namespace DiscordChatExporter.Core.Models
 
         public string IconHash { get; }
 
-        public string IconUrl => IconHash.IsNotBlank()
+        public string IconUrl => IconHash != null
             ? $"https://cdn.discordapp.com/icons/{Id}/{IconHash}.png"
             : "https://cdn.discordapp.com/embed/avatars/0.png";
 

@@ -46,8 +46,7 @@ namespace DiscordChatExporter.Core.Services
                 await CreateRenderer(chatLog, format).RenderAsync(writer);
         }
 
-        public async Task ExportChatLogAsync(ChatLog chatLog, string filePath, ExportFormat format,
-            int? partitionLimit = null)
+        public async Task ExportChatLogAsync(ChatLog chatLog, string filePath, ExportFormat format, int? partitionLimit)
         {
             // If partitioning is disabled or there are fewer messages in chat log than the limit - process it without partitioning
             if (partitionLimit == null || partitionLimit <= 0 || chatLog.Messages.Count <= partitionLimit)

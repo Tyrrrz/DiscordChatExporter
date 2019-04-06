@@ -143,8 +143,7 @@ namespace DiscordChatExporter.Core.Rendering
             // Link node
             if (node is LinkNode linkNode)
             {
-                var escapedUrl = Uri.EscapeUriString(linkNode.Url);
-                return $"<a href=\"{escapedUrl}\">{HtmlEncode(linkNode.Title)}</a>";
+                return $"<a href=\"{Uri.EscapeUriString(linkNode.Url)}\">{HtmlEncode(linkNode.Title)}</a>";
             }
 
             // All other nodes - simply return lexeme

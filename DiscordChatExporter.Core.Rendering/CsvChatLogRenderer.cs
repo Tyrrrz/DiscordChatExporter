@@ -8,7 +8,7 @@ using DiscordChatExporter.Core.Markdown;
 using DiscordChatExporter.Core.Models;
 using Tyrrrz.Extensions;
 
-namespace DiscordChatExporter.Core.Render
+namespace DiscordChatExporter.Core.Rendering
 {
     public class CsvChatLogRenderer : IChatLogRenderer
     {

@@ -5,13 +5,13 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Tyrrrz.Extensions;
 
-namespace DiscordChatExporter.Core.Render
+namespace DiscordChatExporter.Core.Rendering
 {
     public partial class HtmlChatLogRenderer
     {
         private class TemplateLoader : ITemplateLoader
         {
-            private const string ResourceRootNamespace = "DiscordChatExporter.Core.Render.Resources";
+            private const string ResourceRootNamespace = "DiscordChatExporter.Core.Rendering.Resources";
 
             public string Load(string templatePath) =>
                 Assembly.GetExecutingAssembly().GetManifestResourceString($"{ResourceRootNamespace}.{templatePath}");

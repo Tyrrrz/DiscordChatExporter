@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace DiscordChatExporter.Core.Render
+namespace DiscordChatExporter.Core.Rendering
 {
     public partial class HtmlChatLogRenderer
     {

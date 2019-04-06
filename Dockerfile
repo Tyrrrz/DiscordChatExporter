@@ -6,7 +6,7 @@ COPY favicon.ico ./
 
 COPY DiscordChatExporter.Core.Markdown DiscordChatExporter.Core.Markdown
 COPY DiscordChatExporter.Core.Models DiscordChatExporter.Core.Models
-COPY DiscordChatExporter.Core.Render DiscordChatExporter.Core.Render
+COPY DiscordChatExporter.Core.Rendering DiscordChatExporter.Core.Rendering
 COPY DiscordChatExporter.Core.Services DiscordChatExporter.Core.Services
 COPY DiscordChatExporter.Cli DiscordChatExporter.Cli
 

@@ -11,7 +11,7 @@ using Scriban;
 using Scriban.Runtime;
 using Tyrrrz.Extensions;
 
-namespace DiscordChatExporter.Core.Render
+namespace DiscordChatExporter.Core.Rendering
 {
     public partial class HtmlChatLogRenderer : IChatLogRenderer
     {

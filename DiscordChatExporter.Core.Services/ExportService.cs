@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Models;
-using DiscordChatExporter.Core.Render;
+using DiscordChatExporter.Core.Rendering;
 using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Services

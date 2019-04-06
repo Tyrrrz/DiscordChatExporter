@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DiscordChatExporter.Core.Models\DiscordChatExporter.Core.Models.csproj" />
-    <ProjectReference Include="..\DiscordChatExporter.Core.Render\DiscordChatExporter.Core.Render.csproj" />
+    <ProjectReference Include="..\DiscordChatExporter.Core.Rendering\DiscordChatExporter.Core.Rendering.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>discordchatexporter</id>
+    <title>DiscordChatExporter</title>
+    <version>2.11</version>
+    <owners>Tyrrrz</owners>
+    <authors>Tyrrrz</authors>
+    <copyright>Copyright (C) Alexey Golub</copyright>
+    <summary>Exports Discord chat logs to a file</summary>
+    <description>DiscordChatExporter can be used to export message history from a Discord channel to a file. It works for both direct message chats and guild chats, supports markdown, message grouping, and attachments. The tool also lets you select from/to dates to limit the exported messages. There are options to configure the output, such as date format, color theme, message grouping limit, etc.</description>
+    <tags>discordchatexporter discord export chat logs archive gui</tags>
+    <projectSourceUrl>https://github.com/Tyrrrz/DiscordChatExporter</projectSourceUrl>
+    <packageSourceUrl>https://github.com/Tyrrrz/DiscordChatExporter</packageSourceUrl>
+    <projectUrl>http://tyrrrz.me/Projects/DiscordChatExporter</projectUrl>
+    <releaseNotes>https://github.com/Tyrrrz/DiscordChatExporter/blob/master/Changelog.md</releaseNotes>
+    <iconUrl>https://raw.githubusercontent.com/Tyrrrz/DiscordChatExporter/master/favicon.png</iconUrl>
+    <licenseUrl>https://raw.githubusercontent.com/Tyrrrz/DiscordChatExporter/master/License.txt</licenseUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <bugTrackerUrl>https://github.com/Tyrrrz/DiscordChatExporter/issues</bugTrackerUrl>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>

@@ -1,19 +1,24 @@
-﻿$ErrorActionPreference = 'Stop';
+﻿$ErrorActionPreference = 'Stop'
+$packageName = $env:ChocolateyPackageName
+$installDirPath = "$(Split-Path -parent $MyInvocation.MyCommand.Definition)"
 
-# --- GUI ---
+# Install package (GUI)
 
 $packageArgs = @{
-  packageName = $env:ChocolateyPackageName
-  unzipLocation = "$(Split-Path -parent $MyInvocation.MyCommand.Definition)"
-  url = 'https://github.com/Tyrrrz/DiscordChatExporter/releases/download/2.11/DiscordChatExporter.zip'
+    packageName   = $packageName
+    unzipLocation = $installDirPath
+    url           = 'https://github.com/Tyrrrz/DiscordChatExporter/releases/download/2.11/DiscordChatExporter.zip'
 }
 Install-ChocolateyZipPackage @packageArgs
 
-# --- CLI ---
+# Mark the executable as GUI
+New-Item (Join-Path $installDirPath "DiscordChatExporter.exe.gui") -ItemType File -Force
+
+# Install package (CLI)
 
 $packageArgs = @{
-  packageName = $env:ChocolateyPackageName
-  unzipLocation = "$(Split-Path -parent $MyInvocation.MyCommand.Definition)"
-  url = 'https://github.com/Tyrrrz/DiscordChatExporter/releases/download/2.11/DiscordChatExporter.CLI.zip'
+    packageName   = $packageName
+    unzipLocation = $installDirPath
+    url           = 'https://github.com/Tyrrrz/DiscordChatExporter/releases/download/2.11/DiscordChatExporter.CLI.zip'
 }
 Install-ChocolateyZipPackage @packageArgs

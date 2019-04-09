@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Sprache" Version="2.2.0" />
     <PackageReference Include="Tyrrrz.Extensions" Version="1.6.0" />
   </ItemGroup>
 

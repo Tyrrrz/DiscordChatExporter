@@ -5,10 +5,47 @@ namespace DiscordChatExporter.Core.Markdown.Internal
 {
     internal static class Extensions
     {
-        public static void Sort<T, TKey>(this List<T> list, Func<T, TKey> keySelector) =>
-            list.Sort((x, y) => Comparer<TKey>.Default.Compare(keySelector(x), keySelector(y)));
+        public static IEnumerable<ParsedMatch<T>> MatchAll<T>(this IMatcher<T> parser, string input,
+            int startIndex, int length, Func<string, T> fallbackTransform)
+        {
+            // Get end index for simplicity
+            var endIndex = startIndex + length;
 
-        public static IReadOnlyList<ParseResult<T>> Parse<T>(this IParser<T> parser, string input) =>
-            parser.Parse(input, 0, input.Length);
+            // Loop through segments divided by individual matches
+            var currentIndex = startIndex;
+            while (currentIndex < endIndex)
+            {
+                // Parse match within this segment
+                var match = parser.Match(input, currentIndex, endIndex - currentIndex);
+
+                // If there's no match - break
+                if (match == null)
+                    break;
+
+                // If this match doesn't start immediately at offset - transform and yield fallback first
+                if (match.StartIndex > currentIndex)
+                {
+                    var fallback = input.Substring(currentIndex, match.StartIndex - currentIndex);
+                    yield return new ParsedMatch<T>(currentIndex, fallback.Length, fallbackTransform(fallback));
+                }
+
+                // Yield match
+                yield return match;
+
+                // Shift current index to the end of the match
+                currentIndex = match.StartIndex + match.Length;
+            }
+
+            // If EOL wasn't reached - transform and yield remaining part as fallback
+            if (currentIndex < endIndex)
+            {
+                var fallback = input.Substring(currentIndex);
+                yield return new ParsedMatch<T>(currentIndex, fallback.Length, fallbackTransform(fallback));
+            }
+        }
+
+        public static IEnumerable<ParsedMatch<T>> MatchAll<T>(this IMatcher<T> parser, string input,
+            Func<string, T> fallbackHandler) =>
+            parser.MatchAll(input, 0, input.Length, fallbackHandler);
     }
 }

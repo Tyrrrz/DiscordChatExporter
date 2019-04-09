@@ -14,88 +14,88 @@ namespace DiscordChatExporter.Core.Markdown
         /* Formatting */
 
         // Capture until the earliest double asterisk not followed by an asterisk
-        private static readonly IParser<Node> BoldFormattedNodeParser =
-            new RegexParser<Node>(new Regex("\\*\\*(.+?)\\*\\*(?!\\*)", DefaultRegexOptions | RegexOptions.Singleline),
+        private static readonly IMatcher<Node> BoldFormattedNodeMatcher =
+            new RegexMatcher<Node>(new Regex("\\*\\*(.+?)\\*\\*(?!\\*)", DefaultRegexOptions | RegexOptions.Singleline),
                 m => new FormattedNode(m.Value, "**", TextFormatting.Bold, Parse(m.Groups[1].Value)));
 
         // Capture until the earliest single asterisk not preceded or followed by an asterisk
         // Can't have whitespace right after opening or right before closing asterisk
-        private static readonly IParser<Node> ItalicFormattedNodeParser =
-            new RegexParser<Node>(new Regex("\\*(?!\\s)(.+?)(?<!\\s|\\*)\\*(?!\\*)", DefaultRegexOptions | RegexOptions.Singleline),
+        private static readonly IMatcher<Node> ItalicFormattedNodeMatcher =
+            new RegexMatcher<Node>(new Regex("\\*(?!\\s)(.+?)(?<!\\s|\\*)\\*(?!\\*)", DefaultRegexOptions | RegexOptions.Singleline),
                 m => new FormattedNode(m.Value, "*", TextFormatting.Italic, Parse(m.Groups[1].Value)));
 
         // Can't have underscores inside
         // Can't have word characters right after closing underscore
-        private static readonly IParser<Node> ItalicAltFormattedParser =
-            new RegexParser<Node>(new Regex("_([^_]+?)_(?!\\w)", DefaultRegexOptions | RegexOptions.Singleline),
+        private static readonly IMatcher<Node> ItalicAltFormattedNodeMatcher =
+            new RegexMatcher<Node>(new Regex("_([^_]+?)_(?!\\w)", DefaultRegexOptions | RegexOptions.Singleline),
                 m => new FormattedNode(m.Value, "_", TextFormatting.Italic, Parse(m.Groups[1].Value)));
 
         // Treated as a separate entity for simplicity
         // Capture until the earliest triple asterisk not preceded or followed by an asterisk
-        private static readonly IParser<Node> ItalicBoldFormattedNodeParser =
-            new RegexParser<Node>(new Regex("\\*(\\*\\*(?:.+?)\\*\\*)\\*(?!\\*)", DefaultRegexOptions | RegexOptions.Singleline),
+        private static readonly IMatcher<Node> ItalicBoldFormattedNodeMatcher =
+            new RegexMatcher<Node>(new Regex("\\*(\\*\\*(?:.+?)\\*\\*)\\*(?!\\*)", DefaultRegexOptions | RegexOptions.Singleline),
                 m => new FormattedNode(m.Value, "*", TextFormatting.Italic, Parse(m.Groups[1].Value)));
 
         // Capture until the earliest double underscore not followed by an underscore
-        private static readonly IParser<Node> UnderlineFormattedNodeParser =
-            new RegexParser<Node>(new Regex("__(.+?)__(?!_)", DefaultRegexOptions | RegexOptions.Singleline),
+        private static readonly IMatcher<Node> UnderlineFormattedNodeMatcher =
+            new RegexMatcher<Node>(new Regex("__(.+?)__(?!_)", DefaultRegexOptions | RegexOptions.Singleline),
                 m => new FormattedNode(m.Value, "__", TextFormatting.Underline, Parse(m.Groups[1].Value)));
 
         // Treated as a separate entity for simplicity
         // Capture until the earliest triple underscore not preceded or followed by an underscore
-        private static readonly IParser<Node> ItalicUnderlineFormattedNodeParser =
-            new RegexParser<Node>(new Regex("_(__(?:.+?)__)_(?!_)", DefaultRegexOptions | RegexOptions.Singleline),
+        private static readonly IMatcher<Node> ItalicUnderlineFormattedNodeMatcher =
+            new RegexMatcher<Node>(new Regex("_(__(?:.+?)__)_(?!_)", DefaultRegexOptions | RegexOptions.Singleline),
                 m => new FormattedNode(m.Value, "_", TextFormatting.Italic, Parse(m.Groups[1].Value)));
 
         // Strikethrough is safe
-        private static readonly IParser<Node> StrikethroughFormattedNodeParser =
-            new RegexParser<Node>(new Regex("~~(.+?)~~", DefaultRegexOptions | RegexOptions.Singleline),
+        private static readonly IMatcher<Node> StrikethroughFormattedNodeMatcher =
+            new RegexMatcher<Node>(new Regex("~~(.+?)~~", DefaultRegexOptions | RegexOptions.Singleline),
                 m => new FormattedNode(m.Value, "~~", TextFormatting.Strikethrough, Parse(m.Groups[1].Value)));
 
         // Spoiler is safe
-        private static readonly IParser<Node> SpoilerFormattedNodeParser =
-            new RegexParser<Node>(new Regex("\\|\\|(.+?)\\|\\|", DefaultRegexOptions | RegexOptions.Singleline),
+        private static readonly IMatcher<Node> SpoilerFormattedNodeMatcher =
+            new RegexMatcher<Node>(new Regex("\\|\\|(.+?)\\|\\|", DefaultRegexOptions | RegexOptions.Singleline),
                 m => new FormattedNode(m.Value, "||", TextFormatting.Spoiler, Parse(m.Groups[1].Value)));
 
         /* Code blocks */
 
         // Can't have backticks inside and surrounding whitespace is trimmed
-        private static readonly IParser<Node> InlineCodeBlockNodeParser =
-            new RegexParser<Node>(new Regex("`\\s*([^`]+?)\\s*`", DefaultRegexOptions | RegexOptions.Singleline),
+        private static readonly IMatcher<Node> InlineCodeBlockNodeMatcher =
+            new RegexMatcher<Node>(new Regex("`\\s*([^`]+?)\\s*`", DefaultRegexOptions | RegexOptions.Singleline),
                 m => new InlineCodeBlockNode(m.Value, m.Groups[1].Value));
 
         // The first word is a language identifier if it's the only word followed by a newline, the rest is code
-        private static readonly IParser<Node> MultilineCodeBlockNodeParser =
-            new RegexParser<Node>(new Regex("```(?:(\\w*?)?(?:\\s*?\\n))?(.+?)```", DefaultRegexOptions | RegexOptions.Singleline),
+        private static readonly IMatcher<Node> MultilineCodeBlockNodeMatcher =
+            new RegexMatcher<Node>(new Regex("```(?:(\\w*?)?(?:\\s*?\\n))?(.+?)```", DefaultRegexOptions | RegexOptions.Singleline),
                 m => new MultilineCodeBlockNode(m.Value, m.Groups[1].Value, m.Groups[2].Value));
 
         /* Mentions */
 
         // @everyone or @here
-        private static readonly IParser<Node> MetaMentionNodeParser =
-            new RegexParser<Node>(new Regex("@(everyone|here)", DefaultRegexOptions),
+        private static readonly IMatcher<Node> MetaMentionNodeMatcher =
+            new RegexMatcher<Node>(new Regex("@(everyone|here)", DefaultRegexOptions),
                 m => new MentionNode(m.Value, m.Groups[1].Value, MentionType.Meta));
 
         // <@123456> or <@!123456>
-        private static readonly IParser<Node> UserMentionNodeParser =
-            new RegexParser<Node>(new Regex("<@!?(\\d+)>", DefaultRegexOptions),
+        private static readonly IMatcher<Node> UserMentionNodeMatcher =
+            new RegexMatcher<Node>(new Regex("<@!?(\\d+)>", DefaultRegexOptions),
                 m => new MentionNode(m.Value, m.Groups[1].Value, MentionType.User));
 
         // <#123456>
-        private static readonly IParser<Node> ChannelMentionNodeParser =
-            new RegexParser<Node>(new Regex("<#(\\d+)>", DefaultRegexOptions),
+        private static readonly IMatcher<Node> ChannelMentionNodeMatcher =
+            new RegexMatcher<Node>(new Regex("<#(\\d+)>", DefaultRegexOptions),
                 m => new MentionNode(m.Value, m.Groups[1].Value, MentionType.Channel));
 
         // <@&123456>
-        private static readonly IParser<Node> RoleMentionNodeParser =
-            new RegexParser<Node>(new Regex("<@&(\\d+)>", DefaultRegexOptions),
+        private static readonly IMatcher<Node> RoleMentionNodeMatcher =
+            new RegexMatcher<Node>(new Regex("<@&(\\d+)>", DefaultRegexOptions),
                 m => new MentionNode(m.Value, m.Groups[1].Value, MentionType.Role));
 
         /* Emojis */
 
         // Matches all standard unicode emojis
-        private static readonly IParser<Node> StandardEmojiNodeParser =
-            new RegexParser<Node>(new Regex(
+        private static readonly IMatcher<Node> StandardEmojiNodeMatcher =
+            new RegexMatcher<Node>(new Regex(
                 "([\\u2700-\\u27bf]|" +
                 "(?:\\ud83c[\\udde6-\\uddff]){2}|" +
                 "[\\ud800-\\udbff][\\udc00-\\udfff]|" +
@@ -107,33 +107,31 @@ namespace DiscordChatExporter.Core.Markdown
                 m => new EmojiNode(m.Value, m.Groups[1].Value));
 
         // <:lul:123456> or <a:lul:123456>
-        private static readonly IParser<Node> CustomEmojiNodeParser =
-            new RegexParser<Node>(new Regex("<(a)?:(.+?):(\\d+)>", DefaultRegexOptions),
+        private static readonly IMatcher<Node> CustomEmojiNodeMatcher =
+            new RegexMatcher<Node>(new Regex("<(a)?:(.+?):(\\d+)>", DefaultRegexOptions),
                 m => new EmojiNode(m.Value, m.Groups[3].Value, m.Groups[2].Value, !m.Groups[1].Value.IsEmpty()));
 
         /* Links */
 
         // [title](link)
-        private static readonly IParser<Node> TitledLinkNodeParser =
-            new RegexParser<Node>(new Regex("\\[(.+?)\\]\\((.+?)\\)", DefaultRegexOptions),
+        private static readonly IMatcher<Node> TitledLinkNodeMatcher =
+            new RegexMatcher<Node>(new Regex("\\[(.+?)\\]\\((.+?)\\)", DefaultRegexOptions),
                 m => new LinkNode(m.Value, m.Groups[2].Value, m.Groups[1].Value));
 
         // Starts with http:// or https://, stops at the last non-whitespace character followed by whitespace or punctuation character
-        private static readonly IParser<Node> AutoLinkNodeParser =
-            new RegexParser<Node>(new Regex("(https?://\\S*[^\\.,:;\"\'\\s])", DefaultRegexOptions),
+        private static readonly IMatcher<Node> AutoLinkNodeMatcher =
+            new RegexMatcher<Node>(new Regex("(https?://\\S*[^\\.,:;\"\'\\s])", DefaultRegexOptions),
                 m => new LinkNode(m.Value, m.Groups[1].Value));
 
         // Autolink surrounded by angular brackets
-        private static readonly IParser<Node> HiddenLinkNodeParser =
-            new RegexParser<Node>(new Regex("<(https?://\\S*[^\\.,:;\"\'\\s])>", DefaultRegexOptions),
+        private static readonly IMatcher<Node> HiddenLinkNodeMatcher =
+            new RegexMatcher<Node>(new Regex("<(https?://\\S*[^\\.,:;\"\'\\s])>", DefaultRegexOptions),
                 m => new LinkNode(m.Value, m.Groups[1].Value));
 
         /* Text */
 
         // Shrug is an exception and needs to be exempt from formatting
-        private static readonly IParser<Node> ShrugTextNodeParser =
-            new RegexParser<Node>(new Regex(Regex.Escape("¯\\_(ツ)_/¯"), DefaultRegexOptions),
-                m => new TextNode(m.Value));
+        private static readonly IMatcher<Node> ShrugTextNodeMatcher = new StringMatcher<Node>(@"¯\_(ツ)_/¯", s => new TextNode(s));
 
         // Backslash escapes any following unicode surrogate pair
         //private static readonly Parser<Node> EscapedSurrogateTextNode =
@@ -145,39 +143,33 @@ namespace DiscordChatExporter.Core.Markdown
         //    select new TextNode(lexeme, text);
 
         // Backslash escapes any following non-whitespace character except for digits and latin letters
-        private static readonly IParser<Node> EscapedTextNodeParser =
-            new RegexParser<Node>(new Regex("\\\\([^a-zA-Z0-9\\s])", DefaultRegexOptions),
+        private static readonly IMatcher<Node> EscapedTextNodeMatcher = 
+            new RegexMatcher<Node>(new Regex("\\\\([^a-zA-Z0-9\\s])", DefaultRegexOptions),
                 m => new TextNode(m.Value, m.Groups[1].Value));
 
-        // Text node encapsulates text not matched by other parsers
-        private static readonly IParser<Node> FallbackTextNodeParser =
-            new RegexParser<Node>(new Regex(".+", DefaultRegexOptions | RegexOptions.Singleline),
-                m => new TextNode(m.Value));
+        private static readonly IMatcher<Node> NodeMatcher = new AggregateMatcher<Node>(
+            ItalicBoldFormattedNodeMatcher,
+            ItalicUnderlineFormattedNodeMatcher,
+            BoldFormattedNodeMatcher,
+            ItalicFormattedNodeMatcher,
+            UnderlineFormattedNodeMatcher,
+            ItalicAltFormattedNodeMatcher,
+            StrikethroughFormattedNodeMatcher,
+            SpoilerFormattedNodeMatcher,
+            MultilineCodeBlockNodeMatcher,
+            InlineCodeBlockNodeMatcher,
+            MetaMentionNodeMatcher,
+            UserMentionNodeMatcher,
+            ChannelMentionNodeMatcher,
+            RoleMentionNodeMatcher,
+            StandardEmojiNodeMatcher,
+            CustomEmojiNodeMatcher,
+            TitledLinkNodeMatcher,
+            AutoLinkNodeMatcher,
+            HiddenLinkNodeMatcher,
+            ShrugTextNodeMatcher,
+            EscapedTextNodeMatcher);
 
-        private static readonly IParser<Node> NodeParser = new AggregatedParser<Node>(
-            ItalicBoldFormattedNodeParser,
-            ItalicUnderlineFormattedNodeParser,
-            BoldFormattedNodeParser,
-            ItalicFormattedNodeParser,
-            UnderlineFormattedNodeParser,
-            ItalicAltFormattedParser,
-            StrikethroughFormattedNodeParser,
-            SpoilerFormattedNodeParser,
-            MultilineCodeBlockNodeParser,
-            InlineCodeBlockNodeParser,
-            MetaMentionNodeParser,
-            UserMentionNodeParser,
-            ChannelMentionNodeParser,
-            RoleMentionNodeParser,
-            StandardEmojiNodeParser,
-            CustomEmojiNodeParser,
-            TitledLinkNodeParser,
-            AutoLinkNodeParser,
-            HiddenLinkNodeParser,
-            ShrugTextNodeParser,
-            EscapedTextNodeParser,
-            FallbackTextNodeParser);
-
-        public static IReadOnlyList<Node> Parse(string input) => NodeParser.Parse(input).Select(r => r.Value).ToArray();
+        public static IReadOnlyList<Node> Parse(string input) => NodeMatcher.MatchAll(input, s => new TextNode(s)).Select(r => r.Value).ToArray();
     }
 }

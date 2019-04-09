@@ -5,7 +5,7 @@ namespace DiscordChatExporter.Core.Markdown.Internal
 {
     internal static class Extensions
     {
-        public static IEnumerable<ParsedMatch<T>> MatchAll<T>(this IMatcher<T> parser, string input,
+        public static IEnumerable<ParsedMatch<T>> MatchAll<T>(this IMatcher<T> matcher, string input,
             int startIndex, int length, Func<string, T> fallbackTransform)
         {
             // Get end index for simplicity
@@ -15,14 +15,14 @@ namespace DiscordChatExporter.Core.Markdown.Internal
             var currentIndex = startIndex;
             while (currentIndex < endIndex)
             {
-                // Parse match within this segment
-                var match = parser.Match(input, currentIndex, endIndex - currentIndex);
+                // Find a match within this segment
+                var match = matcher.Match(input, currentIndex, endIndex - currentIndex);
 
                 // If there's no match - break
                 if (match == null)
                     break;
 
-                // If this match doesn't start immediately at offset - transform and yield fallback first
+                // If this match doesn't start immediately at current index - transform and yield fallback first
                 if (match.StartIndex > currentIndex)
                 {
                     var fallback = input.Substring(currentIndex, match.StartIndex - currentIndex);
@@ -44,8 +44,7 @@ namespace DiscordChatExporter.Core.Markdown.Internal
             }
         }
 
-        public static IEnumerable<ParsedMatch<T>> MatchAll<T>(this IMatcher<T> parser, string input,
-            Func<string, T> fallbackHandler) =>
-            parser.MatchAll(input, 0, input.Length, fallbackHandler);
+        public static IEnumerable<ParsedMatch<T>> MatchAll<T>(this IMatcher<T> matcher, string input,
+            Func<string, T> fallbackTransform) => matcher.MatchAll(input, 0, input.Length, fallbackTransform);
     }
 }

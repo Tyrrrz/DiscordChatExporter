@@ -50,7 +50,7 @@ namespace DiscordChatExporter.Core.Models
                 yield return char.ConvertToUtf32(emoji, i);
         }
 
-        private static string GetTwemojiName(string emoji)
-            => GetCodePoints(emoji).Select(i => i.ToString("x")).JoinToString("-");
+        private static string GetTwemojiName(string emoji) =>
+            GetCodePoints(emoji).Select(i => i.ToString("x")).JoinToString("-");
     }
 }

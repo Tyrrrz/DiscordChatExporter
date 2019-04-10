@@ -10,11 +10,11 @@ namespace DiscordChatExporter.Core.Rendering
         {
             public User Author { get; }
 
-            public DateTime Timestamp { get; }
+            public DateTimeOffset Timestamp { get; }
 
             public IReadOnlyList<Message> Messages { get; }
 
-            public MessageGroup(User author, DateTime timestamp, IReadOnlyList<Message> messages)
+            public MessageGroup(User author, DateTimeOffset timestamp, IReadOnlyList<Message> messages)
             {
                 Author = author;
                 Timestamp = timestamp;

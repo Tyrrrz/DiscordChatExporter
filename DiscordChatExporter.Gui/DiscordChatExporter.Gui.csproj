@@ -59,6 +59,7 @@
     <Compile Include="Behaviors\ChannelViewModelMultiSelectionListBoxBehavior.cs" />
     <Compile Include="Behaviors\MultiSelectionListBoxBehavior.cs" />
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Converters\DateTimeOffsetToDateTimeConverter.cs" />
     <Compile Include="Converters\ExportFormatToStringConverter.cs" />
     <Compile Include="ViewModels\Components\ChannelViewModel.cs" />
     <Compile Include="ViewModels\Components\GuildViewModel.cs" />

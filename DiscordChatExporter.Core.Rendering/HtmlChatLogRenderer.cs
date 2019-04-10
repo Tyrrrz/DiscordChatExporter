@@ -29,7 +29,8 @@ namespace DiscordChatExporter.Core.Rendering
 
         private string HtmlEncode(string s) => WebUtility.HtmlEncode(s);
 
-        private string FormatDate(DateTime date) => date.ToString(_dateFormat, CultureInfo.InvariantCulture);
+        private string FormatDate(DateTimeOffset date) =>
+            date.ToLocalTime().ToString(_dateFormat, CultureInfo.InvariantCulture);
 
         private IEnumerable<MessageGroup> GroupMessages(IEnumerable<Message> messages) =>
             messages.GroupContiguous((buffer, message) =>
@@ -182,7 +183,7 @@ namespace DiscordChatExporter.Core.Rendering
             var model = new ScriptObject();
             model.SetValue("Model", _chatLog, true);
             model.Import(nameof(GroupMessages), new Func<IEnumerable<Message>, IEnumerable<MessageGroup>>(GroupMessages));
-            model.Import(nameof(FormatDate), new Func<DateTime, string>(FormatDate));
+            model.Import(nameof(FormatDate), new Func<DateTimeOffset, string>(FormatDate));
             model.Import(nameof(FormatMarkdown), new Func<string, string>(FormatMarkdown));
             context.PushGlobal(model);
 

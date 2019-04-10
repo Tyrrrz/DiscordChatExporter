@@ -86,8 +86,8 @@
                 Margin="16,8"
                 materialDesign:HintAssist.Hint="From (optional)"
                 materialDesign:HintAssist.IsFloating="True"
-                DisplayDateEnd="{Binding To}"
-                SelectedDate="{Binding From}"
+                DisplayDateEnd="{Binding Before, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
+                SelectedDate="{Binding After, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
                 ToolTip="If this is set, only messages sent after this date will be exported" />
             <DatePicker
                 Grid.Row="0"
@@ -95,8 +95,8 @@
                 Margin="16,8"
                 materialDesign:HintAssist.Hint="To (optional)"
                 materialDesign:HintAssist.IsFloating="True"
-                DisplayDateStart="{Binding From}"
-                SelectedDate="{Binding To}"
+                DisplayDateStart="{Binding After, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
+                SelectedDate="{Binding Before, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
                 ToolTip="If this is set, only messages sent before this date will be exported" />
         </Grid>
 

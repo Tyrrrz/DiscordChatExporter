@@ -58,7 +58,7 @@ namespace DiscordChatExporter.Core.Services
             {
                 // Create partitions by grouping up to X contiguous messages into separate chat logs
                 var partitions = chatLog.Messages.GroupContiguous(g => g.Count < partitionLimit.Value)
-                    .Select(g => new ChatLog(chatLog.Guild, chatLog.Channel, chatLog.From, chatLog.To, g, chatLog.Mentionables))
+                    .Select(g => new ChatLog(chatLog.Guild, chatLog.Channel, chatLog.After, chatLog.Before, g, chatLog.Mentionables))
                     .ToArray();
 
                 // Split file path into components

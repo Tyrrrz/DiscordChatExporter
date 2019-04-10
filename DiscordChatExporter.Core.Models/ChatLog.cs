@@ -9,21 +9,21 @@ namespace DiscordChatExporter.Core.Models
 
         public Channel Channel { get; }
 
-        public DateTime? From { get; }
+        public DateTimeOffset? After { get; }
 
-        public DateTime? To { get; }
+        public DateTimeOffset? Before { get; }
 
         public IReadOnlyList<Message> Messages { get; }
 
         public Mentionables Mentionables { get; }
 
-        public ChatLog(Guild guild, Channel channel, DateTime? from, DateTime? to,
+        public ChatLog(Guild guild, Channel channel, DateTimeOffset? after, DateTimeOffset? before,
             IReadOnlyList<Message> messages, Mentionables mentionables)
         {
             Guild = guild;
             Channel = channel;
-            From = from;
-            To = to;
+            After = after;
+            Before = before;
             Messages = messages;
             Mentionables = mentionables;
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -8,6 +9,7 @@ using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.Core.Services.Exceptions;
 using DiscordChatExporter.Core.Services.Internal;
 using Failsafe;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Tyrrrz.Extensions;
 
@@ -64,7 +66,12 @@ namespace DiscordChatExporter.Core.Services
                         var raw = await response.Content.ReadAsStringAsync();
 
                         // Parse
-                        return JToken.Parse(raw);
+                        using (var reader = new JsonTextReader(new StringReader(raw)))
+                        {
+                            reader.DateParseHandling = DateParseHandling.DateTimeOffset;
+
+                            return JToken.Load(reader);
+                        }
                     }
                 }
             });
@@ -123,24 +130,24 @@ namespace DiscordChatExporter.Core.Services
         }
 
         public async Task<IReadOnlyList<Message>> GetChannelMessagesAsync(AuthToken token, string channelId,
-            DateTime? from = null, DateTime? to = null, IProgress<double> progress = null)
+            DateTimeOffset? after = null, DateTimeOffset? before = null, IProgress<double> progress = null)
         {
             var result = new List<Message>();
 
             // Get the last message
             var response = await GetApiResponseAsync(token, "channels", $"{channelId}/messages",
-                "limit=1", $"before={to?.ToSnowflake()}");
+                "limit=1", $"before={before?.ToSnowflake()}");
             var lastMessage = response.Select(ParseMessage).FirstOrDefault();
 
             // If the last message doesn't exist or it's outside of range - return
-            if (lastMessage == null || lastMessage.Timestamp < from)
+            if (lastMessage == null || lastMessage.Timestamp < after)
             {
                 progress?.Report(1);
                 return result;
             }
 
             // Get other messages
-            var offsetId = from?.ToSnowflake() ?? "0";
+            var offsetId = after?.ToSnowflake() ?? "0";
             while (true)
             {
                 // Get message batch
@@ -215,19 +222,19 @@ namespace DiscordChatExporter.Core.Services
         }
 
         public async Task<ChatLog> GetChatLogAsync(AuthToken token, Guild guild, Channel channel,
-            DateTime? from = null, DateTime? to = null, IProgress<double> progress = null)
+            DateTimeOffset? after = null, DateTimeOffset? before = null, IProgress<double> progress = null)
         {
             // Get messages
-            var messages = await GetChannelMessagesAsync(token, channel.Id, from, to, progress);
+            var messages = await GetChannelMessagesAsync(token, channel.Id, after, before, progress);
 
             // Get mentionables
             var mentionables = await GetMentionablesAsync(token, guild.Id, messages);
 
-            return new ChatLog(guild, channel, from, to, messages, mentionables);
+            return new ChatLog(guild, channel, after, before, messages, mentionables);
         }
 
         public async Task<ChatLog> GetChatLogAsync(AuthToken token, Channel channel,
-            DateTime? from = null, DateTime? to = null, IProgress<double> progress = null)
+            DateTimeOffset? after = null, DateTimeOffset? before = null, IProgress<double> progress = null)
         {
             // Get guild
             var guild = channel.GuildId == Guild.DirectMessages.Id
@@ -235,17 +242,17 @@ namespace DiscordChatExporter.Core.Services
                 : await GetGuildAsync(token, channel.GuildId);
 
             // Get the chat log
-            return await GetChatLogAsync(token, guild, channel, from, to, progress);
+            return await GetChatLogAsync(token, guild, channel, after, before, progress);
         }
 
         public async Task<ChatLog> GetChatLogAsync(AuthToken token, string channelId,
-            DateTime? from = null, DateTime? to = null, IProgress<double> progress = null)
+            DateTimeOffset? after = null, DateTimeOffset? before = null, IProgress<double> progress = null)
         {
             // Get channel
             var channel = await GetChannelAsync(token, channelId);
 
             // Get the chat log
-            return await GetChatLogAsync(token, channel, from, to, progress);
+            return await GetChatLogAsync(token, channel, after, before, progress);
         }
 
         public void Dispose()

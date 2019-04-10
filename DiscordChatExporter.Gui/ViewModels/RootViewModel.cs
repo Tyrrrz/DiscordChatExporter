@@ -267,7 +267,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                     {
                         // Generate default file name
                         var fileName = ExportHelper.GetDefaultExportFileName(dialog.SelectedFormat, dialog.Guild,
-                            channel, dialog.From, dialog.To);
+                            channel, dialog.After, dialog.Before);
 
                         // Combine paths
                         filePath = Path.Combine(filePath, fileName);
@@ -275,7 +275,7 @@ namespace DiscordChatExporter.Gui.ViewModels
 
                     // Get chat log
                     var chatLog = await _dataService.GetChatLogAsync(token, dialog.Guild, channel, 
-                        dialog.From, dialog.To, operation);
+                        dialog.After, dialog.Before, operation);
 
                     // Export
                     await _exportService.ExportChatLogAsync(chatLog, filePath, dialog.SelectedFormat,

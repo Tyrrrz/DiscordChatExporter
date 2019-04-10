@@ -12,9 +12,11 @@ namespace DiscordChatExporter.Cli.Verbs.Options
         [Option('o', "output", Default = null, HelpText = "Output file or directory path.")]
         public string OutputPath { get; set; }
 
+        // HACK: CommandLineParser doesn't support DateTimeOffset
         [Option("after", Default = null, HelpText = "Limit to messages sent after this date.")]
         public DateTime? After { get; set; }
 
+        // HACK: CommandLineParser doesn't support DateTimeOffset
         [Option("before", Default = null, HelpText = "Limit to messages sent before this date.")]
         public DateTime? Before { get; set; }
 

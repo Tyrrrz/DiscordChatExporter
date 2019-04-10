@@ -14,7 +14,7 @@ namespace DiscordChatExporter.Core.Services.Helpers
             Path.GetExtension(path) == null;
 
         public static string GetDefaultExportFileName(ExportFormat format, Guild guild, Channel channel,
-            DateTime? from = null, DateTime? to = null)
+            DateTimeOffset? after = null, DateTimeOffset? before = null)
         {
             var result = new StringBuilder();
 
@@ -22,24 +22,24 @@ namespace DiscordChatExporter.Core.Services.Helpers
             result.Append($"{guild.Name} - {channel.Name} [{channel.Id}]");
 
             // Append date range
-            if (from != null || to != null)
+            if (after != null || before != null)
             {
                 result.Append(" (");
 
-                // Both 'from' and 'to' are set
-                if (from != null && to != null)
+                // Both 'after' and 'before' are set
+                if (after != null && before != null)
                 {
-                    result.Append($"{from:yyyy-MM-dd} to {to:yyyy-MM-dd}");
+                    result.Append($"{after:yyyy-MM-dd} to {before:yyyy-MM-dd}");
                 }
-                // Only 'from' is set
-                else if (from != null)
+                // Only 'after' is set
+                else if (after != null)
                 {
-                    result.Append($"after {from:yyyy-MM-dd}");
+                    result.Append($"after {after:yyyy-MM-dd}");
                 }
-                // Only 'to' is set
+                // Only 'before' is set
                 else
                 {
-                    result.Append($"before {to:yyyy-MM-dd}");
+                    result.Append($"before {before:yyyy-MM-dd}");
                 }
 
                 result.Append(")");

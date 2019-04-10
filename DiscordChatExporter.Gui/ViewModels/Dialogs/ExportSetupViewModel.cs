@@ -27,9 +27,9 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
 
         public ExportFormat SelectedFormat { get; set; } = ExportFormat.HtmlDark;
 
-        public DateTime? From { get; set; }
+        public DateTimeOffset? After { get; set; }
 
-        public DateTime? To { get; set; }
+        public DateTimeOffset? Before { get; set; }
 
         public int? PartitionLimit { get; set; }
 
@@ -54,11 +54,11 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             _settingsService.LastExportFormat = SelectedFormat;
             _settingsService.LastPartitionLimit = PartitionLimit;
 
-            // Clamp 'from' and 'to' values
-            if (From > To)
-                From = To;
-            if (To < From)
-                To = From;
+            // Clamp 'after' and 'before' values
+            if (After > Before)
+                After = Before;
+            if (Before < After)
+                Before = After;
 
             // If single channel - prompt file path
             if (IsSingleChannel)
@@ -67,7 +67,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
                 var channel = Channels.Single();
 
                 // Generate default file name
-                var defaultFileName = ExportHelper.GetDefaultExportFileName(SelectedFormat, Guild, channel, From, To);
+                var defaultFileName = ExportHelper.GetDefaultExportFileName(SelectedFormat, Guild, channel, After, Before);
 
                 // Generate filter
                 var ext = SelectedFormat.GetFileExtension();

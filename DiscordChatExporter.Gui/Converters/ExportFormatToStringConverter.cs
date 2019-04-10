@@ -12,8 +12,10 @@ namespace DiscordChatExporter.Gui.Converters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var format = value as ExportFormat?;
-            return format?.GetDisplayName();
+            if (value is ExportFormat format)
+                return format.GetDisplayName();
+
+            return null;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

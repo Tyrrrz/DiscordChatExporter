@@ -22,21 +22,22 @@ namespace DiscordChatExporter.Core.Rendering
             _dateFormat = dateFormat;
         }
 
-        private string FormatDate(DateTime date) => date.ToString(_dateFormat, CultureInfo.InvariantCulture);
+        private string FormatDate(DateTimeOffset date) =>
+            date.ToLocalTime().ToString(_dateFormat, CultureInfo.InvariantCulture);
 
-        private string FormatDateRange(DateTime? from, DateTime? to)
+        private string FormatDateRange(DateTimeOffset? after, DateTimeOffset? before)
         {
-            // Both 'from' and 'to'
-            if (from.HasValue && to.HasValue)
-                return $"{FormatDate(from.Value)} to {FormatDate(to.Value)}";
+            // Both 'after' and 'before'
+            if (after != null && before != null)
+                return $"{FormatDate(after.Value)} to {FormatDate(before.Value)}";
 
-            // Just 'from'
-            if (from.HasValue)
-                return $"after {FormatDate(from.Value)}";
+            // Just 'after'
+            if (after != null)
+                return $"after {FormatDate(after.Value)}";
 
-            // Just 'to'
-            if (to.HasValue)
-                return $"before {FormatDate(to.Value)}";
+            // Just 'before'
+            if (before != null)
+                return $"before {FormatDate(before.Value)}";
 
             // Neither
             return null;
@@ -113,7 +114,7 @@ namespace DiscordChatExporter.Core.Rendering
             await writer.WriteLineAsync($"Channel: {_chatLog.Channel.Name}");
             await writer.WriteLineAsync($"Topic: {_chatLog.Channel.Topic}");
             await writer.WriteLineAsync($"Messages: {_chatLog.Messages.Count:N0}");
-            await writer.WriteLineAsync($"Range: {FormatDateRange(_chatLog.From, _chatLog.To)}");
+            await writer.WriteLineAsync($"Range: {FormatDateRange(_chatLog.After, _chatLog.Before)}");
             await writer.WriteLineAsync('='.Repeat(62));
             await writer.WriteLineAsync();
 

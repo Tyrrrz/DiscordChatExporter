@@ -22,7 +22,8 @@ namespace DiscordChatExporter.Core.Rendering
             _dateFormat = dateFormat;
         }
 
-        private string FormatDate(DateTime date) => date.ToString(_dateFormat, CultureInfo.InvariantCulture);
+        private string FormatDate(DateTimeOffset date) =>
+            date.ToLocalTime().ToString(_dateFormat, CultureInfo.InvariantCulture);
 
         private string FormatMarkdown(Node node)
         {

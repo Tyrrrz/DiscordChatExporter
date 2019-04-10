@@ -43,14 +43,14 @@
 
         <div class="info__channel-message-count">{{ Model.Messages | array.size | object.format "N0" }} messages</div>
         
-        {{~ if Model.From || Model.To ~}}
+        {{~ if Model.After || Model.Before ~}}
             <div class="info__channel-date-range">
-                {{~ if Model.From && Model.To ~}}
-                    Between {{ Model.From | FormatDate | html.escape }} and {{ Model.To | FormatDate | html.escape }}
-                {{~ else if Model.From ~}}
-                    After {{ Model.From | FormatDate | html.escape }}
-                {{~ else if Model.To ~}}
-                    Before {{ Model.To | FormatDate | html.escape }}
+                {{~ if Model.After && Model.Before ~}}
+                    Between {{ Model.After | FormatDate | html.escape }} and {{ Model.Before | FormatDate | html.escape }}
+                {{~ else if Model.After ~}}
+                    After {{ Model.After | FormatDate | html.escape }}
+                {{~ else if Model.Before ~}}
+                    Before {{ Model.Before | FormatDate | html.escape }}
                 {{~ end ~}}
             </div>
         {{~ end ~}}

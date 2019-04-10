@@ -1,11 +1,11 @@
-﻿namespace DiscordChatExporter.Core.Markdown
+﻿namespace DiscordChatExporter.Core.Markdown.Nodes
 {
     public class InlineCodeBlockNode : Node
     {
         public string Code { get; }
 
-        public InlineCodeBlockNode(string lexeme, string code)
-            : base(lexeme)
+        public InlineCodeBlockNode(string source, string code)
+            : base(source)
         {
             Code = code;
         }

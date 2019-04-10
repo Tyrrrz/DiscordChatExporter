@@ -1,4 +1,4 @@
-﻿namespace DiscordChatExporter.Core.Markdown
+﻿namespace DiscordChatExporter.Core.Markdown.Nodes
 {
     public class MultilineCodeBlockNode : Node
     {
@@ -6,8 +6,8 @@
 
         public string Code { get; }
 
-        public MultilineCodeBlockNode(string lexeme, string language, string code)
-            : base(lexeme)
+        public MultilineCodeBlockNode(string source, string language, string code)
+            : base(source)
         {
             Language = language;
             Code = code;

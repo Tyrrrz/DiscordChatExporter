@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Markdown;
+using DiscordChatExporter.Core.Markdown.Nodes;
 using DiscordChatExporter.Core.Models;
 using Tyrrrz.Extensions;
 
@@ -83,8 +84,8 @@ namespace DiscordChatExporter.Core.Rendering
                 return $":{emojiNode.Name}:";
             }
 
-            // All other nodes - simply return lexeme
-            return node.Lexeme;
+            // All other nodes - simply return source
+            return node.Source;
         }
 
         private string FormatMarkdown(IEnumerable<Node> nodes) => nodes.Select(FormatMarkdown).JoinToString("");

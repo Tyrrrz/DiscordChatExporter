@@ -1,4 +1,4 @@
-﻿namespace DiscordChatExporter.Core.Markdown
+﻿namespace DiscordChatExporter.Core.Markdown.Nodes
 {
     public class LinkNode : Node
     {
@@ -6,14 +6,14 @@
 
         public string Title { get; }
 
-        public LinkNode(string lexeme, string url, string title)
-            : base(lexeme)
+        public LinkNode(string source, string url, string title)
+            : base(source)
         {
             Url = url;
             Title = title;
         }
 
-        public LinkNode(string lexeme, string url) : this(lexeme, url, url)
+        public LinkNode(string source, string url) : this(source, url, url)
         {
         }
 

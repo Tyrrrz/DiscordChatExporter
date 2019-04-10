@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Markdown;
+using DiscordChatExporter.Core.Markdown.Nodes;
 using DiscordChatExporter.Core.Models;
 using Scriban;
 using Scriban.Runtime;
@@ -146,8 +147,8 @@ namespace DiscordChatExporter.Core.Rendering
                 return $"<a href=\"{Uri.EscapeUriString(linkNode.Url)}\">{HtmlEncode(linkNode.Title)}</a>";
             }
 
-            // All other nodes - simply return lexeme
-            return node.Lexeme;
+            // All other nodes - simply return source
+            return node.Source;
         }
 
         private string FormatMarkdown(IReadOnlyList<Node> nodes, bool isTopLevel)

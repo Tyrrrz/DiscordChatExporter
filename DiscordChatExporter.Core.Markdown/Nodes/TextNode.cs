@@ -1,11 +1,11 @@
-﻿namespace DiscordChatExporter.Core.Markdown
+﻿namespace DiscordChatExporter.Core.Markdown.Nodes
 {
     public class TextNode : Node
     {
         public string Text { get; }
 
-        public TextNode(string lexeme, string text)
-            : base(lexeme)
+        public TextNode(string source, string text)
+            : base(source)
         {
             Text = text;
         }

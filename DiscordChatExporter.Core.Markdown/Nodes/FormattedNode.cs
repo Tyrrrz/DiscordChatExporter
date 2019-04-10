@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DiscordChatExporter.Core.Markdown
+namespace DiscordChatExporter.Core.Markdown.Nodes
 {
     public class FormattedNode : Node
     {
@@ -10,8 +10,8 @@ namespace DiscordChatExporter.Core.Markdown
 
         public IReadOnlyList<Node> Children { get; }
 
-        public FormattedNode(string lexeme, string token, TextFormatting formatting, IReadOnlyList<Node> children)
-            : base(lexeme)
+        public FormattedNode(string source, string token, TextFormatting formatting, IReadOnlyList<Node> children)
+            : base(source)
         {
             Token = token;
             Formatting = formatting;

@@ -1,4 +1,4 @@
-﻿namespace DiscordChatExporter.Core.Markdown
+﻿namespace DiscordChatExporter.Core.Markdown.Nodes
 {
     public class MentionNode : Node
     {
@@ -6,8 +6,8 @@
 
         public MentionType Type { get; }
 
-        public MentionNode(string lexeme, string id, MentionType type)
-            : base(lexeme)
+        public MentionNode(string source, string id, MentionType type)
+            : base(source)
         {
             Id = id;
             Type = type;

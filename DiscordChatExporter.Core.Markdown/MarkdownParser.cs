@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using DiscordChatExporter.Core.Markdown.Internal;
+using DiscordChatExporter.Core.Markdown.Nodes;
 using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Markdown

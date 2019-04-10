@@ -1,4 +1,4 @@
-﻿namespace DiscordChatExporter.Core.Markdown
+﻿namespace DiscordChatExporter.Core.Markdown.Nodes
 {
     public class EmojiNode : Node
     {
@@ -10,16 +10,16 @@
 
         public bool IsCustomEmoji => Id != null;
 
-        public EmojiNode(string lexeme, string id, string name, bool isAnimated)
-            : base(lexeme)
+        public EmojiNode(string source, string id, string name, bool isAnimated)
+            : base(source)
         {
             Id = id;
             Name = name;
             IsAnimated = isAnimated;
         }
 
-        public EmojiNode(string lexeme, string name)
-            : this(lexeme, null, name, false)
+        public EmojiNode(string source, string name)
+            : this(source, null, name, false)
         {
         }
 

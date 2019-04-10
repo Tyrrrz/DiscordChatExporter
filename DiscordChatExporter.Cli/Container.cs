@@ -11,7 +11,7 @@ namespace DiscordChatExporter.Cli
         {
             var builder = new StyletIoCBuilder();
 
-            // Autobind services in the .Core assembly
+            // Autobind the .Services assembly
             builder.Autobind(typeof(DataService).Assembly);
 
             // Bind settings as singleton

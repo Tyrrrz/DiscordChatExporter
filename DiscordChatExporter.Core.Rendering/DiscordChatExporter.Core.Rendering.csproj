@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net46;netstandard2.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\HtmlDark.css" />
+    <EmbeddedResource Include="Resources\HtmlDark.html" />
+    <EmbeddedResource Include="Resources\HtmlLight.css" />
+    <EmbeddedResource Include="Resources\HtmlLight.html" />
+    <EmbeddedResource Include="Resources\HtmlShared.css" />
+    <EmbeddedResource Include="Resources\HtmlShared.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Scriban" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DiscordChatExporter.Core.Markdown\DiscordChatExporter.Core.Markdown.csproj" />
+    <ProjectReference Include="..\DiscordChatExporter.Core.Models\DiscordChatExporter.Core.Models.csproj" />
+  </ItemGroup>
+
+</Project>

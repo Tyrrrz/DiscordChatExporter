@@ -1,23 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <OutputType>Exe</OutputType>
-        <TargetFrameworks>net46;netcoreapp2.1</TargetFrameworks>
-        <Version>2.11</Version>
-        <Company>Tyrrrz</Company>
-        <Copyright>Copyright (c) Alexey Golub</Copyright>
-        <ApplicationIcon>..\favicon.ico</ApplicationIcon>
-        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    </PropertyGroup>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net46;netcoreapp2.1</TargetFrameworks>
+    <Version>2.11</Version>
+    <Company>Tyrrrz</Company>
+    <Copyright>Copyright (c) Alexey Golub</Copyright>
+    <ApplicationIcon>..\favicon.ico</ApplicationIcon>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="CommandLineParser" Version="2.3.0" />
-        <PackageReference Include="Stylet" Version="1.1.22" />
-        <PackageReference Include="Tyrrrz.Extensions" Version="1.5.1" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.3.0" />
+    <PackageReference Include="Stylet" Version="1.1.22" />
+    <PackageReference Include="Tyrrrz.Extensions" Version="1.6.0" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\DiscordChatExporter.Core\DiscordChatExporter.Core.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DiscordChatExporter.Core.Models\DiscordChatExporter.Core.Models.csproj" />
+    <ProjectReference Include="..\DiscordChatExporter.Core.Services\DiscordChatExporter.Core.Services.csproj" />
+  </ItemGroup>
 
 </Project>

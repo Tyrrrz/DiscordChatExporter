@@ -14,7 +14,7 @@ namespace DiscordChatExporter.Gui
         {
             base.ConfigureIoC(builder);
 
-            // Autobind services in the .Core assembly
+            // Autobind the .Services assembly
             builder.Autobind(typeof(DataService).Assembly);
 
             // Bind settings as singleton

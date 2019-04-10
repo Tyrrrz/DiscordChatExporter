@@ -19,7 +19,6 @@
 
     public partial class Role
     {
-        public static Role CreateDeletedRole(string id) =>
-            new Role(id, "deleted-role");
+        public static Role CreateDeletedRole(string id) => new Role(id, "deleted-role");
     }
 }

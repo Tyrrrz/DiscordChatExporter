@@ -14,31 +14,15 @@ namespace DiscordChatExporter.Core.Models
 
         public bool IsAnimated { get; }
 
-        public string ImageUrl
-        {
-            get
-            {
-                // Custom emoji
-                if (Id != null)
-                {
-                    // Animated
-                    if (IsAnimated)
-                        return $"https://cdn.discordapp.com/emojis/{Id}.gif";
-
-                    // Non-animated
-                    return $"https://cdn.discordapp.com/emojis/{Id}.png";
-                }
-
-                // Standard unicode emoji (via twemoji)
-                return $"https://twemoji.maxcdn.com/2/72x72/{GetTwemojiName(Name)}.png";
-            }
-        }
+        public string ImageUrl { get; }
 
         public Emoji(string id, string name, bool isAnimated)
         {
             Id = id;
             Name = name;
             IsAnimated = isAnimated;
+
+            ImageUrl = GetImageUrl(id, name, isAnimated);
         }
     }
 
@@ -52,5 +36,23 @@ namespace DiscordChatExporter.Core.Models
 
         private static string GetTwemojiName(string emoji) =>
             GetCodePoints(emoji).Select(i => i.ToString("x")).JoinToString("-");
+
+        private static string GetImageUrl(string id, string name, bool isAnimated)
+        {
+            // Custom emoji
+            if (id != null)
+            {
+                // Animated
+                if (isAnimated)
+                    return $"https://cdn.discordapp.com/emojis/{id}.gif";
+
+                // Non-animated
+                return $"https://cdn.discordapp.com/emojis/{id}.png";
+            }
+
+            // Standard unicode emoji (via twemoji)
+            var twemojiName = GetTwemojiName(name);
+            return $"https://twemoji.maxcdn.com/2/72x72/{twemojiName}.png";
+        }
     }
 }

@@ -1,10 +1,12 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 
 namespace DiscordChatExporter.Core.Models
 {
     // https://discordapp.com/developers/docs/resources/channel#attachment-object
 
-    public class Attachment
+    public partial class Attachment
     {
         public string Id { get; }
 
@@ -16,11 +18,7 @@ namespace DiscordChatExporter.Core.Models
 
         public string FileName { get; }
 
-        public bool IsImage => FileName.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
-                               FileName.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase) ||
-                               FileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
-                               FileName.EndsWith(".gif", StringComparison.OrdinalIgnoreCase) ||
-                               FileName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase);
+        public bool IsImage { get; }
 
         public FileSize FileSize { get; }
 
@@ -32,8 +30,21 @@ namespace DiscordChatExporter.Core.Models
             Height = height;
             FileName = fileName;
             FileSize = fileSize;
+
+            IsImage = GetIsImage(fileName);
         }
 
         public override string ToString() => FileName;
+    }
+
+    public partial class Attachment
+    {
+        private static readonly string[] ImageFileExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
+
+        private static bool GetIsImage(string fileName)
+        {
+            var fileExtension = Path.GetExtension(fileName);
+            return ImageFileExtensions.Contains(fileExtension, StringComparer.OrdinalIgnoreCase);
+        }
     }
 }

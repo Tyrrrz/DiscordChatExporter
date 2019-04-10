@@ -12,34 +12,11 @@ namespace DiscordChatExporter.Core.Models
 
         public string Name { get; }
 
-        public string FullName => $"{Name}#{Discriminator:0000}";
-
-        public string DefaultAvatarHash => $"{Discriminator % 5}";
+        public string FullName { get; }
 
         public string AvatarHash { get; }
 
-        public bool IsAvatarAnimated =>
-            AvatarHash != null && AvatarHash.StartsWith("a_", StringComparison.Ordinal);
-
-        public string AvatarUrl
-        {
-            get
-            {
-                // Custom avatar
-                if (AvatarHash != null)
-                {
-                    // Animated
-                    if (IsAvatarAnimated)
-                        return $"https://cdn.discordapp.com/avatars/{Id}/{AvatarHash}.gif";
-
-                    // Non-animated
-                    return $"https://cdn.discordapp.com/avatars/{Id}/{AvatarHash}.png";
-                }
-
-                // Default avatar
-                return $"https://cdn.discordapp.com/embed/avatars/{DefaultAvatarHash}.png";
-            }
-        }
+        public string AvatarUrl { get; }
 
         public User(string id, int discriminator, string name, string avatarHash)
         {
@@ -47,6 +24,9 @@ namespace DiscordChatExporter.Core.Models
             Discriminator = discriminator;
             Name = name;
             AvatarHash = avatarHash;
+
+            FullName = GetFullName(name, discriminator);
+            AvatarUrl = GetAvatarUrl(id, discriminator, avatarHash);
         }
 
         public override string ToString() => FullName;
@@ -54,7 +34,25 @@ namespace DiscordChatExporter.Core.Models
 
     public partial class User
     {
-        public static User CreateUnknownUser(string id) =>
-            new User(id, 0, "Unknown", null);
+        private static string GetFullName(string name, int discriminator) => $"{name}#{discriminator:0000}";
+
+        private static string GetAvatarUrl(string id, int discriminator, string avatarHash)
+        {
+            // Custom avatar
+            if (avatarHash != null)
+            {
+                // Animated
+                if (avatarHash.StartsWith("a_", StringComparison.Ordinal))
+                    return $"https://cdn.discordapp.com/avatars/{id}/{avatarHash}.gif";
+
+                // Non-animated
+                return $"https://cdn.discordapp.com/avatars/{id}/{avatarHash}.png";
+            }
+
+            // Default avatar
+            return $"https://cdn.discordapp.com/embed/avatars/{discriminator % 5}.png";
+        }
+
+        public static User CreateUnknownUser(string id) => new User(id, 0, "Unknown", null);
     }
 }

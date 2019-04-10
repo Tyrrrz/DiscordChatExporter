@@ -189,7 +189,7 @@ namespace DiscordChatExporter.Core.Rendering
             // Configure output
             context.PushOutput(new TextWriterOutput(writer));
 
-            // Render output in a separate thread
+            // HACK: Render output in a separate thread
             // (even though Scriban has async API, it still makes a lot of blocking CPU-bound calls)
             await Task.Run(async () => await context.EvaluateAsync(template.Page));
         }

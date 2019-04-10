@@ -98,8 +98,7 @@ namespace DiscordChatExporter.Core.Rendering
             await writer.WriteLineAsync($"[{FormatDate(message.Timestamp)}] {message.Author.FullName}");
 
             // Content
-            var formattedContent = await Task.Run(() => FormatMarkdown(message.Content));
-            await writer.WriteLineAsync(formattedContent);
+            await writer.WriteLineAsync(FormatMarkdown(message.Content));
 
             // Attachments
             foreach (var attachment in message.Attachments)

@@ -89,8 +89,7 @@ namespace DiscordChatExporter.Core.Rendering
             await RenderFieldAsync(writer, FormatDate(message.Timestamp));
 
             // Content
-            var formattedContent = await Task.Run(() => FormatMarkdown(message.Content));
-            await RenderFieldAsync(writer, formattedContent);
+            await RenderFieldAsync(writer, FormatMarkdown(message.Content));
 
             // Attachments
             var formattedAttachments = message.Attachments.Select(a => a.Url).JoinToString(",");

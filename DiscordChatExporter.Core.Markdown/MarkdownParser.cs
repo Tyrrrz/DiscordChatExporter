@@ -100,9 +100,13 @@ namespace DiscordChatExporter.Core.Markdown
 
         /* Emojis */
 
-        // Capture any standard unicode emoji
+        // Capture any country flag emoji (two regional indicator surrogate pairs)
+        // ... or "symbol/other" character
+        // ... or surrogate pair
+        // ... or digit followed by enclosing mark
+        // (this does not match all emojis in Discord but it's reasonably accurate enough)
         private static readonly IMatcher<Node> StandardEmojiNodeMatcher = new RegexMatcher<Node>(
-            new Regex("(\\p{So}|\\p{Cs}+|\\d\\p{Me})", DefaultRegexOptions),
+            new Regex("((?:[\\uD83C][\\uDDE6-\\uDDFF]){2}|\\p{So}|\\p{Cs}{2}|\\d\\p{Me})", DefaultRegexOptions),
             m => new EmojiNode(m.Value, m.Groups[1].Value));
 
         // Capture <:lul:123456> or <a:lul:123456>
@@ -129,17 +133,20 @@ namespace DiscordChatExporter.Core.Markdown
 
         /* Text */
 
-        // Capture the shrug emoticon specifically to prevent its characters from being matched for formatting
+        // Capture the shrug emoticon
+        // This escapes it from matching for formatting
         private static readonly IMatcher<Node> ShrugTextNodeMatcher = new StringMatcher<Node>(
             @"¯\_(ツ)_/¯",
             s => new TextNode(s));
 
-        // Capture any unicode surrogate pair preceeded by a backslash
-        private static readonly IMatcher<Node> EscapedSurrogatePairTextNodeMatcher = new RegexMatcher<Node>(
-            new Regex("\\\\(\\p{Cs}{1,2})", DefaultRegexOptions),
+        // Capture any "symbol/other" character or surrogate pair preceeded by a backslash
+        // This escapes it from matching for emoji
+        private static readonly IMatcher<Node> EscapedSymbolTextNodeMatcher = new RegexMatcher<Node>(
+            new Regex("\\\\(\\p{So}|\\p{Cs}{2})", DefaultRegexOptions),
             m => new TextNode(m.Value, m.Groups[1].Value));
 
         // Capture any non-whitespace, non latin alphanumeric character preceeded by a backslash
+        // This escapes it from matching for formatting or other tokens
         private static readonly IMatcher<Node> EscapedCharacterTextNodeMatcher = new RegexMatcher<Node>(
             new Regex("\\\\([^a-zA-Z0-9\\s])", DefaultRegexOptions),
             m => new TextNode(m.Value, m.Groups[1].Value));
@@ -168,7 +175,7 @@ namespace DiscordChatExporter.Core.Markdown
             AutoLinkNodeMatcher,
             HiddenLinkNodeMatcher,
             ShrugTextNodeMatcher,
-            EscapedSurrogatePairTextNodeMatcher,
+            EscapedSymbolTextNodeMatcher,
             EscapedCharacterTextNodeMatcher);
 
         private static IReadOnlyList<Node> Parse(string input, IMatcher<Node> matcher) =>

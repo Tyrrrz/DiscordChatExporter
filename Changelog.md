@@ -1,3 +1,10 @@
+### v2.12 (11-Apr-2019)
+
+- Improved markdown parsing performance which speeds up the final stage of exporting by around 4.5 times.
+- Improved performance when exporting as PlainText or CSV.
+- [GUI] Fixed an issue where the app would freeze up and report as "not responding" during the final stage of exporting.
+- [CLI] Fixed an issue where it would say "Completed" after exporting a chat log, even if the process failed.
+
 ### v2.11 (14-Mar-2019)
 
 - [HTML] Added syntax highlighting for multiline code blocks via Highlight.js.

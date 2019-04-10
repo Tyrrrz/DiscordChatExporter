@@ -7,6 +7,8 @@ namespace DiscordChatExporter.Cli.Internal
         private readonly int _posX;
         private readonly int _posY;
 
+        private bool _isCompleted;
+
         public InlineProgress()
         {
             // If output is not redirected - save initial cursor position
@@ -27,6 +29,8 @@ namespace DiscordChatExporter.Cli.Internal
             }
         }
 
+        public void ReportCompletion() => _isCompleted = true;
+
         public void Dispose()
         {
             // If output is not redirected - reset cursor position
@@ -34,7 +38,10 @@ namespace DiscordChatExporter.Cli.Internal
                 Console.SetCursorPosition(_posX, _posY);
 
             // Inform about completion
-            Console.WriteLine("Completed ✓");
+            if (_isCompleted)
+                Console.WriteLine("Completed ✓");
+            else
+                Console.WriteLine("Failed X");
         }
     }
 }

@@ -59,6 +59,9 @@ namespace DiscordChatExporter.Cli.Verbs
                         // Export
                         await exportService.ExportChatLogAsync(chatLog, filePath, Options.ExportFormat,
                             Options.PartitionLimit);
+
+                        // Report successful completion
+                        progress.ReportCompletion();
                     }
                 }
                 catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)

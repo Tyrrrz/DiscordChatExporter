@@ -5,6 +5,7 @@ using DiscordChatExporter.Cli.Internal;
 using DiscordChatExporter.Cli.Verbs.Options;
 using DiscordChatExporter.Core.Services;
 using DiscordChatExporter.Core.Services.Helpers;
+using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Cli.Verbs
 {
@@ -23,7 +24,7 @@ namespace DiscordChatExporter.Cli.Verbs
             var exportService = Container.Instance.Get<ExportService>();
 
             // Configure settings
-            if (Options.DateFormat != null)
+            if (!Options.DateFormat.EmptyIfNull().IsWhiteSpace())
                 settingsService.DateFormat = Options.DateFormat;
 
             // Track progress
@@ -36,7 +37,7 @@ namespace DiscordChatExporter.Cli.Verbs
 
                 // Generate file path if not set or is a directory
                 var filePath = Options.OutputPath;
-                if (filePath == null || ExportHelper.IsDirectoryPath(filePath))
+                if (filePath.EmptyIfNull().IsWhiteSpace() || ExportHelper.IsDirectoryPath(filePath))
                 {
                     // Generate default file name
                     var fileName = ExportHelper.GetDefaultExportFileName(Options.ExportFormat, chatLog.Guild,

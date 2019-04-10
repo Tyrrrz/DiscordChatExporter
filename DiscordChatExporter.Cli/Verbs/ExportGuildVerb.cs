@@ -9,6 +9,7 @@ using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.Core.Services;
 using DiscordChatExporter.Core.Services.Exceptions;
 using DiscordChatExporter.Core.Services.Helpers;
+using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Cli.Verbs
 {
@@ -27,7 +28,7 @@ namespace DiscordChatExporter.Cli.Verbs
             var exportService = Container.Instance.Get<ExportService>();
 
             // Configure settings
-            if (Options.DateFormat != null)
+            if (!Options.DateFormat.EmptyIfNull().IsWhiteSpace())
                 settingsService.DateFormat = Options.DateFormat;
 
             // Get channels

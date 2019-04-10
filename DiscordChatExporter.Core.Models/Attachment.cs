@@ -41,7 +41,7 @@ namespace DiscordChatExporter.Core.Models
     {
         private static readonly string[] ImageFileExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
 
-        private static bool GetIsImage(string fileName)
+        public static bool GetIsImage(string fileName)
         {
             var fileExtension = Path.GetExtension(fileName);
             return ImageFileExtensions.Contains(fileExtension, StringComparer.OrdinalIgnoreCase);

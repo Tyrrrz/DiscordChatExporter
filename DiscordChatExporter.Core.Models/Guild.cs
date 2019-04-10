@@ -26,7 +26,7 @@
 
     public partial class Guild
     {
-        private static string GetIconUrl(string id, string iconHash)
+        public static string GetIconUrl(string id, string iconHash)
         {
             return iconHash != null
                 ? $"https://cdn.discordapp.com/icons/{id}/{iconHash}.png"

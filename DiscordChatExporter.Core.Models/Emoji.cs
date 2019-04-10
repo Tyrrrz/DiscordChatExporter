@@ -37,7 +37,7 @@ namespace DiscordChatExporter.Core.Models
         private static string GetTwemojiName(string emoji) =>
             GetCodePoints(emoji).Select(i => i.ToString("x")).JoinToString("-");
 
-        private static string GetImageUrl(string id, string name, bool isAnimated)
+        public static string GetImageUrl(string id, string name, bool isAnimated)
         {
             // Custom emoji
             if (id != null)

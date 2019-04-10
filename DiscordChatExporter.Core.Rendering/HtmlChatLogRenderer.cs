@@ -133,7 +133,7 @@ namespace DiscordChatExporter.Core.Rendering
             if (node is EmojiNode emojiNode)
             {
                 // Get emoji image URL
-                var emojiImageUrl = new Emoji(emojiNode.Id, emojiNode.Name, emojiNode.IsAnimated).ImageUrl;
+                var emojiImageUrl = Emoji.GetImageUrl(emojiNode.Id, emojiNode.Name, emojiNode.IsAnimated);
 
                 // Emoji can be jumboable if it's the only top-level node
                 var jumboableCssClass = isTopLevel && isSingle ? "emoji--large" : null;

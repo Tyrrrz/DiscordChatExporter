@@ -34,9 +34,9 @@ namespace DiscordChatExporter.Core.Models
 
     public partial class User
     {
-        private static string GetFullName(string name, int discriminator) => $"{name}#{discriminator:0000}";
+        public static string GetFullName(string name, int discriminator) => $"{name}#{discriminator:0000}";
 
-        private static string GetAvatarUrl(string id, int discriminator, string avatarHash)
+        public static string GetAvatarUrl(string id, int discriminator, string avatarHash)
         {
             // Custom avatar
             if (avatarHash != null)

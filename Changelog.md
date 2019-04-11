@@ -2,6 +2,7 @@
 
 - [GUI] Fixed an issue where the app crashed when trying to export multiple channels.
 - [HTML] Fixed an issue where some of the emojis were rendered via Twemoji while Discord renders them as plain text.
+- [HTML] Fixed an issue where emojis weren't jumbo if there were more than one of them.
 
 ### v2.12 (11-Apr-2019)
 

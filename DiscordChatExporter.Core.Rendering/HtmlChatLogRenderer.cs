@@ -46,7 +46,7 @@ namespace DiscordChatExporter.Core.Rendering
                 return true;
             }).Select(g => new MessageGroup(g.First().Author, g.First().Timestamp, g));
 
-        private string FormatMarkdown(Node node, bool isTopLevel, bool isSingle)
+        private string FormatMarkdown(Node node, bool isJumbo)
         {
             // Text node
             if (node is TextNode textNode)
@@ -136,8 +136,8 @@ namespace DiscordChatExporter.Core.Rendering
                 // Get emoji image URL
                 var emojiImageUrl = Emoji.GetImageUrl(emojiNode.Id, emojiNode.Name, emojiNode.IsAnimated);
 
-                // Emoji can be jumboable if it's the only top-level node
-                var jumboableCssClass = isTopLevel && isSingle ? "emoji--large" : null;
+                // Make emoji large if it's jumbo
+                var jumboableCssClass = isJumbo ? "emoji--large" : null;
 
                 return $"<img class=\"emoji {jumboableCssClass}\" alt=\"{emojiNode.Name}\" title=\"{emojiNode.Name}\" src=\"{emojiImageUrl}\" />";
             }
@@ -154,8 +154,10 @@ namespace DiscordChatExporter.Core.Rendering
 
         private string FormatMarkdown(IReadOnlyList<Node> nodes, bool isTopLevel)
         {
-            var isSingle = nodes.Count == 1;
-            return nodes.Select(n => FormatMarkdown(n, isTopLevel, isSingle)).JoinToString("");
+            // Emojis are jumbo if all top-level nodes are emoji nodes, disregarding whitespace
+            var isJumbo = isTopLevel && nodes.Where(n => !n.Source.IsNullOrWhiteSpace()).All(n => n is EmojiNode);
+
+            return nodes.Select(n => FormatMarkdown(n, isJumbo)).JoinToString("");
         }
 
         private string FormatMarkdown(string markdown) => FormatMarkdown(MarkdownParser.Parse(markdown), true);

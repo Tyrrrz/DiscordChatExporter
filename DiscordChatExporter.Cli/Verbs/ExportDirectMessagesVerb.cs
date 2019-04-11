@@ -27,7 +27,7 @@ namespace DiscordChatExporter.Cli.Verbs
             var exportService = Container.Instance.Get<ExportService>();
 
             // Configure settings
-            if (!Options.DateFormat.EmptyIfNull().IsWhiteSpace())
+            if (!Options.DateFormat.IsNullOrWhiteSpace())
                 settingsService.DateFormat = Options.DateFormat;
 
             // Get channels

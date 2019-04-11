@@ -113,7 +113,7 @@ namespace DiscordChatExporter.Core.Markdown
         // Capture <:lul:123456> or <a:lul:123456>
         private static readonly IMatcher<Node> CustomEmojiNodeMatcher = new RegexMatcher<Node>(
             new Regex("<(a)?:(.+?):(\\d+?)>", DefaultRegexOptions),
-            m => new EmojiNode(m.Value, m.Groups[3].Value, m.Groups[2].Value, !m.Groups[1].Value.IsEmpty()));
+            m => new EmojiNode(m.Value, m.Groups[3].Value, m.Groups[2].Value, !m.Groups[1].Value.IsNullOrWhiteSpace()));
 
         /* Links */
 

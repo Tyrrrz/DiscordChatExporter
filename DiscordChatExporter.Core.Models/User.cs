@@ -1,4 +1,5 @@
 ﻿using System;
+using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Models
 {
@@ -39,7 +40,7 @@ namespace DiscordChatExporter.Core.Models
         public static string GetAvatarUrl(string id, int discriminator, string avatarHash)
         {
             // Custom avatar
-            if (avatarHash != null)
+            if (!avatarHash.IsNullOrWhiteSpace())
             {
                 // Animated
                 if (avatarHash.StartsWith("a_", StringComparison.Ordinal))

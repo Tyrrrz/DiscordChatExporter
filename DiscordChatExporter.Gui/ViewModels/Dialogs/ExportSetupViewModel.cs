@@ -6,6 +6,7 @@ using DiscordChatExporter.Core.Services;
 using DiscordChatExporter.Core.Services.Helpers;
 using DiscordChatExporter.Gui.ViewModels.Components;
 using DiscordChatExporter.Gui.ViewModels.Framework;
+using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Gui.ViewModels.Dialogs
 {
@@ -84,7 +85,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             }
 
             // If canceled - return
-            if (OutputPath == null)
+            if (OutputPath.IsNullOrWhiteSpace())
                 return;
 
             // Close dialog

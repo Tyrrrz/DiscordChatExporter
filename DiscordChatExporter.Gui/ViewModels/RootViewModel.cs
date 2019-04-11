@@ -122,7 +122,7 @@ namespace DiscordChatExporter.Gui.ViewModels
             await _dialogManager.ShowDialogAsync(dialog);
         }
 
-        public bool CanPopulateGuildsAndChannels => !IsBusy && !TokenValue.EmptyIfNull().IsWhiteSpace();
+        public bool CanPopulateGuildsAndChannels => !IsBusy && !TokenValue.IsNullOrWhiteSpace();
 
         public async void PopulateGuildsAndChannels()
         {
@@ -235,7 +235,7 @@ namespace DiscordChatExporter.Gui.ViewModels
             }
         }
 
-        public bool CanExportChannels => !IsBusy && SelectedChannels.EmptyIfNull().Any();
+        public bool CanExportChannels => !IsBusy && !SelectedChannels.IsNullOrEmpty();
 
         public async void ExportChannels()
         {

@@ -38,7 +38,7 @@ namespace DiscordChatExporter.Core.Services
         {
             // Create output directory
             var dirPath = Path.GetDirectoryName(filePath);
-            if (!dirPath.EmptyIfNull().IsWhiteSpace())
+            if (!dirPath.IsNullOrWhiteSpace())
                 Directory.CreateDirectory(dirPath);
 
             // Render chat log to output file
@@ -74,7 +74,7 @@ namespace DiscordChatExporter.Core.Services
                     var partitionFilePath = $"{fileNameWithoutExt} [{partitionNumber} of {partitions.Length}]{fileExt}";
 
                     // Compose full file path
-                    if (!dirPath.EmptyIfNull().IsWhiteSpace())
+                    if (!dirPath.IsNullOrWhiteSpace())
                         partitionFilePath = Path.Combine(dirPath, partitionFilePath);
 
                     // Export

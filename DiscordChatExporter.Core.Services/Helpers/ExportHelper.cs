@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using DiscordChatExporter.Core.Models;
+using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Services.Helpers
 {
@@ -11,7 +12,7 @@ namespace DiscordChatExporter.Core.Services.Helpers
         public static bool IsDirectoryPath(string path) =>
             path.Last() == Path.DirectorySeparatorChar ||
             path.Last() == Path.AltDirectorySeparatorChar ||
-            Path.GetExtension(path) == null;
+            (Path.GetExtension(path).IsNullOrWhiteSpace() && !File.Exists(path));
 
         public static string GetDefaultExportFileName(ExportFormat format, Guild guild, Channel channel,
             DateTimeOffset? after = null, DateTimeOffset? before = null)

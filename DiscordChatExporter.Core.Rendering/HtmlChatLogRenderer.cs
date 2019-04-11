@@ -92,7 +92,7 @@ namespace DiscordChatExporter.Core.Rendering
             if (node is MultilineCodeBlockNode multilineCodeBlockNode)
             {
                 // Set language class for syntax highlighting
-                var languageCssClass = multilineCodeBlockNode.Language != null
+                var languageCssClass = !multilineCodeBlockNode.Language.IsNullOrWhiteSpace()
                     ? "language-" + multilineCodeBlockNode.Language
                     : null;
 

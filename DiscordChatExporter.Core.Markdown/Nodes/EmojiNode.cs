@@ -1,4 +1,6 @@
-﻿namespace DiscordChatExporter.Core.Markdown.Nodes
+﻿using Tyrrrz.Extensions;
+
+namespace DiscordChatExporter.Core.Markdown.Nodes
 {
     public class EmojiNode : Node
     {
@@ -8,7 +10,7 @@
 
         public bool IsAnimated { get; }
 
-        public bool IsCustomEmoji => Id != null;
+        public bool IsCustomEmoji => !Id.IsNullOrWhiteSpace();
 
         public EmojiNode(string source, string id, string name, bool isAnimated)
             : base(source)

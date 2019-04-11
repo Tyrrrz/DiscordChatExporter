@@ -41,14 +41,14 @@ namespace DiscordChatExporter.Core.Services
             var guildId = json["guild_id"]?.Value<string>();
 
             // If the guild ID is blank, it's direct messages
-            if (guildId == null)
+            if (guildId.IsNullOrWhiteSpace())
                 guildId = Guild.DirectMessages.Id;
 
             // Try to extract name
             var name = json["name"]?.Value<string>();
 
             // If the name is blank, it's direct messages
-            if (name == null)
+            if (name.IsNullOrWhiteSpace())
                 name = json["recipients"].Select(ParseUser).Select(u => u.Name).JoinToString(", ");
 
             return new Channel(id, parentId, guildId, name, topic, type);

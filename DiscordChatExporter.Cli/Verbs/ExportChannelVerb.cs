@@ -24,7 +24,7 @@ namespace DiscordChatExporter.Cli.Verbs
             var exportService = Container.Instance.Get<ExportService>();
 
             // Configure settings
-            if (!Options.DateFormat.EmptyIfNull().IsWhiteSpace())
+            if (!Options.DateFormat.IsNullOrWhiteSpace())
                 settingsService.DateFormat = Options.DateFormat;
 
             // Track progress
@@ -37,7 +37,7 @@ namespace DiscordChatExporter.Cli.Verbs
 
                 // Generate file path if not set or is a directory
                 var filePath = Options.OutputPath;
-                if (filePath.EmptyIfNull().IsWhiteSpace() || ExportHelper.IsDirectoryPath(filePath))
+                if (filePath.IsNullOrWhiteSpace() || ExportHelper.IsDirectoryPath(filePath))
                 {
                     // Generate default file name
                     var fileName = ExportHelper.GetDefaultExportFileName(Options.ExportFormat, chatLog.Guild,

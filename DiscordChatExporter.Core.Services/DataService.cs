@@ -48,7 +48,7 @@ namespace DiscordChatExporter.Core.Services
                         var value = parameter.SubstringAfter("=");
 
                         // Skip empty values
-                        if (value.IsEmpty())
+                        if (value.IsNullOrWhiteSpace())
                             continue;
 
                         request.RequestUri = request.RequestUri.SetQueryParameter(key, value);

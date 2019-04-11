@@ -40,7 +40,7 @@ namespace DiscordChatExporter.Core.Models
         public static string GetImageUrl(string id, string name, bool isAnimated)
         {
             // Custom emoji
-            if (id != null)
+            if (!id.IsNullOrWhiteSpace())
             {
                 // Animated
                 if (isAnimated)

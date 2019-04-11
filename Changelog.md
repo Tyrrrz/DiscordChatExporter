@@ -1,3 +1,8 @@
+### v2.12.1 (12-Apr-2019)
+
+- [GUI] Fixed an issue where the app crashed when trying to export multiple channels.
+- [HTML] Fixed an issue where some of the emojis were rendered via Twemoji while Discord renders them as plain text.
+
 ### v2.12 (11-Apr-2019)
 
 - Improved markdown parsing performance which speeds up the final stage of exporting by around 4.5 times.

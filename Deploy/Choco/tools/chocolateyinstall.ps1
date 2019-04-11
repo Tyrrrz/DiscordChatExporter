@@ -7,7 +7,7 @@ $installDirPath = "$(Split-Path -parent $MyInvocation.MyCommand.Definition)"
 $packageArgs = @{
     packageName   = $packageName
     unzipLocation = $installDirPath
-    url           = 'https://github.com/Tyrrrz/DiscordChatExporter/releases/download/2.12/DiscordChatExporter.zip'
+    url           = 'https://github.com/Tyrrrz/DiscordChatExporter/releases/download/2.12.1/DiscordChatExporter.zip'
 }
 Install-ChocolateyZipPackage @packageArgs
 
@@ -19,6 +19,6 @@ New-Item (Join-Path $installDirPath "DiscordChatExporter.exe.gui") -ItemType Fil
 $packageArgs = @{
     packageName   = $packageName
     unzipLocation = $installDirPath
-    url           = 'https://github.com/Tyrrrz/DiscordChatExporter/releases/download/2.12/DiscordChatExporter.CLI.zip'
+    url           = 'https://github.com/Tyrrrz/DiscordChatExporter/releases/download/2.12.1/DiscordChatExporter.CLI.zip'
 }
 Install-ChocolateyZipPackage @packageArgs

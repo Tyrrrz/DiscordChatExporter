@@ -140,6 +140,12 @@ namespace DiscordChatExporter.Core.Markdown
             @"¯\_(ツ)_/¯",
             s => new TextNode(s));
 
+        // Capture some specific emojis that don't get rendered
+        // This escapes it from matching for emoji
+        private static readonly IMatcher<Node> IgnoredEmojiTextNodeMatcher = new RegexMatcher<Node>(
+            new Regex("(\\u26A7|\\u2640|\\u2642|\\u2695|\\u267E|\\u00A9|\\u00AE|\\u2122)", DefaultRegexOptions),
+            m => new TextNode(m.Value, m.Groups[1].Value));
+
         // Capture any "symbol/other" character or surrogate pair preceeded by a backslash
         // This escapes it from matching for emoji
         private static readonly IMatcher<Node> EscapedSymbolTextNodeMatcher = new RegexMatcher<Node>(
@@ -155,6 +161,13 @@ namespace DiscordChatExporter.Core.Markdown
         // Combine all matchers into one
         // Matchers that have similar patterns are ordered from most specific to least specific
         private static readonly IMatcher<Node> AggregateNodeMatcher = new AggregateMatcher<Node>(
+            // Escaped text
+            ShrugTextNodeMatcher,
+            IgnoredEmojiTextNodeMatcher,
+            EscapedSymbolTextNodeMatcher,
+            EscapedCharacterTextNodeMatcher,
+
+            // Formatting
             ItalicBoldFormattedNodeMatcher,
             ItalicUnderlineFormattedNodeMatcher,
             BoldFormattedNodeMatcher,
@@ -163,21 +176,26 @@ namespace DiscordChatExporter.Core.Markdown
             ItalicAltFormattedNodeMatcher,
             StrikethroughFormattedNodeMatcher,
             SpoilerFormattedNodeMatcher,
+
+            // Code blocks
             MultilineCodeBlockNodeMatcher,
             InlineCodeBlockNodeMatcher,
+
+            // Mentions
             EveryoneMentionNodeMatcher,
             HereMentionNodeMatcher,
             UserMentionNodeMatcher,
             ChannelMentionNodeMatcher,
             RoleMentionNodeMatcher,
-            StandardEmojiNodeMatcher,
-            CustomEmojiNodeMatcher,
+
+            // Links
             TitledLinkNodeMatcher,
             AutoLinkNodeMatcher,
             HiddenLinkNodeMatcher,
-            ShrugTextNodeMatcher,
-            EscapedSymbolTextNodeMatcher,
-            EscapedCharacterTextNodeMatcher);
+
+            // Emoji
+            StandardEmojiNodeMatcher,
+            CustomEmojiNodeMatcher);
 
         private static IReadOnlyList<Node> Parse(string input, IMatcher<Node> matcher) =>
             matcher.MatchAll(input, s => new TextNode(s)).Select(r => r.Value).ToArray();

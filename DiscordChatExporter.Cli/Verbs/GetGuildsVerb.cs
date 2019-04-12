@@ -8,7 +8,7 @@ namespace DiscordChatExporter.Cli.Verbs
 {
     public class GetGuildsVerb : Verb<GetGuildsOptions>
     {
-        public GetGuildsVerb(GetGuildsOptions options) 
+        public GetGuildsVerb(GetGuildsOptions options)
             : base(options)
         {
         }

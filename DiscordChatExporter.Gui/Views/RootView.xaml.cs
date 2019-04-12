@@ -4,7 +4,7 @@
     {
         public RootView()
         {
-            InitializeComponent();            
+            InitializeComponent();
         }
     }
 }

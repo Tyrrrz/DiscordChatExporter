@@ -15,7 +15,7 @@
         public string Topic { get; }
 
         public ChannelType Type { get; }
-        
+
         public Channel(string id, string parentId, string guildId, string name, string topic, ChannelType type)
         {
             Id = id;

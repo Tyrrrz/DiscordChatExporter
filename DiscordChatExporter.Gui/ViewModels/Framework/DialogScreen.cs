@@ -21,6 +21,6 @@ namespace DiscordChatExporter.Gui.ViewModels.Framework
     }
 
     public abstract class DialogScreen : DialogScreen<bool?>
-    {        
+    {
     }
 }

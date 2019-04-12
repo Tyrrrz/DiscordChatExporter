@@ -8,7 +8,7 @@ namespace DiscordChatExporter.Cli.Verbs
 {
     public class GetDirectMessageChannelsVerb : Verb<GetDirectMessageChannelsOptions>
     {
-        public GetDirectMessageChannelsVerb(GetDirectMessageChannelsOptions options) 
+        public GetDirectMessageChannelsVerb(GetDirectMessageChannelsOptions options)
             : base(options)
         {
         }

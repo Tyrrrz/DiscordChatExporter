@@ -274,7 +274,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                     }
 
                     // Get chat log
-                    var chatLog = await _dataService.GetChatLogAsync(token, dialog.Guild, channel, 
+                    var chatLog = await _dataService.GetChatLogAsync(token, dialog.Guild, channel,
                         dialog.After, dialog.Before, operation);
 
                     // Export

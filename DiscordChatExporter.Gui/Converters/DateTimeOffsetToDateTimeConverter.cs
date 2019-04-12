@@ -11,18 +11,18 @@ namespace DiscordChatExporter.Gui.Converters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is DateTimeOffset date)
-                return date.DateTime;
+            if (value is DateTimeOffset dateTimeOffsetValue)
+                return dateTimeOffsetValue.DateTime;
 
-            return null;
+            return default;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is DateTime date)
-                return new DateTimeOffset(date);
+            if (value is DateTime dateTimeValue)
+                return new DateTimeOffset(dateTimeValue);
 
-            return null;
+            return default;
         }
     }
 }

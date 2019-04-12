@@ -253,6 +253,7 @@ namespace DiscordChatExporter.Gui.ViewModels
             var operations = ProgressManager.CreateOperations(dialog.Channels.Count);
 
             // Export channels
+            var successfulExportCount = 0;
             for (var i = 0; i < dialog.Channels.Count; i++)
             {
                 // Get operation and channel
@@ -281,8 +282,8 @@ namespace DiscordChatExporter.Gui.ViewModels
                     await _exportService.ExportChatLogAsync(chatLog, filePath, dialog.SelectedFormat,
                         dialog.PartitionLimit);
 
-                    // Notify completion
-                    Notifications.Enqueue($"Channel [{channel.Model.Name}] successfully exported");
+                    // Report successful export
+                    successfulExportCount++;
                 }
                 catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
                 {
@@ -298,6 +299,9 @@ namespace DiscordChatExporter.Gui.ViewModels
                     operation.Dispose();
                 }
             }
+
+            // Notify of overall completion
+            Notifications.Enqueue($"Successfully exported {successfulExportCount} channel(s)");
         }
     }
 }

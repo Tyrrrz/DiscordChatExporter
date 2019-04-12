@@ -21,7 +21,7 @@ namespace DiscordChatExporter.Core.Markdown
 
         // Capture any character until the earliest single asterisk not preceded or followed by an asterisk
         // Opening asterisk must not be followed by whitespace
-        // Closing asterisk must not be preceeded by whitespace
+        // Closing asterisk must not be preceded by whitespace
         private static readonly IMatcher<Node> ItalicFormattedNodeMatcher = new RegexMatcher<Node>(
             new Regex("\\*(?!\\s)(.+?)(?<!\\s|\\*)\\*(?!\\*)", DefaultRegexOptions | RegexOptions.Singleline),
             m => new FormattedNode(m.Value, "*", TextFormatting.Italic, Parse(m.Groups[1].Value)));
@@ -146,13 +146,13 @@ namespace DiscordChatExporter.Core.Markdown
             new Regex("(\\u26A7|\\u2640|\\u2642|\\u2695|\\u267E|\\u00A9|\\u00AE|\\u2122)", DefaultRegexOptions),
             m => new TextNode(m.Value, m.Groups[1].Value));
 
-        // Capture any "symbol/other" character or surrogate pair preceeded by a backslash
+        // Capture any "symbol/other" character or surrogate pair preceded by a backslash
         // This escapes it from matching for emoji
         private static readonly IMatcher<Node> EscapedSymbolTextNodeMatcher = new RegexMatcher<Node>(
             new Regex("\\\\(\\p{So}|\\p{Cs}{2})", DefaultRegexOptions),
             m => new TextNode(m.Value, m.Groups[1].Value));
 
-        // Capture any non-whitespace, non latin alphanumeric character preceeded by a backslash
+        // Capture any non-whitespace, non latin alphanumeric character preceded by a backslash
         // This escapes it from matching for formatting or other tokens
         private static readonly IMatcher<Node> EscapedCharacterTextNodeMatcher = new RegexMatcher<Node>(
             new Regex("\\\\([^a-zA-Z0-9\\s])", DefaultRegexOptions),

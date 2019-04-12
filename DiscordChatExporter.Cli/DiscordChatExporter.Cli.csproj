@@ -8,6 +8,7 @@
     <Copyright>Copyright (c) Alexey Golub</Copyright>
     <ApplicationIcon>..\favicon.ico</ApplicationIcon>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

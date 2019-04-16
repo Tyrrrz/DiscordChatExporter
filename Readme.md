@@ -11,7 +11,6 @@ DiscordChatExporter can be used to export message history from a [Discord](https
 ## Download
 
 - [Stable releases](https://github.com/Tyrrrz/DiscordChatExporter/releases)
-- [Chocolatey](https://chocolatey.org/packages/DiscordChatExporter): `choco install discordchatexporter`
 - [Docker](https://hub.docker.com/r/tyrrrz/discordchatexporter): `docker pull tyrrrz/discordchatexporter`
 - [Continuous integration](https://ci.appveyor.com/project/Tyrrrz/DiscordChatExporter)
 

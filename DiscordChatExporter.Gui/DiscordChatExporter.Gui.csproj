@@ -63,6 +63,7 @@
     <Compile Include="Converters\DateTimeOffsetToDateTimeConverter.cs" />
     <Compile Include="Converters\ExportFormatToStringConverter.cs" />
     <Compile Include="Converters\InverseBoolConverter.cs" />
+    <Compile Include="Services\UpdateService.cs" />
     <Compile Include="ViewModels\Components\ChannelViewModel.cs" />
     <Compile Include="ViewModels\Components\GuildViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\ExportSetupViewModel.cs" />

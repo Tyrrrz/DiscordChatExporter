@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
+using DiscordChatExporter.Core.Services;
 using Onova;
 using Onova.Exceptions;
 using Onova.Services;
 
-namespace DiscordChatExporter.Core.Services
+namespace DiscordChatExporter.Gui.Services
 {
     public class UpdateService : IDisposable
     {

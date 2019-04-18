@@ -24,12 +24,20 @@ namespace DiscordChatExporter.Cli
             Console.WriteLine(" 3. Navigate to the Bot section on the left");
             Console.WriteLine(" 4. Under Token click Copy");
             Console.WriteLine();
-            Console.WriteLine("# To get guild or channel ID:");
+            Console.WriteLine("# To get guild ID or guild channel ID:");
             Console.WriteLine(" 1. Open Discord");
             Console.WriteLine(" 2. Open Settings");
             Console.WriteLine(" 3. Go to Appearance section");
             Console.WriteLine(" 4. Enable Developer Mode");
             Console.WriteLine(" 5. Right click on the desired guild or channel and click Copy ID");
+            Console.WriteLine();
+            Console.WriteLine("# To get direct message channel ID:");
+            Console.WriteLine(" 1. Open Discord");
+            Console.WriteLine(" 2. Open the desired direct message channel");
+            Console.WriteLine(" 3. Press Ctrl+Shift+I to show developer tools");
+            Console.WriteLine(" 4. Navigate to the Console tab");
+            Console.WriteLine(" 5. Type \"window.location.href\" and press Enter");
+            Console.WriteLine(" 6. Copy the first long sequence of numbers inside the URL");
         }
 
         public static void Main(string[] args)

@@ -1,6 +1,6 @@
 ﻿namespace DiscordChatExporter.Core.Markdown.Internal
 {
-    internal partial class ParsedMatch<T>
+    internal class ParsedMatch<T>
     {
         public int StartIndex { get; }
 

@@ -1,6 +1,6 @@
-﻿using DiscordChatExporter.Core.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using DiscordChatExporter.Core.Models;
 
 namespace DiscordChatExporter.Core.Rendering
 {

@@ -41,6 +41,7 @@ img {
 .pre--inline {
     padding: 2px;
     border-radius: 3px;
+    font-size: 85%;
 }
 
 .mention {

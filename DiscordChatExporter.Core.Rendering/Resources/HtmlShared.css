@@ -1,5 +1,35 @@
 /* === GENERAL === */
 
+@font-face {
+    font-family: Whitney;
+    src: url(https://discordapp.com/assets/6c6374bad0b0b6d204d8d6dc4a18d820.woff);
+    font-weight: 300;
+}
+
+@font-face {
+    font-family: Whitney;
+    src: url(https://discordapp.com/assets/e8acd7d9bf6207f99350ca9f9e23b168.woff);
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: Whitney;
+    src: url(https://discordapp.com/assets/3bdef1251a424500c1b3a78dea9b7e57.woff);
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: Whitney;
+    src: url(https://discordapp.com/assets/be0060dafb7a0e31d2a1ca17c0708636.woff);
+    font-weight: 600;
+}
+
+@font-face {
+    font-family: Whitney;
+    src: url(https://discordapp.com/assets/8e12fb4f14d9c4592eb8ec9f22337b04.woff);
+    font-weight: 700;
+}
+
 body {
     font-family: "Whitney", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 16px;
@@ -41,6 +71,7 @@ img {
 .pre--inline {
     padding: 2px;
     border-radius: 3px;
+    font-size: 85%;
 }
 
 .mention {
@@ -289,7 +320,7 @@ img {
 }
 
 .chatlog__embed-footer-text {
-    font-weight: 600;
+    font-weight: 500;
     font-size: .75em;
 }
 
@@ -309,4 +340,17 @@ img {
     min-width: 9px;
     margin-left: 6px;
     font-size: .875em;
+}
+
+.chatlog__bot-tag {
+    margin-left: 0.3em;
+    background: #7289da;
+    color: #ffffff;
+    font-size: 0.625em;
+    padding: 1px 2px;
+    border-radius: 3px;
+    vertical-align: middle;
+    line-height: 1.3;
+    position: relative;
+    top: -.2em;
 }

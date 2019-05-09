@@ -16,8 +16,9 @@ namespace DiscordChatExporter.Core.Services
             var discriminator = json["discriminator"].Value<int>();
             var name = json["username"].Value<string>();
             var avatarHash = json["avatar"].Value<string>();
+            var isBot = json["bot"]?.Value<bool>() ?? false;
 
-            return new User(id, discriminator, name, avatarHash);
+            return new User(id, discriminator, name, avatarHash, isBot);
         }
 
         private Guild ParseGuild(JToken json)

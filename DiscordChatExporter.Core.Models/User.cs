@@ -19,12 +19,15 @@ namespace DiscordChatExporter.Core.Models
 
         public string AvatarUrl { get; }
 
-        public User(string id, int discriminator, string name, string avatarHash)
+        public bool IsBot { get; }
+
+        public User(string id, int discriminator, string name, string avatarHash, bool isBot)
         {
             Id = id;
             Discriminator = discriminator;
             Name = name;
             AvatarHash = avatarHash;
+            IsBot = isBot;
 
             FullName = GetFullName(name, discriminator);
             AvatarUrl = GetAvatarUrl(id, discriminator, avatarHash);
@@ -54,6 +57,6 @@ namespace DiscordChatExporter.Core.Models
             return $"https://cdn.discordapp.com/embed/avatars/{discriminator % 5}.png";
         }
 
-        public static User CreateUnknownUser(string id) => new User(id, 0, "Unknown", null);
+        public static User CreateUnknownUser(string id) => new User(id, 0, "Unknown", null, false);
     }
 }

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFrameworks>net46;netcoreapp2.1</TargetFrameworks>
-    <Version>2.12.1</Version>
+    <Version>2.13</Version>
     <Company>Tyrrrz</Company>
     <Copyright>Copyright (c) Alexey Golub</Copyright>
     <ApplicationIcon>..\favicon.ico</ApplicationIcon>

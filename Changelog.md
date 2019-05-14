@@ -1,3 +1,10 @@
+### v2.13 (15-May-2019)
+
+- Updated usage instructions.
+- [HTML] Added BOT tags to messages posted by bots.
+- [GUI] UI will now be disabled when exporting.
+- [GUI] Notification informing that the export has completed will now appear after all exports have completed, instead of each of them separately.
+
 ### v2.12.1 (12-Apr-2019)
 
 - [GUI] Fixed an issue where the app crashed when trying to export multiple channels.

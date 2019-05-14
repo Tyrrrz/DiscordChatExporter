@@ -138,23 +138,23 @@
                             <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Ctrl+Shift+I" />
                             <Run Text="to show developer tools" />
                             <LineBreak />
-                            <Run Text="3. Press" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Ctrl+R" />
-                            <Run Text="to reload" />
-                            <LineBreak />
-                            <Run Text="4. Navigate to the" />
+                            <Run Text="3. Navigate to the" />
                             <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Application" />
                             <Run Text="tab" />
                             <LineBreak />
-                            <Run Text="5. Select" />
+                            <Run Text="4. Select" />
                             <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Local Storage" />
                             <Run Text="&gt;" />
                             <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="https://discordapp.com" />
                             <Run Text="on the left" />
                             <LineBreak />
+                            <Run Text="5. Press" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Ctrl+R" />
+                            <Run Text="to reload" />
+                            <LineBreak />
                             <Run Text="6. Find" />
                             <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="token" />
-                            <Run Text="under key and copy the value" />
+                            <Run Text="at the bottom and copy the value" />
                         </TextBlock>
                         <TextBlock Margin="0,24,0,0" FontSize="14">
                             <Run Text="To authorize using bot token instead, click" />

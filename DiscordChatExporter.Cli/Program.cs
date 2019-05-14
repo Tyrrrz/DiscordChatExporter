@@ -13,10 +13,10 @@ namespace DiscordChatExporter.Cli
             Console.WriteLine("# To get user token:");
             Console.WriteLine(" 1. Open Discord");
             Console.WriteLine(" 2. Press Ctrl+Shift+I to show developer tools");
-            Console.WriteLine(" 3. Press Ctrl+R to reload");
-            Console.WriteLine(" 4. Navigate to the Application tab");
-            Console.WriteLine(" 5. Select \"Local Storage\" > \"https://discordapp.com\" on the left");
-            Console.WriteLine(" 6. Find \"token\" under key and copy the value");
+            Console.WriteLine(" 3. Navigate to the Application tab");
+            Console.WriteLine(" 4. Select \"Local Storage\" > \"https://discordapp.com\" on the left");
+            Console.WriteLine(" 5. Press Ctrl+R to reload");
+            Console.WriteLine(" 6. Find \"token\" at the bottom and copy the value");
             Console.WriteLine();
             Console.WriteLine("# To get bot token:");
             Console.WriteLine(" 1. Go to Discord developer portal");

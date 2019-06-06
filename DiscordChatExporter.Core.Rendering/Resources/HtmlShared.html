@@ -67,7 +67,7 @@
             </div>            
             <div class="chatlog__messages">
                 {{~ # Author name and timestamp ~}}
-                <span class="chatlog__author-name" title="{{ group.Author.FullName | html.escape }}">{{ group.Author.Name | html.escape }}</span>
+                <span class="chatlog__author-name" title="{{ group.Author.FullName | html.escape }}" data-user-id="{{ group.Author.Id | html.escape }}">{{ group.Author.Name | html.escape }}</span>
                 {{~ if group.Author.IsBot ~}}
                     <span class="chatlog__bot-tag">BOT</span>
                 {{~ end ~}}

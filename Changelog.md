@@ -1,3 +1,8 @@
+### v2.13.1 (06-Jun-2019)
+
+- Fixed an issue where the app sometimes crashed when exporting due to `System.InvalidCastException`.
+- [HTML] Added `data-user-id` attribute to `span.chatlog__author-name`. The value of this attribute is author's Discord user ID.
+
 ### v2.13 (15-May-2019)
 
 - Updated usage instructions.

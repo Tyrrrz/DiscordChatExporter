@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -9,7 +8,6 @@ using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.Core.Services.Exceptions;
 using DiscordChatExporter.Core.Services.Internal;
 using Failsafe;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Tyrrrz.Extensions;
 
@@ -66,12 +64,7 @@ namespace DiscordChatExporter.Core.Services
                         var raw = await response.Content.ReadAsStringAsync();
 
                         // Parse
-                        using (var reader = new JsonTextReader(new StringReader(raw)))
-                        {
-                            reader.DateParseHandling = DateParseHandling.DateTimeOffset;
-
-                            return JToken.Load(reader);
-                        }
+                        return JToken.Parse(raw);
                     }
                 }
             });

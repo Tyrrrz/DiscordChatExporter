@@ -118,7 +118,7 @@ namespace DiscordChatExporter.Core.Services
             var title = json["title"]?.Value<string>();
             var description = json["description"]?.Value<string>();
             var url = json["url"]?.Value<string>();
-            var timestamp = json["timestamp"]?.Value<DateTimeOffset>();
+            var timestamp = json["timestamp"]?.Value<DateTime>().ToDateTimeOffset();
 
             // Get color
             var color = json["color"] != null
@@ -165,8 +165,8 @@ namespace DiscordChatExporter.Core.Services
             // Get basic data
             var id = json["id"].Value<string>();
             var channelId = json["channel_id"].Value<string>();
-            var timestamp = json["timestamp"].Value<DateTimeOffset>();
-            var editedTimestamp = json["edited_timestamp"]?.Value<DateTimeOffset?>();
+            var timestamp = json["timestamp"].Value<DateTime>().ToDateTimeOffset();
+            var editedTimestamp = json["edited_timestamp"]?.Value<DateTime?>()?.ToDateTimeOffset();
             var content = json["content"].Value<string>();
             var type = (MessageType) json["type"].Value<int>();
 

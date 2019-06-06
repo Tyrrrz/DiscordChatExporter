@@ -5,11 +5,11 @@ namespace DiscordChatExporter.Core.Services.Internal
 {
     internal static class Extensions
     {
-        public static string ToSnowflake(this DateTimeOffset date)
+        public static DateTimeOffset ToDateTimeOffset(this DateTime dateTime) => new DateTimeOffset(dateTime);
+
+        public static string ToSnowflake(this DateTimeOffset dateTime)
         {
-            const long epoch = 62135596800000;
-            var unixTime = date.ToUniversalTime().Ticks / TimeSpan.TicksPerMillisecond - epoch;
-            var value = ((ulong) unixTime - 1420070400000UL) << 22;
+            var value = ((ulong) dateTime.ToUnixTimeMilliseconds() - 1420070400000UL) << 22;
             return value.ToString();
         }
 

@@ -93,6 +93,57 @@ namespace DiscordChatExporter.Core.Rendering
 
         private string FormatMarkdown(string markdown) => FormatMarkdown(MarkdownParser.Parse(markdown));
 
+        private async Task RenderAttachmentAsync(TextWriter writer, Attachment attachment)
+        {
+            await writer.WriteLineAsync("{Attachment}");
+            await writer.WriteLineAsync(attachment.Url);
+        }
+
+        private async Task RenderEmbedAsync(TextWriter writer, Embed embed)
+        {
+            await writer.WriteLineAsync("{Embed}");
+
+            // Author name
+            if (!(embed.Author?.Name).IsNullOrWhiteSpace())
+                await writer.WriteLineAsync(embed.Author?.Name);
+
+            // URL
+            if (!embed.Url.IsNullOrWhiteSpace())
+                await writer.WriteLineAsync(embed.Url);
+
+            // Title
+            if (!embed.Title.IsNullOrWhiteSpace())
+                await writer.WriteLineAsync(FormatMarkdown(embed.Title));
+
+            // Description
+            if (!embed.Description.IsNullOrWhiteSpace())
+                await writer.WriteLineAsync(FormatMarkdown(embed.Description));
+
+            // Fields
+            foreach (var field in embed.Fields)
+            {
+                // Name
+                if (!field.Name.IsNullOrWhiteSpace())
+                    await writer.WriteLineAsync(field.Name);
+
+                // Value
+                if (!field.Value.IsNullOrWhiteSpace())
+                    await writer.WriteLineAsync(field.Value);
+            }
+
+            // Thumbnail URL
+            if (!(embed.Thumbnail?.Url).IsNullOrWhiteSpace())
+                await writer.WriteLineAsync(embed.Thumbnail?.Url);
+
+            // Image URL
+            if (!(embed.Image?.Url).IsNullOrWhiteSpace())
+                await writer.WriteLineAsync(embed.Image?.Url);
+
+            // Footer text
+            if (!(embed.Footer?.Text).IsNullOrWhiteSpace())
+                await writer.WriteLineAsync(embed.Footer?.Text);
+        }
+
         private async Task RenderMessageAsync(TextWriter writer, Message message)
         {
             // Timestamp and author
@@ -101,9 +152,22 @@ namespace DiscordChatExporter.Core.Rendering
             // Content
             await writer.WriteLineAsync(FormatMarkdown(message.Content));
 
+            // Separator
+            await writer.WriteLineAsync();
+
             // Attachments
             foreach (var attachment in message.Attachments)
-                await writer.WriteLineAsync(attachment.Url);
+            {
+                await RenderAttachmentAsync(writer, attachment);
+                await writer.WriteLineAsync();
+            }
+
+            // Embeds
+            foreach (var embed in message.Embeds)
+            {
+                await RenderEmbedAsync(writer, embed);
+                await writer.WriteLineAsync();
+            }
         }
 
         public async Task RenderAsync(TextWriter writer)
@@ -120,10 +184,7 @@ namespace DiscordChatExporter.Core.Rendering
 
             // Log
             foreach (var message in _chatLog.Messages)
-            {
                 await RenderMessageAsync(writer, message);
-                await writer.WriteLineAsync();
-            }
         }
     }
 }

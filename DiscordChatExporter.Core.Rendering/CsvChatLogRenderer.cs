@@ -96,6 +96,10 @@ namespace DiscordChatExporter.Core.Rendering
             var formattedAttachments = message.Attachments.Select(a => a.Url).JoinToString(",");
             await RenderFieldAsync(writer, formattedAttachments);
 
+            // Reactions
+            var formattedReactions = message.Reactions.Select(r => r.Emoji.Name + $"({r.Count})").JoinToString(",");
+            await RenderFieldAsync(writer, formattedReactions);
+
             // Line break
             await writer.WriteLineAsync();
         }
@@ -103,7 +107,7 @@ namespace DiscordChatExporter.Core.Rendering
         public async Task RenderAsync(TextWriter writer)
         {
             // Headers
-            await writer.WriteLineAsync("Author;Date;Content;Attachments;");
+            await writer.WriteLineAsync("Author;Date;Content;Attachments;Reactions;");
 
             // Log
             foreach (var message in _chatLog.Messages)

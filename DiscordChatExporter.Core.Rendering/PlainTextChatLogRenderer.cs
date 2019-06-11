@@ -93,55 +93,88 @@ namespace DiscordChatExporter.Core.Rendering
 
         private string FormatMarkdown(string markdown) => FormatMarkdown(MarkdownParser.Parse(markdown));
 
-        private async Task RenderAttachmentAsync(TextWriter writer, Attachment attachment)
+        private async Task RenderAttachmentsAsync(TextWriter writer, IReadOnlyList<Attachment> attachments)
         {
-            await writer.WriteLineAsync("{Attachment}");
-            await writer.WriteLineAsync(attachment.Url);
+            if (attachments.Any())
+            {
+                await writer.WriteLineAsync("{Attachments}");
+
+                foreach (var attachment in attachments)
+                    await writer.WriteLineAsync(attachment.Url);
+
+                await writer.WriteLineAsync();
+            }
         }
 
-        private async Task RenderEmbedAsync(TextWriter writer, Embed embed)
+        private async Task RenderEmbedsAsync(TextWriter writer, IReadOnlyList<Embed> embeds)
         {
-            await writer.WriteLineAsync("{Embed}");
-
-            // Author name
-            if (!(embed.Author?.Name).IsNullOrWhiteSpace())
-                await writer.WriteLineAsync(embed.Author?.Name);
-
-            // URL
-            if (!embed.Url.IsNullOrWhiteSpace())
-                await writer.WriteLineAsync(embed.Url);
-
-            // Title
-            if (!embed.Title.IsNullOrWhiteSpace())
-                await writer.WriteLineAsync(FormatMarkdown(embed.Title));
-
-            // Description
-            if (!embed.Description.IsNullOrWhiteSpace())
-                await writer.WriteLineAsync(FormatMarkdown(embed.Description));
-
-            // Fields
-            foreach (var field in embed.Fields)
+            foreach (var embed in embeds)
             {
-                // Name
-                if (!field.Name.IsNullOrWhiteSpace())
-                    await writer.WriteLineAsync(field.Name);
+                await writer.WriteLineAsync("{Embed}");
 
-                // Value
-                if (!field.Value.IsNullOrWhiteSpace())
-                    await writer.WriteLineAsync(field.Value);
+                // Author name
+                if (!(embed.Author?.Name).IsNullOrWhiteSpace())
+                    await writer.WriteLineAsync(embed.Author?.Name);
+
+                // URL
+                if (!embed.Url.IsNullOrWhiteSpace())
+                    await writer.WriteLineAsync(embed.Url);
+
+                // Title
+                if (!embed.Title.IsNullOrWhiteSpace())
+                    await writer.WriteLineAsync(FormatMarkdown(embed.Title));
+
+                // Description
+                if (!embed.Description.IsNullOrWhiteSpace())
+                    await writer.WriteLineAsync(FormatMarkdown(embed.Description));
+
+                // Fields
+                foreach (var field in embed.Fields)
+                {
+                    // Name
+                    if (!field.Name.IsNullOrWhiteSpace())
+                        await writer.WriteLineAsync(field.Name);
+
+                    // Value
+                    if (!field.Value.IsNullOrWhiteSpace())
+                        await writer.WriteLineAsync(field.Value);
+                }
+
+                // Thumbnail URL
+                if (!(embed.Thumbnail?.Url).IsNullOrWhiteSpace())
+                    await writer.WriteLineAsync(embed.Thumbnail?.Url);
+
+                // Image URL
+                if (!(embed.Image?.Url).IsNullOrWhiteSpace())
+                    await writer.WriteLineAsync(embed.Image?.Url);
+
+                // Footer text
+                if (!(embed.Footer?.Text).IsNullOrWhiteSpace())
+                    await writer.WriteLineAsync(embed.Footer?.Text);
+
+                await writer.WriteLineAsync();
             }
+        }
 
-            // Thumbnail URL
-            if (!(embed.Thumbnail?.Url).IsNullOrWhiteSpace())
-                await writer.WriteLineAsync(embed.Thumbnail?.Url);
+        private async Task RenderReactionsAsync(TextWriter writer, IReadOnlyList<Reaction> reactions)
+        {
+            if (reactions.Any())
+            {
+                await writer.WriteLineAsync("{Reactions}");
 
-            // Image URL
-            if (!(embed.Image?.Url).IsNullOrWhiteSpace())
-                await writer.WriteLineAsync(embed.Image?.Url);
+                foreach (var reaction in reactions)
+                {
+                    await writer.WriteAsync(reaction.Emoji.Name);
 
-            // Footer text
-            if (!(embed.Footer?.Text).IsNullOrWhiteSpace())
-                await writer.WriteLineAsync(embed.Footer?.Text);
+                    if (reaction.Count > 1)
+                        await writer.WriteAsync($" ({reaction.Count})");
+
+                    await writer.WriteAsync(" ");
+                }
+
+                await writer.WriteLineAsync();
+                await writer.WriteLineAsync();
+            }
         }
 
         private async Task RenderMessageAsync(TextWriter writer, Message message)
@@ -156,18 +189,13 @@ namespace DiscordChatExporter.Core.Rendering
             await writer.WriteLineAsync();
 
             // Attachments
-            foreach (var attachment in message.Attachments)
-            {
-                await RenderAttachmentAsync(writer, attachment);
-                await writer.WriteLineAsync();
-            }
+            await RenderAttachmentsAsync(writer, message.Attachments);
 
             // Embeds
-            foreach (var embed in message.Embeds)
-            {
-                await RenderEmbedAsync(writer, embed);
-                await writer.WriteLineAsync();
-            }
+            await RenderEmbedsAsync(writer, message.Embeds);
+
+            // Reactions
+            await RenderReactionsAsync(writer, message.Reactions);
         }
 
         public async Task RenderAsync(TextWriter writer)

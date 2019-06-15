@@ -1,3 +1,10 @@
+### v2.14 (15-Jun-2019)
+
+- [TXT] Added support for embeds.
+- [TXT] Added support for reactions.
+- [CSV] Added support for reactions.
+- [TXT] Changed how attachments are rendered.
+
 ### v2.13.1 (06-Jun-2019)
 
 - Fixed an issue where the app sometimes crashed when exporting due to `System.InvalidCastException`.

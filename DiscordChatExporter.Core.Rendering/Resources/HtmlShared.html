@@ -75,6 +75,7 @@
 
                 {{~ # Messages ~}}
                 {{~ for message in group.Messages ~}}
+                    <div class="chatlog__message" id="message__{{ message.Id }}">
                     {{~ # Content ~}}
                     {{~ if message.Content ~}}
                         <div class="chatlog__content">
@@ -218,6 +219,7 @@
                             {{~ end ~}}
                         </div>
                     {{~ end ~}}
+                    </div>
                 {{~ end ~}}
             </div>
         </div>

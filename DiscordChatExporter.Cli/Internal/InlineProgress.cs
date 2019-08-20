@@ -1,31 +1,33 @@
 ﻿using System;
+using CliFx.Services;
 
 namespace DiscordChatExporter.Cli.Internal
 {
     internal class InlineProgress : IProgress<double>, IDisposable
     {
-        private readonly int _posX;
-        private readonly int _posY;
+        private readonly IConsole _console;
 
+        private string _lastOutput = "";
         private bool _isCompleted;
 
-        public InlineProgress()
+        public InlineProgress(IConsole console)
         {
-            // If output is not redirected - save initial cursor position
-            if (!Console.IsOutputRedirected)
-            {
-                _posX = Console.CursorLeft;
-                _posY = Console.CursorTop;
-            }
+            _console = console;
+        }
+
+        private void ResetCursorPosition()
+        {
+            foreach (var c in _lastOutput)
+                _console.Output.Write('\b');
         }
 
         public void Report(double progress)
         {
             // If output is not redirected - reset cursor position and write progress
-            if (!Console.IsOutputRedirected)
+            if (!_console.IsOutputRedirected)
             {
-                Console.SetCursorPosition(_posX, _posY);
-                Console.WriteLine($"{progress:P1}");
+                ResetCursorPosition();
+                _console.Output.Write(_lastOutput = $"{progress:P1}");
             }
         }
 
@@ -34,14 +36,13 @@ namespace DiscordChatExporter.Cli.Internal
         public void Dispose()
         {
             // If output is not redirected - reset cursor position
-            if (!Console.IsOutputRedirected)
-                Console.SetCursorPosition(_posX, _posY);
+            if (!_console.IsOutputRedirected)
+            {
+                ResetCursorPosition();
+            }
 
             // Inform about completion
-            if (_isCompleted)
-                Console.WriteLine("Completed ✓");
-            else
-                Console.WriteLine("Failed X");
+            _console.Output.WriteLine(_isCompleted ? "Completed ✓" : "Failed X");
         }
     }
 }

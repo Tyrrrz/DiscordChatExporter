@@ -2,7 +2,8 @@
 
 body {
     background-color: #ffffff;
-    color: #747f8d;
+    color: #23262a;
+    font-weight: 500;
 }
 
 a {
@@ -48,11 +49,12 @@ a {
 }
 
 .chatlog__author-name {
+    font-weight: 600;
     color: #2f3136;
 }
 
 .chatlog__timestamp {
-    color: #99aab5;
+    color: #747f8d;
 }
 
 .chatlog__message--pinned {
@@ -60,7 +62,7 @@ a {
 }
 
 .chatlog__edited-timestamp {
-    color: #99aab5;
+    color: #747f8d;
 }
 
 .chatlog__embed-content-container {
@@ -93,7 +95,7 @@ a {
 }
 
 .chatlog__embed-footer {
-    color: rgba(79, 83, 91, 0.4);
+    color: rgba(79, 83, 91, 0.6);
 }
 
 .chatlog__reaction {
@@ -101,5 +103,5 @@ a {
 }
 
 .chatlog__reaction-count {
-    color: #99aab5;
+    color: #747f8d;
 }

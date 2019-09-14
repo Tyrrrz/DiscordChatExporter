@@ -1,4 +1,4 @@
-﻿/* === GENERAL === */
+/* === GENERAL === */
 
 body {
     background-color: #ffffff;
@@ -55,6 +55,10 @@ a {
 
 .chatlog__timestamp {
     color: #747f8d;
+}
+
+.chatlog__message--highlighted {
+    background-color: rgba(114, 137, 218, 0.2);
 }
 
 .chatlog__message--pinned {

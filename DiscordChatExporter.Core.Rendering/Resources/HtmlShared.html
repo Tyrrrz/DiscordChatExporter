@@ -22,9 +22,17 @@
 
             if (element !== null && element !== undefined) {
                 event.preventDefault();
-                element.scrollIntoView({
+
+                element.classList.add('chatlog__message--highlighted');
+
+                window.scrollTo({
+                    top: element.getBoundingClientRect().top - document.body.getBoundingClientRect().top - (window.innerHeight / 2),
                     behavior: 'smooth'
                 });
+
+                window.setTimeout(function() {
+                    element.classList.remove('chatlog__message--highlighted');
+                }, 2000);
             }
         }
     </script>

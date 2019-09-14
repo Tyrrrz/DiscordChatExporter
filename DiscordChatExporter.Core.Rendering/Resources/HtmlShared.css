@@ -183,6 +183,8 @@ img {
     padding: 2px 5px;
     margin-right: -5px;
     margin-left: -5px;
+    background-color: transparent;
+    transition: background-color 1s ease;
 }
 
 .chatlog__content {

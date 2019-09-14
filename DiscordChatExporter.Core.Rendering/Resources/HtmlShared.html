@@ -27,7 +27,7 @@
     </script>
 </head>
 <body>
-    
+
 {{~ # Info ~}}
 <div class="info">
     <div class="info__guild-icon-container">
@@ -36,13 +36,13 @@
     <div class="info__metadata">
         <div class="info__guild-name">{{ Model.Guild.Name | html.escape }}</div>
         <div class="info__channel-name">{{ Model.Channel.Name | html.escape }}</div>
-        
+
         {{~ if Model.Channel.Topic ~}}
             <div class="info__channel-topic">{{ Model.Channel.Topic | html.escape }}</div>
         {{~ end ~}}
 
         <div class="info__channel-message-count">{{ Model.Messages | array.size | object.format "N0" }} messages</div>
-        
+
         {{~ if Model.After || Model.Before ~}}
             <div class="info__channel-date-range">
                 {{~ if Model.After && Model.Before ~}}
@@ -64,18 +64,21 @@
             {{~ # Avatar ~}}
             <div class="chatlog__author-avatar-container">
                 <img class="chatlog__author-avatar" src="{{ group.Author.AvatarUrl }}" />
-            </div>            
+            </div>
             <div class="chatlog__messages">
                 {{~ # Author name and timestamp ~}}
                 <span class="chatlog__author-name" title="{{ group.Author.FullName | html.escape }}" data-user-id="{{ group.Author.Id | html.escape }}">{{ group.Author.Name | html.escape }}</span>
+
+                {{~ # Bot tag ~}}
                 {{~ if group.Author.IsBot ~}}
                     <span class="chatlog__bot-tag">BOT</span>
                 {{~ end ~}}
+
                 <span class="chatlog__timestamp">{{ group.Timestamp | FormatDate | html.escape }}</span>
 
                 {{~ # Messages ~}}
                 {{~ for message in group.Messages ~}}
-                    <div class="chatlog__message" data-message-id="{{ message.Id }}">
+                    <div class="chatlog__message {{if message.IsPinned }}chatlog__message--pinned{{ end }}" data-message-id="{{ message.Id }}">
                     {{~ # Content ~}}
                     {{~ if message.Content ~}}
                         <div class="chatlog__content">
@@ -170,9 +173,9 @@
                                             </a>
                                         </div>
                                     {{~ end ~}}
-                                </div>    
+                                </div>
 
-                                {{~ # Image ~}} 
+                                {{~ # Image ~}}
                                 {{~ if embed.Image ~}}
                                     <div class="chatlog__embed-image-container">
                                         <a class="chatlog__embed-image-link" href="{{ embed.Image.Url }}">
@@ -189,7 +192,7 @@
                                                 <img class="chatlog__embed-footer-icon" src="{{ embed.Footer.IconUrl }}" />
                                             {{~ end ~}}
                                         {{~ end ~}}
-                                        
+
                                         <span class="chatlog__embed-footer-text">
                                             {{~ if embed.Footer ~}}
                                                 {{~ if embed.Footer.Text ~}}

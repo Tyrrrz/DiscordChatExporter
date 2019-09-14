@@ -55,6 +55,10 @@ a {
     color: #99aab5;
 }
 
+.chatlog__message--pinned {
+    background-color: rgba(249, 168, 37, 0.05);
+}
+
 .chatlog__edited-timestamp {
     color: #99aab5;
 }

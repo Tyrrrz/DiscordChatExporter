@@ -29,9 +29,12 @@ namespace DiscordChatExporter.Core.Models
 
         public IReadOnlyList<User> MentionedUsers { get; }
 
+        public bool IsPinned { get; }
+
         public Message(string id, string channelId, MessageType type, User author, DateTimeOffset timestamp,
             DateTimeOffset? editedTimestamp, string content, IReadOnlyList<Attachment> attachments,
-            IReadOnlyList<Embed> embeds, IReadOnlyList<Reaction> reactions, IReadOnlyList<User> mentionedUsers)
+            IReadOnlyList<Embed> embeds, IReadOnlyList<Reaction> reactions, IReadOnlyList<User> mentionedUsers,
+            bool isPinned)
         {
             Id = id;
             ChannelId = channelId;
@@ -44,6 +47,7 @@ namespace DiscordChatExporter.Core.Models
             Embeds = embeds;
             Reactions = reactions;
             MentionedUsers = mentionedUsers;
+            IsPinned = isPinned;
         }
 
         public override string ToString() => Content;

@@ -65,7 +65,7 @@ img {
     margin-top: 4px;
     padding: 8px;
     border: 2px solid;
-    border-radius: 5px;    
+    border-radius: 5px;
 }
 
 .pre--inline {
@@ -100,7 +100,7 @@ img {
 .info {
     display: flex;
     max-width: 100%;
-    margin: 0 5px 10px 5px;    
+    margin: 0 5px 10px 5px;
 }
 
 .info__guild-icon-container {
@@ -179,8 +179,13 @@ img {
     font-size: .75em;
 }
 
+.chatlog__message {
+    padding: 2px 5px;
+    margin-right: -5px;
+    margin-left: -5px;
+}
+
 .chatlog__content {
-    padding-top: 5px;
     font-size: .9375em;
     word-wrap: break-word;
 }
@@ -190,20 +195,17 @@ img {
     font-size: .8em;
 }
 
-.chatlog__attachment {
-    margin: 5px 0;
-}
-
 .chatlog__attachment-thumbnail {
+    margin-top: 5px;
     max-width: 50%;
     max-height: 500px;
     border-radius: 3px;
 }
 
 .chatlog__embed {
+    margin-top: 5px;
     display: flex;
     max-width: 520px;
-    margin-top: 5px;
 }
 
 .chatlog__embed-color-pill {
@@ -301,7 +303,7 @@ img {
     margin-top: 10px;
 }
 
-.chatlog__embed-image {    
+.chatlog__embed-image {
     max-width: 500px;
     max-height: 400px;
     border-radius: 3px;

@@ -201,8 +201,11 @@ namespace DiscordChatExporter.Core.Services
             // Get mentioned users
             var mentionedUsers = json["mentions"].EmptyIfNull().Select(ParseUser).ToArray();
 
+            // Get whether this message is pinned
+            var isPinned = json["pinned"].Value<bool>();
+
             return new Message(id, channelId, type, author, timestamp, editedTimestamp, content, attachments, embeds,
-                reactions, mentionedUsers);
+                reactions, mentionedUsers, isPinned);
         }
     }
 }

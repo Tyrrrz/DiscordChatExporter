@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Markdown;
 using DiscordChatExporter.Core.Markdown.Nodes;
@@ -145,7 +146,12 @@ namespace DiscordChatExporter.Core.Rendering
             // Link node
             if (node is LinkNode linkNode)
             {
-                return $"<a href=\"{Uri.EscapeUriString(linkNode.Url)}\">{HtmlEncode(linkNode.Title)}</a>";
+                // Extract message ID if the link points to a Discord message
+                var linkedMessageId = Regex.Match(linkNode.Url, "//discordapp.com/channels/[^/]+/\\d+/(\\d+)").Groups[1].Value;
+
+                return linkedMessageId.IsNullOrWhiteSpace()
+                    ? $"<a href=\"{Uri.EscapeUriString(linkNode.Url)}\">{HtmlEncode(linkNode.Title)}</a>"
+                    : $"<a href=\"{Uri.EscapeUriString(linkNode.Url)}\" onclick=\"scrollToMessage(event, '{linkedMessageId}')\">{HtmlEncode(linkNode.Title)}</a>";
             }
 
             // All other nodes - simply return source

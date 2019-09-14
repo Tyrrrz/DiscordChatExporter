@@ -15,6 +15,20 @@
         {{ ThemeStyleSheet }}
     </style>
 
+    {{~ # Local scripts ~}}
+    <script>
+        function scrollToMessage(event, id) {
+            var element = document.getElementById('message-' + id);
+
+            if (element !== null && element !== undefined) {
+                event.preventDefault();
+                element.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        }
+    </script>
+
     {{~ # Syntax highlighting ~}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/{{HighlightJsStyleName}}.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
@@ -78,7 +92,7 @@
 
                 {{~ # Messages ~}}
                 {{~ for message in group.Messages ~}}
-                    <div class="chatlog__message {{if message.IsPinned }}chatlog__message--pinned{{ end }}" data-message-id="{{ message.Id }}">
+                    <div class="chatlog__message {{if message.IsPinned }}chatlog__message--pinned{{ end }}" data-message-id="{{ message.Id }}" id="message-{{ message.Id }}">
                     {{~ # Content ~}}
                     {{~ if message.Content ~}}
                         <div class="chatlog__content">

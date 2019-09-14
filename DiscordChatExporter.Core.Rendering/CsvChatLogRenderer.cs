@@ -83,6 +83,9 @@ namespace DiscordChatExporter.Core.Rendering
 
         private async Task RenderMessageAsync(TextWriter writer, Message message)
         {
+            // Author ID
+            await RenderFieldAsync(writer, message.Author.Id);
+
             // Author
             await RenderFieldAsync(writer, message.Author.FullName);
 
@@ -97,7 +100,7 @@ namespace DiscordChatExporter.Core.Rendering
             await RenderFieldAsync(writer, formattedAttachments);
 
             // Reactions
-            var formattedReactions = message.Reactions.Select(r => r.Emoji.Name + $"({r.Count})").JoinToString(",");
+            var formattedReactions = message.Reactions.Select(r => $"{r.Emoji.Name} ({r.Count})").JoinToString(",");
             await RenderFieldAsync(writer, formattedReactions);
 
             // Line break
@@ -107,7 +110,7 @@ namespace DiscordChatExporter.Core.Rendering
         public async Task RenderAsync(TextWriter writer)
         {
             // Headers
-            await writer.WriteLineAsync("Author;Date;Content;Attachments;Reactions;");
+            await writer.WriteLineAsync("AuthorID;Author;Date;Content;Attachments;Reactions;");
 
             // Log
             foreach (var message in _chatLog.Messages)

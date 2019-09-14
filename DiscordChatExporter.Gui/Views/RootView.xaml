@@ -94,7 +94,8 @@
                             Padding="4"
                             Command="{s:Action PopulateGuildsAndChannels}"
                             IsDefault="True"
-                            Style="{DynamicResource MaterialDesignFlatButton}">
+                            Style="{DynamicResource MaterialDesignFlatButton}"
+                            ToolTip="Pull available guilds and channels (Enter)">
                             <materialDesign:PackIcon
                                 Width="24"
                                 Height="24"
@@ -109,7 +110,8 @@
                     Margin="6"
                     Padding="4"
                     Command="{s:Action ShowSettings}"
-                    Style="{DynamicResource MaterialDesignFlatDarkButton}">
+                    Style="{DynamicResource MaterialDesignFlatDarkButton}"
+                    ToolTip="Settings">
                     <materialDesign:PackIcon
                         Width="24"
                         Height="24"

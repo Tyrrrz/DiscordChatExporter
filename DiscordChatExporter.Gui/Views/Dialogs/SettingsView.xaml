@@ -23,10 +23,14 @@
             Margin="16,8"
             materialDesign:HintAssist.Hint="Date format"
             materialDesign:HintAssist.IsFloating="True"
-            Text="{Binding DateFormat}" />
+            Text="{Binding DateFormat}"
+            ToolTip="Format used when rendering dates (refer to .NET date format)" />
 
         <!--  Auto-updates  -->
-        <DockPanel LastChildFill="False">
+        <DockPanel
+            LastChildFill="False"
+            Background="Transparent"
+            ToolTip="Perform automatic updates on every launch">
             <TextBlock
                 Margin="16,8"
                 DockPanel.Dock="Left"

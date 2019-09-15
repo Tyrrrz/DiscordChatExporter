@@ -1,3 +1,16 @@
+### v2.15 (15-Sep-2019)
+
+- Improved markdown parser and made it even faster for non-HTML formats.
+- [HTML] Added support for block quotes.
+- [HTML] Links pointing to a Discord message will now navigate to the linked message inside exported chat log if it's there. 
+- [HTML] Updated light theme to match how it looks in Discord after recent changes.
+- [HTML] Added indication for when a message is pinned. Pinned messages now have a tinted background.
+- [HTML] Fixed an issue where multiline code blocks sometimes had incorrect formatting applied to them.
+- [TXT] Added indication for when a message is pinned. Pinned messages now have `(pinned)` next to timestamp and author.
+- [CSV] Added message author's user ID to output.
+- [GUI] Streamlined auto-update process a bit.
+- [GUI] Added some tooltips.
+
 ### v2.14 (15-Jun-2019)
 
 - [TXT] Added support for embeds.

@@ -4,16 +4,12 @@ namespace DiscordChatExporter.Core.Markdown.Nodes
 {
     public class FormattedNode : Node
     {
-        public string Token { get; }
-
         public TextFormatting Formatting { get; }
 
         public IReadOnlyList<Node> Children { get; }
 
-        public FormattedNode(string source, string token, TextFormatting formatting, IReadOnlyList<Node> children)
-            : base(source)
+        public FormattedNode(TextFormatting formatting, IReadOnlyList<Node> children)
         {
-            Token = token;
             Formatting = formatting;
             Children = children;
         }

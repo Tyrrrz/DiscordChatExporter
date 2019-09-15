@@ -2,16 +2,13 @@
 {
     internal class ParsedMatch<T>
     {
-        public int StartIndex { get; }
-
-        public int Length { get; }
+        public StringPart StringPart { get; }
 
         public T Value { get; }
 
-        public ParsedMatch(int startIndex, int length, T value)
+        public ParsedMatch(StringPart stringPart, T value)
         {
-            StartIndex = startIndex;
-            Length = length;
+            StringPart = stringPart;
             Value = value;
         }
     }

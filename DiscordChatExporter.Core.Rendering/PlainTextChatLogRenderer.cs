@@ -45,18 +45,21 @@ namespace DiscordChatExporter.Core.Rendering
 
         private string FormatMarkdown(Node node)
         {
-            // Formatted node
-            if (node is FormattedNode formattedNode)
+            // Text node
+            if (node is TextNode textNode)
             {
-                // Recursively get inner text
-                var innerText = FormatMarkdown(formattedNode.Children);
-
-                return $"{formattedNode.Token}{innerText}{formattedNode.Token}";
+                return textNode.Text;
             }
 
-            // Non-meta mention node
-            if (node is MentionNode mentionNode && mentionNode.Type != MentionType.Meta)
+            // Mention node
+            if (node is MentionNode mentionNode)
             {
+                // Meta mention node
+                if (mentionNode.Type == MentionType.Meta)
+                {
+                    return mentionNode.Id;
+                }
+
                 // User mention node
                 if (mentionNode.Type == MentionType.User)
                 {
@@ -79,19 +82,19 @@ namespace DiscordChatExporter.Core.Rendering
                 }
             }
 
-            // Custom emoji node
-            if (node is EmojiNode emojiNode && emojiNode.IsCustomEmoji)
+            // Emoji node
+            if (node is EmojiNode emojiNode)
             {
-                return $":{emojiNode.Name}:";
+                return emojiNode.IsCustomEmoji ? $":{emojiNode.Name}:" : emojiNode.Name;
             }
 
-            // All other nodes - simply return source
-            return node.Source;
+            // Throw on unexpected nodes
+            throw new InvalidOperationException($"Unexpected node: [{node.GetType()}].");
         }
 
         private string FormatMarkdown(IEnumerable<Node> nodes) => nodes.Select(FormatMarkdown).JoinToString("");
 
-        private string FormatMarkdown(string markdown) => FormatMarkdown(MarkdownParser.Parse(markdown));
+        private string FormatMarkdown(string markdown) => FormatMarkdown(MarkdownParser.ParseMinimal(markdown));
 
         private async Task RenderAttachmentsAsync(TextWriter writer, IReadOnlyList<Attachment> attachments)
         {

@@ -4,14 +4,9 @@
     {
         public string Text { get; }
 
-        public TextNode(string source, string text)
-            : base(source)
+        public TextNode(string text)
         {
             Text = text;
-        }
-
-        public TextNode(string text) : this(text, text)
-        {
         }
 
         public override string ToString() => Text;

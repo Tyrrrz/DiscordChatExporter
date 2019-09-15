@@ -12,16 +12,15 @@ namespace DiscordChatExporter.Core.Markdown.Nodes
 
         public bool IsCustomEmoji => !Id.IsNullOrWhiteSpace();
 
-        public EmojiNode(string source, string id, string name, bool isAnimated)
-            : base(source)
+        public EmojiNode(string id, string name, bool isAnimated)
         {
             Id = id;
             Name = name;
             IsAnimated = isAnimated;
         }
 
-        public EmojiNode(string source, string name)
-            : this(source, null, name, false)
+        public EmojiNode(string name)
+            : this(null, name, false)
         {
         }
 

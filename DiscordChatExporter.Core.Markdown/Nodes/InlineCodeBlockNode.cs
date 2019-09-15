@@ -4,8 +4,7 @@
     {
         public string Code { get; }
 
-        public InlineCodeBlockNode(string source, string code)
-            : base(source)
+        public InlineCodeBlockNode(string code)
         {
             Code = code;
         }

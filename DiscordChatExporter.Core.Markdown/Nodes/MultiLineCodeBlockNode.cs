@@ -1,13 +1,12 @@
 ﻿namespace DiscordChatExporter.Core.Markdown.Nodes
 {
-    public class MultilineCodeBlockNode : Node
+    public class MultiLineCodeBlockNode : Node
     {
         public string Language { get; }
 
         public string Code { get; }
 
-        public MultilineCodeBlockNode(string source, string language, string code)
-            : base(source)
+        public MultiLineCodeBlockNode(string language, string code)
         {
             Language = language;
             Code = code;

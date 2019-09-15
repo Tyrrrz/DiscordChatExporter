@@ -16,7 +16,7 @@ namespace DiscordChatExporter.Core.Markdown.Internal
         {
         }
 
-        public ParsedMatch<T> Match(string input, int startIndex, int length)
+        public ParsedMatch<T> Match(StringPart stringPart)
         {
             ParsedMatch<T> earliestMatch = null;
 
@@ -24,19 +24,19 @@ namespace DiscordChatExporter.Core.Markdown.Internal
             foreach (var matcher in _matchers)
             {
                 // Try to match
-                var match = matcher.Match(input, startIndex, length);
+                var match = matcher.Match(stringPart);
 
                 // If there's no match - continue
                 if (match == null)
                     continue;
 
                 // If this match is earlier than previous earliest - replace
-                if (earliestMatch == null || match.StartIndex < earliestMatch.StartIndex)
+                if (earliestMatch == null || match.StringPart.StartIndex < earliestMatch.StringPart.StartIndex)
                     earliestMatch = match;
 
                 // If the earliest match starts at the very beginning - break,
                 // because it's impossible to find a match earlier than that
-                if (earliestMatch.StartIndex == startIndex)
+                if (earliestMatch.StringPart.StartIndex == stringPart.StartIndex)
                     break;
             }
 

@@ -58,7 +58,7 @@ img {
 }
 
 .pre {
-    font-family: "Consolas", "Courier New", Courier, Monospace;
+    font-family: "Consolas", "Courier New", Courier, monospace;
 }
 
 .pre--multiline {

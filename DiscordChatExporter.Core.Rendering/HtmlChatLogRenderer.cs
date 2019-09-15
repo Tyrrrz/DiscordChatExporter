@@ -90,7 +90,7 @@ namespace DiscordChatExporter.Core.Rendering
             }
 
             // Multi-line code block node
-            if (node is MultilineCodeBlockNode multilineCodeBlockNode)
+            if (node is MultiLineCodeBlockNode multilineCodeBlockNode)
             {
                 // Set CSS class for syntax highlighting
                 var highlightCssClass = !multilineCodeBlockNode.Language.IsNullOrWhiteSpace()
@@ -154,14 +154,14 @@ namespace DiscordChatExporter.Core.Rendering
                     : $"<a href=\"{Uri.EscapeUriString(linkNode.Url)}\" onclick=\"scrollToMessage(event, '{linkedMessageId}')\">{HtmlEncode(linkNode.Title)}</a>";
             }
 
-            // All other nodes - simply return source
-            return node.Source;
+            // Throw on unexpected nodes
+            throw new InvalidOperationException($"Unexpected node: [{node.GetType()}].");
         }
 
         private string FormatMarkdown(IReadOnlyList<Node> nodes, bool isTopLevel)
         {
-            // Emojis are jumbo if all top-level nodes are emoji nodes, disregarding whitespace
-            var isJumbo = isTopLevel && nodes.Where(n => !n.Source.IsNullOrWhiteSpace()).All(n => n is EmojiNode);
+            // Emojis are jumbo if all top-level nodes are emoji nodes or whitespace text nodes
+            var isJumbo = isTopLevel && nodes.All(n => n is EmojiNode || n is TextNode textNode && textNode.Text.IsNullOrWhiteSpace());
 
             return nodes.Select(n => FormatMarkdown(n, isJumbo)).JoinToString("");
         }

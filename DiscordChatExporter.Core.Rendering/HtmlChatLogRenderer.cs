@@ -92,12 +92,12 @@ namespace DiscordChatExporter.Core.Rendering
             // Multi-line code block node
             if (node is MultilineCodeBlockNode multilineCodeBlockNode)
             {
-                // Set language class for syntax highlighting
-                var languageCssClass = !multilineCodeBlockNode.Language.IsNullOrWhiteSpace()
-                    ? "language-" + multilineCodeBlockNode.Language
-                    : null;
+                // Set CSS class for syntax highlighting
+                var highlightCssClass = !multilineCodeBlockNode.Language.IsNullOrWhiteSpace()
+                    ? $"language-{multilineCodeBlockNode.Language}"
+                    : "nohighlight";
 
-                return $"<div class=\"pre pre--multiline {languageCssClass}\">{HtmlEncode(multilineCodeBlockNode.Code)}</div>";
+                return $"<div class=\"pre pre--multiline {highlightCssClass}\">{HtmlEncode(multilineCodeBlockNode.Code)}</div>";
             }
 
             // Mention node

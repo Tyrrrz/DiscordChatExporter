@@ -1,4 +1,4 @@
-/* === GENERAL === */
+﻿/* === GENERAL === */
 
 body {
     background-color: #36393e;
@@ -11,6 +11,10 @@ a {
 
 .spoiler {
     background-color: rgba(255, 255, 255, 0.1);
+}
+
+.quote {
+    border-color: #4f545c;
 }
 
 .pre {

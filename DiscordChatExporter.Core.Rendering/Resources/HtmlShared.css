@@ -57,6 +57,13 @@ img {
     border-radius: 3px;
 }
 
+.quote {
+    border-left: 4px solid;
+    border-radius: 3px;
+    margin: 8px 0;
+    padding-left: 10px;
+}
+
 .pre {
     font-family: "Consolas", "Courier New", Courier, monospace;
 }

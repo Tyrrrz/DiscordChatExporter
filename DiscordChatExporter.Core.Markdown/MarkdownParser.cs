@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using DiscordChatExporter.Core.Markdown.Internal;
@@ -56,6 +56,18 @@ namespace DiscordChatExporter.Core.Markdown
         private static readonly IMatcher<Node> SpoilerFormattedNodeMatcher = new RegexMatcher<Node>(
             new Regex("\\|\\|(.+?)\\|\\|", DefaultRegexOptions | RegexOptions.Singleline),
             (p, m) => new FormattedNode(TextFormatting.Spoiler, Parse(p.Shrink(m.Groups[1]))));
+
+        // Capture any character until the end of the line
+        // Opening 'greater than' character must be followed by whitespace
+        private static readonly IMatcher<Node> SingleLineQuoteNodeMatcher = new RegexMatcher<Node>(
+            new Regex("^>\\s(.+)\r?\n?", DefaultRegexOptions),
+            (p, m) => new FormattedNode(TextFormatting.Quote, Parse(p.Shrink(m.Groups[1]))));
+
+        // Capture any character until the end of the input
+        // Opening 'greater than' characters must be followed by whitespace
+        private static readonly IMatcher<Node> MultiLineQuoteNodeMatcher = new RegexMatcher<Node>(
+            new Regex("^>>>\\s(.+)", DefaultRegexOptions | RegexOptions.Singleline),
+            (p, m) => new FormattedNode(TextFormatting.Quote, Parse(p.Shrink(m.Groups[1]))));
 
         /* Code blocks */
 
@@ -176,6 +188,8 @@ namespace DiscordChatExporter.Core.Markdown
             ItalicAltFormattedNodeMatcher,
             StrikethroughFormattedNodeMatcher,
             SpoilerFormattedNodeMatcher,
+            MultiLineQuoteNodeMatcher,
+            SingleLineQuoteNodeMatcher,
 
             // Code blocks
             MultiLineCodeBlockNodeMatcher,

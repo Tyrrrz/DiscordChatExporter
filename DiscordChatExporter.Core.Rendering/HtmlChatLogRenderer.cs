@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -81,6 +81,10 @@ namespace DiscordChatExporter.Core.Rendering
                 // Spoiler
                 if (formattedNode.Formatting == TextFormatting.Spoiler)
                     return $"<span class=\"spoiler\">{innerHtml}</span>";
+
+                // Quote
+                if (formattedNode.Formatting == TextFormatting.Quote)
+                    return $"<div class=\"quote\">{innerHtml}</div>";
             }
 
             // Inline code block node

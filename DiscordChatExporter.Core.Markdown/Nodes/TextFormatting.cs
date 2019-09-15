@@ -6,6 +6,7 @@
         Italic,
         Underline,
         Strikethrough,
-        Spoiler
+        Spoiler,
+        Quote
     }
 }

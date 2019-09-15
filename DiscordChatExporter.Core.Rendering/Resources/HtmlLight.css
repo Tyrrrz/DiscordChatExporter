@@ -58,7 +58,7 @@ a {
 }
 
 .chatlog__message--highlighted {
-    background-color: rgba(114, 137, 218, 0.2);
+    background-color: rgba(114, 137, 218, 0.2) !important;
 }
 
 .chatlog__message--pinned {

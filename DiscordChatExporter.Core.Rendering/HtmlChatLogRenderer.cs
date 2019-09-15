@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -147,7 +147,7 @@ namespace DiscordChatExporter.Core.Rendering
             if (node is LinkNode linkNode)
             {
                 // Extract message ID if the link points to a Discord message
-                var linkedMessageId = Regex.Match(linkNode.Url, "//discordapp.com/channels/[^/]+/\\d+/(\\d+)").Groups[1].Value;
+                var linkedMessageId = Regex.Match(linkNode.Url, "^https?://discordapp.com/channels/.*?/(\\d+)/?$").Groups[1].Value;
 
                 return linkedMessageId.IsNullOrWhiteSpace()
                     ? $"<a href=\"{Uri.EscapeUriString(linkNode.Url)}\">{HtmlEncode(linkNode.Title)}</a>"

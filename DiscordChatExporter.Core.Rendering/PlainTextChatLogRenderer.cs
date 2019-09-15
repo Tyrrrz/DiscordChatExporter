@@ -96,6 +96,21 @@ namespace DiscordChatExporter.Core.Rendering
 
         private string FormatMarkdown(string markdown) => FormatMarkdown(MarkdownParser.ParseMinimal(markdown));
 
+        private async Task RenderMessageHeaderAsync(TextWriter writer, Message message)
+        {
+            // Timestamp
+            await writer.WriteAsync($"[{FormatDate(message.Timestamp)}]");
+
+            // Author
+            await writer.WriteAsync($" {message.Author.FullName}");
+
+            // Whether the message is pinned
+            if (message.IsPinned)
+                await writer.WriteAsync(" (pinned)");
+
+            await writer.WriteLineAsync();
+        }
+
         private async Task RenderAttachmentsAsync(TextWriter writer, IReadOnlyList<Attachment> attachments)
         {
             if (attachments.Any())
@@ -182,8 +197,8 @@ namespace DiscordChatExporter.Core.Rendering
 
         private async Task RenderMessageAsync(TextWriter writer, Message message)
         {
-            // Timestamp and author
-            await writer.WriteLineAsync($"[{FormatDate(message.Timestamp)}] {message.Author.FullName}");
+            // Header
+            await RenderMessageHeaderAsync(writer, message);
 
             // Content
             await writer.WriteLineAsync(FormatMarkdown(message.Content));

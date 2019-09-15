@@ -22,46 +22,46 @@ namespace DiscordChatExporter.Gui.ViewModels.Framework
             var view = _viewManager.CreateAndBindViewForModelIfNecessary(dialogScreen);
 
             // Set up event routing that will close the view when called from viewmodel
-            DialogOpenedEventHandler onDialogOpened = (sender, e) =>
+            void OnDialogOpened(object sender, DialogOpenedEventArgs openArgs)
             {
                 // Delegate to close the dialog and unregister event handler
-                void OnScreenClosed(object o, CloseEventArgs args)
+                void OnScreenClosed(object o, CloseEventArgs closeArgs)
                 {
-                    e.Session.Close();
+                    openArgs.Session.Close();
                     dialogScreen.Closed -= OnScreenClosed;
                 }
 
                 dialogScreen.Closed += OnScreenClosed;
-            };
+            }
 
             // Show view
-            await DialogHost.Show(view, onDialogOpened);
+            await DialogHost.Show(view, OnDialogOpened);
 
             // Return the result
             return dialogScreen.DialogResult;
         }
 
-        public string PromptSaveFilePath(string filter = "All files|*.*", string initialFilePath = "")
+        public string PromptSaveFilePath(string filter = "All files|*.*", string defaultFilePath = "")
         {
             // Create dialog
             var dialog = new SaveFileDialog
             {
                 Filter = filter,
                 AddExtension = true,
-                FileName = initialFilePath,
-                DefaultExt = Path.GetExtension(initialFilePath) ?? ""
+                FileName = defaultFilePath,
+                DefaultExt = Path.GetExtension(defaultFilePath) ?? ""
             };
 
             // Show dialog and return result
             return dialog.ShowDialog() == true ? dialog.FileName : null;
         }
 
-        public string PromptDirectoryPath(string initialDirPath = "")
+        public string PromptDirectoryPath(string defaultDirPath = "")
         {
             // Create dialog
             var dialog = new VistaFolderBrowserDialog
             {
-                SelectedPath = initialDirPath
+                SelectedPath = defaultDirPath
             };
 
             // Show dialog and return result

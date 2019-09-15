@@ -36,9 +36,5 @@ namespace DiscordChatExporter.Gui.ViewModels.Framework
 
             return viewModel;
         }
-
-        public static ExportSetupViewModel CreateExportSetupViewModel(this IViewModelFactory factory,
-            GuildViewModel guild, ChannelViewModel channel)
-            => factory.CreateExportSetupViewModel(guild, new[] { channel });
     }
 }

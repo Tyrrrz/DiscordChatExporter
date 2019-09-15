@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Threading.Tasks;
 using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.Core.Services;
 using DiscordChatExporter.Core.Services.Exceptions;
@@ -68,6 +69,39 @@ namespace DiscordChatExporter.Gui.ViewModels
                 (sender, args) => IsProgressIndeterminate = ProgressManager.IsActive && ProgressManager.Progress.IsEither(0, 1));
         }
 
+        private async Task HandleAutoUpdateAsync()
+        {
+            try
+            {
+                // Don't check for updates if auto-update is disabled
+                if (!_settingsService.IsAutoUpdateEnabled)
+                    return;
+
+                // Check for updates
+                var updateVersion = await _updateService.CheckForUpdatesAsync();
+                if (updateVersion == null)
+                    return;
+
+                // Notify user of an update and prepare it
+                Notifications.Enqueue($"Downloading update to DiscordChatExporter v{updateVersion}...");
+                await _updateService.PrepareUpdateAsync(updateVersion);
+
+                // Prompt user to install update (otherwise install it when application exits)
+                Notifications.Enqueue(
+                    "Update has been downloaded and will be installed when you exit",
+                    "INSTALL NOW", () =>
+                    {
+                        _updateService.FinalizeUpdate(true);
+                        RequestClose();
+                    });
+            }
+            catch
+            {
+                // Failure to update shouldn't crash the application
+                Notifications.Enqueue("Failed to perform application update");
+            }
+        }
+
         protected override async void OnViewLoaded()
         {
             base.OnViewLoaded();
@@ -83,24 +117,7 @@ namespace DiscordChatExporter.Gui.ViewModels
             }
 
             // Check and prepare update
-            try
-            {
-                var updateVersion = await _updateService.CheckPrepareUpdateAsync();
-                if (updateVersion != null)
-                {
-                    Notifications.Enqueue(
-                        $"Update to DiscordChatExporter v{updateVersion} will be installed when you exit",
-                        "INSTALL NOW", () =>
-                        {
-                            _updateService.FinalizeUpdate(true);
-                            RequestClose();
-                        });
-                }
-            }
-            catch
-            {
-                Notifications.Enqueue("Failed to perform application auto-update");
-            }
+            await HandleAutoUpdateAsync();
         }
 
         protected override void OnClose()

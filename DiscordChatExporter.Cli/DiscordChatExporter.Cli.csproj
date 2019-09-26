@@ -2,19 +2,17 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net46;netcoreapp2.1</TargetFrameworks>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <Version>2.15</Version>
     <Company>Tyrrrz</Company>
     <Copyright>Copyright (c) Alexey Golub</Copyright>
     <ApplicationIcon>..\favicon.ico</ApplicationIcon>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="CliFx" Version="0.0.5" />
-    <PackageReference Include="Stylet" Version="1.2.0" />
-    <PackageReference Include="Tyrrrz.Extensions" Version="1.6.2" />
+    <PackageReference Include="Stylet" Version="1.3.0" />
+    <PackageReference Include="Tyrrrz.Extensions" Version="1.6.3" />
   </ItemGroup>
 
   <ItemGroup>

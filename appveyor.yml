@@ -1,6 +1,6 @@
 version: '{build}'
 
-image: Visual Studio 2019 Preview
+image: Visual Studio 2019
 configuration: Release
 
 before_build:
@@ -10,12 +10,12 @@ build:
   verbosity: minimal
 
 after_build:
-- ps: Deploy\Prepare.ps1
+- ps: Deploy/Prepare.ps1
 
 artifacts:
-- path: Deploy\Portable\bin\DiscordChatExporter.zip
+- path: Deploy/bin/DiscordChatExporter.zip
   name: DiscordChatExporter.zip
-- path: Deploy\Portable\bin\DiscordChatExporter.CLI.zip
+- path: Deploy/bin/DiscordChatExporter.CLI.zip
   name: DiscordChatExporter.CLI.zip
 
 deploy:

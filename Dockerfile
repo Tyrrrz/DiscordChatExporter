@@ -1,5 +1,5 @@
 # Build
-FROM microsoft/dotnet:2.1-sdk AS build
+FROM microsoft/dotnet:3.0-sdk AS build
 WORKDIR /src
 
 COPY favicon.ico ./
@@ -10,13 +10,13 @@ COPY DiscordChatExporter.Core.Rendering DiscordChatExporter.Core.Rendering
 COPY DiscordChatExporter.Core.Services DiscordChatExporter.Core.Services
 COPY DiscordChatExporter.Cli DiscordChatExporter.Cli
 
-RUN dotnet publish DiscordChatExporter.Cli -c Release -f netcoreapp2.1
+RUN dotnet publish DiscordChatExporter.Cli -o DiscordChatExporter.Cli/publish -c Release
 
 # Run
-FROM microsoft/dotnet:2.1-runtime AS run
+FROM microsoft/dotnet:3.0-runtime AS run
 WORKDIR /app
 
-COPY --from=build /src/DiscordChatExporter.Cli/bin/Release/netcoreapp2.1/publish ./
+COPY --from=build /src/DiscordChatExporter.Cli/publish ./
 
 WORKDIR /app/out
 ENTRYPOINT ["dotnet", "/app/DiscordChatExporter.Cli.dll"]

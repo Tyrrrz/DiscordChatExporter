@@ -9,4 +9,4 @@ function Replace-TextInFile {
 }
 
 Replace-TextInFile "$PSScriptRoot\DiscordChatExporter.Cli\DiscordChatExporter.Cli.csproj" '(?<=<Version>)(.*?)(?=</Version>)' $newVersion
-Replace-TextInFile "$PSScriptRoot\DiscordChatExporter.Gui\Properties\AssemblyInfo.cs" '(?<=Assembly.*?Version\(")(.*?)(?="\)\])' $newVersion
+Replace-TextInFile "$PSScriptRoot\DiscordChatExporter.Gui\DiscordChatExporter.Gui.csproj" '(?<=<Version>)(.*?)(?=</Version>)' $newVersion

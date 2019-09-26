@@ -12,7 +12,7 @@ namespace DiscordChatExporter.Core.Services.Helpers
         public static bool IsDirectoryPath(string path) =>
             path.Last() == Path.DirectorySeparatorChar ||
             path.Last() == Path.AltDirectorySeparatorChar ||
-            (Path.GetExtension(path).IsNullOrWhiteSpace() && !File.Exists(path));
+            Path.GetExtension(path).IsNullOrWhiteSpace() && !File.Exists(path);
 
         public static string GetDefaultExportFileName(ExportFormat format, Guild guild, Channel channel,
             DateTimeOffset? after = null, DateTimeOffset? before = null)

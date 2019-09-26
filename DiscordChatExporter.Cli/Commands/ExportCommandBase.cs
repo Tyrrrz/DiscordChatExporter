@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using CliFx.Attributes;
 using CliFx.Services;
-using DiscordChatExporter.Cli.Internal;
+using CliFx.Utilities;
 using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.Core.Services;
 using DiscordChatExporter.Core.Services.Helpers;
@@ -50,29 +50,27 @@ namespace DiscordChatExporter.Cli.Commands
                 SettingsService.DateFormat = DateFormat;
 
             console.Output.Write($"Exporting channel [{channel.Name}]... ");
-            using (var progress = new InlineProgress(console))
+            var progress = console.CreateProgressTicker();
+
+            // Get chat log
+            var chatLog = await DataService.GetChatLogAsync(GetToken(), channel, After, Before, progress);
+
+            // Generate file path if not set or is a directory
+            var filePath = OutputPath;
+            if (filePath.IsNullOrWhiteSpace() || ExportHelper.IsDirectoryPath(filePath))
             {
-                // Get chat log
-                var chatLog = await DataService.GetChatLogAsync(GetToken(), channel, After, Before, progress);
+                // Generate default file name
+                var fileName = ExportHelper.GetDefaultExportFileName(ExportFormat, chatLog.Guild,
+                    chatLog.Channel, After, Before);
 
-                // Generate file path if not set or is a directory
-                var filePath = OutputPath;
-                if (filePath.IsNullOrWhiteSpace() || ExportHelper.IsDirectoryPath(filePath))
-                {
-                    // Generate default file name
-                    var fileName = ExportHelper.GetDefaultExportFileName(ExportFormat, chatLog.Guild,
-                        chatLog.Channel, After, Before);
-
-                    // Combine paths
-                    filePath = Path.Combine(filePath ?? "", fileName);
-                }
-
-                // Export
-                await ExportService.ExportChatLogAsync(chatLog, filePath, ExportFormat, PartitionLimit);
-
-                // Report successful completion
-                progress.ReportCompletion();
+                // Combine paths
+                filePath = Path.Combine(filePath ?? "", fileName);
             }
+
+            // Export
+            await ExportService.ExportChatLogAsync(chatLog, filePath, ExportFormat, PartitionLimit);
+
+            console.Output.WriteLine();
         }
     }
 }

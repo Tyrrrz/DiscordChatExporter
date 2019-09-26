@@ -32,41 +32,37 @@ namespace DiscordChatExporter.Core.Services
             {
                 // Create request
                 const string apiRoot = "https://discordapp.com/api/v6";
-                using (var request = new HttpRequestMessage(HttpMethod.Get, $"{apiRoot}/{resource}/{endpoint}"))
+                using var request = new HttpRequestMessage(HttpMethod.Get, $"{apiRoot}/{resource}/{endpoint}");
+                // Set authorization header
+                request.Headers.Authorization = token.Type == AuthTokenType.Bot
+                    ? new AuthenticationHeaderValue("Bot", token.Value)
+                    : new AuthenticationHeaderValue(token.Value);
+
+                // Add parameters
+                foreach (var parameter in parameters)
                 {
-                    // Set authorization header
-                    request.Headers.Authorization = token.Type == AuthTokenType.Bot
-                        ? new AuthenticationHeaderValue("Bot", token.Value)
-                        : new AuthenticationHeaderValue(token.Value);
+                    var key = parameter.SubstringUntil("=");
+                    var value = parameter.SubstringAfter("=");
 
-                    // Add parameters
-                    foreach (var parameter in parameters)
-                    {
-                        var key = parameter.SubstringUntil("=");
-                        var value = parameter.SubstringAfter("=");
+                    // Skip empty values
+                    if (value.IsNullOrWhiteSpace())
+                        continue;
 
-                        // Skip empty values
-                        if (value.IsNullOrWhiteSpace())
-                            continue;
-
-                        request.RequestUri = request.RequestUri.SetQueryParameter(key, value);
-                    }
-
-                    // Get response
-                    using (var response = await _httpClient.SendAsync(request))
-                    {
-                        // Check status code
-                        // We throw our own exception here because default one doesn't have status code
-                        if (!response.IsSuccessStatusCode)
-                            throw new HttpErrorStatusCodeException(response.StatusCode, response.ReasonPhrase);
-
-                        // Get content
-                        var raw = await response.Content.ReadAsStringAsync();
-
-                        // Parse
-                        return JToken.Parse(raw);
-                    }
+                    request.RequestUri = request.RequestUri.SetQueryParameter(key, value);
                 }
+
+                // Get response
+                using var response = await _httpClient.SendAsync(request);
+                // Check status code
+                // We throw our own exception here because default one doesn't have status code
+                if (!response.IsSuccessStatusCode)
+                    throw new HttpErrorStatusCodeException(response.StatusCode, response.ReasonPhrase);
+
+                // Get content
+                var raw = await response.Content.ReadAsStringAsync();
+
+                // Parse
+                return JToken.Parse(raw);
             });
         }
 

@@ -42,8 +42,8 @@ namespace DiscordChatExporter.Core.Services
                 Directory.CreateDirectory(dirPath);
 
             // Render chat log to output file
-            using (var writer = File.CreateText(filePath))
-                await CreateRenderer(chatLog, format).RenderAsync(writer);
+            await using var writer = File.CreateText(filePath);
+            await CreateRenderer(chatLog, format).RenderAsync(writer);
         }
 
         public async Task ExportChatLogAsync(ChatLog chatLog, string filePath, ExportFormat format, int? partitionLimit)

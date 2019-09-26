@@ -4,32 +4,24 @@ namespace DiscordChatExporter.Core.Models
 {
     public static class Extensions
     {
-        public static string GetFileExtension(this ExportFormat format)
-        {
-            if (format == ExportFormat.PlainText)
-                return "txt";
-            if (format == ExportFormat.HtmlDark)
-                return "html";
-            if (format == ExportFormat.HtmlLight)
-                return "html";
-            if (format == ExportFormat.Csv)
-                return "csv";
+        public static string GetFileExtension(this ExportFormat format) =>
+            format switch
+            {
+                ExportFormat.PlainText => "txt",
+                ExportFormat.HtmlDark => "html",
+                ExportFormat.HtmlLight => "html",
+                ExportFormat.Csv => "csv",
+                _ => throw new ArgumentOutOfRangeException(nameof(format))
+            };
 
-            throw new ArgumentOutOfRangeException(nameof(format));
-        }
-
-        public static string GetDisplayName(this ExportFormat format)
-        {
-            if (format == ExportFormat.PlainText)
-                return "Plain Text";
-            if (format == ExportFormat.HtmlDark)
-                return "HTML (Dark)";
-            if (format == ExportFormat.HtmlLight)
-                return "HTML (Light)";
-            if (format == ExportFormat.Csv)
-                return "Comma Seperated Values (CSV)";
-
-            throw new ArgumentOutOfRangeException(nameof(format));
-        }
+        public static string GetDisplayName(this ExportFormat format) =>
+            format switch
+            {
+                ExportFormat.PlainText => "Plain Text",
+                ExportFormat.HtmlDark => "HTML (Dark)",
+                ExportFormat.HtmlLight => "HTML (Light)",
+                ExportFormat.Csv => "Comma Seperated Values (CSV)",
+                _ => throw new ArgumentOutOfRangeException(nameof(format))
+            };
     }
 }

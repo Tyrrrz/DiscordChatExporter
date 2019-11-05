@@ -10,8 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CliFx" Version="0.0.5" />
-    <PackageReference Include="Stylet" Version="1.3.0" />
+    <PackageReference Include="CliFx" Version="0.0.7" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
     <PackageReference Include="Tyrrrz.Extensions" Version="1.6.3" />
   </ItemGroup>
 

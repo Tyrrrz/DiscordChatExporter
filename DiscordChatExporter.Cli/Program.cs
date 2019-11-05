@@ -1,33 +1,42 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using CliFx;
+using DiscordChatExporter.Cli.Commands;
 using DiscordChatExporter.Core.Services;
-using StyletIoC;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DiscordChatExporter.Cli
 {
     public static class Program
     {
-        private static IContainer BuildContainer()
+        private static IServiceProvider ConfigureServices()
         {
-            var builder = new StyletIoCBuilder();
+            var services = new ServiceCollection();
 
-            // Autobind the .Services assembly
-            builder.Autobind(typeof(DataService).Assembly);
+            // Register services
+            services.AddSingleton<DataService>();
+            services.AddSingleton<ExportService>();
+            services.AddSingleton<SettingsService>();
 
-            // Bind settings as singleton
-            builder.Bind<SettingsService>().ToSelf().InSingletonScope();
+            // Register commands
+            services.AddTransient<ExportChannelCommand>();
+            services.AddTransient<ExportDirectMessagesCommand>();
+            services.AddTransient<ExportGuildCommand>();
+            services.AddTransient<GetChannelsCommand>();
+            services.AddTransient<GetDirectMessageChannelsCommand>();
+            services.AddTransient<GetGuildsCommand>();
+            services.AddTransient<GuideCommand>();
 
-            // Set instance
-            return builder.BuildContainer();
+            return services.BuildServiceProvider();
         }
 
         public static Task<int> Main(string[] args)
         {
-            var container = BuildContainer();
+            var serviceProvider = ConfigureServices();
 
             return new CliApplicationBuilder()
                 .AddCommandsFromThisAssembly()
-                .UseCommandFactory(schema => (ICommand) container.Get(schema.Type))
+                .UseCommandFactory(schema => (ICommand) serviceProvider.GetService(schema.Type))
                 .Build()
                 .RunAsync(args);
         }

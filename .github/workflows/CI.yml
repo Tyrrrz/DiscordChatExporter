@@ -1,0 +1,34 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.0.100
+
+    - name: Build & publish (CLI)
+      run: dotnet publish DiscordChatExporter.Cli/ -o DiscordChatExporter.Cli/bin/Publish/ --configuration Release
+
+    - name: Build & publish (GUI)
+      run: dotnet publish DiscordChatExporter.Gui/ -o DiscordChatExporter.Gui/bin/Publish/ --configuration Release
+
+    - name: Upload build artifacts (CLI)
+      uses: actions/upload-artifact@master
+      with:
+        name: DiscordChatExporter.CLI
+        path: DiscordChatExporter.Cli/bin/Publish/
+
+    - name: Upload build artifact (GUI)
+      uses: actions/upload-artifact@master
+      with:
+        name: DiscordChatExporter
+        path: DiscordChatExporter.Gui/bin/Publish/

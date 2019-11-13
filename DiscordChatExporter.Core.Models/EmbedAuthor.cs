@@ -4,19 +4,19 @@ namespace DiscordChatExporter.Core.Models
 
     public class EmbedAuthor
     {
-        public string Name { get; }
+        public string? Name { get; }
 
-        public string Url { get; }
+        public string? Url { get; }
 
-        public string IconUrl { get; }
+        public string? IconUrl { get; }
 
-        public EmbedAuthor(string name, string url, string iconUrl)
+        public EmbedAuthor(string? name, string? url, string? iconUrl)
         {
             Name = name;
             Url = url;
             IconUrl = iconUrl;
         }
 
-        public override string ToString() => Name;
+        public override string ToString() => Name ?? "<unnamed author>";
     }
 }

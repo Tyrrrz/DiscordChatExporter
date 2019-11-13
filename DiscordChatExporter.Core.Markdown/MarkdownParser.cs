@@ -3,7 +3,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using DiscordChatExporter.Core.Markdown.Internal;
 using DiscordChatExporter.Core.Markdown.Nodes;
-using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Markdown
 {
@@ -125,7 +124,7 @@ namespace DiscordChatExporter.Core.Markdown
         // Capture <:lul:123456> or <a:lul:123456>
         private static readonly IMatcher<Node> CustomEmojiNodeMatcher = new RegexMatcher<Node>(
             new Regex("<(a)?:(.+?):(\\d+?)>", DefaultRegexOptions),
-            m => new EmojiNode(m.Groups[3].Value, m.Groups[2].Value, !m.Groups[1].Value.IsNullOrWhiteSpace()));
+            m => new EmojiNode(m.Groups[3].Value, m.Groups[2].Value, !string.IsNullOrWhiteSpace(m.Groups[1].Value)));
 
         /* Links */
 

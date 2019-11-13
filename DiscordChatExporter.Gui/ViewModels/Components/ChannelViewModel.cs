@@ -7,7 +7,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Components
     {
         public Channel Model { get; set; }
 
-        public string Category { get; set; }
+        public string? Category { get; set; }
     }
 
     public partial class ChannelViewModel

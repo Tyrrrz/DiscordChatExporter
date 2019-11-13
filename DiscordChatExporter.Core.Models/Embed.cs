@@ -8,28 +8,29 @@ namespace DiscordChatExporter.Core.Models
 
     public class Embed
     {
-        public string Title { get; }
+        public string? Title { get; }
 
-        public string Url { get; }
+        public string? Url { get; }
 
         public DateTimeOffset? Timestamp { get; }
 
+        // TODO: this should be nullable and default color should be set in CSS
         public Color Color { get; }
 
-        public EmbedAuthor Author { get; }
+        public EmbedAuthor? Author { get; }
 
-        public string Description { get; }
+        public string? Description { get; }
 
         public IReadOnlyList<EmbedField> Fields { get; }
 
-        public EmbedImage Thumbnail { get; }
+        public EmbedImage? Thumbnail { get; }
 
-        public EmbedImage Image { get; }
+        public EmbedImage? Image { get; }
 
-        public EmbedFooter Footer { get; }
+        public EmbedFooter? Footer { get; }
 
-        public Embed(string title, string url, DateTimeOffset? timestamp, Color color, EmbedAuthor author, string description,
-            IReadOnlyList<EmbedField> fields, EmbedImage thumbnail, EmbedImage image, EmbedFooter footer)
+        public Embed(string? title, string? url, DateTimeOffset? timestamp, Color color, EmbedAuthor? author, string? description,
+            IReadOnlyList<EmbedField> fields, EmbedImage? thumbnail, EmbedImage? image, EmbedFooter? footer)
         {
             Title = title;
             Url = url;
@@ -43,6 +44,6 @@ namespace DiscordChatExporter.Core.Models
             Footer = footer;
         }
 
-        public override string ToString() => Title;
+        public override string ToString() => Title ?? "<untitled embed>";
     }
 }

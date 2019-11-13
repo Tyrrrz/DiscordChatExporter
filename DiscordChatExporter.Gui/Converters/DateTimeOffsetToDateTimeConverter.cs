@@ -14,7 +14,7 @@ namespace DiscordChatExporter.Gui.Converters
             if (value is DateTimeOffset dateTimeOffsetValue)
                 return dateTimeOffsetValue.DateTime;
 
-            return default;
+            return default(DateTime);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -22,7 +22,7 @@ namespace DiscordChatExporter.Gui.Converters
             if (value is DateTime dateTimeValue)
                 return new DateTimeOffset(dateTimeValue);
 
-            return default;
+            return default(DateTimeOffset);
         }
     }
 }

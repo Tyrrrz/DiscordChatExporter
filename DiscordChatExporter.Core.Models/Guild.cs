@@ -1,8 +1,6 @@
-﻿using Tyrrrz.Extensions;
-
-namespace DiscordChatExporter.Core.Models
+﻿namespace DiscordChatExporter.Core.Models
 {
-    // https://discordapp.com/developers/docs/resources/guild#guild-object
+    // https://discordapp.string.IsNullOrWhiteSpace(com/developers/docs/resources/guild#guild-object
 
     public partial class Guild
     {
@@ -10,11 +8,11 @@ namespace DiscordChatExporter.Core.Models
 
         public string Name { get; }
 
-        public string IconHash { get; }
+        public string? IconHash { get; }
 
         public string IconUrl { get; }
 
-        public Guild(string id, string name, string iconHash)
+        public Guild(string id, string name, string? iconHash)
         {
             Id = id;
             Name = name;
@@ -28,9 +26,9 @@ namespace DiscordChatExporter.Core.Models
 
     public partial class Guild
     {
-        public static string GetIconUrl(string id, string iconHash)
+        public static string GetIconUrl(string id, string? iconHash)
         {
-            return !iconHash.IsNullOrWhiteSpace()
+            return !string.IsNullOrWhiteSpace(iconHash)
                 ? $"https://cdn.discordapp.com/icons/{id}/{iconHash}.png"
                 : "https://cdn.discordapp.com/embed/avatars/0.png";
         }

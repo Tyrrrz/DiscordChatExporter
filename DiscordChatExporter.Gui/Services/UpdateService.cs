@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DiscordChatExporter.Core.Services;
 using Onova;
 using Onova.Exceptions;
 using Onova.Services;
@@ -13,10 +12,10 @@ namespace DiscordChatExporter.Gui.Services
             new GithubPackageResolver("Tyrrrz", "DiscordChatExporter", "DiscordChatExporter.zip"),
             new ZipPackageExtractor());
 
-        private Version _updateVersion;
+        private Version? _updateVersion;
         private bool _updaterLaunched;
 
-        public async Task<Version> CheckForUpdatesAsync()
+        public async Task<Version?> CheckForUpdatesAsync()
         {
             var check = await _updateManager.CheckForUpdatesAsync();
             return check.CanUpdate ? check.LastVersion : null;

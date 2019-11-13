@@ -45,7 +45,7 @@ namespace DiscordChatExporter.Core.Services
                     var value = parameter.SubstringAfter("=");
 
                     // Skip empty values
-                    if (value.IsNullOrWhiteSpace())
+                    if (string.IsNullOrWhiteSpace(value))
                         continue;
 
                     request.RequestUri = request.RequestUri.SetQueryParameter(key, value);
@@ -53,6 +53,7 @@ namespace DiscordChatExporter.Core.Services
 
                 // Get response
                 using var response = await _httpClient.SendAsync(request);
+
                 // Check status code
                 // We throw our own exception here because default one doesn't have status code
                 if (!response.IsSuccessStatusCode)
@@ -119,7 +120,7 @@ namespace DiscordChatExporter.Core.Services
         }
 
         public async Task<IReadOnlyList<Message>> GetChannelMessagesAsync(AuthToken token, string channelId,
-            DateTimeOffset? after = null, DateTimeOffset? before = null, IProgress<double> progress = null)
+            DateTimeOffset? after = null, DateTimeOffset? before = null, IProgress<double>? progress = null)
         {
             var result = new List<Message>();
 
@@ -211,7 +212,7 @@ namespace DiscordChatExporter.Core.Services
         }
 
         public async Task<ChatLog> GetChatLogAsync(AuthToken token, Guild guild, Channel channel,
-            DateTimeOffset? after = null, DateTimeOffset? before = null, IProgress<double> progress = null)
+            DateTimeOffset? after = null, DateTimeOffset? before = null, IProgress<double>? progress = null)
         {
             // Get messages
             var messages = await GetChannelMessagesAsync(token, channel.Id, after, before, progress);
@@ -223,19 +224,19 @@ namespace DiscordChatExporter.Core.Services
         }
 
         public async Task<ChatLog> GetChatLogAsync(AuthToken token, Channel channel,
-            DateTimeOffset? after = null, DateTimeOffset? before = null, IProgress<double> progress = null)
+            DateTimeOffset? after = null, DateTimeOffset? before = null, IProgress<double>? progress = null)
         {
             // Get guild
-            var guild = channel.GuildId == Guild.DirectMessages.Id
-                ? Guild.DirectMessages
-                : await GetGuildAsync(token, channel.GuildId);
+            var guild = !string.IsNullOrWhiteSpace(channel.GuildId)
+                ? await GetGuildAsync(token, channel.GuildId)
+                : Guild.DirectMessages;
 
             // Get the chat log
             return await GetChatLogAsync(token, guild, channel, after, before, progress);
         }
 
         public async Task<ChatLog> GetChatLogAsync(AuthToken token, string channelId,
-            DateTimeOffset? after = null, DateTimeOffset? before = null, IProgress<double> progress = null)
+            DateTimeOffset? after = null, DateTimeOffset? before = null, IProgress<double>? progress = null)
         {
             // Get channel
             var channel = await GetChannelAsync(token, channelId);

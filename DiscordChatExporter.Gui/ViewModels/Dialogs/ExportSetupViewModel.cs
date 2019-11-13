@@ -6,7 +6,6 @@ using DiscordChatExporter.Core.Services;
 using DiscordChatExporter.Core.Services.Helpers;
 using DiscordChatExporter.Gui.ViewModels.Components;
 using DiscordChatExporter.Gui.ViewModels.Framework;
-using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Gui.ViewModels.Dialogs
 {
@@ -21,12 +20,12 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
 
         public bool IsSingleChannel => Channels.Count == 1;
 
-        public string OutputPath { get; set; }
+        public string? OutputPath { get; set; }
 
         public IReadOnlyList<ExportFormat> AvailableFormats =>
             Enum.GetValues(typeof(ExportFormat)).Cast<ExportFormat>().ToArray();
 
-        public ExportFormat SelectedFormat { get; set; } = ExportFormat.HtmlDark;
+        public ExportFormat SelectedFormat { get; set; }
 
         public DateTimeOffset? After { get; set; }
 
@@ -38,11 +37,6 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
         {
             _dialogManager = dialogManager;
             _settingsService = settingsService;
-        }
-
-        protected override void OnViewLoaded()
-        {
-            base.OnViewLoaded();
 
             // Persist preferences
             SelectedFormat = _settingsService.LastExportFormat;
@@ -85,7 +79,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             }
 
             // If canceled - return
-            if (OutputPath.IsNullOrWhiteSpace())
+            if (string.IsNullOrWhiteSpace(OutputPath))
                 return;
 
             // Close dialog

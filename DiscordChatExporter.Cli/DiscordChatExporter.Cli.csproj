@@ -6,13 +6,14 @@
     <Version>2.15</Version>
     <Company>Tyrrrz</Company>
     <Copyright>Copyright (c) Alexey Golub</Copyright>
+    <Nullable>enable</Nullable>
     <ApplicationIcon>..\favicon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="CliFx" Version="0.0.7" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
-    <PackageReference Include="Tyrrrz.Extensions" Version="1.6.3" />
+    <PackageReference Include="Tyrrrz.Extensions" Version="1.6.5" />
   </ItemGroup>
 
   <ItemGroup>

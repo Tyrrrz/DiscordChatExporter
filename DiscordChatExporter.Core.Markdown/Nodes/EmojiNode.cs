@@ -1,18 +1,16 @@
-﻿using Tyrrrz.Extensions;
-
-namespace DiscordChatExporter.Core.Markdown.Nodes
+﻿namespace DiscordChatExporter.Core.Markdown.Nodes
 {
     public class EmojiNode : Node
     {
-        public string Id { get; }
+        public string? Id { get; }
 
         public string Name { get; }
 
         public bool IsAnimated { get; }
 
-        public bool IsCustomEmoji => !Id.IsNullOrWhiteSpace();
+        public bool IsCustomEmoji => !string.IsNullOrWhiteSpace(Id);
 
-        public EmojiNode(string id, string name, bool isAnimated)
+        public EmojiNode(string? id, string name, bool isAnimated)
         {
             Id = id;
             Name = name;

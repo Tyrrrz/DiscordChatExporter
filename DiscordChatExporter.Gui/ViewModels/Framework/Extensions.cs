@@ -7,8 +7,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Framework
 {
     public static class Extensions
     {
-        public static ChannelViewModel CreateChannelViewModel(this IViewModelFactory factory, Channel model,
-            string category = null)
+        public static ChannelViewModel CreateChannelViewModel(this IViewModelFactory factory, Channel model, string? category = null)
         {
             var viewModel = factory.CreateChannelViewModel();
             viewModel.Model = model;

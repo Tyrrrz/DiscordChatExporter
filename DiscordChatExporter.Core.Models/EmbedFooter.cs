@@ -6,9 +6,9 @@ namespace DiscordChatExporter.Core.Models
     {
         public string Text { get; }
 
-        public string IconUrl { get; }
+        public string? IconUrl { get; }
 
-        public EmbedFooter(string text, string iconUrl)
+        public EmbedFooter(string text, string? iconUrl)
         {
             Text = text;
             IconUrl = iconUrl;

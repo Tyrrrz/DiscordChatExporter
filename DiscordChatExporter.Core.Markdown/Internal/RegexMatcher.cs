@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace DiscordChatExporter.Core.Markdown.Internal
@@ -23,7 +19,7 @@ namespace DiscordChatExporter.Core.Markdown.Internal
         {
         }
 
-        public ParsedMatch<T> Match(StringPart stringPart)
+        public ParsedMatch<T>? Match(StringPart stringPart)
         {
             var match = _regex.Match(stringPart.Target, stringPart.StartIndex, stringPart.Length);
             if (!match.Success)

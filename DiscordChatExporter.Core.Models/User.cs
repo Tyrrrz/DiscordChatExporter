@@ -1,5 +1,4 @@
 ﻿using System;
-using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Models
 {
@@ -15,13 +14,13 @@ namespace DiscordChatExporter.Core.Models
 
         public string FullName { get; }
 
-        public string AvatarHash { get; }
+        public string? AvatarHash { get; }
 
         public string AvatarUrl { get; }
 
         public bool IsBot { get; }
 
-        public User(string id, int discriminator, string name, string avatarHash, bool isBot)
+        public User(string id, int discriminator, string name, string? avatarHash, bool isBot)
         {
             Id = id;
             Discriminator = discriminator;
@@ -40,10 +39,10 @@ namespace DiscordChatExporter.Core.Models
     {
         public static string GetFullName(string name, int discriminator) => $"{name}#{discriminator:0000}";
 
-        public static string GetAvatarUrl(string id, int discriminator, string avatarHash)
+        public static string GetAvatarUrl(string id, int discriminator, string? avatarHash)
         {
             // Custom avatar
-            if (!avatarHash.IsNullOrWhiteSpace())
+            if (!string.IsNullOrWhiteSpace(avatarHash))
             {
                 // Animated
                 if (avatarHash.StartsWith("a_", StringComparison.Ordinal))

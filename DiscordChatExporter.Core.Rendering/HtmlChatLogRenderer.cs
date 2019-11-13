@@ -97,7 +97,7 @@ namespace DiscordChatExporter.Core.Rendering
             if (node is MultiLineCodeBlockNode multilineCodeBlockNode)
             {
                 // Set CSS class for syntax highlighting
-                var highlightCssClass = !multilineCodeBlockNode.Language.IsNullOrWhiteSpace()
+                var highlightCssClass = !string.IsNullOrWhiteSpace(multilineCodeBlockNode.Language)
                     ? $"language-{multilineCodeBlockNode.Language}"
                     : "nohighlight";
 
@@ -153,7 +153,7 @@ namespace DiscordChatExporter.Core.Rendering
                 // Extract message ID if the link points to a Discord message
                 var linkedMessageId = Regex.Match(linkNode.Url, "^https?://discordapp.com/channels/.*?/(\\d+)/?$").Groups[1].Value;
 
-                return linkedMessageId.IsNullOrWhiteSpace()
+                return string.IsNullOrWhiteSpace(linkedMessageId)
                     ? $"<a href=\"{Uri.EscapeUriString(linkNode.Url)}\">{HtmlEncode(linkNode.Title)}</a>"
                     : $"<a href=\"{Uri.EscapeUriString(linkNode.Url)}\" onclick=\"scrollToMessage(event, '{linkedMessageId}')\">{HtmlEncode(linkNode.Title)}</a>";
             }
@@ -165,7 +165,7 @@ namespace DiscordChatExporter.Core.Rendering
         private string FormatMarkdown(IReadOnlyList<Node> nodes, bool isTopLevel)
         {
             // Emojis are jumbo if all top-level nodes are emoji nodes or whitespace text nodes
-            var isJumbo = isTopLevel && nodes.All(n => n is EmojiNode || n is TextNode textNode && textNode.Text.IsNullOrWhiteSpace());
+            var isJumbo = isTopLevel && nodes.All(n => n is EmojiNode || n is TextNode textNode && string.IsNullOrWhiteSpace(textNode.Text));
 
             return nodes.Select(n => FormatMarkdown(n, isJumbo)).JoinToString("");
         }

@@ -8,7 +8,7 @@ namespace DiscordChatExporter.Core.Models
 
     public partial class Emoji
     {
-        public string Id { get; }
+        public string? Id { get; }
 
         public string Name { get; }
 
@@ -16,7 +16,7 @@ namespace DiscordChatExporter.Core.Models
 
         public string ImageUrl { get; }
 
-        public Emoji(string id, string name, bool isAnimated)
+        public Emoji(string? id, string name, bool isAnimated)
         {
             Id = id;
             Name = name;
@@ -37,10 +37,10 @@ namespace DiscordChatExporter.Core.Models
         private static string GetTwemojiName(string emoji) =>
             GetCodePoints(emoji).Select(i => i.ToString("x")).JoinToString("-");
 
-        public static string GetImageUrl(string id, string name, bool isAnimated)
+        public static string GetImageUrl(string? id, string name, bool isAnimated)
         {
             // Custom emoji
-            if (!id.IsNullOrWhiteSpace())
+            if (!string.IsNullOrWhiteSpace(id))
             {
                 // Animated
                 if (isAnimated)

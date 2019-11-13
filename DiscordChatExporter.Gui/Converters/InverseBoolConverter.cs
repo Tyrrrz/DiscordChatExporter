@@ -14,7 +14,7 @@ namespace DiscordChatExporter.Gui.Converters
             if (value is bool boolValue)
                 return !boolValue;
 
-            return default;
+            return default(bool);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -22,7 +22,7 @@ namespace DiscordChatExporter.Gui.Converters
             if (value is bool boolValue)
                 return !boolValue;
 
-            return default;
+            return default(bool);
         }
     }
 }

@@ -20,7 +20,7 @@ namespace DiscordChatExporter.Core.Markdown.Internal
         {
         }
 
-        public ParsedMatch<T> Match(StringPart stringPart)
+        public ParsedMatch<T>? Match(StringPart stringPart)
         {
             var index = stringPart.Target.IndexOf(_needle, stringPart.StartIndex, stringPart.Length, _comparison);
 

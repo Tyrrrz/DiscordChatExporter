@@ -16,9 +16,9 @@ namespace DiscordChatExporter.Core.Markdown.Internal
         {
         }
 
-        public ParsedMatch<T> Match(StringPart stringPart)
+        public ParsedMatch<T>? Match(StringPart stringPart)
         {
-            ParsedMatch<T> earliestMatch = null;
+            ParsedMatch<T>? earliestMatch = null;
 
             // Try to match the input with each matcher and get the match with the lowest start index
             foreach (var matcher in _matchers)

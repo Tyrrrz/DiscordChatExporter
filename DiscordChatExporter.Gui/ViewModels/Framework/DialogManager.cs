@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
@@ -22,10 +23,10 @@ namespace DiscordChatExporter.Gui.ViewModels.Framework
             var view = _viewManager.CreateAndBindViewForModelIfNecessary(dialogScreen);
 
             // Set up event routing that will close the view when called from viewmodel
-            void OnDialogOpened(object sender, DialogOpenedEventArgs openArgs)
+            void OnDialogOpened(object? sender, DialogOpenedEventArgs openArgs)
             {
                 // Delegate to close the dialog and unregister event handler
-                void OnScreenClosed(object o, CloseEventArgs closeArgs)
+                void OnScreenClosed(object? o, EventArgs closeArgs)
                 {
                     openArgs.Session.Close();
                     dialogScreen.Closed -= OnScreenClosed;
@@ -41,7 +42,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Framework
             return dialogScreen.DialogResult;
         }
 
-        public string PromptSaveFilePath(string filter = "All files|*.*", string defaultFilePath = "")
+        public string? PromptSaveFilePath(string filter = "All files|*.*", string defaultFilePath = "")
         {
             // Create dialog
             var dialog = new SaveFileDialog
@@ -56,7 +57,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Framework
             return dialog.ShowDialog() == true ? dialog.FileName : null;
         }
 
-        public string PromptDirectoryPath(string defaultDirPath = "")
+        public string? PromptDirectoryPath(string defaultDirPath = "")
         {
             // Create dialog
             var dialog = new VistaFolderBrowserDialog

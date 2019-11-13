@@ -40,7 +40,7 @@ namespace DiscordChatExporter.Core.Rendering
                 return $"before {FormatDate(before.Value)}";
 
             // Neither
-            return null;
+            return "";
         }
 
         private string FormatMarkdown(Node node)
@@ -131,43 +131,43 @@ namespace DiscordChatExporter.Core.Rendering
                 await writer.WriteLineAsync("{Embed}");
 
                 // Author name
-                if (!(embed.Author?.Name).IsNullOrWhiteSpace())
+                if (!string.IsNullOrWhiteSpace(embed.Author?.Name))
                     await writer.WriteLineAsync(embed.Author?.Name);
 
                 // URL
-                if (!embed.Url.IsNullOrWhiteSpace())
+                if (!string.IsNullOrWhiteSpace(embed.Url))
                     await writer.WriteLineAsync(embed.Url);
 
                 // Title
-                if (!embed.Title.IsNullOrWhiteSpace())
+                if (!string.IsNullOrWhiteSpace(embed.Title))
                     await writer.WriteLineAsync(FormatMarkdown(embed.Title));
 
                 // Description
-                if (!embed.Description.IsNullOrWhiteSpace())
+                if (!string.IsNullOrWhiteSpace(embed.Description))
                     await writer.WriteLineAsync(FormatMarkdown(embed.Description));
 
                 // Fields
                 foreach (var field in embed.Fields)
                 {
                     // Name
-                    if (!field.Name.IsNullOrWhiteSpace())
+                    if (!string.IsNullOrWhiteSpace(field.Name))
                         await writer.WriteLineAsync(field.Name);
 
                     // Value
-                    if (!field.Value.IsNullOrWhiteSpace())
+                    if (!string.IsNullOrWhiteSpace(field.Value))
                         await writer.WriteLineAsync(field.Value);
                 }
 
                 // Thumbnail URL
-                if (!(embed.Thumbnail?.Url).IsNullOrWhiteSpace())
+                if (!string.IsNullOrWhiteSpace(embed.Thumbnail?.Url))
                     await writer.WriteLineAsync(embed.Thumbnail?.Url);
 
                 // Image URL
-                if (!(embed.Image?.Url).IsNullOrWhiteSpace())
+                if (!string.IsNullOrWhiteSpace(embed.Image?.Url))
                     await writer.WriteLineAsync(embed.Image?.Url);
 
                 // Footer text
-                if (!(embed.Footer?.Text).IsNullOrWhiteSpace())
+                if (!string.IsNullOrWhiteSpace(embed.Footer?.Text))
                     await writer.WriteLineAsync(embed.Footer?.Text);
 
                 await writer.WriteLineAsync();
@@ -201,7 +201,8 @@ namespace DiscordChatExporter.Core.Rendering
             await RenderMessageHeaderAsync(writer, message);
 
             // Content
-            await writer.WriteLineAsync(FormatMarkdown(message.Content));
+            if (!string.IsNullOrWhiteSpace(message.Content))
+                await writer.WriteLineAsync(FormatMarkdown(message.Content));
 
             // Separator
             await writer.WriteLineAsync();

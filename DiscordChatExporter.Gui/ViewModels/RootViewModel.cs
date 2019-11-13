@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.Core.Services;
@@ -38,13 +37,13 @@ namespace DiscordChatExporter.Gui.ViewModels
 
         public bool IsBotToken { get; set; }
 
-        public string TokenValue { get; set; }
+        public string? TokenValue { get; set; }
 
-        public IReadOnlyList<GuildViewModel> AvailableGuilds { get; private set; }
+        public IReadOnlyList<GuildViewModel>? AvailableGuilds { get; private set; }
 
-        public GuildViewModel SelectedGuild { get; set; }
+        public GuildViewModel? SelectedGuild { get; set; }
 
-        public IReadOnlyList<ChannelViewModel> SelectedChannels { get; set; }
+        public IReadOnlyList<ChannelViewModel>? SelectedChannels { get; set; }
 
         public RootViewModel(IViewModelFactory viewModelFactory, DialogManager dialogManager,
             SettingsService settingsService, UpdateService updateService, DataService dataService,
@@ -58,8 +57,7 @@ namespace DiscordChatExporter.Gui.ViewModels
             _exportService = exportService;
 
             // Set title
-            var version = Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
-            DisplayName = $"DiscordChatExporter v{version}";
+            DisplayName = $"{App.Name} v{App.VersionString}";
 
             // Update busy state when progress manager changes
             ProgressManager.Bind(o => o.IsActive, (sender, args) => IsBusy = ProgressManager.IsActive);
@@ -83,7 +81,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                     return;
 
                 // Notify user of an update and prepare it
-                Notifications.Enqueue($"Downloading update to DiscordChatExporter v{updateVersion}...");
+                Notifications.Enqueue($"Downloading update to {App.Name} v{updateVersion}...");
                 await _updateService.PrepareUpdateAsync(updateVersion);
 
                 // Prompt user to install update (otherwise install it when application exits)
@@ -140,7 +138,7 @@ namespace DiscordChatExporter.Gui.ViewModels
             await _dialogManager.ShowDialogAsync(dialog);
         }
 
-        public bool CanPopulateGuildsAndChannels => !IsBusy && !TokenValue.IsNullOrWhiteSpace();
+        public bool CanPopulateGuildsAndChannels => !IsBusy && !string.IsNullOrWhiteSpace(TokenValue);
 
         public async void PopulateGuildsAndChannels()
         {
@@ -150,7 +148,7 @@ namespace DiscordChatExporter.Gui.ViewModels
             try
             {
                 // Sanitize token
-                TokenValue = TokenValue.Trim('"');
+                TokenValue = TokenValue!.Trim('"');
 
                 // Create token
                 var token = new AuthToken(
@@ -253,15 +251,15 @@ namespace DiscordChatExporter.Gui.ViewModels
             }
         }
 
-        public bool CanExportChannels => !IsBusy && !SelectedChannels.IsNullOrEmpty();
+        public bool CanExportChannels => !IsBusy && SelectedGuild != null && SelectedChannels != null && SelectedChannels.Any();
 
         public async void ExportChannels()
         {
             // Get last used token
-            var token = _settingsService.LastToken;
+            var token = _settingsService.LastToken!;
 
             // Create dialog
-            var dialog = _viewModelFactory.CreateExportSetupViewModel(SelectedGuild, SelectedChannels);
+            var dialog = _viewModelFactory.CreateExportSetupViewModel(SelectedGuild!, SelectedChannels!);
 
             // Show dialog, if canceled - return
             if (await _dialogManager.ShowDialogAsync(dialog) != true)
@@ -281,7 +279,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                 try
                 {
                     // Generate file path if necessary
-                    var filePath = dialog.OutputPath;
+                    var filePath = dialog.OutputPath!;
                     if (ExportHelper.IsDirectoryPath(filePath))
                     {
                         // Generate default file name

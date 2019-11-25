@@ -18,6 +18,7 @@ namespace DiscordChatExporter.Cli.Commands
             console.Output.WriteLine(" 4. Select \"Local Storage\" > \"https://discordapp.com\" on the left");
             console.Output.WriteLine(" 5. Press Ctrl+R to reload");
             console.Output.WriteLine(" 6. Find \"token\" at the bottom and copy the value");
+            console.Output.WriteLine(" *  Automating user accounts is technically against TOS, use at your own risk.");
             console.Output.WriteLine();
 
             console.WithForegroundColor(ConsoleColor.White, () => console.Output.WriteLine("To get bot token:"));

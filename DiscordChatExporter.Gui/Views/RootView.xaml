@@ -159,6 +159,8 @@
                             <Run Text="at the bottom and copy the value" />
                         </TextBlock>
                         <TextBlock Margin="0,24,0,0" FontSize="14">
+                            <Run Text="Automating user accounts is technically against TOS, use at your own risk." />
+                            <LineBreak />
                             <Run Text="To authorize using bot token instead, click" />
                             <InlineUIContainer>
                                 <materialDesign:PackIcon Margin="1,0,0,-3" Kind="Account" />

@@ -27,18 +27,3 @@ _For guides and other info -- check out the [wiki](https://github.com/Tyrrrz/Dis
 
 ![channel list](.screenshots/list.png)
 ![rendered output](.screenshots/output.png)
-
-## Libraries used
-
-- [Stylet](https://github.com/canton7/Stylet)
-- [PropertyChanged.Fody](https://github.com/Fody/PropertyChanged)
-- [MaterialDesignInXamlToolkit](https://github.com/ButchersBoy/MaterialDesignInXamlToolkit)
-- [Newtonsoft.Json](http://www.newtonsoft.com/json)
-- [Scriban](https://github.com/lunet-io/scriban)
-- [Ookii.Dialogs](https://github.com/caioproiete/ookii-dialogs-wpf)
-- [CliFx](https://github.com/Tyrrrz/CliFx)
-- [Failsafe](https://github.com/Tyrrrz/Failsafe)
-- [Gress](https://github.com/Tyrrrz/Gress)
-- [Onova](https://github.com/Tyrrrz/Onova)
-- [Tyrrrz.Extensions](https://github.com/Tyrrrz/Extensions)
-- [Tyrrrz.Settings](https://github.com/Tyrrrz/Settings)

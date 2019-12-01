@@ -123,7 +123,7 @@ namespace DiscordChatExporter.Core.Services
             // Get color
             var color = json["color"] != null
                 ? Color.FromArgb(json["color"]!.Value<int>()).ResetAlpha()
-                : Color.FromArgb(79, 84, 92); // default color
+                : default(Color?);
 
             // Get author
             var author = json["author"] != null ? ParseEmbedAuthor(json["author"]!) : null;

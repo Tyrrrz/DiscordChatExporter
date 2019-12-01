@@ -14,8 +14,7 @@ namespace DiscordChatExporter.Core.Models
 
         public DateTimeOffset? Timestamp { get; }
 
-        // TODO: this should be nullable and default color should be set in CSS
-        public Color Color { get; }
+        public Color? Color { get; }
 
         public EmbedAuthor? Author { get; }
 
@@ -29,7 +28,7 @@ namespace DiscordChatExporter.Core.Models
 
         public EmbedFooter? Footer { get; }
 
-        public Embed(string? title, string? url, DateTimeOffset? timestamp, Color color, EmbedAuthor? author, string? description,
+        public Embed(string? title, string? url, DateTimeOffset? timestamp, Color? color, EmbedAuthor? author, string? description,
             IReadOnlyList<EmbedField> fields, EmbedImage? thumbnail, EmbedImage? image, EmbedFooter? footer)
         {
             Title = title;

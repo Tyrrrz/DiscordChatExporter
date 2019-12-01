@@ -15,12 +15,23 @@
         {{ ThemeStyleSheet }}
     </style>
 
+    {{~ # Syntax highlighting ~}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/{{HighlightJsStyleName}}.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.pre--multiline').forEach((block) => {
+                hljs.highlightBlock(block);
+            });
+        });
+    </script>
+
     {{~ # Local scripts ~}}
     <script>
         function scrollToMessage(event, id) {
             var element = document.getElementById('message-' + id);
 
-            if (element !== null && element !== undefined) {
+            if (element) {
                 event.preventDefault();
 
                 element.classList.add('chatlog__message--highlighted');
@@ -35,17 +46,6 @@
                 }, 2000);
             }
         }
-    </script>
-
-    {{~ # Syntax highlighting ~}}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/{{HighlightJsStyleName}}.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.pre--multiline').forEach((block) => {
-                hljs.highlightBlock(block);
-            });
-        });
     </script>
 </head>
 <body>
@@ -130,107 +130,111 @@
 
                     {{~ # Embeds ~}}
                     {{~ for embed in message.Embeds ~}}
-                        <div class="chatlog__embed">
-                            <div class="chatlog__embed-color-pill" style="background-color: rgba({{ embed.Color.R }},{{ embed.Color.G }},{{ embed.Color.B }},{{ embed.Color.A }})"></div>
-                            <div class="chatlog__embed-content-container">
-                                <div class="chatlog__embed-content">
-                                    <div class="chatlog__embed-text">
-                                        {{~ # Author ~}}
-                                        {{~ if embed.Author ~}}
-                                            <div class="chatlog__embed-author">
-                                                {{~ if embed.Author.IconUrl ~}}
-                                                    <img class="chatlog__embed-author-icon" src="{{ embed.Author.IconUrl }}" />
-                                                {{~ end ~}}
-
-                                                {{~ if embed.Author.Name ~}}
-                                                    <span class="chatlog__embed-author-name">
-                                                        {{~ if embed.Author.Url ~}}
-                                                            <a class="chatlog__embed-author-name-link" href="{{ embed.Author.Url }}">{{ embed.Author.Name | html.escape }}</a>
-                                                        {{~ else ~}}
-                                                            {{ embed.Author.Name | html.escape }}
-                                                        {{~ end ~}}
-                                                    </span>
-                                                {{~ end ~}}
-                                            </div>
+                    <div class="chatlog__embed">
+                        {{~ if embed.Color ~}}
+                        <div class="chatlog__embed-color-pill" style="background-color: rgba({{ embed.Color.R }},{{ embed.Color.G }},{{ embed.Color.B }},{{ embed.Color.A }})"></div>
+                        {{~ else ~}}
+                        <div class="chatlog__embed-color-pill chatlog__embed-color-pill--default"></div>
+                        {{~ end ~}}
+                        <div class="chatlog__embed-content-container">
+                            <div class="chatlog__embed-content">
+                                <div class="chatlog__embed-text">
+                                    {{~ # Author ~}}
+                                    {{~ if embed.Author ~}}
+                                    <div class="chatlog__embed-author">
+                                        {{~ if embed.Author.IconUrl ~}}
+                                        <img class="chatlog__embed-author-icon" src="{{ embed.Author.IconUrl }}" />
                                         {{~ end ~}}
 
-                                        {{~ # Title ~}}
-                                        {{~ if embed.Title ~}}
-                                            <div class="chatlog__embed-title">
-                                                {{~ if embed.Url ~}}
-                                                    <a class="chatlog__embed-title-link" href="{{ embed.Url }}"><span class="markdown">{{ embed.Title | FormatMarkdown }}</span></a>
-                                                {{~ else ~}}
-                                                    <span class="markdown">{{ embed.Title | FormatMarkdown }}</span>
-                                                {{~ end ~}}
-                                            </div>
-                                        {{~ end ~}}
-
-                                        {{~ # Description ~}}
-                                        {{~ if embed.Description ~}}
-                                        <div class="chatlog__embed-description"><span class="markdown">{{ embed.Description | FormatMarkdown }}</span></div>
-                                        {{~ end ~}}
-
-                                        {{~ # Fields ~}}
-                                        {{~ if embed.Fields | array.size > 0 ~}}
-                                            <div class="chatlog__embed-fields">
-                                                {{~ for field in embed.Fields ~}}
-                                                    <div class="chatlog__embed-field {{ if field.IsInline }} chatlog__embed-field--inline {{ end }}">
-                                                        {{~ if field.Name ~}}
-                                                            <div class="chatlog__embed-field-name"><span class="markdown">{{ field.Name | FormatMarkdown }}</span></div>
-                                                        {{~ end ~}}
-                                                        {{~ if field.Value ~}}
-                                                            <div class="chatlog__embed-field-value"><span class="markdown">{{ field.Value | FormatMarkdown }}</span></div>
-                                                        {{~ end ~}}
-                                                    </div>
-                                                {{~ end ~}}
-                                            </div>
+                                        {{~ if embed.Author.Name ~}}
+                                        <span class="chatlog__embed-author-name">
+                                            {{~ if embed.Author.Url ~}}
+                                            <a class="chatlog__embed-author-name-link" href="{{ embed.Author.Url }}">{{ embed.Author.Name | html.escape }}</a>
+                                            {{~ else ~}}
+                                            {{ embed.Author.Name | html.escape }}
+                                            {{~ end ~}}
+                                        </span>
                                         {{~ end ~}}
                                     </div>
+                                    {{~ end ~}}
 
-                                    {{~ # Thumbnail ~}}
-                                    {{~ if embed.Thumbnail ~}}
-                                        <div class="chatlog__embed-thumbnail-container">
-                                            <a class="chatlog__embed-thumbnail-link" href="{{ embed.Thumbnail.Url }}">
-                                                <img class="chatlog__embed-thumbnail" src="{{ embed.Thumbnail.Url }}" />
-                                            </a>
+                                    {{~ # Title ~}}
+                                    {{~ if embed.Title ~}}
+                                    <div class="chatlog__embed-title">
+                                        {{~ if embed.Url ~}}
+                                        <a class="chatlog__embed-title-link" href="{{ embed.Url }}"><span class="markdown">{{ embed.Title | FormatMarkdown }}</span></a>
+                                        {{~ else ~}}
+                                        <span class="markdown">{{ embed.Title | FormatMarkdown }}</span>
+                                        {{~ end ~}}
+                                    </div>
+                                    {{~ end ~}}
+
+                                    {{~ # Description ~}}
+                                    {{~ if embed.Description ~}}
+                                    <div class="chatlog__embed-description"><span class="markdown">{{ embed.Description | FormatMarkdown }}</span></div>
+                                    {{~ end ~}}
+
+                                    {{~ # Fields ~}}
+                                    {{~ if embed.Fields | array.size > 0 ~}}
+                                    <div class="chatlog__embed-fields">
+                                        {{~ for field in embed.Fields ~}}
+                                        <div class="chatlog__embed-field {{ if field.IsInline }} chatlog__embed-field--inline {{ end }}">
+                                            {{~ if field.Name ~}}
+                                            <div class="chatlog__embed-field-name"><span class="markdown">{{ field.Name | FormatMarkdown }}</span></div>
+                                            {{~ end ~}}
+                                            {{~ if field.Value ~}}
+                                            <div class="chatlog__embed-field-value"><span class="markdown">{{ field.Value | FormatMarkdown }}</span></div>
+                                            {{~ end ~}}
                                         </div>
+                                        {{~ end ~}}
+                                    </div>
                                     {{~ end ~}}
                                 </div>
 
-                                {{~ # Image ~}}
-                                {{~ if embed.Image ~}}
-                                    <div class="chatlog__embed-image-container">
-                                        <a class="chatlog__embed-image-link" href="{{ embed.Image.Url }}">
-                                            <img class="chatlog__embed-image" src="{{ embed.Image.Url }}" />
-                                        </a>
-                                    </div>
-                                {{~ end ~}}
-
-                                {{~ # Footer ~}}
-                                {{~ if embed.Footer || embed.Timestamp ~}}
-                                    <div class="chatlog__embed-footer">
-                                        {{~ if embed.Footer ~}}
-                                            {{~ if embed.Footer.Text && embed.Footer.IconUrl ~}}
-                                                <img class="chatlog__embed-footer-icon" src="{{ embed.Footer.IconUrl }}" />
-                                            {{~ end ~}}
-                                        {{~ end ~}}
-
-                                        <span class="chatlog__embed-footer-text">
-                                            {{~ if embed.Footer ~}}
-                                                {{~ if embed.Footer.Text ~}}
-                                                    {{ embed.Footer.Text | html.escape }}
-                                                    {{ if embed.Timestamp }} • {{ end }}
-                                                {{~ end ~}}
-                                            {{~ end ~}}
-
-                                            {{~ if embed.Timestamp ~}}
-                                                {{ embed.Timestamp | FormatDate | html.escape }}
-                                            {{~ end ~}}
-                                        </span>
-                                    </div>
+                                {{~ # Thumbnail ~}}
+                                {{~ if embed.Thumbnail ~}}
+                                <div class="chatlog__embed-thumbnail-container">
+                                    <a class="chatlog__embed-thumbnail-link" href="{{ embed.Thumbnail.Url }}">
+                                        <img class="chatlog__embed-thumbnail" src="{{ embed.Thumbnail.Url }}" />
+                                    </a>
+                                </div>
                                 {{~ end ~}}
                             </div>
+
+                            {{~ # Image ~}}
+                            {{~ if embed.Image ~}}
+                            <div class="chatlog__embed-image-container">
+                                <a class="chatlog__embed-image-link" href="{{ embed.Image.Url }}">
+                                    <img class="chatlog__embed-image" src="{{ embed.Image.Url }}" />
+                                </a>
+                            </div>
+                            {{~ end ~}}
+
+                            {{~ # Footer ~}}
+                            {{~ if embed.Footer || embed.Timestamp ~}}
+                            <div class="chatlog__embed-footer">
+                                {{~ if embed.Footer ~}}
+                                {{~ if embed.Footer.Text && embed.Footer.IconUrl ~}}
+                                <img class="chatlog__embed-footer-icon" src="{{ embed.Footer.IconUrl }}" />
+                                {{~ end ~}}
+                                {{~ end ~}}
+
+                                <span class="chatlog__embed-footer-text">
+                                    {{~ if embed.Footer ~}}
+                                    {{~ if embed.Footer.Text ~}}
+                                    {{ embed.Footer.Text | html.escape }}
+                                    {{ if embed.Timestamp }} • {{ end }}
+                                    {{~ end ~}}
+                                    {{~ end ~}}
+
+                                    {{~ if embed.Timestamp ~}}
+                                    {{ embed.Timestamp | FormatDate | html.escape }}
+                                    {{~ end ~}}
+                                </span>
+                            </div>
+                            {{~ end ~}}
                         </div>
+                    </div>
                     {{~ end ~}}
 
                     {{~ # Reactions ~}}

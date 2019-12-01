@@ -70,6 +70,10 @@ a {
     color: rgba(255, 255, 255, 0.2);
 }
 
+.chatlog__embed-color-pill--default {
+    background-color: rgba(79, 84, 92, 1);
+}
+
 .chatlog__embed-content-container {
     background-color: rgba(46, 48, 54, 0.3);
     border-color: rgba(46, 48, 54, 0.6);

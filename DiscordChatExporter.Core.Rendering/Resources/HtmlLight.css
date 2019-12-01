@@ -73,6 +73,10 @@ a {
     color: #747f8d;
 }
 
+.chatlog__embed-color-pill--default {
+    background-color: rgba(227, 229, 232, 1);
+}
+
 .chatlog__embed-content-container {
     background-color: rgba(249, 249, 249, 0.3);
     border-color: rgba(204, 204, 204, 0.3);

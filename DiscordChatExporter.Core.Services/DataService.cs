@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.Core.Services.Exceptions;
 using DiscordChatExporter.Core.Services.Internal;
-using Failsafe;
 using Newtonsoft.Json.Linq;
+using Polly;
 using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Services
@@ -21,14 +21,13 @@ namespace DiscordChatExporter.Core.Services
             params string[] parameters)
         {
             // Create retry policy
-            var retry = Retry.Create()
-                .Catch<HttpErrorStatusCodeException>(false, e => (int) e.StatusCode >= 500)
-                .Catch<HttpErrorStatusCodeException>(false, e => (int) e.StatusCode == 429)
-                .WithMaxTryCount(10)
-                .WithDelay(TimeSpan.FromSeconds(0.4));
+            var retryPolicy = Policy
+                .Handle<HttpErrorStatusCodeException>(e => (int) e.StatusCode >= 500)
+                .Or<HttpErrorStatusCodeException>(e => (int) e.StatusCode == 429)
+                .WaitAndRetryAsync(10, _ => TimeSpan.FromSeconds(3));
 
             // Send request
-            return await retry.ExecuteAsync(async () =>
+            return await retryPolicy.ExecuteAsync(async () =>
             {
                 // Create request
                 const string apiRoot = "https://discordapp.com/api/v6";

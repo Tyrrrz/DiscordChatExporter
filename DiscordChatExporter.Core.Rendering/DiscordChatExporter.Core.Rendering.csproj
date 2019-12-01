@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../DiscordChatExporter.props" />
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

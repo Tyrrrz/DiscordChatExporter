@@ -1,13 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <Import Project="../DiscordChatExporter.props" />
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <AssemblyName>DiscordChatExporter</AssemblyName>
-    <Version>2.15</Version>
-    <Company>Tyrrrz</Company>
-    <Copyright>Copyright (c) Alexey Golub</Copyright>
-    <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>../favicon.ico</ApplicationIcon>
   </PropertyGroup>

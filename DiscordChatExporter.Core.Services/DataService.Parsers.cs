@@ -50,7 +50,12 @@ namespace DiscordChatExporter.Core.Services
 
             // If the name is blank, it's direct messages
             if (string.IsNullOrWhiteSpace(name))
-                name = json["recipients"].Select(ParseUser).Select(u => u.Name).JoinToString(", ");
+                name = json["recipients"]?.Select(ParseUser).Select(u => u.Name).JoinToString(", ");
+
+            // If the name is still blank for some reason, fallback to ID
+            // (blind fix to https://github.com/Tyrrrz/DiscordChatExporter/issues/227)
+            if (string.IsNullOrWhiteSpace(name))
+                name = id;
 
             return new Channel(id, parentId, guildId, name, topic, type);
         }

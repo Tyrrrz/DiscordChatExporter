@@ -24,7 +24,7 @@ namespace DiscordChatExporter.Cli.Commands
             var channels = await DataService.GetGuildChannelsAsync(GetToken(), GuildId);
 
             // Filter and order channels
-            channels = channels.Where(c => c.Type == ChannelType.GuildTextChat).OrderBy(c => c.Name).ToArray();
+            channels = channels.Where(c => c.Type.IsExportable()).OrderBy(c => c.Name).ToArray();
 
             // Print result
             foreach (var channel in channels)

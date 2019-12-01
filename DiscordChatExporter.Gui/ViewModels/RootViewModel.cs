@@ -201,14 +201,14 @@ namespace DiscordChatExporter.Gui.ViewModels
                     var channels = await _dataService.GetGuildChannelsAsync(token, guild.Id);
 
                     // Get category channels
-                    var categoryChannels = channels.Where(c => c.Type == ChannelType.Category).ToArray();
+                    var categoryChannels = channels.Where(c => c.Type == ChannelType.GuildCategory).ToArray();
 
-                    // Get text channels
-                    var textChannels = channels.Where(c => c.Type == ChannelType.GuildTextChat).ToArray();
+                    // Get exportable channels
+                    var exportableChannels = channels.Where(c => c.Type.IsExportable()).ToArray();
 
                     // Create channel view models
                     var channelViewModels = new List<ChannelViewModel>();
-                    foreach (var channel in textChannels)
+                    foreach (var channel in exportableChannels)
                     {
                         // Get category
                         var category = categoryChannels.FirstOrDefault(c => c.Id == channel.ParentId)?.Name;

@@ -4,6 +4,13 @@ namespace DiscordChatExporter.Core.Models
 {
     public static class Extensions
     {
+        public static bool IsExportable(this ChannelType channelType) =>
+            channelType == ChannelType.GuildTextChat ||
+            channelType == ChannelType.DirectTextChat ||
+            channelType == ChannelType.DirectGroupTextChat ||
+            channelType == ChannelType.GuildNews ||
+            channelType == ChannelType.GuildStore;
+
         public static string GetFileExtension(this ExportFormat format) =>
             format switch
             {

@@ -81,7 +81,7 @@ namespace DiscordChatExporter.Core.Rendering
         private async Task RenderFieldAsync(TextWriter writer, string value)
         {
             var encodedValue = value.Replace("\"", "\"\"");
-            await writer.WriteAsync($"\"{encodedValue}\";");
+            await writer.WriteAsync($"\"{encodedValue}\",");
         }
 
         private async Task RenderMessageAsync(TextWriter writer, Message message)

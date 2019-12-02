@@ -113,12 +113,12 @@ namespace DiscordChatExporter.Core.Markdown
         /* Emojis */
 
         // Capture any country flag emoji (two regional indicator surrogate pairs)
-        // ... or "symbol/other" character
+        // ... or "miscellaneous symbol" character
         // ... or surrogate pair
         // ... or digit followed by enclosing mark
         // (this does not match all emojis in Discord but it's reasonably accurate enough)
         private static readonly IMatcher<Node> StandardEmojiNodeMatcher = new RegexMatcher<Node>(
-            new Regex("((?:[\\uD83C][\\uDDE6-\\uDDFF]){2}|\\p{So}|\\p{Cs}{2}|\\d\\p{Me})", DefaultRegexOptions),
+            new Regex("((?:[\\uD83C][\\uDDE6-\\uDDFF]){2}|[\\u2600-\\u26FF]|\\p{Cs}{2}|\\d\\p{Me})", DefaultRegexOptions),
             m => new EmojiNode(m.Groups[1].Value));
 
         // Capture <:lul:123456> or <a:lul:123456>

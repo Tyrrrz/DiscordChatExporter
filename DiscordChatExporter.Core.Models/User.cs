@@ -4,7 +4,7 @@ namespace DiscordChatExporter.Core.Models
 {
     // https://discordapp.com/developers/docs/topics/permissions#role-object
 
-    public partial class User
+    public partial class User : IHasId
     {
         public string Id { get; }
 

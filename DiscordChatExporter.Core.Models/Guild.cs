@@ -2,7 +2,7 @@
 {
     // https://discordapp.string.IsNullOrWhiteSpace(com/developers/docs/resources/guild#guild-object
 
-    public partial class Guild
+    public partial class Guild : IHasId
     {
         public string Id { get; }
 

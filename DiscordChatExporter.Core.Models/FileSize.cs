@@ -30,7 +30,6 @@ namespace DiscordChatExporter.Core.Models
         {
             get
             {
-                // Absolute value is used to deal with negative values
                 if (Math.Abs(PetaBytes) >= 1)
                     return PetaByteSymbol;
 
@@ -54,7 +53,6 @@ namespace DiscordChatExporter.Core.Models
         {
             get
             {
-                // Absolute value is used to deal with negative values
                 if (Math.Abs(PetaBytes) >= 1)
                     return PetaBytes;
 

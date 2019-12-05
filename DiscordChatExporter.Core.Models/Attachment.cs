@@ -6,7 +6,7 @@ namespace DiscordChatExporter.Core.Models
 {
     // https://discordapp.com/developers/docs/resources/channel#attachment-object
 
-    public partial class Attachment
+    public partial class Attachment : IHasId
     {
         public string Id { get; }
 

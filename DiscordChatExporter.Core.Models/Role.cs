@@ -2,7 +2,7 @@
 {
     // https://discordapp.com/developers/docs/topics/permissions#role-object
 
-    public partial class Role
+    public partial class Role : IHasId
     {
         public string Id { get; }
 

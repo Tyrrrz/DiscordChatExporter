@@ -5,7 +5,7 @@ namespace DiscordChatExporter.Core.Models
 {
     // https://discordapp.com/developers/docs/resources/channel#message-object
 
-    public class Message
+    public class Message : IHasId
     {
         public string Id { get; }
 

@@ -16,12 +16,20 @@ namespace DiscordChatExporter.Core.Rendering
         private readonly string _themeName;
         private readonly List<Message> _messageGroupBuffer = new List<Message>();
 
+        private readonly Template _leadingBlockTemplate;
+        private readonly Template _messageGroupTemplate;
+        private readonly Template _trailingBlockTemplate;
+
         private bool _isLeadingBlockRendered;
 
         public HtmlMessageRenderer(string filePath, RenderContext context, string themeName)
             : base(filePath, context)
         {
             _themeName = themeName;
+
+            _leadingBlockTemplate = Template.Parse(GetLeadingBlockTemplateCode());
+            _messageGroupTemplate = Template.Parse(GetMessageGroupTemplateCode());
+            _trailingBlockTemplate = Template.Parse(GetTrailingBlockTemplateCode());
         }
 
         private MessageGroup GetCurrentMessageGroup()
@@ -30,42 +38,69 @@ namespace DiscordChatExporter.Core.Rendering
             return new MessageGroup(firstMessage.Author, firstMessage.Timestamp, _messageGroupBuffer);
         }
 
-        private async Task RenderLeadingBlockAsync()
+        private TemplateContext CreateTemplateContext(IReadOnlyDictionary<string, object>? constants = null)
         {
-            var template = Template.Parse(GetLeadingBlockTemplateCode());
-            var templateContext = CreateTemplateContext();
-            var scriptObject = CreateScriptObject(Context, _themeName);
+            // Template context
+            var templateContext = new TemplateContext
+            {
+                MemberRenamer = m => m.Name,
+                MemberFilter = m => true,
+                LoopLimit = int.MaxValue,
+                StrictVariables = true
+            };
 
+            // Model
+            var scriptObject = new ScriptObject();
+
+            // Constants
+            scriptObject.SetValue("Context", Context, true);
+            scriptObject.SetValue("CoreStyleSheet", GetCoreStyleSheetCode(), true);
+            scriptObject.SetValue("ThemeStyleSheet", GetThemeStyleSheetCode(_themeName), true);
+            scriptObject.SetValue("HighlightJsStyleName", $"solarized-{_themeName.ToLowerInvariant()}", true);
+
+            // Additional constants
+            if (constants != null)
+            {
+                foreach (var (member, value) in constants)
+                    scriptObject.SetValue(member, value, true);
+            }
+
+            // Functions
+            scriptObject.Import("FormatDate",
+                new Func<DateTimeOffset, string>(d => SharedRenderingLogic.FormatDate(d, Context.DateFormat)));
+
+            scriptObject.Import("FormatMarkdown",
+                new Func<string, string>(m => HtmlRenderingLogic.FormatMarkdown(Context, m)));
+
+            // Push model
             templateContext.PushGlobal(scriptObject);
+
+            // Push output
             templateContext.PushOutput(new TextWriterOutput(Writer));
 
-            await templateContext.EvaluateAsync(template.Page);
+            return templateContext;
         }
 
-        private async Task RenderTrailingBlockAsync()
+        private async Task RenderLeadingBlockAsync()
         {
-            var template = Template.Parse(GetTrailingBlockTemplateCode());
             var templateContext = CreateTemplateContext();
-            var scriptObject = CreateScriptObject(Context, _themeName);
-
-            templateContext.PushGlobal(scriptObject);
-            templateContext.PushOutput(new TextWriterOutput(Writer));
-
-            await templateContext.EvaluateAsync(template.Page);
+            await templateContext.EvaluateAsync(_leadingBlockTemplate.Page);
         }
 
         private async Task RenderCurrentMessageGroupAsync()
         {
-            var template = Template.Parse(GetMessageGroupTemplateCode());
+            var templateContext = CreateTemplateContext(new Dictionary<string, object>
+            {
+                ["MessageGroup"] = GetCurrentMessageGroup()
+            });
+
+            await templateContext.EvaluateAsync(_messageGroupTemplate.Page);
+        }
+
+        private async Task RenderTrailingBlockAsync()
+        {
             var templateContext = CreateTemplateContext();
-            var scriptObject = CreateScriptObject(Context, _themeName);
-
-            scriptObject.SetValue("MessageGroup", GetCurrentMessageGroup(), true);
-
-            templateContext.PushGlobal(scriptObject);
-            templateContext.PushOutput(new TextWriterOutput(Writer));
-
-            await templateContext.EvaluateAsync(template.Page);
+            await templateContext.EvaluateAsync(_trailingBlockTemplate.Page);
         }
 
         public override async Task RenderMessageAsync(Message message)
@@ -105,6 +140,7 @@ namespace DiscordChatExporter.Core.Rendering
             // Trailing block
             await RenderTrailingBlockAsync();
 
+            // Dispose stream
             await base.DisposeAsync();
         }
     }
@@ -135,35 +171,5 @@ namespace DiscordChatExporter.Core.Rendering
         private static string GetMessageGroupTemplateCode() =>
             ResourcesAssembly
                 .GetManifestResourceString($"{ResourcesNamespace}.HtmlMessageGroupTemplate.html");
-
-        private static ScriptObject CreateScriptObject(RenderContext context, string themeName)
-        {
-            var scriptObject = new ScriptObject();
-
-            // Constants
-            scriptObject.SetValue("Context", context, true);
-            scriptObject.SetValue("CoreStyleSheet", GetCoreStyleSheetCode(), true);
-            scriptObject.SetValue("ThemeStyleSheet", GetThemeStyleSheetCode(themeName), true);
-            scriptObject.SetValue("HighlightJsStyleName", $"solarized-{themeName.ToLowerInvariant()}", true);
-
-            // Functions
-
-            scriptObject.Import("FormatDate",
-                new Func<DateTimeOffset, string>(d => SharedRenderingLogic.FormatDate(d, context.DateFormat)));
-
-            scriptObject.Import("FormatMarkdown",
-                new Func<string, string>(m => HtmlRenderingLogic.FormatMarkdown(context, m)));
-
-            return scriptObject;
-        }
-
-        private static TemplateContext CreateTemplateContext() =>
-            new TemplateContext
-            {
-                MemberRenamer = m => m.Name,
-                MemberFilter = m => true,
-                LoopLimit = int.MaxValue,
-                StrictVariables = true
-            };
     }
 }

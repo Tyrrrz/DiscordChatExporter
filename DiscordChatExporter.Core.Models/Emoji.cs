@@ -6,7 +6,7 @@ namespace DiscordChatExporter.Core.Models
 {
     // https://discordapp.com/developers/docs/resources/emoji#emoji-object
 
-    public partial class Emoji : IHasId
+    public partial class Emoji
     {
         public string? Id { get; }
 

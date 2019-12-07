@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {{~ # Metadata ~}}
+    <title>{{ Context.Guild.Name | html.escape }} - {{ Context.Channel.Name | html.escape }}</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+
+    {{~ # Styles ~}}
+    <style>
+        {{ CoreStyleSheet }}
+    </style>
+    <style>
+        {{ ThemeStyleSheet }}
+    </style>
+
+    {{~ # Syntax highlighting ~}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/{{HighlightJsStyleName}}.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.pre--multiline').forEach(block => hljs.highlightBlock(block));
+        });
+    </script>
+
+    {{~ # Local scripts ~}}
+    <script>
+        function scrollToMessage(event, id) {
+            var element = document.getElementById('message-' + id);
+
+            if (element) {
+                event.preventDefault();
+
+                element.classList.add('chatlog__message--highlighted');
+
+                window.scrollTo({
+                    top: element.getBoundingClientRect().top - document.body.getBoundingClientRect().top - (window.innerHeight / 2),
+                    behavior: 'smooth'
+                });
+
+                window.setTimeout(function() {
+                    element.classList.remove('chatlog__message--highlighted');
+                }, 2000);
+            }
+        }
+    </script>
+</head>
+<body>
+
+{{~ # Info ~}}
+<div class="info">
+    <div class="info__guild-icon-container">
+        <img class="info__guild-icon" src="{{ Context.Guild.IconUrl }}" />
+    </div>
+    <div class="info__metadata">
+        <div class="info__guild-name">{{ Context.Guild.Name | html.escape }}</div>
+        <div class="info__channel-name">{{ Context.Channel.Name | html.escape }}</div>
+
+        {{~ if Context.Channel.Topic ~}}
+            <div class="info__channel-topic">{{ Context.Channel.Topic | html.escape }}</div>
+        {{~ end ~}}
+
+        {{~ if Context.After || Context.Before ~}}
+            <div class="info__channel-date-range">
+                {{~ if Context.After && Context.Before ~}}
+                    Between {{ Context.After | FormatDate | html.escape }} and {{ Context.Before | FormatDate | html.escape }}
+                {{~ else if Context.After ~}}
+                    After {{ Context.After | FormatDate | html.escape }}
+                {{~ else if Context.Before ~}}
+                    Before {{ Context.Before | FormatDate | html.escape }}
+                {{~ end ~}}
+            </div>
+        {{~ end ~}}
+    </div>
+</div>
+
+{{~ # Log ~}}
+<div class="chatlog">
+    {{~ %SPLIT% ~}}
+</div>
+
+</body>
+</html>

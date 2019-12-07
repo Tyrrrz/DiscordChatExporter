@@ -6,12 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources\HtmlCore.css" />
     <EmbeddedResource Include="Resources\HtmlDark.css" />
-    <EmbeddedResource Include="Resources\HtmlDark.html" />
     <EmbeddedResource Include="Resources\HtmlLight.css" />
-    <EmbeddedResource Include="Resources\HtmlLight.html" />
-    <EmbeddedResource Include="Resources\HtmlShared.css" />
-    <EmbeddedResource Include="Resources\HtmlShared.html" />
+    <EmbeddedResource Include="Resources\HtmlLayoutTemplate.html" />
+    <EmbeddedResource Include="Resources\HtmlMessageGroupTemplate.html" />
   </ItemGroup>
 
   <ItemGroup>

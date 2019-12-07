@@ -19,6 +19,8 @@ namespace DiscordChatExporter.Core.Models
 
         public DateTimeOffset? EditedTimestamp { get; }
 
+        public bool IsPinned { get; }
+
         public string? Content { get; }
 
         public IReadOnlyList<Attachment> Attachments { get; }
@@ -29,12 +31,11 @@ namespace DiscordChatExporter.Core.Models
 
         public IReadOnlyList<User> MentionedUsers { get; }
 
-        public bool IsPinned { get; }
-
-        public Message(string id, string channelId, MessageType type, User author, DateTimeOffset timestamp,
-            DateTimeOffset? editedTimestamp, string? content, IReadOnlyList<Attachment> attachments,
-            IReadOnlyList<Embed> embeds, IReadOnlyList<Reaction> reactions, IReadOnlyList<User> mentionedUsers,
-            bool isPinned)
+        public Message(string id, string channelId, MessageType type, User author,
+            DateTimeOffset timestamp, DateTimeOffset? editedTimestamp, bool isPinned,
+            string content,
+            IReadOnlyList<Attachment> attachments,IReadOnlyList<Embed> embeds, IReadOnlyList<Reaction> reactions,
+            IReadOnlyList<User> mentionedUsers)
         {
             Id = id;
             ChannelId = channelId;
@@ -42,12 +43,12 @@ namespace DiscordChatExporter.Core.Models
             Author = author;
             Timestamp = timestamp;
             EditedTimestamp = editedTimestamp;
+            IsPinned = isPinned;
             Content = content;
             Attachments = attachments;
             Embeds = embeds;
             Reactions = reactions;
             MentionedUsers = mentionedUsers;
-            IsPinned = isPinned;
         }
 
         public override string ToString() => Content ?? "<message without content>";

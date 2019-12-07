@@ -27,7 +27,7 @@ namespace DiscordChatExporter.Core.Models
                 ExportFormat.PlainText => "Plain Text",
                 ExportFormat.HtmlDark => "HTML (Dark)",
                 ExportFormat.HtmlLight => "HTML (Light)",
-                ExportFormat.Csv => "Comma Seperated Values (CSV)",
+                ExportFormat.Csv => "Comma Separated Values (CSV)",
                 _ => throw new ArgumentOutOfRangeException(nameof(format))
             };
     }

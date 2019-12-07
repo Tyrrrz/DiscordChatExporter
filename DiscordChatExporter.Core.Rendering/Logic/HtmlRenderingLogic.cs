@@ -1,53 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using DiscordChatExporter.Core.Markdown;
 using DiscordChatExporter.Core.Markdown.Nodes;
 using DiscordChatExporter.Core.Models;
-using Scriban;
-using Scriban.Runtime;
 using Tyrrrz.Extensions;
 
-namespace DiscordChatExporter.Core.Rendering
+namespace DiscordChatExporter.Core.Rendering.Logic
 {
-    public partial class HtmlChatLogRenderer : IChatLogRenderer
+    internal static class HtmlRenderingLogic
     {
-        private readonly ChatLog _chatLog;
-        private readonly string _themeName;
-        private readonly string _dateFormat;
-
-        public HtmlChatLogRenderer(ChatLog chatLog, string themeName, string dateFormat)
+        public static bool CanBeGrouped(Message message1, Message message2)
         {
-            _chatLog = chatLog;
-            _themeName = themeName;
-            _dateFormat = dateFormat;
+            if (message1.Author.Id != message2.Author.Id)
+                return false;
+
+            if ((message2.Timestamp - message1.Timestamp).Duration().TotalMinutes > 7)
+                return false;
+
+            return true;
         }
 
-        private string HtmlEncode(string s) => WebUtility.HtmlEncode(s);
+        private static string HtmlEncode(string s) => WebUtility.HtmlEncode(s);
 
-        private string FormatDate(DateTimeOffset date) =>
-            date.ToLocalTime().ToString(_dateFormat, CultureInfo.InvariantCulture);
-
-        private IEnumerable<MessageGroup> GroupMessages(IEnumerable<Message> messages) =>
-            messages.GroupContiguous((buffer, message) =>
-            {
-                // Break group if the author changed
-                if (buffer.Last().Author.Id != message.Author.Id)
-                    return false;
-
-                // Break group if last message was more than 7 minutes ago
-                if ((message.Timestamp - buffer.Last().Timestamp).TotalMinutes > 7)
-                    return false;
-
-                return true;
-            }).Select(g => new MessageGroup(g.First().Author, g.First().Timestamp, g));
-
-        private string FormatMarkdown(Node node, bool isJumbo)
+        private static string FormatMarkdownNode(RenderContext context, Node node, bool isJumbo)
         {
             // Text node
             if (node is TextNode textNode)
@@ -60,7 +38,7 @@ namespace DiscordChatExporter.Core.Rendering
             if (node is FormattedNode formattedNode)
             {
                 // Recursively get inner html
-                var innerHtml = FormatMarkdown(formattedNode.Children, false);
+                var innerHtml = FormatMarkdownNodes(context, formattedNode.Children, false);
 
                 // Bold
                 if (formattedNode.Formatting == TextFormatting.Bold)
@@ -116,21 +94,27 @@ namespace DiscordChatExporter.Core.Rendering
                 // User mention node
                 if (mentionNode.Type == MentionType.User)
                 {
-                    var user = _chatLog.Mentionables.GetUser(mentionNode.Id);
+                    var user = context.MentionableUsers.FirstOrDefault(u => u.Id == mentionNode.Id) ??
+                               User.CreateUnknownUser(mentionNode.Id);
+
                     return $"<span class=\"mention\" title=\"{HtmlEncode(user.FullName)}\">@{HtmlEncode(user.Name)}</span>";
                 }
 
                 // Channel mention node
                 if (mentionNode.Type == MentionType.Channel)
                 {
-                    var channel = _chatLog.Mentionables.GetChannel(mentionNode.Id);
+                    var channel = context.MentionableChannels.FirstOrDefault(c => c.Id == mentionNode.Id) ??
+                                  Channel.CreateDeletedChannel(mentionNode.Id);
+
                     return $"<span class=\"mention\">#{HtmlEncode(channel.Name)}</span>";
                 }
 
                 // Role mention node
                 if (mentionNode.Type == MentionType.Role)
                 {
-                    var role = _chatLog.Mentionables.GetRole(mentionNode.Id);
+                    var role = context.MentionableRoles.FirstOrDefault(r => r.Id == mentionNode.Id) ??
+                               Role.CreateDeletedRole(mentionNode.Id);
+
                     return $"<span class=\"mention\">@{HtmlEncode(role.Name)}</span>";
                 }
             }
@@ -159,52 +143,18 @@ namespace DiscordChatExporter.Core.Rendering
             }
 
             // Throw on unexpected nodes
-            throw new InvalidOperationException($"Unexpected node: [{node.GetType()}].");
+            throw new InvalidOperationException($"Unexpected node [{node.GetType()}].");
         }
 
-        private string FormatMarkdown(IReadOnlyList<Node> nodes, bool isTopLevel)
+        private static string FormatMarkdownNodes(RenderContext context, IReadOnlyList<Node> nodes, bool isTopLevel)
         {
             // Emojis are jumbo if all top-level nodes are emoji nodes or whitespace text nodes
             var isJumbo = isTopLevel && nodes.All(n => n is EmojiNode || n is TextNode textNode && string.IsNullOrWhiteSpace(textNode.Text));
 
-            return nodes.Select(n => FormatMarkdown(n, isJumbo)).JoinToString("");
+            return nodes.Select(n => FormatMarkdownNode(context, n, isJumbo)).JoinToString("");
         }
 
-        private string FormatMarkdown(string markdown) => FormatMarkdown(MarkdownParser.Parse(markdown), true);
-
-        public async Task RenderAsync(TextWriter writer)
-        {
-            // Create template loader
-            var loader = new TemplateLoader();
-
-            // Get template
-            var templateCode = loader.Load($"Html{_themeName}.html");
-            var template = Template.Parse(templateCode);
-
-            // Create template context
-            var context = new TemplateContext
-            {
-                TemplateLoader = loader,
-                MemberRenamer = m => m.Name,
-                MemberFilter = m => true,
-                LoopLimit = int.MaxValue,
-                StrictVariables = true
-            };
-
-            // Create template model
-            var model = new ScriptObject();
-            model.SetValue("Model", _chatLog, true);
-            model.Import(nameof(GroupMessages), new Func<IEnumerable<Message>, IEnumerable<MessageGroup>>(GroupMessages));
-            model.Import(nameof(FormatDate), new Func<DateTimeOffset, string>(FormatDate));
-            model.Import(nameof(FormatMarkdown), new Func<string, string>(FormatMarkdown));
-            context.PushGlobal(model);
-
-            // Configure output
-            context.PushOutput(new TextWriterOutput(writer));
-
-            // HACK: Render output in a separate thread
-            // (even though Scriban has async API, it still makes a lot of blocking CPU-bound calls)
-            await Task.Run(async () => await context.EvaluateAsync(template.Page));
-        }
+        public static string FormatMarkdown(RenderContext context, string markdown) =>
+            FormatMarkdownNodes(context, MarkdownParser.Parse(markdown), true);
     }
 }

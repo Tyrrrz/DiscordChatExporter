@@ -82,7 +82,7 @@ namespace DiscordChatExporter.Core.Services
             return channel;
         }
 
-        public async IAsyncEnumerable<Guild> EnumerateUserGuildsAsync(AuthToken token)
+        public async IAsyncEnumerable<Guild> GetUserGuildsAsync(AuthToken token)
         {
             var afterId = "";
 
@@ -105,8 +105,6 @@ namespace DiscordChatExporter.Core.Services
             }
         }
 
-        public Task<IReadOnlyList<Guild>> GetUserGuildsAsync(AuthToken token) => EnumerateUserGuildsAsync(token).AggregateAsync();
-
         public async Task<IReadOnlyList<Channel>> GetDirectMessageChannelsAsync(AuthToken token)
         {
             var response = await GetApiResponseAsync(token, "users/@me/channels");
@@ -117,6 +115,10 @@ namespace DiscordChatExporter.Core.Services
 
         public async Task<IReadOnlyList<Channel>> GetGuildChannelsAsync(AuthToken token, string guildId)
         {
+            // Special case for direct messages pseudo-guild
+            if (guildId == Guild.DirectMessages.Id)
+                return Array.Empty<Channel>();
+
             var response = await GetApiResponseAsync(token, $"guilds/{guildId}/channels");
             var channels = response.Select(ParseChannel).ToArray();
 
@@ -125,6 +127,10 @@ namespace DiscordChatExporter.Core.Services
 
         public async Task<IReadOnlyList<Role>> GetGuildRolesAsync(AuthToken token, string guildId)
         {
+            // Special case for direct messages pseudo-guild
+            if (guildId == Guild.DirectMessages.Id)
+                return Array.Empty<Role>();
+
             var response = await GetApiResponseAsync(token, $"guilds/{guildId}/roles");
             var roles = response.Select(ParseRole).ToArray();
 
@@ -142,7 +148,7 @@ namespace DiscordChatExporter.Core.Services
             return response.Select(ParseMessage).FirstOrDefault();
         }
 
-        public async IAsyncEnumerable<Message> EnumerateMessagesAsync(AuthToken token, string channelId,
+        public async IAsyncEnumerable<Message> GetMessagesAsync(AuthToken token, string channelId,
             DateTimeOffset? after = null, DateTimeOffset? before = null, IProgress<double>? progress = null)
         {
             // Get the last message
@@ -157,11 +163,11 @@ namespace DiscordChatExporter.Core.Services
 
             // Get other messages
             var firstMessage = default(Message);
-            var offsetId = after?.ToSnowflake() ?? "0";
+            var afterId = after?.ToSnowflake() ?? "0";
             while (true)
             {
                 // Get message batch
-                var route = $"channels/{channelId}/messages?limit=100&after={offsetId}";
+                var route = $"channels/{channelId}/messages?limit=100&after={afterId}";
                 var response = await GetApiResponseAsync(token, route);
 
                 // Parse
@@ -190,7 +196,7 @@ namespace DiscordChatExporter.Core.Services
                                      (lastMessage.Timestamp - firstMessage.Timestamp).TotalSeconds);
 
                     yield return message;
-                    offsetId = message.Id;
+                    afterId = message.Id;
                 }
 
                 // Break if messages were trimmed (which means the last message was encountered)
@@ -200,65 +206,7 @@ namespace DiscordChatExporter.Core.Services
 
             // Yield last message
             yield return lastMessage;
-
-            // Report progress
             progress?.Report(1);
-        }
-
-        public Task<IReadOnlyList<Message>> GetMessagesAsync(AuthToken token, string channelId,
-            DateTimeOffset? after = null, DateTimeOffset? before = null, IProgress<double>? progress = null) =>
-            EnumerateMessagesAsync(token, channelId, after, before, progress).AggregateAsync();
-
-        public async Task<Mentionables> GetMentionablesAsync(AuthToken token, string guildId,
-            IEnumerable<Message> messages)
-        {
-            // Get channels and roles
-            var channels = guildId != Guild.DirectMessages.Id
-                ? await GetGuildChannelsAsync(token, guildId)
-                : Array.Empty<Channel>();
-            var roles = guildId != Guild.DirectMessages.Id
-                ? await GetGuildRolesAsync(token, guildId)
-                : Array.Empty<Role>();
-
-            // Get users
-            var userMap = new Dictionary<string, User>();
-            foreach (var message in messages)
-            {
-                // Author
-                userMap[message.Author.Id] = message.Author;
-
-                // Mentioned users
-                foreach (var mentionedUser in message.MentionedUsers)
-                    userMap[mentionedUser.Id] = mentionedUser;
-            }
-
-            var users = userMap.Values.ToArray();
-
-            return new Mentionables(users, channels, roles);
-        }
-
-        public async Task<ChatLog> GetChatLogAsync(AuthToken token, Guild guild, Channel channel,
-            DateTimeOffset? after = null, DateTimeOffset? before = null, IProgress<double>? progress = null)
-        {
-            // Get messages
-            var messages = await GetMessagesAsync(token, channel.Id, after, before, progress);
-
-            // Get mentionables
-            var mentionables = await GetMentionablesAsync(token, guild.Id, messages);
-
-            return new ChatLog(guild, channel, after, before, messages, mentionables);
-        }
-
-        public async Task<ChatLog> GetChatLogAsync(AuthToken token, Channel channel,
-            DateTimeOffset? after = null, DateTimeOffset? before = null, IProgress<double>? progress = null)
-        {
-            // Get guild
-            var guild = !string.IsNullOrWhiteSpace(channel.GuildId)
-                ? await GetGuildAsync(token, channel.GuildId)
-                : Guild.DirectMessages;
-
-            // Get the chat log
-            return await GetChatLogAsync(token, guild, channel, after, before, progress);
         }
 
         public void Dispose() => _httpClient.Dispose();

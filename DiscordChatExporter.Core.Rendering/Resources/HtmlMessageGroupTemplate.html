@@ -1,0 +1,170 @@
+<div class="chatlog__message-group">
+    {{~ # Avatar ~}}
+    <div class="chatlog__author-avatar-container">
+        <img class="chatlog__author-avatar" src="{{ MessageGroup.Author.AvatarUrl }}" />
+    </div>
+    <div class="chatlog__messages">
+        {{~ # Author name and timestamp ~}}
+        <span class="chatlog__author-name" title="{{ MessageGroup.Author.FullName | html.escape }}" data-user-id="{{ MessageGroup.Author.Id | html.escape }}">{{ MessageGroup.Author.Name | html.escape }}</span>
+
+        {{~ # Bot tag ~}}
+        {{~ if MessageGroup.Author.IsBot ~}}
+            <span class="chatlog__bot-tag">BOT</span>
+        {{~ end ~}}
+
+        <span class="chatlog__timestamp">{{ MessageGroup.Timestamp | FormatDate | html.escape }}</span>
+
+        {{~ # Messages ~}}
+        {{~ for message in MessageGroup.Messages ~}}
+            <div class="chatlog__message {{if message.IsPinned }}chatlog__message--pinned{{ end }}" data-message-id="{{ message.Id }}" id="message-{{ message.Id }}">
+            {{~ # Content ~}}
+            {{~ if message.Content ~}}
+                <div class="chatlog__content">
+                    <span class="markdown">{{ message.Content | FormatMarkdown }}</span>
+
+                    {{~ # Edited timestamp ~}}
+                    {{~ if message.EditedTimestamp ~}}
+                        <span class="chatlog__edited-timestamp" title="{{ message.EditedTimestamp | FormatDate | html.escape }}">(edited)</span>
+                    {{~ end ~}}
+                </div>
+            {{~ end ~}}
+
+            {{~ # Attachments ~}}
+            {{~ for attachment in message.Attachments ~}}
+                <div class="chatlog__attachment">
+                    <a href="{{ attachment.Url }}">
+                        {{ # Image }}
+                        {{~ if attachment.IsImage ~}}
+                            <img class="chatlog__attachment-thumbnail" src="{{ attachment.Url }}" />
+                        {{~ # Non-image ~}}
+                        {{~ else ~}}
+                            Attachment: {{ attachment.FileName }} ({{ attachment.FileSize }})
+                        {{~ end ~}}
+                    </a>
+                </div>
+            {{~ end ~}}
+
+            {{~ # Embeds ~}}
+            {{~ for embed in message.Embeds ~}}
+            <div class="chatlog__embed">
+                {{~ if embed.Color ~}}
+                <div class="chatlog__embed-color-pill" style="background-color: rgba({{ embed.Color.R }},{{ embed.Color.G }},{{ embed.Color.B }},{{ embed.Color.A }})"></div>
+                {{~ else ~}}
+                <div class="chatlog__embed-color-pill chatlog__embed-color-pill--default"></div>
+                {{~ end ~}}
+                <div class="chatlog__embed-content-container">
+                    <div class="chatlog__embed-content">
+                        <div class="chatlog__embed-text">
+                            {{~ # Author ~}}
+                            {{~ if embed.Author ~}}
+                            <div class="chatlog__embed-author">
+                                {{~ if embed.Author.IconUrl ~}}
+                                <img class="chatlog__embed-author-icon" src="{{ embed.Author.IconUrl }}" />
+                                {{~ end ~}}
+
+                                {{~ if embed.Author.Name ~}}
+                                <span class="chatlog__embed-author-name">
+                                    {{~ if embed.Author.Url ~}}
+                                    <a class="chatlog__embed-author-name-link" href="{{ embed.Author.Url }}">{{ embed.Author.Name | html.escape }}</a>
+                                    {{~ else ~}}
+                                    {{ embed.Author.Name | html.escape }}
+                                    {{~ end ~}}
+                                </span>
+                                {{~ end ~}}
+                            </div>
+                            {{~ end ~}}
+
+                            {{~ # Title ~}}
+                            {{~ if embed.Title ~}}
+                            <div class="chatlog__embed-title">
+                                {{~ if embed.Url ~}}
+                                <a class="chatlog__embed-title-link" href="{{ embed.Url }}"><span class="markdown">{{ embed.Title | FormatMarkdown }}</span></a>
+                                {{~ else ~}}
+                                <span class="markdown">{{ embed.Title | FormatMarkdown }}</span>
+                                {{~ end ~}}
+                            </div>
+                            {{~ end ~}}
+
+                            {{~ # Description ~}}
+                            {{~ if embed.Description ~}}
+                            <div class="chatlog__embed-description"><span class="markdown">{{ embed.Description | FormatMarkdown }}</span></div>
+                            {{~ end ~}}
+
+                            {{~ # Fields ~}}
+                            {{~ if embed.Fields | array.size > 0 ~}}
+                            <div class="chatlog__embed-fields">
+                                {{~ for field in embed.Fields ~}}
+                                <div class="chatlog__embed-field {{ if field.IsInline }} chatlog__embed-field--inline {{ end }}">
+                                    {{~ if field.Name ~}}
+                                    <div class="chatlog__embed-field-name"><span class="markdown">{{ field.Name | FormatMarkdown }}</span></div>
+                                    {{~ end ~}}
+                                    {{~ if field.Value ~}}
+                                    <div class="chatlog__embed-field-value"><span class="markdown">{{ field.Value | FormatMarkdown }}</span></div>
+                                    {{~ end ~}}
+                                </div>
+                                {{~ end ~}}
+                            </div>
+                            {{~ end ~}}
+                        </div>
+
+                        {{~ # Thumbnail ~}}
+                        {{~ if embed.Thumbnail ~}}
+                        <div class="chatlog__embed-thumbnail-container">
+                            <a class="chatlog__embed-thumbnail-link" href="{{ embed.Thumbnail.Url }}">
+                                <img class="chatlog__embed-thumbnail" src="{{ embed.Thumbnail.Url }}" />
+                            </a>
+                        </div>
+                        {{~ end ~}}
+                    </div>
+
+                    {{~ # Image ~}}
+                    {{~ if embed.Image ~}}
+                    <div class="chatlog__embed-image-container">
+                        <a class="chatlog__embed-image-link" href="{{ embed.Image.Url }}">
+                            <img class="chatlog__embed-image" src="{{ embed.Image.Url }}" />
+                        </a>
+                    </div>
+                    {{~ end ~}}
+
+                    {{~ # Footer ~}}
+                    {{~ if embed.Footer || embed.Timestamp ~}}
+                    <div class="chatlog__embed-footer">
+                        {{~ if embed.Footer ~}}
+                        {{~ if embed.Footer.Text && embed.Footer.IconUrl ~}}
+                        <img class="chatlog__embed-footer-icon" src="{{ embed.Footer.IconUrl }}" />
+                        {{~ end ~}}
+                        {{~ end ~}}
+
+                        <span class="chatlog__embed-footer-text">
+                            {{~ if embed.Footer ~}}
+                            {{~ if embed.Footer.Text ~}}
+                            {{ embed.Footer.Text | html.escape }}
+                            {{ if embed.Timestamp }} • {{ end }}
+                            {{~ end ~}}
+                            {{~ end ~}}
+
+                            {{~ if embed.Timestamp ~}}
+                            {{ embed.Timestamp | FormatDate | html.escape }}
+                            {{~ end ~}}
+                        </span>
+                    </div>
+                    {{~ end ~}}
+                </div>
+            </div>
+            {{~ end ~}}
+
+            {{~ # Reactions ~}}
+            {{~ if message.Reactions | array.size > 0 ~}}
+                <div class="chatlog__reactions">
+                    {{~ for reaction in message.Reactions ~}}
+                        <div class="chatlog__reaction">
+                            <img class="emoji emoji--small" alt="{{ reaction.Emoji.Name }}" title="{{ reaction.Emoji.Name }}" src="{{ reaction.Emoji.ImageUrl }}" />
+                            <span class="chatlog__reaction-count">{{ reaction.Count }}</span>
+                        </div>
+                    {{~ end ~}}
+                </div>
+            {{~ end ~}}
+            </div>
+        {{~ end ~}}
+    </div>
+</div>

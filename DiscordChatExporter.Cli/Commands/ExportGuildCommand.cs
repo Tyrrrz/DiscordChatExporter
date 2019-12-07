@@ -33,7 +33,7 @@ namespace DiscordChatExporter.Cli.Commands
             {
                 try
                 {
-                    await ExportChannelAsync(console, channel);
+                    await ExportAsync(console, channel);
                 }
                 catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
                 {

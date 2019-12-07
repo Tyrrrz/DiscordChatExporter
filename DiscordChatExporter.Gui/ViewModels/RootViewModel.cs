@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.Core.Services;
 using DiscordChatExporter.Core.Services.Exceptions;
-using DiscordChatExporter.Core.Services.Helpers;
 using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.ViewModels.Components;
 using DiscordChatExporter.Gui.ViewModels.Framework;
@@ -163,10 +161,7 @@ namespace DiscordChatExporter.Gui.ViewModels
 
                 // Get direct messages
                 {
-                    // Get fake guild
                     var guild = Guild.DirectMessages;
-
-                    // Get channels
                     var channels = await _dataService.GetDirectMessageChannelsAsync(token);
 
                     // Create channel view models
@@ -197,13 +192,8 @@ namespace DiscordChatExporter.Gui.ViewModels
                 var guilds = await _dataService.GetUserGuildsAsync(token);
                 foreach (var guild in guilds)
                 {
-                    // Get channels
                     var channels = await _dataService.GetGuildChannelsAsync(token, guild.Id);
-
-                    // Get category channels
                     var categoryChannels = channels.Where(c => c.Type == ChannelType.GuildCategory).ToArray();
-
-                    // Get exportable channels
                     var exportableChannels = channels.Where(c => c.Type.IsExportable()).ToArray();
 
                     // Create channel view models
@@ -246,7 +236,6 @@ namespace DiscordChatExporter.Gui.ViewModels
             }
             finally
             {
-                // Dispose progress operation
                 operation.Dispose();
             }
         }
@@ -272,33 +261,15 @@ namespace DiscordChatExporter.Gui.ViewModels
             var successfulExportCount = 0;
             for (var i = 0; i < dialog.Channels.Count; i++)
             {
-                // Get operation and channel
                 var operation = operations[i];
                 var channel = dialog.Channels[i];
 
                 try
                 {
-                    // Generate file path if necessary
-                    var filePath = dialog.OutputPath!;
-                    if (ExportHelper.IsDirectoryPath(filePath))
-                    {
-                        // Generate default file name
-                        var fileName = ExportHelper.GetDefaultExportFileName(dialog.SelectedFormat, dialog.Guild,
-                            channel, dialog.After, dialog.Before);
-
-                        // Combine paths
-                        filePath = Path.Combine(filePath, fileName);
-                    }
-
-                    // Get chat log
-                    var chatLog = await _dataService.GetChatLogAsync(token, dialog.Guild, channel,
+                    await _exportService.ExportChatLogAsync(token, dialog.Guild, channel,
+                        dialog.OutputPath!, dialog.SelectedFormat, dialog.PartitionLimit,
                         dialog.After, dialog.Before, operation);
 
-                    // Export
-                    await _exportService.ExportChatLogAsync(chatLog, filePath, dialog.SelectedFormat,
-                        dialog.PartitionLimit);
-
-                    // Report successful export
                     successfulExportCount++;
                 }
                 catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
@@ -311,7 +282,6 @@ namespace DiscordChatExporter.Gui.ViewModels
                 }
                 finally
                 {
-                    // Dispose progress operation
                     operation.Dispose();
                 }
             }

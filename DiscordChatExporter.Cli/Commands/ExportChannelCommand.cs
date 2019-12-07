@@ -16,13 +16,6 @@ namespace DiscordChatExporter.Cli.Commands
         {
         }
 
-        public override async Task ExecuteAsync(IConsole console)
-        {
-            // Get channel
-            var channel = await DataService.GetChannelAsync(GetToken(), ChannelId);
-
-            // Export
-            await ExportChannelAsync(console, channel);
-        }
+        public override async Task ExecuteAsync(IConsole console) => await ExportAsync(console, ChannelId);
     }
 }

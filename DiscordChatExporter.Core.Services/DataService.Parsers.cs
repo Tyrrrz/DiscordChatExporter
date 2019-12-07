@@ -203,14 +203,14 @@ namespace DiscordChatExporter.Core.Services
             // Get reactions
             var reactions = (json["reactions"] ?? Enumerable.Empty<JToken>()).Select(ParseReaction).ToArray();
 
-            // Get mentioned users
+            // Get mentions
             var mentionedUsers = (json["mentions"] ?? Enumerable.Empty<JToken>()).Select(ParseUser).ToArray();
 
             // Get whether this message is pinned
             var isPinned = json["pinned"]!.Value<bool>();
 
-            return new Message(id, channelId, type, author, timestamp, editedTimestamp, content, attachments, embeds,
-                reactions, mentionedUsers, isPinned);
+            return new Message(id, channelId, type, author, timestamp, editedTimestamp, isPinned, content, attachments, embeds,
+                reactions, mentionedUsers);
         }
     }
 }

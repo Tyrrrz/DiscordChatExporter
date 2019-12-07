@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.Core.Rendering;
+using DiscordChatExporter.Core.Services.Logic;
 using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Services
@@ -11,79 +12,99 @@ namespace DiscordChatExporter.Core.Services
     public class ExportService
     {
         private readonly SettingsService _settingsService;
+        private readonly DataService _dataService;
 
-        public ExportService(SettingsService settingsService)
+        public ExportService(SettingsService settingsService, DataService dataService)
         {
             _settingsService = settingsService;
+            _dataService = dataService;
         }
 
-        private IChatLogRenderer CreateRenderer(ChatLog chatLog, ExportFormat format)
+        private string GetFilePathFromOutputPath(string outputPath, ExportFormat format, RenderContext context)
         {
-            if (format == ExportFormat.PlainText)
-                return new PlainTextChatLogRenderer(chatLog, _settingsService.DateFormat);
+            // Output is a directory
+            if (Directory.Exists(outputPath) || string.IsNullOrWhiteSpace(Path.GetExtension(outputPath)))
+            {
+                var fileName = ExportLogic.GetDefaultExportFileName(format, context.Guild, context.Channel, context.After, context.Before);
+                return Path.Combine(outputPath, fileName);
+            }
 
-            if (format == ExportFormat.HtmlDark)
-                return new HtmlChatLogRenderer(chatLog, "Dark", _settingsService.DateFormat);
-
-            if (format == ExportFormat.HtmlLight)
-                return new HtmlChatLogRenderer(chatLog, "Light", _settingsService.DateFormat);
-
-            if (format == ExportFormat.Csv)
-                return new CsvChatLogRenderer(chatLog, _settingsService.DateFormat);
-
-            throw new ArgumentOutOfRangeException(nameof(format), $"Unknown format [{format}].");
+            // Output is a file
+            return outputPath;
         }
 
-        private async Task ExportChatLogAsync(ChatLog chatLog, string filePath, ExportFormat format)
+        private IMessageRenderer CreateRenderer(string outputPath, int partitionIndex, ExportFormat format, RenderContext context)
         {
+            var filePath = ExportLogic.GetExportPartitionFilePath(
+                GetFilePathFromOutputPath(outputPath, format, context),
+                partitionIndex);
+
             // Create output directory
             var dirPath = Path.GetDirectoryName(filePath);
             if (!string.IsNullOrWhiteSpace(dirPath))
                 Directory.CreateDirectory(dirPath);
 
-            // Render chat log to output file
-            await using var writer = File.CreateText(filePath);
-            await CreateRenderer(chatLog, format).RenderAsync(writer);
+            // Create renderer
+
+            if (format == ExportFormat.PlainText)
+                return new PlainTextMessageRenderer(filePath, context);
+
+            if (format == ExportFormat.Csv)
+                return new CsvMessageRenderer(filePath, context);
+
+            if (format == ExportFormat.HtmlDark)
+                return new HtmlMessageRenderer(filePath, context, "Dark");
+
+            if (format == ExportFormat.HtmlLight)
+                return new HtmlMessageRenderer(filePath, context, "Light");
+
+            throw new InvalidOperationException($"Unknown export format [{format}].");
         }
 
-        public async Task ExportChatLogAsync(ChatLog chatLog, string filePath, ExportFormat format, int? partitionLimit)
+        public async Task ExportChatLogAsync(AuthToken token, Guild guild, Channel channel,
+            string outputPath, ExportFormat format, int? partitionLimit,
+            DateTimeOffset? after = null, DateTimeOffset? before = null, IProgress<double>? progress = null)
         {
-            // If partitioning is disabled or there are fewer messages in chat log than the limit - process it without partitioning
-            if (partitionLimit == null || partitionLimit <= 0 || chatLog.Messages.Count <= partitionLimit)
-            {
-                await ExportChatLogAsync(chatLog, filePath, format);
-            }
-            // Otherwise split into partitions and export separately
-            else
-            {
-                // Create partitions by grouping up to X contiguous messages into separate chat logs
-                var partitions = chatLog.Messages.GroupContiguous(g => g.Count < partitionLimit.Value)
-                    .Select(g => new ChatLog(chatLog.Guild, chatLog.Channel, chatLog.After, chatLog.Before, g, chatLog.Mentionables))
-                    .ToArray();
+            // Create context
+            var mentionableUsers = new HashSet<User>(IdBasedEqualityComparer.Instance);
+            var mentionableChannels = await _dataService.GetGuildChannelsAsync(token, guild.Id);
+            var mentionableRoles = await _dataService.GetGuildRolesAsync(token, guild.Id);
 
-                // Split file path into components
-                var dirPath = Path.GetDirectoryName(filePath);
-                var fileNameWithoutExt = Path.GetFileNameWithoutExtension(filePath);
-                var fileExt = Path.GetExtension(filePath);
+            var context = new RenderContext
+            (
+                guild, channel, after, before, _settingsService.DateFormat,
+                mentionableUsers, mentionableChannels, mentionableRoles
+            );
 
-                // Export each partition separately
-                var partitionNumber = 1;
-                foreach (var partition in partitions)
+            // Render messages
+            var partitionIndex = 0;
+            var partitionMessageCount = 0;
+            var renderer = CreateRenderer(outputPath, partitionIndex, format, context);
+
+            await foreach (var message in _dataService.GetMessagesAsync(token, channel.Id, after, before, progress))
+            {
+                // Add encountered users to the list of mentionable users
+                mentionableUsers.Add(message.Author);
+                mentionableUsers.AddRange(message.MentionedUsers);
+
+                // If new partition is required, reset renderer
+                if (partitionLimit != null && partitionLimit > 0 && partitionMessageCount >= partitionLimit)
                 {
-                    // Compose new file name
-                    var partitionFilePath = $"{fileNameWithoutExt} [{partitionNumber} of {partitions.Length}]{fileExt}";
+                    partitionIndex++;
+                    partitionMessageCount = 0;
 
-                    // Compose full file path
-                    if (!string.IsNullOrWhiteSpace(dirPath))
-                        partitionFilePath = Path.Combine(dirPath, partitionFilePath);
-
-                    // Export
-                    await ExportChatLogAsync(partition, partitionFilePath, format);
-
-                    // Increment partition number
-                    partitionNumber++;
+                    // Flush old renderer and create a new one
+                    await renderer.DisposeAsync();
+                    renderer = CreateRenderer(outputPath, partitionIndex, format, context);
                 }
+
+                // Render message
+                await renderer.RenderMessageAsync(message);
+                partitionMessageCount++;
             }
+
+            // Flush last renderer
+            await renderer.DisposeAsync();
         }
     }
 }

@@ -210,6 +210,7 @@ namespace DiscordChatExporter.Core.Markdown
             StandardEmojiNodeMatcher,
             CustomEmojiNodeMatcher);
 
+        // Minimal set of matchers for non-multimedia formats (e.g. plain text)
         private static readonly IMatcher<Node> MinimalAggregateNodeMatcher = new AggregateMatcher<Node>(
             // Mentions
             EveryoneMentionNodeMatcher,
@@ -219,7 +220,6 @@ namespace DiscordChatExporter.Core.Markdown
             RoleMentionNodeMatcher,
 
             // Emoji
-            StandardEmojiNodeMatcher,
             CustomEmojiNodeMatcher);
 
         private static IReadOnlyList<Node> Parse(StringPart stringPart, IMatcher<Node> matcher) =>

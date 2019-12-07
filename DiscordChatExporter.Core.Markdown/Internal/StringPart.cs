@@ -1,6 +1,8 @@
-﻿namespace DiscordChatExporter.Core.Markdown.Internal
+﻿using System.Text.RegularExpressions;
+
+namespace DiscordChatExporter.Core.Markdown.Internal
 {
-    internal class StringPart
+    internal readonly struct StringPart
     {
         public string Target { get; }
 
@@ -22,6 +24,12 @@
             : this(target, 0, target.Length)
         {
         }
+
+        public StringPart Slice(int newStartIndex, int newLength) => new StringPart(Target, newStartIndex, newLength);
+
+        public StringPart Slice(int newStartIndex) => Slice(newStartIndex, EndIndex - newStartIndex);
+
+        public StringPart Slice(Capture capture) => Slice(capture.Index, capture.Length);
 
         public override string ToString() => Target.Substring(StartIndex, Length);
     }

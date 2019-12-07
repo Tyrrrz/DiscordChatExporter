@@ -26,8 +26,8 @@ namespace DiscordChatExporter.Core.Markdown.Internal
 
             if (index >= 0)
             {
-                var stringPartShrunk = stringPart.Shrink(index, _needle.Length);
-                return new ParsedMatch<T>(stringPartShrunk, _transform(stringPartShrunk));
+                var stringPartMatch = stringPart.Slice(index, _needle.Length);
+                return new ParsedMatch<T>(stringPartMatch, _transform(stringPartMatch));
             }
 
             return null;

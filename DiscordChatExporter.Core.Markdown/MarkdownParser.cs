@@ -16,57 +16,57 @@ namespace DiscordChatExporter.Core.Markdown
         // Capture any character until the earliest double asterisk not followed by an asterisk
         private static readonly IMatcher<Node> BoldFormattedNodeMatcher = new RegexMatcher<Node>(
             new Regex("\\*\\*(.+?)\\*\\*(?!\\*)", DefaultRegexOptions | RegexOptions.Singleline),
-            (p, m) => new FormattedNode(TextFormatting.Bold, Parse(p.Shrink(m.Groups[1]))));
+            (p, m) => new FormattedNode(TextFormatting.Bold, Parse(p.Slice(m.Groups[1]))));
 
         // Capture any character until the earliest single asterisk not preceded or followed by an asterisk
         // Opening asterisk must not be followed by whitespace
         // Closing asterisk must not be preceded by whitespace
         private static readonly IMatcher<Node> ItalicFormattedNodeMatcher = new RegexMatcher<Node>(
             new Regex("\\*(?!\\s)(.+?)(?<!\\s|\\*)\\*(?!\\*)", DefaultRegexOptions | RegexOptions.Singleline),
-            (p, m) => new FormattedNode(TextFormatting.Italic, Parse(p.Shrink(m.Groups[1]))));
+            (p, m) => new FormattedNode(TextFormatting.Italic, Parse(p.Slice(m.Groups[1]))));
 
         // Capture any character until the earliest triple asterisk not followed by an asterisk
         private static readonly IMatcher<Node> ItalicBoldFormattedNodeMatcher = new RegexMatcher<Node>(
             new Regex("\\*(\\*\\*.+?\\*\\*)\\*(?!\\*)", DefaultRegexOptions | RegexOptions.Singleline),
-            (p, m) => new FormattedNode(TextFormatting.Italic, Parse(p.Shrink(m.Groups[1]), BoldFormattedNodeMatcher)));
+            (p, m) => new FormattedNode(TextFormatting.Italic, Parse(p.Slice(m.Groups[1]), BoldFormattedNodeMatcher)));
 
         // Capture any character except underscore until an underscore
         // Closing underscore must not be followed by a word character
         private static readonly IMatcher<Node> ItalicAltFormattedNodeMatcher = new RegexMatcher<Node>(
             new Regex("_([^_]+)_(?!\\w)", DefaultRegexOptions | RegexOptions.Singleline),
-            (p, m) => new FormattedNode(TextFormatting.Italic, Parse(p.Shrink(m.Groups[1]))));
+            (p, m) => new FormattedNode(TextFormatting.Italic, Parse(p.Slice(m.Groups[1]))));
 
         // Capture any character until the earliest double underscore not followed by an underscore
         private static readonly IMatcher<Node> UnderlineFormattedNodeMatcher = new RegexMatcher<Node>(
             new Regex("__(.+?)__(?!_)", DefaultRegexOptions | RegexOptions.Singleline),
-            (p, m) => new FormattedNode(TextFormatting.Underline, Parse(p.Shrink(m.Groups[1]))));
+            (p, m) => new FormattedNode(TextFormatting.Underline, Parse(p.Slice(m.Groups[1]))));
 
         // Capture any character until the earliest triple underscore not followed by an underscore
         private static readonly IMatcher<Node> ItalicUnderlineFormattedNodeMatcher = new RegexMatcher<Node>(
             new Regex("_(__.+?__)_(?!_)", DefaultRegexOptions | RegexOptions.Singleline),
-            (p, m) => new FormattedNode(TextFormatting.Italic, Parse(p.Shrink(m.Groups[1]), UnderlineFormattedNodeMatcher)));
+            (p, m) => new FormattedNode(TextFormatting.Italic, Parse(p.Slice(m.Groups[1]), UnderlineFormattedNodeMatcher)));
 
         // Capture any character until the earliest double tilde
         private static readonly IMatcher<Node> StrikethroughFormattedNodeMatcher = new RegexMatcher<Node>(
             new Regex("~~(.+?)~~", DefaultRegexOptions | RegexOptions.Singleline),
-            (p, m) => new FormattedNode(TextFormatting.Strikethrough, Parse(p.Shrink(m.Groups[1]))));
+            (p, m) => new FormattedNode(TextFormatting.Strikethrough, Parse(p.Slice(m.Groups[1]))));
 
         // Capture any character until the earliest double pipe
         private static readonly IMatcher<Node> SpoilerFormattedNodeMatcher = new RegexMatcher<Node>(
             new Regex("\\|\\|(.+?)\\|\\|", DefaultRegexOptions | RegexOptions.Singleline),
-            (p, m) => new FormattedNode(TextFormatting.Spoiler, Parse(p.Shrink(m.Groups[1]))));
+            (p, m) => new FormattedNode(TextFormatting.Spoiler, Parse(p.Slice(m.Groups[1]))));
 
         // Capture any character until the end of the line
         // Opening 'greater than' character must be followed by whitespace
         private static readonly IMatcher<Node> SingleLineQuoteNodeMatcher = new RegexMatcher<Node>(
             new Regex("^>\\s(.+)\r?\n?", DefaultRegexOptions),
-            (p, m) => new FormattedNode(TextFormatting.Quote, Parse(p.Shrink(m.Groups[1]))));
+            (p, m) => new FormattedNode(TextFormatting.Quote, Parse(p.Slice(m.Groups[1]))));
 
         // Capture any character until the end of the input
         // Opening 'greater than' characters must be followed by whitespace
         private static readonly IMatcher<Node> MultiLineQuoteNodeMatcher = new RegexMatcher<Node>(
             new Regex("^>>>\\s(.+)", DefaultRegexOptions | RegexOptions.Singleline),
-            (p, m) => new FormattedNode(TextFormatting.Quote, Parse(p.Shrink(m.Groups[1]))));
+            (p, m) => new FormattedNode(TextFormatting.Quote, Parse(p.Slice(m.Groups[1]))));
 
         /* Code blocks */
 

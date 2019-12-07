@@ -33,8 +33,8 @@ namespace DiscordChatExporter.Core.Markdown.Internal
             if (!_regex.IsMatch(stringPart.Target.Substring(0, stringPart.EndIndex), stringPart.StartIndex))
                 return null;
 
-            var stringPartShrunk = stringPart.Shrink(match.Index, match.Length);
-            return new ParsedMatch<T>(stringPartShrunk, _transform(stringPartShrunk, match));
+            var stringPartMatch = stringPart.Slice(match.Index, match.Length);
+            return new ParsedMatch<T>(stringPartMatch, _transform(stringPartMatch, match));
         }
     }
 }

@@ -1,10 +1,12 @@
 ### v2.16 (08-Dec-2019)
 
 - Migrated from .NET Framework to .NET Core. To run this and future versions of DiscordChatExporter you will need [.NET Core runtime for desktop apps](https://dotnet.microsoft.com/download/dotnet-core/3.1/runtime) (for GUI/CLI version on Windows) or [.NET Core base runtime](https://dotnet.microsoft.com/download/dotnet-core/3.1) (for CLI version on Windows, Linux or macOS).
-- Reworked the exporter engine to render output using streaming data source. This means that only a very small portion of messages are cached in memory when exporting. In other words, you are only limited by storage space and not how much RAM you have, so you can now export terrabytes of chat logs without hitting out of memory exceptions. I still recommend using partitions if you're exporting very large chat logs (250k+ messages) to HTML, unless you want your computer to catch fire when you try to open the export in browser.
+- Reworked the exporter engine to render output using streaming data source. This means that only a very small portion of messages are cached in memory when exporting. In other words, you are only limited by storage space and not how much RAM you have, so you can now export terabytes of chat logs without hitting out of memory exceptions. I still recommend using partitions if you're exporting very large chat logs (250k+ messages) to HTML, unless you want your computer to catch fire when you try to open the export in browser.
+- Changed how partitioned files are named, due to the fact that total number of partitions is no longer known ahead of time.
 - Added a warning about automating user accounts to the usage guide in both GUI and CLI versions.
 - Added support for announcement (news) channels. You will now be able to see them in the list and export them.
 - Fixed various issues that resulted in exceptions during export process.
+- [HTML/TXT] Removed message count from the metadata. Due to the fact that the messages are exported as they are streamed, total number of messages is not known ahead of time.
 - [HTML] Changed default color of the embed color pill to match the theme.
 - [HTML] Changed emoji parser to be less greedy. As a result it should match fewer character sequences that look like emojis but really aren't, but on the other hand it might miss some actual emojis. This means that some standard emojis (i.e. not custom server emojis) may not look like in Discord. This is a compromise I'm willing to take because detecting emojis in text is really hard to get right and not worth it at all.
 - [HTML] Some other minor styling adjustments.

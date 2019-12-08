@@ -15,6 +15,12 @@ _For guides and other info -- check out the [wiki](https://github.com/Tyrrrz/Dis
 - [Docker image](https://hub.docker.com/r/tyrrrz/discordchatexporter): `docker pull tyrrrz/discordchatexporter`
 - [CI build](https://github.com/Tyrrrz/DiscordChatExporter/actions)
 
+Note: This application requires .NET Core runtime in order to run:
+
+- .NET Core runtime for Windows [x64](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.0-windows-x64-installer) | [x86](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.0-windows-x86-installer)
+- .NET Core runtime for macOS (for CLI version only) [x64](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-3.1.0-macos-x64-installer)
+- .NET Core runtime for Linux (for CLI version only) [Ubuntu/Debian](https://docs.microsoft.com/en-us/dotnet/core/install/linux-package-manager-ubuntu-1904#install-the-net-core-runtime)
+
 ## Features
 
 - Graphical and command line interfaces

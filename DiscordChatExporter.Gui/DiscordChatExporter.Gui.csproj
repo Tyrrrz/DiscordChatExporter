@@ -3,7 +3,6 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyName>DiscordChatExporter</AssemblyName>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>../favicon.ico</ApplicationIcon>

@@ -1,7 +1,8 @@
 <Project>
 
   <PropertyGroup>
-    <Version>2.15</Version>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Version>2.16</Version>
     <Company>Tyrrrz</Company>
     <Copyright>Copyright (c) Alexey Golub</Copyright>
     <LangVersion>latest</LangVersion>

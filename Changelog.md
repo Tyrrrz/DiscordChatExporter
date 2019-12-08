@@ -1,8 +1,22 @@
+### v2.16 (08-Dec-2019)
+
+- Migrated from .NET Framework to .NET Core. To run this and future versions of DiscordChatExporter you will need [.NET Core runtime for desktop apps](https://dotnet.microsoft.com/download/dotnet-core/3.1/runtime) (for GUI/CLI version on Windows) or [.NET Core base runtime](https://dotnet.microsoft.com/download/dotnet-core/3.1) (for CLI version on Windows, Linux or macOS).
+- Reworked the exporter engine to render output using streaming data source. This means that only a very small portion of messages are cached in memory when exporting. In other words, you are only limited by storage space and not how much RAM you have, so you can now export terrabytes of chat logs without hitting out of memory exceptions. I still recommend using partitions if you're exporting very large chat logs (250k+ messages) to HTML, unless you want your computer to catch fire when you try to open the export in browser.
+- Added a warning about automating user accounts to the usage guide in both GUI and CLI versions.
+- Added support for announcement (news) channels. You will now be able to see them in the list and export them.
+- Fixed various issues that resulted in exceptions during export process.
+- [HTML] Changed default color of the embed color pill to match the theme.
+- [HTML] Changed emoji parser to be less greedy. As a result it should match fewer character sequences that look like emojis but really aren't, but on the other hand it might miss some actual emojis. This means that some standard emojis (i.e. not custom server emojis) may not look like in Discord. This is a compromise I'm willing to take because detecting emojis in text is really hard to get right and not worth it at all.
+- [HTML] Some other minor styling adjustments.
+- [CSV] Replaced semicolons (;) with (,) as separators.
+
+Please note that CSV export is most likely not going to receive future updates and will remain only as an option for those who wish to use it for text analysis. In other words, it won't contain any of the rich media features like embeds. If you're currently using CSV as a structured output to feed into your program, JSON output will replace that in the future.
+
 ### v2.15 (15-Sep-2019)
 
 - Improved markdown parser and made it even faster for non-HTML formats.
 - [HTML] Added support for block quotes.
-- [HTML] Links pointing to a Discord message will now navigate to the linked message inside exported chat log if it's there. 
+- [HTML] Links pointing to a Discord message will now navigate to the linked message inside exported chat log if it's there.
 - [HTML] Updated light theme to match how it looks in Discord after recent changes.
 - [HTML] Added indication for when a message is pinned. Pinned messages now have a tinted background.
 - [HTML] Fixed an issue where multiline code blocks sometimes had incorrect formatting applied to them.

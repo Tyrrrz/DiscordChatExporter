@@ -49,24 +49,5 @@ namespace DiscordChatExporter.Core.Services.Logic
 
             return buffer.ToString();
         }
-
-        public static string GetExportPartitionFilePath(string baseFilePath, int partitionIndex)
-        {
-            // First partition - no changes
-            if (partitionIndex <= 0)
-                return baseFilePath;
-
-            // Inject partition index into file name
-            var fileNameWithoutExt = Path.GetFileNameWithoutExtension(baseFilePath);
-            var fileExt = Path.GetExtension(baseFilePath);
-            var fileName = $"{fileNameWithoutExt} [part {partitionIndex + 1}]{fileExt}";
-
-            // Generate new path
-            var dirPath = Path.GetDirectoryName(baseFilePath);
-            if (!string.IsNullOrWhiteSpace(dirPath))
-                return Path.Combine(dirPath, fileName);
-
-            return fileName;
-        }
     }
 }

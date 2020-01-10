@@ -10,14 +10,14 @@ namespace DiscordChatExporter.Core.Rendering
 
         protected RenderContext Context { get; }
 
-        protected MessageRendererBase(string filePath, RenderContext context)
+        protected MessageRendererBase(TextWriter writer, RenderContext context)
         {
-            Writer = File.CreateText(filePath);
+            Writer = writer;
             Context = context;
         }
 
         public abstract Task RenderMessageAsync(Message message);
 
-        public virtual ValueTask DisposeAsync() => Writer.DisposeAsync();
+        public virtual ValueTask DisposeAsync() => default;
     }
 }

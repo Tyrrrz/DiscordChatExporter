@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.Core.Rendering.Logic;
 
@@ -8,8 +9,8 @@ namespace DiscordChatExporter.Core.Rendering
     {
         private bool _isPreambleRendered;
 
-        public PlainTextMessageRenderer(string filePath, RenderContext context)
-            : base(filePath, context)
+        public PlainTextMessageRenderer(TextWriter writer, RenderContext context)
+            : base(writer, context)
         {
         }
 

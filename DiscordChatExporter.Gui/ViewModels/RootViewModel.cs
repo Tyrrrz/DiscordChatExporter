@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Models;
+using DiscordChatExporter.Core.Models.Exceptions;
 using DiscordChatExporter.Core.Services;
 using DiscordChatExporter.Core.Services.Exceptions;
 using DiscordChatExporter.Gui.Services;
@@ -230,6 +231,10 @@ namespace DiscordChatExporter.Gui.ViewModels
             {
                 Notifications.Enqueue("Forbidden – account may be locked by 2FA");
             }
+            catch (DomainException ex)
+            {
+                Notifications.Enqueue(ex.Message);
+            }
             finally
             {
                 operation.Dispose();
@@ -276,6 +281,10 @@ namespace DiscordChatExporter.Gui.ViewModels
                 {
                     Notifications.Enqueue($"Channel [{channel.Model.Name}] doesn't exist");
                 }
+                catch (DomainException ex)
+                {
+                    Notifications.Enqueue(ex.Message);
+                }
                 finally
                 {
                     operation.Dispose();
@@ -283,7 +292,8 @@ namespace DiscordChatExporter.Gui.ViewModels
             }
 
             // Notify of overall completion
-            Notifications.Enqueue($"Successfully exported {successfulExportCount} channel(s)");
+            if (successfulExportCount > 0)
+                Notifications.Enqueue($"Successfully exported {successfulExportCount} channel(s)");
         }
     }
 }

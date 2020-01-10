@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -22,8 +23,8 @@ namespace DiscordChatExporter.Core.Rendering
 
         private bool _isLeadingBlockRendered;
 
-        public HtmlMessageRenderer(string filePath, RenderContext context, string themeName)
-            : base(filePath, context)
+        public HtmlMessageRenderer(TextWriter writer, RenderContext context, string themeName)
+            : base(writer, context)
         {
             _themeName = themeName;
 

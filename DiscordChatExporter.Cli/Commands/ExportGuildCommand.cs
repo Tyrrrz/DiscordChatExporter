@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CliFx.Attributes;
 using CliFx.Services;
 using DiscordChatExporter.Core.Models;
+using DiscordChatExporter.Core.Models.Exceptions;
 using DiscordChatExporter.Core.Services;
 using DiscordChatExporter.Core.Services.Exceptions;
 
@@ -42,6 +43,10 @@ namespace DiscordChatExporter.Cli.Commands
                 catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
                 {
                     console.Error.WriteLine("This channel doesn't exist.");
+                }
+                catch (DomainException ex)
+                {
+                    console.Error.WriteLine(ex.Message);
                 }
             }
         }

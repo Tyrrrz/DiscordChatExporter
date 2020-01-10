@@ -28,8 +28,8 @@
 
         <!--  Auto-updates  -->
         <DockPanel
-            LastChildFill="False"
             Background="Transparent"
+            LastChildFill="False"
             ToolTip="Perform automatic updates on every launch">
             <TextBlock
                 Margin="16,8"
@@ -43,8 +43,8 @@
 
         <!--  Persist token  -->
         <DockPanel
-            LastChildFill="False"
             Background="Transparent"
+            LastChildFill="False"
             ToolTip="Persist last used token between sessions">
             <TextBlock
                 Margin="16,8"

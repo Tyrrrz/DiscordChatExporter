@@ -7,16 +7,22 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
     {
         private readonly SettingsService _settingsService;
 
+        public string DateFormat
+        {
+            get => _settingsService.DateFormat;
+            set => _settingsService.DateFormat = value;
+        }
+
         public bool IsAutoUpdateEnabled
         {
             get => _settingsService.IsAutoUpdateEnabled;
             set => _settingsService.IsAutoUpdateEnabled = value;
         }
 
-        public string DateFormat
+        public bool IsTokenPersisted
         {
-            get => _settingsService.DateFormat;
-            set => _settingsService.DateFormat = value;
+            get => _settingsService.IsTokenPersisted;
+            set => _settingsService.IsTokenPersisted = value;
         }
 
         public SettingsViewModel(SettingsService settingsService)

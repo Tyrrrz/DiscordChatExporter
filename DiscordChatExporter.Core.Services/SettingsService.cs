@@ -5,9 +5,11 @@ namespace DiscordChatExporter.Core.Services
 {
     public class SettingsService : SettingsManager
     {
+        public string DateFormat { get; set; } = "dd-MMM-yy hh:mm tt";
+
         public bool IsAutoUpdateEnabled { get; set; } = true;
 
-        public string DateFormat { get; set; } = "dd-MMM-yy hh:mm tt";
+        public bool IsTokenPersisted { get; set; } = true;
 
         public AuthToken? LastToken { get; set; }
 
@@ -21,5 +23,7 @@ namespace DiscordChatExporter.Core.Services
             Configuration.SubDirectoryPath = "";
             Configuration.FileName = "Settings.dat";
         }
+
+        public bool ShouldSerializeLastToken() => IsTokenPersisted;
     }
 }

@@ -41,6 +41,21 @@
                 IsChecked="{Binding IsAutoUpdateEnabled}" />
         </DockPanel>
 
+        <!--  Persist token  -->
+        <DockPanel
+            LastChildFill="False"
+            Background="Transparent"
+            ToolTip="Persist last used token between sessions">
+            <TextBlock
+                Margin="16,8"
+                DockPanel.Dock="Left"
+                Text="Save token" />
+            <ToggleButton
+                Margin="16,8"
+                DockPanel.Dock="Right"
+                IsChecked="{Binding IsTokenPersisted}" />
+        </DockPanel>
+
         <!--  Save button  -->
         <Button
             Margin="8"

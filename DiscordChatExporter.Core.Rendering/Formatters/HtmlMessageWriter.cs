@@ -21,6 +21,8 @@ namespace DiscordChatExporter.Core.Rendering.Formatters
         private readonly Template _messageGroupTemplate;
         private readonly Template _postambleTemplate;
 
+        private long _messageCount;
+
         public HtmlMessageWriter(TextWriter writer, RenderContext context, string themeName)
             : base(writer, context)
         {
@@ -111,6 +113,9 @@ namespace DiscordChatExporter.Core.Rendering.Formatters
                 _messageGroupBuffer.Clear();
                 _messageGroupBuffer.Add(message);
             }
+
+            // Increment message count
+            _messageCount++;
         }
 
         public override async Task WritePostambleAsync()
@@ -119,7 +124,11 @@ namespace DiscordChatExporter.Core.Rendering.Formatters
             if (_messageGroupBuffer.Any())
                 await RenderCurrentMessageGroupAsync();
 
-            var templateContext = CreateTemplateContext();
+            var templateContext = CreateTemplateContext(new Dictionary<string, object>
+            {
+                ["MessageCount"] = _messageCount
+            });
+
             await templateContext.EvaluateAsync(_postambleTemplate.Page);
         }
     }

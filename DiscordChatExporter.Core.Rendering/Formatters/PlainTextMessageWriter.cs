@@ -7,6 +7,8 @@ namespace DiscordChatExporter.Core.Rendering.Formatters
 {
     public class PlainTextMessageWriter : MessageWriterBase
     {
+        private long _messageCount;
+
         public PlainTextMessageWriter(TextWriter writer, RenderContext context)
             : base(writer, context)
         {
@@ -21,6 +23,14 @@ namespace DiscordChatExporter.Core.Rendering.Formatters
         {
             await Writer.WriteLineAsync(PlainTextRenderingLogic.FormatMessage(Context, message));
             await Writer.WriteLineAsync();
+
+            _messageCount++;
+        }
+
+        public override async Task WritePostambleAsync()
+        {
+            await Writer.WriteLineAsync();
+            await Writer.WriteLineAsync(PlainTextRenderingLogic.FormatPostamble(_messageCount));
         }
     }
 }

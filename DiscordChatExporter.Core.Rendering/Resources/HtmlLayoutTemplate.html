@@ -48,7 +48,7 @@
 </head>
 <body>
 
-{{~ # Info ~}}
+{{~ # Preamble ~}}
 <div class="info">
     <div class="info__guild-icon-container">
         <img class="info__guild-icon" src="{{ Context.Guild.IconUrl }}" />
@@ -78,6 +78,13 @@
 {{~ # Log ~}}
 <div class="chatlog">
     {{~ %SPLIT% ~}}
+</div>
+
+{{~ # Postamble ~}}
+<div class="postamble">
+    <div class="postamble__info">
+        Exported {{ MessageCount | object.format "N0" }} message(s)
+    </div>
 </div>
 
 </body>

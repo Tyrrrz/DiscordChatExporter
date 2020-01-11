@@ -18,7 +18,7 @@ namespace DiscordChatExporter.Core.Rendering.Logic
         {
             var buffer = new StringBuilder();
 
-            buffer.AppendLine('='.Repeat(62));
+            buffer.Append('=', 62).AppendLine();
             buffer.AppendLine($"Guild: {context.Guild.Name}");
             buffer.AppendLine($"Channel: {context.Channel.Name}");
 
@@ -31,7 +31,18 @@ namespace DiscordChatExporter.Core.Rendering.Logic
             if (context.Before != null)
                 buffer.AppendLine($"Before: {FormatDate(context.Before.Value, context.DateFormat)}");
 
-            buffer.AppendLine('='.Repeat(62));
+            buffer.Append('=', 62).AppendLine();
+
+            return buffer.ToString();
+        }
+
+        public static string FormatPostamble(long messageCount)
+        {
+            var buffer = new StringBuilder();
+
+            buffer.Append('=', 62).AppendLine();
+            buffer.AppendLine($"Exported {messageCount:N0} message(s)");
+            buffer.Append('=', 62).AppendLine();
 
             return buffer.ToString();
         }
@@ -121,7 +132,7 @@ namespace DiscordChatExporter.Core.Rendering.Logic
             return FormatMarkdown(context, message.Content);
         }
 
-        public static string FormatAttachments(RenderContext context, IReadOnlyList<Attachment> attachments)
+        public static string FormatAttachments(IReadOnlyList<Attachment> attachments)
         {
             if (!attachments.Any())
                 return "";
@@ -193,7 +204,7 @@ namespace DiscordChatExporter.Core.Rendering.Logic
             return buffer.ToString();
         }
 
-        public static string FormatReactions(RenderContext context, IReadOnlyList<Reaction> reactions)
+        public static string FormatReactions(IReadOnlyList<Reaction> reactions)
         {
             if (!reactions.Any())
                 return "";
@@ -225,9 +236,9 @@ namespace DiscordChatExporter.Core.Rendering.Logic
                 .AppendLine(FormatMessageHeader(context, message))
                 .AppendLineIfNotEmpty(FormatMessageContent(context, message))
                 .AppendLine()
-                .AppendLineIfNotEmpty(FormatAttachments(context, message.Attachments))
+                .AppendLineIfNotEmpty(FormatAttachments(message.Attachments))
                 .AppendLineIfNotEmpty(FormatEmbeds(context, message.Embeds))
-                .AppendLineIfNotEmpty(FormatReactions(context, message.Reactions));
+                .AppendLineIfNotEmpty(FormatReactions(message.Reactions));
 
             return buffer.Trim().ToString();
         }

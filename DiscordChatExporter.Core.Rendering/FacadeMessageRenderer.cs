@@ -10,16 +10,19 @@ namespace DiscordChatExporter.Core.Rendering
         private readonly string _baseFilePath;
         private readonly ExportFormat _format;
         private readonly RenderContext _context;
+        private readonly int? _partitionLimit;
 
+        private long _renderedMessageCount;
         private int _partitionIndex;
         private TextWriter _writer;
         private IMessageRenderer _innerRenderer;
 
-        public FacadeMessageRenderer(string baseFilePath, ExportFormat format, RenderContext context)
+        public FacadeMessageRenderer(string baseFilePath, ExportFormat format, RenderContext context, int? partitionLimit)
         {
             _baseFilePath = baseFilePath;
             _format = format;
             _context = context;
+            _partitionLimit = partitionLimit;
         }
 
         private void EnsureInnerRendererInitialized()
@@ -35,7 +38,7 @@ namespace DiscordChatExporter.Core.Rendering
             if (!string.IsNullOrWhiteSpace(dirPath))
                 Directory.CreateDirectory(dirPath);
 
-            // Create writer (will be disposed by renderer)
+            // Create writer
             _writer = File.CreateText(filePath);
 
             // Create inner renderer
@@ -61,31 +64,41 @@ namespace DiscordChatExporter.Core.Rendering
             }
         }
 
-        public async Task NextPartitionAsync()
+        private async Task ResetInnerRendererAsync()
         {
-            // Dispose writer and inner renderer
-            await DisposeAsync();
-            _writer = null;
-            _innerRenderer = null;
+            if (_innerRenderer != null)
+            {
+                await _innerRenderer.DisposeAsync();
+                _innerRenderer = null;
+            }
 
-            // Increment partition index
-            _partitionIndex++;
+            if (_writer != null)
+            {
+                await _writer.DisposeAsync();
+                _writer = null;
+            }
         }
 
         public async Task RenderMessageAsync(Message message)
         {
+            // Ensure underlying writer and renderer are initialized
             EnsureInnerRendererInitialized();
+
+            // Render the actual message
             await _innerRenderer.RenderMessageAsync(message);
+
+            // Increment count
+            _renderedMessageCount++;
+
+            // Update partition if necessary
+            if (_partitionLimit != null && _partitionLimit != 0 && _renderedMessageCount % _partitionLimit == 0)
+            {
+                await ResetInnerRendererAsync();
+                _partitionIndex++;
+            }
         }
 
-        public async ValueTask DisposeAsync()
-        {
-            if (_innerRenderer != null)
-                await _innerRenderer.DisposeAsync();
-
-            if (_writer != null)
-                await _writer.DisposeAsync();
-        }
+        public async ValueTask DisposeAsync() => await ResetInnerRendererAsync();
     }
 
     public partial class FacadeMessageRenderer

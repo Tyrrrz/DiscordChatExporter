@@ -38,10 +38,10 @@ namespace DiscordChatExporter.Core.Services
 
             // Create renderer
             var baseFilePath = GetFilePathFromOutputPath(outputPath, format, context);
-            await using var renderer = new FacadeMessageRenderer(baseFilePath, format, context);
+            await using var renderer = new FacadeMessageRenderer(baseFilePath, format, context, partitionLimit);
 
             // Render messages
-            var messageCount = 0L;
+            var renderedAnything = false;
             await foreach (var message in _dataService.GetMessagesAsync(token, channel.Id, after, before, progress))
             {
                 // Add encountered users to the list of mentionable users
@@ -50,19 +50,11 @@ namespace DiscordChatExporter.Core.Services
 
                 // Render message
                 await renderer.RenderMessageAsync(message);
-                messageCount++;
-
-                // Trigger next partition when needed
-                if (partitionLimit != null &&
-                    partitionLimit != 0 &&
-                    messageCount % partitionLimit.Value == 0)
-                {
-                    await renderer.NextPartitionAsync();
-                }
+                renderedAnything = true;
             }
 
             // Throw if no messages were rendered
-            if (messageCount == 0)
+            if (!renderedAnything)
                 throw new DomainException($"Channel [{channel.Name}] contains no messages for specified period");
         }
     }

@@ -80,6 +80,7 @@
                             x:Name="TokenValueTextBox"
                             Grid.Column="1"
                             Margin="2,6,6,7"
+                            VerticalAlignment="Bottom"
                             materialDesign:HintAssist.Hint="Token"
                             materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
                             materialDesign:TextFieldAssist.TextBoxViewMargin="0,0,2,0"

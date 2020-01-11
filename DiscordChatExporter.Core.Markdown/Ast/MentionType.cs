@@ -1,4 +1,4 @@
-﻿namespace DiscordChatExporter.Core.Markdown.Nodes
+﻿namespace DiscordChatExporter.Core.Markdown.Ast
 {
     public enum MentionType
     {

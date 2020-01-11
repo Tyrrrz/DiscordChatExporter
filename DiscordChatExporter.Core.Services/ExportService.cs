@@ -25,6 +25,12 @@ namespace DiscordChatExporter.Core.Services
             string outputPath, ExportFormat format, int? partitionLimit,
             DateTimeOffset? after = null, DateTimeOffset? before = null, IProgress<double>? progress = null)
         {
+            // Get base file path from output path
+            var baseFilePath = GetFilePathFromOutputPath(outputPath, format, guild, channel, after, before);
+
+            // Create options
+            var options = new RenderOptions(baseFilePath, format, partitionLimit);
+
             // Create context
             var mentionableUsers = new HashSet<User>(IdBasedEqualityComparer.Instance);
             var mentionableChannels = await _dataService.GetGuildChannelsAsync(token, guild.Id);
@@ -37,8 +43,7 @@ namespace DiscordChatExporter.Core.Services
             );
 
             // Create renderer
-            var baseFilePath = GetFilePathFromOutputPath(outputPath, format, context);
-            await using var renderer = new FacadeMessageRenderer(baseFilePath, format, context, partitionLimit);
+            await using var renderer = new MessageRenderer(options, context);
 
             // Render messages
             var renderedAnything = false;
@@ -61,12 +66,13 @@ namespace DiscordChatExporter.Core.Services
 
     public partial class ExportService
     {
-        private static string GetFilePathFromOutputPath(string outputPath, ExportFormat format, RenderContext context)
+        private static string GetFilePathFromOutputPath(string outputPath, ExportFormat format, Guild guild, Channel channel,
+            DateTimeOffset? after, DateTimeOffset? before)
         {
             // Output is a directory
             if (Directory.Exists(outputPath) || string.IsNullOrWhiteSpace(Path.GetExtension(outputPath)))
             {
-                var fileName = ExportLogic.GetDefaultExportFileName(format, context.Guild, context.Channel, context.After, context.Before);
+                var fileName = ExportLogic.GetDefaultExportFileName(format, guild, channel, after, before);
                 return Path.Combine(outputPath, fileName);
             }
 

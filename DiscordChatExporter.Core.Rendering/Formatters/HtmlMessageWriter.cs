@@ -10,27 +10,25 @@ using Scriban;
 using Scriban.Runtime;
 using Tyrrrz.Extensions;
 
-namespace DiscordChatExporter.Core.Rendering
+namespace DiscordChatExporter.Core.Rendering.Formatters
 {
-    public partial class HtmlMessageRenderer : MessageRendererBase
+    public partial class HtmlMessageWriter : MessageWriterBase
     {
         private readonly string _themeName;
         private readonly List<Message> _messageGroupBuffer = new List<Message>();
 
-        private readonly Template _leadingBlockTemplate;
+        private readonly Template _preambleTemplate;
         private readonly Template _messageGroupTemplate;
-        private readonly Template _trailingBlockTemplate;
+        private readonly Template _postambleTemplate;
 
-        private bool _isLeadingBlockRendered;
-
-        public HtmlMessageRenderer(TextWriter writer, RenderContext context, string themeName)
+        public HtmlMessageWriter(TextWriter writer, RenderContext context, string themeName)
             : base(writer, context)
         {
             _themeName = themeName;
 
-            _leadingBlockTemplate = Template.Parse(GetLeadingBlockTemplateCode());
+            _preambleTemplate = Template.Parse(GetPreambleTemplateCode());
             _messageGroupTemplate = Template.Parse(GetMessageGroupTemplateCode());
-            _trailingBlockTemplate = Template.Parse(GetTrailingBlockTemplateCode());
+            _postambleTemplate = Template.Parse(GetPostambleTemplateCode());
         }
 
         private MessageGroup GetCurrentMessageGroup()
@@ -82,12 +80,6 @@ namespace DiscordChatExporter.Core.Rendering
             return templateContext;
         }
 
-        private async Task RenderLeadingBlockAsync()
-        {
-            var templateContext = CreateTemplateContext();
-            await templateContext.EvaluateAsync(_leadingBlockTemplate.Page);
-        }
-
         private async Task RenderCurrentMessageGroupAsync()
         {
             var templateContext = CreateTemplateContext(new Dictionary<string, object>
@@ -98,21 +90,14 @@ namespace DiscordChatExporter.Core.Rendering
             await templateContext.EvaluateAsync(_messageGroupTemplate.Page);
         }
 
-        private async Task RenderTrailingBlockAsync()
+        public override async Task WritePreambleAsync()
         {
             var templateContext = CreateTemplateContext();
-            await templateContext.EvaluateAsync(_trailingBlockTemplate.Page);
+            await templateContext.EvaluateAsync(_preambleTemplate.Page);
         }
 
-        public override async Task RenderMessageAsync(Message message)
+        public override async Task WriteMessageAsync(Message message)
         {
-            // Render leading block if it's the first entry
-            if (!_isLeadingBlockRendered)
-            {
-                await RenderLeadingBlockAsync();
-                _isLeadingBlockRendered = true;
-            }
-
             // If message group is empty or the given message can be grouped, buffer the given message
             if (!_messageGroupBuffer.Any() || HtmlRenderingLogic.CanBeGrouped(_messageGroupBuffer.Last(), message))
             {
@@ -128,25 +113,18 @@ namespace DiscordChatExporter.Core.Rendering
             }
         }
 
-        public override async ValueTask DisposeAsync()
+        public override async Task WritePostambleAsync()
         {
-            // Leading block (can happen if no message were rendered)
-            if (!_isLeadingBlockRendered)
-                await RenderLeadingBlockAsync();
-
             // Flush current message group
             if (_messageGroupBuffer.Any())
                 await RenderCurrentMessageGroupAsync();
 
-            // Trailing block
-            await RenderTrailingBlockAsync();
-
-            // Dispose stream
-            await base.DisposeAsync();
+            var templateContext = CreateTemplateContext();
+            await templateContext.EvaluateAsync(_postambleTemplate.Page);
         }
     }
 
-    public partial class HtmlMessageRenderer
+    public partial class HtmlMessageWriter
     {
         private static readonly Assembly ResourcesAssembly = typeof(HtmlRenderingLogic).Assembly;
         private static readonly string ResourcesNamespace = $"{ResourcesAssembly.GetName().Name}.Resources";
@@ -159,18 +137,18 @@ namespace DiscordChatExporter.Core.Rendering
             ResourcesAssembly
                 .GetManifestResourceString($"{ResourcesNamespace}.Html{themeName}.css");
 
-        private static string GetLeadingBlockTemplateCode() =>
+        private static string GetPreambleTemplateCode() =>
             ResourcesAssembly
                 .GetManifestResourceString($"{ResourcesNamespace}.HtmlLayoutTemplate.html")
                 .SubstringUntil("{{~ %SPLIT% ~}}");
 
-        private static string GetTrailingBlockTemplateCode() =>
-            ResourcesAssembly
-                .GetManifestResourceString($"{ResourcesNamespace}.HtmlLayoutTemplate.html")
-                .SubstringAfter("{{~ %SPLIT% ~}}");
-
         private static string GetMessageGroupTemplateCode() =>
             ResourcesAssembly
                 .GetManifestResourceString($"{ResourcesNamespace}.HtmlMessageGroupTemplate.html");
+
+        private static string GetPostambleTemplateCode() =>
+            ResourcesAssembly
+                .GetManifestResourceString($"{ResourcesNamespace}.HtmlLayoutTemplate.html")
+                .SubstringAfter("{{~ %SPLIT% ~}}");
     }
 }

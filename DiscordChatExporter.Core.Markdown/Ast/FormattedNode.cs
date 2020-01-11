@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DiscordChatExporter.Core.Markdown.Nodes
+namespace DiscordChatExporter.Core.Markdown.Ast
 {
     public class FormattedNode : Node
     {

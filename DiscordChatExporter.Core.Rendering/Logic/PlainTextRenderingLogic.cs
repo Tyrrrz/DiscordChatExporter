@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DiscordChatExporter.Core.Markdown;
-using DiscordChatExporter.Core.Markdown.Nodes;
+using DiscordChatExporter.Core.Markdown.Ast;
 using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.Core.Rendering.Internal;
 using Tyrrrz.Extensions;

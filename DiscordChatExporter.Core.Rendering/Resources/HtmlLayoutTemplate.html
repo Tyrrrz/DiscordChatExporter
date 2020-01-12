@@ -49,20 +49,20 @@
 <body>
 
 {{~ # Preamble ~}}
-<div class="info">
-    <div class="info__guild-icon-container">
-        <img class="info__guild-icon" src="{{ Context.Guild.IconUrl }}" />
+<div class="preamble">
+    <div class="preamble__guild-icon-container">
+        <img class="preamble__guild-icon" src="{{ Context.Guild.IconUrl }}" alt="Guild icon" />
     </div>
-    <div class="info__metadata">
-        <div class="info__guild-name">{{ Context.Guild.Name | html.escape }}</div>
-        <div class="info__channel-name">{{ Context.Channel.Name | html.escape }}</div>
+    <div class="preamble__entries-container">
+        <div class="preamble__entry">{{ Context.Guild.Name | html.escape }}</div>
+        <div class="preamble__entry">{{ Context.Channel.Name | html.escape }}</div>
 
         {{~ if Context.Channel.Topic ~}}
-            <div class="info__channel-topic">{{ Context.Channel.Topic | html.escape }}</div>
+            <div class="preamble__entry preamble__entry--small">{{ Context.Channel.Topic | html.escape }}</div>
         {{~ end ~}}
 
         {{~ if Context.After || Context.Before ~}}
-            <div class="info__channel-date-range">
+            <div class="preamble__entry preamble__entry--small">
                 {{~ if Context.After && Context.Before ~}}
                     Between {{ Context.After | FormatDate | html.escape }} and {{ Context.Before | FormatDate | html.escape }}
                 {{~ else if Context.After ~}}
@@ -82,9 +82,7 @@
 
 {{~ # Postamble ~}}
 <div class="postamble">
-    <div class="postamble__info">
-        Exported {{ MessageCount | object.format "N0" }} message(s)
-    </div>
+    <div class="postamble__entry">Exported {{ MessageCount | object.format "N0" }} message(s)</div>
 </div>
 
 </body>

@@ -1,4 +1,4 @@
-﻿/* === General === */
+﻿/* General */
 
 body {
     background-color: #36393e;
@@ -32,19 +32,11 @@ a {
 
 /* === Preamble === */
 
-.info__guild-name {
+.preamble__entry {
     color: #ffffff;
 }
 
-.info__channel-name {
-    color: #ffffff;
-}
-
-.info__channel-topic {
-    color: #ffffff;
-}
-
-/* === Chatlog === */
+/* Chatlog */
 
 .chatlog__message-group {
     border-color: rgba(255, 255, 255, 0.1);
@@ -115,12 +107,12 @@ a {
     color: rgba(255, 255, 255, 0.3);
 }
 
-/* === Postamble === */
+/* Postamble */
 
 .postamble {
     border-color: rgba(255, 255, 255, 0.1);
 }
 
-.postamble__info {
+.postamble__entry {
     color: #ffffff;
 }

@@ -1,3 +1,10 @@
+### v2.17 (12-Jan-2020)
+
+- Fixed an issue where an empty file was produced when exporting a channel with no messages (for specified period). With the new behavior, no file will be created and instead a message will be shown to the user informing of the failure.
+- [HTML/TXT] Added message count to the bottom of the file. This number shows how many messages were exported as part of the current file. Prior to 2.16 this number was present along with the rest of the metadata at the top, then removed due to changes in the exporter, and now brought back at the end of the file instead.
+- [HTML] Fixed an issue where some emojis were not properly rendered.
+- [GUI] Added a setting that lets you configure whether to remember the last used token. Previously it was the default behavior, but now you can disable it if you don't want the token persisted on your system.
+
 ### v2.16 (08-Dec-2019)
 
 - Migrated from .NET Framework to .NET Core. To run this and future versions of DiscordChatExporter you will need [.NET Core runtime for desktop apps](https://dotnet.microsoft.com/download/dotnet-core/3.1/runtime) (for GUI/CLI version on Windows) or [.NET Core base runtime](https://dotnet.microsoft.com/download/dotnet-core/3.1) (for CLI version on Windows, Linux or macOS).

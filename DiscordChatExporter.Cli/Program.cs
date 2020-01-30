@@ -30,13 +30,13 @@ namespace DiscordChatExporter.Cli
             return services.BuildServiceProvider();
         }
 
-        public static Task<int> Main(string[] args)
+        public static async Task<int> Main(string[] args)
         {
             var serviceProvider = ConfigureServices();
 
-            return new CliApplicationBuilder()
+            return await new CliApplicationBuilder()
                 .AddCommandsFromThisAssembly()
-                .UseCommandFactory(schema => (ICommand) serviceProvider.GetService(schema.Type))
+                .UseTypeActivator(serviceProvider.GetService)
                 .Build()
                 .RunAsync(args);
         }

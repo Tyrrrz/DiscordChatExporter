@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using CliFx;
 using CliFx.Attributes;
-using CliFx.Services;
 using CliFx.Utilities;
 using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.Core.Services;
@@ -40,7 +40,7 @@ namespace DiscordChatExporter.Cli.Commands
             ExportService = exportService;
         }
 
-        protected async Task ExportAsync(IConsole console, Guild guild, Channel channel)
+        protected async ValueTask ExportAsync(IConsole console, Guild guild, Channel channel)
         {
             if (!string.IsNullOrWhiteSpace(DateFormat))
                 SettingsService.DateFormat = DateFormat;
@@ -56,13 +56,13 @@ namespace DiscordChatExporter.Cli.Commands
             console.Output.WriteLine();
         }
 
-        protected async Task ExportAsync(IConsole console, Channel channel)
+        protected async ValueTask ExportAsync(IConsole console, Channel channel)
         {
             var guild = await DataService.GetGuildAsync(GetToken(), channel.GuildId);
             await ExportAsync(console, guild, channel);
         }
 
-        protected async Task ExportAsync(IConsole console, string channelId)
+        protected async ValueTask ExportAsync(IConsole console, string channelId)
         {
             var channel = await DataService.GetChannelAsync(GetToken(), channelId);
             await ExportAsync(console, channel);

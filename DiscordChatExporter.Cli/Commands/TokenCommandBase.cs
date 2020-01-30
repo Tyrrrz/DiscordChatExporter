@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using CliFx;
 using CliFx.Attributes;
-using CliFx.Services;
 using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.Core.Services;
 
@@ -24,6 +23,6 @@ namespace DiscordChatExporter.Cli.Commands
 
         protected AuthToken GetToken() => new AuthToken(IsBotToken ? AuthTokenType.Bot : AuthTokenType.User, TokenValue);
 
-        public abstract Task ExecuteAsync(IConsole console);
+        public abstract ValueTask ExecuteAsync(IConsole console);
     }
 }

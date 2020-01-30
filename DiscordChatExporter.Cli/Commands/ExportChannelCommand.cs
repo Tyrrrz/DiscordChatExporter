@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
+using CliFx;
 using CliFx.Attributes;
-using CliFx.Services;
 using DiscordChatExporter.Core.Services;
 
 namespace DiscordChatExporter.Cli.Commands
@@ -16,6 +16,6 @@ namespace DiscordChatExporter.Cli.Commands
         {
         }
 
-        public override async Task ExecuteAsync(IConsole console) => await ExportAsync(console, ChannelId);
+        public override async ValueTask ExecuteAsync(IConsole console) => await ExportAsync(console, ChannelId);
     }
 }

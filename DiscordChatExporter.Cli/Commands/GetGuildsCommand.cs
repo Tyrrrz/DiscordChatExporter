@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using CliFx;
 using CliFx.Attributes;
-using CliFx.Services;
 using DiscordChatExporter.Core.Services;
 
 namespace DiscordChatExporter.Cli.Commands
@@ -14,7 +14,7 @@ namespace DiscordChatExporter.Cli.Commands
         {
         }
 
-        public override async Task ExecuteAsync(IConsole console)
+        public override async ValueTask ExecuteAsync(IConsole console)
         {
             // Get guilds
             var guilds = await DataService.GetUserGuildsAsync(GetToken());

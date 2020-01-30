@@ -2,14 +2,13 @@
 using System.Threading.Tasks;
 using CliFx;
 using CliFx.Attributes;
-using CliFx.Services;
 
 namespace DiscordChatExporter.Cli.Commands
 {
     [Command("guide", Description = "Explains how to obtain token, guild or channel ID.")]
     public class GuideCommand : ICommand
     {
-        public Task ExecuteAsync(IConsole console)
+        public ValueTask ExecuteAsync(IConsole console)
         {
             console.WithForegroundColor(ConsoleColor.White, () => console.Output.WriteLine("To get user token:"));
             console.Output.WriteLine(" 1. Open Discord");
@@ -48,7 +47,7 @@ namespace DiscordChatExporter.Cli.Commands
             console.Output.WriteLine("If you still have unanswered questions, check out the wiki:");
             console.Output.WriteLine("https://github.com/Tyrrrz/DiscordChatExporter/wiki");
 
-            return Task.CompletedTask;
+            return default;
         }
     }
 }

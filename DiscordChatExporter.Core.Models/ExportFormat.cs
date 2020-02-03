@@ -5,6 +5,7 @@
         PlainText,
         HtmlDark,
         HtmlLight,
-        Csv
+        Csv,
+        Json
     }
 }

@@ -7,13 +7,13 @@ namespace DiscordChatExporter.Core.Rendering.Formatters
 {
     public abstract class MessageWriterBase : IAsyncDisposable
     {
-        protected TextWriter Writer { get; }
+        protected Stream Stream { get; }
 
         protected RenderContext Context { get; }
 
-        protected MessageWriterBase(TextWriter writer, RenderContext context)
+        protected MessageWriterBase(Stream stream, RenderContext context)
         {
-            Writer = writer;
+            Stream = stream;
             Context = context;
         }
 
@@ -23,6 +23,6 @@ namespace DiscordChatExporter.Core.Rendering.Formatters
 
         public virtual Task WritePostambleAsync() => Task.CompletedTask;
 
-        public async ValueTask DisposeAsync() => await Writer.DisposeAsync();
+        public virtual async ValueTask DisposeAsync() => await Stream.DisposeAsync();
     }
 }

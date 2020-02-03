@@ -7,30 +7,39 @@ namespace DiscordChatExporter.Core.Rendering.Formatters
 {
     public class PlainTextMessageWriter : MessageWriterBase
     {
+        private readonly TextWriter _writer;
+
         private long _messageCount;
 
-        public PlainTextMessageWriter(TextWriter writer, RenderContext context)
-            : base(writer, context)
+        public PlainTextMessageWriter(Stream stream, RenderContext context)
+            : base(stream, context)
         {
+            _writer = new StreamWriter(stream);
         }
 
         public override async Task WritePreambleAsync()
         {
-            await Writer.WriteLineAsync(PlainTextRenderingLogic.FormatPreamble(Context));
+            await _writer.WriteLineAsync(PlainTextRenderingLogic.FormatPreamble(Context));
         }
 
         public override async Task WriteMessageAsync(Message message)
         {
-            await Writer.WriteLineAsync(PlainTextRenderingLogic.FormatMessage(Context, message));
-            await Writer.WriteLineAsync();
+            await _writer.WriteLineAsync(PlainTextRenderingLogic.FormatMessage(Context, message));
+            await _writer.WriteLineAsync();
 
             _messageCount++;
         }
 
         public override async Task WritePostambleAsync()
         {
-            await Writer.WriteLineAsync();
-            await Writer.WriteLineAsync(PlainTextRenderingLogic.FormatPostamble(_messageCount));
+            await _writer.WriteLineAsync();
+            await _writer.WriteLineAsync(PlainTextRenderingLogic.FormatPostamble(_messageCount));
+        }
+
+        public override async ValueTask DisposeAsync()
+        {
+            await _writer.DisposeAsync();
+            await base.DisposeAsync();
         }
     }
 }

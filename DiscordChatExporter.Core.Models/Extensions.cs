@@ -18,6 +18,7 @@ namespace DiscordChatExporter.Core.Models
                 ExportFormat.HtmlDark => "html",
                 ExportFormat.HtmlLight => "html",
                 ExportFormat.Csv => "csv",
+                ExportFormat.Json => "json",
                 _ => throw new ArgumentOutOfRangeException(nameof(format))
             };
 
@@ -28,6 +29,7 @@ namespace DiscordChatExporter.Core.Models
                 ExportFormat.HtmlDark => "HTML (Dark)",
                 ExportFormat.HtmlLight => "HTML (Light)",
                 ExportFormat.Csv => "Comma Separated Values (CSV)",
+                ExportFormat.Json => "JavaScript Object Notation (JSON)",
                 _ => throw new ArgumentOutOfRangeException(nameof(format))
             };
     }

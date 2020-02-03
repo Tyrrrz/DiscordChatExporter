@@ -14,6 +14,7 @@ namespace DiscordChatExporter.Core.Rendering.Formatters
 {
     public partial class HtmlMessageWriter : MessageWriterBase
     {
+        private readonly TextWriter _writer;
         private readonly string _themeName;
         private readonly List<Message> _messageGroupBuffer = new List<Message>();
 
@@ -23,9 +24,10 @@ namespace DiscordChatExporter.Core.Rendering.Formatters
 
         private long _messageCount;
 
-        public HtmlMessageWriter(TextWriter writer, RenderContext context, string themeName)
-            : base(writer, context)
+        public HtmlMessageWriter(Stream stream, RenderContext context, string themeName)
+            : base(stream, context)
         {
+            _writer = new StreamWriter(stream);
             _themeName = themeName;
 
             _preambleTemplate = Template.Parse(GetPreambleTemplateCode());
@@ -77,7 +79,7 @@ namespace DiscordChatExporter.Core.Rendering.Formatters
             templateContext.PushGlobal(scriptObject);
 
             // Push output
-            templateContext.PushOutput(new TextWriterOutput(Writer));
+            templateContext.PushOutput(new TextWriterOutput(_writer));
 
             return templateContext;
         }
@@ -130,6 +132,12 @@ namespace DiscordChatExporter.Core.Rendering.Formatters
             });
 
             await templateContext.EvaluateAsync(_postambleTemplate.Page);
+        }
+
+        public override async ValueTask DisposeAsync()
+        {
+            await _writer.DisposeAsync();
+            await base.DisposeAsync();
         }
     }
 

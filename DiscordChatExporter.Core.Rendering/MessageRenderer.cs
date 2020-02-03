@@ -99,21 +99,24 @@ namespace DiscordChatExporter.Core.Rendering
 
         private static MessageWriterBase CreateMessageWriter(string filePath, ExportFormat format, RenderContext context)
         {
-            // Create inner writer (it will get disposed by the wrapper)
-            var writer = File.CreateText(filePath);
+            // Create a stream (it will get disposed by the writer)
+            var stream = File.Create(filePath);
 
             // Create formatter
             if (format == ExportFormat.PlainText)
-                return new PlainTextMessageWriter(writer, context);
+                return new PlainTextMessageWriter(stream, context);
 
             if (format == ExportFormat.Csv)
-                return new CsvMessageWriter(writer, context);
+                return new CsvMessageWriter(stream, context);
 
             if (format == ExportFormat.HtmlDark)
-                return new HtmlMessageWriter(writer, context, "Dark");
+                return new HtmlMessageWriter(stream, context, "Dark");
 
             if (format == ExportFormat.HtmlLight)
-                return new HtmlMessageWriter(writer, context, "Light");
+                return new HtmlMessageWriter(stream, context, "Light");
+
+            if (format == ExportFormat.Json)
+                return new JsonMessageWriter(stream, context);
 
             throw new InvalidOperationException($"Unknown export format [{format}].");
         }

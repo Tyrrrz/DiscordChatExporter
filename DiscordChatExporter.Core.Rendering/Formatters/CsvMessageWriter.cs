@@ -7,19 +7,28 @@ namespace DiscordChatExporter.Core.Rendering.Formatters
 {
     public class CsvMessageWriter : MessageWriterBase
     {
-        public CsvMessageWriter(TextWriter writer, RenderContext context)
-            : base(writer, context)
+        private readonly TextWriter _writer;
+
+        public CsvMessageWriter(Stream stream, RenderContext context)
+            : base(stream, context)
         {
+            _writer = new StreamWriter(stream);
         }
 
         public override async Task WritePreambleAsync()
         {
-            await Writer.WriteLineAsync(CsvRenderingLogic.FormatHeader(Context));
+            await _writer.WriteLineAsync(CsvRenderingLogic.FormatHeader(Context));
         }
 
         public override async Task WriteMessageAsync(Message message)
         {
-            await Writer.WriteLineAsync(CsvRenderingLogic.FormatMessage(Context, message));
+            await _writer.WriteLineAsync(CsvRenderingLogic.FormatMessage(Context, message));
+        }
+
+        public override async ValueTask DisposeAsync()
+        {
+            await _writer.DisposeAsync();
+            await base.DisposeAsync();
         }
     }
 }

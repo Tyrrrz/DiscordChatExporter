@@ -31,7 +31,7 @@ Note: This application requires .NET Core runtime in order to run:
 - Supports file partitioning based on message count
 - Uses custom markdown parser compatible with Discord syntax
 - Handles all rich media features, including attachments, embeds, emojis, etc
-- Renders to: HTML (dark & light themes), plain text (minimal), CSV (structured)
+- Renders to HTML (dark & light), TXT, CSV, JSON
 
 ## Screenshots
 

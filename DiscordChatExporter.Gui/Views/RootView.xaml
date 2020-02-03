@@ -246,7 +246,8 @@
                         <ListBox
                             HorizontalContentAlignment="Stretch"
                             ItemsSource="{Binding SelectedGuild.Channels}"
-                            SelectionMode="Extended">
+                            SelectionMode="Extended"
+                            TextSearch.TextPath="Model.Name">
                             <i:Interaction.Behaviors>
                                 <behaviors:ChannelViewModelMultiSelectionListBoxBehavior SelectedItems="{Binding SelectedChannels}" />
                             </i:Interaction.Behaviors>

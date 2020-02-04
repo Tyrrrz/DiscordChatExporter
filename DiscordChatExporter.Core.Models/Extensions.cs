@@ -25,11 +25,11 @@ namespace DiscordChatExporter.Core.Models
         public static string GetDisplayName(this ExportFormat format) =>
             format switch
             {
-                ExportFormat.PlainText => "Plain Text",
+                ExportFormat.PlainText => "TXT",
                 ExportFormat.HtmlDark => "HTML (Dark)",
                 ExportFormat.HtmlLight => "HTML (Light)",
-                ExportFormat.Csv => "Comma Separated Values (CSV)",
-                ExportFormat.Json => "JavaScript Object Notation (JSON)",
+                ExportFormat.Csv => "CSV",
+                ExportFormat.Json => "JSON",
                 _ => throw new ArgumentOutOfRangeException(nameof(format))
             };
     }

@@ -19,7 +19,7 @@ namespace DiscordChatExporter.Cli.Commands
         public ExportFormat ExportFormat { get; set; } = ExportFormat.HtmlDark;
 
         [CommandOption("output", 'o', Description = "Output file or directory path.")]
-        public string? OutputPath { get; set; }
+        public string OutputPath { get; set; } = Directory.GetCurrentDirectory();
 
         [CommandOption("after", Description = "Limit to messages sent after this date.")]
         public DateTimeOffset? After { get; set; }
@@ -48,9 +48,8 @@ namespace DiscordChatExporter.Cli.Commands
             console.Output.Write($"Exporting channel [{channel.Name}]... ");
             var progress = console.CreateProgressTicker();
 
-            var outputPath = OutputPath ?? Directory.GetCurrentDirectory();
-            await ExportService.ExportChatLogAsync(GetToken(), guild, channel,
-                outputPath, ExportFormat, PartitionLimit,
+            await ExportService.ExportChatLogAsync(Token, guild, channel,
+                OutputPath, ExportFormat, PartitionLimit,
                 After, Before, progress);
 
             console.Output.WriteLine();
@@ -58,13 +57,13 @@ namespace DiscordChatExporter.Cli.Commands
 
         protected async ValueTask ExportAsync(IConsole console, Channel channel)
         {
-            var guild = await DataService.GetGuildAsync(GetToken(), channel.GuildId);
+            var guild = await DataService.GetGuildAsync(Token, channel.GuildId);
             await ExportAsync(console, guild, channel);
         }
 
         protected async ValueTask ExportAsync(IConsole console, string channelId)
         {
-            var channel = await DataService.GetChannelAsync(GetToken(), channelId);
+            var channel = await DataService.GetChannelAsync(Token, channelId);
             await ExportAsync(console, channel);
         }
     }

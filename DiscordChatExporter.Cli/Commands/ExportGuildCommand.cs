@@ -14,7 +14,7 @@ namespace DiscordChatExporter.Cli.Commands
     public class ExportGuildCommand : ExportCommandBase
     {
         [CommandOption("guild", 'g', IsRequired = true, Description = "Guild ID.")]
-        public string GuildId { get; set; }
+        public string GuildId { get; set; } = "";
 
         public ExportGuildCommand(SettingsService settingsService, DataService dataService, ExportService exportService)
             : base(settingsService, dataService, exportService)
@@ -24,7 +24,7 @@ namespace DiscordChatExporter.Cli.Commands
         public override async ValueTask ExecuteAsync(IConsole console)
         {
             // Get channels
-            var channels = await DataService.GetGuildChannelsAsync(GetToken(), GuildId);
+            var channels = await DataService.GetGuildChannelsAsync(Token, GuildId);
 
             // Filter and order channels
             channels = channels.Where(c => c.Type.IsExportable()).OrderBy(c => c.Name).ToArray();

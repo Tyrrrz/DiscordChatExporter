@@ -11,17 +11,17 @@ namespace DiscordChatExporter.Cli.Commands
         protected DataService DataService { get; }
 
         [CommandOption("token", 't', IsRequired = true, Description = "Authorization token.")]
-        public string TokenValue { get; set; }
+        public string TokenValue { get; set; } = "";
 
         [CommandOption("bot", 'b', Description = "Whether this authorization token belongs to a bot.")]
         public bool IsBotToken { get; set; }
+
+        protected AuthToken Token => new AuthToken(IsBotToken ? AuthTokenType.Bot : AuthTokenType.User, TokenValue);
 
         protected TokenCommandBase(DataService dataService)
         {
             DataService = dataService;
         }
-
-        protected AuthToken GetToken() => new AuthToken(IsBotToken ? AuthTokenType.Bot : AuthTokenType.User, TokenValue);
 
         public abstract ValueTask ExecuteAsync(IConsole console);
     }

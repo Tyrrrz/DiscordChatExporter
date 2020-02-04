@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Version>2.17</Version>
+    <Version>2.18</Version>
     <Company>Tyrrrz</Company>
     <Copyright>Copyright (c) Alexey Golub</Copyright>
     <LangVersion>latest</LangVersion>

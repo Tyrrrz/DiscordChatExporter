@@ -1,3 +1,9 @@
+### v2.18 (04-Feb-2020)
+
+- Added JSON export format. It's a structured data format which is easy to parse. If you're using DiscordChatExporter to export chat logs for further ingestion by another tool, this is most likely the format you will want to use.
+- [GUI] You can now quickly jump to a specific channel in a list. For example, if you want to jump to a channel named "General", you can simply press the 'g' key in the channel list view. You can also press 'g', 'e' and 'n' in quick succession which will jump to the next channel that starts with "gen". This mechanic is consistent with other Windows applications.
+- [CLI] Improved help text screen.
+
 ### v2.17 (12-Jan-2020)
 
 - Fixed an issue where an empty file was produced when exporting a channel with no messages (for specified period). With the new behavior, no file will be created and instead a message will be shown to the user informing of the failure.

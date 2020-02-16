@@ -8,10 +8,10 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
 
     - name: Install .NET Core
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v1.4.0
       with:
         dotnet-version: 3.1.100
 
@@ -22,13 +22,13 @@ jobs:
       run: dotnet publish DiscordChatExporter.Gui/ -o DiscordChatExporter.Gui/bin/Publish/ --configuration Release
 
     - name: Upload build artifacts (CLI)
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@v1
       with:
         name: DiscordChatExporter.CLI
         path: DiscordChatExporter.Cli/bin/Publish/
 
     - name: Upload build artifact (GUI)
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@v1
       with:
         name: DiscordChatExporter
         path: DiscordChatExporter.Gui/bin/Publish/

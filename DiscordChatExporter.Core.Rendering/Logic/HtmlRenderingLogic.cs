@@ -115,7 +115,7 @@ namespace DiscordChatExporter.Core.Rendering.Logic
                     var role = context.MentionableRoles.FirstOrDefault(r => r.Id == mentionNode.Id) ??
                                Role.CreateDeletedRole(mentionNode.Id);
                     string style = "";
-                    if (role.Color != 0) style = $"style=\"color: {role.ColorAsHex}; background-color: rgba({role.ColorAsRgb}, 0.1);\"";
+                    if (role.Color != 0) style = $"style=\"color: {role.ColorAsHex}; background-color: rgba({role.ColorAsRgb}, 0.1); weight: 400;\"";
                     return $"<span class=\"mention\" {style}>@{HtmlEncode(role.Name)}</span>";
                 }
             }

@@ -11,7 +11,7 @@ namespace DiscordChatExporter.Core.Models
 
         public int Color { get; }
 
-        public string ColorAsHex { get => "#"+Color.ToString("X6"); }
+        public string ColorAsHex { get => Color == 0? "" : "#"+Color.ToString("X6"); }
 
         public int Position { get; }
 
@@ -28,7 +28,7 @@ namespace DiscordChatExporter.Core.Models
 
     public partial class Role
     {
-        private static Role _everyone;
+        private static Role? _everyone;
         public static Role Everyone
         {
             get => _everyone ?? (_everyone = new Role("", "@everyone", 0, 0));

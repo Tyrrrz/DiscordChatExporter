@@ -12,7 +12,7 @@ namespace DiscordChatExporter.Core.Models
         public int Color { get; }
 
         public string ColorAsHex { get => "#"+Color.ToString("X6"); }
-        public string ColorAsRgb { get => $"{Color>>8}, {(Color & 0xff00)>>4}, {Color & 0xff}"; }
+        public string ColorAsRgb { get => $"{Color>>16}, {(Color & 0xff00)>>8}, {Color & 0xff}"; }
 
         public int Position { get; }
 

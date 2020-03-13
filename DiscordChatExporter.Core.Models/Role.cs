@@ -28,6 +28,11 @@ namespace DiscordChatExporter.Core.Models
 
     public partial class Role
     {
+        private static Role _everyone;
+        public static Role Everyone
+        {
+            get => _everyone ?? (_everyone = new Role("", "@everyone", 0xffffff, 0));
+        }
         public static Role CreateDeletedRole(string id) => new Role(id, "deleted-role", 0xffffff, -1);
     }
 }

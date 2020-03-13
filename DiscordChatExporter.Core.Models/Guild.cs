@@ -1,4 +1,8 @@
-﻿namespace DiscordChatExporter.Core.Models
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace DiscordChatExporter.Core.Models
 {
     // https://discordapp.string.IsNullOrWhiteSpace(com/developers/docs/resources/guild#guild-object
 
@@ -10,13 +14,19 @@
 
         public string? IconHash { get; }
 
+        public List<Role> Roles { get; }
+
+        public Dictionary<string, Member?> Members { get; }
+
         public string IconUrl { get; }
 
-        public Guild(string id, string name, string? iconHash)
+        public Guild(string id, string name, List<Role> roles, string? iconHash)
         {
             Id = id;
             Name = name;
             IconHash = iconHash;
+            Roles = roles;
+            Members = new Dictionary<string, Member?>();
 
             IconUrl = GetIconUrl(id, iconHash);
         }
@@ -26,6 +36,15 @@
 
     public partial class Guild
     {
+        public static string GetUserColor(Guild guild, User user) => 
+                guild.Members.GetValueOrDefault(user.Id, null)?.Roles
+                ?.Select(r => guild.Roles
+                            .Where(role => r == role.Id)
+                            .FirstOrDefault()
+                )?.FirstOrDefault()?
+                .ColorAsHex ?? "#FFFFFF";
+        public static string GetUserNick(Guild guild, User user) => guild.Members[user.Id]?.Nick ?? user.Name;
+
         public static string GetIconUrl(string id, string? iconHash)
         {
             return !string.IsNullOrWhiteSpace(iconHash)
@@ -33,6 +52,6 @@
                 : "https://cdn.discordapp.com/embed/avatars/0.png";
         }
 
-        public static Guild DirectMessages { get; } = new Guild("@me", "Direct Messages", null);
+        public static Guild DirectMessages { get; } = new Guild("@me", "Direct Messages", new List<Role>(), null);
     }
 }

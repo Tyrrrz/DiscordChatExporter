@@ -5,7 +5,7 @@
     </div>
     <div class="chatlog__messages">
         {{~ # Author name and timestamp ~}}
-        <span class="chatlog__author-name" title="{{ MessageGroup.Author.FullName | html.escape }}" data-user-id="{{ MessageGroup.Author.Id | html.escape }}">{{ MessageGroup.Author.Name | html.escape }}</span>
+    <span class="chatlog__author-name" title="{{ MessageGroup.Author.FullName | html.escape }}" data-user-id="{{ MessageGroup.Author.Id | html.escape }}" style="color: {{ GetUserColor Context.Guild MessageGroup.Author }}">{{ GetUserNick Context.Guild MessageGroup.Author | html.escape }}</span>
 
         {{~ # Bot tag ~}}
         {{~ if MessageGroup.Author.IsBot ~}}

@@ -43,7 +43,7 @@ namespace DiscordChatExporter.Core.Models
                             .FirstOrDefault()
                 )?.Where(r => r.Color != 0)?
                 .Aggregate(Role.Everyone, (a, b) => a.Position > b.Position? a : b)?
-                .ColorAsHex ?? "#FFFFFF";
+                .ColorAsHex ?? "";
         public static string GetUserNick(Guild guild, User user) => guild.Members[user.Id]?.Nick ?? user.Name;
 
         public static string GetIconUrl(string id, string? iconHash)

@@ -82,6 +82,10 @@ img {
 }
 
 .mention {
+    border-radius: 3px;
+    padding: 0 2px;
+    color: #7289da;
+    background: rgba(114, 137, 218, .1);
     font-weight: 500;
 }
 

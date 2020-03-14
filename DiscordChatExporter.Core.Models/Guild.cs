@@ -42,7 +42,7 @@ namespace DiscordChatExporter.Core.Models
                             .Where(role => r == role.Id)
                             .FirstOrDefault()
                 )?.Where(r => r.Color != 0)?
-                .Aggregate(Role.Everyone, (a, b) => a.Position > b.Position? a : b)?
+                .Aggregate<Role, Role?>(null, (a, b) => (a?.Position ?? 0) > b.Position? a : b)?
                 .ColorAsHex ?? "";
         public static string GetUserNick(Guild guild, User user) => guild.Members.GetValueOrDefault(user.Id)?.Nick ?? user.Name;
 

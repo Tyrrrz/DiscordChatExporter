@@ -14,11 +14,11 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
         private readonly DialogManager _dialogManager;
         private readonly SettingsService _settingsService;
 
-        public GuildViewModel Guild { get; set; }
+        public GuildViewModel? Guild { get; set; }
 
-        public IReadOnlyList<ChannelViewModel> Channels { get; set; }
+        public IReadOnlyList<ChannelViewModel>? Channels { get; set; }
 
-        public bool IsSingleChannel => Channels.Count == 1;
+        public bool IsSingleChannel => Channels == null || Channels.Count == 1;
 
         public string? OutputPath { get; set; }
 
@@ -62,7 +62,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
                 var channel = Channels.Single();
 
                 // Generate default file name
-                var defaultFileName = ExportLogic.GetDefaultExportFileName(SelectedFormat, Guild, channel, After, Before);
+                var defaultFileName = ExportLogic.GetDefaultExportFileName(SelectedFormat, Guild!, channel!, After, Before);
 
                 // Generate filter
                 var ext = SelectedFormat.GetFileExtension();

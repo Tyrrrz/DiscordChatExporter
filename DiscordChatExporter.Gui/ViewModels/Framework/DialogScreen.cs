@@ -5,7 +5,8 @@ namespace DiscordChatExporter.Gui.ViewModels.Framework
 {
     public abstract class DialogScreen<T> : PropertyChangedBase
     {
-        public T DialogResult { get; private set; }
+        // ReSharper disable once RedundantDefaultMemberInitializer
+        public T DialogResult { get; private set; } = default!;
 
         public event EventHandler? Closed;
 

@@ -178,7 +178,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                     // Create guild view model
                     var guildViewModel = _viewModelFactory.CreateGuildViewModel(guild,
                         channelViewModels.OrderBy(c => c.Category)
-                            .ThenBy(c => c.Model.Name)
+                            .ThenBy(c => c.Model!.Name)
                             .ToArray());
 
                     // Add to list
@@ -210,7 +210,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                     // Create guild view model
                     var guildViewModel = _viewModelFactory.CreateGuildViewModel(guild,
                         channelViewModels.OrderBy(c => c.Category)
-                            .ThenBy(c => c.Model.Name)
+                            .ThenBy(c => c.Model!.Name)
                             .ToArray());
 
                     // Add to list
@@ -256,7 +256,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                 return;
 
             // Create a progress operation for each channel to export
-            var operations = ProgressManager.CreateOperations(dialog.Channels.Count);
+            var operations = ProgressManager.CreateOperations(dialog.Channels!.Count);
 
             // Export channels
             var successfulExportCount = 0;
@@ -267,7 +267,7 @@ namespace DiscordChatExporter.Gui.ViewModels
 
                 try
                 {
-                    await _exportService.ExportChatLogAsync(token, dialog.Guild, channel,
+                    await _exportService.ExportChatLogAsync(token, dialog.Guild!, channel!,
                         dialog.OutputPath!, dialog.SelectedFormat, dialog.PartitionLimit,
                         dialog.After, dialog.Before, operation);
 
@@ -275,11 +275,11 @@ namespace DiscordChatExporter.Gui.ViewModels
                 }
                 catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
                 {
-                    Notifications.Enqueue($"You don't have access to channel [{channel.Model.Name}]");
+                    Notifications.Enqueue($"You don't have access to channel [{channel.Model!.Name}]");
                 }
                 catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    Notifications.Enqueue($"Channel [{channel.Model.Name}] doesn't exist");
+                    Notifications.Enqueue($"Channel [{channel.Model!.Name}] doesn't exist");
                 }
                 catch (DomainException ex)
                 {

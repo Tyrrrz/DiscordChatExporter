@@ -16,10 +16,10 @@ jobs:
         dotnet-version: 3.1.100
 
     - name: Build & publish (CLI)
-      run: dotnet publish DiscordChatExporter.Cli/ -o DiscordChatExporter.Cli/bin/Publish/ --configuration Release
+      run: dotnet publish DiscordChatExporter.Cli/ -o DiscordChatExporter.Cli/bin/Publish/ -c Release
 
     - name: Build & publish (GUI)
-      run: dotnet publish DiscordChatExporter.Gui/ -o DiscordChatExporter.Gui/bin/Publish/ --configuration Release
+      run: dotnet publish DiscordChatExporter.Gui/ -o DiscordChatExporter.Gui/bin/Publish/ -c Release -r win-x86 --self-contained false
 
     - name: Upload build artifacts (CLI)
       uses: actions/upload-artifact@v1

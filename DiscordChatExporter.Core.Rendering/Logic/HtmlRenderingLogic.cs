@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -115,7 +116,7 @@ namespace DiscordChatExporter.Core.Rendering.Logic
                     var role = context.MentionableRoles.FirstOrDefault(r => r.Id == mentionNode.Id) ??
                                Role.CreateDeletedRole(mentionNode.Id);
                     string style = "";
-                    if (role.Color != 0) style = $"style=\"color: {role.ColorAsHex}; background-color: rgba({role.ColorAsRgb}, 0.1); font-weight: 400;\"";
+                    if (role.Color != Color.Black) style = $"style=\"color: {role.ColorAsHex}; background-color: rgba({role.ColorAsRgb}, 0.1); font-weight: 400;\"";
                     return $"<span class=\"mention\" {style}>@{HtmlEncode(role.Name)}</span>";
                 }
             }

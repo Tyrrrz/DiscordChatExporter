@@ -1,4 +1,6 @@
 ﻿
+using System.Drawing;
+
 namespace DiscordChatExporter.Core.Models
 {
     // https://discordapp.com/developers/docs/topics/permissions#role-object
@@ -9,14 +11,14 @@ namespace DiscordChatExporter.Core.Models
 
         public string Name { get; }
 
-        public int Color { get; }
+        public Color Color { get; }
 
-        public string ColorAsHex { get => "#"+Color.ToString("X6"); }
-        public string ColorAsRgb { get => $"{Color>>16}, {(Color & 0xff00)>>8}, {Color & 0xff}"; }
+        public string ColorAsHex => $"#{(Color.ToArgb() & 0xffffff):X6}";
+        public string ColorAsRgb => $"{Color.R}, {Color.G}, {Color.B}";
 
         public int Position { get; }
 
-        public Role(string id, string name, int color, int position)
+        public Role(string id, string name, Color color, int position)
         {
             Id = id;
             Name = name;
@@ -29,6 +31,6 @@ namespace DiscordChatExporter.Core.Models
 
     public partial class Role
     {
-        public static Role CreateDeletedRole(string id) => new Role(id, "deleted-role", 0, -1);
+        public static Role CreateDeletedRole(string id) => new Role(id, "deleted-role", Color.Black, -1);
     }
 }

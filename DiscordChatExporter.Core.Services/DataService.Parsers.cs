@@ -77,7 +77,7 @@ namespace DiscordChatExporter.Core.Services
             var color = json["color"]!.Value<int>();
             var position = json["position"]!.Value<int>();
 
-            return new Role(id, name, color, position);
+            return new Role(id, name, Color.FromArgb(color), position);
         }
 
         private Attachment ParseAttachment(JToken json)

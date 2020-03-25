@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Threading.Tasks;
 using CliFx;
 using DiscordChatExporter.Cli.Commands;

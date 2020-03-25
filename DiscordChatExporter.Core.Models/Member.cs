@@ -5,12 +5,12 @@ namespace DiscordChatExporter.Core.Models
 {
     public class Member
     {
-        public string UserId;
-        public string? Nick;
+        public string UserId { get; }
+        public string? Nick { get; }
 
-        public string[] Roles { get; }
+        public IReadOnlyList<string> Roles { get; }
 
-        public Member(string userId, string? nick, string[] roles)
+        public Member(string userId, string? nick, IReadOnlyList<string> roles)
         {
             UserId = userId;
             Nick = nick;

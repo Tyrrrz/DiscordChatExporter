@@ -56,6 +56,21 @@
                 IsChecked="{Binding IsTokenPersisted}" />
         </DockPanel>
 
+        <!--  Parallel limit  -->
+        <StackPanel Background="Transparent" ToolTip="How many channels can be exported at the same time">
+            <TextBlock Margin="16,8">
+                <Run Text="Parallel limit:" />
+                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding ParallelLimit, Mode=OneWay}" />
+            </TextBlock>
+            <Slider
+                Margin="16,8"
+                IsSnapToTickEnabled="True"
+                Maximum="10"
+                Minimum="1"
+                TickFrequency="1"
+                Value="{Binding ParallelLimit}" />
+        </StackPanel>
+
         <!--  Save button  -->
         <Button
             Margin="8"

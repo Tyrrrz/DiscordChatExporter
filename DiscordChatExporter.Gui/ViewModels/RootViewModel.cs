@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.Core.Models.Exceptions;
@@ -260,10 +261,13 @@ namespace DiscordChatExporter.Gui.ViewModels
 
             // Export channels
             var successfulExportCount = 0;
-            for (var i = 0; i < dialog.Channels.Count; i++)
+            using var semaphore = new SemaphoreSlim(_settingsService.ParallelLimit.ClampMin(1));
+
+            await Task.WhenAll(dialog.Channels.Select(async (channel, i) =>
             {
                 var operation = operations[i];
-                var channel = dialog.Channels[i];
+
+                await semaphore.WaitAsync();
 
                 try
                 {
@@ -288,8 +292,9 @@ namespace DiscordChatExporter.Gui.ViewModels
                 finally
                 {
                     operation.Dispose();
+                    semaphore.Release();
                 }
-            }
+            }));
 
             // Notify of overall completion
             if (successfulExportCount > 0)

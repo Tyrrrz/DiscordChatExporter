@@ -16,14 +16,9 @@ namespace DiscordChatExporter.Cli.Commands
 
         public override async ValueTask ExecuteAsync(IConsole console)
         {
-            // Get guilds
             var guilds = await DataService.GetUserGuildsAsync(Token);
 
-            // Order guilds
-            guilds = guilds.OrderBy(g => g.Name).ToArray();
-
-            // Print result
-            foreach (var guild in guilds)
+            foreach (var guild in guilds.OrderBy(g => g.Name))
                 console.Output.WriteLine($"{guild.Id} | {guild.Name}");
         }
     }

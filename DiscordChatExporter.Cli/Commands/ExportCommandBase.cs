@@ -53,6 +53,7 @@ namespace DiscordChatExporter.Cli.Commands
                 After, Before, progress);
 
             console.Output.WriteLine();
+            console.Output.WriteLine("Done.");
         }
 
         protected async ValueTask ExportAsync(IConsole console, Channel channel)

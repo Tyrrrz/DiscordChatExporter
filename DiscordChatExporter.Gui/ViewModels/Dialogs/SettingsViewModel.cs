@@ -1,5 +1,6 @@
 ﻿using DiscordChatExporter.Core.Services;
 using DiscordChatExporter.Gui.ViewModels.Framework;
+using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Gui.ViewModels.Dialogs
 {
@@ -23,6 +24,12 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
         {
             get => _settingsService.IsTokenPersisted;
             set => _settingsService.IsTokenPersisted = value;
+        }
+
+        public int ParallelLimit
+        {
+            get => _settingsService.ParallelLimit;
+            set => _settingsService.ParallelLimit = value.Clamp(1, 10);
         }
 
         public SettingsViewModel(SettingsService settingsService)

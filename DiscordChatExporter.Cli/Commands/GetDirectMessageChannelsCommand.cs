@@ -16,13 +16,9 @@ namespace DiscordChatExporter.Cli.Commands
 
         public override async ValueTask ExecuteAsync(IConsole console)
         {
-            // Get channels
-            var channels = await DataService.GetDirectMessageChannelsAsync(Token);
+            var directMessageChannels = await DataService.GetDirectMessageChannelsAsync(Token);
+            var channels = directMessageChannels.OrderBy(c => c.Name).ToArray();
 
-            // Order channels
-            channels = channels.OrderBy(c => c.Name).ToArray();
-
-            // Print result
             foreach (var channel in channels)
                 console.Output.WriteLine($"{channel.Id} | {channel.Name}");
         }

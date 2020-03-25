@@ -20,13 +20,13 @@ namespace DiscordChatExporter.Cli.Commands
 
         public override async ValueTask ExecuteAsync(IConsole console)
         {
-            // Get channels
-            var channels = await DataService.GetGuildChannelsAsync(Token, GuildId);
+            var guildChannels = await DataService.GetGuildChannelsAsync(Token, GuildId);
 
-            // Filter and order channels
-            channels = channels.Where(c => c.Type.IsExportable()).OrderBy(c => c.Name).ToArray();
+            var channels = guildChannels
+                .Where(c => c.Type.IsExportable())
+                .OrderBy(c => c.Name)
+                .ToArray();
 
-            // Print result
             foreach (var channel in channels)
                 console.Output.WriteLine($"{channel.Id} | {channel.Name}");
         }

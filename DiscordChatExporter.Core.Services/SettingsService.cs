@@ -11,6 +11,8 @@ namespace DiscordChatExporter.Core.Services
 
         public bool IsTokenPersisted { get; set; } = true;
 
+        public int ParallelLimit { get; set; } = 1;
+
         public AuthToken? LastToken { get; set; }
 
         public ExportFormat LastExportFormat { get; set; } = ExportFormat.HtmlDark;

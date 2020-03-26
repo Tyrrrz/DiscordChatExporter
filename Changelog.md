@@ -1,3 +1,10 @@
+### v2.19 (26-Mar-2020)
+
+- Added parallel exporting. This option allows you to export multiple channels faster by doing it in parallel. You can configure the parallel limit in settings (GUI) or with the `--parallel` option (CLI). Default value is `1`, which means there is no parallelization. Warning: be careful when using this option, as this will result in higher volume of concurrent HTTP requests sent to Discord, which might get you flagged. Use at your own risk.
+- [HTML] Added support for user colors. User names are now appropriately colored according to the assigned guild roles.
+- [HTML] Added support for nicknames. User names are replaced with nicknames where it's applicable. It's still possible to see the full user name by hovering your mouse over the nickname.
+- [HTML] Improved styling for mentions to bring it more in line with how it looks in Discord.
+
 ### v2.18 (04-Feb-2020)
 
 - Added JSON export format. It's a structured data format which is easy to parse. If you're using DiscordChatExporter to export chat logs for further ingestion by another tool, this is most likely the format you will want to use.

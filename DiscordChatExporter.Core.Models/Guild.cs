@@ -43,6 +43,7 @@ namespace DiscordChatExporter.Core.Models
                 .Select(r => guild.Roles.FirstOrDefault(role => r == role.Id))
                 .Where(r => r != null)
                 .Where(r => r.Color != Color.Black)
+                .Where(r => r.Color.R + r.Color.G + r.Color.B > 0)
                 .Aggregate<Role, Role?>(null, (a, b) => (a?.Position ?? 0) > b.Position ? a : b)
                 ?.ColorAsHex ?? "";
 

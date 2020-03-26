@@ -1,5 +1,4 @@
-﻿
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace DiscordChatExporter.Core.Models
 {
@@ -13,7 +12,8 @@ namespace DiscordChatExporter.Core.Models
 
         public Color Color { get; }
 
-        public string ColorAsHex => $"#{(Color.ToArgb() & 0xffffff):X6}";
+        public string ColorAsHex => $"#{Color.ToArgb() & 0xffffff:X6}";
+
         public string ColorAsRgb => $"{Color.R}, {Color.G}, {Color.B}";
 
         public int Position { get; }

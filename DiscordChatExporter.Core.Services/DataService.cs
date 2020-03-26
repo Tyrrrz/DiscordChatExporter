@@ -40,11 +40,12 @@ namespace DiscordChatExporter.Core.Services
                     },
                     (response, timespan, retryCount, context) => Task.CompletedTask);
         }
-        
+
         private async Task<JToken> GetApiResponseAsync(AuthToken token, string route)
         {
             return (await GetApiResponseAsync(token, route, true))!;
         }
+
         private async Task<JToken?> GetApiResponseAsync(AuthToken token, string route, bool errorOnFail)
         {
             using var response = await _httpPolicy.ExecuteAsync(async () =>
@@ -61,7 +62,7 @@ namespace DiscordChatExporter.Core.Services
             // We throw our own exception here because default one doesn't have status code
             if (!response.IsSuccessStatusCode)
             {
-                if(errorOnFail) throw new HttpErrorStatusCodeException(response.StatusCode, response.ReasonPhrase);
+                if (errorOnFail) throw new HttpErrorStatusCodeException(response.StatusCode, response.ReasonPhrase);
                 else return null;
             }
 
@@ -84,7 +85,7 @@ namespace DiscordChatExporter.Core.Services
         public async Task<Member?> GetGuildMemberAsync(AuthToken token, string guildId, string userId)
         {
             var response = await GetApiResponseAsync(token, $"guilds/{guildId}/members/{userId}", false);
-            if(response == null) return null;
+            if (response == null) return null;
             var member = ParseMember(response);
 
             return member;
@@ -113,10 +114,11 @@ namespace DiscordChatExporter.Core.Services
                 if (!response.HasValues)
                     yield break;
 
-                foreach (var guild in response.Select(ParseGuild))
+                // Get full guild object
+                foreach (var guildId in response.Select(j => j["id"]!.Value<string>()))
                 {
-                    yield return guild;
-                    afterId = guild.Id;
+                    yield return await GetGuildAsync(token, guildId);
+                    afterId = guildId;
                 }
             }
         }

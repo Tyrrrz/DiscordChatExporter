@@ -25,7 +25,7 @@ namespace DiscordChatExporter.Core.Services
         {
             var userId = ParseUser(json["user"]!).Id;
             var nick = json["nick"]?.Value<string>();
-            var roles = json["roles"]!.Select(jt => jt.Value<string>()).ToArray();
+            var roles = (json["roles"] ?? Enumerable.Empty<JToken>()).Select(j => j.Value<string>()).ToArray();
 
             return new Member(userId, nick, roles);
         }
@@ -35,7 +35,7 @@ namespace DiscordChatExporter.Core.Services
             var id = json["id"]!.Value<string>();
             var name = json["name"]!.Value<string>();
             var iconHash = json["icon"]!.Value<string>();
-            var roles = json["roles"]!.Select(ParseRole).ToList();
+            var roles = (json["roles"] ?? Enumerable.Empty<JToken>()).Select(ParseRole).ToArray();
 
             return new Guild(id, name, roles, iconHash);
         }
@@ -205,7 +205,7 @@ namespace DiscordChatExporter.Core.Services
 
             // Get author
             var author = ParseUser(json["author"]!);
-            
+
             // Get attachments
             var attachments = (json["attachments"] ?? Enumerable.Empty<JToken>()).Select(ParseAttachment).ToArray();
 

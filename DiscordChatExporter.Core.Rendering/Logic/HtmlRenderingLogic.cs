@@ -98,7 +98,9 @@ namespace DiscordChatExporter.Core.Rendering.Logic
                     var user = context.MentionableUsers.FirstOrDefault(u => u.Id == mentionNode.Id) ??
                                User.CreateUnknownUser(mentionNode.Id);
 
-                    return $"<span class=\"mention\" title=\"{HtmlEncode(user.FullName)}\">@{HtmlEncode(user.Name)}</span>";
+                    var nick = Guild.GetUserNick(context.Guild, user);
+
+                    return $"<span class=\"mention\" title=\"{HtmlEncode(user.FullName)}\">@{HtmlEncode(nick)}</span>";
                 }
 
                 // Channel mention node
@@ -116,7 +118,9 @@ namespace DiscordChatExporter.Core.Rendering.Logic
                     var role = context.MentionableRoles.FirstOrDefault(r => r.Id == mentionNode.Id) ??
                                Role.CreateDeletedRole(mentionNode.Id);
                     string style = "";
-                    if (role.Color != Color.Black) style = $"style=\"color: {role.ColorAsHex}; background-color: rgba({role.ColorAsRgb}, 0.1); font-weight: 400;\"";
+                    if (role.Color != Color.Black)
+                        style = $"style=\"color: {role.ColorAsHex}; background-color: rgba({role.ColorAsRgb}, 0.1); font-weight: 400;\"";
+
                     return $"<span class=\"mention\" {style}>@{HtmlEncode(role.Name)}</span>";
                 }
             }
@@ -130,7 +134,8 @@ namespace DiscordChatExporter.Core.Rendering.Logic
                 // Make emoji large if it's jumbo
                 var jumboableCssClass = isJumbo ? "emoji--large" : null;
 
-                return $"<img class=\"emoji {jumboableCssClass}\" alt=\"{emojiNode.Name}\" title=\"{emojiNode.Name}\" src=\"{emojiImageUrl}\" />";
+                return
+                    $"<img class=\"emoji {jumboableCssClass}\" alt=\"{emojiNode.Name}\" title=\"{emojiNode.Name}\" src=\"{emojiImageUrl}\" />";
             }
 
             // Link node

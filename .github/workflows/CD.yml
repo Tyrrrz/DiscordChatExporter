@@ -19,10 +19,10 @@ jobs:
         dotnet-version: 3.1.100
 
     - name: Build & publish (CLI)
-      run: dotnet publish DiscordChatExporter.Cli/ -o DiscordChatExporter.Cli/bin/Publish/ -c Release
+      run: dotnet publish DiscordChatExporter.Cli/ -o DiscordChatExporter.Cli/bin/Publish/ --configuration Release
 
     - name: Build & publish (GUI)
-      run: dotnet publish DiscordChatExporter.Gui/ -o DiscordChatExporter.Gui/bin/Publish/ -c Release -r win-x86 --self-contained false
+      run: dotnet publish DiscordChatExporter.Gui/ -o DiscordChatExporter.Gui/bin/Publish/ --configuration Release
 
     - name: Pack (CLI)
       run: Compress-Archive -Path DiscordChatExporter.Cli/bin/Publish/* -DestinationPath DiscordChatExporter.Cli/bin/Publish/Archive.zip -Force

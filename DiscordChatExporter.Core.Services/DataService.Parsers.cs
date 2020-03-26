@@ -21,13 +21,23 @@ namespace DiscordChatExporter.Core.Services
             return new User(id, discriminator, name, avatarHash, isBot);
         }
 
+        private Member ParseMember(JToken json)
+        {
+            var userId = ParseUser(json["user"]!).Id;
+            var nick = json["nick"]?.Value<string>();
+            var roles = json["roles"]!.Select(jt => jt.Value<string>()).ToArray();
+
+            return new Member(userId, nick, roles);
+        }
+
         private Guild ParseGuild(JToken json)
         {
             var id = json["id"]!.Value<string>();
             var name = json["name"]!.Value<string>();
             var iconHash = json["icon"]!.Value<string>();
+            var roles = json["roles"]!.Select(ParseRole).ToList();
 
-            return new Guild(id, name, iconHash);
+            return new Guild(id, name, roles, iconHash);
         }
 
         private Channel ParseChannel(JToken json)
@@ -64,8 +74,10 @@ namespace DiscordChatExporter.Core.Services
         {
             var id = json["id"]!.Value<string>();
             var name = json["name"]!.Value<string>();
+            var color = json["color"]!.Value<int>();
+            var position = json["position"]!.Value<int>();
 
-            return new Role(id, name);
+            return new Role(id, name, Color.FromArgb(color), position);
         }
 
         private Attachment ParseAttachment(JToken json)
@@ -193,7 +205,7 @@ namespace DiscordChatExporter.Core.Services
 
             // Get author
             var author = ParseUser(json["author"]!);
-
+            
             // Get attachments
             var attachments = (json["attachments"] ?? Enumerable.Empty<JToken>()).Select(ParseAttachment).ToArray();
 

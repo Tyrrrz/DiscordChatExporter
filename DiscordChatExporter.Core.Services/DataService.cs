@@ -40,8 +40,12 @@ namespace DiscordChatExporter.Core.Services
                     },
                     (response, timespan, retryCount, context) => Task.CompletedTask);
         }
-
+        
         private async Task<JToken> GetApiResponseAsync(AuthToken token, string route)
+        {
+            return (await GetApiResponseAsync(token, route, true))!;
+        }
+        private async Task<JToken?> GetApiResponseAsync(AuthToken token, string route, bool errorOnFail)
         {
             using var response = await _httpPolicy.ExecuteAsync(async () =>
             {
@@ -56,7 +60,10 @@ namespace DiscordChatExporter.Core.Services
 
             // We throw our own exception here because default one doesn't have status code
             if (!response.IsSuccessStatusCode)
-                throw new HttpErrorStatusCodeException(response.StatusCode, response.ReasonPhrase);
+            {
+                if(errorOnFail) throw new HttpErrorStatusCodeException(response.StatusCode, response.ReasonPhrase);
+                else return null;
+            }
 
             var jsonRaw = await response.Content.ReadAsStringAsync();
             return JToken.Parse(jsonRaw);
@@ -72,6 +79,15 @@ namespace DiscordChatExporter.Core.Services
             var guild = ParseGuild(response);
 
             return guild;
+        }
+
+        public async Task<Member?> GetGuildMemberAsync(AuthToken token, string guildId, string userId)
+        {
+            var response = await GetApiResponseAsync(token, $"guilds/{guildId}/members/{userId}", false);
+            if(response == null) return null;
+            var member = ParseMember(response);
+
+            return member;
         }
 
         public async Task<Channel> GetChannelAsync(AuthToken token, string channelId)
@@ -123,18 +139,6 @@ namespace DiscordChatExporter.Core.Services
             var channels = response.Select(ParseChannel).ToArray();
 
             return channels;
-        }
-
-        public async Task<IReadOnlyList<Role>> GetGuildRolesAsync(AuthToken token, string guildId)
-        {
-            // Special case for direct messages pseudo-guild
-            if (guildId == Guild.DirectMessages.Id)
-                return Array.Empty<Role>();
-
-            var response = await GetApiResponseAsync(token, $"guilds/{guildId}/roles");
-            var roles = response.Select(ParseRole).ToArray();
-
-            return roles;
         }
 
         private async Task<Message> GetLastMessageAsync(AuthToken token, string channelId, DateTimeOffset? before = null)

@@ -75,6 +75,10 @@ namespace DiscordChatExporter.Core.Rendering.Formatters
             scriptObject.Import("FormatMarkdown",
                 new Func<string, string>(m => HtmlRenderingLogic.FormatMarkdown(Context, m)));
 
+            scriptObject.Import("GetUserColor", new Func<Guild, User, string>(Guild.GetUserColor));
+            
+            scriptObject.Import("GetUserNick", new Func<Guild, User, string>(Guild.GetUserNick));
+
             // Push model
             templateContext.PushGlobal(scriptObject);
 

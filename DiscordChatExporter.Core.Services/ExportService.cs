@@ -34,7 +34,7 @@ namespace DiscordChatExporter.Core.Services
             // Create context
             var mentionableUsers = new HashSet<User>(IdBasedEqualityComparer.Instance);
             var mentionableChannels = await _dataService.GetGuildChannelsAsync(token, guild.Id);
-            var mentionableRoles = await _dataService.GetGuildRolesAsync(token, guild.Id);
+            var mentionableRoles = guild.Roles;
 
             var context = new RenderContext
             (
@@ -50,8 +50,21 @@ namespace DiscordChatExporter.Core.Services
             await foreach (var message in _dataService.GetMessagesAsync(token, channel.Id, after, before, progress))
             {
                 // Add encountered users to the list of mentionable users
-                mentionableUsers.Add(message.Author);
-                mentionableUsers.AddRange(message.MentionedUsers);
+                var encounteredUsers = new List<User>();
+                encounteredUsers.Add(message.Author);
+                encounteredUsers.AddRange(message.MentionedUsers);
+
+                mentionableUsers.AddRange(encounteredUsers);
+
+                foreach (User u in encounteredUsers)
+                {
+                    if(!guild.Members.ContainsKey(u.Id))
+                    {
+                        var member = await _dataService.GetGuildMemberAsync(token, guild.Id, u.Id);
+                        guild.Members[u.Id] = member;
+                    }
+                }
+
 
                 // Render message
                 await renderer.RenderMessageAsync(message);

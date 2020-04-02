@@ -16,6 +16,7 @@ namespace DiscordChatExporter.Gui.Services
         private readonly SettingsService _settingsService;
 
         private Version? _updateVersion;
+        private bool _updatePrepared;
         private bool _updaterLaunched;
 
         public UpdateService(SettingsService settingsService)
@@ -40,6 +41,7 @@ namespace DiscordChatExporter.Gui.Services
             try
             {
                 await _updateManager.PrepareUpdateAsync(_updateVersion = version);
+                _updatePrepared = true;
             }
             catch (UpdaterAlreadyLaunchedException)
             {
@@ -56,7 +58,7 @@ namespace DiscordChatExporter.Gui.Services
             if (!_settingsService.IsAutoUpdateEnabled)
                 return;
 
-            if (_updateVersion == null || _updaterLaunched)
+            if (_updateVersion == null || !_updatePrepared || _updaterLaunched)
                 return;
 
             try

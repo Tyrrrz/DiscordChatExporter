@@ -53,6 +53,16 @@
             }
             spoilerTag.classList.remove('hidden');
         });
+
+        // unhiding image spoilers on click
+        document.addEventListener('click', (e) => {
+            var spoilerImage = e.target.closest('.spoiler-image');
+            if (!spoilerImage) {
+                return;
+            }
+            var image = spoilerImage.querySelector('a');
+            spoilerImage.replaceWith(image);
+        });
     </script>
 </head>
 <body>

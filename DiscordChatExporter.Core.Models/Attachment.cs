@@ -20,6 +20,8 @@ namespace DiscordChatExporter.Core.Models
 
         public bool IsImage { get; }
 
+        public bool IsSpoiler { get; }
+
         public FileSize FileSize { get; }
 
         public Attachment(string id, int? width, int? height, string url, string fileName, FileSize fileSize)
@@ -32,6 +34,8 @@ namespace DiscordChatExporter.Core.Models
             FileSize = fileSize;
 
             IsImage = GetIsImage(fileName);
+
+            IsSpoiler = IsImage && FileName.StartsWith("SPOILER_");
         }
 
         public override string ToString() => FileName;

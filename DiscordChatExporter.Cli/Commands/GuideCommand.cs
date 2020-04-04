@@ -44,7 +44,7 @@ namespace DiscordChatExporter.Cli.Commands
             console.Output.WriteLine(" 6. Copy the first long sequence of numbers inside the URL");
             console.Output.WriteLine();
 
-            console.Output.WriteLine("If you still have unanswered questions, check out the wiki:");
+            console.Output.WriteLine("For more information, check out the wiki:");
             console.Output.WriteLine("https://github.com/Tyrrrz/DiscordChatExporter/wiki");
 
             return default;

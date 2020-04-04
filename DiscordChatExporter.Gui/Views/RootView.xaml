@@ -167,6 +167,10 @@
                                 <materialDesign:PackIcon Margin="1,0,0,-3" Kind="Account" />
                             </InlineUIContainer>
                         </TextBlock>
+                        <TextBlock Margin="0,24,0,0" FontSize="14">
+                            <Run Text="For more information, check out the" />
+                            <Hyperlink NavigateUri="https://github.com/Tyrrrz/DiscordChatExporter/wiki" RequestNavigate="Hyperlink_OnRequestNavigate">wiki</Hyperlink><Run Text="." />
+                        </TextBlock>
                     </StackPanel>
 
                     <!--  For bot token  -->
@@ -191,6 +195,10 @@
                             <InlineUIContainer>
                                 <materialDesign:PackIcon Margin="1,0,0,-1" Kind="Robot" />
                             </InlineUIContainer>
+                        </TextBlock>
+                        <TextBlock Margin="0,24,0,0" FontSize="14">
+                            <Run Text="For more information, check out the" />
+                            <Hyperlink NavigateUri="https://github.com/Tyrrrz/DiscordChatExporter/wiki" RequestNavigate="Hyperlink_OnRequestNavigate">wiki</Hyperlink><Run Text="." />
                         </TextBlock>
                     </StackPanel>
                 </Grid>

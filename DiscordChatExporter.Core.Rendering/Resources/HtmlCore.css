@@ -68,7 +68,6 @@ img {
 .spoiler-image {
     margin-top: 0.3em;
     border-radius: 3px;
-    -webkit-box-shadow: 0.5px 0.5px 1px 1px rgba(0,0,0,.1);
     box-shadow: 0.5px 0.5px 1px 1px rgba(0,0,0,.1);
     cursor: pointer;
     overflow: hidden;
@@ -88,18 +87,12 @@ img {
     position: absolute;
     left: 50%;
     top: 50%;
-    -webkit-transform: translate(-50%,-50%);
     transform: translate(-50%,-50%);
     text-transform: uppercase;
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
-    -ms-flex-direction: column;
     flex-direction: column;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
     align-items: center;
     font-weight: 600;
     cursor: pointer;
@@ -108,15 +101,11 @@ img {
     border-radius: 20px;
     letter-spacing: .5px;
     font-size: 15px;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none;
 }
 
 .spoiler-image-wrapper {
     margin-top: -0.3em;
-    -webkit-filter: blur(44px);
     filter: blur(44px);
     pointer-events: none;
 }

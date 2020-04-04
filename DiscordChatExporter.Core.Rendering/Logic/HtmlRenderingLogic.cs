@@ -59,7 +59,7 @@ namespace DiscordChatExporter.Core.Rendering.Logic
 
                 // Spoiler
                 if (formattedNode.Formatting == TextFormatting.Spoiler)
-                    return $"<span class=\"spoiler\">{innerHtml}</span>";
+                    return $"<span class=\"spoiler hidden\"><span class=\"spoilerText\">{innerHtml}</span></span>";
 
                 // Quote
                 if (formattedNode.Formatting == TextFormatting.Quote)

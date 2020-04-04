@@ -57,6 +57,14 @@ img {
     border-radius: 3px;
 }
 
+.spoiler.hidden {
+    cursor: pointer;
+}
+
+.spoiler.hidden .spoilerText {
+    opacity: 0;
+}
+
 .quote {
     margin: 0.5em 0;
     padding-left: 0.6em;

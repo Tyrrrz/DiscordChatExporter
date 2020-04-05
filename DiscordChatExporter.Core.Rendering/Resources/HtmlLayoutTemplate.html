@@ -47,11 +47,11 @@
 
         // unhiding text spoilers on click
         document.addEventListener('click', (e) => {
-            var spoilerTag = e.target.closest('.spoiler.hidden');
+            var spoilerTag = e.target.closest('.spoiler--hidden');
             if (!spoilerTag) {
                 return;
             }
-            spoilerTag.classList.remove('hidden');
+            spoilerTag.classList.remove('spoiler--hidden');
         });
 
         // unhiding image spoilers on click

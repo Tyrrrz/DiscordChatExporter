@@ -57,11 +57,11 @@ img {
     border-radius: 3px;
 }
 
-.spoiler.hidden {
+.spoiler--hidden {
     cursor: pointer;
 }
 
-.spoiler.hidden .spoilerText {
+.spoiler--hidden .spoiler-text {
     opacity: 0;
 }
 

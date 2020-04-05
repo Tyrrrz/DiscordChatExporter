@@ -35,7 +35,7 @@ namespace DiscordChatExporter.Core.Models
 
             IsImage = GetIsImage(fileName);
 
-            IsSpoiler = IsImage && FileName.StartsWith("SPOILER_");
+            IsSpoiler = IsImage && FileName.StartsWith("SPOILER_", StringComparison.Ordinal);
         }
 
         public override string ToString() => FileName;

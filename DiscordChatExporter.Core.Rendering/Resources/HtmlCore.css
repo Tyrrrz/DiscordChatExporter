@@ -57,6 +57,59 @@ img {
     border-radius: 3px;
 }
 
+.spoiler--hidden {
+    cursor: pointer;
+}
+
+.spoiler--hidden .spoiler-text {
+    opacity: 0;
+}
+
+.spoiler-image {
+    margin-top: 0.3em;
+    border-radius: 3px;
+    box-shadow: 0.5px 0.5px 1px 1px rgba(0,0,0,.1);
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    width: fit-content;
+}
+
+.spoiler-image:hover .spoiler-warning {
+    color: #fff;
+    background-color: rgba(0,0,0,.9);
+}
+
+.spoiler-warning {
+    color: #dcddde;
+    background-color: rgba(0,0,0,.6);
+
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    text-transform: uppercase;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    flex-direction: column;
+    align-items: center;
+    font-weight: 600;
+    cursor: pointer;
+    z-index: 1;
+    padding: 8px 12px;
+    border-radius: 20px;
+    letter-spacing: .5px;
+    font-size: 15px;
+    user-select: none;
+}
+
+.spoiler-image-wrapper {
+    margin-top: -0.3em;
+    filter: blur(44px);
+    pointer-events: none;
+}
+
 .quote {
     margin: 0.5em 0;
     padding-left: 0.6em;
@@ -197,7 +250,6 @@ img {
 
 .chatlog__attachment-thumbnail {
     margin-top: 0.3em;
-    max-width: 50%;
     max-height: 500px;
     border-radius: 3px;
 }

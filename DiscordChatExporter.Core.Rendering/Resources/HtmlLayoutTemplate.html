@@ -44,6 +44,25 @@
                 }, 2000);
             }
         }
+
+        // unhiding text spoilers on click
+        document.addEventListener('click', (e) => {
+            var spoilerTag = e.target.closest('.spoiler--hidden');
+            if (!spoilerTag) {
+                return;
+            }
+            spoilerTag.classList.remove('spoiler--hidden');
+        });
+
+        // unhiding image spoilers on click
+        document.addEventListener('click', (e) => {
+            var spoilerImage = e.target.closest('.spoiler-image');
+            if (!spoilerImage) {
+                return;
+            }
+            var image = spoilerImage.querySelector('a');
+            spoilerImage.replaceWith(image);
+        });
     </script>
 </head>
 <body>

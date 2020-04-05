@@ -14,6 +14,14 @@ a {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
+.spoiler--hidden {
+    background-color: #b9bbbe;
+}
+
+.spoiler--hidden:hover {
+    background-color: rgba(185,187,190,.8);
+}
+
 .quote {
     border-color: #c7ccd1;
 }

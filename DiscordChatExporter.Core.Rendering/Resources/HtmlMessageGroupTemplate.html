@@ -34,24 +34,23 @@
                 <div class="chatlog__attachment">
                     {{ # Spoiler image }}
                     {{~ if attachment.IsSpoiler ~}}
+                    <div class="spoiler spoiler--hidden" onclick="showSpoiler(event, this)">
                         <div class="spoiler-image">
-                            <div class="spoiler-warning">Spoiler</div>
-                            <div class="spoiler-image-wrapper">
-                                <a href="{{ attachment.Url }}">
-                                    <img class="chatlog__attachment-thumbnail" src="{{ attachment.Url }}" alt="Attachment" />
-                                </a>
-                            </div>
-                        </div>
-                    {{~ else ~}}
-                        <a href="{{ attachment.Url }}">
-                            {{ # Non-spoiler image }}
-                            {{~ if attachment.IsImage ~}}
+                            <a href="{{ attachment.Url }}">
                                 <img class="chatlog__attachment-thumbnail" src="{{ attachment.Url }}" alt="Attachment" />
-                            {{~ # Non-image ~}}
-                            {{~ else ~}}
-                                Attachment: {{ attachment.FileName }} ({{ attachment.FileSize }})
-                            {{~ end ~}}
-                        </a>
+                            </a>
+                        </div>
+                    </div>
+                    {{~ else ~}}
+                    <a href="{{ attachment.Url }}">
+                        {{ # Non-spoiler image }}
+                        {{~ if attachment.IsImage ~}}
+                            <img class="chatlog__attachment-thumbnail" src="{{ attachment.Url }}" alt="Attachment" />
+                        {{~ # Non-image ~}}
+                        {{~ else ~}}
+                            Attachment: {{ attachment.FileName }} ({{ attachment.FileSize }})
+                        {{~ end ~}}
+                    </a>
                     {{~ end ~}}
                 </div>
             {{~ end ~}}

@@ -59,7 +59,7 @@ namespace DiscordChatExporter.Core.Rendering.Logic
 
                 // Spoiler
                 if (formattedNode.Formatting == TextFormatting.Spoiler)
-                    return $"<span class=\"spoiler spoiler--hidden\"><span class=\"spoiler-text\">{innerHtml}</span></span>";
+                    return $"<span class=\"spoiler spoiler--hidden\" onclick=\"showSpoiler(event, this)\"><span class=\"spoiler-text\">{innerHtml}</span></span>";
 
                 // Quote
                 if (formattedNode.Formatting == TextFormatting.Quote)
@@ -117,7 +117,8 @@ namespace DiscordChatExporter.Core.Rendering.Logic
                 {
                     var role = context.MentionableRoles.FirstOrDefault(r => r.Id == mentionNode.Id) ??
                                Role.CreateDeletedRole(mentionNode.Id);
-                    string style = "";
+
+                    var style = "";
                     if (role.Color != Color.Black)
                         style = $"style=\"color: {role.ColorAsHex}; background-color: rgba({role.ColorAsRgb}, 0.1); font-weight: 400;\"";
 

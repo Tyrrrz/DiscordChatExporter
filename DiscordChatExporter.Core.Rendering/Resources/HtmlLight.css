@@ -10,16 +10,16 @@ a {
     color: #00b0f4;
 }
 
-.spoiler {
+.spoiler-text {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
-.spoiler--hidden {
+.spoiler--hidden .spoiler-text {
     background-color: #b9bbbe;
 }
 
-.spoiler--hidden:hover {
-    background-color: rgba(185,187,190,.8);
+.spoiler--hidden:hover .spoiler-text {
+    background-color: rgba(185, 187, 190, 0.8);
 }
 
 .quote {

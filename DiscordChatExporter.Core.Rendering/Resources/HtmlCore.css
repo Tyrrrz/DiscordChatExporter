@@ -69,6 +69,10 @@ img {
     color: rgba(0, 0, 0, 0);
 }
 
+.spoiler--hidden .spoiler-text::selection {
+    color: rgba(0, 0, 0, 0);
+}
+
 .spoiler-image {
     position: relative;
     overflow: hidden;
@@ -76,7 +80,7 @@ img {
 }
 
 .spoiler--hidden .spoiler-image {
-    box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .spoiler--hidden .spoiler-image img {
@@ -246,7 +250,7 @@ img {
 }
 
 .chatlog__attachment-thumbnail {
-    display: block;
+    vertical-align: top;
     max-width: 45vw;
     max-height: 500px;
     border-radius: 3px;

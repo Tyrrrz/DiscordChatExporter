@@ -70,7 +70,7 @@ namespace DiscordChatExporter.Core.Rendering.Formatters
 
             // Functions
             scriptObject.Import("FormatDate",
-                new Func<DateTimeOffset, string>(d => SharedRenderingLogic.FormatDate(d, Context.DateFormat)));
+                new Func<DateTimeOffset, string>(d => SharedRenderingLogic.FormatDate(d, Context.DateFormat, Context.IsUseUtcEnabled)));
 
             scriptObject.Import("FormatMarkdown",
                 new Func<string, string>(m => HtmlRenderingLogic.FormatMarkdown(Context, m)));

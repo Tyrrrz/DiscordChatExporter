@@ -26,10 +26,10 @@ namespace DiscordChatExporter.Core.Rendering.Logic
                 buffer.AppendLine($"Topic: {context.Channel.Topic}");
 
             if (context.After != null)
-                buffer.AppendLine($"After: {FormatDate(context.After.Value, context.DateFormat)}");
+                buffer.AppendLine($"After: {FormatDate(context.After.Value, context.DateFormat, context.IsUseUtcEnabled)}");
 
             if (context.Before != null)
-                buffer.AppendLine($"Before: {FormatDate(context.Before.Value, context.DateFormat)}");
+                buffer.AppendLine($"Before: {FormatDate(context.Before.Value, context.DateFormat, context.IsUseUtcEnabled)}");
 
             buffer.Append('=', 62).AppendLine();
 
@@ -111,7 +111,7 @@ namespace DiscordChatExporter.Core.Rendering.Logic
 
             // Timestamp & author
             buffer
-                .Append($"[{FormatDate(message.Timestamp, context.DateFormat)}]")
+                .Append($"[{FormatDate(message.Timestamp, context.DateFormat, context.IsUseUtcEnabled)}]")
                 .Append(' ')
                 .Append($"{message.Author.FullName}");
 

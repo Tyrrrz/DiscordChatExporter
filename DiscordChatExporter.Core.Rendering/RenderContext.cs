@@ -16,13 +16,15 @@ namespace DiscordChatExporter.Core.Rendering
 
         public string DateFormat { get; }
 
+        public bool IsUseUtcEnabled { get; }
+
         public IReadOnlyCollection<User> MentionableUsers { get; }
 
         public IReadOnlyCollection<Channel> MentionableChannels { get; }
 
         public IReadOnlyCollection<Role> MentionableRoles { get; }
 
-        public RenderContext(Guild guild, Channel channel, DateTimeOffset? after, DateTimeOffset? before, string dateFormat,
+        public RenderContext(Guild guild, Channel channel, DateTimeOffset? after, DateTimeOffset? before, string dateFormat, bool isUseUtcEnabled,
             IReadOnlyCollection<User> mentionableUsers, IReadOnlyCollection<Channel> mentionableChannels, IReadOnlyCollection<Role> mentionableRoles)
         {
             Guild = guild;
@@ -30,6 +32,7 @@ namespace DiscordChatExporter.Core.Rendering
             After = after;
             Before = before;
             DateFormat = dateFormat;
+            IsUseUtcEnabled = isUseUtcEnabled;
             MentionableUsers = mentionableUsers;
             MentionableChannels = mentionableChannels;
             MentionableRoles = mentionableRoles;

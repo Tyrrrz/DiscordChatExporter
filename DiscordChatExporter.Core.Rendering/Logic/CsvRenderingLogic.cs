@@ -28,7 +28,7 @@ namespace DiscordChatExporter.Core.Rendering.Logic
             buffer
                 .Append(EncodeValue(message.Author.Id)).Append(',')
                 .Append(EncodeValue(message.Author.FullName)).Append(',')
-                .Append(EncodeValue(FormatDate(message.Timestamp, context.DateFormat))).Append(',')
+                .Append(EncodeValue(FormatDate(message.Timestamp, context.DateFormat, context.IsUseUtcEnabled))).Append(',')
                 .Append(EncodeValue(FormatMarkdown(context, message.Content ?? ""))).Append(',')
                 .Append(EncodeValue(message.Attachments.Select(a => a.Url).JoinToString(","))).Append(',')
                 .Append(EncodeValue(message.Reactions.Select(r => $"{r.Emoji.Name} ({r.Count})").JoinToString(",")));

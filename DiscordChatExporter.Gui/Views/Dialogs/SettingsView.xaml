@@ -26,6 +26,21 @@
             Text="{Binding DateFormat}"
             ToolTip="Format used when rendering dates (refer to .NET date format)" />
 
+        <!--  UTC / local time  -->
+        <DockPanel
+            Background="Transparent"
+            LastChildFill="False"
+            ToolTip="Use UTC instead of local time for message timestamps">
+            <TextBlock
+                Margin="16,8"
+                DockPanel.Dock="Left"
+                Text="Use UTC instead of local time" />
+            <ToggleButton
+                Margin="16,8"
+                DockPanel.Dock="Right"
+                IsChecked="{Binding IsUseUtcEnabled}" />
+        </DockPanel>
+
         <!--  Auto-updates  -->
         <DockPanel
             Background="Transparent"

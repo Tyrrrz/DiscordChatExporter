@@ -38,7 +38,7 @@ namespace DiscordChatExporter.Core.Services
 
             var context = new RenderContext
             (
-                guild, channel, after, before, _settingsService.DateFormat,
+                guild, channel, after, before, _settingsService.DateFormat, _settingsService.IsUseUtcEnabled,
                 mentionableUsers, mentionableChannels, mentionableRoles
             );
 

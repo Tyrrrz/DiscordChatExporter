@@ -14,6 +14,12 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             set => _settingsService.DateFormat = value;
         }
 
+        public bool IsUseUtcEnabled
+        {
+            get => _settingsService.IsUseUtcEnabled;
+            set => _settingsService.IsUseUtcEnabled = value;
+        }
+
         public bool IsAutoUpdateEnabled
         {
             get => _settingsService.IsAutoUpdateEnabled;

@@ -10,10 +10,12 @@ namespace DiscordChatExporter.Cli.Commands
     {
         protected DataService DataService { get; }
 
-        [CommandOption("token", 't', IsRequired = true, Description = "Authorization token.")]
+        [CommandOption("token", 't', IsRequired = true, EnvironmentVariableName = "DISCORD_TOKEN",
+            Description = "Authorization token.")]
         public string TokenValue { get; set; } = "";
 
-        [CommandOption("bot", 'b', Description = "Whether this authorization token belongs to a bot.")]
+        [CommandOption("bot", 'b', EnvironmentVariableName = "DISCORD_TOKEN_BOT",
+            Description = "Whether this authorization token belongs to a bot.")]
         public bool IsBotToken { get; set; }
 
         protected AuthToken Token => new AuthToken(IsBotToken ? AuthTokenType.Bot : AuthTokenType.User, TokenValue);

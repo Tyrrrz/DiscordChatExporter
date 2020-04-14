@@ -59,8 +59,18 @@ namespace DiscordChatExporter.Core.Markdown
         // Capture any character until the end of the line
         // Opening 'greater than' character must be followed by whitespace
         private static readonly IMatcher<Node> SingleLineQuoteNodeMatcher = new RegexMatcher<Node>(
-            new Regex("^>\\s(.+)\r?\n?", DefaultRegexOptions),
+            new Regex("^>\\s(.+\n?)", DefaultRegexOptions),
             (p, m) => new FormattedNode(TextFormatting.Quote, Parse(p.Slice(m.Groups[1]))));
+
+        // Repeatedly capture any character until the end of the line
+        // This one is tricky as it ends up producing multiple separate captures
+        private static readonly IMatcher<Node> RepeatedSingleLineQuoteNodeMatcher = new RegexMatcher<Node>(
+            new Regex("(?:^>\\s(.+\n?)){2,}", DefaultRegexOptions),
+            (p, m) =>
+            {
+                var children = m.Groups[1].Captures.Select(c => c.Value).SelectMany(Parse).ToArray();
+                return new FormattedNode(TextFormatting.Quote, children);
+            });
 
         // Capture any character until the end of the input
         // Opening 'greater than' characters must be followed by whitespace
@@ -188,6 +198,7 @@ namespace DiscordChatExporter.Core.Markdown
             StrikethroughFormattedNodeMatcher,
             SpoilerFormattedNodeMatcher,
             MultiLineQuoteNodeMatcher,
+            RepeatedSingleLineQuoteNodeMatcher,
             SingleLineQuoteNodeMatcher,
 
             // Code blocks
@@ -208,7 +219,8 @@ namespace DiscordChatExporter.Core.Markdown
 
             // Emoji
             StandardEmojiNodeMatcher,
-            CustomEmojiNodeMatcher);
+            CustomEmojiNodeMatcher
+        );
 
         // Minimal set of matchers for non-multimedia formats (e.g. plain text)
         private static readonly IMatcher<Node> MinimalAggregateNodeMatcher = new AggregateMatcher<Node>(
@@ -220,7 +232,8 @@ namespace DiscordChatExporter.Core.Markdown
             RoleMentionNodeMatcher,
 
             // Emoji
-            CustomEmojiNodeMatcher);
+            CustomEmojiNodeMatcher
+        );
 
         private static IReadOnlyList<Node> Parse(StringPart stringPart, IMatcher<Node> matcher) =>
             matcher.MatchAll(stringPart, p => new TextNode(p.ToString())).Select(r => r.Value).ToArray();

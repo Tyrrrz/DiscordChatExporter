@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using DiscordChatExporter.Core.Markdown.Ast;
@@ -63,13 +64,13 @@ namespace DiscordChatExporter.Core.Markdown
             (p, m) => new FormattedNode(TextFormatting.Quote, Parse(p.Slice(m.Groups[1]))));
 
         // Repeatedly capture any character until the end of the line
-        // This one is tricky as it ends up producing multiple separate captures
+        // This one is tricky as it ends up producing multiple separate captures which need to be joined
         private static readonly IMatcher<Node> RepeatedSingleLineQuoteNodeMatcher = new RegexMatcher<Node>(
             new Regex("(?:^>\\s(.+\n?)){2,}", DefaultRegexOptions),
             (p, m) =>
             {
-                var children = m.Groups[1].Captures.Select(c => c.Value).SelectMany(Parse).ToArray();
-                return new FormattedNode(TextFormatting.Quote, children);
+                var content = string.Concat(m.Groups[1].Captures.Select(c => c.Value));
+                return new FormattedNode(TextFormatting.Quote, Parse(content));
             });
 
         // Capture any character until the end of the input

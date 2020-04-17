@@ -15,7 +15,11 @@ namespace DiscordChatExporter.Core.Rendering.Logic
     {
         public static bool CanBeGrouped(Message message1, Message message2)
         {
-            if (message1.Author.Id != message2.Author.Id)
+            if (!string.Equals(message1.Author.Id, message2.Author.Id, StringComparison.Ordinal))
+                return false;
+
+            // Bots can post message under different usernames, so need to check this too
+            if (!string.Equals(message1.Author.FullName, message2.Author.FullName, StringComparison.Ordinal))
                 return false;
 
             if ((message2.Timestamp - message1.Timestamp).Duration().TotalMinutes > 7)

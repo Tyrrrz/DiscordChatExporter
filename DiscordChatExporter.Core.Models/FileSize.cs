@@ -4,79 +4,58 @@ namespace DiscordChatExporter.Core.Models
 {
     // Loosely based on https://github.com/omar/ByteSize (MIT license)
 
-    public struct FileSize
+    public readonly struct FileSize
     {
-        public const long BytesInKiloByte = 1024;
-        public const long BytesInMegaByte = 1024 * BytesInKiloByte;
-        public const long BytesInGigaByte = 1024 * BytesInMegaByte;
-        public const long BytesInTeraByte = 1024 * BytesInGigaByte;
-        public const long BytesInPetaByte = 1024 * BytesInTeraByte;
+        public long TotalBytes { get; }
 
-        public const string ByteSymbol = "B";
-        public const string KiloByteSymbol = "KB";
-        public const string MegaByteSymbol = "MB";
-        public const string GigaByteSymbol = "GB";
-        public const string TeraByteSymbol = "TB";
-        public const string PetaByteSymbol = "PB";
+        public double TotalKiloBytes => TotalBytes / 1024.0;
+        public double TotalMegaBytes => TotalKiloBytes / 1024.0;
+        public double TotalGigaBytes => TotalMegaBytes / 1024.0;
+        public double TotalTeraBytes => TotalGigaBytes / 1024.0;
+        public double TotalPetaBytes => TotalTeraBytes / 1024.0;
 
-        public double Bytes { get; }
-        public double KiloBytes => Bytes / BytesInKiloByte;
-        public double MegaBytes => Bytes / BytesInMegaByte;
-        public double GigaBytes => Bytes / BytesInGigaByte;
-        public double TeraBytes => Bytes / BytesInTeraByte;
-        public double PetaBytes => Bytes / BytesInPetaByte;
+        public FileSize(long bytes) => TotalBytes = bytes;
 
-        public string LargestWholeNumberSymbol
+        private double GetLargestWholeNumberValue()
         {
-            get
-            {
-                if (Math.Abs(PetaBytes) >= 1)
-                    return PetaByteSymbol;
+            if (Math.Abs(TotalPetaBytes) >= 1)
+                return TotalPetaBytes;
 
-                if (Math.Abs(TeraBytes) >= 1)
-                    return TeraByteSymbol;
+            if (Math.Abs(TotalTeraBytes) >= 1)
+                return TotalTeraBytes;
 
-                if (Math.Abs(GigaBytes) >= 1)
-                    return GigaByteSymbol;
+            if (Math.Abs(TotalGigaBytes) >= 1)
+                return TotalGigaBytes;
 
-                if (Math.Abs(MegaBytes) >= 1)
-                    return MegaByteSymbol;
+            if (Math.Abs(TotalMegaBytes) >= 1)
+                return TotalMegaBytes;
 
-                if (Math.Abs(KiloBytes) >= 1)
-                    return KiloByteSymbol;
+            if (Math.Abs(TotalKiloBytes) >= 1)
+                return TotalKiloBytes;
 
-                return ByteSymbol;
-            }
+            return TotalBytes;
         }
 
-        public double LargestWholeNumberValue
+        private string GetLargestWholeNumberSymbol()
         {
-            get
-            {
-                if (Math.Abs(PetaBytes) >= 1)
-                    return PetaBytes;
+            if (Math.Abs(TotalPetaBytes) >= 1)
+                return "PB";
 
-                if (Math.Abs(TeraBytes) >= 1)
-                    return TeraBytes;
+            if (Math.Abs(TotalTeraBytes) >= 1)
+                return "TB";
 
-                if (Math.Abs(GigaBytes) >= 1)
-                    return GigaBytes;
+            if (Math.Abs(TotalGigaBytes) >= 1)
+                return "GB";
 
-                if (Math.Abs(MegaBytes) >= 1)
-                    return MegaBytes;
+            if (Math.Abs(TotalMegaBytes) >= 1)
+                return "MB";
 
-                if (Math.Abs(KiloBytes) >= 1)
-                    return KiloBytes;
+            if (Math.Abs(TotalKiloBytes) >= 1)
+                return "KB";
 
-                return Bytes;
-            }
+            return "B";
         }
 
-        public FileSize(double bytes)
-        {
-            Bytes = bytes;
-        }
-
-        public override string ToString() => $"{LargestWholeNumberValue:0.##} {LargestWholeNumberSymbol}";
+        public override string ToString() => $"{GetLargestWholeNumberValue():0.##} {GetLargestWholeNumberSymbol()}";
     }
 }

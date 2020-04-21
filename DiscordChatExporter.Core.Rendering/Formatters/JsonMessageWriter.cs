@@ -88,7 +88,7 @@ namespace DiscordChatExporter.Core.Rendering.Formatters
                 _writer.WriteString("id", attachment.Id);
                 _writer.WriteString("url", attachment.Url);
                 _writer.WriteString("fileName", attachment.FileName);
-                _writer.WriteNumber("fileSizeBytes", (long) attachment.FileSize.Bytes);
+                _writer.WriteNumber("fileSizeBytes", attachment.FileSize.TotalBytes);
 
                 _writer.WriteEndObject();
             }

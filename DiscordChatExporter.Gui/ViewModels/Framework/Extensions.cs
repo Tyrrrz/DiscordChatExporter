@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using DiscordChatExporter.Core.Models;
+using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Gui.ViewModels.Components;
 using DiscordChatExporter.Gui.ViewModels.Dialogs;
 

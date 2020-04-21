@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../DiscordChatExporter.props" />
+
+  <ItemGroup>
+    <PackageReference Include="Polly" Version="7.2.0" />
+    <PackageReference Include="Scriban" Version="2.1.1" />
+    <PackageReference Include="Tyrrrz.Extensions" Version="1.6.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Exporting\Resources\HtmlCore.css" />
+    <EmbeddedResource Include="Exporting\Resources\HtmlDark.css" />
+    <EmbeddedResource Include="Exporting\Resources\HtmlLayoutTemplate.html" />
+    <EmbeddedResource Include="Exporting\Resources\HtmlLight.css" />
+    <EmbeddedResource Include="Exporting\Resources\HtmlMessageGroupTemplate.html" />
+  </ItemGroup>
+
+</Project>

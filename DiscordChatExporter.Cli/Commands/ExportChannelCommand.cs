@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using CliFx;
 using CliFx.Attributes;
-using DiscordChatExporter.Core.Services;
+using DiscordChatExporter.Cli.Commands.Base;
 
 namespace DiscordChatExporter.Cli.Commands
 {
@@ -10,11 +10,6 @@ namespace DiscordChatExporter.Cli.Commands
     {
         [CommandOption("channel", 'c', IsRequired = true, Description = "Channel ID.")]
         public string ChannelId { get; set; } = "";
-
-        public ExportChannelCommand(SettingsService settingsService, DataService dataService, ExportService exportService)
-            : base(settingsService, dataService, exportService)
-        {
-        }
 
         public override async ValueTask ExecuteAsync(IConsole console) => await ExportAsync(console, ChannelId);
     }

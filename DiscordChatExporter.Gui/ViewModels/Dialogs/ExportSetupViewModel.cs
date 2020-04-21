@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DiscordChatExporter.Core.Models;
-using DiscordChatExporter.Core.Services;
-using DiscordChatExporter.Core.Services.Logic;
+using DiscordChatExporter.Domain.Exporting;
+using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.ViewModels.Components;
 using DiscordChatExporter.Gui.ViewModels.Framework;
 
@@ -62,7 +61,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
                 var channel = Channels.Single();
 
                 // Generate default file name
-                var defaultFileName = ExportLogic.GetDefaultExportFileName(SelectedFormat, Guild!, channel!, After, Before);
+                var defaultFileName = Exporter.GetDefaultExportFileName(SelectedFormat, Guild!, channel!, After, Before);
 
                 // Generate filter
                 var ext = SelectedFormat.GetFileExtension();

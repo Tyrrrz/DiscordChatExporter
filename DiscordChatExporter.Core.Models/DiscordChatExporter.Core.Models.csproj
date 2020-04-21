@@ -1,8 +1,0 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="../DiscordChatExporter.props" />
-
-  <ItemGroup>
-    <PackageReference Include="Tyrrrz.Extensions" Version="1.6.5" />
-  </ItemGroup>
-
-</Project>

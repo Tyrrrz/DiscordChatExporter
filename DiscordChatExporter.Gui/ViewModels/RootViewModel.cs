@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using DiscordChatExporter.Core.Models;
-using DiscordChatExporter.Core.Models.Exceptions;
-using DiscordChatExporter.Core.Services;
-using DiscordChatExporter.Core.Services.Exceptions;
+using DiscordChatExporter.Domain.Discord;
+using DiscordChatExporter.Domain.Discord.Models;
+using DiscordChatExporter.Domain.Exceptions;
+using DiscordChatExporter.Domain.Exporting;
+using DiscordChatExporter.Domain.Utilities;
 using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.ViewModels.Components;
 using DiscordChatExporter.Gui.ViewModels.Framework;
@@ -24,8 +24,6 @@ namespace DiscordChatExporter.Gui.ViewModels
         private readonly DialogManager _dialogManager;
         private readonly SettingsService _settingsService;
         private readonly UpdateService _updateService;
-        private readonly DataService _dataService;
-        private readonly ExportService _exportService;
 
         public ISnackbarMessageQueue Notifications { get; } = new SnackbarMessageQueue(TimeSpan.FromSeconds(5));
 
@@ -45,16 +43,16 @@ namespace DiscordChatExporter.Gui.ViewModels
 
         public IReadOnlyList<ChannelViewModel>? SelectedChannels { get; set; }
 
-        public RootViewModel(IViewModelFactory viewModelFactory, DialogManager dialogManager,
-            SettingsService settingsService, UpdateService updateService, DataService dataService,
-            ExportService exportService)
+        public RootViewModel(
+            IViewModelFactory viewModelFactory,
+            DialogManager dialogManager,
+            SettingsService settingsService,
+            UpdateService updateService)
         {
             _viewModelFactory = viewModelFactory;
             _dialogManager = dialogManager;
             _settingsService = settingsService;
             _updateService = updateService;
-            _dataService = dataService;
-            _exportService = exportService;
 
             // Set title
             DisplayName = $"{App.Name} v{App.VersionString}";
@@ -66,6 +64,10 @@ namespace DiscordChatExporter.Gui.ViewModels
             ProgressManager.Bind(o => o.Progress,
                 (sender, args) => IsProgressIndeterminate = ProgressManager.IsActive && ProgressManager.Progress.IsEither(0, 1));
         }
+
+        private DiscordClient GetDiscordClient(AuthToken token) => new DiscordClient(token);
+
+        private Exporter GetExporter(AuthToken token) => new Exporter(GetDiscordClient(token));
 
         private async Task HandleAutoUpdateAsync()
         {
@@ -160,7 +162,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                 // Get direct messages
                 {
                     var guild = Guild.DirectMessages;
-                    var channels = await _dataService.GetDirectMessageChannelsAsync(token);
+                    var channels = await GetDiscordClient(token).GetDirectMessageChannelsAsync();
 
                     // Create channel view models
                     var channelViewModels = new List<ChannelViewModel>();
@@ -187,12 +189,12 @@ namespace DiscordChatExporter.Gui.ViewModels
                 }
 
                 // Get guilds
-                var guilds = await _dataService.GetUserGuildsAsync(token);
+                var guilds = await GetDiscordClient(token).GetUserGuildsAsync();
                 foreach (var guild in guilds)
                 {
-                    var channels = await _dataService.GetGuildChannelsAsync(token, guild.Id);
+                    var channels = await GetDiscordClient(token).GetGuildChannelsAsync(guild.Id);
                     var categoryChannels = channels.Where(c => c.Type == ChannelType.GuildCategory).ToArray();
-                    var exportableChannels = channels.Where(c => c.Type.IsExportable()).ToArray();
+                    var exportableChannels = channels.Where(c => c.IsTextChannel).ToArray();
 
                     // Create channel view models
                     var channelViewModels = new List<ChannelViewModel>();
@@ -224,15 +226,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                 // Pre-select first guild
                 SelectedGuild = AvailableGuilds.FirstOrDefault();
             }
-            catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                Notifications.Enqueue("Unauthorized – make sure the token is valid");
-            }
-            catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
-            {
-                Notifications.Enqueue("Forbidden – account may be locked by 2FA");
-            }
-            catch (DomainException ex)
+            catch (DiscordChatExporterException ex) when (!ex.IsCritical)
             {
                 Notifications.Enqueue(ex.Message);
             }
@@ -261,40 +255,27 @@ namespace DiscordChatExporter.Gui.ViewModels
 
             // Export channels
             var successfulExportCount = 0;
-            using var semaphore = new SemaphoreSlim(_settingsService.ParallelLimit.ClampMin(1));
-
-            await Task.WhenAll(dialog.Channels.Select(async (channel, i) =>
+            await dialog.Channels.Zip(operations).ParallelForEachAsync(async tuple =>
             {
-                var operation = operations[i];
-
-                await semaphore.WaitAsync();
+                var (channel, operation) = tuple;
 
                 try
                 {
-                    await _exportService.ExportChatLogAsync(token, dialog.Guild!, channel!,
-                        dialog.OutputPath!, dialog.SelectedFormat, dialog.PartitionLimit,
-                        dialog.After, dialog.Before, operation);
+                    await GetExporter(token).ExportChatLogAsync(dialog.Guild!, channel!,
+                        dialog.OutputPath!, dialog.SelectedFormat, _settingsService.DateFormat,
+                        dialog.PartitionLimit, dialog.After, dialog.Before, operation);
 
-                    successfulExportCount++;
+                    Interlocked.Increment(ref successfulExportCount);
                 }
-                catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
-                {
-                    Notifications.Enqueue($"You don't have access to channel [{channel.Model!.Name}]");
-                }
-                catch (HttpErrorStatusCodeException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
-                {
-                    Notifications.Enqueue($"Channel [{channel.Model!.Name}] doesn't exist");
-                }
-                catch (DomainException ex)
+                catch (DiscordChatExporterException ex) when (!ex.IsCritical)
                 {
                     Notifications.Enqueue(ex.Message);
                 }
                 finally
                 {
                     operation.Dispose();
-                    semaphore.Release();
                 }
-            }));
+            }, _settingsService.ParallelLimit.ClampMin(1));
 
             // Notify of overall completion
             if (successfulExportCount > 0)

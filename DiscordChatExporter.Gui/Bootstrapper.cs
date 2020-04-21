@@ -1,4 +1,4 @@
-﻿using DiscordChatExporter.Core.Services;
+﻿using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.ViewModels;
 using DiscordChatExporter.Gui.ViewModels.Framework;
 using Stylet;
@@ -16,9 +16,6 @@ namespace DiscordChatExporter.Gui
         protected override void ConfigureIoC(IStyletIoCBuilder builder)
         {
             base.ConfigureIoC(builder);
-
-            // Autobind the .Services assembly
-            builder.Autobind(typeof(DataService).Assembly);
 
             // Bind settings as singleton
             builder.Bind<SettingsService>().ToSelf().InSingletonScope();

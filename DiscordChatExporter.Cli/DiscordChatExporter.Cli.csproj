@@ -9,13 +9,11 @@
   <ItemGroup>
     <PackageReference Include="CliFx" Version="1.0.0" />
     <PackageReference Include="Gress" Version="1.1.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.1" />
     <PackageReference Include="Tyrrrz.Extensions" Version="1.6.5" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DiscordChatExporter.Core.Models\DiscordChatExporter.Core.Models.csproj" />
-    <ProjectReference Include="..\DiscordChatExporter.Core.Services\DiscordChatExporter.Core.Services.csproj" />
+    <ProjectReference Include="..\DiscordChatExporter.Domain\DiscordChatExporter.Domain.csproj" />
   </ItemGroup>
 
 </Project>

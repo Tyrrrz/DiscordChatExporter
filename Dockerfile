@@ -4,11 +4,7 @@ WORKDIR /src
 
 COPY favicon.ico ./
 COPY DiscordChatExporter.props ./
-
-COPY DiscordChatExporter.Core.Markdown DiscordChatExporter.Core.Markdown
-COPY DiscordChatExporter.Core.Models DiscordChatExporter.Core.Models
-COPY DiscordChatExporter.Core.Rendering DiscordChatExporter.Core.Rendering
-COPY DiscordChatExporter.Core.Services DiscordChatExporter.Core.Services
+COPY DiscordChatExporter.Domain DiscordChatExporter.Domain
 COPY DiscordChatExporter.Cli DiscordChatExporter.Cli
 
 RUN dotnet publish DiscordChatExporter.Cli -o DiscordChatExporter.Cli/publish -c Release

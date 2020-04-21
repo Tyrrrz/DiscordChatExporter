@@ -1,4 +1,4 @@
-﻿using DiscordChatExporter.Core.Models;
+﻿using DiscordChatExporter.Domain.Discord.Models;
 using Stylet;
 
 namespace DiscordChatExporter.Gui.ViewModels.Components

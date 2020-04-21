@@ -1,4 +1,4 @@
-﻿using DiscordChatExporter.Core.Services;
+﻿using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.ViewModels.Framework;
 using Tyrrrz.Extensions;
 

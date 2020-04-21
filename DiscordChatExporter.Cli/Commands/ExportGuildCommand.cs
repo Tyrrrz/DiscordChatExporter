@@ -2,8 +2,7 @@
 using System.Threading.Tasks;
 using CliFx;
 using CliFx.Attributes;
-using DiscordChatExporter.Core.Models;
-using DiscordChatExporter.Core.Services;
+using DiscordChatExporter.Cli.Commands.Base;
 
 namespace DiscordChatExporter.Cli.Commands
 {
@@ -13,17 +12,12 @@ namespace DiscordChatExporter.Cli.Commands
         [CommandOption("guild", 'g', IsRequired = true, Description = "Guild ID.")]
         public string GuildId { get; set; } = "";
 
-        public ExportGuildCommand(SettingsService settingsService, DataService dataService, ExportService exportService)
-            : base(settingsService, dataService, exportService)
-        {
-        }
-
         public override async ValueTask ExecuteAsync(IConsole console)
         {
-            var guildChannels = await DataService.GetGuildChannelsAsync(Token, GuildId);
+            var guildChannels = await GetDiscordClient().GetGuildChannelsAsync(GuildId);
 
             var channels = guildChannels
-                .Where(c => c.Type.IsExportable())
+                .Where(c => c.IsTextChannel)
                 .OrderBy(c => c.Name)
                 .ToArray();
 

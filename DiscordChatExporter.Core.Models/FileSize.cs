@@ -4,7 +4,7 @@ namespace DiscordChatExporter.Core.Models
 {
     // Loosely based on https://github.com/omar/ByteSize (MIT license)
 
-    public readonly struct FileSize
+    public readonly partial struct FileSize
     {
         public long TotalBytes { get; }
 
@@ -57,5 +57,10 @@ namespace DiscordChatExporter.Core.Models
         }
 
         public override string ToString() => $"{GetLargestWholeNumberValue():0.##} {GetLargestWholeNumberSymbol()}";
+    }
+
+    public partial struct FileSize
+    {
+        public static FileSize FromBytes(long bytes) => new FileSize(bytes);
     }
 }

@@ -1,225 +1,195 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
+using System.Text.Json;
 using DiscordChatExporter.Core.Models;
-using DiscordChatExporter.Core.Services.Internal;
-using Newtonsoft.Json.Linq;
+using DiscordChatExporter.Core.Services.Internal.Extensions;
 using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Services
 {
     public partial class DataService
     {
-        private User ParseUser(JToken json)
+        private string ParseId(JsonElement json) =>
+            json.GetProperty("id").GetString();
+
+        private User ParseUser(JsonElement json)
         {
-            var id = json["id"]!.Value<string>();
-            var discriminator = json["discriminator"]!.Value<int>();
-            var name = json["username"]!.Value<string>();
-            var avatarHash = json["avatar"]!.Value<string>();
-            var isBot = json["bot"]?.Value<bool>() ?? false;
+            var id = ParseId(json);
+            var discriminator = json.GetProperty("discriminator").GetString().Pipe(int.Parse);
+            var name = json.GetProperty("username").GetString();
+            var avatarHash = json.GetProperty("avatar").GetString();
+            var isBot = json.GetPropertyOrNull("bot")?.GetBoolean() ?? false;
 
             return new User(id, discriminator, name, avatarHash, isBot);
         }
 
-        private Member ParseMember(JToken json)
+        private Member ParseMember(JsonElement json)
         {
-            var userId = ParseUser(json["user"]!).Id;
-            var nick = json["nick"]?.Value<string>();
-            var roles = (json["roles"] ?? Enumerable.Empty<JToken>()).Select(j => j.Value<string>()).ToArray();
+            var userId = json.GetProperty("user").Pipe(ParseId);
+            var nick = json.GetPropertyOrNull("nick")?.GetString();
+            var roles = json.GetPropertyOrNull("roles")?.EnumerateArray().Select(j => j.GetString()).ToArray() ??
+                        Array.Empty<string>();
 
             return new Member(userId, nick, roles);
         }
 
-        private Guild ParseGuild(JToken json)
+        private Guild ParseGuild(JsonElement json)
         {
-            var id = json["id"]!.Value<string>();
-            var name = json["name"]!.Value<string>();
-            var iconHash = json["icon"]!.Value<string>();
-            var roles = (json["roles"] ?? Enumerable.Empty<JToken>()).Select(ParseRole).ToArray();
+            var id = ParseId(json);
+            var name = json.GetProperty("name").GetString();
+            var iconHash = json.GetProperty("icon").GetString();
+            var roles = json.GetPropertyOrNull("roles")?.EnumerateArray().Select(ParseRole).ToArray() ??
+                        Array.Empty<Role>();
 
             return new Guild(id, name, roles, iconHash);
         }
 
-        private Channel ParseChannel(JToken json)
+        private Channel ParseChannel(JsonElement json)
         {
-            // Get basic data
-            var id = json["id"]!.Value<string>();
-            var parentId = json["parent_id"]?.Value<string>();
-            var type = (ChannelType) json["type"]!.Value<int>();
-            var topic = json["topic"]?.Value<string>();
+            var id = ParseId(json);
+            var parentId = json.GetPropertyOrNull("parent_id")?.GetString();
+            var type = (ChannelType) json.GetProperty("type").GetInt32();
+            var topic = json.GetPropertyOrNull("topic")?.GetString();
 
-            // Try to extract guild ID
-            var guildId = json["guild_id"]?.Value<string>();
+            var guildId = json.GetPropertyOrNull("guild_id")?.GetString() ??
+                          Guild.DirectMessages.Id;
 
-            // If the guild ID is blank, it's direct messages
-            if (string.IsNullOrWhiteSpace(guildId))
-                guildId = Guild.DirectMessages.Id;
-
-            // Try to extract name
-            var name = json["name"]?.Value<string>();
-
-            // If the name is blank, it's direct messages
-            if (string.IsNullOrWhiteSpace(name))
-                name = json["recipients"]?.Select(ParseUser).Select(u => u.Name).JoinToString(", ");
-
-            // If the name is still blank for some reason, fallback to ID
-            // (blind fix to https://github.com/Tyrrrz/DiscordChatExporter/issues/227)
-            if (string.IsNullOrWhiteSpace(name))
-                name = id;
+            var name =
+                json.GetPropertyOrNull("name")?.GetString() ??
+                json.GetPropertyOrNull("recipients")?.EnumerateArray().Select(ParseUser).Select(u => u.Name).JoinToString(", ") ??
+                id;
 
             return new Channel(id, parentId, guildId, name, topic, type);
         }
 
-        private Role ParseRole(JToken json)
+        private Role ParseRole(JsonElement json)
         {
-            var id = json["id"]!.Value<string>();
-            var name = json["name"]!.Value<string>();
-            var color = json["color"]!.Value<int>();
-            var position = json["position"]!.Value<int>();
+            var id = ParseId(json);
+            var name = json.GetProperty("name").GetString();
+            var color = json.GetProperty("color").GetInt32().Pipe(Color.FromArgb);
+            var position = json.GetProperty("position").GetInt32();
 
-            return new Role(id, name, Color.FromArgb(color), position);
+            return new Role(id, name, color, position);
         }
 
-        private Attachment ParseAttachment(JToken json)
+        private Attachment ParseAttachment(JsonElement json)
         {
-            var id = json["id"]!.Value<string>();
-            var url = json["url"]!.Value<string>();
-            var width = json["width"]?.Value<int>();
-            var height = json["height"]?.Value<int>();
-            var fileName = json["filename"]!.Value<string>();
-            var fileSizeBytes = json["size"]!.Value<long>();
-
-            var fileSize = new FileSize(fileSizeBytes);
+            var id = ParseId(json);
+            var url = json.GetProperty("url").GetString();
+            var width = json.GetPropertyOrNull("width")?.GetInt32();
+            var height = json.GetPropertyOrNull("height")?.GetInt32();
+            var fileName = json.GetProperty("filename").GetString();
+            var fileSize = json.GetProperty("size").GetInt64().Pipe(FileSize.FromBytes);
 
             return new Attachment(id, width, height, url, fileName, fileSize);
         }
 
-        private EmbedAuthor ParseEmbedAuthor(JToken json)
+        private EmbedAuthor ParseEmbedAuthor(JsonElement json)
         {
-            var name = json["name"]?.Value<string>();
-            var url = json["url"]?.Value<string>();
-            var iconUrl = json["icon_url"]?.Value<string>();
+            var name = json.GetPropertyOrNull("name")?.GetString();
+            var url = json.GetPropertyOrNull("url")?.GetString();
+            var iconUrl = json.GetPropertyOrNull("icon_url")?.GetString();
 
             return new EmbedAuthor(name, url, iconUrl);
         }
 
-        private EmbedField ParseEmbedField(JToken json)
+        private EmbedField ParseEmbedField(JsonElement json)
         {
-            var name = json["name"]!.Value<string>();
-            var value = json["value"]!.Value<string>();
-            var isInline = json["inline"]?.Value<bool>() ?? false;
+            var name = json.GetProperty("name").GetString();
+            var value = json.GetProperty("value").GetString();
+            var isInline = json.GetPropertyOrNull("inline")?.GetBoolean() ?? false;
 
             return new EmbedField(name, value, isInline);
         }
 
-        private EmbedImage ParseEmbedImage(JToken json)
+        private EmbedImage ParseEmbedImage(JsonElement json)
         {
-            var url = json["url"]?.Value<string>();
-            var width = json["width"]?.Value<int>();
-            var height = json["height"]?.Value<int>();
+            var url = json.GetPropertyOrNull("url")?.GetString();
+            var width = json.GetPropertyOrNull("width")?.GetInt32();
+            var height = json.GetPropertyOrNull("height")?.GetInt32();
 
             return new EmbedImage(url, width, height);
         }
 
-        private EmbedFooter ParseEmbedFooter(JToken json)
+        private EmbedFooter ParseEmbedFooter(JsonElement json)
         {
-            var text = json["text"]!.Value<string>();
-            var iconUrl = json["icon_url"]?.Value<string>();
+            var text = json.GetProperty("text").GetString();
+            var iconUrl = json.GetPropertyOrNull("icon_url")?.GetString();
 
             return new EmbedFooter(text, iconUrl);
         }
 
-        private Embed ParseEmbed(JToken json)
+        private Embed ParseEmbed(JsonElement json)
         {
-            // Get basic data
-            var title = json["title"]?.Value<string>();
-            var description = json["description"]?.Value<string>();
-            var url = json["url"]?.Value<string>();
-            var timestamp = json["timestamp"]?.Value<DateTime>().ToDateTimeOffset();
+            var title = json.GetPropertyOrNull("title")?.GetString();
+            var description = json.GetPropertyOrNull("description")?.GetString();
+            var url = json.GetPropertyOrNull("url")?.GetString();
+            var timestamp = json.GetPropertyOrNull("timestamp")?.GetDateTimeOffset();
+            var color = json.GetPropertyOrNull("color")?.GetInt32().Pipe(Color.FromArgb).ResetAlpha();
 
-            // Get color
-            var color = json["color"] != null
-                ? Color.FromArgb(json["color"]!.Value<int>()).ResetAlpha()
-                : default(Color?);
+            var author = json.GetPropertyOrNull("author")?.Pipe(ParseEmbedAuthor);
+            var thumbnail = json.GetPropertyOrNull("thumbnail")?.Pipe(ParseEmbedImage);
+            var image = json.GetPropertyOrNull("image")?.Pipe(ParseEmbedImage);
+            var footer = json.GetPropertyOrNull("footer")?.Pipe(ParseEmbedFooter);
 
-            // Get author
-            var author = json["author"] != null ? ParseEmbedAuthor(json["author"]!) : null;
-
-            // Get fields
-            var fields = (json["fields"] ?? Enumerable.Empty<JToken>()).Select(ParseEmbedField).ToArray();
-
-            // Get thumbnail
-            var thumbnail = json["thumbnail"] != null ? ParseEmbedImage(json["thumbnail"]!) : null;
-
-            // Get image
-            var image = json["image"] != null ? ParseEmbedImage(json["image"]!) : null;
-
-            // Get footer
-            var footer = json["footer"] != null ? ParseEmbedFooter(json["footer"]!) : null;
+            var fields = json.GetPropertyOrNull("fields")?.EnumerateArray().Select(ParseEmbedField).ToArray() ??
+                         Array.Empty<EmbedField>();
 
             return new Embed(title, url, timestamp, color, author, description, fields, thumbnail, image, footer);
         }
 
-        private Emoji ParseEmoji(JToken json)
+        private Emoji ParseEmoji(JsonElement json)
         {
-            var id = json["id"]?.Value<string>();
-            var name = json["name"]!.Value<string>();
-            var isAnimated = json["animated"]?.Value<bool>() ?? false;
+            var id = json.GetPropertyOrNull("id")?.GetString();
+            var name = json.GetProperty("name").GetString();
+            var isAnimated = json.GetPropertyOrNull("animated")?.GetBoolean() ?? false;
 
             return new Emoji(id, name, isAnimated);
         }
 
-        private Reaction ParseReaction(JToken json)
+        private Reaction ParseReaction(JsonElement json)
         {
-            var count = json["count"]!.Value<int>();
-            var emoji = ParseEmoji(json["emoji"]!);
+            var count = json.GetProperty("count").GetInt32();
+            var emoji = json.GetProperty("emoji").Pipe(ParseEmoji);
 
             return new Reaction(count, emoji);
         }
 
-        private Message ParseMessage(JToken json)
+        private Message ParseMessage(JsonElement json)
         {
-            // Get basic data
-            var id = json["id"]!.Value<string>();
-            var channelId = json["channel_id"]!.Value<string>();
-            var timestamp = json["timestamp"]!.Value<DateTime>().ToDateTimeOffset();
-            var editedTimestamp = json["edited_timestamp"]?.Value<DateTime?>()?.ToDateTimeOffset();
-            var content = json["content"]!.Value<string>();
-            var type = (MessageType) json["type"]!.Value<int>();
+            var id = ParseId(json);
+            var channelId = json.GetProperty("channel_id").GetString();
+            var timestamp = json.GetProperty("timestamp").GetDateTimeOffset();
+            var editedTimestamp = json.GetPropertyOrNull("edited_timestamp")?.GetDateTimeOffset();
+            var type = (MessageType) json.GetProperty("type").GetInt32();
+            var isPinned = json.GetPropertyOrNull("pinned")?.GetBoolean() ?? false;
 
-            // Workarounds for non-default types
-            if (type == MessageType.RecipientAdd)
-                content = "Added a recipient.";
-            else if (type == MessageType.RecipientRemove)
-                content = "Removed a recipient.";
-            else if (type == MessageType.Call)
-                content = "Started a call.";
-            else if (type == MessageType.ChannelNameChange)
-                content = "Changed the channel name.";
-            else if (type == MessageType.ChannelIconChange)
-                content = "Changed the channel icon.";
-            else if (type == MessageType.ChannelPinnedMessage)
-                content = "Pinned a message.";
-            else if (type == MessageType.GuildMemberJoin)
-                content = "Joined the server.";
+            var content = type switch
+            {
+                MessageType.RecipientAdd => "Added a recipient.",
+                MessageType.RecipientRemove => "Removed a recipient.",
+                MessageType.Call => "Started a call.",
+                MessageType.ChannelNameChange => "Changed the channel name.",
+                MessageType.ChannelIconChange => "Changed the channel icon.",
+                MessageType.ChannelPinnedMessage => "Pinned a message.",
+                MessageType.GuildMemberJoin => "Joined the server.",
+                _ => json.GetPropertyOrNull("content")?.GetString() ?? ""
+            };
 
-            // Get author
-            var author = ParseUser(json["author"]!);
+            var author = json.GetProperty("author").Pipe(ParseUser);
 
-            // Get attachments
-            var attachments = (json["attachments"] ?? Enumerable.Empty<JToken>()).Select(ParseAttachment).ToArray();
+            var attachments = json.GetPropertyOrNull("attachments")?.EnumerateArray().Select(ParseAttachment).ToArray() ??
+                              Array.Empty<Attachment>();
 
-            // Get embeds
-            var embeds = (json["embeds"] ?? Enumerable.Empty<JToken>()).Select(ParseEmbed).ToArray();
+            var embeds = json.GetPropertyOrNull("embeds")?.EnumerateArray().Select(ParseEmbed).ToArray() ??
+                              Array.Empty<Embed>();
 
-            // Get reactions
-            var reactions = (json["reactions"] ?? Enumerable.Empty<JToken>()).Select(ParseReaction).ToArray();
+            var reactions = json.GetPropertyOrNull("reactions")?.EnumerateArray().Select(ParseReaction).ToArray() ??
+                         Array.Empty<Reaction>();
 
-            // Get mentions
-            var mentionedUsers = (json["mentions"] ?? Enumerable.Empty<JToken>()).Select(ParseUser).ToArray();
-
-            // Get whether this message is pinned
-            var isPinned = json["pinned"]!.Value<bool>();
+            var mentionedUsers = json.GetPropertyOrNull("mentions")?.EnumerateArray().Select(ParseUser).ToArray() ??
+                                 Array.Empty<User>();
 
             return new Message(id, channelId, type, author, timestamp, editedTimestamp, isPinned, content, attachments, embeds,
                 reactions, mentionedUsers);

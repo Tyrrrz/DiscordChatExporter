@@ -4,11 +4,12 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.Json;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Models;
 using DiscordChatExporter.Core.Services.Exceptions;
 using DiscordChatExporter.Core.Services.Internal;
-using Newtonsoft.Json.Linq;
+using DiscordChatExporter.Core.Services.Internal.Extensions;
 using Polly;
 
 namespace DiscordChatExporter.Core.Services
@@ -41,12 +42,12 @@ namespace DiscordChatExporter.Core.Services
                     (response, timespan, retryCount, context) => Task.CompletedTask);
         }
 
-        private async Task<JToken> GetApiResponseAsync(AuthToken token, string route)
+        private async Task<JsonElement> GetApiResponseAsync(AuthToken token, string route)
         {
-            return (await GetApiResponseAsync(token, route, true))!;
+            return (await GetApiResponseAsync(token, route, true))!.Value;
         }
 
-        private async Task<JToken?> GetApiResponseAsync(AuthToken token, string route, bool errorOnFail)
+        private async Task<JsonElement?> GetApiResponseAsync(AuthToken token, string route, bool errorOnFail)
         {
             using var response = await _httpPolicy.ExecuteAsync(async () =>
             {
@@ -62,12 +63,14 @@ namespace DiscordChatExporter.Core.Services
             // We throw our own exception here because default one doesn't have status code
             if (!response.IsSuccessStatusCode)
             {
-                if (errorOnFail) throw new HttpErrorStatusCodeException(response.StatusCode, response.ReasonPhrase);
-                else return null;
+                if (errorOnFail)
+                    throw new HttpErrorStatusCodeException(response.StatusCode, response.ReasonPhrase);
+
+                return null;
             }
 
             var jsonRaw = await response.Content.ReadAsStringAsync();
-            return JToken.Parse(jsonRaw);
+            return Json.Parse(jsonRaw);
         }
 
         public async Task<Guild> GetGuildAsync(AuthToken token, string guildId)
@@ -85,10 +88,7 @@ namespace DiscordChatExporter.Core.Services
         public async Task<Member?> GetGuildMemberAsync(AuthToken token, string guildId, string userId)
         {
             var response = await GetApiResponseAsync(token, $"guilds/{guildId}/members/{userId}", false);
-            if (response == null) return null;
-            var member = ParseMember(response);
-
-            return member;
+            return response?.Pipe(ParseMember);
         }
 
         public async Task<Channel> GetChannelAsync(AuthToken token, string channelId)
@@ -111,22 +111,28 @@ namespace DiscordChatExporter.Core.Services
 
                 var response = await GetApiResponseAsync(token, route);
 
-                if (!response.HasValues)
-                    yield break;
+                var isEmpty = true;
 
                 // Get full guild object
-                foreach (var guildId in response.Select(j => j["id"]!.Value<string>()))
+                foreach (var guildJson in response.EnumerateArray())
                 {
+                    var guildId = ParseId(guildJson);
+
                     yield return await GetGuildAsync(token, guildId);
                     afterId = guildId;
+
+                    isEmpty = false;
                 }
+
+                if (isEmpty)
+                    yield break;
             }
         }
 
         public async Task<IReadOnlyList<Channel>> GetDirectMessageChannelsAsync(AuthToken token)
         {
             var response = await GetApiResponseAsync(token, "users/@me/channels");
-            var channels = response.Select(ParseChannel).ToArray();
+            var channels = response.EnumerateArray().Select(ParseChannel).ToArray();
 
             return channels;
         }
@@ -138,7 +144,7 @@ namespace DiscordChatExporter.Core.Services
                 return Array.Empty<Channel>();
 
             var response = await GetApiResponseAsync(token, $"guilds/{guildId}/channels");
-            var channels = response.Select(ParseChannel).ToArray();
+            var channels = response.EnumerateArray().Select(ParseChannel).ToArray();
 
             return channels;
         }
@@ -151,7 +157,7 @@ namespace DiscordChatExporter.Core.Services
 
             var response = await GetApiResponseAsync(token, route);
 
-            return response.Select(ParseMessage).FirstOrDefault();
+            return response.EnumerateArray().Select(ParseMessage).FirstOrDefault();
         }
 
         public async IAsyncEnumerable<Message> GetMessagesAsync(AuthToken token, string channelId,
@@ -178,6 +184,7 @@ namespace DiscordChatExporter.Core.Services
 
                 // Parse
                 var messages = response
+                    .EnumerateArray()
                     .Select(ParseMessage)
                     .Reverse() // reverse because messages appear newest first
                     .ToArray();

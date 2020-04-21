@@ -2,8 +2,6 @@
   <Import Project="../DiscordChatExporter.props" />
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="Onova" Version="2.5.2" />
     <PackageReference Include="Polly" Version="7.2.0" />
     <PackageReference Include="Tyrrrz.Extensions" Version="1.6.5" />
     <PackageReference Include="Tyrrrz.Settings" Version="1.3.4" />

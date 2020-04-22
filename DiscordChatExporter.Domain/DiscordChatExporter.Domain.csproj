@@ -3,7 +3,7 @@
 
   <ItemGroup>
     <PackageReference Include="Polly" Version="7.2.0" />
-    <PackageReference Include="Scriban" Version="2.1.1" />
+    <PackageReference Include="Scriban" Version="2.1.2" />
     <PackageReference Include="Tyrrrz.Extensions" Version="1.6.5" />
   </ItemGroup>
 

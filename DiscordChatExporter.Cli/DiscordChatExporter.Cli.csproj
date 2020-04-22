@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CliFx" Version="1.0.0" />
-    <PackageReference Include="Gress" Version="1.1.1" />
+    <PackageReference Include="CliFx" Version="1.1.0" />
+    <PackageReference Include="Gress" Version="1.2.0" />
     <PackageReference Include="Tyrrrz.Extensions" Version="1.6.5" />
   </ItemGroup>
 

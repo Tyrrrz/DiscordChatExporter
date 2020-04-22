@@ -23,17 +23,10 @@ namespace DiscordChatExporter.Cli.Commands.Base
             // This uses a separate route from ExportCommandBase because the progress ticker is not thread-safe
             // Ugly code ahead. Will need to refactor.
 
-            // Progress
             console.Output.Write($"Exporting {channels.Count} channels... ");
-            var ticker = console.CreateProgressTicker();
+            var progress = console.CreateProgressTicker();
 
-            // TODO: refactor this after improving Gress
-            var progressManager = new ProgressManager();
-            progressManager.PropertyChanged += (sender, args) => ticker.Report(progressManager.Progress);
-
-            var operations = progressManager.CreateOperations(channels.Count);
-
-            // Export channels
+            var operations = progress.Wrap().CreateOperations(channels.Count);
 
             var errors = new List<string>();
 
@@ -62,7 +55,6 @@ namespace DiscordChatExporter.Cli.Commands.Base
                 }
             }, ParallelLimit.ClampMin(1));
 
-            ticker.Report(1);
             console.Output.WriteLine();
 
             foreach (var error in errors)

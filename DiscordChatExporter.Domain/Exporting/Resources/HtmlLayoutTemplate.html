@@ -4,8 +4,8 @@
 <head>
     {{~ # Metadata ~}}
     <title>{{ Context.Guild.Name | html.escape }} - {{ Context.Channel.Name | html.escape }}</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
 
     {{~ # Styles ~}}
     <style>
@@ -58,7 +58,7 @@
 {{~ # Preamble ~}}
 <div class="preamble">
     <div class="preamble__guild-icon-container">
-        <img class="preamble__guild-icon" src="{{ Context.Guild.IconUrl }}" alt="Guild icon" />
+        <img class="preamble__guild-icon" src="{{ Context.Guild.IconUrl }}" alt="Guild icon">
     </div>
     <div class="preamble__entries-container">
         <div class="preamble__entry">{{ Context.Guild.Name | html.escape }}</div>

@@ -4,7 +4,7 @@ using DiscordChatExporter.Domain.Discord.Models;
 
 namespace DiscordChatExporter.Domain.Exporting
 {
-    public class RenderContext
+    public class ExportContext
     {
         public Guild Guild { get; }
 
@@ -22,7 +22,7 @@ namespace DiscordChatExporter.Domain.Exporting
 
         public IReadOnlyCollection<Role> MentionableRoles { get; }
 
-        public RenderContext(
+        public ExportContext(
             Guild guild,
             Channel channel,
             DateTimeOffset? after,

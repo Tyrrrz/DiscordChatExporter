@@ -61,7 +61,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
                 var channel = Channels.Single();
 
                 // Generate default file name
-                var defaultFileName = Exporter.GetDefaultExportFileName(SelectedFormat, Guild!, channel!, After, Before);
+                var defaultFileName = ChannelExporter.GetDefaultExportFileName(Guild!, channel!, SelectedFormat, After, Before);
 
                 // Generate filter
                 var ext = SelectedFormat.GetFileExtension();

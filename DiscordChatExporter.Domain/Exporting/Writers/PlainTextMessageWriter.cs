@@ -10,13 +10,13 @@ using DiscordChatExporter.Domain.Internal;
 
 namespace DiscordChatExporter.Domain.Exporting.Writers
 {
-    internal class PlainTextMessageWriter : MessageWriterBase
+    internal class PlainTextMessageWriter : MessageWriter
     {
         private readonly TextWriter _writer;
 
         private long _messageCount;
 
-        public PlainTextMessageWriter(Stream stream, RenderContext context)
+        public PlainTextMessageWriter(Stream stream, ExportContext context)
             : base(stream, context)
         {
             _writer = new StreamWriter(stream);

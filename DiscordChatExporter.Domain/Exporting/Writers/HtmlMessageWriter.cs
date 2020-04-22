@@ -13,7 +13,7 @@ using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Domain.Exporting.Writers
 {
-    internal partial class HtmlMessageWriter : MessageWriterBase
+    internal partial class HtmlMessageWriter : MessageWriter
     {
         private readonly TextWriter _writer;
         private readonly string _themeName;
@@ -25,7 +25,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
         private long _messageCount;
 
-        public HtmlMessageWriter(Stream stream, RenderContext context, string themeName)
+        public HtmlMessageWriter(Stream stream, ExportContext context, string themeName)
             : base(stream, context)
         {
             _writer = new StreamWriter(stream);

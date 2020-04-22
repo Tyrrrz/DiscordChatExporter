@@ -7,13 +7,13 @@ using DiscordChatExporter.Domain.Internal;
 
 namespace DiscordChatExporter.Domain.Exporting.Writers
 {
-    internal class JsonMessageWriter : MessageWriterBase
+    internal class JsonMessageWriter : MessageWriter
     {
         private readonly Utf8JsonWriter _writer;
 
         private long _messageCount;
 
-        public JsonMessageWriter(Stream stream, RenderContext context)
+        public JsonMessageWriter(Stream stream, ExportContext context)
             : base(stream, context)
         {
             _writer = new Utf8JsonWriter(stream, new JsonWriterOptions

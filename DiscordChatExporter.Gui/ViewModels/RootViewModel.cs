@@ -67,7 +67,7 @@ namespace DiscordChatExporter.Gui.ViewModels
 
         private DiscordClient GetDiscordClient(AuthToken token) => new DiscordClient(token);
 
-        private Exporter GetExporter(AuthToken token) => new Exporter(GetDiscordClient(token));
+        private ChannelExporter GetChannelExporter(AuthToken token) => new ChannelExporter(GetDiscordClient(token));
 
         private async Task HandleAutoUpdateAsync()
         {
@@ -261,7 +261,7 @@ namespace DiscordChatExporter.Gui.ViewModels
 
                 try
                 {
-                    await GetExporter(token).ExportChatLogAsync(dialog.Guild!, channel!,
+                    await GetChannelExporter(token).ExportAsync(dialog.Guild!, channel!,
                         dialog.OutputPath!, dialog.SelectedFormat, _settingsService.DateFormat,
                         dialog.PartitionLimit, dialog.After, dialog.Before, operation);
 

@@ -29,14 +29,14 @@ namespace DiscordChatExporter.Cli.Commands.Base
         [CommandOption("dateformat", Description = "Date format used in output.")]
         public string DateFormat { get; set; } = "dd-MMM-yy hh:mm tt";
 
-        protected Exporter GetExporter() => new Exporter(GetDiscordClient());
+        protected ChannelExporter GetChannelExporter() => new ChannelExporter(GetDiscordClient());
 
         protected async ValueTask ExportAsync(IConsole console, Guild guild, Channel channel)
         {
             console.Output.Write($"Exporting channel '{channel.Name}'... ");
             var progress = console.CreateProgressTicker();
 
-            await GetExporter().ExportChatLogAsync(guild, channel,
+            await GetChannelExporter().ExportAsync(guild, channel,
                 OutputPath, ExportFormat, DateFormat, PartitionLimit,
                 After, Before, progress);
 

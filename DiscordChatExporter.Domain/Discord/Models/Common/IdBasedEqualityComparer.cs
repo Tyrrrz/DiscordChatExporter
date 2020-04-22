@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DiscordChatExporter.Domain.Discord.Models
+namespace DiscordChatExporter.Domain.Discord.Models.Common
 {
     public partial class IdBasedEqualityComparer : IEqualityComparer<IHasId>
     {

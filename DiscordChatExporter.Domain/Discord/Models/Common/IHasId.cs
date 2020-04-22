@@ -1,4 +1,4 @@
-﻿namespace DiscordChatExporter.Domain.Discord.Models
+﻿namespace DiscordChatExporter.Domain.Discord.Models.Common
 {
     public interface IHasId
     {

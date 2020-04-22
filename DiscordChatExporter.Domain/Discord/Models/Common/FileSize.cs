@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DiscordChatExporter.Domain.Discord.Models
+namespace DiscordChatExporter.Domain.Discord.Models.Common
 {
     // Loosely based on https://github.com/omar/ByteSize (MIT license)
 

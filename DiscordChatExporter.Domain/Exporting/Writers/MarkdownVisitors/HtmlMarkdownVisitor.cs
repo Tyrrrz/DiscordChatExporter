@@ -12,11 +12,11 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
 {
     internal partial class HtmlMarkdownVisitor : MarkdownVisitor
     {
-        private readonly RenderContext _context;
+        private readonly ExportContext _context;
         private readonly StringBuilder _buffer;
         private readonly bool _isJumbo;
 
-        public HtmlMarkdownVisitor(RenderContext context, StringBuilder buffer, bool isJumbo)
+        public HtmlMarkdownVisitor(ExportContext context, StringBuilder buffer, bool isJumbo)
         {
             _context = context;
             _buffer = buffer;
@@ -162,7 +162,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
     {
         private static string HtmlEncode(string text) => WebUtility.HtmlEncode(text);
 
-        public static string Format(RenderContext context, string markdown)
+        public static string Format(ExportContext context, string markdown)
         {
             var nodes = MarkdownParser.Parse(markdown);
             var isJumbo = nodes.All(n => n is EmojiNode || n is TextNode textNode && string.IsNullOrWhiteSpace(textNode.Text));

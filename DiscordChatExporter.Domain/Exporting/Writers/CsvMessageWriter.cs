@@ -9,11 +9,11 @@ using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Domain.Exporting.Writers
 {
-    internal partial class CsvMessageWriter : MessageWriterBase
+    internal partial class CsvMessageWriter : MessageWriter
     {
         private readonly TextWriter _writer;
 
-        public CsvMessageWriter(Stream stream, RenderContext context)
+        public CsvMessageWriter(Stream stream, ExportContext context)
             : base(stream, context)
         {
             _writer = new StreamWriter(stream);

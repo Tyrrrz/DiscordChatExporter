@@ -1,4 +1,6 @@
-﻿namespace DiscordChatExporter.Domain.Discord.Models
+﻿using DiscordChatExporter.Domain.Discord.Models.Common;
+
+namespace DiscordChatExporter.Domain.Discord.Models
 {
     // https://discordapp.com/developers/docs/resources/channel#channel-object-channel-types
     // Order of enum fields needs to match the order in the docs.

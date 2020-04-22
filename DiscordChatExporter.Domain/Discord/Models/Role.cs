@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using DiscordChatExporter.Domain.Discord.Models.Common;
 
 namespace DiscordChatExporter.Domain.Discord.Models
 {

@@ -1,6 +1,6 @@
 ﻿namespace DiscordChatExporter.Domain.Exporting
 {
-    public class RenderOptions
+    public class ExportOptions
     {
         public string BaseFilePath { get; }
 
@@ -8,7 +8,7 @@
 
         public int? PartitionLimit { get; }
 
-        public RenderOptions(string baseFilePath, ExportFormat format, int? partitionLimit)
+        public ExportOptions(string baseFilePath, ExportFormat format, int? partitionLimit)
         {
             BaseFilePath = baseFilePath;
             Format = format;

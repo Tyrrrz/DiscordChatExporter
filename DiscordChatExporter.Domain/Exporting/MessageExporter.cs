@@ -6,82 +6,77 @@ using DiscordChatExporter.Domain.Exporting.Writers;
 
 namespace DiscordChatExporter.Domain.Exporting
 {
-    internal partial class MessageRenderer : IAsyncDisposable
+    internal partial class MessageExporter : IAsyncDisposable
     {
-        private readonly RenderOptions _options;
-        private readonly RenderContext _context;
+        private readonly ExportOptions _options;
+        private readonly ExportContext _context;
 
         private long _renderedMessageCount;
         private int _partitionIndex;
-        private MessageWriterBase? _writer;
+        private MessageWriter? _writer;
 
-        public MessageRenderer(RenderOptions options, RenderContext context)
+        public MessageExporter(ExportOptions options, ExportContext context)
         {
             _options = options;
             _context = context;
         }
 
-        private async Task<MessageWriterBase> InitializeWriterAsync()
-        {
-            // Get partition file path
-            var filePath = GetPartitionFilePath(_options.BaseFilePath, _partitionIndex);
-
-            // Create output directory
-            var dirPath = Path.GetDirectoryName(_options.BaseFilePath);
-            if (!string.IsNullOrWhiteSpace(dirPath))
-                Directory.CreateDirectory(dirPath);
-
-            // Create writer
-            var writer = CreateMessageWriter(filePath, _options.Format, _context);
-
-            // Write preamble
-            await writer.WritePreambleAsync();
-
-            return _writer = writer;
-        }
+        private bool IsPartitionLimitReached() =>
+            _renderedMessageCount > 0 &&
+            _options.PartitionLimit != null &&
+            _options.PartitionLimit != 0 &&
+            _renderedMessageCount % _options.PartitionLimit == 0;
 
         private async Task ResetWriterAsync()
         {
             if (_writer != null)
             {
-                // Write postamble
                 await _writer.WritePostambleAsync();
-
-                // Flush
                 await _writer.DisposeAsync();
                 _writer = null;
             }
         }
 
-        public async Task RenderMessageAsync(Message message)
+        private async Task<MessageWriter> GetWriterAsync()
         {
-            // Ensure underlying writer is initialized
-            _writer ??= await InitializeWriterAsync();
-
-            // Render the actual message
-            await _writer!.WriteMessageAsync(message);
-
-            // Increment count
-            _renderedMessageCount++;
-
-            // Shift partition if necessary
-            if (_options.PartitionLimit != null &&
-                _options.PartitionLimit != 0 &&
-                _renderedMessageCount % _options.PartitionLimit == 0)
+            // Ensure partition limit is not exceeded
+            if (IsPartitionLimitReached())
             {
                 await ResetWriterAsync();
                 _partitionIndex++;
             }
+
+            // Writer is still valid - return
+            if (_writer != null)
+                return _writer;
+
+            var filePath = GetPartitionFilePath(_options.BaseFilePath, _partitionIndex);
+
+            var dirPath = Path.GetDirectoryName(_options.BaseFilePath);
+            if (!string.IsNullOrWhiteSpace(dirPath))
+                Directory.CreateDirectory(dirPath);
+
+            var writer = CreateMessageWriter(filePath, _options.Format, _context);
+            await writer.WritePreambleAsync();
+
+            return _writer = writer;
+        }
+
+        public async Task RenderMessageAsync(Message message)
+        {
+            var writer = await GetWriterAsync();
+            await writer.WriteMessageAsync(message);
+            _renderedMessageCount++;
         }
 
         public async ValueTask DisposeAsync() => await ResetWriterAsync();
     }
 
-    internal partial class MessageRenderer
+    internal partial class MessageExporter
     {
         private static string GetPartitionFilePath(string baseFilePath, int partitionIndex)
         {
-            // First partition - no changes
+            // First partition - don't change file name
             if (partitionIndex <= 0)
                 return baseFilePath;
 
@@ -98,9 +93,9 @@ namespace DiscordChatExporter.Domain.Exporting
             return fileName;
         }
 
-        private static MessageWriterBase CreateMessageWriter(string filePath, ExportFormat format, RenderContext context)
+        private static MessageWriter CreateMessageWriter(string filePath, ExportFormat format, ExportContext context)
         {
-            // Create a stream (it will get disposed by the writer)
+            // Stream will be disposed by the underlying writer
             var stream = File.Create(filePath);
 
             return format switch

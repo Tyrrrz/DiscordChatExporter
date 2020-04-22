@@ -8,10 +8,10 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
 {
     internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
     {
-        private readonly RenderContext _context;
+        private readonly ExportContext _context;
         private readonly StringBuilder _buffer;
 
-        public PlainTextMarkdownVisitor(RenderContext context, StringBuilder buffer)
+        public PlainTextMarkdownVisitor(ExportContext context, StringBuilder buffer)
         {
             _context = context;
             _buffer = buffer;
@@ -64,7 +64,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
 
     internal partial class PlainTextMarkdownVisitor
     {
-        public static string Format(RenderContext context, string markdown)
+        public static string Format(ExportContext context, string markdown)
         {
             var nodes = MarkdownParser.ParseMinimal(markdown);
             var buffer = new StringBuilder();

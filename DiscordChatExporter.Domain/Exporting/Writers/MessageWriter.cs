@@ -5,13 +5,13 @@ using DiscordChatExporter.Domain.Discord.Models;
 
 namespace DiscordChatExporter.Domain.Exporting.Writers
 {
-    internal abstract class MessageWriterBase : IAsyncDisposable
+    internal abstract class MessageWriter : IAsyncDisposable
     {
         protected Stream Stream { get; }
 
-        protected RenderContext Context { get; }
+        protected ExportContext Context { get; }
 
-        protected MessageWriterBase(Stream stream, RenderContext context)
+        protected MessageWriter(Stream stream, ExportContext context)
         {
             Stream = stream;
             Context = context;

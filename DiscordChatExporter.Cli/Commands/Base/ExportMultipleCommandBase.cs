@@ -46,7 +46,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
                 {
                     var guild = await GetDiscordClient().GetGuildAsync(channel.GuildId);
 
-                    await GetExporter().ExportChatLogAsync(guild, channel,
+                    await GetChannelExporter().ExportAsync(guild, channel,
                         OutputPath, ExportFormat, DateFormat, PartitionLimit,
                         After, Before, operation);
 

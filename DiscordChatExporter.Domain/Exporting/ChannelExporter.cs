@@ -5,39 +5,47 @@ using System.Text;
 using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord;
 using DiscordChatExporter.Domain.Discord.Models;
+using DiscordChatExporter.Domain.Discord.Models.Common;
 using DiscordChatExporter.Domain.Exceptions;
 using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Domain.Exporting
 {
-    public partial class Exporter
+    public partial class ChannelExporter
     {
         private readonly DiscordClient _discord;
 
-        public Exporter(DiscordClient discord) => _discord = discord;
+        public ChannelExporter(DiscordClient discord) => _discord = discord;
 
-        public async Task ExportChatLogAsync(Guild guild, Channel channel,
-            string outputPath, ExportFormat format, string dateFormat, int? partitionLimit,
-            DateTimeOffset? after = null, DateTimeOffset? before = null, IProgress<double>? progress = null)
+        public async Task ExportAsync(
+            Guild guild,
+            Channel channel,
+            string outputPath,
+            ExportFormat format,
+            string dateFormat,
+            int? partitionLimit,
+            DateTimeOffset? after = null,
+            DateTimeOffset? before = null,
+            IProgress<double>? progress = null)
         {
             // Get base file path from output path
-            var baseFilePath = GetFilePathFromOutputPath(outputPath, format, guild, channel, after, before);
+            var baseFilePath = GetFilePathFromOutputPath(guild, channel, outputPath, format, after, before);
 
             // Create options
-            var options = new RenderOptions(baseFilePath, format, partitionLimit);
+            var options = new ExportOptions(baseFilePath, format, partitionLimit);
 
             // Create context
             var mentionableUsers = new HashSet<User>(IdBasedEqualityComparer.Instance);
             var mentionableChannels = await _discord.GetGuildChannelsAsync(guild.Id);
             var mentionableRoles = guild.Roles;
 
-            var context = new RenderContext(
+            var context = new ExportContext(
                 guild, channel, after, before, dateFormat,
                 mentionableUsers, mentionableChannels, mentionableRoles
             );
 
             // Create renderer
-            await using var renderer = new MessageRenderer(options, context);
+            await using var renderer = new MessageExporter(options, context);
 
             // Render messages
             var renderedAnything = false;
@@ -52,13 +60,12 @@ namespace DiscordChatExporter.Domain.Exporting
 
                 foreach (User u in encounteredUsers)
                 {
-                    if(!guild.Members.ContainsKey(u.Id))
+                    if (!guild.Members.ContainsKey(u.Id))
                     {
                         var member = await _discord.GetGuildMemberAsync(guild.Id, u.Id);
                         guild.Members[u.Id] = member;
                     }
                 }
-
 
                 // Render message
                 await renderer.RenderMessageAsync(message);
@@ -71,18 +78,21 @@ namespace DiscordChatExporter.Domain.Exporting
         }
     }
 
-    public partial class Exporter
+    public partial class ChannelExporter
     {
-        public static string GetDefaultExportFileName(ExportFormat format,
-            Guild guild, Channel channel,
-            DateTimeOffset? after = null, DateTimeOffset? before = null)
+        public static string GetDefaultExportFileName(
+            Guild guild,
+            Channel channel,
+            ExportFormat format,
+            DateTimeOffset? after = null,
+            DateTimeOffset? before = null)
         {
             var buffer = new StringBuilder();
 
-            // Append guild and channel names
+            // Guild and channel names
             buffer.Append($"{guild.Name} - {channel.Name} [{channel.Id}]");
 
-            // Append date range
+            // Date range
             if (after != null || before != null)
             {
                 buffer.Append(" (");
@@ -106,7 +116,7 @@ namespace DiscordChatExporter.Domain.Exporting
                 buffer.Append(")");
             }
 
-            // Append extension
+            // File extension
             buffer.Append($".{format.GetFileExtension()}");
 
             // Replace invalid chars
@@ -116,13 +126,18 @@ namespace DiscordChatExporter.Domain.Exporting
             return buffer.ToString();
         }
 
-        private static string GetFilePathFromOutputPath(string outputPath, ExportFormat format, Guild guild, Channel channel,
-            DateTimeOffset? after, DateTimeOffset? before)
+        private static string GetFilePathFromOutputPath(
+            Guild guild,
+            Channel channel,
+            string outputPath,
+            ExportFormat format,
+            DateTimeOffset? after = null,
+            DateTimeOffset? before = null)
         {
             // Output is a directory
             if (Directory.Exists(outputPath) || string.IsNullOrWhiteSpace(Path.GetExtension(outputPath)))
             {
-                var fileName = GetDefaultExportFileName(format, guild, channel, after, before);
+                var fileName = GetDefaultExportFileName(guild, channel, format, after, before);
                 return Path.Combine(outputPath, fileName);
             }
 

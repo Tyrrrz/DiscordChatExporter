@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors;
 using DiscordChatExporter.Domain.Internal;
-using DiscordChatExporter.Domain.Markdown;
-using DiscordChatExporter.Domain.Markdown.Ast;
 using Scriban;
 using Scriban.Runtime;
 using Tyrrrz.Extensions;
@@ -79,7 +74,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
                 new Func<DateTimeOffset, string>(d => d.ToLocalString(Context.DateFormat)));
 
             scriptObject.Import("FormatMarkdown",
-                new Func<string, string>(FormatMarkdown));
+                new Func<string?, string>(FormatMarkdown));
 
             scriptObject.Import("GetUserColor", new Func<Guild, User, string>(Guild.GetUserColor));
 
@@ -94,8 +89,8 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             return templateContext;
         }
 
-        private string FormatMarkdown(string markdown) =>
-            HtmlMarkdownVisitor.Format(Context, markdown);
+        private string FormatMarkdown(string? markdown) =>
+            HtmlMarkdownVisitor.Format(Context, markdown ?? "");
 
         private async Task RenderCurrentMessageGroupAsync()
         {
@@ -180,7 +175,5 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             ResourcesAssembly
                 .GetManifestResourceString($"{ResourcesNamespace}.HtmlLayoutTemplate.html")
                 .SubstringAfter("{{~ %SPLIT% ~}}");
-
-        private static string HtmlEncode(string s) => WebUtility.HtmlEncode(s);
     }
 }

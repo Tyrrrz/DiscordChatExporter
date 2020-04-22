@@ -22,41 +22,8 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer = new StreamWriter(stream);
         }
 
-        private string FormatPreamble()
-        {
-            var buffer = new StringBuilder();
-
-            buffer.Append('=', 62).AppendLine();
-            buffer.AppendLine($"Guild: {Context.Guild.Name}");
-            buffer.AppendLine($"Channel: {Context.Channel.Name}");
-
-            if (!string.IsNullOrWhiteSpace(Context.Channel.Topic))
-                buffer.AppendLine($"Topic: {Context.Channel.Topic}");
-
-            if (Context.After != null)
-                buffer.AppendLine($"After: {Context.After.Value.ToLocalString(Context.DateFormat)}");
-
-            if (Context.Before != null)
-                buffer.AppendLine($"Before: {Context.Before.Value.ToLocalString(Context.DateFormat)}");
-
-            buffer.Append('=', 62).AppendLine();
-
-            return buffer.ToString();
-        }
-
-        private string FormatPostamble()
-        {
-            var buffer = new StringBuilder();
-
-            buffer.Append('=', 62).AppendLine();
-            buffer.AppendLine($"Exported {_messageCount:N0} message(s)");
-            buffer.Append('=', 62).AppendLine();
-
-            return buffer.ToString();
-        }
-
-        private string FormatMarkdown(string markdown) =>
-            PlainTextMarkdownVisitor.Format(Context, markdown);
+        private string FormatMarkdown(string? markdown) =>
+            PlainTextMarkdownVisitor.Format(Context, markdown ?? "");
 
         private string FormatMessageHeader(Message message)
         {
@@ -70,19 +37,9 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
             // Whether the message is pinned
             if (message.IsPinned)
-            {
                 buffer.Append(' ').Append("(pinned)");
-            }
 
             return buffer.ToString();
-        }
-
-        private string FormatMessageContent(Message message)
-        {
-            if (string.IsNullOrWhiteSpace(message.Content))
-                return "";
-
-            return FormatMarkdown(message.Content);
         }
 
         private string FormatAttachments(IReadOnlyList<Attachment> attachments)
@@ -109,49 +66,25 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
             foreach (var embed in embeds)
             {
-                buffer.AppendLine("{Embed}");
+                buffer
+                    .AppendLine("{Embed}")
+                    .AppendLineIfNotNullOrWhiteSpace(embed.Author?.Name)
+                    .AppendLineIfNotNullOrWhiteSpace(embed.Url)
+                    .AppendLineIfNotNullOrWhiteSpace(FormatMarkdown(embed.Title))
+                    .AppendLineIfNotNullOrWhiteSpace(FormatMarkdown(embed.Description));
 
-                // Author name
-                if (!string.IsNullOrWhiteSpace(embed.Author?.Name))
-                    buffer.AppendLine(embed.Author.Name);
-
-                // URL
-                if (!string.IsNullOrWhiteSpace(embed.Url))
-                    buffer.AppendLine(embed.Url);
-
-                // Title
-                if (!string.IsNullOrWhiteSpace(embed.Title))
-                    buffer.AppendLine(FormatMarkdown(embed.Title));
-
-                // Description
-                if (!string.IsNullOrWhiteSpace(embed.Description))
-                    buffer.AppendLine(FormatMarkdown(embed.Description));
-
-                // Fields
                 foreach (var field in embed.Fields)
                 {
-                    // Name
-                    if (!string.IsNullOrWhiteSpace(field.Name))
-                        buffer.AppendLine(field.Name);
-
-                    // Value
-                    if (!string.IsNullOrWhiteSpace(field.Value))
-                        buffer.AppendLine(field.Value);
+                    buffer
+                        .AppendLineIfNotNullOrWhiteSpace(field.Name)
+                        .AppendLineIfNotNullOrWhiteSpace(field.Value);
                 }
 
-                // Thumbnail URL
-                if (!string.IsNullOrWhiteSpace(embed.Thumbnail?.Url))
-                    buffer.AppendLine(embed.Thumbnail?.Url);
-
-                // Image URL
-                if (!string.IsNullOrWhiteSpace(embed.Image?.Url))
-                    buffer.AppendLine(embed.Image?.Url);
-
-                // Footer text
-                if (!string.IsNullOrWhiteSpace(embed.Footer?.Text))
-                    buffer.AppendLine(embed.Footer?.Text);
-
-                buffer.AppendLine();
+                buffer
+                    .AppendLineIfNotNullOrWhiteSpace(embed.Thumbnail?.Url)
+                    .AppendLineIfNotNullOrWhiteSpace(embed.Image?.Url)
+                    .AppendLineIfNotNullOrWhiteSpace(embed.Footer?.Text)
+                    .AppendLine();
             }
 
             return buffer.ToString();
@@ -187,18 +120,35 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
             buffer
                 .AppendLine(FormatMessageHeader(message))
-                .AppendLineIfNotEmpty(FormatMessageContent(message))
+                .AppendLineIfNotNullOrWhiteSpace(FormatMarkdown(message.Content))
                 .AppendLine()
-                .AppendLineIfNotEmpty(FormatAttachments(message.Attachments))
-                .AppendLineIfNotEmpty(FormatEmbeds(message.Embeds))
-                .AppendLineIfNotEmpty(FormatReactions(message.Reactions));
+                .AppendLineIfNotNullOrWhiteSpace(FormatAttachments(message.Attachments))
+                .AppendLineIfNotNullOrWhiteSpace(FormatEmbeds(message.Embeds))
+                .AppendLineIfNotNullOrWhiteSpace(FormatReactions(message.Reactions));
 
             return buffer.Trim().ToString();
         }
 
         public override async Task WritePreambleAsync()
         {
-            await _writer.WriteLineAsync(FormatPreamble());
+            var buffer = new StringBuilder();
+
+            buffer.Append('=', 62).AppendLine();
+            buffer.AppendLine($"Guild: {Context.Guild.Name}");
+            buffer.AppendLine($"Channel: {Context.Channel.Name}");
+
+            if (!string.IsNullOrWhiteSpace(Context.Channel.Topic))
+                buffer.AppendLine($"Topic: {Context.Channel.Topic}");
+
+            if (Context.After != null)
+                buffer.AppendLine($"After: {Context.After.Value.ToLocalString(Context.DateFormat)}");
+
+            if (Context.Before != null)
+                buffer.AppendLine($"Before: {Context.Before.Value.ToLocalString(Context.DateFormat)}");
+
+            buffer.Append('=', 62).AppendLine();
+
+            await _writer.WriteLineAsync(buffer.ToString());
         }
 
         public override async Task WriteMessageAsync(Message message)
@@ -211,8 +161,15 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
         public override async Task WritePostambleAsync()
         {
-            await _writer.WriteLineAsync();
-            await _writer.WriteLineAsync(FormatPostamble());
+            var buffer = new StringBuilder();
+
+            buffer
+                .Append('=', 62).AppendLine()
+                .AppendLine($"Exported {_messageCount:N0} message(s)")
+                .Append('=', 62).AppendLine()
+                .AppendLine();
+
+            await _writer.WriteLineAsync(buffer.ToString());
         }
 
         public override async ValueTask DisposeAsync()

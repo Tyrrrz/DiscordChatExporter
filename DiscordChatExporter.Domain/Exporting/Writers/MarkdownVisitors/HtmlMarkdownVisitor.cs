@@ -115,7 +115,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
                     : "";
 
                 _buffer
-                    .Append($"<span class=\"mention\" style=\"{style}>\"")
+                    .Append($"<span class=\"mention\" style=\"{style}\">")
                     .Append("@").Append(HtmlEncode(role.Name))
                     .Append("</span>");
             }

@@ -4,7 +4,7 @@ namespace DiscordChatExporter.Domain.Internal
 {
     internal static class StringExtensions
     {
-        public static StringBuilder AppendLineIfNotEmpty(this StringBuilder builder, string value) =>
+        public static StringBuilder AppendLineIfNotNullOrWhiteSpace(this StringBuilder builder, string? value) =>
             !string.IsNullOrWhiteSpace(value) ? builder.AppendLine(value) : builder;
 
         public static StringBuilder Trim(this StringBuilder builder)

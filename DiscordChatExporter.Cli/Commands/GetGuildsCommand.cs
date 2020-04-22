@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using CliFx;
 using CliFx.Attributes;
 using DiscordChatExporter.Cli.Commands.Base;
-using DiscordChatExporter.Domain.Discord;
+using DiscordChatExporter.Domain.Utilities;
 
 namespace DiscordChatExporter.Cli.Commands
 {

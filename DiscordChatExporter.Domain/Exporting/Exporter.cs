@@ -31,8 +31,7 @@ namespace DiscordChatExporter.Domain.Exporting
             var mentionableChannels = await _discord.GetGuildChannelsAsync(guild.Id);
             var mentionableRoles = guild.Roles;
 
-            var context = new RenderContext
-            (
+            var context = new RenderContext(
                 guild, channel, after, before, dateFormat,
                 mentionableUsers, mentionableChannels, mentionableRoles
             );

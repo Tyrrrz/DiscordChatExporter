@@ -22,6 +22,124 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             });
         }
 
+        private string FormatMarkdown(string? markdown) =>
+            PlainTextMarkdownVisitor.Format(Context, markdown ?? "");
+
+        private void WriteAttachment(Attachment attachment)
+        {
+            _writer.WriteStartObject();
+
+            _writer.WriteString("id", attachment.Id);
+            _writer.WriteString("url", attachment.Url);
+            _writer.WriteString("fileName", attachment.FileName);
+            _writer.WriteNumber("fileSizeBytes", attachment.FileSize.TotalBytes);
+
+            _writer.WriteEndObject();
+        }
+
+        private void WriteEmbedAuthor(EmbedAuthor embedAuthor)
+        {
+            _writer.WriteStartObject("author");
+
+            _writer.WriteString("name", embedAuthor.Name);
+            _writer.WriteString("url", embedAuthor.Url);
+            _writer.WriteString("iconUrl", embedAuthor.IconUrl);
+
+            _writer.WriteEndObject();
+        }
+
+        private void WriteEmbedThumbnail(EmbedImage embedThumbnail)
+        {
+            _writer.WriteStartObject("thumbnail");
+
+            _writer.WriteString("url", embedThumbnail.Url);
+            _writer.WriteNumber("width", embedThumbnail.Width);
+            _writer.WriteNumber("height", embedThumbnail.Height);
+
+            _writer.WriteEndObject();
+        }
+
+        private void WriteEmbedImage(EmbedImage embedImage)
+        {
+            _writer.WriteStartObject("image");
+
+            _writer.WriteString("url", embedImage.Url);
+            _writer.WriteNumber("width", embedImage.Width);
+            _writer.WriteNumber("height", embedImage.Height);
+
+            _writer.WriteEndObject();
+        }
+
+        private void WriteEmbedFooter(EmbedFooter embedFooter)
+        {
+            _writer.WriteStartObject("footer");
+
+            _writer.WriteString("text", embedFooter.Text);
+            _writer.WriteString("iconUrl", embedFooter.IconUrl);
+
+            _writer.WriteEndObject();
+        }
+
+        private void WriteEmbedField(EmbedField embedField)
+        {
+            _writer.WriteStartObject();
+
+            _writer.WriteString("name", embedField.Name);
+            _writer.WriteString("value", embedField.Value);
+            _writer.WriteBoolean("isInline", embedField.IsInline);
+
+            _writer.WriteEndObject();
+        }
+
+        private void WriteEmbed(Embed embed)
+        {
+            _writer.WriteStartObject();
+
+            _writer.WriteString("title", FormatMarkdown(embed.Title));
+            _writer.WriteString("url", embed.Url);
+            _writer.WriteString("timestamp", embed.Timestamp);
+            _writer.WriteString("description", FormatMarkdown(embed.Description));
+
+            if (embed.Author != null)
+                WriteEmbedAuthor(embed.Author);
+
+            if (embed.Thumbnail != null)
+                WriteEmbedThumbnail(embed.Thumbnail);
+
+            if (embed.Image != null)
+                WriteEmbedImage(embed.Image);
+
+            if (embed.Footer != null)
+                WriteEmbedFooter(embed.Footer);
+
+            // Fields
+            _writer.WriteStartArray("fields");
+
+            foreach (var field in embed.Fields)
+                WriteEmbedField(field);
+
+            _writer.WriteEndArray();
+
+            _writer.WriteEndObject();
+        }
+
+        private void WriteReaction(Reaction reaction)
+        {
+            _writer.WriteStartObject();
+
+            // Emoji
+            _writer.WriteStartObject("emoji");
+            _writer.WriteString("id", reaction.Emoji.Id);
+            _writer.WriteString("name", reaction.Emoji.Name);
+            _writer.WriteBoolean("isAnimated", reaction.Emoji.IsAnimated);
+            _writer.WriteString("imageUrl", reaction.Emoji.ImageUrl);
+            _writer.WriteEndObject();
+
+            _writer.WriteNumber("count", reaction.Count);
+
+            _writer.WriteEndObject();
+        }
+
         public override async Task WritePreambleAsync()
         {
             // Root object (start)
@@ -66,8 +184,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteBoolean("isPinned", message.IsPinned);
 
             // Content
-            var content = PlainTextMarkdownVisitor.Format(Context, message.Content);
-            _writer.WriteString("content", content);
+            _writer.WriteString("content", FormatMarkdown(message.Content));
 
             // Author
             _writer.WriteStartObject("author");
@@ -82,16 +199,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteStartArray("attachments");
 
             foreach (var attachment in message.Attachments)
-            {
-                _writer.WriteStartObject();
-
-                _writer.WriteString("id", attachment.Id);
-                _writer.WriteString("url", attachment.Url);
-                _writer.WriteString("fileName", attachment.FileName);
-                _writer.WriteNumber("fileSizeBytes", attachment.FileSize.TotalBytes);
-
-                _writer.WriteEndObject();
-            }
+                WriteAttachment(attachment);
 
             _writer.WriteEndArray();
 
@@ -99,71 +207,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteStartArray("embeds");
 
             foreach (var embed in message.Embeds)
-            {
-                _writer.WriteStartObject();
-
-                _writer.WriteString("title", embed.Title);
-                _writer.WriteString("url", embed.Url);
-                _writer.WriteString("timestamp", embed.Timestamp);
-                _writer.WriteString("description", embed.Description);
-
-                // Author
-                if (embed.Author != null)
-                {
-                    _writer.WriteStartObject("author");
-                    _writer.WriteString("name", embed.Author.Name);
-                    _writer.WriteString("url", embed.Author.Url);
-                    _writer.WriteString("iconUrl", embed.Author.IconUrl);
-                    _writer.WriteEndObject();
-                }
-
-                // Thumbnail
-                if (embed.Thumbnail != null)
-                {
-                    _writer.WriteStartObject("thumbnail");
-                    _writer.WriteString("url", embed.Thumbnail.Url);
-                    _writer.WriteNumber("width", embed.Thumbnail.Width);
-                    _writer.WriteNumber("height", embed.Thumbnail.Height);
-                    _writer.WriteEndObject();
-                }
-
-                // Image
-                if (embed.Image != null)
-                {
-                    _writer.WriteStartObject("image");
-                    _writer.WriteString("url", embed.Image.Url);
-                    _writer.WriteNumber("width", embed.Image.Width);
-                    _writer.WriteNumber("height", embed.Image.Height);
-                    _writer.WriteEndObject();
-                }
-
-                // Footer
-                if (embed.Footer != null)
-                {
-                    _writer.WriteStartObject("footer");
-                    _writer.WriteString("text", embed.Footer.Text);
-                    _writer.WriteString("iconUrl", embed.Footer.IconUrl);
-                    _writer.WriteEndObject();
-                }
-
-                // Fields
-                _writer.WriteStartArray("fields");
-
-                foreach (var field in embed.Fields)
-                {
-                    _writer.WriteStartObject();
-
-                    _writer.WriteString("name", field.Name);
-                    _writer.WriteString("value", field.Value);
-                    _writer.WriteBoolean("isInline", field.IsInline);
-
-                    _writer.WriteEndObject();
-                }
-
-                _writer.WriteEndArray();
-
-                _writer.WriteEndObject();
-            }
+                WriteEmbed(embed);
 
             _writer.WriteEndArray();
 
@@ -171,31 +215,14 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteStartArray("reactions");
 
             foreach (var reaction in message.Reactions)
-            {
-                _writer.WriteStartObject();
-
-                // Emoji
-                _writer.WriteStartObject("emoji");
-                _writer.WriteString("id", reaction.Emoji.Id);
-                _writer.WriteString("name", reaction.Emoji.Name);
-                _writer.WriteBoolean("isAnimated", reaction.Emoji.IsAnimated);
-                _writer.WriteString("imageUrl", reaction.Emoji.ImageUrl);
-                _writer.WriteEndObject();
-
-                // Count
-                _writer.WriteNumber("count", reaction.Count);
-
-                _writer.WriteEndObject();
-            }
+                WriteReaction(reaction);
 
             _writer.WriteEndArray();
 
             _writer.WriteEndObject();
 
-            _messageCount++;
-
             // Flush every 100 messages
-            if (_messageCount % 100 == 0)
+            if (_messageCount++ % 100 == 0)
                 await _writer.FlushAsync();
         }
 
@@ -204,7 +231,6 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             // Message array (end)
             _writer.WriteEndArray();
 
-            // Message count
             _writer.WriteNumber("messageCount", _messageCount);
 
             // Root object (end)

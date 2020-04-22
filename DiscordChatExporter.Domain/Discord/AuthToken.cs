@@ -2,11 +2,7 @@
 
 namespace DiscordChatExporter.Domain.Discord
 {
-    public enum AuthTokenType
-    {
-        User,
-        Bot
-    }
+    public enum AuthTokenType { User, Bot }
 
     public class AuthToken
     {

@@ -52,9 +52,11 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
 
         public override MarkdownNode VisitEmoji(EmojiNode emoji)
         {
-            _buffer.Append(emoji.IsCustomEmoji
-                ? $":{emoji.Name}:"
-                : emoji.Name);
+            _buffer.Append(
+                emoji.IsCustomEmoji
+                    ? $":{emoji.Name}:"
+                    : emoji.Name
+            );
 
             return base.VisitEmoji(emoji);
         }

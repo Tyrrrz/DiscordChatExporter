@@ -23,7 +23,9 @@ namespace DiscordChatExporter.Domain.Discord
             _token = token;
             _httpClient = httpClient;
 
-            // Discord seems to always respond 429 on our first request with unreasonable wait time (10+ minutes).
+            _httpClient.BaseAddress = new Uri("https://discordapp.com/api/v6");
+
+            // Discord seems to always respond with 429 on the first request with unreasonable wait time (10+ minutes).
             // For that reason the policy will start respecting their retry-after header only after Nth failed response.
             _httpRequestPolicy = Policy
                 .HandleResult<HttpResponseMessage>(m => m.StatusCode == HttpStatusCode.TooManyRequests)
@@ -240,10 +242,7 @@ namespace DiscordChatExporter.Domain.Discord
 
             handler.UseCookies = false;
 
-            return new HttpClient(handler, true)
-            {
-                BaseAddress = new Uri("https://discordapp.com/api/v6")
-            };
+            return new HttpClient(handler, true);
         });
     }
 }

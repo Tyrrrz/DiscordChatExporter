@@ -17,6 +17,8 @@ namespace DiscordChatExporter.Domain.Exporting
 
         public ChannelExporter(DiscordClient discord) => _discord = discord;
 
+        public ChannelExporter(AuthToken token) : this(new DiscordClient(token)) {}
+
         public async Task ExportAsync(
             Guild guild,
             Channel channel,
@@ -28,13 +30,12 @@ namespace DiscordChatExporter.Domain.Exporting
             DateTimeOffset? before = null,
             IProgress<double>? progress = null)
         {
-            // Get base file path from output path
             var baseFilePath = GetFilePathFromOutputPath(guild, channel, outputPath, format, after, before);
 
-            // Create options
+            // Options
             var options = new ExportOptions(baseFilePath, format, partitionLimit);
 
-            // Create context
+            // Context
             var mentionableUsers = new HashSet<User>(IdBasedEqualityComparer.Instance);
             var mentionableChannels = await _discord.GetGuildChannelsAsync(guild.Id);
             var mentionableRoles = guild.Roles;
@@ -44,11 +45,9 @@ namespace DiscordChatExporter.Domain.Exporting
                 mentionableUsers, mentionableChannels, mentionableRoles
             );
 
-            // Create renderer
-            await using var renderer = new MessageExporter(options, context);
+            await using var messageExporter = new MessageExporter(options, context);
 
-            // Render messages
-            var renderedAnything = false;
+            var exportedAnything = false;
             await foreach (var message in _discord.GetMessagesAsync(channel.Id, after, before, progress))
             {
                 // Add encountered users to the list of mentionable users
@@ -68,12 +67,12 @@ namespace DiscordChatExporter.Domain.Exporting
                 }
 
                 // Render message
-                await renderer.RenderMessageAsync(message);
-                renderedAnything = true;
+                await messageExporter.ExportMessageAsync(message);
+                exportedAnything = true;
             }
 
-            // Throw if no messages were rendered
-            if (!renderedAnything)
+            // Throw if no messages were exported
+            if (!exportedAnything)
                 throw DiscordChatExporterException.ChannelEmpty(channel);
         }
     }

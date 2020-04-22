@@ -16,7 +16,7 @@ namespace DiscordChatExporter.Domain.Discord
             Value = value;
         }
 
-        public AuthenticationHeaderValue GetAuthenticationHeader() => Type == AuthTokenType.User
+        public AuthenticationHeaderValue GetAuthorizationHeader() => Type == AuthTokenType.User
             ? new AuthenticationHeaderValue(Value)
             : new AuthenticationHeaderValue("Bot", Value);
 

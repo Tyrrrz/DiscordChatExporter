@@ -62,7 +62,7 @@ namespace DiscordChatExporter.Domain.Exporting
             return _writer = writer;
         }
 
-        public async Task RenderMessageAsync(Message message)
+        public async Task ExportMessageAsync(Message message)
         {
             var writer = await GetWriterAsync();
             await writer.WriteMessageAsync(message);

@@ -18,6 +18,8 @@ namespace DiscordChatExporter.Domain.Discord
         private readonly HttpClient _httpClient;
         private readonly IAsyncPolicy<HttpResponseMessage> _httpRequestPolicy;
 
+        private readonly Uri _baseUri = new Uri("https://discordapp.com/api/v6/", UriKind.Absolute);
+
         public DiscordClient(AuthToken token, HttpClient httpClient)
         {
             _token = token;
@@ -51,10 +53,8 @@ namespace DiscordChatExporter.Domain.Discord
         {
             using var response = await _httpRequestPolicy.ExecuteAsync(async () =>
             {
-                var uri = new Uri(new Uri("https://discordapp.com/api/v6"), url);
-
-                using var request = new HttpRequestMessage(HttpMethod.Get, uri);
-                request.Headers.Authorization = _token.GetAuthenticationHeader();
+                using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, url));
+                request.Headers.Authorization = _token.GetAuthorizationHeader();
 
                 return await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
             });
@@ -113,11 +113,13 @@ namespace DiscordChatExporter.Domain.Discord
 
             while (true)
             {
-                var route = "users/@me/guilds?limit=100";
-                if (!string.IsNullOrWhiteSpace(afterId))
-                    route += $"&after={afterId}";
+                var url = new UrlBuilder()
+                    .SetPath("users/@me/guilds")
+                    .SetQueryParameter("limit", "100")
+                    .SetQueryParameterIfNotNullOrWhiteSpace("after", afterId)
+                    .Build();
 
-                var response = await GetApiResponseAsync(route);
+                var response = await GetApiResponseAsync(url);
 
                 var isEmpty = true;
 
@@ -147,7 +149,7 @@ namespace DiscordChatExporter.Domain.Discord
 
         public async Task<IReadOnlyList<Channel>> GetGuildChannelsAsync(string guildId)
         {
-            // Special case for direct messages pseudo-guild
+            // Direct messages pseudo-guild
             if (guildId == Guild.DirectMessages.Id)
                 return Array.Empty<Channel>();
 
@@ -159,38 +161,42 @@ namespace DiscordChatExporter.Domain.Discord
 
         private async Task<Message> GetLastMessageAsync(string channelId, DateTimeOffset? before = null)
         {
-            var route = $"channels/{channelId}/messages?limit=1";
-            if (before != null)
-                route += $"&before={before.Value.ToSnowflake()}";
+            var url = new UrlBuilder()
+                .SetPath($"channels/{channelId}/messages")
+                .SetQueryParameter("limit", "1")
+                .SetQueryParameterIfNotNullOrWhiteSpace("before", before?.ToSnowflake())
+                .Build();
 
-            var response = await GetApiResponseAsync(route);
+            var response = await GetApiResponseAsync(url);
 
             return response.EnumerateArray().Select(ParseMessage).FirstOrDefault();
         }
 
-        public async IAsyncEnumerable<Message> GetMessagesAsync(string channelId,
-            DateTimeOffset? after = null, DateTimeOffset? before = null, IProgress<double>? progress = null)
+        public async IAsyncEnumerable<Message> GetMessagesAsync(
+            string channelId,
+            DateTimeOffset? after = null,
+            DateTimeOffset? before = null,
+            IProgress<double>? progress = null)
         {
-            // Get the last message
             var lastMessage = await GetLastMessageAsync(channelId, before);
 
             // If the last message doesn't exist or it's outside of range - return
             if (lastMessage == null || lastMessage.Timestamp < after)
-            {
-                progress?.Report(1);
                 yield break;
-            }
 
-            // Get other messages
             var firstMessage = default(Message);
             var afterId = after?.ToSnowflake() ?? "0";
+
             while (true)
             {
-                // Get message batch
-                var route = $"channels/{channelId}/messages?limit=100&after={afterId}";
-                var response = await GetApiResponseAsync(route);
+                var url = new UrlBuilder()
+                    .SetPath($"channels/{channelId}/messages")
+                    .SetQueryParameter("limit", "100")
+                    .SetQueryParameter("after", afterId)
+                    .Build();
 
-                // Parse
+                var response = await GetApiResponseAsync(url);
+
                 var messages = response
                     .EnumerateArray()
                     .Select(ParseMessage)
@@ -201,33 +207,28 @@ namespace DiscordChatExporter.Domain.Discord
                 if (!messages.Any())
                     break;
 
-                // Trim messages to range (until last message)
-                var messagesInRange = messages
-                    .TakeWhile(m => m.Id != lastMessage.Id && m.Timestamp < lastMessage.Timestamp)
-                    .ToArray();
-
-                // Yield messages
-                foreach (var message in messagesInRange)
+                foreach (var message in messages)
                 {
-                    // Set first message if it's not set
                     firstMessage ??= message;
 
-                    // Report progress (based on the time range of parsed messages compared to total)
-                    progress?.Report((message.Timestamp - firstMessage.Timestamp).TotalSeconds /
-                                     (lastMessage.Timestamp - firstMessage.Timestamp).TotalSeconds);
+                    // Ensure messages are in range (take into account that last message could have been deleted)
+                    if (message.Timestamp > lastMessage.Timestamp)
+                        yield break;
+
+                    // Report progress based on the duration of parsed messages divided by total
+                    progress?.Report(
+                        (message.Timestamp - firstMessage.Timestamp) /
+                        (lastMessage.Timestamp - firstMessage.Timestamp)
+                    );
 
                     yield return message;
                     afterId = message.Id;
+
+                    // Yielded last message - break loop
+                    if (message.Id == lastMessage.Id)
+                        yield break;
                 }
-
-                // Break if messages were trimmed (which means the last message was encountered)
-                if (messagesInRange.Length != messages.Length)
-                    break;
             }
-
-            // Yield last message
-            yield return lastMessage;
-            progress?.Report(1);
         }
     }
 

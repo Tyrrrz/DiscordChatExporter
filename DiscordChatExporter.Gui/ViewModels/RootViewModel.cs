@@ -54,35 +54,28 @@ namespace DiscordChatExporter.Gui.ViewModels
             _settingsService = settingsService;
             _updateService = updateService;
 
-            // Set title
             DisplayName = $"{App.Name} v{App.VersionString}";
 
             // Update busy state when progress manager changes
-            ProgressManager.Bind(o => o.IsActive, (sender, args) => IsBusy = ProgressManager.IsActive);
+            ProgressManager.Bind(o => o.IsActive,
+                (sender, args) => IsBusy = ProgressManager.IsActive);
             ProgressManager.Bind(o => o.IsActive,
                 (sender, args) => IsProgressIndeterminate = ProgressManager.IsActive && ProgressManager.Progress.IsEither(0, 1));
             ProgressManager.Bind(o => o.Progress,
                 (sender, args) => IsProgressIndeterminate = ProgressManager.IsActive && ProgressManager.Progress.IsEither(0, 1));
         }
 
-        private DiscordClient GetDiscordClient(AuthToken token) => new DiscordClient(token);
-
-        private ChannelExporter GetChannelExporter(AuthToken token) => new ChannelExporter(GetDiscordClient(token));
-
         private async Task HandleAutoUpdateAsync()
         {
             try
             {
-                // Check for updates
                 var updateVersion = await _updateService.CheckForUpdatesAsync();
                 if (updateVersion == null)
                     return;
 
-                // Notify user of an update and prepare it
                 Notifications.Enqueue($"Downloading update to {App.Name} v{updateVersion}...");
                 await _updateService.PrepareUpdateAsync(updateVersion);
 
-                // Prompt user to install update (otherwise install it when application exits)
                 Notifications.Enqueue(
                     "Update has been downloaded and will be installed when you exit",
                     "INSTALL NOW", () =>
@@ -102,17 +95,14 @@ namespace DiscordChatExporter.Gui.ViewModels
         {
             base.OnViewLoaded();
 
-            // Load settings
             _settingsService.Load();
 
-            // Get last token
             if (_settingsService.LastToken != null)
             {
                 IsBotToken = _settingsService.LastToken.Type == AuthTokenType.Bot;
                 TokenValue = _settingsService.LastToken.Value;
             }
 
-            // Check and prepare update
             await HandleAutoUpdateAsync();
         }
 
@@ -120,49 +110,44 @@ namespace DiscordChatExporter.Gui.ViewModels
         {
             base.OnClose();
 
-            // Save settings
             _settingsService.Save();
-
-            // Finalize updates if necessary
             _updateService.FinalizeUpdate(false);
         }
 
         public async void ShowSettings()
         {
-            // Create dialog
             var dialog = _viewModelFactory.CreateSettingsViewModel();
-
-            // Show dialog
             await _dialogManager.ShowDialogAsync(dialog);
         }
 
-        public bool CanPopulateGuildsAndChannels => !IsBusy && !string.IsNullOrWhiteSpace(TokenValue);
+        public bool CanPopulateGuildsAndChannels =>
+            !IsBusy && !string.IsNullOrWhiteSpace(TokenValue);
 
         public async void PopulateGuildsAndChannels()
         {
-            // Create progress operation
-            var operation = ProgressManager.CreateOperation();
+            using var operation = ProgressManager.CreateOperation();
 
             try
             {
-                // Sanitize token
-                TokenValue = TokenValue!.Trim('"');
+                var tokenValue = TokenValue?.Trim('"');
+                if (string.IsNullOrWhiteSpace(tokenValue))
+                    return;
 
-                // Create token
                 var token = new AuthToken(
                     IsBotToken ? AuthTokenType.Bot : AuthTokenType.User,
-                    TokenValue);
+                    tokenValue
+                );
 
-                // Save token
                 _settingsService.LastToken = token;
 
-                // Prepare available guild list
+                var discord = new DiscordClient(token);
+
                 var availableGuilds = new List<GuildViewModel>();
 
-                // Get direct messages
+                // Direct messages
                 {
                     var guild = Guild.DirectMessages;
-                    var channels = await GetDiscordClient(token).GetDirectMessageChannelsAsync();
+                    var channels = await discord.GetDirectMessageChannelsAsync();
 
                     // Create channel view models
                     var channelViewModels = new List<ChannelViewModel>();
@@ -188,11 +173,11 @@ namespace DiscordChatExporter.Gui.ViewModels
                     availableGuilds.Add(guildViewModel);
                 }
 
-                // Get guilds
-                var guilds = await GetDiscordClient(token).GetUserGuildsAsync();
+                // Guilds
+                var guilds = await discord.GetUserGuildsAsync();
                 foreach (var guild in guilds)
                 {
-                    var channels = await GetDiscordClient(token).GetGuildChannelsAsync(guild.Id);
+                    var channels = await discord.GetGuildChannelsAsync(guild.Id);
                     var categoryChannels = channels.Where(c => c.Type == ChannelType.GuildCategory).ToArray();
                     var exportableChannels = channels.Where(c => c.IsTextChannel).ToArray();
 
@@ -220,40 +205,32 @@ namespace DiscordChatExporter.Gui.ViewModels
                     availableGuilds.Add(guildViewModel);
                 }
 
-                // Update available guild list
                 AvailableGuilds = availableGuilds;
-
-                // Pre-select first guild
                 SelectedGuild = AvailableGuilds.FirstOrDefault();
             }
             catch (DiscordChatExporterException ex) when (!ex.IsCritical)
             {
-                Notifications.Enqueue(ex.Message);
-            }
-            finally
-            {
-                operation.Dispose();
+                Notifications.Enqueue(ex.Message.TrimEnd('.'));
             }
         }
 
-        public bool CanExportChannels => !IsBusy && SelectedGuild != null && SelectedChannels != null && SelectedChannels.Any();
+        public bool CanExportChannels =>
+            !IsBusy && SelectedGuild != null && SelectedChannels != null && SelectedChannels.Any();
 
         public async void ExportChannels()
         {
-            // Get last used token
-            var token = _settingsService.LastToken!;
+            var token = _settingsService.LastToken;
+            if (token == null || SelectedGuild == null || SelectedChannels == null || !SelectedChannels.Any())
+                return;
 
-            // Create dialog
-            var dialog = _viewModelFactory.CreateExportSetupViewModel(SelectedGuild!, SelectedChannels!);
-
-            // Show dialog, if canceled - return
+            var dialog = _viewModelFactory.CreateExportSetupViewModel(SelectedGuild, SelectedChannels);
             if (await _dialogManager.ShowDialogAsync(dialog) != true)
                 return;
 
-            // Create a progress operation for each channel to export
+            var exporter = new ChannelExporter(token);
+
             var operations = ProgressManager.CreateOperations(dialog.Channels!.Count);
 
-            // Export channels
             var successfulExportCount = 0;
             await dialog.Channels.Zip(operations).ParallelForEachAsync(async tuple =>
             {
@@ -261,7 +238,7 @@ namespace DiscordChatExporter.Gui.ViewModels
 
                 try
                 {
-                    await GetChannelExporter(token).ExportAsync(dialog.Guild!, channel!,
+                    await exporter.ExportAsync(dialog.Guild!, channel!,
                         dialog.OutputPath!, dialog.SelectedFormat, _settingsService.DateFormat,
                         dialog.PartitionLimit, dialog.After, dialog.Before, operation);
 
@@ -269,7 +246,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                 }
                 catch (DiscordChatExporterException ex) when (!ex.IsCritical)
                 {
-                    Notifications.Enqueue(ex.Message);
+                    Notifications.Enqueue(ex.Message.TrimEnd('.'));
                 }
                 finally
                 {

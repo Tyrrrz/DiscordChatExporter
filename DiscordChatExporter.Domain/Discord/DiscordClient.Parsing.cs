@@ -29,10 +29,12 @@ namespace DiscordChatExporter.Domain.Discord
         {
             var userId = json.GetProperty("user").Pipe(ParseId);
             var nick = json.GetPropertyOrNull("nick")?.GetString();
-            var roles = json.GetPropertyOrNull("roles")?.EnumerateArray().Select(j => j.GetString()).ToArray() ??
-                        Array.Empty<string>();
 
-            return new Member(userId, nick, roles);
+            var roleIds =
+                json.GetPropertyOrNull("roles")?.EnumerateArray().Select(j => j.GetString()).ToArray() ??
+                Array.Empty<string>();
+
+            return new Member(userId, nick, roleIds);
         }
 
         private Guild ParseGuild(JsonElement json)
@@ -40,8 +42,10 @@ namespace DiscordChatExporter.Domain.Discord
             var id = ParseId(json);
             var name = json.GetProperty("name").GetString();
             var iconHash = json.GetProperty("icon").GetString();
-            var roles = json.GetPropertyOrNull("roles")?.EnumerateArray().Select(ParseRole).ToArray() ??
-                        Array.Empty<Role>();
+
+            var roles =
+                json.GetPropertyOrNull("roles")?.EnumerateArray().Select(ParseRole).ToArray() ??
+                Array.Empty<Role>();
 
             return new Guild(id, name, iconHash, roles);
         }
@@ -53,8 +57,9 @@ namespace DiscordChatExporter.Domain.Discord
             var type = (ChannelType) json.GetProperty("type").GetInt32();
             var topic = json.GetPropertyOrNull("topic")?.GetString();
 
-            var guildId = json.GetPropertyOrNull("guild_id")?.GetString() ??
-                          Guild.DirectMessages.Id;
+            var guildId =
+                json.GetPropertyOrNull("guild_id")?.GetString() ??
+                Guild.DirectMessages.Id;
 
             var name =
                 json.GetPropertyOrNull("name")?.GetString() ??
@@ -134,10 +139,22 @@ namespace DiscordChatExporter.Domain.Discord
             var image = json.GetPropertyOrNull("image")?.Pipe(ParseEmbedImage);
             var footer = json.GetPropertyOrNull("footer")?.Pipe(ParseEmbedFooter);
 
-            var fields = json.GetPropertyOrNull("fields")?.EnumerateArray().Select(ParseEmbedField).ToArray() ??
-                         Array.Empty<EmbedField>();
+            var fields =
+                json.GetPropertyOrNull("fields")?.EnumerateArray().Select(ParseEmbedField).ToArray() ??
+                Array.Empty<EmbedField>();
 
-            return new Embed(title, url, timestamp, color, author, description, fields, thumbnail, image, footer);
+            return new Embed(
+                title,
+                url,
+                timestamp,
+                color,
+                author,
+                description,
+                fields,
+                thumbnail,
+                image,
+                footer
+            );
         }
 
         private Emoji ParseEmoji(JsonElement json)
@@ -180,20 +197,36 @@ namespace DiscordChatExporter.Domain.Discord
 
             var author = json.GetProperty("author").Pipe(ParseUser);
 
-            var attachments = json.GetPropertyOrNull("attachments")?.EnumerateArray().Select(ParseAttachment).ToArray() ??
-                              Array.Empty<Attachment>();
+            var attachments =
+                json.GetPropertyOrNull("attachments")?.EnumerateArray().Select(ParseAttachment).ToArray() ??
+                Array.Empty<Attachment>();
 
-            var embeds = json.GetPropertyOrNull("embeds")?.EnumerateArray().Select(ParseEmbed).ToArray() ??
-                         Array.Empty<Embed>();
+            var embeds =
+                json.GetPropertyOrNull("embeds")?.EnumerateArray().Select(ParseEmbed).ToArray() ??
+                Array.Empty<Embed>();
 
-            var reactions = json.GetPropertyOrNull("reactions")?.EnumerateArray().Select(ParseReaction).ToArray() ??
-                            Array.Empty<Reaction>();
+            var reactions =
+                json.GetPropertyOrNull("reactions")?.EnumerateArray().Select(ParseReaction).ToArray() ??
+                Array.Empty<Reaction>();
 
-            var mentionedUsers = json.GetPropertyOrNull("mentions")?.EnumerateArray().Select(ParseUser).ToArray() ??
-                                 Array.Empty<User>();
+            var mentionedUsers =
+                json.GetPropertyOrNull("mentions")?.EnumerateArray().Select(ParseUser).ToArray() ??
+                Array.Empty<User>();
 
-            return new Message(id, channelId, type, author, timestamp, editedTimestamp, isPinned, content, attachments, embeds,
-                reactions, mentionedUsers);
+            return new Message(
+                id,
+                channelId,
+                type,
+                author,
+                timestamp,
+                editedTimestamp,
+                isPinned,
+                content,
+                attachments,
+                embeds,
+                reactions,
+                mentionedUsers
+            );
         }
     }
 }

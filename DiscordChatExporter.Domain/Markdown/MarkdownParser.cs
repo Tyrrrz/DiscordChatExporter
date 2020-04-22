@@ -84,8 +84,8 @@ namespace DiscordChatExporter.Domain.Markdown
         // Blank lines at the beginning and end of content are trimmed
         // There can be either one or two backticks, but equal number on both sides
         private static readonly IMatcher<MarkdownNode> InlineCodeBlockNodeMatcher = new RegexMatcher<MarkdownNode>(
-            new Regex("`([^`]+)`", DefaultRegexOptions | RegexOptions.Singleline),
-            m => new InlineCodeBlockNode(m.Groups[1].Value.Trim('\r', '\n')));
+            new Regex("(`{1,2})([^`]+)\\1", DefaultRegexOptions | RegexOptions.Singleline),
+            m => new InlineCodeBlockNode(m.Groups[2].Value.Trim('\r', '\n')));
 
         // Capture language identifier and then any character until the earliest triple backtick
         // Language identifier is one word immediately after opening backticks, followed immediately by newline

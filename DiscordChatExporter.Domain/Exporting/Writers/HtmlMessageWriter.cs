@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -73,12 +74,20 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             scriptObject.Import("FormatDate",
                 new Func<DateTimeOffset, string>(d => d.ToLocalString(Context.DateFormat)));
 
+            scriptObject.Import("FormatColorRgb",
+                new Func<Color?, string?>(c => c != null ? $"rgb({c?.R}, {c?.G}, {c?.B})" : null));
+
+            scriptObject.Import("TryGetUserColor",
+                new Func<User, Color?>(Context.TryGetUserColor));
+
+            scriptObject.Import("TryGetUserNick",
+                new Func<User, string?>(u => Context.TryGetUserMember(u)?.Nick));
+
             scriptObject.Import("FormatMarkdown",
-                new Func<string?, string>(FormatMarkdown));
+                new Func<string?, string>(m => FormatMarkdown(m)));
 
-            scriptObject.Import("GetUserColor", new Func<Guild, User, string>(Guild.GetUserColor));
-
-            scriptObject.Import("GetUserNick", new Func<Guild, User, string>(Guild.GetUserNick));
+            scriptObject.Import("FormatEmbedMarkdown",
+                new Func<string?, string>(m => FormatMarkdown(m, false)));
 
             // Push model
             templateContext.PushGlobal(scriptObject);
@@ -89,8 +98,8 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             return templateContext;
         }
 
-        private string FormatMarkdown(string? markdown) =>
-            HtmlMarkdownVisitor.Format(Context, markdown ?? "");
+        private string FormatMarkdown(string? markdown, bool isJumboAllowed = true) =>
+            HtmlMarkdownVisitor.Format(Context, markdown ?? "", isJumboAllowed);
 
         private async Task RenderCurrentMessageGroupAsync()
         {

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CliFx;
 using CliFx.Attributes;
 using DiscordChatExporter.Cli.Commands.Base;
+using DiscordChatExporter.Domain.Utilities;
 
 namespace DiscordChatExporter.Cli.Commands
 {
@@ -16,12 +17,7 @@ namespace DiscordChatExporter.Cli.Commands
         {
             var guildChannels = await GetDiscordClient().GetGuildChannelsAsync(GuildId);
 
-            var channels = guildChannels
-                .Where(c => c.IsTextChannel)
-                .OrderBy(c => c.Name)
-                .ToArray();
-
-            foreach (var channel in channels)
+            foreach (var channel in guildChannels.OrderBy(c => c.Name))
                 console.Output.WriteLine($"{channel.Id} | {channel.Name}");
         }
     }

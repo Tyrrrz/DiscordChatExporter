@@ -1,8 +1,9 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using CliFx;
 using CliFx.Attributes;
 using DiscordChatExporter.Cli.Commands.Base;
+using DiscordChatExporter.Domain.Discord.Models;
+using DiscordChatExporter.Domain.Utilities;
 
 namespace DiscordChatExporter.Cli.Commands
 {
@@ -11,10 +12,8 @@ namespace DiscordChatExporter.Cli.Commands
     {
         public override async ValueTask ExecuteAsync(IConsole console)
         {
-            var directMessageChannels = await GetDiscordClient().GetDirectMessageChannelsAsync();
-            var channels = directMessageChannels.OrderBy(c => c.Name).ToArray();
-
-            await ExportMultipleAsync(console, channels);
+            var dmChannels = await GetDiscordClient().GetGuildChannelsAsync(Guild.DirectMessages.Id);
+            await ExportMultipleAsync(console, dmChannels);
         }
     }
 }

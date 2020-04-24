@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exporting;
 using DiscordChatExporter.Gui.Services;
-using DiscordChatExporter.Gui.ViewModels.Components;
 using DiscordChatExporter.Gui.ViewModels.Framework;
 
 namespace DiscordChatExporter.Gui.ViewModels.Dialogs
@@ -13,9 +13,9 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
         private readonly DialogManager _dialogManager;
         private readonly SettingsService _settingsService;
 
-        public GuildViewModel? Guild { get; set; }
+        public Guild? Guild { get; set; }
 
-        public IReadOnlyList<ChannelViewModel>? Channels { get; set; }
+        public IReadOnlyList<Channel>? Channels { get; set; }
 
         public bool IsSingleChannel => Channels == null || Channels.Count == 1;
 
@@ -61,7 +61,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
                 var channel = Channels.Single();
 
                 // Generate default file name
-                var defaultFileName = ChannelExporter.GetDefaultExportFileName(Guild!, channel!, SelectedFormat, After, Before);
+                var defaultFileName = ChannelExporter.GetDefaultExportFileName(Guild!, channel, SelectedFormat, After, Before);
 
                 // Generate filter
                 var ext = SelectedFormat.GetFileExtension();

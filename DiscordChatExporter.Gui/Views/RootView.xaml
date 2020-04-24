@@ -226,7 +226,7 @@
                                         Margin="-8"
                                         Background="Transparent"
                                         Cursor="Hand"
-                                        ToolTip="{Binding Model.Name}">
+                                        ToolTip="{Binding Name}">
                                         <!--  Guild icon placeholder  -->
                                         <Ellipse
                                             Width="48"
@@ -240,7 +240,7 @@
                                             Height="48"
                                             Margin="12,4,12,4">
                                             <Ellipse.Fill>
-                                                <ImageBrush ImageSource="{Binding Model.IconUrl}" />
+                                                <ImageBrush ImageSource="{Binding IconUrl}" />
                                             </Ellipse.Fill>
                                         </Ellipse>
                                     </Grid>
@@ -253,11 +253,11 @@
                     <Border Grid.Column="1">
                         <ListBox
                             HorizontalContentAlignment="Stretch"
-                            ItemsSource="{Binding SelectedGuild.Channels}"
+                            ItemsSource="{Binding AvailableChannels}"
                             SelectionMode="Extended"
                             TextSearch.TextPath="Model.Name">
                             <i:Interaction.Behaviors>
-                                <behaviors:ChannelViewModelMultiSelectionListBoxBehavior SelectedItems="{Binding SelectedChannels}" />
+                                <behaviors:ChannelMultiSelectionListBoxBehavior SelectedItems="{Binding SelectedChannels}" />
                             </i:Interaction.Behaviors>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
@@ -286,7 +286,7 @@
                                             FontSize="14">
                                             <Run Foreground="{DynamicResource SecondaryTextBrush}" Text="{Binding Category, Mode=OneWay}" />
                                             <Run Text="/" />
-                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Model.Name, Mode=OneWay}" />
+                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Name, Mode=OneWay}" />
                                         </TextBlock>
 
                                         <!--  Is selected checkmark  -->

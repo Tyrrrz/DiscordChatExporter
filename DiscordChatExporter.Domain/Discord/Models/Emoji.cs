@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using DiscordChatExporter.Domain.Internal;
 using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Domain.Discord.Models
 {
     // https://discordapp.com/developers/docs/resources/emoji#emoji-object
-
     public partial class Emoji
     {
         public string? Id { get; }
@@ -60,12 +61,19 @@ namespace DiscordChatExporter.Domain.Discord.Models
                 return $"https://cdn.discordapp.com/emojis/{id}.png";
             }
 
-            // Get runes
+            // Standard emoji
             var emojiRunes = GetRunes(name).ToArray();
-
-            // Get corresponding Twemoji image
             var twemojiName = GetTwemojiName(emojiRunes);
             return $"https://twemoji.maxcdn.com/2/72x72/{twemojiName}.png";
+        }
+
+        public static Emoji Parse(JsonElement json)
+        {
+            var id = json.GetPropertyOrNull("id")?.GetString();
+            var name = json.GetProperty("name").GetString();
+            var isAnimated = json.GetPropertyOrNull("animated")?.GetBoolean() ?? false;
+
+            return new Emoji(id, name, isAnimated);
         }
     }
 }

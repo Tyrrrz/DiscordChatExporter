@@ -76,8 +76,8 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
                 foreach (var field in embed.Fields)
                 {
                     buffer
-                        .AppendLineIfNotNullOrWhiteSpace(field.Name)
-                        .AppendLineIfNotNullOrWhiteSpace(field.Value);
+                        .AppendLineIfNotNullOrWhiteSpace(FormatMarkdown(field.Name))
+                        .AppendLineIfNotNullOrWhiteSpace(FormatMarkdown(field.Value));
                 }
 
                 buffer
@@ -135,7 +135,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
             buffer.Append('=', 62).AppendLine();
             buffer.AppendLine($"Guild: {Context.Guild.Name}");
-            buffer.AppendLine($"Channel: {Context.Channel.Name}");
+            buffer.AppendLine($"Channel: {Context.Channel.Category} / {Context.Channel.Name}");
 
             if (!string.IsNullOrWhiteSpace(Context.Channel.Topic))
                 buffer.AppendLine($"Topic: {Context.Channel.Topic}");

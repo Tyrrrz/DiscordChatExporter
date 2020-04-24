@@ -9,7 +9,6 @@ using DiscordChatExporter.Domain.Exceptions;
 using DiscordChatExporter.Domain.Exporting;
 using DiscordChatExporter.Domain.Utilities;
 using DiscordChatExporter.Gui.Services;
-using DiscordChatExporter.Gui.ViewModels.Components;
 using DiscordChatExporter.Gui.ViewModels.Framework;
 using Gress;
 using MaterialDesignThemes.Wpf;
@@ -37,11 +36,17 @@ namespace DiscordChatExporter.Gui.ViewModels
 
         public string? TokenValue { get; set; }
 
-        public IReadOnlyList<GuildViewModel>? AvailableGuilds { get; private set; }
+        private IReadOnlyDictionary<Guild, IReadOnlyList<Channel>>? GuildChannelMap { get; set; }
 
-        public GuildViewModel? SelectedGuild { get; set; }
+        public IReadOnlyList<Guild>? AvailableGuilds => GuildChannelMap?.Keys.ToArray();
 
-        public IReadOnlyList<ChannelViewModel>? SelectedChannels { get; set; }
+        public Guild? SelectedGuild { get; set; }
+
+        public IReadOnlyList<Channel>? AvailableChannels => SelectedGuild != null
+            ? GuildChannelMap?[SelectedGuild]
+            : null;
+
+        public IReadOnlyList<Channel>? SelectedChannels { get; set; }
 
         public RootViewModel(
             IViewModelFactory viewModelFactory,
@@ -142,71 +147,18 @@ namespace DiscordChatExporter.Gui.ViewModels
 
                 var discord = new DiscordClient(token);
 
-                var availableGuilds = new List<GuildViewModel>();
-
-                // Direct messages
-                {
-                    var guild = Guild.DirectMessages;
-                    var channels = await discord.GetDirectMessageChannelsAsync();
-
-                    // Create channel view models
-                    var channelViewModels = new List<ChannelViewModel>();
-                    foreach (var channel in channels)
-                    {
-                        // Get fake category
-                        var category = channel.Type == ChannelType.DirectTextChat ? "Private" : "Group";
-
-                        // Create channel view model
-                        var channelViewModel = _viewModelFactory.CreateChannelViewModel(channel, category);
-
-                        // Add to list
-                        channelViewModels.Add(channelViewModel);
-                    }
-
-                    // Create guild view model
-                    var guildViewModel = _viewModelFactory.CreateGuildViewModel(guild,
-                        channelViewModels.OrderBy(c => c.Category)
-                            .ThenBy(c => c.Model!.Name)
-                            .ToArray());
-
-                    // Add to list
-                    availableGuilds.Add(guildViewModel);
-                }
-
-                // Guilds
-                var guilds = await discord.GetUserGuildsAsync();
-                foreach (var guild in guilds)
+                var guildChannelMap = new Dictionary<Guild, IReadOnlyList<Channel>>();
+                await foreach (var guild in discord.GetUserGuildsAsync())
                 {
                     var channels = await discord.GetGuildChannelsAsync(guild.Id);
-                    var categoryChannels = channels.Where(c => c.Type == ChannelType.GuildCategory).ToArray();
-                    var exportableChannels = channels.Where(c => c.IsTextChannel).ToArray();
-
-                    // Create channel view models
-                    var channelViewModels = new List<ChannelViewModel>();
-                    foreach (var channel in exportableChannels)
-                    {
-                        // Get category
-                        var category = categoryChannels.FirstOrDefault(c => c.Id == channel.ParentId)?.Name;
-
-                        // Create channel view model
-                        var channelViewModel = _viewModelFactory.CreateChannelViewModel(channel, category);
-
-                        // Add to list
-                        channelViewModels.Add(channelViewModel);
-                    }
-
-                    // Create guild view model
-                    var guildViewModel = _viewModelFactory.CreateGuildViewModel(guild,
-                        channelViewModels.OrderBy(c => c.Category)
-                            .ThenBy(c => c.Model!.Name)
-                            .ToArray());
-
-                    // Add to list
-                    availableGuilds.Add(guildViewModel);
+                    guildChannelMap[guild] = channels
+                        .OrderBy(c => c.Category)
+                        .ThenBy(c => c.Name)
+                        .ToArray();
                 }
 
-                AvailableGuilds = availableGuilds;
-                SelectedGuild = AvailableGuilds.FirstOrDefault();
+                GuildChannelMap = guildChannelMap;
+                SelectedGuild = guildChannelMap.Keys.FirstOrDefault();
             }
             catch (DiscordChatExporterException ex) when (!ex.IsCritical)
             {

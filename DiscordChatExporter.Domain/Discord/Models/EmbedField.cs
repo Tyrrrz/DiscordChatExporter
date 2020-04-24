@@ -1,8 +1,10 @@
+using System.Text.Json;
+using DiscordChatExporter.Domain.Internal;
+
 namespace DiscordChatExporter.Domain.Discord.Models
 {
     // https://discordapp.com/developers/docs/resources/channel#embed-object-embed-field-structure
-
-    public class EmbedField
+    public partial class EmbedField
     {
         public string Name { get; }
 
@@ -18,5 +20,17 @@ namespace DiscordChatExporter.Domain.Discord.Models
         }
 
         public override string ToString() => $"{Name} | {Value}";
+    }
+
+    public partial class EmbedField
+    {
+        public static EmbedField Parse(JsonElement json)
+        {
+            var name = json.GetProperty("name").GetString();
+            var value = json.GetProperty("value").GetString();
+            var isInline = json.GetPropertyOrNull("inline")?.GetBoolean() ?? false;
+
+            return new EmbedField(name, value, isInline);
+        }
     }
 }

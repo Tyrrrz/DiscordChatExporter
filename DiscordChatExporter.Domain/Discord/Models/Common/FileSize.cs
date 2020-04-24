@@ -3,7 +3,6 @@
 namespace DiscordChatExporter.Domain.Discord.Models.Common
 {
     // Loosely based on https://github.com/omar/ByteSize (MIT license)
-
     public readonly partial struct FileSize
     {
         public long TotalBytes { get; }

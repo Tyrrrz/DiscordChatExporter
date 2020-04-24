@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Text;
-using DiscordChatExporter.Domain.Discord.Models;
+﻿using System.Text;
 using DiscordChatExporter.Domain.Markdown;
 using DiscordChatExporter.Domain.Markdown.Ast;
 
@@ -27,24 +25,24 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
         {
             if (mention.Type == MentionType.User)
             {
-                var user = _context.MentionableUsers.FirstOrDefault(u => u.Id == mention.Id) ??
-                           User.CreateUnknownUser(mention.Id);
+                var member = _context.TryGetMentionedMember(mention.Id);
+                var name = member?.User.Name ?? "Unknown";
 
-                _buffer.Append($"@{user.Name}");
+                _buffer.Append($"@{name}");
             }
             else if (mention.Type == MentionType.Channel)
             {
-                var channel = _context.MentionableChannels.FirstOrDefault(c => c.Id == mention.Id) ??
-                              Channel.CreateDeletedChannel(mention.Id);
+                var channel = _context.TryGetMentionedChannel(mention.Id);
+                var name = channel?.Name ?? "deleted-channel";
 
-                _buffer.Append($"#{channel.Name}");
+                _buffer.Append($"#{name}");
             }
             else if (mention.Type == MentionType.Role)
             {
-                var role = _context.MentionableRoles.FirstOrDefault(r => r.Id == mention.Id) ??
-                           Role.CreateDeletedRole(mention.Id);
+                var role = _context.TryGetMentionedRole(mention.Id);
+                var name = role?.Name ?? "deleted-role";
 
-                _buffer.Append($"@{role.Name}");
+                _buffer.Append($"@{name}");
             }
 
             return base.VisitMention(mention);

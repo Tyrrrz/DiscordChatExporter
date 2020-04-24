@@ -40,9 +40,7 @@ namespace DiscordChatExporter.Domain.Discord
             buffer.Append(_path);
 
             if (_queryParameters.Any())
-                buffer.Append('?');
-
-            buffer.AppendJoin('&', _queryParameters.Select(kvp => $"{kvp.Key}={kvp.Value}"));
+                buffer.Append('?').AppendJoin('&', _queryParameters.Select(kvp => $"{kvp.Key}={kvp.Value}"));
 
             return buffer.ToString();
         }

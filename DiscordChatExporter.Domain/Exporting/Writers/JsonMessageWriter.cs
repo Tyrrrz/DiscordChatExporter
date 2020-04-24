@@ -84,8 +84,8 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         {
             _writer.WriteStartObject();
 
-            _writer.WriteString("name", embedField.Name);
-            _writer.WriteString("value", embedField.Value);
+            _writer.WriteString("name", FormatMarkdown(embedField.Name));
+            _writer.WriteString("value", FormatMarkdown(embedField.Value));
             _writer.WriteBoolean("isInline", embedField.IsInline);
 
             _writer.WriteEndObject();
@@ -156,6 +156,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteStartObject("channel");
             _writer.WriteString("id", Context.Channel.Id);
             _writer.WriteString("type", Context.Channel.Type.ToString());
+            _writer.WriteString("category", Context.Channel.Category);
             _writer.WriteString("name", Context.Channel.Name);
             _writer.WriteString("topic", Context.Channel.Topic);
             _writer.WriteEndObject();

@@ -68,7 +68,6 @@ namespace DiscordChatExporter.Domain.Discord
             return await response.Content.ReadAsJsonAsync();
         }
 
-        // TODO: do we need this?
         private async Task<JsonElement?> TryGetApiResponseAsync(string url)
         {
             try
@@ -81,36 +80,11 @@ namespace DiscordChatExporter.Domain.Discord
             }
         }
 
-        public async Task<Guild> GetGuildAsync(string guildId)
-        {
-            // Special case for direct messages pseudo-guild
-            if (guildId == Guild.DirectMessages.Id)
-                return Guild.DirectMessages;
-
-            var response = await GetApiResponseAsync($"guilds/{guildId}");
-            var guild = ParseGuild(response);
-
-            return guild;
-        }
-
-        public async Task<Member?> GetGuildMemberAsync(string guildId, string userId)
-        {
-            var response = await TryGetApiResponseAsync($"guilds/{guildId}/members/{userId}");
-            return response?.Pipe(ParseMember);
-        }
-
-        public async Task<Channel> GetChannelAsync(string channelId)
-        {
-            var response = await GetApiResponseAsync($"channels/{channelId}");
-            var channel = ParseChannel(response);
-
-            return channel;
-        }
-
         public async IAsyncEnumerable<Guild> GetUserGuildsAsync()
         {
-            var afterId = "";
+            yield return Guild.DirectMessages;
 
+            var afterId = "";
             while (true)
             {
                 var url = new UrlBuilder()
@@ -122,15 +96,12 @@ namespace DiscordChatExporter.Domain.Discord
                 var response = await GetApiResponseAsync(url);
 
                 var isEmpty = true;
-
-                // Get full guild object
                 foreach (var guildJson in response.EnumerateArray())
                 {
-                    var guildId = ParseId(guildJson);
+                    var guild = Guild.Parse(guildJson);
+                    yield return guild;
 
-                    yield return await GetGuildAsync(guildId);
-                    afterId = guildId;
-
+                    afterId = guild.Id;
                     isEmpty = false;
                 }
 
@@ -139,27 +110,93 @@ namespace DiscordChatExporter.Domain.Discord
             }
         }
 
-        public async Task<IReadOnlyList<Channel>> GetDirectMessageChannelsAsync()
+        public async Task<Guild> GetGuildAsync(string guildId)
         {
-            var response = await GetApiResponseAsync("users/@me/channels");
-            var channels = response.EnumerateArray().Select(ParseChannel).ToArray();
-
-            return channels;
-        }
-
-        public async Task<IReadOnlyList<Channel>> GetGuildChannelsAsync(string guildId)
-        {
-            // Direct messages pseudo-guild
             if (guildId == Guild.DirectMessages.Id)
-                return Array.Empty<Channel>();
+                return Guild.DirectMessages;
 
-            var response = await GetApiResponseAsync($"guilds/{guildId}/channels");
-            var channels = response.EnumerateArray().Select(ParseChannel).ToArray();
-
-            return channels;
+            var response = await GetApiResponseAsync($"guilds/{guildId}");
+            return Guild.Parse(response);
         }
 
-        private async Task<Message> GetLastMessageAsync(string channelId, DateTimeOffset? before = null)
+        public async IAsyncEnumerable<Channel> GetGuildChannelsAsync(string guildId)
+        {
+            if (guildId == Guild.DirectMessages.Id)
+            {
+                var response = await GetApiResponseAsync("users/@me/channels");
+                foreach (var channelJson in response.EnumerateArray())
+                    yield return Channel.Parse(channelJson);
+            }
+            else
+            {
+                var response = await GetApiResponseAsync($"guilds/{guildId}/channels");
+
+                var categories = response
+                    .EnumerateArray()
+                    .ToDictionary(
+                        j => j.GetProperty("id").GetString(),
+                        j => j.GetProperty("name").GetString()
+                    );
+
+                foreach (var channelJson in response.EnumerateArray())
+                {
+                    var parentId = channelJson.GetPropertyOrNull("parent_id")?.GetString();
+                    var category = !string.IsNullOrWhiteSpace(parentId)
+                        ? categories.GetValueOrDefault(parentId)
+                        : null;
+
+                    var channel = Channel.Parse(channelJson, category);
+
+                    // Skip non-text channels
+                    if (!channel.IsTextChannel)
+                        continue;
+
+                    yield return channel;
+                }
+            }
+        }
+
+        public async IAsyncEnumerable<Role> GetGuildRolesAsync(string guildId)
+        {
+            if (guildId == Guild.DirectMessages.Id)
+                yield break;
+
+            var response = await GetApiResponseAsync($"guilds/{guildId}/roles");
+
+            foreach (var roleJson in response.EnumerateArray())
+            {
+                yield return Role.Parse(roleJson);
+            }
+        }
+
+        public async Task<Member?> TryGetGuildMemberAsync(string guildId, User user)
+        {
+            if (guildId == Guild.DirectMessages.Id)
+                return Member.CreateForUser(user);
+
+            var response = await TryGetApiResponseAsync($"guilds/{guildId}/members/{user.Id}");
+            return response?.Pipe(Member.Parse);
+        }
+
+        private async Task<string> GetChannelCategoryAsync(string channelParentId)
+        {
+            var response = await GetApiResponseAsync($"channels/{channelParentId}");
+            return response.GetProperty("name").GetString();
+        }
+
+        public async Task<Channel> GetChannelAsync(string channelId)
+        {
+            var response = await GetApiResponseAsync($"channels/{channelId}");
+
+            var parentId = response.GetPropertyOrNull("parent_id")?.GetString();
+            var category = !string.IsNullOrWhiteSpace(parentId)
+                ? await GetChannelCategoryAsync(parentId)
+                : null;
+
+            return Channel.Parse(response, category);
+        }
+
+        private async Task<Message?> TryGetLastMessageAsync(string channelId, DateTimeOffset? before = null)
         {
             var url = new UrlBuilder()
                 .SetPath($"channels/{channelId}/messages")
@@ -168,8 +205,7 @@ namespace DiscordChatExporter.Domain.Discord
                 .Build();
 
             var response = await GetApiResponseAsync(url);
-
-            return response.EnumerateArray().Select(ParseMessage).FirstOrDefault();
+            return response.EnumerateArray().Select(Message.Parse).LastOrDefault();
         }
 
         public async IAsyncEnumerable<Message> GetMessagesAsync(
@@ -178,9 +214,8 @@ namespace DiscordChatExporter.Domain.Discord
             DateTimeOffset? before = null,
             IProgress<double>? progress = null)
         {
-            var lastMessage = await GetLastMessageAsync(channelId, before);
-
-            // If the last message doesn't exist or it's outside of range - return
+            // Get the last message in the specified range
+            var lastMessage = await TryGetLastMessageAsync(channelId, before);
             if (lastMessage == null || lastMessage.Timestamp < after)
                 yield break;
 
@@ -199,13 +234,13 @@ namespace DiscordChatExporter.Domain.Discord
 
                 var messages = response
                     .EnumerateArray()
-                    .Select(ParseMessage)
+                    .Select(Message.Parse)
                     .Reverse() // reverse because messages appear newest first
                     .ToArray();
 
                 // Break if there are no messages (can happen if messages are deleted during execution)
                 if (!messages.Any())
-                    break;
+                    yield break;
 
                 foreach (var message in messages)
                 {
@@ -223,10 +258,6 @@ namespace DiscordChatExporter.Domain.Discord
 
                     yield return message;
                     afterId = message.Id;
-
-                    // Yielded last message - break loop
-                    if (message.Id == lastMessage.Id)
-                        yield break;
                 }
             }
         }

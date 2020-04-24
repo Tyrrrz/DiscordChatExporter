@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using DiscordChatExporter.Domain.Discord.Models.Common;
+using DiscordChatExporter.Domain.Internal;
 
 namespace DiscordChatExporter.Domain.Discord.Models
 {
     // https://discordapp.com/developers/docs/resources/channel#message-object-message-types
-
     public enum MessageType
     {
         Default,
@@ -20,12 +21,9 @@ namespace DiscordChatExporter.Domain.Discord.Models
     }
 
     // https://discordapp.com/developers/docs/resources/channel#message-object
-
-    public class Message : IHasId
+    public partial class Message : IHasId
     {
         public string Id { get; }
-
-        public string ChannelId { get; }
 
         public MessageType Type { get; }
 
@@ -49,7 +47,6 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
         public Message(
             string id,
-            string channelId,
             MessageType type,
             User author,
             DateTimeOffset timestamp,
@@ -62,7 +59,6 @@ namespace DiscordChatExporter.Domain.Discord.Models
             IReadOnlyList<User> mentionedUsers)
         {
             Id = id;
-            ChannelId = channelId;
             Type = type;
             Author = author;
             Timestamp = timestamp;
@@ -79,5 +75,60 @@ namespace DiscordChatExporter.Domain.Discord.Models
             Content ?? (Embeds.Any()
                 ? "<embed>"
                 : "<no content>");
+    }
+
+    public partial class Message
+    {
+        public static Message Parse(JsonElement json)
+        {
+            var id = json.GetProperty("id").GetString();
+            var author = json.GetProperty("author").Pipe(User.Parse);
+            var timestamp = json.GetProperty("timestamp").GetDateTimeOffset();
+            var editedTimestamp = json.GetPropertyOrNull("edited_timestamp")?.GetDateTimeOffset();
+            var type = (MessageType) json.GetProperty("type").GetInt32();
+            var isPinned = json.GetPropertyOrNull("pinned")?.GetBoolean() ?? false;
+
+            var content = type switch
+            {
+                MessageType.RecipientAdd => "Added a recipient.",
+                MessageType.RecipientRemove => "Removed a recipient.",
+                MessageType.Call => "Started a call.",
+                MessageType.ChannelNameChange => "Changed the channel name.",
+                MessageType.ChannelIconChange => "Changed the channel icon.",
+                MessageType.ChannelPinnedMessage => "Pinned a message.",
+                MessageType.GuildMemberJoin => "Joined the server.",
+                _ => json.GetPropertyOrNull("content")?.GetString() ?? ""
+            };
+
+            var attachments =
+                json.GetPropertyOrNull("attachments")?.EnumerateArray().Select(Attachment.Parse).ToArray() ??
+                Array.Empty<Attachment>();
+
+            var embeds =
+                json.GetPropertyOrNull("embeds")?.EnumerateArray().Select(Embed.Parse).ToArray() ??
+                Array.Empty<Embed>();
+
+            var reactions =
+                json.GetPropertyOrNull("reactions")?.EnumerateArray().Select(Reaction.Parse).ToArray() ??
+                Array.Empty<Reaction>();
+
+            var mentionedUsers =
+                json.GetPropertyOrNull("mentions")?.EnumerateArray().Select(User.Parse).ToArray() ??
+                Array.Empty<User>();
+
+            return new Message(
+                id,
+                type,
+                author,
+                timestamp,
+                editedTimestamp,
+                isPinned,
+                content,
+                attachments,
+                embeds,
+                reactions,
+                mentionedUsers
+            );
+        }
     }
 }

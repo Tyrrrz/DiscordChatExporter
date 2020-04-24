@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Text.Json;
 using DiscordChatExporter.Domain.Discord.Models.Common;
+using DiscordChatExporter.Domain.Internal;
 
 namespace DiscordChatExporter.Domain.Discord.Models
 {
     // https://discordapp.com/developers/docs/resources/user#user-object
-
     public partial class User : IHasId
     {
         public string Id { get; }
+
+        public bool IsBot { get; }
 
         public int Discriminator { get; }
 
@@ -15,19 +18,14 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
         public string FullName => $"{Name}#{Discriminator:0000}";
 
-        public string? AvatarHash { get; }
-
         public string AvatarUrl { get; }
 
-        public bool IsBot { get; }
-
-        public User(string id, int discriminator, string name, string? avatarHash, bool isBot)
+        public User(string id, bool isBot, int discriminator, string name, string? avatarHash)
         {
             Id = id;
+            IsBot = isBot;
             Discriminator = discriminator;
             Name = name;
-            AvatarHash = avatarHash;
-            IsBot = isBot;
 
             AvatarUrl = GetAvatarUrl(id, discriminator, avatarHash);
         }
@@ -54,6 +52,15 @@ namespace DiscordChatExporter.Domain.Discord.Models
             return $"https://cdn.discordapp.com/embed/avatars/{discriminator % 5}.png";
         }
 
-        public static User CreateUnknownUser(string id) => new User(id, 0, "Unknown", null, false);
+        public static User Parse(JsonElement json)
+        {
+            var id = json.GetProperty("id").GetString();
+            var discriminator = json.GetProperty("discriminator").GetString().Pipe(int.Parse);
+            var name = json.GetProperty("username").GetString();
+            var avatarHash = json.GetProperty("avatar").GetString();
+            var isBot = json.GetPropertyOrNull("bot")?.GetBoolean() ?? false;
+
+            return new User(id, isBot, discriminator, name, avatarHash);
+        }
     }
 }

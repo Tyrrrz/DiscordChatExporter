@@ -85,38 +85,38 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
             }
             else if (mention.Type == MentionType.User)
             {
-                var user = _context.MentionableUsers.FirstOrDefault(u => u.Id == mention.Id) ??
-                           User.CreateUnknownUser(mention.Id);
-
-                var nick = Guild.GetUserNick(_context.Guild, user);
+                var member = _context.TryGetMentionedMember(mention.Id);
+                var fullName = member?.User.FullName ?? "Unknown";
+                var nick = member?.Nick ?? "Unknown";
 
                 _buffer
-                    .Append($"<span class=\"mention\" title=\"{HtmlEncode(user.FullName)}\">")
+                    .Append($"<span class=\"mention\" title=\"{HtmlEncode(fullName)}\">")
                     .Append("@").Append(HtmlEncode(nick))
                     .Append("</span>");
             }
             else if (mention.Type == MentionType.Channel)
             {
-                var channel = _context.MentionableChannels.FirstOrDefault(c => c.Id == mention.Id) ??
-                              Channel.CreateDeletedChannel(mention.Id);
+                var channel = _context.TryGetMentionedChannel(mention.Id);
+                var name = channel?.Name ?? "deleted-channel";
 
                 _buffer
                     .Append("<span class=\"mention\">")
-                    .Append("#").Append(HtmlEncode(channel.Name))
+                    .Append("#").Append(HtmlEncode(name))
                     .Append("</span>");
             }
             else if (mention.Type == MentionType.Role)
             {
-                var role = _context.MentionableRoles.FirstOrDefault(r => r.Id == mention.Id) ??
-                           Role.CreateDeletedRole(mention.Id);
+                var role = _context.TryGetMentionedRole(mention.Id);
+                var name = role?.Name ?? "deleted-role";
+                var color = role?.Color;
 
-                var style = role.Color != null
-                    ? $"color: {role.Color.Value.ToHexString()}; background-color: rgba({role.Color.Value.ToRgbString()}, 0.1);"
+                var style = color != null
+                    ? $"color: rgb({color?.R}, {color?.G}, {color?.B}); background-color: rgba({color?.R}, {color?.G}, {color?.B}, 0.1);"
                     : "";
 
                 _buffer
                     .Append($"<span class=\"mention\" style=\"{style}\">")
-                    .Append("@").Append(HtmlEncode(role.Name))
+                    .Append("@").Append(HtmlEncode(name))
                     .Append("</span>");
             }
 
@@ -162,10 +162,13 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
     {
         private static string HtmlEncode(string text) => WebUtility.HtmlEncode(text);
 
-        public static string Format(ExportContext context, string markdown)
+        public static string Format(ExportContext context, string markdown, bool isJumboAllowed = true)
         {
             var nodes = MarkdownParser.Parse(markdown);
-            var isJumbo = nodes.All(n => n is EmojiNode || n is TextNode textNode && string.IsNullOrWhiteSpace(textNode.Text));
+
+            var isJumbo =
+                isJumboAllowed &&
+                nodes.All(n => n is EmojiNode || n is TextNode textNode && string.IsNullOrWhiteSpace(textNode.Text));
 
             var buffer = new StringBuilder();
 

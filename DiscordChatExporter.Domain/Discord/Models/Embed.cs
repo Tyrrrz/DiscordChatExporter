@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+using System.Text.Json;
+using DiscordChatExporter.Domain.Internal;
 
 namespace DiscordChatExporter.Domain.Discord.Models
 {
     // https://discordapp.com/developers/docs/resources/channel#embed-object
-
-    public class Embed
+    public partial class Embed
     {
         public string? Title { get; }
 
@@ -53,5 +55,39 @@ namespace DiscordChatExporter.Domain.Discord.Models
         }
 
         public override string ToString() => Title ?? "<untitled embed>";
+    }
+
+    public partial class Embed
+    {
+        public static Embed Parse(JsonElement json)
+        {
+            var title = json.GetPropertyOrNull("title")?.GetString();
+            var description = json.GetPropertyOrNull("description")?.GetString();
+            var url = json.GetPropertyOrNull("url")?.GetString();
+            var timestamp = json.GetPropertyOrNull("timestamp")?.GetDateTimeOffset();
+            var color = json.GetPropertyOrNull("color")?.GetInt32().Pipe(System.Drawing.Color.FromArgb).ResetAlpha();
+
+            var author = json.GetPropertyOrNull("author")?.Pipe(EmbedAuthor.Parse);
+            var thumbnail = json.GetPropertyOrNull("thumbnail")?.Pipe(EmbedImage.Parse);
+            var image = json.GetPropertyOrNull("image")?.Pipe(EmbedImage.Parse);
+            var footer = json.GetPropertyOrNull("footer")?.Pipe(EmbedFooter.Parse);
+
+            var fields =
+                json.GetPropertyOrNull("fields")?.EnumerateArray().Select(EmbedField.Parse).ToArray() ??
+                Array.Empty<EmbedField>();
+
+            return new Embed(
+                title,
+                url,
+                timestamp,
+                color,
+                author,
+                description,
+                fields,
+                thumbnail,
+                image,
+                footer
+            );
+        }
     }
 }

@@ -1,8 +1,10 @@
-﻿namespace DiscordChatExporter.Domain.Discord.Models
+﻿using System.Text.Json;
+using DiscordChatExporter.Domain.Internal;
+
+namespace DiscordChatExporter.Domain.Discord.Models
 {
     // https://discordapp.com/developers/docs/resources/channel#reaction-object
-
-    public class Reaction
+    public partial class Reaction
     {
         public Emoji Emoji { get; }
 
@@ -15,5 +17,16 @@
         }
 
         public override string ToString() => $"{Emoji} ({Count})";
+    }
+
+    public partial class Reaction
+    {
+        public static Reaction Parse(JsonElement json)
+        {
+            var count = json.GetProperty("count").GetInt32();
+            var emoji = json.GetProperty("emoji").Pipe(Emoji.Parse);
+
+            return new Reaction(emoji, count);
+        }
     }
 }

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Discord.Models.Common;
 using DiscordChatExporter.Domain.Exceptions;
-using Tyrrrz.Extensions;
+using DiscordChatExporter.Domain.Utilities;
 
 namespace DiscordChatExporter.Domain.Exporting
 {
@@ -36,37 +37,35 @@ namespace DiscordChatExporter.Domain.Exporting
             var options = new ExportOptions(baseFilePath, format, partitionLimit);
 
             // Context
-            var mentionableUsers = new HashSet<User>(IdBasedEqualityComparer.Instance);
-            var mentionableChannels = await _discord.GetGuildChannelsAsync(guild.Id);
-            var mentionableRoles = guild.Roles;
+            var contextMembers = new HashSet<Member>(IdBasedEqualityComparer.Instance);
+            var contextChannels = await _discord.GetGuildChannelsAsync(guild.Id);
+            var contextRoles = await _discord.GetGuildRolesAsync(guild.Id);
 
             var context = new ExportContext(
                 guild, channel, after, before, dateFormat,
-                mentionableUsers, mentionableChannels, mentionableRoles
+                contextMembers, contextChannels, contextRoles
             );
 
             await using var messageExporter = new MessageExporter(options, context);
 
             var exportedAnything = false;
+            var encounteredUsers = new HashSet<User>(IdBasedEqualityComparer.Instance);
             await foreach (var message in _discord.GetMessagesAsync(channel.Id, after, before, progress))
             {
-                // Add encountered users to the list of mentionable users
-                var encounteredUsers = new List<User>();
-                encounteredUsers.Add(message.Author);
-                encounteredUsers.AddRange(message.MentionedUsers);
-
-                mentionableUsers.AddRange(encounteredUsers);
-
-                foreach (User u in encounteredUsers)
+                // Resolve members for referenced users
+                foreach (var referencedUser in message.MentionedUsers.Prepend(message.Author))
                 {
-                    if (!guild.Members.ContainsKey(u.Id))
+                    if (encounteredUsers.Add(referencedUser))
                     {
-                        var member = await _discord.GetGuildMemberAsync(guild.Id, u.Id);
-                        guild.Members[u.Id] = member;
+                        var member =
+                            await _discord.TryGetGuildMemberAsync(guild.Id, referencedUser) ??
+                            Member.CreateForUser(referencedUser);
+
+                        contextMembers.Add(member);
                     }
                 }
 
-                // Render message
+                // Export message
                 await messageExporter.ExportMessageAsync(message);
                 exportedAnything = true;
             }

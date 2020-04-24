@@ -62,22 +62,22 @@
     </div>
     <div class="preamble__entries-container">
         <div class="preamble__entry">{{ Context.Guild.Name | html.escape }}</div>
-        <div class="preamble__entry">{{ Context.Channel.Name | html.escape }}</div>
+        <div class="preamble__entry">{{ Context.Channel.Category | html.escape }} / {{ Context.Channel.Name | html.escape }}</div>
 
         {{~ if Context.Channel.Topic ~}}
-            <div class="preamble__entry preamble__entry--small">{{ Context.Channel.Topic | html.escape }}</div>
+        <div class="preamble__entry preamble__entry--small">{{ Context.Channel.Topic | html.escape }}</div>
         {{~ end ~}}
 
         {{~ if Context.After || Context.Before ~}}
-            <div class="preamble__entry preamble__entry--small">
-                {{~ if Context.After && Context.Before ~}}
-                    Between {{ Context.After | FormatDate | html.escape }} and {{ Context.Before | FormatDate | html.escape }}
-                {{~ else if Context.After ~}}
-                    After {{ Context.After | FormatDate | html.escape }}
-                {{~ else if Context.Before ~}}
-                    Before {{ Context.Before | FormatDate | html.escape }}
-                {{~ end ~}}
-            </div>
+        <div class="preamble__entry preamble__entry--small">
+            {{~ if Context.After && Context.Before ~}}
+                Between {{ Context.After | FormatDate | html.escape }} and {{ Context.Before | FormatDate | html.escape }}
+            {{~ else if Context.After ~}}
+                After {{ Context.After | FormatDate | html.escape }}
+            {{~ else if Context.Before ~}}
+                Before {{ Context.Before | FormatDate | html.escape }}
+            {{~ end ~}}
+        </div>
         {{~ end ~}}
     </div>
 </div>

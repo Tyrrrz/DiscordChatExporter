@@ -1,8 +1,10 @@
+using System.Text.Json;
+using DiscordChatExporter.Domain.Internal;
+
 namespace DiscordChatExporter.Domain.Discord.Models
 {
     // https://discordapp.com/developers/docs/resources/channel#embed-object-embed-footer-structure
-
-    public class EmbedFooter
+    public partial class EmbedFooter
     {
         public string Text { get; }
 
@@ -15,5 +17,16 @@ namespace DiscordChatExporter.Domain.Discord.Models
         }
 
         public override string ToString() => Text;
+    }
+
+    public partial class EmbedFooter
+    {
+        public static EmbedFooter Parse(JsonElement json)
+        {
+            var text = json.GetProperty("text").GetString();
+            var iconUrl = json.GetPropertyOrNull("icon_url")?.GetString();
+
+            return new EmbedFooter(text, iconUrl);
+        }
     }
 }

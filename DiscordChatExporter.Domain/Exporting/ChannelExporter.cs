@@ -88,7 +88,7 @@ namespace DiscordChatExporter.Domain.Exporting
             var buffer = new StringBuilder();
 
             // Guild and channel names
-            buffer.Append($"{guild.Name} - {channel.Name} [{channel.Id}]");
+            buffer.Append($"{guild.Name} - {channel.Category} - {channel.Name} [{channel.Id}]");
 
             // Date range
             if (after != null || before != null)

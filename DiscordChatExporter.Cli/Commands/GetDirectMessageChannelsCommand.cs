@@ -15,8 +15,8 @@ namespace DiscordChatExporter.Cli.Commands
         {
             var dmChannels = await GetDiscordClient().GetGuildChannelsAsync(Guild.DirectMessages.Id);
 
-            foreach (var channel in dmChannels.OrderBy(c => c.Name))
-                console.Output.WriteLine($"{channel.Id} | {channel.Name}");
+            foreach (var channel in dmChannels.OrderBy(c => c.Category).ThenBy(c => c.Name))
+                console.Output.WriteLine($"{channel.Id} | {channel.Category} / {channel.Name}");
         }
     }
 }

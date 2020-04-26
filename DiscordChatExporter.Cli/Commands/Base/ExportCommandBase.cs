@@ -33,7 +33,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
 
         protected async ValueTask ExportAsync(IConsole console, Guild guild, Channel channel)
         {
-            console.Output.Write($"Exporting channel '{channel.Name}'... ");
+            console.Output.Write($"Exporting channel '{channel.Category} / {channel.Name}'... ");
             var progress = console.CreateProgressTicker();
 
             await GetChannelExporter().ExportAsync(guild, channel,

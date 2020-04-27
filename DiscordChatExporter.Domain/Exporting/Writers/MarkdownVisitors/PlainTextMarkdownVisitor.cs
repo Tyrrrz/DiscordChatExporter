@@ -23,7 +23,11 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
 
         public override MarkdownNode VisitMention(MentionNode mention)
         {
-            if (mention.Type == MentionType.User)
+            if (mention.Type == MentionType.Meta)
+            {
+                _buffer.Append($"@{mention.Id}");
+            }
+            else if (mention.Type == MentionType.User)
             {
                 var member = _context.TryGetMentionedMember(mention.Id);
                 var name = member?.User.Name ?? "Unknown";

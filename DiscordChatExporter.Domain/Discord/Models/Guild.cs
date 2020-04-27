@@ -25,13 +25,13 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
     public partial class Guild
     {
-        private static string GetIconUrl(string? id, string? iconHash) =>
-            !string.IsNullOrWhiteSpace(id) && !string.IsNullOrWhiteSpace(iconHash)
-                ? $"https://cdn.discordapp.com/icons/{id}/{iconHash}.png"
-                : "https://cdn.discordapp.com/embed/avatars/0.png";
-
         public static Guild DirectMessages { get; } =
             new Guild("@me", "Direct Messages", null);
+
+        private static string GetIconUrl(string id, string? iconHash) =>
+            !string.IsNullOrWhiteSpace(iconHash)
+                ? $"https://cdn.discordapp.com/icons/{id}/{iconHash}.png"
+                : "https://cdn.discordapp.com/embed/avatars/0.png";
 
         public static Guild Parse(JsonElement json)
         {

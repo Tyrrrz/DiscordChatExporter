@@ -35,15 +35,15 @@ Failed to perform an HTTP request.
             return new DiscordChatExporterException(message);
         }
 
-        internal static DiscordChatExporterException ChannelForbidden(string channel)
+        internal static DiscordChatExporterException Forbidden()
         {
-            var message = $"Access to channel '{channel}' is forbidden.";
+            const string message = "Access is forbidden.";
             return new DiscordChatExporterException(message);
         }
 
-        internal static DiscordChatExporterException ChannelDoesNotExist(string channel)
+        internal static DiscordChatExporterException NotFound()
         {
-            var message = $"Channel '{channel}' does not exist.";
+            const string message = "Not found.";
             return new DiscordChatExporterException(message);
         }
 

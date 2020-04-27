@@ -49,35 +49,42 @@ namespace DiscordChatExporter.Domain.Discord
         {
         }
 
-        private async Task<JsonElement> GetApiResponseAsync(string url)
+        private async Task<HttpResponseMessage> GetResponseAsync(string url)
         {
-            using var response = await _httpRequestPolicy.ExecuteAsync(async () =>
+            return await _httpRequestPolicy.ExecuteAsync(async () =>
             {
                 using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, url));
                 request.Headers.Authorization = _token.GetAuthorizationHeader();
 
                 return await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
             });
+        }
 
-            if (response.StatusCode == HttpStatusCode.Unauthorized)
-                throw DiscordChatExporterException.Unauthorized();
+        private async Task<JsonElement> GetJsonResponseAsync(string url)
+        {
+            using var response = await GetResponseAsync(url);
 
-            if ((int) response.StatusCode >= 400)
-                throw DiscordChatExporterException.FailedHttpRequest(response);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw response.StatusCode switch
+                {
+                    HttpStatusCode.Unauthorized => DiscordChatExporterException.Unauthorized(),
+                    HttpStatusCode.Forbidden => DiscordChatExporterException.Forbidden(),
+                    HttpStatusCode.NotFound => DiscordChatExporterException.NotFound(),
+                    _ => DiscordChatExporterException.FailedHttpRequest(response)
+                };
+            }
 
             return await response.Content.ReadAsJsonAsync();
         }
 
-        private async Task<JsonElement?> TryGetApiResponseAsync(string url)
+        private async Task<JsonElement?> TryGetJsonResponseAsync(string url)
         {
-            try
-            {
-                return await GetApiResponseAsync(url);
-            }
-            catch (DiscordChatExporterException)
-            {
-                return null;
-            }
+            using var response = await GetResponseAsync(url);
+
+            return response.IsSuccessStatusCode
+                ? await response.Content.ReadAsJsonAsync()
+                : (JsonElement?) null;
         }
 
         public async IAsyncEnumerable<Guild> GetUserGuildsAsync()
@@ -93,7 +100,7 @@ namespace DiscordChatExporter.Domain.Discord
                     .SetQueryParameterIfNotNullOrWhiteSpace("after", afterId)
                     .Build();
 
-                var response = await GetApiResponseAsync(url);
+                var response = await GetJsonResponseAsync(url);
 
                 var isEmpty = true;
                 foreach (var guildJson in response.EnumerateArray())
@@ -115,7 +122,7 @@ namespace DiscordChatExporter.Domain.Discord
             if (guildId == Guild.DirectMessages.Id)
                 return Guild.DirectMessages;
 
-            var response = await GetApiResponseAsync($"guilds/{guildId}");
+            var response = await GetJsonResponseAsync($"guilds/{guildId}");
             return Guild.Parse(response);
         }
 
@@ -123,13 +130,13 @@ namespace DiscordChatExporter.Domain.Discord
         {
             if (guildId == Guild.DirectMessages.Id)
             {
-                var response = await GetApiResponseAsync("users/@me/channels");
+                var response = await GetJsonResponseAsync("users/@me/channels");
                 foreach (var channelJson in response.EnumerateArray())
                     yield return Channel.Parse(channelJson);
             }
             else
             {
-                var response = await GetApiResponseAsync($"guilds/{guildId}/channels");
+                var response = await GetJsonResponseAsync($"guilds/{guildId}/channels");
 
                 var categories = response
                     .EnumerateArray()
@@ -161,12 +168,10 @@ namespace DiscordChatExporter.Domain.Discord
             if (guildId == Guild.DirectMessages.Id)
                 yield break;
 
-            var response = await GetApiResponseAsync($"guilds/{guildId}/roles");
+            var response = await GetJsonResponseAsync($"guilds/{guildId}/roles");
 
             foreach (var roleJson in response.EnumerateArray())
-            {
                 yield return Role.Parse(roleJson);
-            }
         }
 
         public async Task<Member?> TryGetGuildMemberAsync(string guildId, User user)
@@ -174,19 +179,19 @@ namespace DiscordChatExporter.Domain.Discord
             if (guildId == Guild.DirectMessages.Id)
                 return Member.CreateForUser(user);
 
-            var response = await TryGetApiResponseAsync($"guilds/{guildId}/members/{user.Id}");
+            var response = await TryGetJsonResponseAsync($"guilds/{guildId}/members/{user.Id}");
             return response?.Pipe(Member.Parse);
         }
 
         private async Task<string> GetChannelCategoryAsync(string channelParentId)
         {
-            var response = await GetApiResponseAsync($"channels/{channelParentId}");
+            var response = await GetJsonResponseAsync($"channels/{channelParentId}");
             return response.GetProperty("name").GetString();
         }
 
         public async Task<Channel> GetChannelAsync(string channelId)
         {
-            var response = await GetApiResponseAsync($"channels/{channelId}");
+            var response = await GetJsonResponseAsync($"channels/{channelId}");
 
             var parentId = response.GetPropertyOrNull("parent_id")?.GetString();
             var category = !string.IsNullOrWhiteSpace(parentId)
@@ -204,7 +209,7 @@ namespace DiscordChatExporter.Domain.Discord
                 .SetQueryParameterIfNotNullOrWhiteSpace("before", before?.ToSnowflake())
                 .Build();
 
-            var response = await GetApiResponseAsync(url);
+            var response = await GetJsonResponseAsync(url);
             return response.EnumerateArray().Select(Message.Parse).LastOrDefault();
         }
 
@@ -230,7 +235,7 @@ namespace DiscordChatExporter.Domain.Discord
                     .SetQueryParameter("after", afterId)
                     .Build();
 
-                var response = await GetApiResponseAsync(url);
+                var response = await GetJsonResponseAsync(url);
 
                 var messages = response
                     .EnumerateArray()

@@ -39,7 +39,7 @@ namespace DiscordChatExporter.Domain.Exporting
 
         private async Task<MessageWriter> GetWriterAsync()
         {
-            // Ensure partition limit is not exceeded
+            // Ensure partition limit has not been exceeded
             if (IsPartitionLimitReached())
             {
                 await ResetWriterAsync();

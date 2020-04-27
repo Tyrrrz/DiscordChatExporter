@@ -5,7 +5,6 @@ using DiscordChatExporter.Domain.Discord.Models;
 namespace DiscordChatExporter.Domain.Exporting
 {
     // Used for grouping contiguous messages in HTML export
-
     internal partial class MessageGroup
     {
         public User Author { get; }

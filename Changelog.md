@@ -1,3 +1,20 @@
+### v2.20 (27-Apr-2020)
+
+- [CLI] Added environment variables as fallback for `--token` and `--bot` options. They are `DISCORD_TOKEN` and `DISCORD_TOKEN_BOT` respectively.
+- [GUI] Fixed a crash that occurred if the application was closed in the middle of an auto-update.
+- [GUI] Added a link to project's wiki in the usage guide.
+- [HTML] Added full spoiler support for text and images. To spoil the hidden content you now need to click on it, similarly to how it works in Discord. (Thanks [@FM-96](https://github.com/FM-96))
+- [HTML] Updated grammar for consecutive single-line quotes. Previously they appeared separately, now they're grouped together as if it was one multi-line quote instead.
+- [HTML] Fixed an issue where messages sent by the same bot but with different usernames were grouped together when they shouldn't be.
+- [HTML] Updated grammar for single-line code blocks to accept double backticks as synonymous with single backticks. This change makes code blocks appear the same, whether they were inserted manually or using Discord's buggy markdown preview mode.
+- [HTML] Fixed styling inconsistencies and other minor issues.
+- [TXT/JSON] Fixed an issue where markdown was not parsed correctly in embed fields.
+- [HTML] Changed markdown formatting in embeds so it follows the same set of rules as in Discord.
+- Added channel category to the default file name used when exporting chat logs.
+- [HTML/TXT/JSON] Added channel category to exported metadata.
+- [CLI] Updated commands to also show channel category as well as channel name wherever relevant.
+- Starting with this release, Docker images will have new tags: `stable` for latest stable release and `2.20` for a specific version.
+
 ### v2.19 (26-Mar-2020)
 
 - Added parallel exporting. This option allows you to export multiple channels faster by doing it in parallel. You can configure the parallel limit in settings (GUI) or with the `--parallel` option (CLI). Default value is `1`, which means there is no parallelization. Warning: be careful when using this option, as this will result in higher volume of concurrent HTTP requests sent to Discord, which might get you flagged. Use at your own risk.

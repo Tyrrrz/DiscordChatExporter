@@ -32,6 +32,8 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
 
         public int? PartitionLimit { get; set; }
 
+        public bool IsMediaExported { get; set; }
+
         public ExportSetupViewModel(DialogManager dialogManager, SettingsService settingsService)
         {
             _dialogManager = dialogManager;
@@ -40,6 +42,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             // Persist preferences
             SelectedFormat = _settingsService.LastExportFormat;
             PartitionLimit = _settingsService.LastPartitionLimit;
+            IsMediaExported = _settingsService.LastIsMediaExported;
         }
 
         public void Confirm()
@@ -47,6 +50,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             // Persist preferences
             _settingsService.LastExportFormat = SelectedFormat;
             _settingsService.LastPartitionLimit = PartitionLimit;
+            _settingsService.LastIsMediaExported = IsMediaExported;
 
             // Clamp 'after' and 'before' values
             if (After > Before)

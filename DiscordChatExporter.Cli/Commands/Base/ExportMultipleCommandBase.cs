@@ -40,8 +40,10 @@ namespace DiscordChatExporter.Cli.Commands.Base
                     var guild = await GetDiscordClient().GetGuildAsync(channel.GuildId);
 
                     await GetChannelExporter().ExportAsync(guild, channel,
-                        OutputPath, ExportFormat, DateFormat, PartitionLimit,
-                        After, Before, operation);
+                        OutputPath, ExportFormat, DateFormat,
+                        PartitionLimit, IsMediaExported,
+                        After, Before, operation
+                    );
 
                     Interlocked.Increment(ref successfulExportCount);
                 }

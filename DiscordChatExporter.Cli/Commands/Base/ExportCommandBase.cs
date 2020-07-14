@@ -26,6 +26,9 @@ namespace DiscordChatExporter.Cli.Commands.Base
         [CommandOption("partition", 'p', Description = "Split output into partitions limited to this number of messages.")]
         public int? PartitionLimit { get; set; }
 
+        [CommandOption("media", Description = "Download media content.")]
+        public bool IsMediaExported { get; set; }
+
         [CommandOption("dateformat", Description = "Date format used in output.")]
         public string DateFormat { get; set; } = "dd-MMM-yy hh:mm tt";
 
@@ -37,9 +40,10 @@ namespace DiscordChatExporter.Cli.Commands.Base
             var progress = console.CreateProgressTicker();
 
             await GetChannelExporter().ExportAsync(guild, channel,
-                OutputPath, ExportFormat, DateFormat, PartitionLimit,
-                After, Before, progress);
-
+                OutputPath, ExportFormat, DateFormat,
+                PartitionLimit, IsMediaExported,
+                After, Before, progress
+            );
             console.Output.WriteLine();
             console.Output.WriteLine("Done.");
         }

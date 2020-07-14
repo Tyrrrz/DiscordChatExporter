@@ -27,6 +27,7 @@ namespace DiscordChatExporter.Domain.Exporting
             ExportFormat format,
             string dateFormat,
             int? partitionLimit,
+            bool isMediaExported,
             DateTimeOffset? after = null,
             DateTimeOffset? before = null,
             IProgress<double>? progress = null)

@@ -192,7 +192,9 @@ namespace DiscordChatExporter.Gui.ViewModels
                 {
                     await exporter.ExportAsync(dialog.Guild!, channel!,
                         dialog.OutputPath!, dialog.SelectedFormat, _settingsService.DateFormat,
-                        dialog.PartitionLimit, dialog.After, dialog.Before, operation);
+                        dialog.PartitionLimit, dialog.IsMediaExported,
+                        dialog.After, dialog.Before, operation
+                    );
 
                     Interlocked.Increment(ref successfulExportCount);
                 }

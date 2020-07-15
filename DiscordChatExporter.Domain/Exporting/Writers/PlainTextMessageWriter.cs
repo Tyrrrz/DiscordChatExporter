@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors;
 using DiscordChatExporter.Domain.Internal;
+using DiscordChatExporter.Domain.Internal.Extensions;
 
 namespace DiscordChatExporter.Domain.Exporting.Writers
 {
@@ -31,7 +32,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
             // Timestamp & author
             buffer
-                .Append($"[{message.Timestamp.ToLocalString(Context.DateFormat)}]")
+                .Append($"[{message.Timestamp.ToLocalString(Context.Request.DateFormat)}]")
                 .Append(' ')
                 .Append($"{message.Author.FullName}");
 
@@ -134,17 +135,17 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             var buffer = new StringBuilder();
 
             buffer.Append('=', 62).AppendLine();
-            buffer.AppendLine($"Guild: {Context.Guild.Name}");
-            buffer.AppendLine($"Channel: {Context.Channel.Category} / {Context.Channel.Name}");
+            buffer.AppendLine($"Guild: {Context.Request.Guild.Name}");
+            buffer.AppendLine($"Channel: {Context.Request.Channel.Category} / {Context.Request.Channel.Name}");
 
-            if (!string.IsNullOrWhiteSpace(Context.Channel.Topic))
-                buffer.AppendLine($"Topic: {Context.Channel.Topic}");
+            if (!string.IsNullOrWhiteSpace(Context.Request.Channel.Topic))
+                buffer.AppendLine($"Topic: {Context.Request.Channel.Topic}");
 
-            if (Context.After != null)
-                buffer.AppendLine($"After: {Context.After.Value.ToLocalString(Context.DateFormat)}");
+            if (Context.Request.After != null)
+                buffer.AppendLine($"After: {Context.Request.After.Value.ToLocalString(Context.Request.DateFormat)}");
 
-            if (Context.Before != null)
-                buffer.AppendLine($"Before: {Context.Before.Value.ToLocalString(Context.DateFormat)}");
+            if (Context.Request.Before != null)
+                buffer.AppendLine($"Before: {Context.Request.Before.Value.ToLocalString(Context.Request.DateFormat)}");
 
             buffer.Append('=', 62).AppendLine();
 

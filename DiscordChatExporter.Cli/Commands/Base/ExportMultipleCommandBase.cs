@@ -7,6 +7,7 @@ using CliFx.Attributes;
 using CliFx.Utilities;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exceptions;
+using DiscordChatExporter.Domain.Exporting;
 using DiscordChatExporter.Domain.Utilities;
 using Gress;
 using Tyrrrz.Extensions;
@@ -39,11 +40,19 @@ namespace DiscordChatExporter.Cli.Commands.Base
                 {
                     var guild = await GetDiscordClient().GetGuildAsync(channel.GuildId);
 
-                    await GetChannelExporter().ExportAsync(guild, channel,
-                        OutputPath, ExportFormat, DateFormat,
-                        PartitionLimit, IsMediaExported,
-                        After, Before, operation
+                    var request = new ExportRequest(
+                        guild,
+                        channel,
+                        OutputPath,
+                        ExportFormat,
+                        DateFormat,
+                        After,
+                        Before,
+                        PartitionLimit,
+                        IsMediaExported
                     );
+
+                    await GetChannelExporter().ExportAsync(request, operation);
 
                     Interlocked.Increment(ref successfulExportCount);
                 }

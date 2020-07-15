@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors;
 using DiscordChatExporter.Domain.Internal;
+using DiscordChatExporter.Domain.Internal.Extensions;
 using Scriban;
 using Scriban.Runtime;
 using Tyrrrz.Extensions;
@@ -72,7 +73,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
             // Functions
             scriptObject.Import("FormatDate",
-                new Func<DateTimeOffset, string>(d => d.ToLocalString(Context.DateFormat)));
+                new Func<DateTimeOffset, string>(d => d.ToLocalString(Context.Request.DateFormat)));
 
             scriptObject.Import("FormatColorRgb",
                 new Func<Color?, string?>(c => c != null ? $"rgb({c?.R}, {c?.G}, {c?.B})" : null));
@@ -120,7 +121,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         public override async Task WriteMessageAsync(Message message)
         {
             // If message group is empty or the given message can be grouped, buffer the given message
-            if (!_messageGroupBuffer.Any() || MessageGroup.CanGroup(_messageGroupBuffer.Last(), message))
+            if (!_messageGroupBuffer.Any() || MessageGroup.CanJoin(_messageGroupBuffer.Last(), message))
             {
                 _messageGroupBuffer.Add(message);
             }

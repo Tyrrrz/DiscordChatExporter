@@ -8,11 +8,12 @@ using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exceptions;
 using DiscordChatExporter.Domain.Internal;
+using DiscordChatExporter.Domain.Internal.Extensions;
 using Polly;
 
 namespace DiscordChatExporter.Domain.Discord
 {
-    public partial class DiscordClient
+    public class DiscordClient
     {
         private readonly AuthToken _token;
         private readonly HttpClient _httpClient;
@@ -26,7 +27,8 @@ namespace DiscordChatExporter.Domain.Discord
             _httpClient = httpClient;
 
             // Discord seems to always respond with 429 on the first request with unreasonable wait time (10+ minutes).
-            // For that reason the policy will start respecting their retry-after header only after Nth failed response.
+            // For that reason the policy will ignore such errors at first, then wait a constant amount of time, and
+            // finally wait the specified amount of time, based on how many requests have failed in a row.
             _httpRequestPolicy = Policy
                 .HandleResult<HttpResponseMessage>(m => m.StatusCode == HttpStatusCode.TooManyRequests)
                 .OrResult(m => m.StatusCode >= HttpStatusCode.InternalServerError)
@@ -41,24 +43,22 @@ namespace DiscordChatExporter.Domain.Discord
 
                         return result.Result.Headers.RetryAfter.Delta ?? TimeSpan.FromSeconds(10 * i);
                     },
-                    (response, timespan, retryCount, context) => Task.CompletedTask);
+                    (response, timespan, retryCount, context) => Task.CompletedTask
+                );
         }
 
         public DiscordClient(AuthToken token)
-            : this(token, LazyHttpClient.Value)
+            : this(token, Singleton.HttpClient)
         {
         }
 
-        private async Task<HttpResponseMessage> GetResponseAsync(string url)
+        private async Task<HttpResponseMessage> GetResponseAsync(string url) => await _httpRequestPolicy.ExecuteAsync(async () =>
         {
-            return await _httpRequestPolicy.ExecuteAsync(async () =>
-            {
-                using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, url));
-                request.Headers.Authorization = _token.GetAuthorizationHeader();
+            using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, url));
+            request.Headers.Authorization = _token.GetAuthorizationHeader();
 
-                return await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-            });
-        }
+            return await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+        });
 
         private async Task<JsonElement> GetJsonResponseAsync(string url)
         {
@@ -103,9 +103,8 @@ namespace DiscordChatExporter.Domain.Discord
                 var response = await GetJsonResponseAsync(url);
 
                 var isEmpty = true;
-                foreach (var guildJson in response.EnumerateArray())
+                foreach (var guild in response.EnumerateArray().Select(Guild.Parse))
                 {
-                    var guild = Guild.Parse(guildJson);
                     yield return guild;
 
                     afterId = guild.Id;
@@ -219,11 +218,15 @@ namespace DiscordChatExporter.Domain.Discord
             DateTimeOffset? before = null,
             IProgress<double>? progress = null)
         {
-            // Get the last message in the specified range
+            // Get the last message in the specified range.
+            // This snapshots the boundaries, which means that messages posted after the exported started
+            // will not appear in the output.
+            // Additionally, it provides the date of the last message, which is used to calculate progress.
             var lastMessage = await TryGetLastMessageAsync(channelId, before);
             if (lastMessage == null || lastMessage.Timestamp < after)
                 yield break;
 
+            // Keep track of first message in range in order to calculate progress
             var firstMessage = default(Message);
             var afterId = after?.ToSnowflake() ?? "0";
 
@@ -266,20 +269,5 @@ namespace DiscordChatExporter.Domain.Discord
                 }
             }
         }
-    }
-
-    public partial class DiscordClient
-    {
-        private static readonly Lazy<HttpClient> LazyHttpClient = new Lazy<HttpClient>(() =>
-        {
-            var handler = new HttpClientHandler();
-
-            if (handler.SupportsAutomaticDecompression)
-                handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-
-            handler.UseCookies = false;
-
-            return new HttpClient(handler, true);
-        });
     }
 }

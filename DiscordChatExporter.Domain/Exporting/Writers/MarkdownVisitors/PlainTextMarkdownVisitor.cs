@@ -15,13 +15,13 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
             _buffer = buffer;
         }
 
-        public override MarkdownNode VisitText(TextNode text)
+        protected override MarkdownNode VisitText(TextNode text)
         {
             _buffer.Append(text.Text);
             return base.VisitText(text);
         }
 
-        public override MarkdownNode VisitMention(MentionNode mention)
+        protected override MarkdownNode VisitMention(MentionNode mention)
         {
             if (mention.Type == MentionType.Meta)
             {
@@ -52,7 +52,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
             return base.VisitMention(mention);
         }
 
-        public override MarkdownNode VisitEmoji(EmojiNode emoji)
+        protected override MarkdownNode VisitEmoji(EmojiNode emoji)
         {
             _buffer.Append(
                 emoji.IsCustomEmoji

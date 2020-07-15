@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using DiscordChatExporter.Domain.Discord.Models.Common;
 using DiscordChatExporter.Domain.Internal;
+using DiscordChatExporter.Domain.Internal.Extensions;
 
 namespace DiscordChatExporter.Domain.Discord.Models
 {
@@ -71,10 +72,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
             MentionedUsers = mentionedUsers;
         }
 
-        public override string ToString() =>
-            Content ?? (Embeds.Any()
-                ? "<embed>"
-                : "<no content>");
+        public override string ToString() => Content;
     }
 
     public partial class Message

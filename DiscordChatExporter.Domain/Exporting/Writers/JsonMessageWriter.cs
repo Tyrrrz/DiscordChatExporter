@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors;
 using DiscordChatExporter.Domain.Internal;
+using DiscordChatExporter.Domain.Internal.Extensions;
 
 namespace DiscordChatExporter.Domain.Exporting.Writers
 {
@@ -147,24 +148,24 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
             // Guild
             _writer.WriteStartObject("guild");
-            _writer.WriteString("id", Context.Guild.Id);
-            _writer.WriteString("name", Context.Guild.Name);
-            _writer.WriteString("iconUrl", Context.Guild.IconUrl);
+            _writer.WriteString("id", Context.Request.Guild.Id);
+            _writer.WriteString("name", Context.Request.Guild.Name);
+            _writer.WriteString("iconUrl", Context.Request.Guild.IconUrl);
             _writer.WriteEndObject();
 
             // Channel
             _writer.WriteStartObject("channel");
-            _writer.WriteString("id", Context.Channel.Id);
-            _writer.WriteString("type", Context.Channel.Type.ToString());
-            _writer.WriteString("category", Context.Channel.Category);
-            _writer.WriteString("name", Context.Channel.Name);
-            _writer.WriteString("topic", Context.Channel.Topic);
+            _writer.WriteString("id", Context.Request.Channel.Id);
+            _writer.WriteString("type", Context.Request.Channel.Type.ToString());
+            _writer.WriteString("category", Context.Request.Channel.Category);
+            _writer.WriteString("name", Context.Request.Channel.Name);
+            _writer.WriteString("topic", Context.Request.Channel.Topic);
             _writer.WriteEndObject();
 
             // Date range
             _writer.WriteStartObject("dateRange");
-            _writer.WriteString("after", Context.After);
-            _writer.WriteString("before", Context.Before);
+            _writer.WriteString("after", Context.Request.After);
+            _writer.WriteString("before", Context.Request.Before);
             _writer.WriteEndObject();
 
             // Message array (start)

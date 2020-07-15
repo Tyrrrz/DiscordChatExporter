@@ -39,11 +39,20 @@ namespace DiscordChatExporter.Cli.Commands.Base
             console.Output.Write($"Exporting channel '{channel.Category} / {channel.Name}'... ");
             var progress = console.CreateProgressTicker();
 
-            await GetChannelExporter().ExportAsync(guild, channel,
-                OutputPath, ExportFormat, DateFormat,
-                PartitionLimit, IsMediaExported,
-                After, Before, progress
+            var request = new ExportRequest(
+                guild,
+                channel,
+                OutputPath,
+                ExportFormat,
+                DateFormat,
+                After,
+                Before,
+                PartitionLimit,
+                IsMediaExported
             );
+
+            await GetChannelExporter().ExportAsync(request, progress);
+
             console.Output.WriteLine();
             console.Output.WriteLine("Done.");
         }

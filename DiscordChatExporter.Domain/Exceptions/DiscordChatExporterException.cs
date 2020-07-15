@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net.Http;
-using DiscordChatExporter.Domain.Discord.Models;
 
 namespace DiscordChatExporter.Domain.Exceptions
 {
@@ -47,13 +46,10 @@ Failed to perform an HTTP request.
             return new DiscordChatExporterException(message);
         }
 
-        internal static DiscordChatExporterException ChannelEmpty(string channel)
+        internal static DiscordChatExporterException ChannelIsEmpty(string channel)
         {
             var message = $"Channel '{channel}' contains no messages for the specified period.";
             return new DiscordChatExporterException(message);
         }
-
-        internal static DiscordChatExporterException ChannelEmpty(Channel channel) =>
-            ChannelEmpty(channel.Name);
     }
 }

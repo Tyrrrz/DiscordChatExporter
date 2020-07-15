@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json;
 
-namespace DiscordChatExporter.Domain.Internal
+namespace DiscordChatExporter.Domain.Internal.Extensions
 {
     internal static class Utf8JsonWriterExtensions
     {

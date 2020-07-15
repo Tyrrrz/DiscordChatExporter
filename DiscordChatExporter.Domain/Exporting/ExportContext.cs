@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using DiscordChatExporter.Domain.Discord.Models;
@@ -8,15 +7,7 @@ namespace DiscordChatExporter.Domain.Exporting
 {
     public class ExportContext
     {
-        public Guild Guild { get; }
-
-        public Channel Channel { get; }
-
-        public DateTimeOffset? After { get; }
-
-        public DateTimeOffset? Before { get; }
-
-        public string DateFormat { get; }
+        public ExportRequest Request { get; }
 
         public IReadOnlyCollection<Member> Members { get; }
 
@@ -25,20 +16,12 @@ namespace DiscordChatExporter.Domain.Exporting
         public IReadOnlyCollection<Role> Roles { get; }
 
         public ExportContext(
-            Guild guild,
-            Channel channel,
-            DateTimeOffset? after,
-            DateTimeOffset? before,
-            string dateFormat,
+            ExportRequest request,
             IReadOnlyCollection<Member> members,
             IReadOnlyCollection<Channel> channels,
             IReadOnlyCollection<Role> roles)
         {
-            Guild = guild;
-            Channel = channel;
-            After = after;
-            Before = before;
-            DateFormat = dateFormat;
+            Request = request;
             Members = members;
             Channels = channels;
             Roles = roles;

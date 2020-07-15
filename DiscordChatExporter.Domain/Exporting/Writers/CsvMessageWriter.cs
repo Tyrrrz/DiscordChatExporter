@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors;
 using DiscordChatExporter.Domain.Internal;
+using DiscordChatExporter.Domain.Internal.Extensions;
 using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Domain.Exporting.Writers
@@ -32,7 +33,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             buffer
                 .Append(CsvEncode(message.Author.Id)).Append(',')
                 .Append(CsvEncode(message.Author.FullName)).Append(',')
-                .Append(CsvEncode(message.Timestamp.ToLocalString(Context.DateFormat))).Append(',')
+                .Append(CsvEncode(message.Timestamp.ToLocalString(Context.Request.DateFormat))).Append(',')
                 .Append(CsvEncode(FormatMarkdown(message.Content))).Append(',')
                 .Append(CsvEncode(message.Attachments.Select(a => a.Url).JoinToString(","))).Append(',')
                 .Append(CsvEncode(message.Reactions.Select(r => $"{r.Emoji.Name} ({r.Count})").JoinToString(",")));

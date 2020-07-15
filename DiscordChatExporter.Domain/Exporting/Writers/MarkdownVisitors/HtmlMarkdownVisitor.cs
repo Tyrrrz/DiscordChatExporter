@@ -23,13 +23,13 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
             _isJumbo = isJumbo;
         }
 
-        public override MarkdownNode VisitText(TextNode text)
+        protected override MarkdownNode VisitText(TextNode text)
         {
             _buffer.Append(HtmlEncode(text.Text));
             return base.VisitText(text);
         }
 
-        public override MarkdownNode VisitFormatted(FormattedNode formatted)
+        protected override MarkdownNode VisitFormatted(FormattedNode formatted)
         {
             var (tagOpen, tagClose) = formatted.Formatting switch
             {
@@ -50,7 +50,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
             return result;
         }
 
-        public override MarkdownNode VisitInlineCodeBlock(InlineCodeBlockNode inlineCodeBlock)
+        protected override MarkdownNode VisitInlineCodeBlock(InlineCodeBlockNode inlineCodeBlock)
         {
             _buffer
                 .Append("<span class=\"pre pre--inline\">")
@@ -60,7 +60,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
             return base.VisitInlineCodeBlock(inlineCodeBlock);
         }
 
-        public override MarkdownNode VisitMultiLineCodeBlock(MultiLineCodeBlockNode multiLineCodeBlock)
+        protected override MarkdownNode VisitMultiLineCodeBlock(MultiLineCodeBlockNode multiLineCodeBlock)
         {
             var highlightCssClass = !string.IsNullOrWhiteSpace(multiLineCodeBlock.Language)
                 ? $"language-{multiLineCodeBlock.Language}"
@@ -74,7 +74,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
             return base.VisitMultiLineCodeBlock(multiLineCodeBlock);
         }
 
-        public override MarkdownNode VisitMention(MentionNode mention)
+        protected override MarkdownNode VisitMention(MentionNode mention)
         {
             if (mention.Type == MentionType.Meta)
             {
@@ -123,7 +123,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
             return base.VisitMention(mention);
         }
 
-        public override MarkdownNode VisitEmoji(EmojiNode emoji)
+        protected override MarkdownNode VisitEmoji(EmojiNode emoji)
         {
             var emojiImageUrl = Emoji.GetImageUrl(emoji.Id, emoji.Name, emoji.IsAnimated);
             var jumboClass = _isJumbo ? "emoji--large" : "";
@@ -134,7 +134,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
             return base.VisitEmoji(emoji);
         }
 
-        public override MarkdownNode VisitLink(LinkNode link)
+        protected override MarkdownNode VisitLink(LinkNode link)
         {
             // Extract message ID if the link points to a Discord message
             var linkedMessageId = Regex.Match(link.Url, "^https?://discordapp.com/channels/.*?/(\\d+)/?$").Groups[1].Value;

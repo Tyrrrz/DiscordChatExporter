@@ -2,6 +2,7 @@
 using System.Text.Json;
 using DiscordChatExporter.Domain.Discord.Models.Common;
 using DiscordChatExporter.Domain.Internal;
+using DiscordChatExporter.Domain.Internal.Extensions;
 
 namespace DiscordChatExporter.Domain.Discord.Models
 {
@@ -20,14 +21,13 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
         public string AvatarUrl { get; }
 
-        public User(string id, bool isBot, int discriminator, string name, string? avatarHash)
+        public User(string id, bool isBot, int discriminator, string name, string avatarUrl)
         {
             Id = id;
             IsBot = isBot;
             Discriminator = discriminator;
             Name = name;
-
-            AvatarUrl = GetAvatarUrl(id, discriminator, avatarHash);
+            AvatarUrl = avatarUrl;
         }
 
         public override string ToString() => FullName;
@@ -35,21 +35,17 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
     public partial class User
     {
-        private static string GetAvatarUrl(string id, int discriminator, string? avatarHash)
+        private static string GetDefaultAvatarUrl(int discriminator) =>
+            $"https://cdn.discordapp.com/embed/avatars/{discriminator % 5}.png";
+
+        private static string GetAvatarUrl(string id, string avatarHash)
         {
-            // Custom avatar
-            if (!string.IsNullOrWhiteSpace(avatarHash))
-            {
-                // Animated
-                if (avatarHash.StartsWith("a_", StringComparison.Ordinal))
-                    return $"https://cdn.discordapp.com/avatars/{id}/{avatarHash}.gif";
+            // Animated
+            if (avatarHash.StartsWith("a_", StringComparison.Ordinal))
+                return $"https://cdn.discordapp.com/avatars/{id}/{avatarHash}.gif";
 
-                // Non-animated
-                return $"https://cdn.discordapp.com/avatars/{id}/{avatarHash}.png";
-            }
-
-            // Default avatar
-            return $"https://cdn.discordapp.com/embed/avatars/{discriminator % 5}.png";
+            // Non-animated
+            return $"https://cdn.discordapp.com/avatars/{id}/{avatarHash}.png";
         }
 
         public static User Parse(JsonElement json)
@@ -60,7 +56,11 @@ namespace DiscordChatExporter.Domain.Discord.Models
             var avatarHash = json.GetProperty("avatar").GetString();
             var isBot = json.GetPropertyOrNull("bot")?.GetBoolean() ?? false;
 
-            return new User(id, isBot, discriminator, name, avatarHash);
+            var avatarUrl = !string.IsNullOrWhiteSpace(avatarHash)
+                ? GetAvatarUrl(id, avatarHash)
+                : GetDefaultAvatarUrl(discriminator);
+
+            return new User(id, isBot, discriminator, name, avatarUrl);
         }
     }
 }

@@ -61,23 +61,18 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             // If single channel - prompt file path
             if (IsSingleChannel)
             {
-                // Get single channel
                 var channel = Channels.Single();
+                var defaultFileName = ExportRequest.GetDefaultOutputFileName(Guild!, channel, SelectedFormat, After, Before);
 
-                // Generate default file name
-                var defaultFileName = ChannelExporter.GetDefaultExportFileName(Guild!, channel, SelectedFormat, After, Before);
-
-                // Generate filter
+                // Filter
                 var ext = SelectedFormat.GetFileExtension();
                 var filter = $"{ext.ToUpperInvariant()} files|*.{ext}";
 
-                // Prompt user
                 OutputPath = _dialogManager.PromptSaveFilePath(filter, defaultFileName);
             }
             // If multiple channels - prompt dir path
             else
             {
-                // Prompt user
                 OutputPath = _dialogManager.PromptDirectoryPath();
             }
 
@@ -85,7 +80,6 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             if (string.IsNullOrWhiteSpace(OutputPath))
                 return;
 
-            // Close dialog
             Close(true);
         }
     }

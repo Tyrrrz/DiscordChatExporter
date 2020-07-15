@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace DiscordChatExporter.Domain.Internal
+namespace DiscordChatExporter.Domain.Internal.Extensions
 {
     internal static class StringExtensions
     {

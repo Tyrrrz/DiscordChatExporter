@@ -12,12 +12,11 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
         public string IconUrl { get; }
 
-        public Guild(string id, string name, string? iconHash)
+        public Guild(string id, string name, string iconUrl)
         {
             Id = id;
             Name = name;
-
-            IconUrl = GetIconUrl(id, iconHash);
+            IconUrl = iconUrl;
         }
 
         public override string ToString() => Name;
@@ -26,12 +25,13 @@ namespace DiscordChatExporter.Domain.Discord.Models
     public partial class Guild
     {
         public static Guild DirectMessages { get; } =
-            new Guild("@me", "Direct Messages", null);
+            new Guild("@me", "Direct Messages", GetDefaultIconUrl());
 
-        private static string GetIconUrl(string id, string? iconHash) =>
-            !string.IsNullOrWhiteSpace(iconHash)
-                ? $"https://cdn.discordapp.com/icons/{id}/{iconHash}.png"
-                : "https://cdn.discordapp.com/embed/avatars/0.png";
+        private static string GetDefaultIconUrl() =>
+            "https://cdn.discordapp.com/embed/avatars/0.png";
+
+        private static string GetIconUrl(string id, string iconHash) =>
+            $"https://cdn.discordapp.com/icons/{id}/{iconHash}.png";
 
         public static Guild Parse(JsonElement json)
         {
@@ -39,7 +39,11 @@ namespace DiscordChatExporter.Domain.Discord.Models
             var name = json.GetProperty("name").GetString();
             var iconHash = json.GetProperty("icon").GetString();
 
-            return new Guild(id, name, iconHash);
+            var iconUrl = !string.IsNullOrWhiteSpace(iconHash)
+                ? GetIconUrl(id, iconHash)
+                : GetDefaultIconUrl();
+
+            return new Guild(id, name, iconUrl);
         }
     }
 }

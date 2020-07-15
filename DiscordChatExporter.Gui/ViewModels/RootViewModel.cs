@@ -190,11 +190,19 @@ namespace DiscordChatExporter.Gui.ViewModels
 
                 try
                 {
-                    await exporter.ExportAsync(dialog.Guild!, channel!,
-                        dialog.OutputPath!, dialog.SelectedFormat, _settingsService.DateFormat,
-                        dialog.PartitionLimit, dialog.IsMediaExported,
-                        dialog.After, dialog.Before, operation
+                    var request = new ExportRequest(
+                        dialog.Guild!,
+                        channel!,
+                        dialog.OutputPath!,
+                        dialog.SelectedFormat,
+                        _settingsService.DateFormat,
+                        dialog.After,
+                        dialog.Before,
+                        dialog.PartitionLimit,
+                        dialog.IsMediaExported
                     );
+
+                    await exporter.ExportAsync(request, operation);
 
                     Interlocked.Increment(ref successfulExportCount);
                 }

@@ -3,7 +3,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors;
-using DiscordChatExporter.Domain.Internal;
 using DiscordChatExporter.Domain.Internal.Extensions;
 
 namespace DiscordChatExporter.Domain.Exporting.Writers
@@ -14,8 +13,8 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
         private long _messageCount;
 
-        public JsonMessageWriter(Stream stream, ExportContext context)
-            : base(stream, context)
+        public JsonMessageWriter(Stream stream, ExportContext context, UrlProcessor urlProcessor)
+            : base(stream, context, urlProcessor)
         {
             _writer = new Utf8JsonWriter(stream, new JsonWriterOptions
             {
@@ -26,62 +25,67 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         private string FormatMarkdown(string? markdown) =>
             PlainTextMarkdownVisitor.Format(Context, markdown ?? "");
 
-        private void WriteAttachment(Attachment attachment)
+        private async Task WriteAttachmentAsync(Attachment attachment)
         {
             _writer.WriteStartObject();
 
             _writer.WriteString("id", attachment.Id);
-            _writer.WriteString("url", attachment.Url);
+            _writer.WriteString("url", await ResolveUrlAsync(attachment.Url));
             _writer.WriteString("fileName", attachment.FileName);
             _writer.WriteNumber("fileSizeBytes", attachment.FileSize.TotalBytes);
 
             _writer.WriteEndObject();
+            await _writer.FlushAsync();
         }
 
-        private void WriteEmbedAuthor(EmbedAuthor embedAuthor)
+        private async Task WriteEmbedAuthorAsync(EmbedAuthor embedAuthor)
         {
             _writer.WriteStartObject("author");
 
             _writer.WriteString("name", embedAuthor.Name);
             _writer.WriteString("url", embedAuthor.Url);
-            _writer.WriteString("iconUrl", embedAuthor.IconUrl);
+            _writer.WriteString("iconUrl", await ResolveUrlAsync(embedAuthor.IconUrl));
 
             _writer.WriteEndObject();
+            await _writer.FlushAsync();
         }
 
-        private void WriteEmbedThumbnail(EmbedImage embedThumbnail)
+        private async Task WriteEmbedThumbnailAsync(EmbedImage embedThumbnail)
         {
             _writer.WriteStartObject("thumbnail");
 
-            _writer.WriteString("url", embedThumbnail.Url);
+            _writer.WriteString("url", await ResolveUrlAsync(embedThumbnail.Url));
             _writer.WriteNumber("width", embedThumbnail.Width);
             _writer.WriteNumber("height", embedThumbnail.Height);
 
             _writer.WriteEndObject();
+            await _writer.FlushAsync();
         }
 
-        private void WriteEmbedImage(EmbedImage embedImage)
+        private async Task WriteEmbedImageAsync(EmbedImage embedImage)
         {
             _writer.WriteStartObject("image");
 
-            _writer.WriteString("url", embedImage.Url);
+            _writer.WriteString("url", await ResolveUrlAsync(embedImage.Url));
             _writer.WriteNumber("width", embedImage.Width);
             _writer.WriteNumber("height", embedImage.Height);
 
             _writer.WriteEndObject();
+            await _writer.FlushAsync();
         }
 
-        private void WriteEmbedFooter(EmbedFooter embedFooter)
+        private async Task WriteEmbedFooterAsync(EmbedFooter embedFooter)
         {
             _writer.WriteStartObject("footer");
 
             _writer.WriteString("text", embedFooter.Text);
-            _writer.WriteString("iconUrl", embedFooter.IconUrl);
+            _writer.WriteString("iconUrl", await ResolveUrlAsync(embedFooter.IconUrl));
 
             _writer.WriteEndObject();
+            await _writer.FlushAsync();
         }
 
-        private void WriteEmbedField(EmbedField embedField)
+        private async Task WriteEmbedFieldAsync(EmbedField embedField)
         {
             _writer.WriteStartObject();
 
@@ -90,9 +94,10 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteBoolean("isInline", embedField.IsInline);
 
             _writer.WriteEndObject();
+            await _writer.FlushAsync();
         }
 
-        private void WriteEmbed(Embed embed)
+        private async Task WriteEmbedAsync(Embed embed)
         {
             _writer.WriteStartObject();
 
@@ -102,29 +107,30 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteString("description", FormatMarkdown(embed.Description));
 
             if (embed.Author != null)
-                WriteEmbedAuthor(embed.Author);
+                await WriteEmbedAuthorAsync(embed.Author);
 
             if (embed.Thumbnail != null)
-                WriteEmbedThumbnail(embed.Thumbnail);
+                await WriteEmbedThumbnailAsync(embed.Thumbnail);
 
             if (embed.Image != null)
-                WriteEmbedImage(embed.Image);
+                await WriteEmbedImageAsync(embed.Image);
 
             if (embed.Footer != null)
-                WriteEmbedFooter(embed.Footer);
+                await WriteEmbedFooterAsync(embed.Footer);
 
             // Fields
             _writer.WriteStartArray("fields");
 
             foreach (var field in embed.Fields)
-                WriteEmbedField(field);
+                await WriteEmbedFieldAsync(field);
 
             _writer.WriteEndArray();
 
             _writer.WriteEndObject();
+            await _writer.FlushAsync();
         }
 
-        private void WriteReaction(Reaction reaction)
+        private async Task WriteReactionAsync(Reaction reaction)
         {
             _writer.WriteStartObject();
 
@@ -133,12 +139,13 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteString("id", reaction.Emoji.Id);
             _writer.WriteString("name", reaction.Emoji.Name);
             _writer.WriteBoolean("isAnimated", reaction.Emoji.IsAnimated);
-            _writer.WriteString("imageUrl", reaction.Emoji.ImageUrl);
+            _writer.WriteString("imageUrl", await ResolveUrlAsync(reaction.Emoji.ImageUrl));
             _writer.WriteEndObject();
 
             _writer.WriteNumber("count", reaction.Count);
 
             _writer.WriteEndObject();
+            await _writer.FlushAsync();
         }
 
         public override async Task WritePreambleAsync()
@@ -150,7 +157,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteStartObject("guild");
             _writer.WriteString("id", Context.Request.Guild.Id);
             _writer.WriteString("name", Context.Request.Guild.Name);
-            _writer.WriteString("iconUrl", Context.Request.Guild.IconUrl);
+            _writer.WriteString("iconUrl", await ResolveUrlAsync(Context.Request.Guild.IconUrl));
             _writer.WriteEndObject();
 
             // Channel
@@ -194,14 +201,14 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteString("name", message.Author.Name);
             _writer.WriteString("discriminator", $"{message.Author.Discriminator:0000}");
             _writer.WriteBoolean("isBot", message.Author.IsBot);
-            _writer.WriteString("avatarUrl", message.Author.AvatarUrl);
+            _writer.WriteString("avatarUrl", await ResolveUrlAsync(message.Author.AvatarUrl));
             _writer.WriteEndObject();
 
             // Attachments
             _writer.WriteStartArray("attachments");
 
             foreach (var attachment in message.Attachments)
-                WriteAttachment(attachment);
+                await WriteAttachmentAsync(attachment);
 
             _writer.WriteEndArray();
 
@@ -209,7 +216,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteStartArray("embeds");
 
             foreach (var embed in message.Embeds)
-                WriteEmbed(embed);
+                await WriteEmbedAsync(embed);
 
             _writer.WriteEndArray();
 
@@ -217,15 +224,14 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteStartArray("reactions");
 
             foreach (var reaction in message.Reactions)
-                WriteReaction(reaction);
+                await WriteReactionAsync(reaction);
 
             _writer.WriteEndArray();
 
             _writer.WriteEndObject();
+            await _writer.FlushAsync();
 
-            // Flush every 100 messages
-            if (_messageCount++ % 100 == 0)
-                await _writer.FlushAsync();
+            _messageCount++;
         }
 
         public override async Task WritePostambleAsync()

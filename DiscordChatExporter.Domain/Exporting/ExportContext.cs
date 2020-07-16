@@ -5,7 +5,7 @@ using DiscordChatExporter.Domain.Discord.Models;
 
 namespace DiscordChatExporter.Domain.Exporting
 {
-    public class ExportContext
+    internal class ExportContext
     {
         public ExportRequest Request { get; }
 
@@ -36,8 +36,8 @@ namespace DiscordChatExporter.Domain.Exporting
         public Role? TryGetMentionedRole(string id) =>
             Roles.FirstOrDefault(r => r.Id == id);
 
-        public Member? TryGetUserMember(User user) => Members
-            .FirstOrDefault(m => m.Id == user.Id);
+        public Member? TryGetUserMember(User user) =>
+            Members.FirstOrDefault(m => m.Id == user.Id);
 
         public Color? TryGetUserColor(User user)
         {

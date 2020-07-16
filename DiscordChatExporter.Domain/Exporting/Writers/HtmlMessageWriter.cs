@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors;
-using DiscordChatExporter.Domain.Internal;
+using DiscordChatExporter.Domain.Exporting.Writers.Utilities;
 using DiscordChatExporter.Domain.Internal.Extensions;
 using Scriban;
 using Scriban.Runtime;
@@ -19,6 +19,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
     {
         private readonly TextWriter _writer;
         private readonly string _themeName;
+
         private readonly List<Message> _messageGroupBuffer = new List<Message>();
 
         private readonly Template _preambleTemplate;
@@ -27,8 +28,8 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
         private long _messageCount;
 
-        public HtmlMessageWriter(Stream stream, ExportContext context, string themeName)
-            : base(stream, context)
+        public HtmlMessageWriter(Stream stream, ExportContext context, UrlProcessor urlProcessor, string themeName)
+            : base(stream, context, urlProcessor)
         {
             _writer = new StreamWriter(stream);
             _themeName = themeName;
@@ -90,6 +91,11 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             scriptObject.Import("FormatEmbedMarkdown",
                 new Func<string?, string>(m => FormatMarkdown(m, false)));
 
+            // HACK: Scriban doesn't support async, so we have to resort to this and be careful about deadlocks.
+            // TODO: move to Razor.
+            scriptObject.Import("ResolveUrl",
+                new Func<string?, string?>(u => ResolveUrlAsync(u).GetAwaiter().GetResult()));
+
             // Push model
             templateContext.PushGlobal(scriptObject);
 
@@ -102,7 +108,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         private string FormatMarkdown(string? markdown, bool isJumboAllowed = true) =>
             HtmlMarkdownVisitor.Format(Context, markdown ?? "", isJumboAllowed);
 
-        private async Task RenderCurrentMessageGroupAsync()
+        private async Task WriteCurrentMessageGroupAsync()
         {
             var templateContext = CreateTemplateContext(new Dictionary<string, object>
             {
@@ -128,7 +134,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             // Otherwise, flush the group and render messages
             else
             {
-                await RenderCurrentMessageGroupAsync();
+                await WriteCurrentMessageGroupAsync();
 
                 _messageGroupBuffer.Clear();
                 _messageGroupBuffer.Add(message);
@@ -142,7 +148,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         {
             // Flush current message group
             if (_messageGroupBuffer.Any())
-                await RenderCurrentMessageGroupAsync();
+                await WriteCurrentMessageGroupAsync();
 
             var templateContext = CreateTemplateContext(new Dictionary<string, object>
             {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using DiscordChatExporter.Domain.Discord.Models;
 
-namespace DiscordChatExporter.Domain.Exporting
+namespace DiscordChatExporter.Domain.Exporting.Writers.Utilities
 {
     // Used for grouping contiguous messages in HTML export
     internal partial class MessageGroup

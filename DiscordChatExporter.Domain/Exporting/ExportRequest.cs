@@ -59,6 +59,8 @@ namespace DiscordChatExporter.Domain.Exporting
             // Output is a file
             return OutputPath;
         }
+
+        public string GetOutputBaseDirPath() => Path.GetDirectoryName(GetOutputBaseFilePath()) ?? OutputPath;
     }
 
     public partial class ExportRequest

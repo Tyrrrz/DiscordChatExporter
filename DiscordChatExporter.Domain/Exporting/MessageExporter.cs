@@ -1,45 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Net.Http;
 using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exporting.Writers;
-using DiscordChatExporter.Domain.Internal;
-using DiscordChatExporter.Domain.Internal.Extensions;
 
 namespace DiscordChatExporter.Domain.Exporting
 {
     internal partial class MessageExporter : IAsyncDisposable
     {
-        private readonly HttpClient _httpClient;
         private readonly ExportContext _context;
+
         private readonly string _outputBaseFilePath;
+        private readonly UrlProcessor _urlProcessor;
 
-        private readonly Dictionary<string, string> _mediaPathMap = new Dictionary<string, string>();
-
-        private long _renderedMessageCount;
+        private long _messagesCount;
         private int _partitionIndex;
         private MessageWriter? _writer;
 
-        public MessageExporter(HttpClient httpClient,ExportContext context)
+        public MessageExporter(ExportContext context)
         {
-            _httpClient = httpClient;
             _context = context;
 
             _outputBaseFilePath = context.Request.GetOutputBaseFilePath();
-        }
-
-        public MessageExporter(ExportContext context)
-            : this(Singleton.HttpClient, context)
-        {
+            _urlProcessor = new UrlProcessor($"{_outputBaseFilePath}_Files/");
         }
 
         private bool IsPartitionLimitReached() =>
-            _renderedMessageCount > 0 &&
+            _messagesCount > 0 &&
             _context.Request.PartitionLimit != null &&
             _context.Request.PartitionLimit != 0 &&
-            _renderedMessageCount % _context.Request.PartitionLimit == 0;
+            _messagesCount % _context.Request.PartitionLimit == 0;
 
         private async Task ResetWriterAsync()
         {
@@ -49,6 +39,22 @@ namespace DiscordChatExporter.Domain.Exporting
                 await _writer.DisposeAsync();
                 _writer = null;
             }
+        }
+
+        private MessageWriter CreateMessageWriter(string filePath, ExportFormat format, ExportContext context)
+        {
+            // Stream will be disposed by the underlying writer
+            var stream = File.Create(filePath);
+
+            return format switch
+            {
+                ExportFormat.PlainText => new PlainTextMessageWriter(stream, context, _urlProcessor),
+                ExportFormat.Csv => new CsvMessageWriter(stream, context, _urlProcessor),
+                ExportFormat.HtmlDark => new HtmlMessageWriter(stream, context, _urlProcessor, "Dark"),
+                ExportFormat.HtmlLight => new HtmlMessageWriter(stream, context, _urlProcessor, "Light"),
+                ExportFormat.Json => new JsonMessageWriter(stream, context, _urlProcessor),
+                _ => throw new ArgumentOutOfRangeException(nameof(format), $"Unknown export format '{format}'.")
+            };
         }
 
         private async Task<MessageWriter> GetWriterAsync()
@@ -76,90 +82,11 @@ namespace DiscordChatExporter.Domain.Exporting
             return _writer = writer;
         }
 
-        private async Task<string> RetargetMediaUrlAsync(string url)
-        {
-            if (_mediaPathMap.TryGetValue(url, out var cachedFilePath))
-                return cachedFilePath;
-
-            var outputDirPath = Path.Combine(_options.BaseDirPath, $"{Path.GetFileNameWithoutExtension(_outputBaseFilePath)}_Files");
-            Directory.CreateDirectory(outputDirPath);
-
-            var ext = Path.GetExtension(new Uri(url).AbsolutePath);
-            var filePath = Path.Combine(outputDirPath, $"{Guid.NewGuid()}{ext}");
-
-            await _httpClient.DownloadAsync(url, filePath);
-
-            return _mediaPathMap[url] = filePath;
-        }
-
-        private async Task<Message> RetargetMediaAsync(Message message)
-        {
-            // Media that we're interested in downloading:
-            // - Author avatar
-            // - Image attachments
-            // - Images in embeds
-
-            var avatarUrl = await RetargetMediaUrlAsync(message.Author.AvatarUrl);
-            var author = new User(
-                message.Author.Id,
-                message.Author.IsBot,
-                message.Author.Discriminator,
-                message.Author.Name,
-                avatarUrl
-            );
-
-            var attachments = new List<Attachment>();
-            foreach (var attachment in message.Attachments)
-            {
-                if (attachment.IsImage)
-                {
-                    var attachmentUrl = await RetargetMediaUrlAsync(attachment.Url);
-                    attachments.Add(new Attachment(
-                        attachment.Id,
-                        attachmentUrl,
-                        attachment.FileName,
-                        attachment.Width,
-                        attachment.Height,
-                        attachment.FileSize
-                    ));
-                }
-                else
-                {
-                    attachments.Add(attachment);
-                }
-            }
-
-            var embeds = new List<Embed>();
-            foreach (var embed in message.Embeds)
-            {
-                // TODO
-                embeds.Add(embed);
-            }
-
-            return new Message(
-                message.Id,
-                message.Type,
-                author,
-                message.Timestamp,
-                message.EditedTimestamp,
-                message.IsPinned,
-                message.Content,
-                attachments,
-                embeds,
-                message.Reactions,
-                message.MentionedUsers
-            );
-        }
-
         public async Task ExportMessageAsync(Message message)
         {
             var writer = await GetWriterAsync();
-
-            if (_context.Request.RewriteMedia)
-                message = await RetargetMediaAsync(message);
-
             await writer.WriteMessageAsync(message);
-            _renderedMessageCount++;
+            _messagesCount++;
         }
 
         public async ValueTask DisposeAsync() => await ResetWriterAsync();
@@ -184,22 +111,6 @@ namespace DiscordChatExporter.Domain.Exporting
                 return Path.Combine(dirPath, fileName);
 
             return fileName;
-        }
-
-        private static MessageWriter CreateMessageWriter(string filePath, ExportFormat format, ExportContext context)
-        {
-            // Stream will be disposed by the underlying writer
-            var stream = File.Create(filePath);
-
-            return format switch
-            {
-                ExportFormat.PlainText => new PlainTextMessageWriter(stream, context),
-                ExportFormat.Csv => new CsvMessageWriter(stream, context),
-                ExportFormat.HtmlDark => new HtmlMessageWriter(stream, context, "Dark"),
-                ExportFormat.HtmlLight => new HtmlMessageWriter(stream, context, "Light"),
-                ExportFormat.Json => new JsonMessageWriter(stream, context),
-                _ => throw new ArgumentOutOfRangeException(nameof(format), $"Unknown export format '{format}'.")
-            };
         }
     }
 }

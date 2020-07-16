@@ -1,7 +1,7 @@
 <div class="chatlog__message-group">
     {{~ # Avatar ~}}
     <div class="chatlog__author-avatar-container">
-        <img class="chatlog__author-avatar" src="{{ MessageGroup.Author.AvatarUrl }}" alt="Avatar">
+        <img class="chatlog__author-avatar" src="{{ MessageGroup.Author.AvatarUrl | ResolveUrl }}" alt="Avatar">
     </div>
     <div class="chatlog__messages">
         {{~ # Author name and timestamp ~}}
@@ -39,16 +39,16 @@
                     {{~ if attachment.IsSpoiler ~}}
                     <div class="spoiler spoiler--hidden" onclick="showSpoiler(event, this)">
                         <div class="spoiler-image">
-                            <a href="{{ attachment.Url }}">
-                                <img class="chatlog__attachment-thumbnail" src="{{ attachment.Url }}" alt="Attachment">
+                            <a href="{{ attachment.Url | ResolveUrl }}">
+                                <img class="chatlog__attachment-thumbnail" src="{{ attachment.Url | ResolveUrl }}" alt="Attachment">
                             </a>
                         </div>
                     </div>
                     {{~ else ~}}
-                    <a href="{{ attachment.Url }}">
+                    <a href="{{ attachment.Url | ResolveUrl }}">
                         {{ # Non-spoiler image }}
                         {{~ if attachment.IsImage ~}}
-                            <img class="chatlog__attachment-thumbnail" src="{{ attachment.Url }}" alt="Attachment">
+                            <img class="chatlog__attachment-thumbnail" src="{{ attachment.Url | ResolveUrl }}" alt="Attachment">
                         {{~ # Non-image ~}}
                         {{~ else ~}}
                             Attachment: {{ attachment.FileName }} ({{ attachment.FileSize }})
@@ -73,7 +73,7 @@
                             {{~ if embed.Author ~}}
                             <div class="chatlog__embed-author">
                                 {{~ if embed.Author.IconUrl ~}}
-                                <img class="chatlog__embed-author-icon" src="{{ embed.Author.IconUrl }}" alt="Author icon">
+                                <img class="chatlog__embed-author-icon" src="{{ embed.Author.IconUrl | ResolveUrl }}" alt="Author icon">
                                 {{~ end ~}}
 
                                 {{~ if embed.Author.Name ~}}
@@ -124,8 +124,8 @@
                         {{~ # Thumbnail ~}}
                         {{~ if embed.Thumbnail ~}}
                         <div class="chatlog__embed-thumbnail-container">
-                            <a class="chatlog__embed-thumbnail-link" href="{{ embed.Thumbnail.Url }}">
-                                <img class="chatlog__embed-thumbnail" src="{{ embed.Thumbnail.Url }}" alt="Thumbnail">
+                            <a class="chatlog__embed-thumbnail-link" href="{{ embed.Thumbnail.Url | ResolveUrl }}">
+                                <img class="chatlog__embed-thumbnail" src="{{ embed.Thumbnail.Url | ResolveUrl }}" alt="Thumbnail">
                             </a>
                         </div>
                         {{~ end ~}}
@@ -134,8 +134,8 @@
                     {{~ # Image ~}}
                     {{~ if embed.Image ~}}
                     <div class="chatlog__embed-image-container">
-                        <a class="chatlog__embed-image-link" href="{{ embed.Image.Url }}">
-                            <img class="chatlog__embed-image" src="{{ embed.Image.Url }}" alt="Image">
+                        <a class="chatlog__embed-image-link" href="{{ embed.Image.Url | ResolveUrl }}">
+                            <img class="chatlog__embed-image" src="{{ embed.Image.Url | ResolveUrl }}" alt="Image">
                         </a>
                     </div>
                     {{~ end ~}}
@@ -145,7 +145,7 @@
                     <div class="chatlog__embed-footer">
                         {{~ if embed.Footer ~}}
                         {{~ if embed.Footer.Text && embed.Footer.IconUrl ~}}
-                        <img class="chatlog__embed-footer-icon" src="{{ embed.Footer.IconUrl }}" alt="Footer icon">
+                        <img class="chatlog__embed-footer-icon" src="{{ embed.Footer.IconUrl | ResolveUrl }}" alt="Footer icon">
                         {{~ end ~}}
                         {{~ end ~}}
 
@@ -172,7 +172,7 @@
                 <div class="chatlog__reactions">
                     {{~ for reaction in message.Reactions ~}}
                         <div class="chatlog__reaction">
-                            <img class="emoji emoji--small" alt="{{ reaction.Emoji.Name }}" title="{{ reaction.Emoji.Name }}" src="{{ reaction.Emoji.ImageUrl }}">
+                            <img class="emoji emoji--small" alt="{{ reaction.Emoji.Name }}" title="{{ reaction.Emoji.Name }}" src="{{ reaction.Emoji.ImageUrl | ResolveUrl }}">
                             <span class="chatlog__reaction-count">{{ reaction.Count }}</span>
                         </div>
                     {{~ end ~}}

@@ -4,7 +4,6 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using DiscordChatExporter.Domain.Discord.Models;
-using DiscordChatExporter.Domain.Internal;
 using DiscordChatExporter.Domain.Markdown;
 using DiscordChatExporter.Domain.Markdown.Ast;
 

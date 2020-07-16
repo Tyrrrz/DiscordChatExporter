@@ -16,15 +16,14 @@ namespace DiscordChatExporter.Domain.Discord
     public class DiscordClient
     {
         private readonly AuthToken _token;
-        private readonly HttpClient _httpClient;
+        private readonly HttpClient _httpClient = Singleton.HttpClient;
         private readonly IAsyncPolicy<HttpResponseMessage> _httpRequestPolicy;
 
         private readonly Uri _baseUri = new Uri("https://discordapp.com/api/v6/", UriKind.Absolute);
 
-        public DiscordClient(AuthToken token, HttpClient httpClient)
+        public DiscordClient(AuthToken token)
         {
             _token = token;
-            _httpClient = httpClient;
 
             // Discord seems to always respond with 429 on the first request with unreasonable wait time (10+ minutes).
             // For that reason the policy will ignore such errors at first, then wait a constant amount of time, and
@@ -45,11 +44,6 @@ namespace DiscordChatExporter.Domain.Discord
                     },
                     (response, timespan, retryCount, context) => Task.CompletedTask
                 );
-        }
-
-        public DiscordClient(AuthToken token)
-            : this(token, Singleton.HttpClient)
-        {
         }
 
         private async Task<HttpResponseMessage> GetResponseAsync(string url) => await _httpRequestPolicy.ExecuteAsync(async () =>

@@ -6,8 +6,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord.Models;
+using DiscordChatExporter.Domain.Exporting.Writers.Html;
 using DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors;
-using DiscordChatExporter.Domain.Exporting.Writers.Utilities;
 using DiscordChatExporter.Domain.Internal.Extensions;
 using Scriban;
 using Scriban.Runtime;
@@ -37,12 +37,6 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _preambleTemplate = Template.Parse(GetPreambleTemplateCode());
             _messageGroupTemplate = Template.Parse(GetMessageGroupTemplateCode());
             _postambleTemplate = Template.Parse(GetPostambleTemplateCode());
-        }
-
-        private MessageGroup GetCurrentMessageGroup()
-        {
-            var firstMessage = _messageGroupBuffer.First();
-            return new MessageGroup(firstMessage.Author, firstMessage.Timestamp, _messageGroupBuffer);
         }
 
         private TemplateContext CreateTemplateContext(IReadOnlyDictionary<string, object>? constants = null)
@@ -112,7 +106,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         {
             var templateContext = CreateTemplateContext(new Dictionary<string, object>
             {
-                ["MessageGroup"] = GetCurrentMessageGroup()
+                ["MessageGroup"] = MessageGroup.Join(_messageGroupBuffer)
             });
 
             await templateContext.EvaluateAsync(_messageGroupTemplate.Page);
@@ -168,7 +162,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
     internal partial class HtmlMessageWriter
     {
         private static readonly Assembly ResourcesAssembly = typeof(HtmlMessageWriter).Assembly;
-        private static readonly string ResourcesNamespace = $"{ResourcesAssembly.GetName().Name}.Exporting.Resources";
+        private static readonly string ResourcesNamespace = $"{ResourcesAssembly.GetName().Name}.Exporting.Writers.Html";
 
         private static string GetCoreStyleSheetCode() =>
             ResourcesAssembly

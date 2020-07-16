@@ -21,8 +21,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
 
         protected async ValueTask ExportMultipleAsync(IConsole console, IReadOnlyList<Channel> channels)
         {
-            // This uses a separate route from ExportCommandBase because the progress ticker is not thread-safe
-            // Ugly code ahead. Will need to refactor.
+            // HACK: this uses a separate route from ExportCommandBase because the progress ticker is not thread-safe
 
             console.Output.Write($"Exporting {channels.Count} channels... ");
             var progress = console.CreateProgressTicker();

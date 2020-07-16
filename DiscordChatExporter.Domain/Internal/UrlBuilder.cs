@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 
-namespace DiscordChatExporter.Domain.Discord
+namespace DiscordChatExporter.Domain.Internal
 {
     internal class UrlBuilder
     {

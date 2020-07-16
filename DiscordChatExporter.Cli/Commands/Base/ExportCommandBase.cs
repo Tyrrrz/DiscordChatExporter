@@ -26,7 +26,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
         [CommandOption("partition", 'p', Description = "Split output into partitions limited to this number of messages.")]
         public int? PartitionLimit { get; set; }
 
-        [CommandOption("media", Description = "Download media content.")]
+        [CommandOption("media", Description = "Download referenced media content.")]
         public bool IsMediaExported { get; set; }
 
         [CommandOption("dateformat", Description = "Date format used in output.")]

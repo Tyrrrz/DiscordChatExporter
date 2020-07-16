@@ -111,7 +111,7 @@
                 ToolTip="If this is set, the exported file will be split into multiple partitions, each containing no more than specified number of messages" />
 
             <!--  Media export  -->
-            <Grid Margin="16,16" ToolTip="Download referenced media content (such as user avatars and attached images) in addition to text content">
+            <Grid Margin="16,16" ToolTip="Download additional referenced files, such as user avatars, attached files, embedded images, etc. to preserve them in the event of deletion">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -120,7 +120,7 @@
                 <TextBlock
                     Grid.Column="0"
                     VerticalAlignment="Center"
-                    Text="Download media content" />
+                    Text="Download referenced media content" />
                 <ToggleButton
                     Grid.Column="1"
                     HorizontalAlignment="Right"

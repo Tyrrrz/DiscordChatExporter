@@ -16,7 +16,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
 {
     public abstract class ExportMultipleCommandBase : ExportCommandBase
     {
-        [CommandOption("parallel", Description = "Export this number of separate channels in parallel.")]
+        [CommandOption("parallel", Description = "Export this number of channels in parallel.")]
         public int ParallelLimit { get; set; } = 1;
 
         protected async ValueTask ExportMultipleAsync(IConsole console, IReadOnlyList<Channel> channels)

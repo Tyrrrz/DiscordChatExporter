@@ -75,7 +75,7 @@
         </ComboBox>
 
         <!--  Advanced section  -->
-        <StackPanel Visibility="{Binding IsChecked, ElementName=AdvancedToggleButton, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
+        <StackPanel Visibility="{Binding IsChecked, ElementName=AdvancedSectionToggleButton, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
             <!--  Date limits  -->
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -110,8 +110,8 @@
                 Text="{Binding PartitionLimit, TargetNullValue=''}"
                 ToolTip="If this is set, the exported file will be split into multiple partitions, each containing no more than specified number of messages" />
 
-            <!--  Media export  -->
-            <Grid Margin="16,16" ToolTip="Download additional referenced files, such as user avatars, attached files, embedded images, etc. to preserve them in the event of deletion">
+            <!--  Download media  -->
+            <Grid Margin="16,16" ToolTip="If this is set, the export will include additional files such as user avatars, attached files, embedded images, etc">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -125,7 +125,7 @@
                     Grid.Column="1"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Center"
-                    IsChecked="{Binding IsMediaExported}" />
+                    IsChecked="{Binding ShouldDownloadMedia}" />
             </Grid>
         </StackPanel>
 
@@ -139,11 +139,11 @@
             </Grid.ColumnDefinitions>
 
             <ToggleButton
-                x:Name="AdvancedToggleButton"
+                x:Name="AdvancedSectionToggleButton"
                 Grid.Column="0"
                 Margin="8"
                 Cursor="Hand"
-                Loaded="AdvancedToggleButton_OnLoaded"
+                Loaded="AdvancedSectionToggleButton_OnLoaded"
                 Style="{DynamicResource MaterialDesignFlatToggleButton}"
                 ToolTip="Show advanced options">
                 <ToggleButton.Content>

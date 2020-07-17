@@ -22,7 +22,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
         // HACK: ConfigureAwait() is crucial here to enable sync-over-async in HtmlMessageWriter
         protected async Task<string?> ResolveUrlAsync(string? url) =>
-            !string.IsNullOrWhiteSpace(url) && Context.Request.RewriteMedia
+            !string.IsNullOrWhiteSpace(url) && Context.Request.ShouldDownloadMedia
                 ? await _urlProcessor.ConvertAsync(url).ConfigureAwait(false)
                 : url;
 

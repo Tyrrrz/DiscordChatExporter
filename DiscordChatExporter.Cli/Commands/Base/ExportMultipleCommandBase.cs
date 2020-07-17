@@ -44,12 +44,10 @@ namespace DiscordChatExporter.Cli.Commands.Base
                         channel,
                         OutputPath,
                         ExportFormat,
-                        DateFormat,
                         After,
                         Before,
                         PartitionLimit,
-                        IsMediaExported
-                    );
+                        ShouldDownloadMedia, DateFormat);
 
                     await GetChannelExporter().ExportChannelAsync(request, operation);
 

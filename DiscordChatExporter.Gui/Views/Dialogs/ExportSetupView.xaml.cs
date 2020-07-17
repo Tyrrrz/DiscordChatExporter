@@ -10,10 +10,10 @@ namespace DiscordChatExporter.Gui.Views.Dialogs
             InitializeComponent();
         }
 
-        private void AdvancedToggleButton_OnLoaded(object sender, RoutedEventArgs e)
+        private void AdvancedSectionToggleButton_OnLoaded(object sender, RoutedEventArgs e)
         {
             if (DataContext is ExportSetupViewModel vm)
-                AdvancedToggleButton.IsChecked = vm.IsAdvancedSectionDisplayedByDefault;
+                AdvancedSectionToggleButton.IsChecked = vm.IsAdvancedSectionDisplayedByDefault;
         }
     }
 }

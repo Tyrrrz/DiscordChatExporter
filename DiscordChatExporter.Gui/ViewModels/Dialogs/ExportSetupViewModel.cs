@@ -32,7 +32,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
 
         public int? PartitionLimit { get; set; }
 
-        public bool IsMediaExported { get; set; }
+        public bool ShouldDownloadMedia { get; set; }
 
         // Whether to show the "advanced options" by default when the dialog opens.
         // This is active if any of the advanced options are set to non-default values.
@@ -40,7 +40,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             After != default ||
             Before != default ||
             PartitionLimit != default ||
-            IsMediaExported != default;
+            ShouldDownloadMedia != default;
 
         public ExportSetupViewModel(DialogManager dialogManager, SettingsService settingsService)
         {
@@ -50,7 +50,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             // Persist preferences
             SelectedFormat = _settingsService.LastExportFormat;
             PartitionLimit = _settingsService.LastPartitionLimit;
-            IsMediaExported = _settingsService.LastIsMediaExported;
+            ShouldDownloadMedia = _settingsService.LastShouldDownloadMedia;
         }
 
         public void Confirm()
@@ -58,7 +58,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             // Persist preferences
             _settingsService.LastExportFormat = SelectedFormat;
             _settingsService.LastPartitionLimit = PartitionLimit;
-            _settingsService.LastIsMediaExported = IsMediaExported;
+            _settingsService.LastShouldDownloadMedia = ShouldDownloadMedia;
 
             // Clamp 'after' and 'before' values
             if (After > Before)

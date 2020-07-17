@@ -21,14 +21,44 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         private string FormatMarkdown(string? markdown) =>
             PlainTextMarkdownVisitor.Format(Context, markdown ?? "");
 
-        private async Task WriteRowAsync() =>
-            await _writer.WriteLineAsync();
+        private async Task WriteRowAsync() => await _writer.WriteLineAsync();
 
-        private async Task WriteColumnAsync(string value) =>
-            await _writer.WriteAsync(CsvEncode(value) + ',');
+        private async Task WriteColumnAsync(string value) => await _writer.WriteAsync(CsvEncode(value) + ',');
 
         public override async Task WritePreambleAsync() =>
             await _writer.WriteLineAsync("AuthorID,Author,Date,Content,Attachments,Reactions");
+
+        private async Task WriteAttachmentsAsync(IReadOnlyList<Attachment> attachments)
+        {
+            var buffer = new StringBuilder();
+
+            foreach (var attachment in attachments)
+            {
+                buffer
+                    .AppendIfEmpty(',')
+                    .Append(await ResolveUrlAsync(attachment.Url));
+            }
+
+            await WriteColumnAsync(buffer.ToString());
+        }
+
+        private async Task WriteReactionsAsync(IReadOnlyList<Reaction> reactions)
+        {
+            var buffer = new StringBuilder();
+
+            foreach (var reaction in reactions)
+            {
+                buffer
+                    .AppendIfEmpty(',')
+                    .Append(reaction.Emoji.Name)
+                    .Append(' ')
+                    .Append('(')
+                    .Append(reaction.Count)
+                    .Append(')');
+            }
+
+            await WriteColumnAsync(buffer.ToString());
+        }
 
         public override async Task WriteMessageAsync(Message message)
         {
@@ -41,30 +71,10 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             await WriteColumnAsync(FormatMarkdown(message.Content));
 
             // Attachments
-            var attachmentsBuffer = new StringBuilder();
-            foreach (var attachment in message.Attachments)
-            {
-                attachmentsBuffer
-                    .AppendIfEmpty(',')
-                    .Append(await ResolveUrlAsync(attachment.Url));
-            }
-
-            await WriteColumnAsync(attachmentsBuffer.ToString());
+            await WriteAttachmentsAsync(message.Attachments);
 
             // Reactions
-            var reactionsBuffer = new StringBuilder();
-            foreach (var reaction in message.Reactions)
-            {
-                attachmentsBuffer
-                    .AppendIfEmpty(',')
-                    .Append(reaction.Emoji.Name)
-                    .Append(' ')
-                    .Append('(')
-                    .Append(reaction.Count)
-                    .Append(')');
-            }
-
-            await WriteColumnAsync(reactionsBuffer.ToString());
+            await WriteReactionsAsync(message.Reactions);
 
             // Finish row
             await WriteRowAsync();

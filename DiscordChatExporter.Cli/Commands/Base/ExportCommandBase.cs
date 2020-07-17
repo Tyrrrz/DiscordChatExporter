@@ -11,11 +11,11 @@ namespace DiscordChatExporter.Cli.Commands.Base
 {
     public abstract class ExportCommandBase : TokenCommandBase
     {
-        [CommandOption("format", 'f', Description = "Output file format.")]
-        public ExportFormat ExportFormat { get; set; } = ExportFormat.HtmlDark;
-
         [CommandOption("output", 'o', Description = "Output file or directory path.")]
         public string OutputPath { get; set; } = Directory.GetCurrentDirectory();
+
+        [CommandOption("format", 'f', Description = "Output file format.")]
+        public ExportFormat ExportFormat { get; set; } = ExportFormat.HtmlDark;
 
         [CommandOption("after", Description = "Limit to messages sent after this date.")]
         public DateTimeOffset? After { get; set; }
@@ -27,7 +27,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
         public int? PartitionLimit { get; set; }
 
         [CommandOption("media", Description = "Download referenced media content.")]
-        public bool IsMediaExported { get; set; }
+        public bool ShouldDownloadMedia { get; set; }
 
         [CommandOption("dateformat", Description = "Date format used in output.")]
         public string DateFormat { get; set; } = "dd-MMM-yy hh:mm tt";
@@ -44,12 +44,10 @@ namespace DiscordChatExporter.Cli.Commands.Base
                 channel,
                 OutputPath,
                 ExportFormat,
-                DateFormat,
                 After,
                 Before,
                 PartitionLimit,
-                IsMediaExported
-            );
+                ShouldDownloadMedia, DateFormat);
 
             await GetChannelExporter().ExportChannelAsync(request, progress);
 

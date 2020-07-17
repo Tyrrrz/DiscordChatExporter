@@ -10,7 +10,6 @@ namespace DiscordChatExporter.Domain.Exporting
     {
         private readonly ExportContext _context;
 
-        private readonly string _outputBaseFilePath;
         private readonly UrlProcessor _urlProcessor;
 
         private long _messageCount;
@@ -21,8 +20,7 @@ namespace DiscordChatExporter.Domain.Exporting
         {
             _context = context;
 
-            _outputBaseFilePath = context.Request.GetOutputBaseFilePath();
-            _urlProcessor = new UrlProcessor($"{_outputBaseFilePath}_Files/");
+            _urlProcessor = new UrlProcessor($"{context.Request.OutputBaseFilePath}_Files/");
         }
 
         private bool IsPartitionLimitReached() =>
@@ -70,9 +68,9 @@ namespace DiscordChatExporter.Domain.Exporting
             if (_writer != null)
                 return _writer;
 
-            var filePath = GetPartitionFilePath(_outputBaseFilePath, _partitionIndex);
+            var filePath = GetPartitionFilePath(_context.Request.OutputBaseFilePath, _partitionIndex);
 
-            var dirPath = Path.GetDirectoryName(_outputBaseFilePath);
+            var dirPath = Path.GetDirectoryName(_context.Request.OutputBaseFilePath);
             if (!string.IsNullOrWhiteSpace(dirPath))
                 Directory.CreateDirectory(dirPath);
 

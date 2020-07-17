@@ -166,24 +166,24 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
         private static string GetCoreStyleSheetCode() =>
             ResourcesAssembly
-                .GetManifestResourceString($"{ResourcesNamespace}.HtmlCore.css");
+                .GetManifestResourceString($"{ResourcesNamespace}.Core.css");
 
         private static string GetThemeStyleSheetCode(string themeName) =>
             ResourcesAssembly
-                .GetManifestResourceString($"{ResourcesNamespace}.Html{themeName}.css");
+                .GetManifestResourceString($"{ResourcesNamespace}.{themeName}.css");
 
         private static string GetPreambleTemplateCode() =>
             ResourcesAssembly
-                .GetManifestResourceString($"{ResourcesNamespace}.HtmlLayoutTemplate.html")
+                .GetManifestResourceString($"{ResourcesNamespace}.LayoutTemplate.html")
                 .SubstringUntil("{{~ %SPLIT% ~}}");
 
         private static string GetMessageGroupTemplateCode() =>
             ResourcesAssembly
-                .GetManifestResourceString($"{ResourcesNamespace}.HtmlMessageGroupTemplate.html");
+                .GetManifestResourceString($"{ResourcesNamespace}.MessageGroupTemplate.html");
 
         private static string GetPostambleTemplateCode() =>
             ResourcesAssembly
-                .GetManifestResourceString($"{ResourcesNamespace}.HtmlLayoutTemplate.html")
+                .GetManifestResourceString($"{ResourcesNamespace}.LayoutTemplate.html")
                 .SubstringAfter("{{~ %SPLIT% ~}}");
     }
 }

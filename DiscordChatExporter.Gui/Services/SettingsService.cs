@@ -20,7 +20,7 @@ namespace DiscordChatExporter.Gui.Services
 
         public int? LastPartitionLimit { get; set; }
 
-        public bool LastIsMediaExported { get; set; }
+        public bool LastShouldDownloadMedia { get; set; }
 
         public SettingsService()
         {

@@ -28,8 +28,8 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
         private long _messageCount;
 
-        public HtmlMessageWriter(Stream stream, ExportContext context, UrlProcessor urlProcessor, string themeName)
-            : base(stream, context, urlProcessor)
+        public HtmlMessageWriter(Stream stream, ExportContext context, string themeName)
+            : base(stream, context)
         {
             _writer = new StreamWriter(stream);
             _themeName = themeName;
@@ -77,7 +77,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
                 new Func<User, Color?>(Context.TryGetUserColor));
 
             scriptObject.Import("TryGetUserNick",
-                new Func<User, string?>(u => Context.TryGetUserMember(u)?.Nick));
+                new Func<User, string?>(u => Context.TryGetMember(u.Id)?.Nick));
 
             scriptObject.Import("FormatMarkdown",
                 new Func<string?, string>(m => FormatMarkdown(m)));
@@ -88,7 +88,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             // HACK: Scriban doesn't support async, so we have to resort to this and be careful about deadlocks.
             // TODO: move to Razor.
             scriptObject.Import("ResolveUrl",
-                new Func<string?, string?>(u => ResolveUrlAsync(u).GetAwaiter().GetResult()));
+                new Func<string, string>(u => Context.ResolveUrlAsync(u).GetAwaiter().GetResult()));
 
             // Push model
             templateContext.PushGlobal(scriptObject);

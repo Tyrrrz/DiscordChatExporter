@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord.Models;
-using DiscordChatExporter.Domain.Internal.Extensions;
 
 namespace DiscordChatExporter.Domain.Exporting
 {
     internal class ExportContext
     {
+        private readonly MediaDownloader _mediaDownloader;
+
         public ExportRequest Request { get; }
 
         public IReadOnlyCollection<Member> Members { get; }
@@ -27,29 +29,41 @@ namespace DiscordChatExporter.Domain.Exporting
             Members = members;
             Channels = channels;
             Roles = roles;
+
+            _mediaDownloader = new MediaDownloader(request.OutputMediaDirPath);
         }
 
-        public Member? TryGetMentionedMember(string id) =>
+        public Member? TryGetMember(string id) =>
             Members.FirstOrDefault(m => m.Id == id);
 
-        public Channel? TryGetMentionedChannel(string id) =>
+        public Channel? TryGetChannel(string id) =>
             Channels.FirstOrDefault(c => c.Id == id);
 
-        public Role? TryGetMentionedRole(string id) =>
+        public Role? TryGetRole(string id) =>
             Roles.FirstOrDefault(r => r.Id == id);
-
-        public Member? TryGetUserMember(User user) =>
-            Members.FirstOrDefault(m => m.Id == user.Id);
 
         public Color? TryGetUserColor(User user)
         {
-            var member = TryGetUserMember(user);
+            var member = TryGetMember(user.Id);
             var roles = member?.RoleIds.Join(Roles, i => i, r => r.Id, (_, role) => role);
 
             return roles?
+                .Where(r => r.Color != null)
                 .OrderByDescending(r => r.Position)
                 .Select(r => r.Color)
-                .FirstOrDefault(c => c != null);
+                .FirstOrDefault();
+        }
+
+        // HACK: ConfigureAwait() is crucial here to enable sync-over-async in HtmlMessageWriter
+        public async Task<string> ResolveUrlAsync(string url)
+        {
+            if (!Request.ShouldDownloadMedia)
+                return url;
+
+            var filePath = await _mediaDownloader.DownloadAsync(url).ConfigureAwait(false);
+
+            // Return relative path so that the output files can be copied around without breaking
+            return Path.GetRelativePath(Request.OutputBaseDirPath, filePath);
         }
     }
 }

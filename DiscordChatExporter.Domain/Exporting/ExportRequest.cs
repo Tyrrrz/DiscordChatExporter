@@ -17,6 +17,8 @@ namespace DiscordChatExporter.Domain.Exporting
 
         public string OutputBaseDirPath { get; }
 
+        public string OutputMediaDirPath { get; }
+
         public ExportFormat Format { get; }
 
         public DateTimeOffset? After { get; }
@@ -49,7 +51,7 @@ namespace DiscordChatExporter.Domain.Exporting
             ShouldDownloadMedia = shouldDownloadMedia;
             DateFormat = dateFormat;
 
-            OutputBaseFilePath = GetFilePathFromOutputPath(
+            OutputBaseFilePath = GetOutputBaseFilePath(
                 guild,
                 channel,
                 outputPath,
@@ -59,12 +61,13 @@ namespace DiscordChatExporter.Domain.Exporting
             );
 
             OutputBaseDirPath = Path.GetDirectoryName(OutputBaseFilePath) ?? outputPath;
+            OutputMediaDirPath = $"{OutputBaseFilePath}_Files{Path.PathSeparator}";
         }
     }
 
     public partial class ExportRequest
     {
-        private static string GetFilePathFromOutputPath(
+        private static string GetOutputBaseFilePath(
             Guild guild,
             Channel channel,
             string outputPath,

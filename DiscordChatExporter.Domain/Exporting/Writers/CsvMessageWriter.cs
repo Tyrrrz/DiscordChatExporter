@@ -12,8 +12,8 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
     {
         private readonly TextWriter _writer;
 
-        public CsvMessageWriter(Stream stream, ExportContext context, UrlProcessor urlProcessor)
-            : base(stream, context, urlProcessor)
+        public CsvMessageWriter(Stream stream, ExportContext context)
+            : base(stream, context)
         {
             _writer = new StreamWriter(stream);
         }
@@ -36,7 +36,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             {
                 buffer
                     .AppendIfEmpty(',')
-                    .Append(await ResolveUrlAsync(attachment.Url));
+                    .Append(await Context.ResolveUrlAsync(attachment.Url));
             }
 
             await WriteColumnAsync(buffer.ToString());

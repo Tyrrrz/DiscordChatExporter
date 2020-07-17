@@ -15,8 +15,8 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
         private long _messageCount;
 
-        public PlainTextMessageWriter(Stream stream, ExportContext context, UrlProcessor urlProcessor)
-            : base(stream, context, urlProcessor)
+        public PlainTextMessageWriter(Stream stream, ExportContext context)
+            : base(stream, context)
         {
             _writer = new StreamWriter(stream);
         }
@@ -45,9 +45,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             await _writer.WriteLineAsync("{Attachments}");
 
             foreach (var attachment in attachments)
-            {
-                await _writer.WriteLineAsync(await ResolveUrlAsync(attachment.Url));
-            }
+                await _writer.WriteLineAsync(await Context.ResolveUrlAsync(attachment.Url));
 
             await _writer.WriteLineAsync();
         }
@@ -80,10 +78,10 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
                 }
 
                 if (!string.IsNullOrWhiteSpace(embed.Thumbnail?.Url))
-                    await _writer.WriteLineAsync(await ResolveUrlAsync(embed.Thumbnail.Url));
+                    await _writer.WriteLineAsync(await Context.ResolveUrlAsync(embed.Thumbnail.Url));
 
                 if (!string.IsNullOrWhiteSpace(embed.Image?.Url))
-                    await _writer.WriteLineAsync(await ResolveUrlAsync(embed.Image.Url));
+                    await _writer.WriteLineAsync(await Context.ResolveUrlAsync(embed.Image.Url));
 
                 if (!string.IsNullOrWhiteSpace(embed.Footer?.Text))
                     await _writer.WriteLineAsync(embed.Footer.Text);

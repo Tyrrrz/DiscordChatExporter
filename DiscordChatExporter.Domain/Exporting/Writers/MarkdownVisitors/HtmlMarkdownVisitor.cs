@@ -84,7 +84,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
             }
             else if (mention.Type == MentionType.User)
             {
-                var member = _context.TryGetMentionedMember(mention.Id);
+                var member = _context.TryGetMember(mention.Id);
                 var fullName = member?.User.FullName ?? "Unknown";
                 var nick = member?.Nick ?? "Unknown";
 
@@ -95,7 +95,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
             }
             else if (mention.Type == MentionType.Channel)
             {
-                var channel = _context.TryGetMentionedChannel(mention.Id);
+                var channel = _context.TryGetChannel(mention.Id);
                 var name = channel?.Name ?? "deleted-channel";
 
                 _buffer
@@ -105,7 +105,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
             }
             else if (mention.Type == MentionType.Role)
             {
-                var role = _context.TryGetMentionedRole(mention.Id);
+                var role = _context.TryGetRole(mention.Id);
                 var name = role?.Name ?? "deleted-role";
                 var color = role?.Color;
 

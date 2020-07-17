@@ -10,8 +10,6 @@ namespace DiscordChatExporter.Domain.Exporting
     {
         private readonly ExportContext _context;
 
-        private readonly UrlProcessor _urlProcessor;
-
         private long _messageCount;
         private int _partitionIndex;
         private MessageWriter? _writer;
@@ -19,8 +17,6 @@ namespace DiscordChatExporter.Domain.Exporting
         public MessageExporter(ExportContext context)
         {
             _context = context;
-
-            _urlProcessor = new UrlProcessor($"{context.Request.OutputBaseFilePath}_Files/");
         }
 
         private bool IsPartitionLimitReached() =>
@@ -37,22 +33,6 @@ namespace DiscordChatExporter.Domain.Exporting
                 await _writer.DisposeAsync();
                 _writer = null;
             }
-        }
-
-        private MessageWriter CreateMessageWriter(string filePath, ExportFormat format, ExportContext context)
-        {
-            // Stream will be disposed by the underlying writer
-            var stream = File.Create(filePath);
-
-            return format switch
-            {
-                ExportFormat.PlainText => new PlainTextMessageWriter(stream, context, _urlProcessor),
-                ExportFormat.Csv => new CsvMessageWriter(stream, context, _urlProcessor),
-                ExportFormat.HtmlDark => new HtmlMessageWriter(stream, context, _urlProcessor, "Dark"),
-                ExportFormat.HtmlLight => new HtmlMessageWriter(stream, context, _urlProcessor, "Light"),
-                ExportFormat.Json => new JsonMessageWriter(stream, context, _urlProcessor),
-                _ => throw new ArgumentOutOfRangeException(nameof(format), $"Unknown export format '{format}'.")
-            };
         }
 
         private async Task<MessageWriter> GetWriterAsync()
@@ -109,6 +89,22 @@ namespace DiscordChatExporter.Domain.Exporting
                 return Path.Combine(dirPath, fileName);
 
             return fileName;
+        }
+
+        private static MessageWriter CreateMessageWriter(string filePath, ExportFormat format, ExportContext context)
+        {
+            // Stream will be disposed by the underlying writer
+            var stream = File.Create(filePath);
+
+            return format switch
+            {
+                ExportFormat.PlainText => new PlainTextMessageWriter(stream, context),
+                ExportFormat.Csv => new CsvMessageWriter(stream, context),
+                ExportFormat.HtmlDark => new HtmlMessageWriter(stream, context, "Dark"),
+                ExportFormat.HtmlLight => new HtmlMessageWriter(stream, context, "Light"),
+                ExportFormat.Json => new JsonMessageWriter(stream, context),
+                _ => throw new ArgumentOutOfRangeException(nameof(format), $"Unknown export format '{format}'.")
+            };
         }
     }
 }

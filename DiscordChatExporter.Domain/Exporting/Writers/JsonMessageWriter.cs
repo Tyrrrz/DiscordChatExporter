@@ -13,8 +13,8 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
         private long _messageCount;
 
-        public JsonMessageWriter(Stream stream, ExportContext context, UrlProcessor urlProcessor)
-            : base(stream, context, urlProcessor)
+        public JsonMessageWriter(Stream stream, ExportContext context)
+            : base(stream, context)
         {
             _writer = new Utf8JsonWriter(stream, new JsonWriterOptions
             {
@@ -30,7 +30,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteStartObject();
 
             _writer.WriteString("id", attachment.Id);
-            _writer.WriteString("url", await ResolveUrlAsync(attachment.Url));
+            _writer.WriteString("url", await Context.ResolveUrlAsync(attachment.Url));
             _writer.WriteString("fileName", attachment.FileName);
             _writer.WriteNumber("fileSizeBytes", attachment.FileSize.TotalBytes);
 
@@ -44,7 +44,9 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
             _writer.WriteString("name", embedAuthor.Name);
             _writer.WriteString("url", embedAuthor.Url);
-            _writer.WriteString("iconUrl", await ResolveUrlAsync(embedAuthor.IconUrl));
+
+            if (!string.IsNullOrWhiteSpace(embedAuthor.IconUrl))
+                _writer.WriteString("iconUrl", await Context.ResolveUrlAsync(embedAuthor.IconUrl));
 
             _writer.WriteEndObject();
             await _writer.FlushAsync();
@@ -54,7 +56,9 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         {
             _writer.WriteStartObject("thumbnail");
 
-            _writer.WriteString("url", await ResolveUrlAsync(embedThumbnail.Url));
+            if (!string.IsNullOrWhiteSpace(embedThumbnail.Url))
+                _writer.WriteString("url", await Context.ResolveUrlAsync(embedThumbnail.Url));
+
             _writer.WriteNumber("width", embedThumbnail.Width);
             _writer.WriteNumber("height", embedThumbnail.Height);
 
@@ -66,7 +70,9 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         {
             _writer.WriteStartObject("image");
 
-            _writer.WriteString("url", await ResolveUrlAsync(embedImage.Url));
+            if (!string.IsNullOrWhiteSpace(embedImage.Url))
+                _writer.WriteString("url", await Context.ResolveUrlAsync(embedImage.Url));
+
             _writer.WriteNumber("width", embedImage.Width);
             _writer.WriteNumber("height", embedImage.Height);
 
@@ -79,7 +85,9 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteStartObject("footer");
 
             _writer.WriteString("text", embedFooter.Text);
-            _writer.WriteString("iconUrl", await ResolveUrlAsync(embedFooter.IconUrl));
+
+            if (!string.IsNullOrWhiteSpace(embedFooter.IconUrl))
+                _writer.WriteString("iconUrl", await Context.ResolveUrlAsync(embedFooter.IconUrl));
 
             _writer.WriteEndObject();
             await _writer.FlushAsync();
@@ -139,7 +147,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteString("id", reaction.Emoji.Id);
             _writer.WriteString("name", reaction.Emoji.Name);
             _writer.WriteBoolean("isAnimated", reaction.Emoji.IsAnimated);
-            _writer.WriteString("imageUrl", await ResolveUrlAsync(reaction.Emoji.ImageUrl));
+            _writer.WriteString("imageUrl", await Context.ResolveUrlAsync(reaction.Emoji.ImageUrl));
             _writer.WriteEndObject();
 
             _writer.WriteNumber("count", reaction.Count);
@@ -157,7 +165,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteStartObject("guild");
             _writer.WriteString("id", Context.Request.Guild.Id);
             _writer.WriteString("name", Context.Request.Guild.Name);
-            _writer.WriteString("iconUrl", await ResolveUrlAsync(Context.Request.Guild.IconUrl));
+            _writer.WriteString("iconUrl", await Context.ResolveUrlAsync(Context.Request.Guild.IconUrl));
             _writer.WriteEndObject();
 
             // Channel
@@ -200,7 +208,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteString("name", message.Author.Name);
             _writer.WriteString("discriminator", $"{message.Author.Discriminator:0000}");
             _writer.WriteBoolean("isBot", message.Author.IsBot);
-            _writer.WriteString("avatarUrl", await ResolveUrlAsync(message.Author.AvatarUrl));
+            _writer.WriteString("avatarUrl", await Context.ResolveUrlAsync(message.Author.AvatarUrl));
             _writer.WriteEndObject();
 
             // Attachments

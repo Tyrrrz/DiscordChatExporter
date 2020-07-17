@@ -12,15 +12,8 @@ namespace DiscordChatExporter.Gui.Views.Dialogs
 
         private void AdvancedToggleButton_OnLoaded(object sender, RoutedEventArgs e)
         {
-            // Show advanced options by default if any of the advanced options were configured
             if (DataContext is ExportSetupViewModel vm)
-            {
-                AdvancedToggleButton.IsChecked =
-                    vm.After != default ||
-                    vm.Before != default ||
-                    vm.PartitionLimit != default ||
-                    vm.IsMediaExported != default;
-            }
+                AdvancedToggleButton.IsChecked = vm.IsAdvancedSectionDisplayedByDefault;
         }
     }
 }

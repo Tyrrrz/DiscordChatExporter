@@ -51,7 +51,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
                         IsMediaExported
                     );
 
-                    await GetChannelExporter().ExportAsync(request, operation);
+                    await GetChannelExporter().ExportChannelAsync(request, operation);
 
                     Interlocked.Increment(ref successfulExportCount);
                 }

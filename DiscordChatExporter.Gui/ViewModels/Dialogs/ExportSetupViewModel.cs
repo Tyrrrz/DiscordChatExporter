@@ -34,6 +34,14 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
 
         public bool IsMediaExported { get; set; }
 
+        // Whether to show the "advanced options" by default when the dialog opens.
+        // This is active if any of the advanced options are set to non-default values.
+        public bool IsAdvancedSectionDisplayedByDefault =>
+            After != default ||
+            Before != default ||
+            PartitionLimit != default ||
+            IsMediaExported != default;
+
         public ExportSetupViewModel(DialogManager dialogManager, SettingsService settingsService)
         {
             _dialogManager = dialogManager;

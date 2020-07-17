@@ -13,7 +13,7 @@ namespace DiscordChatExporter.Domain.Exporting
         private readonly string _outputBaseFilePath;
         private readonly UrlProcessor _urlProcessor;
 
-        private long _messagesCount;
+        private long _messageCount;
         private int _partitionIndex;
         private MessageWriter? _writer;
 
@@ -26,10 +26,10 @@ namespace DiscordChatExporter.Domain.Exporting
         }
 
         private bool IsPartitionLimitReached() =>
-            _messagesCount > 0 &&
+            _messageCount > 0 &&
             _context.Request.PartitionLimit != null &&
             _context.Request.PartitionLimit != 0 &&
-            _messagesCount % _context.Request.PartitionLimit == 0;
+            _messageCount % _context.Request.PartitionLimit == 0;
 
         private async Task ResetWriterAsync()
         {
@@ -86,7 +86,7 @@ namespace DiscordChatExporter.Domain.Exporting
         {
             var writer = await GetWriterAsync();
             await writer.WriteMessageAsync(message);
-            _messagesCount++;
+            _messageCount++;
         }
 
         public async ValueTask DisposeAsync() => await ResetWriterAsync();

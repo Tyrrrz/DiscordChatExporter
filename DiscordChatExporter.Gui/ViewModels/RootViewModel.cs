@@ -202,7 +202,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                         dialog.IsMediaExported
                     );
 
-                    await exporter.ExportAsync(request, operation);
+                    await exporter.ExportChannelAsync(request, operation);
 
                     Interlocked.Increment(ref successfulExportCount);
                 }

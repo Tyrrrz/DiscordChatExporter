@@ -177,7 +177,6 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
             // Message array (start)
             _writer.WriteStartArray("messages");
-
             await _writer.FlushAsync();
         }
 
@@ -243,7 +242,6 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
             // Root object (end)
             _writer.WriteEndObject();
-
             await _writer.FlushAsync();
         }
 

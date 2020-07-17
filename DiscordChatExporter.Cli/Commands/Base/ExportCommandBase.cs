@@ -51,7 +51,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
                 IsMediaExported
             );
 
-            await GetChannelExporter().ExportAsync(request, progress);
+            await GetChannelExporter().ExportChannelAsync(request, progress);
 
             console.Output.WriteLine();
             console.Output.WriteLine("Done.");

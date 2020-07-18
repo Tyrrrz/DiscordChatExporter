@@ -1,3 +1,10 @@
+### v2.21 (18-Jul-2020)
+
+- Added a new option that enables self-contained exports for all output formats. You can turn it on in the export setup dialog in GUI or using the `--media` option in CLI. When using this, the application will additionally download any media content directly referenced from the exported file instead of linking back to Discord CDN. The files which are downloaded include: guild icons, user avatars, attachments, embedded images, reaction emojis. Note that only files which are actually referenced by the export are downloaded, which means that, for example, user avatars will not be downloaded when using plain text export format. This option is not meant to enable complete offline viewing for HTML exports, but rather to make it easier to archive media content that may eventually get deleted from Discord servers. Also keep in mind that this option may make the export drastically slower and the total file size larger.
+- Changed "discordapp.com" to "discord.com" where applicable as Discord is migrating to a new domain. CDN will remain on "cdn.discordapp.com" for the foreseeable future.
+
+Note that all existing and current HTML exports will likely not render accurately because Discord enabled CORS for their font resources, which prevents them from loading locally. Please refer to [issue #322](https://github.com/Tyrrrz/DiscordChatExporter/issues/322) for discussion on this topic. 
+
 ### v2.20 (27-Apr-2020)
 
 - [CLI] Added environment variables as fallback for `--token` and `--bot` options. They are `DISCORD_TOKEN` and `DISCORD_TOKEN_BOT` respectively.

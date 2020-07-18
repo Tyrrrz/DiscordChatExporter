@@ -17,11 +17,11 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             Context = context;
         }
 
-        public virtual Task WritePreambleAsync() => Task.CompletedTask;
+        public virtual ValueTask WritePreambleAsync() => default;
 
-        public abstract Task WriteMessageAsync(Message message);
+        public abstract ValueTask WriteMessageAsync(Message message);
 
-        public virtual Task WritePostambleAsync() => Task.CompletedTask;
+        public virtual ValueTask WritePostambleAsync() => default;
 
         public virtual async ValueTask DisposeAsync() => await Stream.DisposeAsync();
     }

@@ -102,7 +102,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         private string FormatMarkdown(string? markdown, bool isJumboAllowed = true) =>
             HtmlMarkdownVisitor.Format(Context, markdown ?? "", isJumboAllowed);
 
-        private async Task WriteCurrentMessageGroupAsync()
+        private async ValueTask WriteCurrentMessageGroupAsync()
         {
             var templateContext = CreateTemplateContext(new Dictionary<string, object>
             {
@@ -112,13 +112,13 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             await templateContext.EvaluateAsync(_messageGroupTemplate.Page);
         }
 
-        public override async Task WritePreambleAsync()
+        public override async ValueTask WritePreambleAsync()
         {
             var templateContext = CreateTemplateContext();
             await templateContext.EvaluateAsync(_preambleTemplate.Page);
         }
 
-        public override async Task WriteMessageAsync(Message message)
+        public override async ValueTask WriteMessageAsync(Message message)
         {
             // If message group is empty or the given message can be grouped, buffer the given message
             if (!_messageGroupBuffer.Any() || MessageGroup.CanJoin(_messageGroupBuffer.Last(), message))
@@ -138,7 +138,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _messageCount++;
         }
 
-        public override async Task WritePostambleAsync()
+        public override async ValueTask WritePostambleAsync()
         {
             // Flush current message group
             if (_messageGroupBuffer.Any())

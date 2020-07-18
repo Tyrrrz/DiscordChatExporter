@@ -25,7 +25,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         private string FormatMarkdown(string? markdown) =>
             PlainTextMarkdownVisitor.Format(Context, markdown ?? "");
 
-        private async Task WriteAttachmentAsync(Attachment attachment)
+        private async ValueTask WriteAttachmentAsync(Attachment attachment)
         {
             _writer.WriteStartObject();
 
@@ -38,7 +38,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             await _writer.FlushAsync();
         }
 
-        private async Task WriteEmbedAuthorAsync(EmbedAuthor embedAuthor)
+        private async ValueTask WriteEmbedAuthorAsync(EmbedAuthor embedAuthor)
         {
             _writer.WriteStartObject("author");
 
@@ -52,7 +52,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             await _writer.FlushAsync();
         }
 
-        private async Task WriteEmbedThumbnailAsync(EmbedImage embedThumbnail)
+        private async ValueTask WriteEmbedThumbnailAsync(EmbedImage embedThumbnail)
         {
             _writer.WriteStartObject("thumbnail");
 
@@ -66,7 +66,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             await _writer.FlushAsync();
         }
 
-        private async Task WriteEmbedImageAsync(EmbedImage embedImage)
+        private async ValueTask WriteEmbedImageAsync(EmbedImage embedImage)
         {
             _writer.WriteStartObject("image");
 
@@ -80,7 +80,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             await _writer.FlushAsync();
         }
 
-        private async Task WriteEmbedFooterAsync(EmbedFooter embedFooter)
+        private async ValueTask WriteEmbedFooterAsync(EmbedFooter embedFooter)
         {
             _writer.WriteStartObject("footer");
 
@@ -93,7 +93,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             await _writer.FlushAsync();
         }
 
-        private async Task WriteEmbedFieldAsync(EmbedField embedField)
+        private async ValueTask WriteEmbedFieldAsync(EmbedField embedField)
         {
             _writer.WriteStartObject();
 
@@ -105,7 +105,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             await _writer.FlushAsync();
         }
 
-        private async Task WriteEmbedAsync(Embed embed)
+        private async ValueTask WriteEmbedAsync(Embed embed)
         {
             _writer.WriteStartObject();
 
@@ -138,7 +138,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             await _writer.FlushAsync();
         }
 
-        private async Task WriteReactionAsync(Reaction reaction)
+        private async ValueTask WriteReactionAsync(Reaction reaction)
         {
             _writer.WriteStartObject();
 
@@ -156,7 +156,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             await _writer.FlushAsync();
         }
 
-        public override async Task WritePreambleAsync()
+        public override async ValueTask WritePreambleAsync()
         {
             // Root object (start)
             _writer.WriteStartObject();
@@ -188,7 +188,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             await _writer.FlushAsync();
         }
 
-        public override async Task WriteMessageAsync(Message message)
+        public override async ValueTask WriteMessageAsync(Message message)
         {
             _writer.WriteStartObject();
 
@@ -241,7 +241,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _messageCount++;
         }
 
-        public override async Task WritePostambleAsync()
+        public override async ValueTask WritePostambleAsync()
         {
             // Message array (end)
             _writer.WriteEndArray();

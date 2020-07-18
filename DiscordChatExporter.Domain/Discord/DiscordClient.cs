@@ -46,7 +46,7 @@ namespace DiscordChatExporter.Domain.Discord
                 );
         }
 
-        private async Task<HttpResponseMessage> GetResponseAsync(string url) => await _httpRequestPolicy.ExecuteAsync(async () =>
+        private async ValueTask<HttpResponseMessage> GetResponseAsync(string url) => await _httpRequestPolicy.ExecuteAsync(async () =>
         {
             using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, url));
             request.Headers.Authorization = _token.GetAuthorizationHeader();
@@ -54,7 +54,7 @@ namespace DiscordChatExporter.Domain.Discord
             return await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
         });
 
-        private async Task<JsonElement> GetJsonResponseAsync(string url)
+        private async ValueTask<JsonElement> GetJsonResponseAsync(string url)
         {
             using var response = await GetResponseAsync(url);
 
@@ -72,7 +72,7 @@ namespace DiscordChatExporter.Domain.Discord
             return await response.Content.ReadAsJsonAsync();
         }
 
-        private async Task<JsonElement?> TryGetJsonResponseAsync(string url)
+        private async ValueTask<JsonElement?> TryGetJsonResponseAsync(string url)
         {
             using var response = await GetResponseAsync(url);
 
@@ -110,7 +110,7 @@ namespace DiscordChatExporter.Domain.Discord
             }
         }
 
-        public async Task<Guild> GetGuildAsync(string guildId)
+        public async ValueTask<Guild> GetGuildAsync(string guildId)
         {
             if (guildId == Guild.DirectMessages.Id)
                 return Guild.DirectMessages;
@@ -167,7 +167,7 @@ namespace DiscordChatExporter.Domain.Discord
                 yield return Role.Parse(roleJson);
         }
 
-        public async Task<Member?> TryGetGuildMemberAsync(string guildId, User user)
+        public async ValueTask<Member?> TryGetGuildMemberAsync(string guildId, User user)
         {
             if (guildId == Guild.DirectMessages.Id)
                 return Member.CreateForUser(user);
@@ -176,13 +176,13 @@ namespace DiscordChatExporter.Domain.Discord
             return response?.Pipe(Member.Parse);
         }
 
-        private async Task<string> GetChannelCategoryAsync(string channelParentId)
+        private async ValueTask<string> GetChannelCategoryAsync(string channelParentId)
         {
             var response = await GetJsonResponseAsync($"channels/{channelParentId}");
             return response.GetProperty("name").GetString();
         }
 
-        public async Task<Channel> GetChannelAsync(string channelId)
+        public async ValueTask<Channel> GetChannelAsync(string channelId)
         {
             var response = await GetJsonResponseAsync($"channels/{channelId}");
 
@@ -194,7 +194,7 @@ namespace DiscordChatExporter.Domain.Discord
             return Channel.Parse(response, category);
         }
 
-        private async Task<Message?> TryGetLastMessageAsync(string channelId, DateTimeOffset? before = null)
+        private async ValueTask<Message?> TryGetLastMessageAsync(string channelId, DateTimeOffset? before = null)
         {
             var url = new UrlBuilder()
                 .SetPath($"channels/{channelId}/messages")

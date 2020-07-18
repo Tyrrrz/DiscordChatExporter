@@ -22,7 +22,7 @@ namespace DiscordChatExporter.Domain.Utilities
         public static ValueTaskAwaiter<IReadOnlyList<T>> GetAwaiter<T>(this IAsyncEnumerable<T> asyncEnumerable) =>
             asyncEnumerable.AggregateAsync().GetAwaiter();
 
-        public static async Task ParallelForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> handleAsync, int degreeOfParallelism)
+        public static async ValueTask ParallelForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> handleAsync, int degreeOfParallelism)
         {
             using var semaphore = new SemaphoreSlim(degreeOfParallelism);
 

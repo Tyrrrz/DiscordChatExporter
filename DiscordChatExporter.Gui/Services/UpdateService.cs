@@ -23,7 +23,7 @@ namespace DiscordChatExporter.Gui.Services
             _settingsService = settingsService;
         }
 
-        public async Task<Version?> CheckForUpdatesAsync()
+        public async ValueTask<Version?> CheckForUpdatesAsync()
         {
             if (!_settingsService.IsAutoUpdateEnabled)
                 return null;
@@ -32,7 +32,7 @@ namespace DiscordChatExporter.Gui.Services
             return check.CanUpdate ? check.LastVersion : null;
         }
 
-        public async Task PrepareUpdateAsync(Version version)
+        public async ValueTask PrepareUpdateAsync(Version version)
         {
             if (!_settingsService.IsAutoUpdateEnabled)
                 return;

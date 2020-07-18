@@ -85,7 +85,8 @@ namespace DiscordChatExporter.Domain.Discord.Models
                 guildId ?? Guild.DirectMessages.Id,
                 category ?? GetDefaultCategory(type),
                 name,
-                topic);
+                topic
+            );
         }
     }
 }

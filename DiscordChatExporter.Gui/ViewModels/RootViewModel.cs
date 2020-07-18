@@ -70,7 +70,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                 (sender, args) => IsProgressIndeterminate = ProgressManager.IsActive && ProgressManager.Progress.IsEither(0, 1));
         }
 
-        private async Task HandleAutoUpdateAsync()
+        private async ValueTask HandleAutoUpdateAsync()
         {
             try
             {

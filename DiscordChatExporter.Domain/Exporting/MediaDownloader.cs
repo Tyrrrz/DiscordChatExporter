@@ -22,7 +22,7 @@ namespace DiscordChatExporter.Domain.Exporting
         }
 
         // HACK: ConfigureAwait() is crucial here to enable sync-over-async in HtmlMessageWriter
-        public async Task<string> DownloadAsync(string url)
+        public async ValueTask<string> DownloadAsync(string url)
         {
             if (_mediaPathMap.TryGetValue(url, out var cachedFilePath))
                 return cachedFilePath;

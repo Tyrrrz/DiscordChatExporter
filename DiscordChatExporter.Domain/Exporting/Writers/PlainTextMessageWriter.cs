@@ -24,7 +24,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         private string FormatMarkdown(string? markdown) =>
             PlainTextMarkdownVisitor.Format(Context, markdown ?? "");
 
-        private async Task WriteMessageHeaderAsync(Message message)
+        private async ValueTask WriteMessageHeaderAsync(Message message)
         {
             // Timestamp & author
             await _writer.WriteAsync($"[{message.Timestamp.ToLocalString(Context.Request.DateFormat)}]");
@@ -37,7 +37,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             await _writer.WriteLineAsync();
         }
 
-        private async Task WriteAttachmentsAsync(IReadOnlyList<Attachment> attachments)
+        private async ValueTask WriteAttachmentsAsync(IReadOnlyList<Attachment> attachments)
         {
             if (!attachments.Any())
                 return;
@@ -50,7 +50,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             await _writer.WriteLineAsync();
         }
 
-        private async Task WriteEmbedsAsync(IReadOnlyList<Embed> embeds)
+        private async ValueTask WriteEmbedsAsync(IReadOnlyList<Embed> embeds)
         {
             foreach (var embed in embeds)
             {
@@ -90,7 +90,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             }
         }
 
-        private async Task WriteReactionsAsync(IReadOnlyList<Reaction> reactions)
+        private async ValueTask WriteReactionsAsync(IReadOnlyList<Reaction> reactions)
         {
             if (!reactions.Any())
                 return;
@@ -110,7 +110,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             await _writer.WriteLineAsync();
         }
 
-        public override async Task WritePreambleAsync()
+        public override async ValueTask WritePreambleAsync()
         {
             await _writer.WriteLineAsync('='.Repeat(62));
             await _writer.WriteLineAsync($"Guild: {Context.Request.Guild.Name}");
@@ -129,7 +129,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             await _writer.WriteLineAsync();
         }
 
-        public override async Task WriteMessageAsync(Message message)
+        public override async ValueTask WriteMessageAsync(Message message)
         {
             await WriteMessageHeaderAsync(message);
 
@@ -147,7 +147,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _messageCount++;
         }
 
-        public override async Task WritePostambleAsync()
+        public override async ValueTask WritePostambleAsync()
         {
             await _writer.WriteLineAsync('='.Repeat(62));
             await _writer.WriteLineAsync($"Exported {_messageCount:N0} message(s)");

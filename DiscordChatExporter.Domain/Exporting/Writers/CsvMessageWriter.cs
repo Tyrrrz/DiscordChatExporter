@@ -21,10 +21,10 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         private string FormatMarkdown(string? markdown) =>
             PlainTextMarkdownVisitor.Format(Context, markdown ?? "");
 
-        public override async Task WritePreambleAsync() =>
+        public override async ValueTask WritePreambleAsync() =>
             await _writer.WriteLineAsync("AuthorID,Author,Date,Content,Attachments,Reactions");
 
-        private async Task WriteAttachmentsAsync(IReadOnlyList<Attachment> attachments)
+        private async ValueTask WriteAttachmentsAsync(IReadOnlyList<Attachment> attachments)
         {
             var buffer = new StringBuilder();
 
@@ -38,7 +38,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             await _writer.WriteAsync(CsvEncode(buffer.ToString()));
         }
 
-        private async Task WriteReactionsAsync(IReadOnlyList<Reaction> reactions)
+        private async ValueTask WriteReactionsAsync(IReadOnlyList<Reaction> reactions)
         {
             var buffer = new StringBuilder();
 
@@ -56,7 +56,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             await _writer.WriteAsync(CsvEncode(buffer.ToString()));
         }
 
-        public override async Task WriteMessageAsync(Message message)
+        public override async ValueTask WriteMessageAsync(Message message)
         {
             // Author ID
             await _writer.WriteAsync(CsvEncode(message.Author.Id));

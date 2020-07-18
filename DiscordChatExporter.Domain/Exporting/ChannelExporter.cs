@@ -18,7 +18,7 @@ namespace DiscordChatExporter.Domain.Exporting
 
         public ChannelExporter(AuthToken token) : this(new DiscordClient(token)) {}
 
-        public async Task ExportChannelAsync(ExportRequest request, IProgress<double>? progress = null)
+        public async ValueTask ExportChannelAsync(ExportRequest request, IProgress<double>? progress = null)
         {
             // Build context
             var contextMembers = new HashSet<Member>(IdBasedEqualityComparer.Instance);

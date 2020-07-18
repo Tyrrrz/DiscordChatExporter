@@ -88,7 +88,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             // HACK: Scriban doesn't support async, so we have to resort to this and be careful about deadlocks.
             // TODO: move to Razor.
             scriptObject.Import("ResolveUrl",
-                new Func<string, string>(u => Context.ResolveUrlAsync(u).GetAwaiter().GetResult()));
+                new Func<string, string>(u => Context.ResolveMediaUrlAsync(u).GetAwaiter().GetResult()));
 
             // Push model
             templateContext.PushGlobal(scriptObject);

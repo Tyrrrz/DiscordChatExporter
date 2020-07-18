@@ -31,7 +31,8 @@ namespace DiscordChatExporter.Domain.Exporting
 
         public string DateFormat { get; }
 
-        public ExportRequest(Guild guild,
+        public ExportRequest(
+            Guild guild,
             Channel channel,
             string outputPath,
             ExportFormat format,

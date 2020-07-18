@@ -45,7 +45,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             await _writer.WriteLineAsync("{Attachments}");
 
             foreach (var attachment in attachments)
-                await _writer.WriteLineAsync(await Context.ResolveUrlAsync(attachment.Url));
+                await _writer.WriteLineAsync(await Context.ResolveMediaUrlAsync(attachment.Url));
 
             await _writer.WriteLineAsync();
         }
@@ -78,10 +78,10 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
                 }
 
                 if (!string.IsNullOrWhiteSpace(embed.Thumbnail?.Url))
-                    await _writer.WriteLineAsync(await Context.ResolveUrlAsync(embed.Thumbnail.Url));
+                    await _writer.WriteLineAsync(await Context.ResolveMediaUrlAsync(embed.Thumbnail.Url));
 
                 if (!string.IsNullOrWhiteSpace(embed.Image?.Url))
-                    await _writer.WriteLineAsync(await Context.ResolveUrlAsync(embed.Image.Url));
+                    await _writer.WriteLineAsync(await Context.ResolveMediaUrlAsync(embed.Image.Url));
 
                 if (!string.IsNullOrWhiteSpace(embed.Footer?.Text))
                     await _writer.WriteLineAsync(embed.Footer.Text);

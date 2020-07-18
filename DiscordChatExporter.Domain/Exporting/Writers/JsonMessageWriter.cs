@@ -30,7 +30,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteStartObject();
 
             _writer.WriteString("id", attachment.Id);
-            _writer.WriteString("url", await Context.ResolveUrlAsync(attachment.Url));
+            _writer.WriteString("url", await Context.ResolveMediaUrlAsync(attachment.Url));
             _writer.WriteString("fileName", attachment.FileName);
             _writer.WriteNumber("fileSizeBytes", attachment.FileSize.TotalBytes);
 
@@ -46,7 +46,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteString("url", embedAuthor.Url);
 
             if (!string.IsNullOrWhiteSpace(embedAuthor.IconUrl))
-                _writer.WriteString("iconUrl", await Context.ResolveUrlAsync(embedAuthor.IconUrl));
+                _writer.WriteString("iconUrl", await Context.ResolveMediaUrlAsync(embedAuthor.IconUrl));
 
             _writer.WriteEndObject();
             await _writer.FlushAsync();
@@ -57,7 +57,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteStartObject("thumbnail");
 
             if (!string.IsNullOrWhiteSpace(embedThumbnail.Url))
-                _writer.WriteString("url", await Context.ResolveUrlAsync(embedThumbnail.Url));
+                _writer.WriteString("url", await Context.ResolveMediaUrlAsync(embedThumbnail.Url));
 
             _writer.WriteNumber("width", embedThumbnail.Width);
             _writer.WriteNumber("height", embedThumbnail.Height);
@@ -71,7 +71,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteStartObject("image");
 
             if (!string.IsNullOrWhiteSpace(embedImage.Url))
-                _writer.WriteString("url", await Context.ResolveUrlAsync(embedImage.Url));
+                _writer.WriteString("url", await Context.ResolveMediaUrlAsync(embedImage.Url));
 
             _writer.WriteNumber("width", embedImage.Width);
             _writer.WriteNumber("height", embedImage.Height);
@@ -87,7 +87,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteString("text", embedFooter.Text);
 
             if (!string.IsNullOrWhiteSpace(embedFooter.IconUrl))
-                _writer.WriteString("iconUrl", await Context.ResolveUrlAsync(embedFooter.IconUrl));
+                _writer.WriteString("iconUrl", await Context.ResolveMediaUrlAsync(embedFooter.IconUrl));
 
             _writer.WriteEndObject();
             await _writer.FlushAsync();
@@ -147,7 +147,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteString("id", reaction.Emoji.Id);
             _writer.WriteString("name", reaction.Emoji.Name);
             _writer.WriteBoolean("isAnimated", reaction.Emoji.IsAnimated);
-            _writer.WriteString("imageUrl", await Context.ResolveUrlAsync(reaction.Emoji.ImageUrl));
+            _writer.WriteString("imageUrl", await Context.ResolveMediaUrlAsync(reaction.Emoji.ImageUrl));
             _writer.WriteEndObject();
 
             _writer.WriteNumber("count", reaction.Count);
@@ -165,7 +165,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteStartObject("guild");
             _writer.WriteString("id", Context.Request.Guild.Id);
             _writer.WriteString("name", Context.Request.Guild.Name);
-            _writer.WriteString("iconUrl", await Context.ResolveUrlAsync(Context.Request.Guild.IconUrl));
+            _writer.WriteString("iconUrl", await Context.ResolveMediaUrlAsync(Context.Request.Guild.IconUrl));
             _writer.WriteEndObject();
 
             // Channel
@@ -208,7 +208,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteString("name", message.Author.Name);
             _writer.WriteString("discriminator", $"{message.Author.Discriminator:0000}");
             _writer.WriteBoolean("isBot", message.Author.IsBot);
-            _writer.WriteString("avatarUrl", await Context.ResolveUrlAsync(message.Author.AvatarUrl));
+            _writer.WriteString("avatarUrl", await Context.ResolveMediaUrlAsync(message.Author.AvatarUrl));
             _writer.WriteEndObject();
 
             // Attachments

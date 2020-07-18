@@ -3,7 +3,7 @@ using DiscordChatExporter.Domain.Discord.Models.Common;
 
 namespace DiscordChatExporter.Domain.Discord.Models
 {
-    // https://discordapp.com/developers/docs/resources/guild#guild-object
+    // https://discord.com/developers/docs/resources/guild#guild-object
     public partial class Guild : IHasId
     {
         public string Id { get; }

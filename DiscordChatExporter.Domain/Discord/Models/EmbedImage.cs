@@ -3,7 +3,7 @@ using DiscordChatExporter.Domain.Internal.Extensions;
 
 namespace DiscordChatExporter.Domain.Discord.Models
 {
-    // https://discordapp.com/developers/docs/resources/channel#embed-object-embed-image-structure
+    // https://discord.com/developers/docs/resources/channel#embed-object-embed-image-structure
     public partial class EmbedImage
     {
         public string? Url { get; }

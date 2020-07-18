@@ -7,7 +7,7 @@ using DiscordChatExporter.Domain.Internal.Extensions;
 
 namespace DiscordChatExporter.Domain.Discord.Models
 {
-    // https://discordapp.com/developers/docs/resources/channel#attachment-object
+    // https://discord.com/developers/docs/resources/channel#attachment-object
     public partial class Attachment : IHasId
     {
         public string Id { get; }

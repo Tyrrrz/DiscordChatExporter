@@ -6,7 +6,7 @@ using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Domain.Discord.Models
 {
-    // https://discordapp.com/developers/docs/resources/channel#channel-object-channel-types
+    // https://discord.com/developers/docs/resources/channel#channel-object-channel-types
     // Order of enum fields needs to match the order in the docs.
     public enum ChannelType
     {
@@ -19,7 +19,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
         GuildStore
     }
 
-    // https://discordapp.com/developers/docs/resources/channel#channel-object
+    // https://discord.com/developers/docs/resources/channel#channel-object
     public partial class Channel : IHasId
     {
         public string Id { get; }

@@ -4,7 +4,7 @@ using DiscordChatExporter.Domain.Internal.Extensions;
 
 namespace DiscordChatExporter.Domain.Discord.Models
 {
-    // https://discordapp.com/developers/docs/topics/permissions#role-object
+    // https://discord.com/developers/docs/topics/permissions#role-object
     public partial class Role
     {
         public string Id { get; }

@@ -148,7 +148,7 @@
                             <Run Text="4. Select" />
                             <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Local Storage" />
                             <Run Text="&gt;" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="https://discordapp.com" />
+                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="https://discord.com" />
                             <Run Text="on the left" />
                             <LineBreak />
                             <Run Text="5. Press" />

@@ -7,7 +7,7 @@ using DiscordChatExporter.Domain.Internal.Extensions;
 
 namespace DiscordChatExporter.Domain.Discord.Models
 {
-    // https://discordapp.com/developers/docs/resources/guild#guild-member-object
+    // https://discord.com/developers/docs/resources/guild#guild-member-object
     public partial class Member : IHasId
     {
         public string Id => User.Id;

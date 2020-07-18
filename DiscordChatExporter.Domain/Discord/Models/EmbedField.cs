@@ -3,7 +3,7 @@ using DiscordChatExporter.Domain.Internal.Extensions;
 
 namespace DiscordChatExporter.Domain.Discord.Models
 {
-    // https://discordapp.com/developers/docs/resources/channel#embed-object-embed-field-structure
+    // https://discord.com/developers/docs/resources/channel#embed-object-embed-field-structure
     public partial class EmbedField
     {
         public string Name { get; }

@@ -7,7 +7,7 @@ using DiscordChatExporter.Domain.Internal.Extensions;
 
 namespace DiscordChatExporter.Domain.Discord.Models
 {
-    // https://discordapp.com/developers/docs/resources/channel#message-object-message-types
+    // https://discord.com/developers/docs/resources/channel#message-object-message-types
     public enum MessageType
     {
         Default,
@@ -20,7 +20,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
         GuildMemberJoin
     }
 
-    // https://discordapp.com/developers/docs/resources/channel#message-object
+    // https://discord.com/developers/docs/resources/channel#message-object
     public partial class Message : IHasId
     {
         public string Id { get; }

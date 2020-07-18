@@ -136,7 +136,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
         protected override MarkdownNode VisitLink(LinkNode link)
         {
             // Extract message ID if the link points to a Discord message
-            var linkedMessageId = Regex.Match(link.Url, "^https?://discordapp.com/channels/.*?/(\\d+)/?$").Groups[1].Value;
+            var linkedMessageId = Regex.Match(link.Url, "^https?://(?:discord|discordapp).com/channels/.*?/(\\d+)/?$").Groups[1].Value;
 
             if (!string.IsNullOrWhiteSpace(linkedMessageId))
             {

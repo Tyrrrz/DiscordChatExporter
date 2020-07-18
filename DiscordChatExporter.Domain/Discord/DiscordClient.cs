@@ -19,7 +19,7 @@ namespace DiscordChatExporter.Domain.Discord
         private readonly HttpClient _httpClient = Singleton.HttpClient;
         private readonly IAsyncPolicy<HttpResponseMessage> _httpRequestPolicy;
 
-        private readonly Uri _baseUri = new Uri("https://discordapp.com/api/v6/", UriKind.Absolute);
+        private readonly Uri _baseUri = new Uri("https://discord.com/api/v6/", UriKind.Absolute);
 
         public DiscordClient(AuthToken token)
         {

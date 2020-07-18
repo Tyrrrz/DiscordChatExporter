@@ -5,7 +5,7 @@ using DiscordChatExporter.Domain.Internal.Extensions;
 
 namespace DiscordChatExporter.Domain.Discord.Models
 {
-    // https://discordapp.com/developers/docs/resources/user#user-object
+    // https://discord.com/developers/docs/resources/user#user-object
     public partial class User : IHasId
     {
         public string Id { get; }

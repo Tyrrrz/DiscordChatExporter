@@ -7,7 +7,7 @@ using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Domain.Discord.Models
 {
-    // https://discordapp.com/developers/docs/resources/emoji#emoji-object
+    // https://discord.com/developers/docs/resources/emoji#emoji-object
     public partial class Emoji
     {
         public string? Id { get; }

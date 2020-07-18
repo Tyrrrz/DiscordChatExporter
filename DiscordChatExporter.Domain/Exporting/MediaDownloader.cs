@@ -27,11 +27,11 @@ namespace DiscordChatExporter.Domain.Exporting
             if (_mediaPathMap.TryGetValue(url, out var cachedFilePath))
                 return cachedFilePath;
 
-            Directory.CreateDirectory(_workingDirPath);
-
             var extension = Path.GetExtension(GetFileNameFromUrl(url));
             var fileName = $"{Guid.NewGuid()}{extension}";
             var filePath = Path.Combine(_workingDirPath, fileName);
+
+            Directory.CreateDirectory(_workingDirPath);
 
             await _httpClient.DownloadAsync(url, filePath).ConfigureAwait(false);
 
@@ -41,7 +41,6 @@ namespace DiscordChatExporter.Domain.Exporting
 
     internal partial class MediaDownloader
     {
-        private static string GetFileNameFromUrl(string url) =>
-            Regex.Match(url, @".+/([^?]*)").Groups[1].Value;
+        private static string GetFileNameFromUrl(string url) => Regex.Match(url, @".+/([^?]*)").Groups[1].Value;
     }
 }

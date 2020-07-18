@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord.Models;
 
@@ -60,10 +61,18 @@ namespace DiscordChatExporter.Domain.Exporting
             if (!Request.ShouldDownloadMedia)
                 return url;
 
-            var filePath = await _mediaDownloader.DownloadAsync(url).ConfigureAwait(false);
+            try
+            {
+                var filePath = await _mediaDownloader.DownloadAsync(url).ConfigureAwait(false);
 
-            // Return relative path so that the output files can be copied around without breaking
-            return Path.GetRelativePath(Request.OutputBaseDirPath, filePath);
+                // Return relative path so that the output files can be copied around without breaking
+                return Path.GetRelativePath(Request.OutputBaseDirPath, filePath);
+            }
+            catch (HttpRequestException)
+            {
+                // We don't want this to crash the exporting process in case of failure
+                return url;
+            }
         }
     }
 }

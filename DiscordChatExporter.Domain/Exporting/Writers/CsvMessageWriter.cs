@@ -1,11 +1,10 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors;
-using DiscordChatExporter.Domain.Internal;
-using Tyrrrz.Extensions;
+using DiscordChatExporter.Domain.Internal.Extensions;
 
 namespace DiscordChatExporter.Domain.Exporting.Writers
 {
@@ -25,19 +24,65 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         public override async Task WritePreambleAsync() =>
             await _writer.WriteLineAsync("AuthorID,Author,Date,Content,Attachments,Reactions");
 
-        public override async Task WriteMessageAsync(Message message)
+        private async Task WriteAttachmentsAsync(IReadOnlyList<Attachment> attachments)
         {
             var buffer = new StringBuilder();
 
-            buffer
-                .Append(CsvEncode(message.Author.Id)).Append(',')
-                .Append(CsvEncode(message.Author.FullName)).Append(',')
-                .Append(CsvEncode(message.Timestamp.ToLocalString(Context.DateFormat))).Append(',')
-                .Append(CsvEncode(FormatMarkdown(message.Content))).Append(',')
-                .Append(CsvEncode(message.Attachments.Select(a => a.Url).JoinToString(","))).Append(',')
-                .Append(CsvEncode(message.Reactions.Select(r => $"{r.Emoji.Name} ({r.Count})").JoinToString(",")));
+            foreach (var attachment in attachments)
+            {
+                buffer
+                    .AppendIfNotEmpty(',')
+                    .Append(await Context.ResolveMediaUrlAsync(attachment.Url));
+            }
 
-            await _writer.WriteLineAsync(buffer.ToString());
+            await _writer.WriteAsync(CsvEncode(buffer.ToString()));
+        }
+
+        private async Task WriteReactionsAsync(IReadOnlyList<Reaction> reactions)
+        {
+            var buffer = new StringBuilder();
+
+            foreach (var reaction in reactions)
+            {
+                buffer
+                    .AppendIfNotEmpty(',')
+                    .Append(reaction.Emoji.Name)
+                    .Append(' ')
+                    .Append('(')
+                    .Append(reaction.Count)
+                    .Append(')');
+            }
+
+            await _writer.WriteAsync(CsvEncode(buffer.ToString()));
+        }
+
+        public override async Task WriteMessageAsync(Message message)
+        {
+            // Author ID
+            await _writer.WriteAsync(CsvEncode(message.Author.Id));
+            await _writer.WriteAsync(',');
+
+            // Author name
+            await _writer.WriteAsync(CsvEncode(message.Author.FullName));
+            await _writer.WriteAsync(',');
+
+            // Message timestamp
+            await _writer.WriteAsync(CsvEncode(message.Timestamp.ToLocalString(Context.Request.DateFormat)));
+            await _writer.WriteAsync(',');
+
+            // Message content
+            await _writer.WriteAsync(CsvEncode(FormatMarkdown(message.Content)));
+            await _writer.WriteAsync(',');
+
+            // Attachments
+            await WriteAttachmentsAsync(message.Attachments);
+            await _writer.WriteAsync(',');
+
+            // Reactions
+            await WriteReactionsAsync(message.Reactions);
+
+            // Finish row
+            await _writer.WriteLineAsync();
         }
 
         public override async ValueTask DisposeAsync()

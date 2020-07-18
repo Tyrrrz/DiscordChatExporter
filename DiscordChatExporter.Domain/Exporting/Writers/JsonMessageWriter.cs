@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors;
-using DiscordChatExporter.Domain.Internal;
+using DiscordChatExporter.Domain.Internal.Extensions;
 
 namespace DiscordChatExporter.Domain.Exporting.Writers
 {
@@ -25,62 +25,75 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         private string FormatMarkdown(string? markdown) =>
             PlainTextMarkdownVisitor.Format(Context, markdown ?? "");
 
-        private void WriteAttachment(Attachment attachment)
+        private async Task WriteAttachmentAsync(Attachment attachment)
         {
             _writer.WriteStartObject();
 
             _writer.WriteString("id", attachment.Id);
-            _writer.WriteString("url", attachment.Url);
+            _writer.WriteString("url", await Context.ResolveMediaUrlAsync(attachment.Url));
             _writer.WriteString("fileName", attachment.FileName);
             _writer.WriteNumber("fileSizeBytes", attachment.FileSize.TotalBytes);
 
             _writer.WriteEndObject();
+            await _writer.FlushAsync();
         }
 
-        private void WriteEmbedAuthor(EmbedAuthor embedAuthor)
+        private async Task WriteEmbedAuthorAsync(EmbedAuthor embedAuthor)
         {
             _writer.WriteStartObject("author");
 
             _writer.WriteString("name", embedAuthor.Name);
             _writer.WriteString("url", embedAuthor.Url);
-            _writer.WriteString("iconUrl", embedAuthor.IconUrl);
+
+            if (!string.IsNullOrWhiteSpace(embedAuthor.IconUrl))
+                _writer.WriteString("iconUrl", await Context.ResolveMediaUrlAsync(embedAuthor.IconUrl));
 
             _writer.WriteEndObject();
+            await _writer.FlushAsync();
         }
 
-        private void WriteEmbedThumbnail(EmbedImage embedThumbnail)
+        private async Task WriteEmbedThumbnailAsync(EmbedImage embedThumbnail)
         {
             _writer.WriteStartObject("thumbnail");
 
-            _writer.WriteString("url", embedThumbnail.Url);
+            if (!string.IsNullOrWhiteSpace(embedThumbnail.Url))
+                _writer.WriteString("url", await Context.ResolveMediaUrlAsync(embedThumbnail.Url));
+
             _writer.WriteNumber("width", embedThumbnail.Width);
             _writer.WriteNumber("height", embedThumbnail.Height);
 
             _writer.WriteEndObject();
+            await _writer.FlushAsync();
         }
 
-        private void WriteEmbedImage(EmbedImage embedImage)
+        private async Task WriteEmbedImageAsync(EmbedImage embedImage)
         {
             _writer.WriteStartObject("image");
 
-            _writer.WriteString("url", embedImage.Url);
+            if (!string.IsNullOrWhiteSpace(embedImage.Url))
+                _writer.WriteString("url", await Context.ResolveMediaUrlAsync(embedImage.Url));
+
             _writer.WriteNumber("width", embedImage.Width);
             _writer.WriteNumber("height", embedImage.Height);
 
             _writer.WriteEndObject();
+            await _writer.FlushAsync();
         }
 
-        private void WriteEmbedFooter(EmbedFooter embedFooter)
+        private async Task WriteEmbedFooterAsync(EmbedFooter embedFooter)
         {
             _writer.WriteStartObject("footer");
 
             _writer.WriteString("text", embedFooter.Text);
-            _writer.WriteString("iconUrl", embedFooter.IconUrl);
+
+            if (!string.IsNullOrWhiteSpace(embedFooter.IconUrl))
+                _writer.WriteString("iconUrl", await Context.ResolveMediaUrlAsync(embedFooter.IconUrl));
 
             _writer.WriteEndObject();
+            await _writer.FlushAsync();
         }
 
-        private void WriteEmbedField(EmbedField embedField)
+        private async Task WriteEmbedFieldAsync(EmbedField embedField)
         {
             _writer.WriteStartObject();
 
@@ -89,9 +102,10 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteBoolean("isInline", embedField.IsInline);
 
             _writer.WriteEndObject();
+            await _writer.FlushAsync();
         }
 
-        private void WriteEmbed(Embed embed)
+        private async Task WriteEmbedAsync(Embed embed)
         {
             _writer.WriteStartObject();
 
@@ -101,29 +115,30 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteString("description", FormatMarkdown(embed.Description));
 
             if (embed.Author != null)
-                WriteEmbedAuthor(embed.Author);
+                await WriteEmbedAuthorAsync(embed.Author);
 
             if (embed.Thumbnail != null)
-                WriteEmbedThumbnail(embed.Thumbnail);
+                await WriteEmbedThumbnailAsync(embed.Thumbnail);
 
             if (embed.Image != null)
-                WriteEmbedImage(embed.Image);
+                await WriteEmbedImageAsync(embed.Image);
 
             if (embed.Footer != null)
-                WriteEmbedFooter(embed.Footer);
+                await WriteEmbedFooterAsync(embed.Footer);
 
             // Fields
             _writer.WriteStartArray("fields");
 
             foreach (var field in embed.Fields)
-                WriteEmbedField(field);
+                await WriteEmbedFieldAsync(field);
 
             _writer.WriteEndArray();
 
             _writer.WriteEndObject();
+            await _writer.FlushAsync();
         }
 
-        private void WriteReaction(Reaction reaction)
+        private async Task WriteReactionAsync(Reaction reaction)
         {
             _writer.WriteStartObject();
 
@@ -132,12 +147,13 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteString("id", reaction.Emoji.Id);
             _writer.WriteString("name", reaction.Emoji.Name);
             _writer.WriteBoolean("isAnimated", reaction.Emoji.IsAnimated);
-            _writer.WriteString("imageUrl", reaction.Emoji.ImageUrl);
+            _writer.WriteString("imageUrl", await Context.ResolveMediaUrlAsync(reaction.Emoji.ImageUrl));
             _writer.WriteEndObject();
 
             _writer.WriteNumber("count", reaction.Count);
 
             _writer.WriteEndObject();
+            await _writer.FlushAsync();
         }
 
         public override async Task WritePreambleAsync()
@@ -147,29 +163,28 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
             // Guild
             _writer.WriteStartObject("guild");
-            _writer.WriteString("id", Context.Guild.Id);
-            _writer.WriteString("name", Context.Guild.Name);
-            _writer.WriteString("iconUrl", Context.Guild.IconUrl);
+            _writer.WriteString("id", Context.Request.Guild.Id);
+            _writer.WriteString("name", Context.Request.Guild.Name);
+            _writer.WriteString("iconUrl", await Context.ResolveMediaUrlAsync(Context.Request.Guild.IconUrl));
             _writer.WriteEndObject();
 
             // Channel
             _writer.WriteStartObject("channel");
-            _writer.WriteString("id", Context.Channel.Id);
-            _writer.WriteString("type", Context.Channel.Type.ToString());
-            _writer.WriteString("category", Context.Channel.Category);
-            _writer.WriteString("name", Context.Channel.Name);
-            _writer.WriteString("topic", Context.Channel.Topic);
+            _writer.WriteString("id", Context.Request.Channel.Id);
+            _writer.WriteString("type", Context.Request.Channel.Type.ToString());
+            _writer.WriteString("category", Context.Request.Channel.Category);
+            _writer.WriteString("name", Context.Request.Channel.Name);
+            _writer.WriteString("topic", Context.Request.Channel.Topic);
             _writer.WriteEndObject();
 
             // Date range
             _writer.WriteStartObject("dateRange");
-            _writer.WriteString("after", Context.After);
-            _writer.WriteString("before", Context.Before);
+            _writer.WriteString("after", Context.Request.After);
+            _writer.WriteString("before", Context.Request.Before);
             _writer.WriteEndObject();
 
             // Message array (start)
             _writer.WriteStartArray("messages");
-
             await _writer.FlushAsync();
         }
 
@@ -193,14 +208,14 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteString("name", message.Author.Name);
             _writer.WriteString("discriminator", $"{message.Author.Discriminator:0000}");
             _writer.WriteBoolean("isBot", message.Author.IsBot);
-            _writer.WriteString("avatarUrl", message.Author.AvatarUrl);
+            _writer.WriteString("avatarUrl", await Context.ResolveMediaUrlAsync(message.Author.AvatarUrl));
             _writer.WriteEndObject();
 
             // Attachments
             _writer.WriteStartArray("attachments");
 
             foreach (var attachment in message.Attachments)
-                WriteAttachment(attachment);
+                await WriteAttachmentAsync(attachment);
 
             _writer.WriteEndArray();
 
@@ -208,7 +223,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteStartArray("embeds");
 
             foreach (var embed in message.Embeds)
-                WriteEmbed(embed);
+                await WriteEmbedAsync(embed);
 
             _writer.WriteEndArray();
 
@@ -216,15 +231,14 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteStartArray("reactions");
 
             foreach (var reaction in message.Reactions)
-                WriteReaction(reaction);
+                await WriteReactionAsync(reaction);
 
             _writer.WriteEndArray();
 
             _writer.WriteEndObject();
+            await _writer.FlushAsync();
 
-            // Flush every 100 messages
-            if (_messageCount++ % 100 == 0)
-                await _writer.FlushAsync();
+            _messageCount++;
         }
 
         public override async Task WritePostambleAsync()
@@ -236,7 +250,6 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
             // Root object (end)
             _writer.WriteEndObject();
-
             await _writer.FlushAsync();
         }
 

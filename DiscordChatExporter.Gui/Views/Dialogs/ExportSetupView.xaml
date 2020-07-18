@@ -74,54 +74,100 @@
             </ComboBox.ItemTemplate>
         </ComboBox>
 
-        <!--  Date limits  -->
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <DatePicker
-                Grid.Row="0"
-                Grid.Column="0"
-                Margin="16,8"
-                materialDesign:HintAssist.Hint="From (optional)"
-                materialDesign:HintAssist.IsFloating="True"
-                DisplayDateEnd="{Binding Before, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
-                SelectedDate="{Binding After, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
-                ToolTip="If this is set, only messages sent after this date will be exported" />
-            <DatePicker
-                Grid.Row="0"
-                Grid.Column="1"
-                Margin="16,8"
-                materialDesign:HintAssist.Hint="To (optional)"
-                materialDesign:HintAssist.IsFloating="True"
-                DisplayDateStart="{Binding After, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
-                SelectedDate="{Binding Before, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
-                ToolTip="If this is set, only messages sent before this date will be exported" />
-        </Grid>
+        <!--  Advanced section  -->
+        <StackPanel Visibility="{Binding IsChecked, ElementName=AdvancedSectionToggleButton, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
+            <!--  Date limits  -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <DatePicker
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="16,8"
+                    materialDesign:HintAssist.Hint="From (optional)"
+                    materialDesign:HintAssist.IsFloating="True"
+                    DisplayDateEnd="{Binding Before, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
+                    SelectedDate="{Binding After, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
+                    ToolTip="If this is set, only messages sent after this date will be exported" />
+                <DatePicker
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="16,8"
+                    materialDesign:HintAssist.Hint="To (optional)"
+                    materialDesign:HintAssist.IsFloating="True"
+                    DisplayDateStart="{Binding After, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
+                    SelectedDate="{Binding Before, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
+                    ToolTip="If this is set, only messages sent before this date will be exported" />
+            </Grid>
 
-        <!--  Partitioning  -->
-        <TextBox
-            Margin="16,8"
-            materialDesign:HintAssist.Hint="Messages per partition (optional)"
-            materialDesign:HintAssist.IsFloating="True"
-            Text="{Binding PartitionLimit, TargetNullValue=''}"
-            ToolTip="If this is set, the exported file will be split into multiple partitions, each containing no more than specified number of messages" />
+            <!--  Partitioning  -->
+            <TextBox
+                Margin="16,8"
+                materialDesign:HintAssist.Hint="Messages per partition (optional)"
+                materialDesign:HintAssist.IsFloating="True"
+                Text="{Binding PartitionLimit, TargetNullValue=''}"
+                ToolTip="If this is set, the exported file will be split into multiple partitions, each containing no more than specified number of messages" />
+
+            <!--  Download media  -->
+            <Grid Margin="16,16" ToolTip="If this is set, the export will include additional files such as user avatars, attached files, embedded images, etc">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    Text="Download referenced media content" />
+                <ToggleButton
+                    Grid.Column="1"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    IsChecked="{Binding ShouldDownloadMedia}" />
+            </Grid>
+        </StackPanel>
 
         <!--  Buttons  -->
-        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <ToggleButton
+                x:Name="AdvancedSectionToggleButton"
+                Grid.Column="0"
+                Margin="8"
+                Cursor="Hand"
+                Loaded="AdvancedSectionToggleButton_OnLoaded"
+                Style="{DynamicResource MaterialDesignFlatToggleButton}"
+                ToolTip="Show advanced options">
+                <ToggleButton.Content>
+                    <materialDesign:PackIcon
+                        Width="24"
+                        Height="24"
+                        Kind="Menu" />
+                </ToggleButton.Content>
+            </ToggleButton>
+
             <Button
+                Grid.Column="2"
                 Margin="8"
                 Command="{s:Action Confirm}"
                 Content="EXPORT"
                 IsDefault="True"
                 Style="{DynamicResource MaterialDesignFlatButton}" />
             <Button
+                Grid.Column="3"
                 Margin="8"
                 Command="{s:Action Close}"
                 Content="CANCEL"
                 IsCancel="True"
                 Style="{DynamicResource MaterialDesignFlatButton}" />
-        </StackPanel>
+        </Grid>
     </StackPanel>
 </UserControl>

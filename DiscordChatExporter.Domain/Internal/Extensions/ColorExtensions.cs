@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace DiscordChatExporter.Domain.Internal
+namespace DiscordChatExporter.Domain.Internal.Extensions
 {
     internal static class ColorExtensions
     {

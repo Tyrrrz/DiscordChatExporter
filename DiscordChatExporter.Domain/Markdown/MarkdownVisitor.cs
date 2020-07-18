@@ -6,23 +6,23 @@ namespace DiscordChatExporter.Domain.Markdown
 {
     internal abstract class MarkdownVisitor
     {
-        public virtual MarkdownNode VisitText(TextNode text) => text;
+        protected virtual MarkdownNode VisitText(TextNode text) => text;
 
-        public virtual MarkdownNode VisitFormatted(FormattedNode formatted)
+        protected virtual MarkdownNode VisitFormatted(FormattedNode formatted)
         {
             Visit(formatted.Children);
             return formatted;
         }
 
-        public virtual MarkdownNode VisitInlineCodeBlock(InlineCodeBlockNode inlineCodeBlock) => inlineCodeBlock;
+        protected virtual MarkdownNode VisitInlineCodeBlock(InlineCodeBlockNode inlineCodeBlock) => inlineCodeBlock;
 
-        public virtual MarkdownNode VisitMultiLineCodeBlock(MultiLineCodeBlockNode multiLineCodeBlock) => multiLineCodeBlock;
+        protected virtual MarkdownNode VisitMultiLineCodeBlock(MultiLineCodeBlockNode multiLineCodeBlock) => multiLineCodeBlock;
 
-        public virtual MarkdownNode VisitLink(LinkNode link) => link;
+        protected virtual MarkdownNode VisitLink(LinkNode link) => link;
 
-        public virtual MarkdownNode VisitEmoji(EmojiNode emoji) => emoji;
+        protected virtual MarkdownNode VisitEmoji(EmojiNode emoji) => emoji;
 
-        public virtual MarkdownNode VisitMention(MentionNode mention) => mention;
+        protected virtual MarkdownNode VisitMention(MentionNode mention) => mention;
 
         public MarkdownNode Visit(MarkdownNode node) => node switch
         {

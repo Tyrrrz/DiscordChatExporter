@@ -7,6 +7,7 @@ using CliFx.Attributes;
 using CliFx.Utilities;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exceptions;
+using DiscordChatExporter.Domain.Exporting;
 using DiscordChatExporter.Domain.Utilities;
 using Gress;
 using Tyrrrz.Extensions;
@@ -15,13 +16,12 @@ namespace DiscordChatExporter.Cli.Commands.Base
 {
     public abstract class ExportMultipleCommandBase : ExportCommandBase
     {
-        [CommandOption("parallel", Description = "Export this number of separate channels in parallel.")]
+        [CommandOption("parallel", Description = "Export this number of channels in parallel.")]
         public int ParallelLimit { get; set; } = 1;
 
         protected async ValueTask ExportMultipleAsync(IConsole console, IReadOnlyList<Channel> channels)
         {
-            // This uses a separate route from ExportCommandBase because the progress ticker is not thread-safe
-            // Ugly code ahead. Will need to refactor.
+            // HACK: this uses a separate route from ExportCommandBase because the progress ticker is not thread-safe
 
             console.Output.Write($"Exporting {channels.Count} channels... ");
             var progress = console.CreateProgressTicker();
@@ -39,9 +39,19 @@ namespace DiscordChatExporter.Cli.Commands.Base
                 {
                     var guild = await GetDiscordClient().GetGuildAsync(channel.GuildId);
 
-                    await GetChannelExporter().ExportAsync(guild, channel,
-                        OutputPath, ExportFormat, DateFormat, PartitionLimit,
-                        After, Before, operation);
+                    var request = new ExportRequest(
+                        guild,
+                        channel,
+                        OutputPath,
+                        ExportFormat,
+                        After,
+                        Before,
+                        PartitionLimit,
+                        ShouldDownloadMedia,
+                        DateFormat
+                    );
+
+                    await GetChannelExporter().ExportChannelAsync(request, operation);
 
                     Interlocked.Increment(ref successfulExportCount);
                 }

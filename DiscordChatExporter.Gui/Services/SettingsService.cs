@@ -20,6 +20,8 @@ namespace DiscordChatExporter.Gui.Services
 
         public int? LastPartitionLimit { get; set; }
 
+        public bool LastShouldDownloadMedia { get; set; }
+
         public SettingsService()
         {
             Configuration.StorageSpace = StorageSpace.Instance;

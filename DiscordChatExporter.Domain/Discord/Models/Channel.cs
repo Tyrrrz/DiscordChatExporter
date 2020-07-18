@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Text.Json;
 using DiscordChatExporter.Domain.Discord.Models.Common;
-using DiscordChatExporter.Domain.Internal;
+using DiscordChatExporter.Domain.Internal.Extensions;
 using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Domain.Discord.Models

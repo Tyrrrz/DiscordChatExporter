@@ -8,11 +8,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Exporting\Resources\HtmlCore.css" />
-    <EmbeddedResource Include="Exporting\Resources\HtmlDark.css" />
-    <EmbeddedResource Include="Exporting\Resources\HtmlLayoutTemplate.html" />
-    <EmbeddedResource Include="Exporting\Resources\HtmlLight.css" />
-    <EmbeddedResource Include="Exporting\Resources\HtmlMessageGroupTemplate.html" />
+    <EmbeddedResource Include="Exporting\Writers\Html\Core.css" />
+    <EmbeddedResource Include="Exporting\Writers\Html\Dark.css" />
+    <EmbeddedResource Include="Exporting\Writers\Html\LayoutTemplate.html" />
+    <EmbeddedResource Include="Exporting\Writers\Html\Light.css" />
+    <EmbeddedResource Include="Exporting\Writers\Html\MessageGroupTemplate.html" />
   </ItemGroup>
 
 </Project>

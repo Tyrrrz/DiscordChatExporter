@@ -6,8 +6,9 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord.Models;
+using DiscordChatExporter.Domain.Exporting.Writers.Html;
 using DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors;
-using DiscordChatExporter.Domain.Internal;
+using DiscordChatExporter.Domain.Internal.Extensions;
 using Scriban;
 using Scriban.Runtime;
 using Tyrrrz.Extensions;
@@ -18,6 +19,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
     {
         private readonly TextWriter _writer;
         private readonly string _themeName;
+
         private readonly List<Message> _messageGroupBuffer = new List<Message>();
 
         private readonly Template _preambleTemplate;
@@ -35,12 +37,6 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _preambleTemplate = Template.Parse(GetPreambleTemplateCode());
             _messageGroupTemplate = Template.Parse(GetMessageGroupTemplateCode());
             _postambleTemplate = Template.Parse(GetPostambleTemplateCode());
-        }
-
-        private MessageGroup GetCurrentMessageGroup()
-        {
-            var firstMessage = _messageGroupBuffer.First();
-            return new MessageGroup(firstMessage.Author, firstMessage.Timestamp, _messageGroupBuffer);
         }
 
         private TemplateContext CreateTemplateContext(IReadOnlyDictionary<string, object>? constants = null)
@@ -72,7 +68,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
             // Functions
             scriptObject.Import("FormatDate",
-                new Func<DateTimeOffset, string>(d => d.ToLocalString(Context.DateFormat)));
+                new Func<DateTimeOffset, string>(d => d.ToLocalString(Context.Request.DateFormat)));
 
             scriptObject.Import("FormatColorRgb",
                 new Func<Color?, string?>(c => c != null ? $"rgb({c?.R}, {c?.G}, {c?.B})" : null));
@@ -81,13 +77,18 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
                 new Func<User, Color?>(Context.TryGetUserColor));
 
             scriptObject.Import("TryGetUserNick",
-                new Func<User, string?>(u => Context.TryGetUserMember(u)?.Nick));
+                new Func<User, string?>(u => Context.TryGetMember(u.Id)?.Nick));
 
             scriptObject.Import("FormatMarkdown",
                 new Func<string?, string>(m => FormatMarkdown(m)));
 
             scriptObject.Import("FormatEmbedMarkdown",
                 new Func<string?, string>(m => FormatMarkdown(m, false)));
+
+            // HACK: Scriban doesn't support async, so we have to resort to this and be careful about deadlocks.
+            // TODO: move to Razor.
+            scriptObject.Import("ResolveUrl",
+                new Func<string, string>(u => Context.ResolveMediaUrlAsync(u).GetAwaiter().GetResult()));
 
             // Push model
             templateContext.PushGlobal(scriptObject);
@@ -101,11 +102,11 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         private string FormatMarkdown(string? markdown, bool isJumboAllowed = true) =>
             HtmlMarkdownVisitor.Format(Context, markdown ?? "", isJumboAllowed);
 
-        private async Task RenderCurrentMessageGroupAsync()
+        private async Task WriteCurrentMessageGroupAsync()
         {
             var templateContext = CreateTemplateContext(new Dictionary<string, object>
             {
-                ["MessageGroup"] = GetCurrentMessageGroup()
+                ["MessageGroup"] = MessageGroup.Join(_messageGroupBuffer)
             });
 
             await templateContext.EvaluateAsync(_messageGroupTemplate.Page);
@@ -120,14 +121,14 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         public override async Task WriteMessageAsync(Message message)
         {
             // If message group is empty or the given message can be grouped, buffer the given message
-            if (!_messageGroupBuffer.Any() || MessageGroup.CanGroup(_messageGroupBuffer.Last(), message))
+            if (!_messageGroupBuffer.Any() || MessageGroup.CanJoin(_messageGroupBuffer.Last(), message))
             {
                 _messageGroupBuffer.Add(message);
             }
             // Otherwise, flush the group and render messages
             else
             {
-                await RenderCurrentMessageGroupAsync();
+                await WriteCurrentMessageGroupAsync();
 
                 _messageGroupBuffer.Clear();
                 _messageGroupBuffer.Add(message);
@@ -141,7 +142,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         {
             // Flush current message group
             if (_messageGroupBuffer.Any())
-                await RenderCurrentMessageGroupAsync();
+                await WriteCurrentMessageGroupAsync();
 
             var templateContext = CreateTemplateContext(new Dictionary<string, object>
             {
@@ -161,28 +162,28 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
     internal partial class HtmlMessageWriter
     {
         private static readonly Assembly ResourcesAssembly = typeof(HtmlMessageWriter).Assembly;
-        private static readonly string ResourcesNamespace = $"{ResourcesAssembly.GetName().Name}.Exporting.Resources";
+        private static readonly string ResourcesNamespace = $"{ResourcesAssembly.GetName().Name}.Exporting.Writers.Html";
 
         private static string GetCoreStyleSheetCode() =>
             ResourcesAssembly
-                .GetManifestResourceString($"{ResourcesNamespace}.HtmlCore.css");
+                .GetManifestResourceString($"{ResourcesNamespace}.Core.css");
 
         private static string GetThemeStyleSheetCode(string themeName) =>
             ResourcesAssembly
-                .GetManifestResourceString($"{ResourcesNamespace}.Html{themeName}.css");
+                .GetManifestResourceString($"{ResourcesNamespace}.{themeName}.css");
 
         private static string GetPreambleTemplateCode() =>
             ResourcesAssembly
-                .GetManifestResourceString($"{ResourcesNamespace}.HtmlLayoutTemplate.html")
+                .GetManifestResourceString($"{ResourcesNamespace}.LayoutTemplate.html")
                 .SubstringUntil("{{~ %SPLIT% ~}}");
 
         private static string GetMessageGroupTemplateCode() =>
             ResourcesAssembly
-                .GetManifestResourceString($"{ResourcesNamespace}.HtmlMessageGroupTemplate.html");
+                .GetManifestResourceString($"{ResourcesNamespace}.MessageGroupTemplate.html");
 
         private static string GetPostambleTemplateCode() =>
             ResourcesAssembly
-                .GetManifestResourceString($"{ResourcesNamespace}.HtmlLayoutTemplate.html")
+                .GetManifestResourceString($"{ResourcesNamespace}.LayoutTemplate.html")
                 .SubstringAfter("{{~ %SPLIT% ~}}");
     }
 }

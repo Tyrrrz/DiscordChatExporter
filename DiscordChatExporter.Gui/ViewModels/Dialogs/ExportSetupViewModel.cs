@@ -32,6 +32,16 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
 
         public int? PartitionLimit { get; set; }
 
+        public bool ShouldDownloadMedia { get; set; }
+
+        // Whether to show the "advanced options" by default when the dialog opens.
+        // This is active if any of the advanced options are set to non-default values.
+        public bool IsAdvancedSectionDisplayedByDefault =>
+            After != default ||
+            Before != default ||
+            PartitionLimit != default ||
+            ShouldDownloadMedia != default;
+
         public ExportSetupViewModel(DialogManager dialogManager, SettingsService settingsService)
         {
             _dialogManager = dialogManager;
@@ -40,6 +50,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             // Persist preferences
             SelectedFormat = _settingsService.LastExportFormat;
             PartitionLimit = _settingsService.LastPartitionLimit;
+            ShouldDownloadMedia = _settingsService.LastShouldDownloadMedia;
         }
 
         public void Confirm()
@@ -47,6 +58,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             // Persist preferences
             _settingsService.LastExportFormat = SelectedFormat;
             _settingsService.LastPartitionLimit = PartitionLimit;
+            _settingsService.LastShouldDownloadMedia = ShouldDownloadMedia;
 
             // Clamp 'after' and 'before' values
             if (After > Before)
@@ -57,23 +69,18 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             // If single channel - prompt file path
             if (IsSingleChannel)
             {
-                // Get single channel
                 var channel = Channels.Single();
+                var defaultFileName = ExportRequest.GetDefaultOutputFileName(Guild!, channel, SelectedFormat, After, Before);
 
-                // Generate default file name
-                var defaultFileName = ChannelExporter.GetDefaultExportFileName(Guild!, channel, SelectedFormat, After, Before);
-
-                // Generate filter
+                // Filter
                 var ext = SelectedFormat.GetFileExtension();
                 var filter = $"{ext.ToUpperInvariant()} files|*.{ext}";
 
-                // Prompt user
                 OutputPath = _dialogManager.PromptSaveFilePath(filter, defaultFileName);
             }
             // If multiple channels - prompt dir path
             else
             {
-                // Prompt user
                 OutputPath = _dialogManager.PromptDirectoryPath();
             }
 
@@ -81,7 +88,6 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             if (string.IsNullOrWhiteSpace(OutputPath))
                 return;
 
-            // Close dialog
             Close(true);
         }
     }

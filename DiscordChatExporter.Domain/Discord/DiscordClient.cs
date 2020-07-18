@@ -91,7 +91,7 @@ namespace DiscordChatExporter.Domain.Discord
                 var url = new UrlBuilder()
                     .SetPath("users/@me/guilds")
                     .SetQueryParameter("limit", "100")
-                    .SetQueryParameterIfNotNullOrWhiteSpace("after", afterId)
+                    .SetQueryParameter("after", afterId)
                     .Build();
 
                 var response = await GetJsonResponseAsync(url);
@@ -199,7 +199,7 @@ namespace DiscordChatExporter.Domain.Discord
             var url = new UrlBuilder()
                 .SetPath($"channels/{channelId}/messages")
                 .SetQueryParameter("limit", "1")
-                .SetQueryParameterIfNotNullOrWhiteSpace("before", before?.ToSnowflake())
+                .SetQueryParameter("before", before?.ToSnowflake())
                 .Build();
 
             var response = await GetJsonResponseAsync(url);

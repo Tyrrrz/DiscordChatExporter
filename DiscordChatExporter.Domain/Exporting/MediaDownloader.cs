@@ -42,6 +42,6 @@ namespace DiscordChatExporter.Domain.Exporting
     internal partial class MediaDownloader
     {
         private static string GetFileNameFromUrl(string url) =>
-            Regex.Match(url, @".+/(.*?)(?:\?|$)").Groups[1].Value;
+            Regex.Match(url, @".+/([^?]*)").Groups[1].Value;
     }
 }

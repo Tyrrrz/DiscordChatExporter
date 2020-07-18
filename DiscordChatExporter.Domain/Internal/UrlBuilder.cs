@@ -19,19 +19,17 @@ namespace DiscordChatExporter.Domain.Internal
             return this;
         }
 
-        public UrlBuilder SetQueryParameter(string key, string? value)
+        public UrlBuilder SetQueryParameter(string key, string? value, bool ignoreUnsetValue = true)
         {
+            if (ignoreUnsetValue && string.IsNullOrWhiteSpace(value))
+                return this;
+
             var keyEncoded = WebUtility.UrlEncode(key);
             var valueEncoded = WebUtility.UrlEncode(value);
             _queryParameters[keyEncoded] = valueEncoded;
 
             return this;
         }
-
-        public UrlBuilder SetQueryParameterIfNotNullOrWhiteSpace(string key, string? value) =>
-            !string.IsNullOrWhiteSpace(value)
-                ? SetQueryParameter(key, value)
-                : this;
 
         public string Build()
         {

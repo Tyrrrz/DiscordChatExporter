@@ -47,7 +47,9 @@ namespace DiscordChatExporter.Cli.Commands.Base
                 After,
                 Before,
                 PartitionLimit,
-                ShouldDownloadMedia, DateFormat);
+                ShouldDownloadMedia,
+                DateFormat
+            );
 
             await GetChannelExporter().ExportChannelAsync(request, progress);
 

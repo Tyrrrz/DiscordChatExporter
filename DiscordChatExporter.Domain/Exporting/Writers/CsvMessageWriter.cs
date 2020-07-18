@@ -21,10 +21,6 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         private string FormatMarkdown(string? markdown) =>
             PlainTextMarkdownVisitor.Format(Context, markdown ?? "");
 
-        private async Task WriteRowAsync() => await _writer.WriteLineAsync();
-
-        private async Task WriteColumnAsync(string value) => await _writer.WriteAsync(CsvEncode(value) + ',');
-
         public override async Task WritePreambleAsync() =>
             await _writer.WriteLineAsync("AuthorID,Author,Date,Content,Attachments,Reactions");
 
@@ -35,11 +31,11 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             foreach (var attachment in attachments)
             {
                 buffer
-                    .AppendIfEmpty(',')
+                    .AppendIfNotEmpty(',')
                     .Append(await Context.ResolveUrlAsync(attachment.Url));
             }
 
-            await WriteColumnAsync(buffer.ToString());
+            await _writer.WriteAsync(CsvEncode(buffer.ToString()));
         }
 
         private async Task WriteReactionsAsync(IReadOnlyList<Reaction> reactions)
@@ -49,7 +45,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             foreach (var reaction in reactions)
             {
                 buffer
-                    .AppendIfEmpty(',')
+                    .AppendIfNotEmpty(',')
                     .Append(reaction.Emoji.Name)
                     .Append(' ')
                     .Append('(')
@@ -57,27 +53,36 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
                     .Append(')');
             }
 
-            await WriteColumnAsync(buffer.ToString());
+            await _writer.WriteAsync(CsvEncode(buffer.ToString()));
         }
 
         public override async Task WriteMessageAsync(Message message)
         {
-            // Author
-            await WriteColumnAsync(message.Author.Id);
-            await WriteColumnAsync(message.Author.FullName);
+            // Author ID
+            await _writer.WriteAsync(CsvEncode(message.Author.Id));
+            await _writer.WriteAsync(',');
 
-            // Message
-            await WriteColumnAsync(message.Timestamp.ToLocalString(Context.Request.DateFormat));
-            await WriteColumnAsync(FormatMarkdown(message.Content));
+            // Author name
+            await _writer.WriteAsync(CsvEncode(message.Author.FullName));
+            await _writer.WriteAsync(',');
+
+            // Message timestamp
+            await _writer.WriteAsync(CsvEncode(message.Timestamp.ToLocalString(Context.Request.DateFormat)));
+            await _writer.WriteAsync(',');
+
+            // Message content
+            await _writer.WriteAsync(CsvEncode(FormatMarkdown(message.Content)));
+            await _writer.WriteAsync(',');
 
             // Attachments
             await WriteAttachmentsAsync(message.Attachments);
+            await _writer.WriteAsync(',');
 
             // Reactions
             await WriteReactionsAsync(message.Reactions);
 
             // Finish row
-            await WriteRowAsync();
+            await _writer.WriteLineAsync();
         }
 
         public override async ValueTask DisposeAsync()

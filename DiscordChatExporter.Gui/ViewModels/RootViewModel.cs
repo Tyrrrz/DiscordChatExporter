@@ -198,7 +198,9 @@ namespace DiscordChatExporter.Gui.ViewModels
                         dialog.After,
                         dialog.Before,
                         dialog.PartitionLimit,
-                        dialog.ShouldDownloadMedia, _settingsService.DateFormat);
+                        dialog.ShouldDownloadMedia,
+                        _settingsService.DateFormat
+                    );
 
                     await exporter.ExportChannelAsync(request, operation);
 

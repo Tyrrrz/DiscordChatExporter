@@ -60,8 +60,8 @@ namespace DiscordChatExporter.Domain.Exporting
                 before
             );
 
-            OutputBaseDirPath = Path.GetDirectoryName(OutputBaseFilePath) ?? outputPath;
-            OutputMediaDirPath = $"{OutputBaseFilePath}_Files{Path.PathSeparator}";
+            OutputBaseDirPath = Path.GetDirectoryName(OutputBaseFilePath) ?? OutputPath;
+            OutputMediaDirPath = $"{OutputBaseFilePath}_Files{Path.DirectorySeparatorChar}";
         }
     }
 

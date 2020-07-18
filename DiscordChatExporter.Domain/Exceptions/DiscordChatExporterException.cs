@@ -42,7 +42,7 @@ Failed to perform an HTTP request.
 
         internal static DiscordChatExporterException NotFound()
         {
-            const string message = "Resource does not exist.";
+            const string message = "Requested resource does not exist.";
             return new DiscordChatExporterException(message);
         }
 

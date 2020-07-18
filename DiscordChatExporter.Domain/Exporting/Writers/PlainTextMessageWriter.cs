@@ -126,6 +126,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
                 await _writer.WriteLineAsync($"Before: {Context.Request.Before.Value.ToLocalString(Context.Request.DateFormat)}");
 
             await _writer.WriteLineAsync('='.Repeat(62));
+            await _writer.WriteLineAsync();
         }
 
         public override async Task WriteMessageAsync(Message message)
@@ -151,7 +152,6 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             await _writer.WriteLineAsync('='.Repeat(62));
             await _writer.WriteLineAsync($"Exported {_messageCount:N0} message(s)");
             await _writer.WriteLineAsync('='.Repeat(62));
-            await _writer.WriteLineAsync();
         }
 
         public override async ValueTask DisposeAsync()

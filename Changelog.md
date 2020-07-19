@@ -1,3 +1,8 @@
+### v2.21.1 (19-Jul-2020)
+
+- Fixed an issue where the export crashed if an embedded image has been deleted. Such media files are now ignored.
+- Changed the naming convention for downloaded media files so that the original file names are used when possible.
+
 ### v2.21 (18-Jul-2020)
 
 - Added a new option that enables self-contained exports for all output formats. You can turn it on in the export setup dialog in GUI or using the `--media` option in CLI. When using this, the application will additionally download any media content directly referenced from the exported file instead of linking back to Discord CDN. The files which are downloaded include: guild icons, user avatars, attachments, embedded images, reaction emojis. Note that only files which are actually referenced by the export are downloaded, which means that, for example, user avatars will not be downloaded when using plain text export format. This option is not meant to enable complete offline viewing for HTML exports, but rather to make it easier to archive media content that may eventually get deleted from Discord servers. Also keep in mind that this option may make the export drastically slower and the total file size larger.

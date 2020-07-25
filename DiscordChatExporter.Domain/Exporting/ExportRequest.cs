@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using DiscordChatExporter.Domain.Discord.Models;
+using DiscordChatExporter.Domain.Internal;
 
 namespace DiscordChatExporter.Domain.Exporting
 {
@@ -127,8 +128,7 @@ namespace DiscordChatExporter.Domain.Exporting
             buffer.Append($".{format.GetFileExtension()}");
 
             // Replace invalid chars
-            foreach (var invalidChar in Path.GetInvalidFileNameChars())
-                buffer.Replace(invalidChar, '_');
+            PathEx.EscapePath(buffer);
 
             return buffer.ToString();
         }

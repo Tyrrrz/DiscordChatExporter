@@ -27,10 +27,11 @@ namespace DiscordChatExporter.Domain.Exporting
         {
             var originalFileName = Regex.Match(url, @".+/([^?]*)").Groups[1].Value;
 
-            if (string.IsNullOrWhiteSpace(originalFileName))
-                return GetRandomSuffix();
+            var fileName = !string.IsNullOrWhiteSpace(originalFileName) ?
+                $"{Path.GetFileNameWithoutExtension(originalFileName)}-{GetRandomSuffix()}{Path.GetExtension(originalFileName)}" :
+                GetRandomSuffix();
 
-            return $"{Path.GetFileNameWithoutExtension(originalFileName)}-{GetRandomSuffix()}{Path.GetExtension(originalFileName)}";
+            return PathEx.EscapePath(fileName);
         }
 
         // HACK: ConfigureAwait() is crucial here to enable sync-over-async in HtmlMessageWriter

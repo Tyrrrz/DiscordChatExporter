@@ -4,6 +4,7 @@
 [![Release](https://img.shields.io/github/release/Tyrrrz/DiscordChatExporter.svg)](https://github.com/Tyrrrz/DiscordChatExporter/releases)
 [![Downloads](https://img.shields.io/github/downloads/Tyrrrz/DiscordChatExporter/total.svg)](https://github.com/Tyrrrz/DiscordChatExporter/releases)
 [![Donate](https://img.shields.io/badge/donate-$$$-purple.svg)](https://tyrrrz.me/donate)
+[![Extra Services](https://img.shields.io/badge/extra%20services-xs:code-blue.svg)](https://xscode.com/Tyrrrz/DiscordChatExporter)
 
 DiscordChatExporter can be used to export message history from a [Discord](https://discord.com) channel to a file. It works with direct messages, group messages, server channels, supports Discord's dialect of markdown and all other rich media features.
 

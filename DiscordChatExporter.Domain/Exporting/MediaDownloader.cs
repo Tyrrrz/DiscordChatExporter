@@ -9,7 +9,7 @@ using DiscordChatExporter.Domain.Internal.Extensions;
 
 namespace DiscordChatExporter.Domain.Exporting
 {
-    internal class MediaDownloader
+    internal partial class MediaDownloader
     {
         private readonly HttpClient _httpClient = Singleton.HttpClient;
         private readonly string _workingDirPath;
@@ -21,33 +21,35 @@ namespace DiscordChatExporter.Domain.Exporting
             _workingDirPath = workingDirPath;
         }
 
-        private string GetRandomSuffix() => Guid.NewGuid().ToString().Replace("-", "").Substring(0, 8);
-
-        private string GetFileNameFromUrl(string url)
-        {
-            var originalFileName = Regex.Match(url, @".+/([^?]*)").Groups[1].Value;
-
-            var fileName = !string.IsNullOrWhiteSpace(originalFileName) ?
-                $"{Path.GetFileNameWithoutExtension(originalFileName)}-{GetRandomSuffix()}{Path.GetExtension(originalFileName)}" :
-                GetRandomSuffix();
-
-            return PathEx.EscapePath(fileName);
-        }
-
-        // HACK: ConfigureAwait() is crucial here to enable sync-over-async in HtmlMessageWriter
         public async ValueTask<string> DownloadAsync(string url)
         {
             if (_pathMap.TryGetValue(url, out var cachedFilePath))
                 return cachedFilePath;
 
             var fileName = GetFileNameFromUrl(url);
-            var filePath = Path.Combine(_workingDirPath, fileName);
+            var filePath = PathEx.MakeUniqueFilePath(Path.Combine(_workingDirPath, fileName));
 
             Directory.CreateDirectory(_workingDirPath);
 
-            await _httpClient.DownloadAsync(url, filePath).ConfigureAwait(false);
+            await _httpClient.DownloadAsync(url, filePath);
 
             return _pathMap[url] = filePath;
+        }
+    }
+
+    internal partial class MediaDownloader
+    {
+        private static string GetRandomFileName() => Guid.NewGuid().ToString().Replace("-", "").Substring(0, 16);
+
+        private static string GetFileNameFromUrl(string url)
+        {
+            var originalFileName = Regex.Match(url, @".+/([^?]*)").Groups[1].Value;
+
+            var fileName = !string.IsNullOrWhiteSpace(originalFileName)
+                ? originalFileName
+                : GetRandomFileName();
+
+            return PathEx.EscapePath(fileName);
         }
     }
 }

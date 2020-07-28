@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Internal.Extensions;
+using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Domain.Exporting
 {
@@ -72,7 +73,13 @@ namespace DiscordChatExporter.Domain.Exporting
                 // We want relative path so that the output files can be copied around without breaking
                 var relativeFilePath = Path.GetRelativePath(Request.OutputBaseDirPath, filePath);
 
-                return $"file:///./{Uri.EscapeDataString(relativeFilePath)}";
+                // Need to properly escape each path segment while keeping the slashes
+                var escapedRelativeFilePath = relativeFilePath
+                    .Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                    .Select(Uri.EscapeDataString)
+                    .JoinToString(Path.AltDirectorySeparatorChar.ToString());
+
+                return escapedRelativeFilePath;
             }
             catch (HttpRequestException)
             {

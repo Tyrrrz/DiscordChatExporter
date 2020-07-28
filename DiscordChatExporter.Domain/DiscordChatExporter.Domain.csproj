@@ -3,16 +3,17 @@
 
   <ItemGroup>
     <PackageReference Include="Polly" Version="7.2.1" />
-    <PackageReference Include="Scriban" Version="2.1.2" />
+    <PackageReference Include="RazorLight" Version="2.0.0-beta9" />
     <PackageReference Include="Tyrrrz.Extensions" Version="1.6.5" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Exporting\Writers\Html\Core.css" />
     <EmbeddedResource Include="Exporting\Writers\Html\Dark.css" />
-    <EmbeddedResource Include="Exporting\Writers\Html\LayoutTemplate.html" />
     <EmbeddedResource Include="Exporting\Writers\Html\Light.css" />
-    <EmbeddedResource Include="Exporting\Writers\Html\MessageGroupTemplate.html" />
+    <EmbeddedResource Include="Exporting\Writers\Html\LayoutTemplate-End.cshtml" />
+    <EmbeddedResource Include="Exporting\Writers\Html\LayoutTemplate-Begin.cshtml" />
+    <EmbeddedResource Include="Exporting\Writers\Html\MessageGroupTemplate.cshtml" />
   </ItemGroup>
 
 </Project>

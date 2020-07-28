@@ -67,7 +67,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             await _writer.WriteAsync(',');
 
             // Message timestamp
-            await _writer.WriteAsync(CsvEncode(message.Timestamp.ToLocalString(Context.Request.DateFormat)));
+            await _writer.WriteAsync(CsvEncode(Context.FormatDate(message.Timestamp)));
             await _writer.WriteAsync(',');
 
             // Message content

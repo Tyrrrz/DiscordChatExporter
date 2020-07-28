@@ -1,14 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord.Models;
+using DiscordChatExporter.Domain.Internal.Extensions;
 
 namespace DiscordChatExporter.Domain.Exporting
 {
-    internal class ExportContext
+    public class ExportContext
     {
         private readonly MediaDownloader _mediaDownloader;
 
@@ -34,6 +37,8 @@ namespace DiscordChatExporter.Domain.Exporting
             _mediaDownloader = new MediaDownloader(request.OutputMediaDirPath);
         }
 
+        public string FormatDate(DateTimeOffset date) => date.ToLocalString(Request.DateFormat);
+
         public Member? TryGetMember(string id) =>
             Members.FirstOrDefault(m => m.Id == id);
 
@@ -43,9 +48,9 @@ namespace DiscordChatExporter.Domain.Exporting
         public Role? TryGetRole(string id) =>
             Roles.FirstOrDefault(r => r.Id == id);
 
-        public Color? TryGetUserColor(User user)
+        public Color? TryGetUserColor(string id)
         {
-            var member = TryGetMember(user.Id);
+            var member = TryGetMember(id);
             var roles = member?.RoleIds.Join(Roles, i => i, r => r.Id, (_, role) => role);
 
             return roles?
@@ -55,7 +60,6 @@ namespace DiscordChatExporter.Domain.Exporting
                 .FirstOrDefault();
         }
 
-        // HACK: ConfigureAwait() is crucial here to enable sync-over-async in HtmlMessageWriter
         public async ValueTask<string> ResolveMediaUrlAsync(string url)
         {
             if (!Request.ShouldDownloadMedia)
@@ -63,10 +67,12 @@ namespace DiscordChatExporter.Domain.Exporting
 
             try
             {
-                var filePath = await _mediaDownloader.DownloadAsync(url).ConfigureAwait(false);
+                var filePath = await _mediaDownloader.DownloadAsync(url);
 
-                // Return relative path so that the output files can be copied around without breaking
-                return Path.GetRelativePath(Request.OutputBaseDirPath, filePath);
+                // We want relative path so that the output files can be copied around without breaking
+                var relativeFilePath = Path.GetRelativePath(Request.OutputBaseDirPath, filePath);
+
+                return $"file:///./{Uri.EscapeDataString(relativeFilePath)}";
             }
             catch (HttpRequestException)
             {

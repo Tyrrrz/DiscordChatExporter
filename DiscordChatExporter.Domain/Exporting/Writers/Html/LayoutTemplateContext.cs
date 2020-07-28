@@ -1,0 +1,18 @@
+﻿namespace DiscordChatExporter.Domain.Exporting.Writers.Html
+{
+    public class LayoutTemplateContext
+    {
+        public ExportContext ExportContext { get; }
+
+        public string ThemeName { get; }
+
+        public long MessageCount { get; }
+
+        public LayoutTemplateContext(ExportContext exportContext, string themeName, long messageCount)
+        {
+            ExportContext = exportContext;
+            ThemeName = themeName;
+            MessageCount = messageCount;
+        }
+    }
+}

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors;
-using DiscordChatExporter.Domain.Internal.Extensions;
 using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Domain.Exporting.Writers
@@ -27,7 +26,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         private async ValueTask WriteMessageHeaderAsync(Message message)
         {
             // Timestamp & author
-            await _writer.WriteAsync($"[{message.Timestamp.ToLocalString(Context.Request.DateFormat)}]");
+            await _writer.WriteAsync($"[{Context.FormatDate(message.Timestamp)}]");
             await _writer.WriteAsync($" {message.Author.FullName}");
 
             // Whether the message is pinned
@@ -120,10 +119,10 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
                 await _writer.WriteLineAsync($"Topic: {Context.Request.Channel.Topic}");
 
             if (Context.Request.After != null)
-                await _writer.WriteLineAsync($"After: {Context.Request.After.Value.ToLocalString(Context.Request.DateFormat)}");
+                await _writer.WriteLineAsync($"After: {Context.FormatDate(Context.Request.After.Value)}");
 
             if (Context.Request.Before != null)
-                await _writer.WriteLineAsync($"Before: {Context.Request.Before.Value.ToLocalString(Context.Request.DateFormat)}");
+                await _writer.WriteLineAsync($"Before: {Context.FormatDate(Context.Request.Before.Value)}");
 
             await _writer.WriteLineAsync('='.Repeat(62));
             await _writer.WriteLineAsync();

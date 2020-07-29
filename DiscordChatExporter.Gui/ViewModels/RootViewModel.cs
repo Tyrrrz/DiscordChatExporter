@@ -134,7 +134,7 @@ namespace DiscordChatExporter.Gui.ViewModels
 
             try
             {
-                var tokenValue = TokenValue?.Trim('"');
+                var tokenValue = TokenValue?.Trim('"', ' ');
                 if (string.IsNullOrWhiteSpace(tokenValue))
                     return;
 

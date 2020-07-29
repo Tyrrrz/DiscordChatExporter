@@ -15,7 +15,7 @@ namespace DiscordChatExporter.Domain.Internal
 
         public static string EscapePath(string path) => EscapePath(new StringBuilder(path)).ToString();
 
-        public static string MakeUniqueFilePath(string baseFilePath, int maxAttempts = 100)
+        public static string MakeUniqueFilePath(string baseFilePath, int maxAttempts = int.MaxValue)
         {
             if (!File.Exists(baseFilePath))
                 return baseFilePath;

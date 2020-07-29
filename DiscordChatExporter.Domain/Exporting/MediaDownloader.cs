@@ -46,7 +46,7 @@ namespace DiscordChatExporter.Domain.Exporting
             var originalFileName = Regex.Match(url, @".+/([^?]*)").Groups[1].Value;
 
             var fileName = !string.IsNullOrWhiteSpace(originalFileName)
-                ? originalFileName
+                ? $"{Path.GetFileNameWithoutExtension(originalFileName).Truncate(50)}{Path.GetExtension(originalFileName)}"
                 : GetRandomFileName();
 
             return PathEx.EscapePath(fileName);

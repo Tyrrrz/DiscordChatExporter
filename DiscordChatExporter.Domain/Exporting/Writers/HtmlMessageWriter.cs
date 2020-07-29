@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exporting.Writers.Html;
-using RazorLight;
 
 namespace DiscordChatExporter.Domain.Exporting.Writers
 {
@@ -13,7 +12,6 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         private readonly TextWriter _writer;
         private readonly string _themeName;
 
-        private readonly RazorLightEngine _templateEngine;
         private readonly List<Message> _messageGroupBuffer = new List<Message>();
 
         private long _messageCount;
@@ -23,28 +21,25 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         {
             _writer = new StreamWriter(stream);
             _themeName = themeName;
-
-            _templateEngine = new RazorLightEngineBuilder()
-                .EnableEncoding()
-                .UseEmbeddedResourcesProject(typeof(HtmlMessageWriter).Assembly, $"{typeof(HtmlMessageWriter).Namespace}.Html")
-                .Build();
         }
 
         public override async ValueTask WritePreambleAsync()
         {
             var templateContext = new LayoutTemplateContext(Context, _themeName, _messageCount);
+            var templateBundle = await TemplateBundle.ResolveAsync();
 
             await _writer.WriteLineAsync(
-                await _templateEngine.CompileRenderAsync("LayoutTemplate-Begin.cshtml", templateContext)
+                await templateBundle.PreambleTemplate.RenderAsync(templateContext)
             );
         }
 
         private async ValueTask WriteMessageGroupAsync(MessageGroup messageGroup)
         {
             var templateContext = new MessageGroupTemplateContext(Context, messageGroup);
+            var templateBundle = await TemplateBundle.ResolveAsync();
 
             await _writer.WriteLineAsync(
-                await _templateEngine.CompileRenderAsync("MessageGroupTemplate.cshtml", templateContext)
+                await templateBundle.MessageGroupTemplate.RenderAsync(templateContext)
             );
         }
 
@@ -75,9 +70,10 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
                 await WriteMessageGroupAsync(MessageGroup.Join(_messageGroupBuffer));
 
             var templateContext = new LayoutTemplateContext(Context, _themeName, _messageCount);
+            var templateBundle = await TemplateBundle.ResolveAsync();
 
             await _writer.WriteLineAsync(
-                await _templateEngine.CompileRenderAsync("LayoutTemplate-End.cshtml", templateContext)
+                await templateBundle.PostambleTemplate.RenderAsync(templateContext)
             );
         }
 

@@ -6,7 +6,7 @@ using DiscordChatExporter.Domain.Discord.Models;
 namespace DiscordChatExporter.Domain.Exporting.Writers.Html
 {
     // Used for grouping contiguous messages in HTML export
-    public partial class MessageGroup
+    internal partial class MessageGroup
     {
         public User Author { get; }
 
@@ -22,7 +22,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.Html
         }
     }
 
-    public partial class MessageGroup
+    internal partial class MessageGroup
     {
         public static bool CanJoin(Message message1, Message message2) =>
             string.Equals(message1.Author.Id, message2.Author.Id, StringComparison.Ordinal) &&

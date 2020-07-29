@@ -1,6 +1,7 @@
-@using RazorLight
-@using DiscordChatExporter.Domain.Exporting.Writers.Html
-@inherits TemplatePage<MessageGroupTemplateContext>
+@using System
+@using System.Linq
+@using System.Threading.Tasks
+@inherits MiniRazor.MiniRazorTemplateBase<DiscordChatExporter.Domain.Exporting.Writers.Html.MessageGroupTemplateContext>
 
 @{
     string FormatDate(DateTimeOffset date) => Model.ExportContext.FormatDate(date);

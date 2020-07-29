@@ -7,7 +7,6 @@
     <Copyright>Copyright (c) Alexey Golub</Copyright>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <PreserveCompilationContext>true</PreserveCompilationContext>
   </PropertyGroup>
 
 </Project>

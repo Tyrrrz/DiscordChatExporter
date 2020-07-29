@@ -2,7 +2,7 @@
 
 namespace DiscordChatExporter.Domain.Exporting.Writers.Html
 {
-    public class MessageGroupTemplateContext
+    internal class MessageGroupTemplateContext
     {
         public ExportContext ExportContext { get; }
 

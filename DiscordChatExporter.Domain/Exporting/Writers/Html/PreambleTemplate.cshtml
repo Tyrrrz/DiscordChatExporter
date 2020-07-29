@@ -1,15 +1,14 @@
-﻿@using RazorLight
-@using DiscordChatExporter.Domain.Exporting.Writers.Html
+﻿@using System
+@using System.Threading.Tasks
 @using Tyrrrz.Extensions
-@inherits TemplatePage<LayoutTemplateContext>
+@inherits MiniRazor.MiniRazorTemplateBase<DiscordChatExporter.Domain.Exporting.Writers.Html.LayoutTemplateContext>
 
 @{
     string FormatDate(DateTimeOffset date) => Model.ExportContext.FormatDate(date);
 
     ValueTask<string> ResolveUrlAsync(string url) => Model.ExportContext.ResolveMediaUrlAsync(url);
 
-    // Workaround: https://github.com/toddams/RazorLight/issues/359
-    string RenderStyleSheet(string name) => Model.GetType().Assembly.GetManifestResourceString($"DiscordChatExporter.Domain.Exporting.Writers.Html.{name}.css");
+    string GetStyleSheet(string name) => Model.GetType().Assembly.GetManifestResourceString($"DiscordChatExporter.Domain.Exporting.Writers.Html.{name}.css");
 }
 
 <!DOCTYPE html>
@@ -21,10 +20,10 @@
     <meta name="viewport" content="width=device-width">
 
     <style>
-        @Raw(RenderStyleSheet("Core"))
+        @Raw(GetStyleSheet("Core"))
     </style>
     <style>
-        @Raw(RenderStyleSheet(Model.ThemeName))
+        @Raw(GetStyleSheet(Model.ThemeName))
     </style>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/solarized-@(Model.ThemeName.ToLowerInvariant()).min.css">

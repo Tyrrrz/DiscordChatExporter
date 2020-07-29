@@ -1,6 +1,6 @@
 ﻿namespace DiscordChatExporter.Domain.Exporting.Writers.Html
 {
-    public class LayoutTemplateContext
+    internal class LayoutTemplateContext
     {
         public ExportContext ExportContext { get; }
 

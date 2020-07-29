@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord.Models;
@@ -12,7 +11,7 @@ using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Domain.Exporting
 {
-    public class ExportContext
+    internal class ExportContext
     {
         private readonly MediaDownloader _mediaDownloader;
 

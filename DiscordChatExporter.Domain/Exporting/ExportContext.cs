@@ -72,13 +72,17 @@ namespace DiscordChatExporter.Domain.Exporting
                 // We want relative path so that the output files can be copied around without breaking
                 var relativeFilePath = Path.GetRelativePath(Request.OutputBaseDirPath, filePath);
 
-                // Need to properly escape each path segment while keeping the slashes
-                var escapedRelativeFilePath = relativeFilePath
-                    .Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
-                    .Select(Uri.EscapeDataString)
-                    .JoinToString(Path.AltDirectorySeparatorChar.ToString());
+                // For HTML, we need to format the URL properly
+                if (Request.Format == ExportFormat.HtmlDark || Request.Format == ExportFormat.HtmlLight)
+                {
+                    // Need to escape each path segment while keeping the directory separators intact
+                    return relativeFilePath
+                        .Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                        .Select(Uri.EscapeDataString)
+                        .JoinToString(Path.AltDirectorySeparatorChar.ToString());
+                }
 
-                return escapedRelativeFilePath;
+                return relativeFilePath;
             }
             catch (HttpRequestException)
             {

@@ -1,3 +1,12 @@
+### v2.21.2 (30-Jul-2020)
+
+- [GUI] When copy-pasting token, any surrounding spaces are now discarded, in addition to double quotes.
+- [HTML] Changed underlying templating engine to provide higher performance and better error messages. New templating engine adds a small cold start, but any export after the first should be faster.
+- Changed naming schema for downloaded media so that it follows `<original filename> (nn)` format rather than `<original filename>-salt`.
+- [HTML] Fixed an issue where downloaded media was sometimes inaccessible due to reserved characters appearing in the URL.
+- Fixed an issue where the application crashed when trying to download media with a file name that exceeds system's maximum allowed length.
+- Fixed an issue where the application crashed when trying to download media with illegal characters in the file name.
+
 ### v2.21.1 (19-Jul-2020)
 
 - Fixed an issue where the export crashed if an embedded image has been deleted. Such media files are now ignored.

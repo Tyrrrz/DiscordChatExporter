@@ -14,7 +14,7 @@
 
     var userMember = Model.ExportContext.TryGetMember(Model.MessageGroup.Author.Id);
     var userColor = Model.ExportContext.TryGetUserColor(Model.MessageGroup.Author.Id);
-    var userNick = userMember?.Nick ?? Model.MessageGroup.Author.Name;
+    var userNick = (Model.MessageGroup.Author.IsBot ? Model.MessageGroup.Author.Name : (userMember?.Nick ?? Model.MessageGroup.Author.Name));
 
     var userColorStyle = userColor != null
         ? $"color: rgb({userColor?.R},{userColor?.G},{userColor?.B})"

@@ -163,6 +163,7 @@
                 Grid.Column="0"
                 Margin="8"
                 Cursor="Hand"
+                IsChecked="True"
                 Loaded="AdvancedSectionToggleButton_OnLoaded"
                 Style="{DynamicResource MaterialDesignFlatToggleButton}"
                 ToolTip="Show advanced options">

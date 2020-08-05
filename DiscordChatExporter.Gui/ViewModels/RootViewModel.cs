@@ -62,6 +62,8 @@ namespace DiscordChatExporter.Gui.ViewModels
                 if (result != null)
                 {
                     var GroupedResults = CollectionViewSource.GetDefaultView(result);
+                    GroupedResults.GroupDescriptions.Clear();
+                    GroupedResults.SortDescriptions.Clear();
                     GroupedResults.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
                     GroupedResults.SortDescriptions.Add(new SortDescription("Category", ListSortDirection.Descending));
                     return GroupedResults;

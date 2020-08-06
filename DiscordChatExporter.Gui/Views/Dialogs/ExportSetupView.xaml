@@ -82,6 +82,10 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
                 <DatePicker
                     Grid.Row="0"
                     Grid.Column="0"
@@ -100,6 +104,22 @@
                     DisplayDateStart="{Binding After, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
                     SelectedDate="{Binding Before, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
                     ToolTip="If this is set, only messages sent before this date will be exported" />
+                <materialDesign:TimePicker
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="16,8"
+                    materialDesign:HintAssist.Hint="From Time (optional)"
+                    materialDesign:HintAssist.IsFloating="True"
+                    SelectedTime="{Binding After, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
+                    ToolTip="If this is set, only messages sent after this time/date will be exported" />
+                <materialDesign:TimePicker
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="16,8"
+                    materialDesign:HintAssist.Hint="To Time (optional)"
+                    materialDesign:HintAssist.IsFloating="True"
+                    SelectedTime="{Binding Before, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
+                    ToolTip="If this is set, only messages sent before this time/date will be exported" />
             </Grid>
 
             <!--  Partitioning  -->
@@ -143,7 +163,6 @@
                 Grid.Column="0"
                 Margin="8"
                 Cursor="Hand"
-                IsChecked="True"
                 Loaded="AdvancedSectionToggleButton_OnLoaded"
                 Style="{DynamicResource MaterialDesignFlatToggleButton}"
                 ToolTip="Show advanced options">

@@ -26,9 +26,23 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
 
         public ExportFormat SelectedFormat { get; set; }
 
-        public DateTimeOffset? After { get; set; }
+        // This date/time abomination is required because we use separate controls to set these
 
-        public DateTimeOffset? Before { get; set; }
+        public DateTimeOffset? AfterDate { get; set; }
+
+        public bool IsAfterDateSet => AfterDate != null;
+
+        public TimeSpan? AfterTime { get; set; }
+
+        public DateTimeOffset? After => AfterDate?.Add(AfterTime ?? TimeSpan.Zero);
+
+        public DateTimeOffset? BeforeDate { get; set; }
+
+        public bool IsBeforeDateSet => BeforeDate != null;
+
+        public TimeSpan? BeforeTime { get; set; }
+
+        public DateTimeOffset? Before => BeforeDate?.Add(BeforeTime ?? TimeSpan.Zero);
 
         public int? PartitionLimit { get; set; }
 
@@ -59,12 +73,6 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             _settingsService.LastExportFormat = SelectedFormat;
             _settingsService.LastPartitionLimit = PartitionLimit;
             _settingsService.LastShouldDownloadMedia = ShouldDownloadMedia;
-
-            // Clamp 'after' and 'before' values
-            if (After > Before)
-                After = Before;
-            if (Before < After)
-                Before = After;
 
             // If single channel - prompt file path
             if (IsSingleChannel)

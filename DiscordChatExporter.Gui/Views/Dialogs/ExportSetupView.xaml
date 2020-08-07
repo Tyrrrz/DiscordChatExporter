@@ -89,43 +89,45 @@
                 <DatePicker
                     Grid.Row="0"
                     Grid.Column="0"
-                    Margin="16,8"
-                    materialDesign:HintAssist.Hint="From (optional)"
+                    Margin="16,8,16,4"
+                    materialDesign:HintAssist.Hint="After (date)"
                     materialDesign:HintAssist.IsFloating="True"
-                    DisplayDateEnd="{Binding Before, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
-                    SelectedDate="{Binding After, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
+                    DisplayDateEnd="{Binding BeforeDate, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
+                    SelectedDate="{Binding AfterDate, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
                     ToolTip="If this is set, only messages sent after this date will be exported" />
                 <DatePicker
                     Grid.Row="0"
                     Grid.Column="1"
-                    Margin="16,8"
-                    materialDesign:HintAssist.Hint="To (optional)"
+                    Margin="16,8,16,4"
+                    materialDesign:HintAssist.Hint="Before (date)"
                     materialDesign:HintAssist.IsFloating="True"
-                    DisplayDateStart="{Binding After, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
-                    SelectedDate="{Binding Before, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
+                    DisplayDateStart="{Binding AfterDate, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
+                    SelectedDate="{Binding BeforeDate, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
                     ToolTip="If this is set, only messages sent before this date will be exported" />
                 <materialDesign:TimePicker
                     Grid.Row="1"
                     Grid.Column="0"
-                    Margin="16,8"
-                    materialDesign:HintAssist.Hint="From Time (optional)"
+                    Margin="16,4,16,8"
+                    materialDesign:HintAssist.Hint="After (time)"
                     materialDesign:HintAssist.IsFloating="True"
-                    SelectedTime="{Binding After, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
-                    ToolTip="If this is set, only messages sent after this time/date will be exported" />
+                    IsEnabled="{Binding IsAfterDateSet}"
+                    SelectedTime="{Binding AfterTime, Converter={x:Static converters:TimeSpanToDateTimeConverter.Instance}}"
+                    ToolTip="If this is set, only messages sent after this time will be exported" />
                 <materialDesign:TimePicker
                     Grid.Row="1"
                     Grid.Column="1"
-                    Margin="16,8"
-                    materialDesign:HintAssist.Hint="To Time (optional)"
+                    Margin="16,4,16,8"
+                    materialDesign:HintAssist.Hint="Before (time)"
                     materialDesign:HintAssist.IsFloating="True"
-                    SelectedTime="{Binding Before, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
-                    ToolTip="If this is set, only messages sent before this time/date will be exported" />
+                    IsEnabled="{Binding IsBeforeDateSet}"
+                    SelectedTime="{Binding BeforeTime, Converter={x:Static converters:TimeSpanToDateTimeConverter.Instance}}"
+                    ToolTip="If this is set, only messages sent before this time will be exported" />
             </Grid>
 
             <!--  Partitioning  -->
             <TextBox
                 Margin="16,8"
-                materialDesign:HintAssist.Hint="Messages per partition (optional)"
+                materialDesign:HintAssist.Hint="Messages per partition"
                 materialDesign:HintAssist.IsFloating="True"
                 Text="{Binding PartitionLimit, TargetNullValue=''}"
                 ToolTip="If this is set, the exported file will be split into multiple partitions, each containing no more than specified number of messages" />

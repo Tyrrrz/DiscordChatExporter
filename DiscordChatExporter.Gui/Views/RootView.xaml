@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:behaviors="clr-namespace:DiscordChatExporter.Gui.Behaviors"
+    xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
     xmlns:converters="clr-namespace:DiscordChatExporter.Gui.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
@@ -23,6 +24,17 @@
     <Window.TaskbarItemInfo>
         <TaskbarItemInfo ProgressState="Normal" ProgressValue="{Binding ProgressManager.Progress}" />
     </Window.TaskbarItemInfo>
+    <Window.Resources>
+        <CollectionViewSource x:Key="AvailableChannelsViewSource" Source="{Binding AvailableChannels, Mode=OneWay}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="Category" />
+            </CollectionViewSource.GroupDescriptions>
+            <CollectionViewSource.SortDescriptions>
+                <componentModel:SortDescription Direction="Ascending" PropertyName="Category" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+    </Window.Resources>
+
     <materialDesign:DialogHost SnackbarMessageQueue="{Binding Notifications}" Style="{DynamicResource MaterialDesignEmbeddedDialogHost}">
         <Grid>
             <Grid.RowDefinitions>
@@ -253,35 +265,29 @@
                     <Border Grid.Column="1">
                         <ListBox
                             HorizontalContentAlignment="Stretch"
-                            ItemsSource="{Binding AvailableChannels}"
+                            ItemsSource="{Binding Source={StaticResource AvailableChannelsViewSource}}"
                             SelectionMode="Extended"
-                            TextSearch.TextPath="Model.Name">
+                            TextSearch.TextPath="Model.Name"
+                            VirtualizingPanel.IsVirtualizingWhenGrouping="True">
                             <i:Interaction.Behaviors>
                                 <behaviors:ChannelMultiSelectionListBoxBehavior SelectedItems="{Binding SelectedChannels}" />
                             </i:Interaction.Behaviors>
                             <ListBox.GroupStyle>
                                 <GroupStyle>
-                                    <GroupStyle.Panel>
-                                        <ItemsPanelTemplate>
-                                            <VirtualizingStackPanel Orientation="Vertical" />
-                                        </ItemsPanelTemplate>
-                                    </GroupStyle.Panel>
                                     <GroupStyle.ContainerStyle>
                                         <Style TargetType="{x:Type GroupItem}">
                                             <Setter Property="Template">
                                                 <Setter.Value>
-                                                    <ControlTemplate>
+                                                    <ControlTemplate d:DataContext="{x:Type CollectionViewGroup}">
                                                         <Expander
+                                                            Margin="0"
                                                             Padding="0"
-                                                            BorderThickness="0"
+                                                            Background="Transparent"
+                                                            BorderBrush="{DynamicResource DividerBrush}"
+                                                            BorderThickness="0,1,0,0"
+                                                            Header="{Binding Name}"
                                                             IsExpanded="False">
                                                             <ItemsPresenter />
-                                                            <Expander.Header>
-                                                                <Run
-                                                                    FontWeight="Bold"
-                                                                    Foreground="{DynamicResource SecondaryTextBrush}"
-                                                                    Text="{Binding Name, Mode=OneWay}" />
-                                                            </Expander.Header>
                                                         </Expander>
                                                     </ControlTemplate>
                                                 </Setter.Value>
@@ -309,16 +315,14 @@
                                             VerticalAlignment="Center"
                                             Kind="Pound" />
 
-                                        <!--  Channel category / name  -->
+                                        <!--  Channel name  -->
                                         <TextBlock
                                             Grid.Column="1"
                                             Margin="3,8,8,8"
                                             VerticalAlignment="Center"
-                                            FontSize="14">
-                                            <Run Foreground="{DynamicResource SecondaryTextBrush}" Text="{Binding Category, Mode=OneWay}" />
-                                            <Run Text="/" />
-                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Name, Mode=OneWay}" />
-                                        </TextBlock>
+                                            FontSize="14"
+                                            Foreground="{DynamicResource PrimaryTextBrush}"
+                                            Text="{Binding Name, Mode=OneWay}" />
 
                                         <!--  Is selected checkmark  -->
                                         <materialDesign:PackIcon

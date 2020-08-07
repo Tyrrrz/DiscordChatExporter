@@ -136,6 +136,89 @@
                     </Trigger>
                 </Style.Triggers>
             </Style>
+
+            <!--  Default MD Expander is incredibly slow (https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit/issues/1307)  -->
+            <Style BasedOn="{StaticResource MaterialDesignExpander}" TargetType="{x:Type Expander}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Expander">
+                            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                <DockPanel Background="{TemplateBinding Background}">
+                                    <ToggleButton
+                                        Name="HeaderSite"
+                                        BorderThickness="0"
+                                        Content="{TemplateBinding Header}"
+                                        ContentStringFormat="{TemplateBinding HeaderStringFormat}"
+                                        ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                        ContentTemplateSelector="{TemplateBinding HeaderTemplateSelector}"
+                                        Cursor="Hand"
+                                        DockPanel.Dock="Top"
+                                        Focusable="False"
+                                        Foreground="{TemplateBinding Foreground}"
+                                        IsChecked="{Binding Path=IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                        IsTabStop="False"
+                                        Opacity=".87"
+                                        Style="{StaticResource MaterialDesignExpanderDownHeaderStyle}"
+                                        TextElement.FontSize="15" />
+                                    <Border
+                                        Name="ContentSite"
+                                        DockPanel.Dock="Bottom"
+                                        Visibility="Collapsed">
+                                        <StackPanel
+                                            Name="ContentPanel"
+                                            Margin="{TemplateBinding Padding}"
+                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                                            <ContentPresenter
+                                                Name="PART_Content"
+                                                ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                                Focusable="False" />
+                                        </StackPanel>
+                                    </Border>
+                                </DockPanel>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsExpanded" Value="true">
+                                    <Setter TargetName="ContentSite" Property="Visibility" Value="Visible" />
+                                </Trigger>
+                                <Trigger Property="ExpandDirection" Value="Right">
+                                    <Setter TargetName="HeaderSite" Property="DockPanel.Dock" Value="Left" />
+                                    <Setter TargetName="ContentSite" Property="DockPanel.Dock" Value="Right" />
+                                    <Setter TargetName="ContentPanel" Property="Orientation" Value="Horizontal" />
+                                    <Setter TargetName="ContentPanel" Property="Height" Value="Auto" />
+                                    <Setter TargetName="HeaderSite" Property="Style" Value="{StaticResource MaterialDesignExpanderRightHeaderStyle}" />
+                                </Trigger>
+
+                                <Trigger Property="ExpandDirection" Value="Left">
+                                    <Setter TargetName="HeaderSite" Property="DockPanel.Dock" Value="Right" />
+                                    <Setter TargetName="ContentSite" Property="DockPanel.Dock" Value="Left" />
+                                    <Setter TargetName="ContentPanel" Property="Orientation" Value="Horizontal" />
+                                    <Setter TargetName="ContentPanel" Property="Height" Value="Auto" />
+                                    <Setter TargetName="HeaderSite" Property="Style" Value="{StaticResource MaterialDesignExpanderLeftHeaderStyle}" />
+                                </Trigger>
+
+                                <Trigger Property="ExpandDirection" Value="Up">
+                                    <Setter TargetName="HeaderSite" Property="DockPanel.Dock" Value="Bottom" />
+                                    <Setter TargetName="ContentSite" Property="DockPanel.Dock" Value="Top" />
+                                    <Setter TargetName="ContentPanel" Property="Orientation" Value="Vertical" />
+                                    <Setter TargetName="ContentPanel" Property="Width" Value="Auto" />
+                                    <Setter TargetName="HeaderSite" Property="Style" Value="{StaticResource MaterialDesignExpanderUpHeaderStyle}" />
+                                </Trigger>
+
+                                <Trigger Property="ExpandDirection" Value="Down">
+                                    <Setter TargetName="HeaderSite" Property="DockPanel.Dock" Value="Top" />
+                                    <Setter TargetName="ContentSite" Property="DockPanel.Dock" Value="Bottom" />
+                                    <Setter TargetName="ContentPanel" Property="Orientation" Value="Vertical" />
+                                    <Setter TargetName="ContentPanel" Property="Width" Value="Auto" />
+                                    <Setter TargetName="HeaderSite" Property="Style" Value="{StaticResource MaterialDesignExpanderDownHeaderStyle}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </s:ApplicationLoader>
     </Application.Resources>
 </Application>

@@ -259,6 +259,37 @@
                             <i:Interaction.Behaviors>
                                 <behaviors:ChannelMultiSelectionListBoxBehavior SelectedItems="{Binding SelectedChannels}" />
                             </i:Interaction.Behaviors>
+                            <ListBox.GroupStyle>
+                                <GroupStyle>
+                                    <GroupStyle.Panel>
+                                        <ItemsPanelTemplate>
+                                            <VirtualizingStackPanel Orientation="Vertical" />
+                                        </ItemsPanelTemplate>
+                                    </GroupStyle.Panel>
+                                    <GroupStyle.ContainerStyle>
+                                        <Style TargetType="{x:Type GroupItem}">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate>
+                                                        <Expander
+                                                            Padding="0"
+                                                            BorderThickness="0"
+                                                            IsExpanded="False">
+                                                            <ItemsPresenter />
+                                                            <Expander.Header>
+                                                                <Run
+                                                                    FontWeight="Bold"
+                                                                    Foreground="{DynamicResource SecondaryTextBrush}"
+                                                                    Text="{Binding Name, Mode=OneWay}" />
+                                                            </Expander.Header>
+                                                        </Expander>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </GroupStyle.ContainerStyle>
+                                </GroupStyle>
+                            </ListBox.GroupStyle>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Grid Margin="-8" Background="Transparent">

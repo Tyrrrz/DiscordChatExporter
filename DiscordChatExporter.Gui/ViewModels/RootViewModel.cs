@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Data;
 using DiscordChatExporter.Domain.Discord;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exceptions;
@@ -42,9 +44,34 @@ namespace DiscordChatExporter.Gui.ViewModels
 
         public Guild? SelectedGuild { get; set; }
 
-        public IReadOnlyList<Channel>? AvailableChannels => SelectedGuild != null
-            ? GuildChannelMap?[SelectedGuild]
-            : null;
+
+        //Here for Legacy Purposes
+        public IReadOnlyList<Channel>? AvailableChannelsList
+        {
+            get
+            {
+                return SelectedGuild != null ? GuildChannelMap?[SelectedGuild] : null;
+            }
+        }
+
+        public ICollectionView? AvailableChannels 
+        {
+            get 
+            {
+                var result = SelectedGuild != null ? GuildChannelMap?[SelectedGuild] : null;
+                if (result != null)
+                {
+                    var GroupedResults = CollectionViewSource.GetDefaultView(result);
+                    GroupedResults.GroupDescriptions.Clear();
+                    GroupedResults.SortDescriptions.Clear();
+                    GroupedResults.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
+                    GroupedResults.SortDescriptions.Add(new SortDescription("Category", ListSortDirection.Descending));
+                    return GroupedResults;
+                }
+                else return null;
+            }
+        }
+
 
         public IReadOnlyList<Channel>? SelectedChannels { get; set; }
 

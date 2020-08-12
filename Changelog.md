@@ -1,3 +1,10 @@
+### v2.22 (12-Aug-2020)
+
+- [GUI] Improved the channel list by adding collapsible category groups. (Thanks [@CarJem Generations](https://github.com/CarJem))
+- [GUI] Improved exporting options by adding a set of controls that can be used to limit the date range of the export down to minutes. Previously it was only possible to configure the date range without the time component. (Thanks [@CarJem Generations](https://github.com/CarJem))
+- [HTML] Fixed an issue where the export didn't reflect changes in nicknames between messages sent by bots. This affected chat logs that contained interactions with the Tupperbox bot. (Thanks [@CarJem Generations](https://github.com/CarJem))
+- [CLI] Fixed an issue where the application crashed if there were two environment variables defined that had the same name but in different case.
+
 ### v2.21.2 (30-Jul-2020)
 
 - [GUI] When copy-pasting token, any surrounding spaces are now discarded, in addition to double quotes.

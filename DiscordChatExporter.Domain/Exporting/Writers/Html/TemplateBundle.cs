@@ -3,12 +3,18 @@ using System.Threading.Tasks;
 using MiniRazor;
 using Tyrrrz.Extensions;
 
-[assembly: InternalsVisibleTo("RazorAssembly")]
+[assembly: InternalsVisibleTo(DiscordChatExporter.Domain.Exporting.Writers.Html.TemplateBundle.PreambleTemplateAssemblyName)]
+[assembly: InternalsVisibleTo(DiscordChatExporter.Domain.Exporting.Writers.Html.TemplateBundle.MessageGroupTemplateAssemblyName)]
+[assembly: InternalsVisibleTo(DiscordChatExporter.Domain.Exporting.Writers.Html.TemplateBundle.PostambleTemplateAssemblyName)]
 
 namespace DiscordChatExporter.Domain.Exporting.Writers.Html
 {
     internal partial class TemplateBundle
     {
+        public const string PreambleTemplateAssemblyName = "RazorAssembly_Preamble";
+        public const string MessageGroupTemplateAssemblyName = "RazorAssembly_MessageGroup";
+        public const string PostambleTemplateAssemblyName = "RazorAssembly_Postamble";
+
         public MiniRazorTemplateDescriptor PreambleTemplate { get; }
 
         public MiniRazorTemplateDescriptor MessageGroupTemplate { get; }
@@ -44,11 +50,11 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.Html
             var postambleTemplateSource = typeof(HtmlMessageWriter).Assembly
                 .GetManifestResourceString($"{ns}.PostambleTemplate.cshtml");
 
-            var engine = new MiniRazorTemplateEngine("RazorAssembly", ns);
+            var engine = new MiniRazorTemplateEngine();
 
-            var preambleTemplate = engine.Compile(preambleTemplateSource);
-            var messageGroupTemplate = engine.Compile(messageGroupTemplateSource);
-            var postambleTemplate = engine.Compile(postambleTemplateSource);
+            var preambleTemplate = engine.Compile(preambleTemplateSource, PreambleTemplateAssemblyName, ns);
+            var messageGroupTemplate = engine.Compile(messageGroupTemplateSource, MessageGroupTemplateAssemblyName, ns);
+            var postambleTemplate = engine.Compile(postambleTemplateSource, PostambleTemplateAssemblyName, ns);
 
             return new TemplateBundle(preambleTemplate, messageGroupTemplate, postambleTemplate);
         });

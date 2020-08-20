@@ -197,6 +197,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteString("type", message.Type.ToString());
             _writer.WriteString("timestamp", message.Timestamp);
             _writer.WriteString("timestampEdited", message.EditedTimestamp);
+            _writer.WriteString("callEndedTimestamp", message.CallEndedTimestamp);
             _writer.WriteBoolean("isPinned", message.IsPinned);
 
             // Content

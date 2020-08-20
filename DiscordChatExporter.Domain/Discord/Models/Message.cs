@@ -32,10 +32,12 @@ namespace DiscordChatExporter.Domain.Discord.Models
         public DateTimeOffset Timestamp { get; }
 
         public DateTimeOffset? EditedTimestamp { get; }
+        public DateTimeOffset? CallEndedTimestamp { get; }
 
         public bool IsPinned { get; }
 
         public string Content { get; }
+        
 
         public IReadOnlyList<Attachment> Attachments { get; }
 
@@ -51,6 +53,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
             User author,
             DateTimeOffset timestamp,
             DateTimeOffset? editedTimestamp,
+            DateTimeOffset? callEndedTimestamp,
             bool isPinned,
             string content,
             IReadOnlyList<Attachment> attachments,
@@ -63,6 +66,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
             Author = author;
             Timestamp = timestamp;
             EditedTimestamp = editedTimestamp;
+            CallEndedTimestamp = callEndedTimestamp;
             IsPinned = isPinned;
             Content = content;
             Attachments = attachments;
@@ -82,14 +86,16 @@ namespace DiscordChatExporter.Domain.Discord.Models
             var author = json.GetProperty("author").Pipe(User.Parse);
             var timestamp = json.GetProperty("timestamp").GetDateTimeOffset();
             var editedTimestamp = json.GetPropertyOrNull("edited_timestamp")?.GetDateTimeOffset();
+            var callEndedTimestamp = json.GetPropertyOrNull("call")?.GetPropertyOrNull("ended_timestamp")?.GetDateTimeOffset();
             var type = (MessageType) json.GetProperty("type").GetInt32();
             var isPinned = json.GetPropertyOrNull("pinned")?.GetBoolean() ?? false;
 
+            
             var content = type switch
             {
                 MessageType.RecipientAdd => "Added a recipient.",
                 MessageType.RecipientRemove => "Removed a recipient.",
-                MessageType.Call => "Started a call.",
+                MessageType.Call => $"Started a call that lasted {Convert.ToInt32(callEndedTimestamp?.Subtract(timestamp).TotalMinutes)} minutes.",
                 MessageType.ChannelNameChange => "Changed the channel name.",
                 MessageType.ChannelIconChange => "Changed the channel icon.",
                 MessageType.ChannelPinnedMessage => "Pinned a message.",
@@ -119,12 +125,14 @@ namespace DiscordChatExporter.Domain.Discord.Models
                 author,
                 timestamp,
                 editedTimestamp,
+                callEndedTimestamp,
                 isPinned,
                 content,
                 attachments,
                 embeds,
                 reactions,
                 mentionedUsers
+                
             );
         }
     }

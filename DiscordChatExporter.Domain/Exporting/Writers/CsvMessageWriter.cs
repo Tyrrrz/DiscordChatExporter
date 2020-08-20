@@ -55,7 +55,6 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
             await _writer.WriteAsync(CsvEncode(buffer.ToString()));
         }
-
         public override async ValueTask WriteMessageAsync(Message message)
         {
             // Author ID

@@ -95,7 +95,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
             {
                 MessageType.RecipientAdd => "Added a recipient.",
                 MessageType.RecipientRemove => "Removed a recipient.",
-                MessageType.Call => $"Started a call that lasted {Convert.ToInt32(callEndedTimestamp?.Subtract(timestamp).TotalMinutes)} minutes.",
+                MessageType.Call => $"Started a call that lasted {callEndedTimestamp?.Pipe(t => t - timestamp).Pipe(t => (int) t.TotalMinutes) ?? 0} minutes.",
                 MessageType.ChannelNameChange => "Changed the channel name.",
                 MessageType.ChannelIconChange => "Changed the channel icon.",
                 MessageType.ChannelPinnedMessage => "Pinned a message.",

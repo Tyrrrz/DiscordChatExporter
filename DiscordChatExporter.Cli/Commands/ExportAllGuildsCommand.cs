@@ -7,8 +7,8 @@ using DiscordChatExporter.Domain.Utilities;
 
 namespace DiscordChatExporter.Cli.Commands
 {
-    [Command("guilds", Description = "Get the list of accessible guilds.")]
-    public class GetGuildsCommand : TokenCommandBase
+    [Command("exportallguilds", Description = "Export all channels within specified all guilds.")]
+    public class ExportAllGuildsCommand : TokenCommandBase
     {
         public override async ValueTask ExecuteAsync(IConsole console)
         {

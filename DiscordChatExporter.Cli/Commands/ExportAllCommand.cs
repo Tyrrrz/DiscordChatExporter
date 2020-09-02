@@ -8,7 +8,7 @@ using DiscordChatExporter.Domain.Utilities;
 namespace DiscordChatExporter.Cli.Commands
 {
     [Command("exportall", Description = "Export all direct messages and all channels within all guilds.")]
-    public class ExportAllGuildsCommand : ExportMultipleCommandBase
+    public class ExportAllCommand : ExportMultipleCommandBase
     {
         [CommandOption("exclude-dm", 'e', Description = "If this flag is present, direct messages will not be exported.")]
         public bool ExcludeDMs { get; set; }

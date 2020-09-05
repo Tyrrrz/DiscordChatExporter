@@ -13,9 +13,9 @@ namespace DiscordChatExporter.Cli.Commands
     {
         public override async ValueTask ExecuteAsync(IConsole console)
         {
-            var dmChannels = await GetDiscordClient().GetGuildChannelsAsync(Guild.DirectMessages.Id);
+            var channels = await GetDiscordClient().GetGuildChannelsAsync(Guild.DirectMessages.Id);
 
-            foreach (var channel in dmChannels.OrderBy(c => c.Category).ThenBy(c => c.Name))
+            foreach (var channel in channels.OrderBy(c => c.Category).ThenBy(c => c.Name))
                 console.Output.WriteLine($"{channel.Id} | {channel.Category} / {channel.Name}");
         }
     }

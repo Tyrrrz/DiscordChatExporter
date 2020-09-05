@@ -7,7 +7,7 @@ using DiscordChatExporter.Domain.Utilities;
 
 namespace DiscordChatExporter.Cli.Commands
 {
-    [Command("channels", Description = "Get the list of channels in specified guild.")]
+    [Command("channels", Description = "Get the list of channels in a guild.")]
     public class GetChannelsCommand : TokenCommandBase
     {
         [CommandOption("guild", 'g', IsRequired = true, Description = "Guild ID.")]
@@ -15,9 +15,9 @@ namespace DiscordChatExporter.Cli.Commands
 
         public override async ValueTask ExecuteAsync(IConsole console)
         {
-            var guildChannels = await GetDiscordClient().GetGuildChannelsAsync(GuildId);
+            var channels = await GetDiscordClient().GetGuildChannelsAsync(GuildId);
 
-            foreach (var channel in guildChannels.OrderBy(c => c.Category).ThenBy(c => c.Name))
+            foreach (var channel in channels.OrderBy(c => c.Category).ThenBy(c => c.Name))
                 console.Output.WriteLine($"{channel.Id} | {channel.Category} / {channel.Name}");
         }
     }

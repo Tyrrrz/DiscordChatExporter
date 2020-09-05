@@ -1,33 +1,36 @@
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using CliFx;
 using CliFx.Attributes;
 using DiscordChatExporter.Cli.Commands.Base;
 using DiscordChatExporter.Domain.Discord.Models;
-using DiscordChatExporter.Domain.Utilities;
 
 namespace DiscordChatExporter.Cli.Commands
 {
-    [Command("exportall", Description = "Export all direct messages and all channels within all guilds.")]
+    [Command("exportall", Description = "Export all accessible channels.")]
     public class ExportAllCommand : ExportMultipleCommandBase
     {
-        [CommandOption("exclude-dm", 'e', Description = "If this flag is present, direct messages will not be exported.")]
-        public bool ExcludeDMs { get; set; }
-        
+        [CommandOption("include-dm", Description = "Whether to also export direct message channels.")]
+        public bool IncludeDirectMessages { get; set; } = true;
+
         public override async ValueTask ExecuteAsync(IConsole console)
         {
+            var channels = new List<Channel>();
 
-            if(!ExcludeDMs){
-                var dmChannels = await GetDiscordClient().GetGuildChannelsAsync(Guild.DirectMessages.Id);
-                await ExportMultipleAsync(console, dmChannels);
-            }
-
-            var guilds = await GetDiscordClient().GetUserGuildsAsync();
-            foreach (var guild in guilds.OrderBy(g => g.Name))
+            // Aggregate channels from all guilds
+            await foreach (var guild in GetDiscordClient().GetUserGuildsAsync())
             {
-                var guildChannels = await GetDiscordClient().GetGuildChannelsAsync(guild.Id);
-                await ExportMultipleAsync(console, guildChannels);
+                // Skip DMs if instructed to
+                if (!IncludeDirectMessages && guild.Id == Guild.DirectMessages.Id)
+                    continue;
+
+                await foreach (var channel in GetDiscordClient().GetGuildChannelsAsync(guild.Id))
+                {
+                    channels.Add(channel);
+                }
             }
+
+            await ExportMultipleAsync(console, channels);
         }
     }
 }

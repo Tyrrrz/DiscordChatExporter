@@ -12,8 +12,8 @@ namespace DiscordChatExporter.Cli.Commands
     {
         public override async ValueTask ExecuteAsync(IConsole console)
         {
-            var dmChannels = await GetDiscordClient().GetGuildChannelsAsync(Guild.DirectMessages.Id);
-            await ExportMultipleAsync(console, dmChannels);
+            var channels = await GetDiscordClient().GetGuildChannelsAsync(Guild.DirectMessages.Id);
+            await ExportMultipleAsync(console, channels);
         }
     }
 }

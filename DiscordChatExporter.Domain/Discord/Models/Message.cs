@@ -32,12 +32,12 @@ namespace DiscordChatExporter.Domain.Discord.Models
         public DateTimeOffset Timestamp { get; }
 
         public DateTimeOffset? EditedTimestamp { get; }
+
         public DateTimeOffset? CallEndedTimestamp { get; }
 
         public bool IsPinned { get; }
 
         public string Content { get; }
-        
 
         public IReadOnlyList<Attachment> Attachments { get; }
 
@@ -90,12 +90,12 @@ namespace DiscordChatExporter.Domain.Discord.Models
             var type = (MessageType) json.GetProperty("type").GetInt32();
             var isPinned = json.GetPropertyOrNull("pinned")?.GetBoolean() ?? false;
 
-            
             var content = type switch
             {
                 MessageType.RecipientAdd => "Added a recipient.",
                 MessageType.RecipientRemove => "Removed a recipient.",
-                MessageType.Call => $"Started a call that lasted {callEndedTimestamp?.Pipe(t => t - timestamp).Pipe(t => (int) t.TotalMinutes) ?? 0} minutes.",
+                MessageType.Call =>
+                $"Started a call that lasted {callEndedTimestamp?.Pipe(t => t - timestamp).Pipe(t => (int) t.TotalMinutes) ?? 0} minutes.",
                 MessageType.ChannelNameChange => "Changed the channel name.",
                 MessageType.ChannelIconChange => "Changed the channel icon.",
                 MessageType.ChannelPinnedMessage => "Pinned a message.",
@@ -132,7 +132,6 @@ namespace DiscordChatExporter.Domain.Discord.Models
                 embeds,
                 reactions,
                 mentionedUsers
-                
             );
         }
     }

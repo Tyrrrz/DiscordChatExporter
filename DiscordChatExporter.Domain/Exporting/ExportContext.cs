@@ -84,7 +84,10 @@ namespace DiscordChatExporter.Domain.Exporting
 
                 return relativeFilePath;
             }
-            catch (HttpRequestException)
+            // Try to catch only exceptions related to failed HTTP requests
+            // https://github.com/Tyrrrz/DiscordChatExporter/issues/332
+            // https://github.com/Tyrrrz/DiscordChatExporter/issues/372
+            catch (Exception ex) when (ex is HttpRequestException || ex is OperationCanceledException)
             {
                 // We don't want this to crash the exporting process in case of failure
                 return url;

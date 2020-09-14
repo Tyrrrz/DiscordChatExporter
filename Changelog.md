@@ -1,3 +1,9 @@
+### v2.23 (14-Sep-2020)
+
+- [CLI] Added a command to export all channels across all servers. Use `exportall` to do it. (Thanks [@wyattscarpenter](https://github.com/wyattscarpenter))
+- [HTML] Fixed an issue where Whitney fonts were not being loaded properly, causing the browser to fall back to Helvetica.
+- Fixed an issue where self-contained export crashed occasionally. This usually happened when the server hosting the file did not serve the stream properly. Such files are now ignored after the first failed attempt.
+
 ### v2.22 (12-Aug-2020)
 
 - [GUI] Improved the channel list by adding collapsible category groups. (Thanks [@CarJem Generations](https://github.com/CarJem))

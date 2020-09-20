@@ -14,6 +14,7 @@ _For guides and other info -- check out the [wiki](https://github.com/Tyrrrz/Dis
 
 - **[Latest release](https://github.com/Tyrrrz/DiscordChatExporter/releases/latest)**
 - [Docker image](https://hub.docker.com/r/tyrrrz/discordchatexporter): `docker pull tyrrrz/discordchatexporter`
+- [AUR](https://aur.archlinux.org/packages/discord-chat-exporter-cli/): `yay -S discord-chat-exporter-cli`
 - [CI build](https://github.com/Tyrrrz/DiscordChatExporter/actions)
 
 Note: This application requires .NET Core runtime in order to run:

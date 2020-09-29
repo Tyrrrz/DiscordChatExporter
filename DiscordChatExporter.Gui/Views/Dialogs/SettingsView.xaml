@@ -15,7 +15,7 @@
         <TextBlock
             Margin="16"
             FontSize="17"
-            Foreground="{DynamicResource PrimaryTextBrush}"
+            Style="{DynamicResource MaterialDesignHeadline1TextBlock}"
             Text="Settings" />
 
         <!--  Date format  -->
@@ -60,7 +60,7 @@
         <StackPanel Background="Transparent" ToolTip="How many channels can be exported at the same time">
             <TextBlock Margin="16,8">
                 <Run Text="Parallel limit:" />
-                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding ParallelLimit, Mode=OneWay}" />
+                <Run Text="{Binding ParallelLimit, Mode=OneWay}" />
             </TextBlock>
             <Slider
                 Margin="16,8"

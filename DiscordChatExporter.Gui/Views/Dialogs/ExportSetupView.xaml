@@ -53,7 +53,7 @@
                 <Run Text="{Binding Channels[0].Category, Mode=OneWay}" ToolTip="{Binding Channels[0].Category, Mode=OneWay}" />
                 <Run Text="/" />
                 <Run
-                    Foreground="{DynamicResource PrimaryTextBrush}"
+                    Foreground="{DynamicResource PrimaryHueDarkBrush}"
                     Text="{Binding Channels[0].Name, Mode=OneWay}"
                     ToolTip="{Binding Channels[0].Name, Mode=OneWay}" />
             </TextBlock>

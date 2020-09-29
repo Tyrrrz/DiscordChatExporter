@@ -46,10 +46,8 @@
             </Grid.RowDefinitions>
 
             <!--  Toolbar  -->
-            <Grid
-                Grid.Row="0"
-                Background="{DynamicResource PrimaryHueMidBrush}"
-                TextElement.Foreground="{DynamicResource SecondaryInverseTextBrush}">
+            <Grid Grid.Row="0" Background="{DynamicResource PrimaryHueMidBrush}">
+
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -151,25 +149,25 @@
                             <Run Text="1. Open Discord" />
                             <LineBreak />
                             <Run Text="2. Press" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Ctrl+Shift+I" />
+                            <Run Foreground="{DynamicResource PrimaryHueDarkBrush}" Text="Ctrl+Shift+I" />
                             <Run Text="to show developer tools" />
                             <LineBreak />
                             <Run Text="3. Navigate to the" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Application" />
+                            <Run Foreground="{DynamicResource PrimaryHueDarkBrush}" Text="Application" />
                             <Run Text="tab" />
                             <LineBreak />
                             <Run Text="4. Select" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Local Storage" />
+                            <Run Foreground="{DynamicResource PrimaryHueDarkBrush}" Text="Local Storage" />
                             <Run Text="&gt;" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="https://discord.com" />
+                            <Run Foreground="{DynamicResource PrimaryHueDarkBrush}" Text="https://discord.com" />
                             <Run Text="on the left" />
                             <LineBreak />
                             <Run Text="5. Press" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Ctrl+R" />
+                            <Run Foreground="{DynamicResource PrimaryHueDarkBrush}" Text="Ctrl+R" />
                             <Run Text="to reload" />
                             <LineBreak />
                             <Run Text="6. Find" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="token" />
+                            <Run Foreground="{DynamicResource PrimaryHueDarkBrush}" Text="token" />
                             <Run Text="at the bottom and copy the value" />
                         </TextBlock>
                         <TextBlock Margin="0,24,0,0" FontSize="14">
@@ -195,13 +193,13 @@
                             <Run Text="2. Open your application's settings" />
                             <LineBreak />
                             <Run Text="3. Navigate to the" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Bot" />
+                            <Run Foreground="{DynamicResource PrimaryHueDarkBrush}" Text="Bot" />
                             <Run Text="section on the left" />
                             <LineBreak />
                             <Run Text="4. Under" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Token" />
+                            <Run Foreground="{DynamicResource PrimaryHueDarkBrush}" Text="Token" />
                             <Run Text="click" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Copy" />
+                            <Run Foreground="{DynamicResource PrimaryHueDarkBrush}" Text="Copy" />
                         </TextBlock>
                         <TextBlock Margin="0,24,0,0" FontSize="14">
                             <Run Text="To authorize using user token instead, click" />
@@ -226,7 +224,7 @@
                     <!--  Guilds  -->
                     <Border
                         Grid.Column="0"
-                        BorderBrush="{DynamicResource DividerBrush}"
+                        BorderBrush="{DynamicResource MaterialDesignDivider}"
                         BorderThickness="0,0,1,0">
                         <ListBox
                             ItemsSource="{Binding AvailableGuilds}"
@@ -245,7 +243,7 @@
                                             Width="48"
                                             Height="48"
                                             Margin="12,4,12,4"
-                                            Fill="{DynamicResource DividerBrush}" />
+                                            Fill="{DynamicResource MaterialDesignDivider}" />
 
                                         <!--  Guild icon  -->
                                         <Ellipse
@@ -284,7 +282,7 @@
                                                             Margin="0"
                                                             Padding="0"
                                                             Background="Transparent"
-                                                            BorderBrush="{DynamicResource DividerBrush}"
+                                                            BorderBrush="{DynamicResource MaterialDesignDivider}"
                                                             BorderThickness="0,1,0,0"
                                                             Header="{Binding Name}"
                                                             IsExpanded="False">
@@ -322,7 +320,6 @@
                                             Margin="3,8,8,8"
                                             VerticalAlignment="Center"
                                             FontSize="14"
-                                            Foreground="{DynamicResource PrimaryTextBrush}"
                                             Text="{Binding Name, Mode=OneWay}" />
 
                                         <!--  Is selected checkmark  -->

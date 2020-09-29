@@ -26,6 +26,12 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             set => _settingsService.IsTokenPersisted = value;
         }
 
+        public bool IsDarkThemeEnabled
+        {
+            get => _settingsService.IsDarkThemeEnabled;
+            set => _settingsService.IsDarkThemeEnabled = value;
+        }
+
         public int ParallelLimit
         {
             get => _settingsService.ParallelLimit;

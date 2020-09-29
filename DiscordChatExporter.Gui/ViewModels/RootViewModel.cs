@@ -107,6 +107,10 @@ namespace DiscordChatExporter.Gui.ViewModels
                 IsBotToken = _settingsService.LastToken.Type == AuthTokenType.Bot;
                 TokenValue = _settingsService.LastToken.Value;
             }
+            if (_settingsService.IsDarkThemeEnabled != null)
+            {
+                ((App)System.Windows.Application.Current).setBaseTheme(_settingsService.IsDarkThemeEnabled ? Theme.Dark : Theme.Light);
+            }
 
             await HandleAutoUpdateAsync();
         }

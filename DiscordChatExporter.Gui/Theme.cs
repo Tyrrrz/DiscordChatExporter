@@ -11,7 +11,7 @@ namespace DiscordChatExporter.Gui
     public sealed class Theme
     {
         public static Theme Light { get; } = new Theme(new MaterialDesignLightTheme(), HexToColor.convert("#343838"), HexToColor.convert("#F9A825"));
-        public static Theme Dark { get; } = new Theme(new MaterialDesignDarkTheme(), HexToColor.convert("#2196f3"), HexToColor.convert("#F9A825"));
+        public static Theme Dark { get; } = new Theme(new MaterialDesignDarkTheme(), HexToColor.convert("#cbc7c7"), HexToColor.convert("#F9A825"));
         private Theme(IBaseTheme baseTheme, Color primaryColor, Color secondaryColor)
         {
             this.baseTheme = baseTheme;

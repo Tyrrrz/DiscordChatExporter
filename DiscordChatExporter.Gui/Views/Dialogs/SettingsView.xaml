@@ -15,7 +15,6 @@
         <TextBlock
             Margin="16"
             FontSize="17"
-            Style="{DynamicResource MaterialDesignHeadline1TextBlock}"
             Text="Settings" />
 
         <!--  Date format  -->

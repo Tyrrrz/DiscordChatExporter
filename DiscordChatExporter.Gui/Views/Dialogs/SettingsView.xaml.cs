@@ -21,9 +21,9 @@ namespace DiscordChatExporter.Gui.Views.Dialogs
             setBaseTheme(Theme.Light);
         }
 
-        private void setBaseTheme(IBaseTheme baseTheme)
+        private void setBaseTheme(Theme theme)
         {
-            ((App)System.Windows.Application.Current).setBaseTheme(baseTheme);
+            ((App)System.Windows.Application.Current).setTheme(theme);
         }
     }
 }

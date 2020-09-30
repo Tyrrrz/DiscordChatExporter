@@ -21,7 +21,6 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-
             <!--  Styles  -->
             <Style x:Key="MaterialDesignRoot" TargetType="{x:Type Control}">
                 <Setter Property="FontFamily" Value="{DynamicResource MaterialDesignFont}" />

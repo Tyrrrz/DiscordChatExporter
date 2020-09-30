@@ -109,7 +109,7 @@ namespace DiscordChatExporter.Gui.ViewModels
             }
             if (_settingsService.IsDarkThemeEnabled != null)
             {
-                ((App)System.Windows.Application.Current).setBaseTheme(_settingsService.IsDarkThemeEnabled ? Theme.Dark : Theme.Light);
+                ((App)System.Windows.Application.Current).setTheme(_settingsService.IsDarkThemeEnabled ? Theme.Dark : Theme.Light);
             }
 
             await HandleAutoUpdateAsync();

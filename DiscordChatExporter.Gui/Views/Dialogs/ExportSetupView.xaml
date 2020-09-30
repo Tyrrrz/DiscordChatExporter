@@ -163,17 +163,13 @@
             <ToggleButton
                 x:Name="AdvancedSectionToggleButton"
                 Grid.Column="0"
-                Margin="8"
+                Margin="12"
                 Cursor="Hand"
                 Loaded="AdvancedSectionToggleButton_OnLoaded"
-                Style="{DynamicResource MaterialDesignFlatToggleButton}"
-                ToolTip="Show advanced options">
-                <ToggleButton.Content>
-                    <materialDesign:PackIcon
-                        Width="24"
-                        Height="24"
-                        Kind="Menu" />
-                </ToggleButton.Content>
+                Style="{DynamicResource MaterialDesignHamburgerToggleButton}"
+                ToolTip="Show advanced options"
+                Width="24"
+                Height="24">
             </ToggleButton>
 
             <Button

@@ -163,14 +163,13 @@
             <ToggleButton
                 x:Name="AdvancedSectionToggleButton"
                 Grid.Column="0"
+                Width="24"
+                Height="24"
                 Margin="12"
                 Cursor="Hand"
                 Loaded="AdvancedSectionToggleButton_OnLoaded"
                 Style="{DynamicResource MaterialDesignHamburgerToggleButton}"
-                ToolTip="Show advanced options"
-                Width="24"
-                Height="24">
-            </ToggleButton>
+                ToolTip="Show advanced options" />
 
             <Button
                 Grid.Column="2"

@@ -12,16 +12,17 @@ namespace DiscordChatExporter.Gui
     {
         public static Theme Light { get; } = new Theme(new MaterialDesignLightTheme(), HexToColor.convert("#343838"), HexToColor.convert("#F9A825"));
         public static Theme Dark { get; } = new Theme(new MaterialDesignDarkTheme(), HexToColor.convert("#cbc7c7"), HexToColor.convert("#F9A825"));
-        private Theme(IBaseTheme baseTheme, Color primaryColor, Color secondaryColor)
+
+        public Theme(IBaseTheme baseTheme, Color primaryColor, Color secondaryColor)
         {
-            this.baseTheme = baseTheme;
-            this.primaryColor = primaryColor;
-            this.secondaryColor = secondaryColor;
+            BaseTheme = baseTheme;
+            PrimaryColor = primaryColor;
+            SecondaryColor = secondaryColor;
         }
 
-        public IBaseTheme baseTheme { get; }
-        public Color primaryColor { get; }
-        public Color secondaryColor { get; }
+        public IBaseTheme BaseTheme { get; }
+        public Color PrimaryColor { get; }
+        public Color SecondaryColor { get; }
 
         class HexToColor
         {

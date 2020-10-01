@@ -23,7 +23,7 @@ namespace DiscordChatExporter.Gui.Views.Dialogs
 
         private void setBaseTheme(Theme theme)
         {
-            ((App)System.Windows.Application.Current).setTheme(theme);
+            ((App)System.Windows.Application.Current).SetTheme(theme);
         }
     }
 }

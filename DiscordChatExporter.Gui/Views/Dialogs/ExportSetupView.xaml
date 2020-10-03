@@ -48,12 +48,13 @@
                 Margin="8,0,0,0"
                 VerticalAlignment="Center"
                 FontSize="19"
+                FontWeight="Light"
                 TextTrimming="CharacterEllipsis"
                 Visibility="{Binding IsSingleChannel, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
                 <Run Text="{Binding Channels[0].Category, Mode=OneWay}" ToolTip="{Binding Channels[0].Category, Mode=OneWay}" />
                 <Run Text="/" />
                 <Run
-                    Foreground="{DynamicResource PrimaryHueDarkBrush}"
+                    FontWeight="DemiBold"
                     Text="{Binding Channels[0].Name, Mode=OneWay}"
                     ToolTip="{Binding Channels[0].Name, Mode=OneWay}" />
             </TextBlock>

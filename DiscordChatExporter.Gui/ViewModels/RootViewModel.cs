@@ -108,7 +108,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                 TokenValue = _settingsService.LastToken.Value;
             }
             
-            ((App)System.Windows.Application.Current).SetTheme(_settingsService.IsDarkThemeEnabled ? Theme.Dark : Theme.Light);
+            Theme.SetAppTheme(_settingsService.IsDarkThemeEnabled ? Theme.Dark : Theme.Light);
 
             await HandleAutoUpdateAsync();
         }

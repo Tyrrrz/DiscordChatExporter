@@ -46,10 +46,7 @@
             </Grid.RowDefinitions>
 
             <!--  Toolbar  -->
-            <Grid
-                Grid.Row="0"
-                Background="{DynamicResource PrimaryHueMidBrush}"
-                TextElement.Foreground="{DynamicResource SecondaryInverseTextBrush}">
+            <Grid Grid.Row="0" Background="{DynamicResource MaterialDesignDarkBackground}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -124,8 +121,12 @@
                     Margin="6"
                     Padding="4"
                     Command="{s:Action ShowSettings}"
-                    Style="{DynamicResource MaterialDesignFlatDarkButton}"
+                    Foreground="{DynamicResource MaterialDesignDarkForeground}"
+                    Style="{DynamicResource MaterialDesignFlatButton}"
                     ToolTip="Settings">
+                    <Button.Resources>
+                        <SolidColorBrush x:Key="MaterialDesignFlatButtonClick" Color="#4C4C4C" />
+                    </Button.Resources>
                     <materialDesign:PackIcon
                         Width="24"
                         Height="24"
@@ -136,12 +137,17 @@
             <!--  Progress bar  -->
             <ProgressBar
                 Grid.Row="1"
-                Background="{DynamicResource PrimaryHueMidBrush}"
+                Background="{DynamicResource MaterialDesignDarkBackground}"
                 IsIndeterminate="{Binding IsProgressIndeterminate}"
                 Value="{Binding ProgressManager.Progress, Mode=OneWay}" />
 
             <!--  Content  -->
             <Grid Grid.Row="2" IsEnabled="{Binding IsBusy, Converter={x:Static converters:InverseBoolConverter.Instance}}">
+                <Grid.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="FontWeight" Value="Light" />
+                    </Style>
+                </Grid.Resources>
                 <!--  Placeholder / usage instructions  -->
                 <Grid Margin="32,32,8,8" Visibility="{Binding AvailableGuilds, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}">
                     <!--  For user token  -->
@@ -151,25 +157,25 @@
                             <Run Text="1. Open Discord" />
                             <LineBreak />
                             <Run Text="2. Press" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Ctrl+Shift+I" />
+                            <Run FontWeight="Bold" Text="Ctrl+Shift+I" />
                             <Run Text="to show developer tools" />
                             <LineBreak />
                             <Run Text="3. Navigate to the" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Application" />
+                            <Run FontWeight="Bold" Text="Application" />
                             <Run Text="tab" />
                             <LineBreak />
                             <Run Text="4. Select" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Local Storage" />
+                            <Run FontWeight="Bold" Text="Local Storage" />
                             <Run Text="&gt;" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="https://discord.com" />
+                            <Run FontWeight="Bold" Text="https://discord.com" />
                             <Run Text="on the left" />
                             <LineBreak />
                             <Run Text="5. Press" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Ctrl+R" />
+                            <Run FontWeight="Bold" Text="Ctrl+R" />
                             <Run Text="to reload" />
                             <LineBreak />
                             <Run Text="6. Find" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="token" />
+                            <Run FontWeight="Bold" Text="token" />
                             <Run Text="at the bottom and copy the value" />
                         </TextBlock>
                         <TextBlock Margin="0,24,0,0" FontSize="14">
@@ -177,7 +183,10 @@
                             <LineBreak />
                             <Run Text="To authorize using bot token instead, click" />
                             <InlineUIContainer>
-                                <materialDesign:PackIcon Margin="1,0,0,-3" Kind="Account" />
+                                <materialDesign:PackIcon
+                                    Margin="1,0,0,-3"
+                                    Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                    Kind="Account" />
                             </InlineUIContainer>
                         </TextBlock>
                         <TextBlock Margin="0,24,0,0" FontSize="14">
@@ -188,25 +197,34 @@
 
                     <!--  For bot token  -->
                     <StackPanel Visibility="{Binding IsBotToken, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
-                        <TextBlock FontSize="18" Text="Please provide your bot token to authorize" />
-                        <TextBlock Margin="8,8,0,0" FontSize="14">
+                        <TextBlock
+                            FontSize="18"
+                            FontWeight="Light"
+                            Text="Please provide your bot token to authorize" />
+                        <TextBlock
+                            Margin="8,8,0,0"
+                            FontSize="14"
+                            FontWeight="Light">
                             <Run Text="1. Open Discord developer portal" />
                             <LineBreak />
                             <Run Text="2. Open your application's settings" />
                             <LineBreak />
                             <Run Text="3. Navigate to the" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Bot" />
+                            <Run FontWeight="Bold" Text="Bot" />
                             <Run Text="section on the left" />
                             <LineBreak />
                             <Run Text="4. Under" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Token" />
+                            <Run FontWeight="Bold" Text="Token" />
                             <Run Text="click" />
-                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="Copy" />
+                            <Run FontWeight="Bold" Text="Copy" />
                         </TextBlock>
                         <TextBlock Margin="0,24,0,0" FontSize="14">
                             <Run Text="To authorize using user token instead, click" />
                             <InlineUIContainer>
-                                <materialDesign:PackIcon Margin="1,0,0,-1" Kind="Robot" />
+                                <materialDesign:PackIcon
+                                    Margin="1,0,0,-1"
+                                    Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                    Kind="Robot" />
                             </InlineUIContainer>
                         </TextBlock>
                         <TextBlock Margin="0,24,0,0" FontSize="14">
@@ -226,7 +244,7 @@
                     <!--  Guilds  -->
                     <Border
                         Grid.Column="0"
-                        BorderBrush="{DynamicResource DividerBrush}"
+                        BorderBrush="{DynamicResource MaterialDesignDivider}"
                         BorderThickness="0,0,1,0">
                         <ListBox
                             ItemsSource="{Binding AvailableGuilds}"
@@ -245,7 +263,7 @@
                                             Width="48"
                                             Height="48"
                                             Margin="12,4,12,4"
-                                            Fill="{DynamicResource DividerBrush}" />
+                                            Fill="{DynamicResource MaterialDesignDivider}" />
 
                                         <!--  Guild icon  -->
                                         <Ellipse
@@ -284,7 +302,7 @@
                                                             Margin="0"
                                                             Padding="0"
                                                             Background="Transparent"
-                                                            BorderBrush="{DynamicResource DividerBrush}"
+                                                            BorderBrush="{DynamicResource MaterialDesignDivider}"
                                                             BorderThickness="0,1,0,0"
                                                             Header="{Binding Name}"
                                                             IsExpanded="False">
@@ -322,7 +340,6 @@
                                             Margin="3,8,8,8"
                                             VerticalAlignment="Center"
                                             FontSize="14"
-                                            Foreground="{DynamicResource PrimaryTextBrush}"
                                             Text="{Binding Name, Mode=OneWay}" />
 
                                         <!--  Is selected checkmark  -->

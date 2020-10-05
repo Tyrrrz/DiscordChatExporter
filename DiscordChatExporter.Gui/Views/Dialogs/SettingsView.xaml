@@ -15,7 +15,6 @@
         <TextBlock
             Margin="16"
             FontSize="17"
-            Foreground="{DynamicResource PrimaryTextBrush}"
             Text="Settings" />
 
         <!--  Date format  -->
@@ -56,11 +55,28 @@
                 IsChecked="{Binding IsTokenPersisted}" />
         </DockPanel>
 
+        <!--  Dark/Light theme  -->
+        <DockPanel
+            Background="Transparent"
+            LastChildFill="False"
+            ToolTip="Persist last used token between sessions">
+            <TextBlock
+                Margin="16,8"
+                DockPanel.Dock="Left"
+                Text="Dark theme" />
+            <ToggleButton
+                Margin="16,8"
+                Checked="ToggleButton_Checked"
+                DockPanel.Dock="Right"
+                IsChecked="{Binding IsDarkThemeEnabled}"
+                Unchecked="ToggleButton_Unchecked" />
+        </DockPanel>
+
         <!--  Parallel limit  -->
         <StackPanel Background="Transparent" ToolTip="How many channels can be exported at the same time">
             <TextBlock Margin="16,8">
                 <Run Text="Parallel limit:" />
-                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding ParallelLimit, Mode=OneWay}" />
+                <Run Text="{Binding ParallelLimit, Mode=OneWay}" />
             </TextBlock>
             <Slider
                 Margin="16,8"

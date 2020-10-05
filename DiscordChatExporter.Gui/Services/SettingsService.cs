@@ -12,6 +12,8 @@ namespace DiscordChatExporter.Gui.Services
 
         public bool IsTokenPersisted { get; set; } = true;
 
+        public bool IsDarkThemeEnabled { get; set; } = false;
+
         public int ParallelLimit { get; set; } = 1;
 
         public AuthToken? LastToken { get; set; }

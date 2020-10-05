@@ -54,7 +54,7 @@
                 <Run Text="{Binding Channels[0].Category, Mode=OneWay}" ToolTip="{Binding Channels[0].Category, Mode=OneWay}" />
                 <Run Text="/" />
                 <Run
-                    FontWeight="DemiBold"
+                    FontWeight="SemiBold"
                     Text="{Binding Channels[0].Name, Mode=OneWay}"
                     ToolTip="{Binding Channels[0].Name, Mode=OneWay}" />
             </TextBlock>

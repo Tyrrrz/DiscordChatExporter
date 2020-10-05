@@ -157,25 +157,25 @@
                             <Run Text="1. Open Discord" />
                             <LineBreak />
                             <Run Text="2. Press" />
-                            <Run FontWeight="Bold" Text="Ctrl+Shift+I" />
+                            <Run FontWeight="SemiBold" Text="Ctrl+Shift+I" />
                             <Run Text="to show developer tools" />
                             <LineBreak />
                             <Run Text="3. Navigate to the" />
-                            <Run FontWeight="Bold" Text="Application" />
+                            <Run FontWeight="SemiBold" Text="Application" />
                             <Run Text="tab" />
                             <LineBreak />
                             <Run Text="4. Select" />
-                            <Run FontWeight="Bold" Text="Local Storage" />
+                            <Run FontWeight="SemiBold" Text="Local Storage" />
                             <Run Text="&gt;" />
-                            <Run FontWeight="Bold" Text="https://discord.com" />
+                            <Run FontWeight="SemiBold" Text="https://discord.com" />
                             <Run Text="on the left" />
                             <LineBreak />
                             <Run Text="5. Press" />
-                            <Run FontWeight="Bold" Text="Ctrl+R" />
+                            <Run FontWeight="SemiBold" Text="Ctrl+R" />
                             <Run Text="to reload" />
                             <LineBreak />
                             <Run Text="6. Find" />
-                            <Run FontWeight="Bold" Text="token" />
+                            <Run FontWeight="SemiBold" Text="token" />
                             <Run Text="at the bottom and copy the value" />
                         </TextBlock>
                         <TextBlock Margin="0,24,0,0" FontSize="14">
@@ -210,13 +210,13 @@
                             <Run Text="2. Open your application's settings" />
                             <LineBreak />
                             <Run Text="3. Navigate to the" />
-                            <Run FontWeight="Bold" Text="Bot" />
+                            <Run FontWeight="SemiBold" Text="Bot" />
                             <Run Text="section on the left" />
                             <LineBreak />
                             <Run Text="4. Under" />
-                            <Run FontWeight="Bold" Text="Token" />
+                            <Run FontWeight="SemiBold" Text="Token" />
                             <Run Text="click" />
-                            <Run FontWeight="Bold" Text="Copy" />
+                            <Run FontWeight="SemiBold" Text="Copy" />
                         </TextBlock>
                         <TextBlock Margin="0,24,0,0" FontSize="14">
                             <Run Text="To authorize using user token instead, click" />
@@ -269,7 +269,9 @@
                                         <Ellipse
                                             Width="48"
                                             Height="48"
-                                            Margin="12,4,12,4">
+                                            Margin="12,4,12,4"
+                                            Stroke="{DynamicResource MaterialDesignDivider}"
+                                            StrokeThickness="1">
                                             <Ellipse.Fill>
                                                 <ImageBrush ImageSource="{Binding IconUrl}" />
                                             </Ellipse.Fill>
@@ -303,7 +305,7 @@
                                                             Padding="0"
                                                             Background="Transparent"
                                                             BorderBrush="{DynamicResource MaterialDesignDivider}"
-                                                            BorderThickness="0,1,0,0"
+                                                            BorderThickness="0,0,0,1"
                                                             Header="{Binding Name}"
                                                             IsExpanded="False">
                                                             <ItemsPresenter />

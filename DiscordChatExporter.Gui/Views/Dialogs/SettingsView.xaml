@@ -17,14 +17,6 @@
             FontSize="17"
             Text="Settings" />
 
-        <!--  Date format  -->
-        <TextBox
-            Margin="16,8"
-            materialDesign:HintAssist.Hint="Date format"
-            materialDesign:HintAssist.IsFloating="True"
-            Text="{Binding DateFormat}"
-            ToolTip="Format used when rendering dates (refer to .NET date format)" />
-
         <!--  Auto-updates  -->
         <DockPanel
             Background="Transparent"
@@ -38,6 +30,24 @@
                 Margin="16,8"
                 DockPanel.Dock="Right"
                 IsChecked="{Binding IsAutoUpdateEnabled}" />
+        </DockPanel>
+
+        <!--  Dark mode  -->
+        <DockPanel
+            Background="Transparent"
+            LastChildFill="False"
+            ToolTip="Use darker colors in the UI">
+            <TextBlock
+                Margin="16,8"
+                DockPanel.Dock="Left"
+                Text="Dark mode" />
+            <ToggleButton
+                x:Name="DarkModeToggleButton"
+                Margin="16,8"
+                Checked="DarkModeToggleButton_Checked"
+                DockPanel.Dock="Right"
+                IsChecked="{Binding IsDarkModeEnabled}"
+                Unchecked="DarkModeToggleButton_Unchecked" />
         </DockPanel>
 
         <!--  Persist token  -->
@@ -55,31 +65,22 @@
                 IsChecked="{Binding IsTokenPersisted}" />
         </DockPanel>
 
-        <!--  Dark/Light theme  -->
-        <DockPanel
-            Background="Transparent"
-            LastChildFill="False"
-            ToolTip="Persist last used token between sessions">
-            <TextBlock
-                Margin="16,8"
-                DockPanel.Dock="Left"
-                Text="Dark theme" />
-            <ToggleButton
-                Margin="16,8"
-                Checked="ToggleButton_Checked"
-                DockPanel.Dock="Right"
-                IsChecked="{Binding IsDarkThemeEnabled}"
-                Unchecked="ToggleButton_Unchecked" />
-        </DockPanel>
+        <!--  Date format  -->
+        <TextBox
+            Margin="16,8"
+            materialDesign:HintAssist.Hint="Date format"
+            materialDesign:HintAssist.IsFloating="True"
+            Text="{Binding DateFormat}"
+            ToolTip="Format used when rendering dates (uses .NET date formatting rules)" />
 
         <!--  Parallel limit  -->
         <StackPanel Background="Transparent" ToolTip="How many channels can be exported at the same time">
-            <TextBlock Margin="16,8">
+            <TextBlock Margin="16,8,16,4">
                 <Run Text="Parallel limit:" />
                 <Run Text="{Binding ParallelLimit, Mode=OneWay}" />
             </TextBlock>
             <Slider
-                Margin="16,8"
+                Margin="16,4,16,8"
                 IsSnapToTickEnabled="True"
                 Maximum="10"
                 Minimum="1"

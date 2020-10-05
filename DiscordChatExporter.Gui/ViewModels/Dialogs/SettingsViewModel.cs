@@ -8,16 +8,16 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
     {
         private readonly SettingsService _settingsService;
 
-        public string DateFormat
-        {
-            get => _settingsService.DateFormat;
-            set => _settingsService.DateFormat = value;
-        }
-
         public bool IsAutoUpdateEnabled
         {
             get => _settingsService.IsAutoUpdateEnabled;
             set => _settingsService.IsAutoUpdateEnabled = value;
+        }
+
+        public bool IsDarkModeEnabled
+        {
+            get => _settingsService.IsDarkModeEnabled;
+            set => _settingsService.IsDarkModeEnabled = value;
         }
 
         public bool IsTokenPersisted
@@ -26,10 +26,10 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             set => _settingsService.IsTokenPersisted = value;
         }
 
-        public bool IsDarkThemeEnabled
+        public string DateFormat
         {
-            get => _settingsService.IsDarkThemeEnabled;
-            set => _settingsService.IsDarkThemeEnabled = value;
+            get => _settingsService.DateFormat;
+            set => _settingsService.DateFormat = value;
         }
 
         public int ParallelLimit

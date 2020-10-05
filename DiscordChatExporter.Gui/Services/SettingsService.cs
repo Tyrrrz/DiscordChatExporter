@@ -6,13 +6,13 @@ namespace DiscordChatExporter.Gui.Services
 {
     public class SettingsService : SettingsManager
     {
-        public string DateFormat { get; set; } = "dd-MMM-yy hh:mm tt";
-
         public bool IsAutoUpdateEnabled { get; set; } = true;
+
+        public bool IsDarkModeEnabled { get; set; }
 
         public bool IsTokenPersisted { get; set; } = true;
 
-        public bool IsDarkThemeEnabled { get; set; } = false;
+        public string DateFormat { get; set; } = "dd-MMM-yy hh:mm tt";
 
         public int ParallelLimit { get; set; } = 1;
 

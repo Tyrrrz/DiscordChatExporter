@@ -13,6 +13,14 @@ namespace DiscordChatExporter.Gui
 {
     public class Bootstrapper : Bootstrapper<RootViewModel>
     {
+        protected override void OnStart()
+        {
+            base.OnStart();
+
+            // Light theme is the default
+            App.SetLightTheme();
+        }
+
         protected override void ConfigureIoC(IStyletIoCBuilder builder)
         {
             base.ConfigureIoC(builder);

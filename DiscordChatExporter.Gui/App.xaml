@@ -14,10 +14,12 @@
 
             <!--  Merged dictionaries  -->
             <ResourceDictionary.MergedDictionaries>
+                <!--  Colors are irrelevant because they are overriden in runtime  -->
                 <materialDesign:BundledTheme
                     BaseTheme="Light"
                     PrimaryColor="Blue"
                     SecondaryColor="Blue" />
+
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
             </ResourceDictionary.MergedDictionaries>
 

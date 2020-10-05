@@ -1,6 +1,4 @@
-﻿using MaterialDesignThemes;
-using MaterialDesignThemes.Wpf;
-using System.Windows.Media.Media3D;
+﻿using System.Windows;
 
 namespace DiscordChatExporter.Gui.Views.Dialogs
 {
@@ -11,19 +9,14 @@ namespace DiscordChatExporter.Gui.Views.Dialogs
             InitializeComponent();
         }
 
-        private void ToggleButton_Checked(object sender, System.Windows.RoutedEventArgs e)
+        private void ToggleButton_Checked(object sender, RoutedEventArgs e)
         {
-            setBaseTheme(Theme.Dark);
+            App.SetDarkTheme();
         }
 
-        private void ToggleButton_Unchecked(object sender, System.Windows.RoutedEventArgs e)
+        private void ToggleButton_Unchecked(object sender, RoutedEventArgs e)
         {
-            setBaseTheme(Theme.Light);
-        }
-
-        private void setBaseTheme(Theme theme)
-        {
-            Theme.SetCurrent(theme);
+            App.SetLightTheme();
         }
     }
 }

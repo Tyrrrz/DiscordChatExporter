@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using System.Windows.Media;
-using MaterialDesignColors;
-using MaterialDesignThemes.Wpf;
 
 namespace DiscordChatExporter.Gui
 {

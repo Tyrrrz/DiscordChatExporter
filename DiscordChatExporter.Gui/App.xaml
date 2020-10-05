@@ -38,6 +38,7 @@
 
             <Style BasedOn="{StaticResource MaterialDesignLinearProgressBar}" TargetType="{x:Type ProgressBar}">
                 <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Background" Value="Transparent" />
                 <Setter Property="Foreground" Value="{DynamicResource SecondaryAccentBrush}" />
                 <Setter Property="Height" Value="2" />
                 <Setter Property="Maximum" Value="1" />

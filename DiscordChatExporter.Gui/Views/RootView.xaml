@@ -46,8 +46,7 @@
             </Grid.RowDefinitions>
 
             <!--  Toolbar  -->
-            <Grid Grid.Row="0" Background="{DynamicResource PrimaryHueMidBrush}">
-
+            <Grid Grid.Row="0" Background="{DynamicResource MaterialDesignDarkBackground}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -122,8 +121,12 @@
                     Margin="6"
                     Padding="4"
                     Command="{s:Action ShowSettings}"
-                    Style="{DynamicResource MaterialDesignFlatDarkButton}"
+                    Foreground="{DynamicResource MaterialDesignDarkForeground}"
+                    Style="{DynamicResource MaterialDesignFlatButton}"
                     ToolTip="Settings">
+                    <Button.Resources>
+                        <SolidColorBrush x:Key="MaterialDesignFlatButtonClick" Color="#4C4C4C" />
+                    </Button.Resources>
                     <materialDesign:PackIcon
                         Width="24"
                         Height="24"
@@ -134,7 +137,7 @@
             <!--  Progress bar  -->
             <ProgressBar
                 Grid.Row="1"
-                Background="{DynamicResource PrimaryHueMidBrush}"
+                Background="{DynamicResource MaterialDesignDarkBackground}"
                 IsIndeterminate="{Binding IsProgressIndeterminate}"
                 Value="{Binding ProgressManager.Progress, Mode=OneWay}" />
 

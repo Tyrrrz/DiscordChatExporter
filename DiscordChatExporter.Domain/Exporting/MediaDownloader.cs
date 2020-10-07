@@ -30,6 +30,12 @@ namespace DiscordChatExporter.Domain.Exporting
             var fileName = $"{urlParser.FileName}({urlParser.ParentDirectory}).{urlParser.FileExtension}";
             var filePath = Path.Combine(_workingDirPath, fileName);
 
+            if (!File.Exists(filePath))
+            {
+                Directory.CreateDirectory(_workingDirPath);
+                await _httpClient.DownloadAsync(url, filePath);
+            }
+
             return _pathMap[url] = filePath;
         }
     }

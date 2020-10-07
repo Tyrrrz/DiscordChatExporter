@@ -26,30 +26,34 @@ namespace DiscordChatExporter.Domain.Exporting
             if (_pathMap.TryGetValue(url, out var cachedFilePath))
                 return cachedFilePath;
 
-            var fileName = GetFileNameFromUrl(url);
-            var filePath = PathEx.MakeUniqueFilePath(Path.Combine(_workingDirPath, fileName));
-
-            Directory.CreateDirectory(_workingDirPath);
-
-            await _httpClient.DownloadAsync(url, filePath);
+            var urlParser = new MediaUrlParser(url);
+            var fileName = $"{urlParser.FileName}({urlParser.ParentDirectory}).{urlParser.FileExtension}";
+            var filePath = Path.Combine(_workingDirPath, fileName);
 
             return _pathMap[url] = filePath;
         }
     }
 
-    internal partial class MediaDownloader
+    internal class MediaUrlParser
     {
+        public string ParentDirectory { get; }
+        public string FileName { get; }
+
+        public string FileExtension { get; }
         private static string GetRandomFileName() => Guid.NewGuid().ToString().Replace("-", "").Substring(0, 16);
 
-        private static string GetFileNameFromUrl(string url)
+        public MediaUrlParser(string url)
         {
-            var originalFileName = Regex.Match(url, @".+/([^?]*)").Groups[1].Value;
+            var match = Regex.Match(url, @".+/([^?]*)/([^?]*)\.([^?]*)");
 
-            var fileName = !string.IsNullOrWhiteSpace(originalFileName)
+            ParentDirectory = match.Groups[1].Value;
+            var originalFileName = match.Groups[2].Value;
+            FileExtension = match.Groups[3].Value;
+            
+            FileName = PathEx.EscapePath(!string.IsNullOrWhiteSpace(originalFileName)
                 ? $"{Path.GetFileNameWithoutExtension(originalFileName).Truncate(50)}{Path.GetExtension(originalFileName)}"
-                : GetRandomFileName();
-
-            return PathEx.EscapePath(fileName);
+                : GetRandomFileName());
         }
     }
+
 }

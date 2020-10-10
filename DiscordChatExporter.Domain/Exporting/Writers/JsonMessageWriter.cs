@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Drawing;
+using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord.Models;
@@ -113,6 +114,9 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteString("url", embed.Url);
             _writer.WriteString("timestamp", embed.Timestamp);
             _writer.WriteString("description", FormatMarkdown(embed.Description));
+
+            if (embed.Color != null)
+                _writer.WriteString("color", ColorTranslator.ToHtml(embed.Color.Value));
 
             if (embed.Author != null)
                 await WriteEmbedAuthorAsync(embed.Author);

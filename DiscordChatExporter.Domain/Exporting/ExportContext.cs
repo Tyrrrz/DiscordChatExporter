@@ -37,7 +37,12 @@ namespace DiscordChatExporter.Domain.Exporting
             _mediaDownloader = new MediaDownloader(request.OutputMediaDirPath);
         }
 
-        public string FormatDate(DateTimeOffset date) => date.ToLocalString(Request.DateFormat);
+        public string FormatDate(DateTimeOffset date) => Request.DateFormat switch
+        {
+            "unix" => date.ToUnixTimeSeconds().ToString(),
+            "unixms" => date.ToUnixTimeMilliseconds().ToString(),
+            var df => date.ToLocalString(df),
+        };
 
         public Member? TryGetMember(string id) =>
             Members.FirstOrDefault(m => m.Id == id);

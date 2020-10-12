@@ -26,22 +26,7 @@ namespace DiscordChatExporter.Domain.Exporting
 
             _httpRequestPolicy = Policy
                 .Handle<IOException>()
-                .WaitAndRetryAsync(GenerateSleepDurations());
-
-            IEnumerable<TimeSpan> GenerateSleepDurations()
-            {
-                int totalWait = 0;
-                int i = 0;
-                while (true)
-                {
-                    int wait = (int)Math.Pow(2, i) * FIRST_RETRY_WAIT_MS;
-                    if (totalWait + wait > MAX_RETRY_WAIT_MS) yield break;
-
-                    totalWait += wait;
-                    yield return TimeSpan.FromMilliseconds(wait);
-                    i++;
-                }
-            }
+                .WaitAndRetryAsync(8, i => TimeSpan.FromSeconds(0.5 * i));
         }
 
         public async ValueTask<string> DownloadAsync(string url)
@@ -65,8 +50,6 @@ namespace DiscordChatExporter.Domain.Exporting
 
     internal partial class MediaDownloader
     {
-        private static int FIRST_RETRY_WAIT_MS = 250;
-        private static int MAX_RETRY_WAIT_MS = 32 * 1000;
         private static string GetRandomFileName() => Guid.NewGuid().ToString().Replace("-", "").Substring(0, 16);
 
         private static string GetFileNameFromUrl(string url)

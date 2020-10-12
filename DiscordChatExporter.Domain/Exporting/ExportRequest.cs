@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Internal;
+using DiscordChatExporter.Domain.Internal.Extensions;
 
 namespace DiscordChatExporter.Domain.Exporting
 {
@@ -12,15 +14,11 @@ namespace DiscordChatExporter.Domain.Exporting
 
         public Channel Channel { get; }
 
-        public string OutputPath { get; }
-
-        public string OutputBaseFilePath { get; }
-
         public string OutputBaseDirPath { get; }
 
         public string OutputMediaDirPath { get; }
 
-        public ExportFormat Format { get; }
+        public IEnumerable<ExportFormat> Formats { get; }
 
         public DateTimeOffset? After { get; }
 
@@ -35,8 +33,8 @@ namespace DiscordChatExporter.Domain.Exporting
         public ExportRequest(
             Guild guild,
             Channel channel,
-            string outputPath,
-            ExportFormat format,
+            string outputDirPath,
+            IEnumerable<ExportFormat> formats,
             DateTimeOffset? after,
             DateTimeOffset? before,
             int? partitionLimit,
@@ -45,49 +43,53 @@ namespace DiscordChatExporter.Domain.Exporting
         {
             Guild = guild;
             Channel = channel;
-            OutputPath = outputPath;
-            Format = format;
+            OutputBaseDirPath = AsDirectoryIfFile(outputDirPath);
+            Formats = formats;
             After = after;
             Before = before;
             PartitionLimit = partitionLimit;
             ShouldDownloadMedia = shouldDownloadMedia;
             DateFormat = dateFormat;
 
-            OutputBaseFilePath = GetOutputBaseFilePath(
-                guild,
-                channel,
-                outputPath,
-                format,
-                after,
-                before
-            );
+            OutputMediaDirPath = Path.Combine(OutputBaseDirPath,
+                GetOutputFileNameWithoutExtension(guild, channel, after, before)) + $"_Files{Path.DirectorySeparatorChar}";
 
-            OutputBaseDirPath = Path.GetDirectoryName(OutputBaseFilePath) ?? OutputPath;
-            OutputMediaDirPath = $"{OutputBaseFilePath}_Files{Path.DirectorySeparatorChar}";
+            string AsDirectoryIfFile(string path)
+            {
+                if (isPathToFile(path))
+                {
+                    var dir = Path.GetDirectoryName(path);
+                    return dir switch
+                    {
+                        "" => dir,
+                        null => throw new ArgumentException($"Received invalid output directory: ${dir}"),
+                        var val => val,
+                    };
+                }
+
+                validatePath(path);
+
+                return path;
+
+                static void validatePath(string path) => Path.GetFullPath(path);
+            }
+
+            static bool isPathToFile(string path) => !Directory.Exists(path) && !string.IsNullOrWhiteSpace(Path.GetExtension(path));
+        }
+
+        public string GetOutputFilePathForFormat(ExportFormat format)
+        {
+            if (!Formats.Includes(format))
+            {
+                throw new ArgumentException($"Format {format} was not included in this export request.");
+            }
+
+            return GetOutputFilePath(Guild, Channel, OutputBaseDirPath, format, After, Before);
         }
     }
 
     public partial class ExportRequest
     {
-        private static string GetOutputBaseFilePath(
-            Guild guild,
-            Channel channel,
-            string outputPath,
-            ExportFormat format,
-            DateTimeOffset? after = null,
-            DateTimeOffset? before = null)
-        {
-            // Output is a directory
-            if (Directory.Exists(outputPath) || string.IsNullOrWhiteSpace(Path.GetExtension(outputPath)))
-            {
-                var fileName = GetDefaultOutputFileName(guild, channel, format, after, before);
-                return Path.Combine(outputPath, fileName);
-            }
-
-            // Output is a file
-            return outputPath;
-        }
-
         public static string GetDefaultOutputFileName(
             Guild guild,
             Channel channel,
@@ -95,6 +97,17 @@ namespace DiscordChatExporter.Domain.Exporting
             DateTimeOffset? after = null,
             DateTimeOffset? before = null)
         {
+            var withoutExtension = GetOutputFileNameWithoutExtension(guild, channel, after, before);
+            return $"{withoutExtension}.{format.GetFileExtension()}";
+        }
+
+        private static string GetOutputFileNameWithoutExtension(
+            Guild guild,
+            Channel channel,
+            DateTimeOffset? after = null,
+            DateTimeOffset? before = null)
+        {
+
             var buffer = new StringBuilder();
 
             // Guild and channel names
@@ -124,13 +137,20 @@ namespace DiscordChatExporter.Domain.Exporting
                 buffer.Append(")");
             }
 
-            // File extension
-            buffer.Append($".{format.GetFileExtension()}");
-
             // Replace invalid chars
             PathEx.EscapePath(buffer);
 
             return buffer.ToString();
+        }
+        private static string GetOutputFilePath(
+            Guild guild,
+            Channel channel,
+            string outputDirPath,
+            ExportFormat format,
+            DateTimeOffset? after = null,
+            DateTimeOffset? before = null)
+        {
+            return Path.Combine(outputDirPath, GetDefaultOutputFileName(guild, channel, format, after, before));
         }
     }
 }

@@ -199,7 +199,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                         dialog.Guild!,
                         channel!,
                         dialog.OutputPath!,
-                        dialog.SelectedFormat,
+                        new[] { dialog.SelectedFormat },
                         dialog.After,
                         dialog.Before,
                         dialog.PartitionLimit,

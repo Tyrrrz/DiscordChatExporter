@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using CliFx;
 using CliFx.Attributes;
@@ -15,7 +17,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
         public string OutputPath { get; set; } = Directory.GetCurrentDirectory();
 
         [CommandOption("format", 'f', Description = "Output file format.")]
-        public ExportFormat ExportFormat { get; set; } = ExportFormat.HtmlDark;
+        public ExportFormat[] ExportFormats { get; set; } = new [] { ExportFormat.HtmlDark };
 
         [CommandOption("after", Description = "Limit to messages sent after this date.")]
         public DateTimeOffset? After { get; set; }
@@ -43,7 +45,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
                 guild,
                 channel,
                 OutputPath,
-                ExportFormat,
+                ExportFormats,
                 After,
                 Before,
                 PartitionLimit,

@@ -31,10 +31,12 @@ namespace DiscordChatExporter.Domain.Exporting
 
             Directory.CreateDirectory(_workingDirPath);
 
+            _pathMap[url] = filePath;
+
             await _httpClient.DownloadAsync(url, filePath);
 
-            return _pathMap[url] = filePath;
-        }
+            return filePath;
+        }   
     }
 
     internal partial class MediaDownloader

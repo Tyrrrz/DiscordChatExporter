@@ -43,7 +43,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
                         guild,
                         channel,
                         OutputPath,
-                        ExportFormat,
+                        ExportFormats,
                         After,
                         Before,
                         PartitionLimit,

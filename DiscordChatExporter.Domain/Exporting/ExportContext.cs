@@ -14,7 +14,6 @@ namespace DiscordChatExporter.Domain.Exporting
     internal class ExportContext
     {
         private readonly MediaDownloader _mediaDownloader;
-
         public ExportRequest Request { get; }
 
         public IReadOnlyCollection<Member> Members { get; }
@@ -62,9 +61,16 @@ namespace DiscordChatExporter.Domain.Exporting
 
         public async ValueTask<string> ResolveMediaUrlAsync(string url)
         {
-            if (!Request.ShouldDownloadMedia)
-                return url;
+            return await DownloadMediaAsync(url, false);
+        }
 
+        public async ValueTask<string> ResolveMediaUrlForHtmlAsync(string url)
+        {
+            return await DownloadMediaAsync(url, true);
+        }
+
+        private async ValueTask<string> DownloadMediaAsync(string url, bool forHtmlOutput)
+        {
             try
             {
                 var filePath = await _mediaDownloader.DownloadAsync(url);
@@ -73,7 +79,7 @@ namespace DiscordChatExporter.Domain.Exporting
                 var relativeFilePath = Path.GetRelativePath(Request.OutputBaseDirPath, filePath);
 
                 // For HTML, we need to format the URL properly
-                if (Request.Format == ExportFormat.HtmlDark || Request.Format == ExportFormat.HtmlLight)
+                if (forHtmlOutput)
                 {
                     // Need to escape each path segment while keeping the directory separators intact
                     return relativeFilePath

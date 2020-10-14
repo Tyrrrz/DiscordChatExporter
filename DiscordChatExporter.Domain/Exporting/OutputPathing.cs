@@ -20,11 +20,6 @@ namespace DiscordChatExporter.Domain.Exporting
     {
         public static OutputPathing ParseForMultipleOutputFormats(string outputPath)
         {
-            if (isFilePath(outputPath))
-            {
-                throw new ArgumentException("Output path cannot include a file name when exporting to multiple formats.");
-            }
-
             return new OutputPathing(outputPath);
         }
 

@@ -26,8 +26,7 @@ namespace DiscordChatExporter.Domain.Exporting
             if (_pathMap.TryGetValue(url, out var cachedFilePath))
                 return cachedFilePath;
 
-            var urlParser = new MediaUrlParser(url);
-            var fileName = $"{urlParser.FileName}({urlParser.ParentDirectory}).{urlParser.FileExtension}";
+            var fileName = GetFileNameFromUrl(url);
             var filePath = Path.Combine(_workingDirPath, fileName);
 
             if (!File.Exists(filePath))
@@ -40,26 +39,32 @@ namespace DiscordChatExporter.Domain.Exporting
         }
     }
 
-    internal class MediaUrlParser
+    internal partial class MediaDownloader
     {
-        public string ParentDirectory { get; }
-        public string FileName { get; }
+        private static string HashUrl(string url)
+        {
+            // Knuth hash
+            UInt64 hashedValue = 3074457345618258791ul;
+            for (int i = 0; i < url.Length; i++)
+            {
+                hashedValue += url[i];
+                hashedValue *= 3074457345618258799ul;
+            }
+            return hashedValue.ToString();
+        }
 
-        public string FileExtension { get; }
         private static string GetRandomFileName() => Guid.NewGuid().ToString().Replace("-", "").Substring(0, 16);
 
-        public MediaUrlParser(string url)
+        private static string GetFileNameFromUrl(string url)
         {
-            var match = Regex.Match(url, @".+/([^?]*)/([^?]*)\.([^?]*)");
+            var originalFileName = Regex.Match(url, @".+/([^?]*)").Groups[1].Value;
+            var urlHash = HashUrl(url);
 
-            ParentDirectory = match.Groups[1].Value;
-            var originalFileName = match.Groups[2].Value;
-            FileExtension = match.Groups[3].Value;
-            
-            FileName = PathEx.EscapePath(!string.IsNullOrWhiteSpace(originalFileName)
-                ? $"{Path.GetFileNameWithoutExtension(originalFileName).Truncate(50)}{Path.GetExtension(originalFileName)}"
-                : GetRandomFileName());
+            var fileName = !string.IsNullOrWhiteSpace(originalFileName)
+                ? $"{Path.GetFileNameWithoutExtension(originalFileName).Truncate(41)}-({urlHash.Truncate(5)})-{Path.GetExtension(originalFileName)}"
+                : GetRandomFileName();
+
+            return PathEx.EscapePath(fileName);
         }
     }
-
 }

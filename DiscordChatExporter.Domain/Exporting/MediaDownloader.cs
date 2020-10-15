@@ -13,12 +13,14 @@ namespace DiscordChatExporter.Domain.Exporting
     {
         private readonly HttpClient _httpClient = Singleton.HttpClient;
         private readonly string _workingDirPath;
+        private readonly bool _reuseMedia;
 
         private readonly Dictionary<string, string> _pathMap = new Dictionary<string, string>();
 
-        public MediaDownloader(string workingDirPath)
+        public MediaDownloader(string workingDirPath, bool reuseMedia = false)
         {
             _workingDirPath = workingDirPath;
+            _reuseMedia = reuseMedia;
         }
 
         public async ValueTask<string> DownloadAsync(string url)
@@ -29,7 +31,7 @@ namespace DiscordChatExporter.Domain.Exporting
             var fileName = GetFileNameFromUrl(url);
             var filePath = Path.Combine(_workingDirPath, fileName);
 
-            if (!File.Exists(filePath))
+            if (!_reuseMedia || !File.Exists(filePath))
             {
                 Directory.CreateDirectory(_workingDirPath);
                 await _httpClient.DownloadAsync(url, filePath);

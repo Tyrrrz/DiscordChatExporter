@@ -34,7 +34,7 @@ namespace DiscordChatExporter.Domain.Exporting
             Channels = channels;
             Roles = roles;
 
-            _mediaDownloader = new MediaDownloader(request.OutputMediaDirPath);
+            _mediaDownloader = new MediaDownloader(request.OutputMediaDirPath, request.ShouldReuseMedia);
         }
 
         public string FormatDate(DateTimeOffset date) => date.ToLocalString(Request.DateFormat);

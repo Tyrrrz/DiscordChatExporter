@@ -30,6 +30,8 @@ namespace DiscordChatExporter.Domain.Exporting
 
         public bool ShouldDownloadMedia { get; }
 
+        public bool ShouldReuseMedia { get; }
+
         public string DateFormat { get; }
 
         public ExportRequest(
@@ -41,6 +43,7 @@ namespace DiscordChatExporter.Domain.Exporting
             DateTimeOffset? before,
             int? partitionLimit,
             bool shouldDownloadMedia,
+            bool shouldReuseMedia,
             string dateFormat)
         {
             Guild = guild;
@@ -51,6 +54,7 @@ namespace DiscordChatExporter.Domain.Exporting
             Before = before;
             PartitionLimit = partitionLimit;
             ShouldDownloadMedia = shouldDownloadMedia;
+            ShouldReuseMedia = shouldReuseMedia;
             DateFormat = dateFormat;
 
             OutputBaseFilePath = GetOutputBaseFilePath(

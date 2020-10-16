@@ -142,7 +142,10 @@
                 Value="{Binding ProgressManager.Progress, Mode=OneWay}" />
 
             <!--  Content  -->
-            <Grid Grid.Row="2" IsEnabled="{Binding IsBusy, Converter={x:Static converters:InverseBoolConverter.Instance}}">
+            <Grid
+                Grid.Row="2"
+                Background="{DynamicResource MaterialDesignCardBackground}"
+                IsEnabled="{Binding IsBusy, Converter={x:Static converters:InverseBoolConverter.Instance}}">
                 <Grid.Resources>
                     <Style TargetType="TextBlock">
                         <Setter Property="FontWeight" Value="Light" />

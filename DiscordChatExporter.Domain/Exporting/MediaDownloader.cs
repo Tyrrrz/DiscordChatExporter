@@ -63,7 +63,7 @@ namespace DiscordChatExporter.Domain.Exporting
             var urlHash = HashUrl(url);
 
             var fileName = !string.IsNullOrWhiteSpace(originalFileName)
-                ? $"{Path.GetFileNameWithoutExtension(originalFileName).Truncate(41)}-({urlHash.Truncate(5)})-{Path.GetExtension(originalFileName)}"
+                ? $"{Path.GetFileNameWithoutExtension(originalFileName).Truncate(42)}-({urlHash.Truncate(5)}){Path.GetExtension(originalFileName)}"
                 : GetRandomFileName();
 
             return PathEx.EscapePath(fileName);

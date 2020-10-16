@@ -39,14 +39,19 @@ namespace DiscordChatExporter.Domain.Exporting
                 if (_pathMap.TryGetValue(url, out var cachedFilePath))
                     return cachedFilePath;
 
-            var fileName = GetFileNameFromUrl(url);
-            var filePath = Path.Combine(_workingDirPath, fileName);
+                var fileName = GetFileNameFromUrl(url);
+                var filePath = Path.Combine(_workingDirPath, fileName);
 
-            if (!_reuseMedia || !File.Exists(filePath))
-            {
-                Directory.CreateDirectory(_workingDirPath);
-                await _httpClient.DownloadAsync(url, filePath);
-            }
+                if (!_reuseMedia)
+                {
+                    filePath = PathEx.MakeUniqueFilePath(filePath);
+                }
+
+                if (!_reuseMedia || !File.Exists(filePath))
+                {
+                    Directory.CreateDirectory(_workingDirPath);
+                    await _httpClient.DownloadAsync(url, filePath);
+                }
 
                 return _pathMap[url] = filePath;
             });

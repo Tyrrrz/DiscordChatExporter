@@ -48,12 +48,13 @@
                 Margin="8,0,0,0"
                 VerticalAlignment="Center"
                 FontSize="19"
+                FontWeight="Light"
                 TextTrimming="CharacterEllipsis"
                 Visibility="{Binding IsSingleChannel, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
                 <Run Text="{Binding Channels[0].Category, Mode=OneWay}" ToolTip="{Binding Channels[0].Category, Mode=OneWay}" />
                 <Run Text="/" />
                 <Run
-                    Foreground="{DynamicResource PrimaryTextBrush}"
+                    FontWeight="SemiBold"
                     Text="{Binding Channels[0].Name, Mode=OneWay}"
                     ToolTip="{Binding Channels[0].Name, Mode=OneWay}" />
             </TextBlock>
@@ -163,18 +164,13 @@
             <ToggleButton
                 x:Name="AdvancedSectionToggleButton"
                 Grid.Column="0"
-                Margin="8"
+                Width="24"
+                Height="24"
+                Margin="12"
                 Cursor="Hand"
                 Loaded="AdvancedSectionToggleButton_OnLoaded"
-                Style="{DynamicResource MaterialDesignFlatToggleButton}"
-                ToolTip="Show advanced options">
-                <ToggleButton.Content>
-                    <materialDesign:PackIcon
-                        Width="24"
-                        Height="24"
-                        Kind="Menu" />
-                </ToggleButton.Content>
-            </ToggleButton>
+                Style="{DynamicResource MaterialDesignHamburgerToggleButton}"
+                ToolTip="Show advanced options" />
 
             <Button
                 Grid.Column="2"

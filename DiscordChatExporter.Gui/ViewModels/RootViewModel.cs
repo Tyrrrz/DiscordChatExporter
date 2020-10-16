@@ -108,6 +108,15 @@ namespace DiscordChatExporter.Gui.ViewModels
                 TokenValue = _settingsService.LastToken.Value;
             }
 
+            if (_settingsService.IsDarkModeEnabled)
+            {
+                App.SetDarkTheme();
+            }
+            else
+            {
+                App.SetLightTheme();
+            }
+
             await HandleAutoUpdateAsync();
         }
 

@@ -8,7 +8,7 @@
 
 DiscordChatExporter can be used to export message history from a [Discord](https://discord.com) channel to a file. It works with direct messages, group messages, server channels, supports Discord's dialect of markdown and all other rich media features.
 
-_For guides and other info -- check out the [wiki](https://github.com/Tyrrrz/DiscordChatExporter/wiki)._
+Have questions? Check out the [wiki](https://github.com/Tyrrrz/DiscordChatExporter/wiki) first.
 
 ## Download
 

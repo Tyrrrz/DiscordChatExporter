@@ -76,6 +76,9 @@ namespace DiscordChatExporter.Domain.Exporting
 
         private async ValueTask<string> DownloadMediaAsync(string url, bool forHtmlOutput)
         {
+            if (!Request.ShouldDownloadMedia)
+                return url;
+
             try
             {
                 var filePath = await _mediaDownloader.DownloadAsync(url);

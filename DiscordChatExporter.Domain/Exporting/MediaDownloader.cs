@@ -22,7 +22,7 @@ namespace DiscordChatExporter.Domain.Exporting
 
         private readonly Dictionary<string, string> _pathMap = new Dictionary<string, string>();
 
-        public MediaDownloader(string workingDirPath, bool reuseMedia = false)
+        public MediaDownloader(string workingDirPath, bool reuseMedia)
         {
             _workingDirPath = workingDirPath;
             _reuseMedia = reuseMedia;

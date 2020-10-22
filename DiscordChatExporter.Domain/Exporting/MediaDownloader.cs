@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Internal;
@@ -60,16 +62,21 @@ namespace DiscordChatExporter.Domain.Exporting
 
     internal partial class MediaDownloader
     {
+        private static int URL_HASH_LENGTH = 5;
         private static string HashUrl(string url)
         {
-            // Knuth hash
-            UInt64 hashedValue = 3074457345618258791ul;
-            for (int i = 0; i < url.Length; i++)
+            using (var md5 = MD5.Create())
             {
-                hashedValue += url[i];
-                hashedValue *= 3074457345618258799ul;
+                var inputBytes = Encoding.ASCII.GetBytes(url);
+                var hashBytes = md5.ComputeHash(inputBytes);
+
+                var hashBuilder = new StringBuilder();
+                for (int i = 0; i < hashBytes.Length; i++)
+                {
+                    hashBuilder.Append(hashBytes[i].ToString("X2"));
+                }
+                return hashBuilder.ToString().Truncate(URL_HASH_LENGTH);
             }
-            return hashedValue.ToString();
         }
 
         private static string GetRandomFileName() => Guid.NewGuid().ToString().Replace("-", "").Substring(0, 16);
@@ -77,10 +84,9 @@ namespace DiscordChatExporter.Domain.Exporting
         private static string GetFileNameFromUrl(string url)
         {
             var originalFileName = Regex.Match(url, @".+/([^?]*)").Groups[1].Value;
-            var urlHash = HashUrl(url);
 
             var fileName = !string.IsNullOrWhiteSpace(originalFileName)
-                ? $"{Path.GetFileNameWithoutExtension(originalFileName).Truncate(42)}-({urlHash.Truncate(5)}){Path.GetExtension(originalFileName)}"
+                ? $"{Path.GetFileNameWithoutExtension(originalFileName).Truncate(42)}-({HashUrl(url)}){Path.GetExtension(originalFileName)}"
                 : GetRandomFileName();
 
             return PathEx.EscapePath(fileName);

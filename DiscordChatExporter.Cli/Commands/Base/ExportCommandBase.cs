@@ -31,6 +31,9 @@ namespace DiscordChatExporter.Cli.Commands.Base
         [CommandOption("media", Description = "Download referenced media content.")]
         public bool ShouldDownloadMedia { get; set; }
 
+        [CommandOption("reuse-media", Description = "If the media folder already exists, reuse media inside it to skip downloads.")]
+        public bool ShouldReuseMedia { get; set; }
+
         [CommandOption("dateformat", Description = "Date format used in output.")]
         public string DateFormat { get; set; } = "dd-MMM-yy hh:mm tt";
 
@@ -50,6 +53,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
                 Before,
                 PartitionLimit,
                 ShouldDownloadMedia,
+                ShouldReuseMedia,
                 DateFormat
             );
 

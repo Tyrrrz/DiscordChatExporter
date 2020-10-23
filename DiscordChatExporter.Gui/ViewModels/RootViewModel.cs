@@ -204,6 +204,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                         dialog.Before,
                         dialog.PartitionLimit,
                         dialog.ShouldDownloadMedia,
+                        _settingsService.ShouldReuseMedia,
                         _settingsService.DateFormat
                     );
 

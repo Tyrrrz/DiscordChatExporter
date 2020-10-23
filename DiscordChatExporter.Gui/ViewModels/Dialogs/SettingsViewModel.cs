@@ -37,6 +37,12 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             get => _settingsService.ParallelLimit;
             set => _settingsService.ParallelLimit = value.Clamp(1, 10);
         }
+        
+        public bool ShouldReuseMedia
+        {
+            get => _settingsService.ShouldReuseMedia;
+            set => _settingsService.ShouldReuseMedia = value;
+        }
 
         public SettingsViewModel(SettingsService settingsService)
         {

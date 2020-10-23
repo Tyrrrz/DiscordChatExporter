@@ -48,6 +48,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
                         Before,
                         PartitionLimit,
                         ShouldDownloadMedia,
+                        ShouldReuseMedia,
                         DateFormat
                     );
 

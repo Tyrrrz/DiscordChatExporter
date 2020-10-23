@@ -7,7 +7,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:s="https://github.com/canton7/Stylet"
-    Width="300"
+    Width="310"
     d:DataContext="{d:DesignInstance Type=dialogs:SettingsViewModel}"
     Style="{DynamicResource MaterialDesignRoot}"
     mc:Ignorable="d">
@@ -63,6 +63,21 @@
                 Margin="16,8"
                 DockPanel.Dock="Right"
                 IsChecked="{Binding IsTokenPersisted}" />
+        </DockPanel>
+
+        <!--  Reuse Media  -->
+        <DockPanel
+            Background="Transparent"
+            LastChildFill="False"
+            ToolTip="If the media folder already exists, reuse media inside it to skip downloads">
+            <TextBlock
+                Margin="16,8"
+                DockPanel.Dock="Left"
+                Text="Reuse previously downloaded media" />
+            <ToggleButton
+                Margin="16,8"
+                DockPanel.Dock="Right"
+                IsChecked="{Binding ShouldReuseMedia}" />
         </DockPanel>
 
         <!--  Date format  -->

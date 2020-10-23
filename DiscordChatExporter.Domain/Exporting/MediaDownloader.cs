@@ -67,7 +67,7 @@ namespace DiscordChatExporter.Domain.Exporting
         {
             using (var md5 = MD5.Create())
             {
-                var inputBytes = Encoding.ASCII.GetBytes(url);
+                var inputBytes = Encoding.UTF8.GetBytes(url);
                 var hashBytes = md5.ComputeHash(inputBytes);
 
                 var hashBuilder = new StringBuilder();

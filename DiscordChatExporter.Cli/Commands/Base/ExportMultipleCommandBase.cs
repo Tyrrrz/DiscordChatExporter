@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,21 +17,23 @@ namespace DiscordChatExporter.Cli.Commands.Base
 {
     public abstract class ExportMultipleCommandBase : ExportCommandBase
     {
-        [CommandOption("parallel", Description = "Export this number of channels in parallel.")]
+        [CommandOption("parallel",
+            Description = "Limits how many channels can be exported in parallel.")]
         public int ParallelLimit { get; set; } = 1;
 
         protected async ValueTask ExportMultipleAsync(IConsole console, IReadOnlyList<Channel> channels)
         {
-            // HACK: this uses a separate route from ExportCommandBase because the progress ticker is not thread-safe
+            // This uses a different route from ExportCommandBase.ExportAsync() because it runs
+            // in parallel and needs another way to report progress to console.
 
             console.Output.Write($"Exporting {channels.Count} channels... ");
             var progress = console.CreateProgressTicker();
 
             var operations = progress.Wrap().CreateOperations(channels.Count);
 
-            var errors = new List<string>();
-
             var successfulExportCount = 0;
+            var errors = new ConcurrentBag<string>();
+
             await channels.Zip(operations).ParallelForEachAsync(async tuple =>
             {
                 var (channel, operation) = tuple;

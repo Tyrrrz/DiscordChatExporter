@@ -9,7 +9,8 @@ namespace DiscordChatExporter.Domain.Utilities
 {
     public static class AsyncExtensions
     {
-        private static async ValueTask<IReadOnlyList<T>> AggregateAsync<T>(this IAsyncEnumerable<T> asyncEnumerable)
+        private static async ValueTask<IReadOnlyList<T>> AggregateAsync<T>(
+            this IAsyncEnumerable<T> asyncEnumerable)
         {
             var list = new List<T>();
 
@@ -19,10 +20,14 @@ namespace DiscordChatExporter.Domain.Utilities
             return list;
         }
 
-        public static ValueTaskAwaiter<IReadOnlyList<T>> GetAwaiter<T>(this IAsyncEnumerable<T> asyncEnumerable) =>
+        public static ValueTaskAwaiter<IReadOnlyList<T>> GetAwaiter<T>(
+            this IAsyncEnumerable<T> asyncEnumerable) =>
             asyncEnumerable.AggregateAsync().GetAwaiter();
 
-        public static async ValueTask ParallelForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> handleAsync, int degreeOfParallelism)
+        public static async ValueTask ParallelForEachAsync<T>(
+            this IEnumerable<T> source,
+            Func<T, ValueTask> handleAsync,
+            int degreeOfParallelism)
         {
             using var semaphore = new SemaphoreSlim(degreeOfParallelism);
 

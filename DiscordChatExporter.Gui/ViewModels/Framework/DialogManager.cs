@@ -19,13 +19,10 @@ namespace DiscordChatExporter.Gui.ViewModels.Framework
 
         public async ValueTask<T> ShowDialogAsync<T>(DialogScreen<T> dialogScreen)
         {
-            // Get the view that renders this viewmodel
             var view = _viewManager.CreateAndBindViewForModelIfNecessary(dialogScreen);
 
-            // Set up event routing that will close the view when called from viewmodel
             void OnDialogOpened(object? sender, DialogOpenedEventArgs openArgs)
             {
-                // Delegate to close the dialog and unregister event handler
                 void OnScreenClosed(object? o, EventArgs closeArgs)
                 {
                     openArgs.Session.Close();
@@ -35,37 +32,31 @@ namespace DiscordChatExporter.Gui.ViewModels.Framework
                 dialogScreen.Closed += OnScreenClosed;
             }
 
-            // Show view
             await DialogHost.Show(view, OnDialogOpened);
 
-            // Return the result
             return dialogScreen.DialogResult;
         }
 
         public string? PromptSaveFilePath(string filter = "All files|*.*", string defaultFilePath = "")
         {
-            // Create dialog
             var dialog = new SaveFileDialog
             {
                 Filter = filter,
                 AddExtension = true,
                 FileName = defaultFilePath,
-                DefaultExt = Path.GetExtension(defaultFilePath) ?? ""
+                DefaultExt = Path.GetExtension(defaultFilePath)
             };
 
-            // Show dialog and return result
             return dialog.ShowDialog() == true ? dialog.FileName : null;
         }
 
         public string? PromptDirectoryPath(string defaultDirPath = "")
         {
-            // Create dialog
             var dialog = new VistaFolderBrowserDialog
             {
                 SelectedPath = defaultDirPath
             };
 
-            // Show dialog and return result
             return dialog.ShowDialog() == true ? dialog.SelectedPath : null;
         }
     }

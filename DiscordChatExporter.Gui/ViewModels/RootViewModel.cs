@@ -8,7 +8,9 @@ using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exceptions;
 using DiscordChatExporter.Domain.Exporting;
 using DiscordChatExporter.Domain.Utilities;
+using DiscordChatExporter.Gui.Internal;
 using DiscordChatExporter.Gui.Services;
+using DiscordChatExporter.Gui.ViewModels.Dialogs;
 using DiscordChatExporter.Gui.ViewModels.Framework;
 using Gress;
 using MaterialDesignThemes.Wpf;
@@ -63,14 +65,21 @@ namespace DiscordChatExporter.Gui.ViewModels
 
             // Update busy state when progress manager changes
             ProgressManager.Bind(o => o.IsActive,
-                (sender, args) => IsBusy = ProgressManager.IsActive);
+                (sender, args) => IsBusy = ProgressManager.IsActive
+            );
+
             ProgressManager.Bind(o => o.IsActive,
-                (sender, args) => IsProgressIndeterminate = ProgressManager.IsActive && ProgressManager.Progress.IsEither(0, 1));
+                (sender, args) => IsProgressIndeterminate =
+                    ProgressManager.IsActive && ProgressManager.Progress.IsEither(0, 1)
+            );
+
             ProgressManager.Bind(o => o.Progress,
-                (sender, args) => IsProgressIndeterminate = ProgressManager.IsActive && ProgressManager.Progress.IsEither(0, 1));
+                (sender, args) => IsProgressIndeterminate =
+                    ProgressManager.IsActive && ProgressManager.Progress.IsEither(0, 1)
+            );
         }
 
-        private async ValueTask HandleAutoUpdateAsync()
+        private async ValueTask CheckForUpdatesAsync()
         {
             try
             {
@@ -117,7 +126,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                 App.SetLightTheme();
             }
 
-            await HandleAutoUpdateAsync();
+            await CheckForUpdatesAsync();
         }
 
         protected override void OnClose()
@@ -133,6 +142,8 @@ namespace DiscordChatExporter.Gui.ViewModels
             var dialog = _viewModelFactory.CreateSettingsViewModel();
             await _dialogManager.ShowDialogAsync(dialog);
         }
+
+        public void ShowHelp() => ProcessEx.StartShellExecute(App.GitHubProjectWikiUrl);
 
         public bool CanPopulateGuildsAndChannels =>
             !IsBusy && !string.IsNullOrWhiteSpace(TokenValue);
@@ -187,8 +198,8 @@ namespace DiscordChatExporter.Gui.ViewModels
             var exporter = new ChannelExporter(token);
 
             var operations = ProgressManager.CreateOperations(dialog.Channels!.Count);
-
             var successfulExportCount = 0;
+
             await dialog.Channels.Zip(operations).ParallelForEachAsync(async tuple =>
             {
                 var (channel, operation) = tuple;

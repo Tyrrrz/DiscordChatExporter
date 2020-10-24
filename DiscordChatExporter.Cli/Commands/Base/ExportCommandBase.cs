@@ -11,28 +11,36 @@ namespace DiscordChatExporter.Cli.Commands.Base
 {
     public abstract class ExportCommandBase : TokenCommandBase
     {
-        [CommandOption("output", 'o', Description = "Output file or directory path.")]
+        [CommandOption("output", 'o',
+            Description = "Output file or directory path.")]
         public string OutputPath { get; set; } = Directory.GetCurrentDirectory();
 
-        [CommandOption("format", 'f', Description = "Output file format.")]
+        [CommandOption("format", 'f',
+            Description = "Export format.")]
         public ExportFormat ExportFormat { get; set; } = ExportFormat.HtmlDark;
 
-        [CommandOption("after", Description = "Limit to messages sent after this date.")]
+        [CommandOption("after",
+            Description = "Only include messages sent after this date.")]
         public DateTimeOffset? After { get; set; }
 
-        [CommandOption("before", Description = "Limit to messages sent before this date.")]
+        [CommandOption("before",
+            Description = "Only include messages sent before this date.")]
         public DateTimeOffset? Before { get; set; }
 
-        [CommandOption("partition", 'p', Description = "Split output into partitions limited to this number of messages.")]
+        [CommandOption("partition", 'p',
+            Description = "Split output into partitions limited to this number of messages.")]
         public int? PartitionLimit { get; set; }
 
-        [CommandOption("media", Description = "Download referenced media content.")]
+        [CommandOption("media",
+            Description = "Download referenced media content.")]
         public bool ShouldDownloadMedia { get; set; }
 
-        [CommandOption("reuse-media", Description = "If the media folder already exists, reuse media inside it to skip downloads.")]
+        [CommandOption("reuse-media",
+            Description = "Reuse already existing media content to skip redundant downloads.")]
         public bool ShouldReuseMedia { get; set; }
 
-        [CommandOption("dateformat", Description = "Date format used in output.")]
+        [CommandOption("dateformat",
+            Description = "Format used when writing dates.")]
         public string DateFormat { get; set; } = "dd-MMM-yy hh:mm tt";
 
         protected ChannelExporter GetChannelExporter() => new ChannelExporter(GetDiscordClient());

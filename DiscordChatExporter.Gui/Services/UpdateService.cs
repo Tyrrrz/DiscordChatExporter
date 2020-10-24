@@ -10,7 +10,8 @@ namespace DiscordChatExporter.Gui.Services
     {
         private readonly IUpdateManager _updateManager = new UpdateManager(
             new GithubPackageResolver("Tyrrrz", "DiscordChatExporter", "DiscordChatExporter.zip"),
-            new ZipPackageExtractor());
+            new ZipPackageExtractor()
+        );
 
         private readonly SettingsService _settingsService;
 

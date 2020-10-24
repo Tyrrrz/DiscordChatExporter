@@ -10,7 +10,8 @@ namespace DiscordChatExporter.Cli.Commands
     [Command("channels", Description = "Get the list of channels in a guild.")]
     public class GetChannelsCommand : TokenCommandBase
     {
-        [CommandOption("guild", 'g', IsRequired = true, Description = "Guild ID.")]
+        [CommandOption("guild", 'g', IsRequired = true,
+            Description = "Guild ID.")]
         public string GuildId { get; set; } = "";
 
         public override async ValueTask ExecuteAsync(IConsole console)

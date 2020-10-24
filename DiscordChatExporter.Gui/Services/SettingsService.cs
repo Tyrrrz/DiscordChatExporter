@@ -16,7 +16,7 @@ namespace DiscordChatExporter.Gui.Services
 
         public int ParallelLimit { get; set; } = 1;
 
-        public bool ShouldReuseMedia { get; set; } = false;
+        public bool ShouldReuseMedia { get; set; }
 
         public AuthToken? LastToken { get; set; }
 

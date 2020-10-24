@@ -7,13 +7,17 @@ namespace DiscordChatExporter.Gui
 {
     public partial class App
     {
-        private static readonly Assembly Assembly = typeof(App).Assembly;
+        private static Assembly Assembly { get; } = typeof(App).Assembly;
 
-        public static string Name => Assembly.GetName().Name!;
+        public static string Name { get; } = Assembly.GetName().Name!;
 
-        public static Version Version => Assembly.GetName().Version!;
+        public static Version Version { get; } = Assembly.GetName().Version!;
 
-        public static string VersionString => Version.ToString(3);
+        public static string VersionString { get; } = Version.ToString(3);
+
+        public static string GitHubProjectUrl { get; } = "https://github.com/Tyrrrz/DiscordChatExporter";
+
+        public static string GitHubProjectWikiUrl { get; } = GitHubProjectUrl + "/wiki";
     }
 
     public partial class App

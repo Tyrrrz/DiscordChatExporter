@@ -95,7 +95,7 @@
                     materialDesign:HintAssist.IsFloating="True"
                     DisplayDateEnd="{Binding BeforeDate, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
                     SelectedDate="{Binding AfterDate, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
-                    ToolTip="If this is set, only messages sent after this date will be exported" />
+                    ToolTip="Only include messages sent after this date" />
                 <DatePicker
                     Grid.Row="0"
                     Grid.Column="1"
@@ -104,7 +104,7 @@
                     materialDesign:HintAssist.IsFloating="True"
                     DisplayDateStart="{Binding AfterDate, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
                     SelectedDate="{Binding BeforeDate, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
-                    ToolTip="If this is set, only messages sent before this date will be exported" />
+                    ToolTip="Only include messages sent before this date" />
                 <materialDesign:TimePicker
                     Grid.Row="1"
                     Grid.Column="0"
@@ -113,7 +113,7 @@
                     materialDesign:HintAssist.IsFloating="True"
                     IsEnabled="{Binding IsAfterDateSet}"
                     SelectedTime="{Binding AfterTime, Converter={x:Static converters:TimeSpanToDateTimeConverter.Instance}}"
-                    ToolTip="If this is set, only messages sent after this time will be exported" />
+                    ToolTip="Only include messages sent after this time" />
                 <materialDesign:TimePicker
                     Grid.Row="1"
                     Grid.Column="1"
@@ -122,7 +122,7 @@
                     materialDesign:HintAssist.IsFloating="True"
                     IsEnabled="{Binding IsBeforeDateSet}"
                     SelectedTime="{Binding BeforeTime, Converter={x:Static converters:TimeSpanToDateTimeConverter.Instance}}"
-                    ToolTip="If this is set, only messages sent before this time will be exported" />
+                    ToolTip="Only include messages sent before this time" />
             </Grid>
 
             <!--  Partitioning  -->
@@ -131,10 +131,10 @@
                 materialDesign:HintAssist.Hint="Messages per partition"
                 materialDesign:HintAssist.IsFloating="True"
                 Text="{Binding PartitionLimit, TargetNullValue=''}"
-                ToolTip="If this is set, the exported file will be split into multiple partitions, each containing no more than specified number of messages" />
+                ToolTip="Split output into partitions limited to this number of messages" />
 
             <!--  Download media  -->
-            <Grid Margin="16,16" ToolTip="If this is set, the export will include additional files such as user avatars, attached files, embedded images, etc">
+            <Grid Margin="16,16" ToolTip="Download referenced media content (user avatars, attached files, embedded images, etc)">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -143,7 +143,7 @@
                 <TextBlock
                     Grid.Column="0"
                     VerticalAlignment="Center"
-                    Text="Download referenced media content" />
+                    Text="Download media" />
                 <ToggleButton
                     Grid.Column="1"
                     HorizontalAlignment="Right"
@@ -168,9 +168,9 @@
                 Height="24"
                 Margin="12"
                 Cursor="Hand"
-                Loaded="AdvancedSectionToggleButton_OnLoaded"
+                IsChecked="{Binding IsAdvancedSectionDisplayedByDefault, Mode=OneTime}"
                 Style="{DynamicResource MaterialDesignHamburgerToggleButton}"
-                ToolTip="Show advanced options" />
+                ToolTip="Toggle advanced options" />
 
             <Button
                 Grid.Column="2"

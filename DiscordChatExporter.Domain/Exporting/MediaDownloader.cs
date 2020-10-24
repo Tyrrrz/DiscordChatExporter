@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
@@ -9,84 +8,79 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Internal;
 using DiscordChatExporter.Domain.Internal.Extensions;
-using Polly;
-using Polly.Retry;
 
 namespace DiscordChatExporter.Domain.Exporting
 {
     internal partial class MediaDownloader
     {
-        private readonly HttpClient _httpClient = Singleton.HttpClient;
+        private readonly HttpClient _httpClient;
         private readonly string _workingDirPath;
-
         private readonly bool _reuseMedia;
-        private readonly AsyncRetryPolicy _httpRequestPolicy;
 
-        private readonly Dictionary<string, string> _pathMap = new Dictionary<string, string>();
+        // URL -> Local file path
+        private readonly Dictionary<string, string> _pathCache =
+            new Dictionary<string, string>(StringComparer.Ordinal);
 
-        public MediaDownloader(string workingDirPath, bool reuseMedia)
+        public MediaDownloader(HttpClient httpClient, string workingDirPath, bool reuseMedia)
         {
+            _httpClient = httpClient;
             _workingDirPath = workingDirPath;
             _reuseMedia = reuseMedia;
-
-            _httpRequestPolicy = Policy
-                .Handle<IOException>()
-                .WaitAndRetryAsync(8, i => TimeSpan.FromSeconds(0.5 * i));
         }
+
+        public MediaDownloader(string workingDirPath, bool reuseMedia)
+            : this(Http.Client, workingDirPath, reuseMedia) {}
 
         public async ValueTask<string> DownloadAsync(string url)
         {
-            return await _httpRequestPolicy.ExecuteAsync(async () =>
+            if (_pathCache.TryGetValue(url, out var cachedFilePath))
+                return cachedFilePath;
+
+            var fileName = GetFileNameFromUrl(url);
+            var filePath = Path.Combine(_workingDirPath, fileName);
+
+            // Reuse existing files if we're allowed to
+            if (_reuseMedia && File.Exists(filePath))
+                return _pathCache[url] = filePath;
+
+            // Download it
+            Directory.CreateDirectory(_workingDirPath);
+            await Http.ExceptionPolicy.ExecuteAsync(async () =>
             {
-                if (_pathMap.TryGetValue(url, out var cachedFilePath))
-                    return cachedFilePath;
-
-                var fileName = GetFileNameFromUrl(url);
-                var filePath = Path.Combine(_workingDirPath, fileName);
-
-                _pathMap[url] = filePath;
-
-                if (!_reuseMedia || !File.Exists(filePath))
-                {
-                    Directory.CreateDirectory(_workingDirPath);
-                    await _httpClient.DownloadAsync(url, filePath);
-                }
-
-                return filePath;
+                // This catches IOExceptions which is dangerous as we're working also with files
+                await _httpClient.DownloadAsync(url, filePath);
             });
+
+            return _pathCache[url] = filePath;
         }
     }
 
     internal partial class MediaDownloader
     {
-        private static int URL_HASH_LENGTH = 5;
-        private static string HashUrl(string url)
+        private static string GetUrlHash(string url)
         {
-            using (var md5 = MD5.Create())
-            {
-                var inputBytes = Encoding.UTF8.GetBytes(url);
-                var hashBytes = md5.ComputeHash(inputBytes);
+            using var hash = SHA256.Create();
 
-                var hashBuilder = new StringBuilder();
-                for (int i = 0; i < hashBytes.Length; i++)
-                {
-                    hashBuilder.Append(hashBytes[i].ToString("X2"));
-                }
-                return hashBuilder.ToString().Truncate(URL_HASH_LENGTH);
-            }
+            var data = hash.ComputeHash(Encoding.UTF8.GetBytes(url));
+            return data.ToHex().Truncate(5); // 5 chars ought to be enough for anybody
         }
-
-        private static string GetRandomFileName() => Guid.NewGuid().ToString().Replace("-", "").Substring(0, 16);
 
         private static string GetFileNameFromUrl(string url)
         {
-            var originalFileName = Regex.Match(url, @".+/([^?]*)").Groups[1].Value;
+            var urlHash = GetUrlHash(url);
 
-            var fileName = !string.IsNullOrWhiteSpace(originalFileName)
-                ? $"{Path.GetFileNameWithoutExtension(originalFileName).Truncate(42)}-({HashUrl(url)}){Path.GetExtension(originalFileName)}"
-                : GetRandomFileName();
+            // Try to extract file name from URL
+            var fileName = Regex.Match(url, @".+/([^?]*)").Groups[1].Value;
 
-            return PathEx.EscapePath(fileName);
+            // If it's not there, just use the URL hash as the file name
+            if (string.IsNullOrWhiteSpace(fileName))
+                return urlHash;
+
+            // Otherwise, use the original file name but inject the hash in the middle
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+            var fileExtension = Path.GetExtension(fileName);
+
+            return PathEx.EscapePath(fileNameWithoutExtension.Truncate(42) + '-' + urlHash + fileExtension);
         }
     }
 }

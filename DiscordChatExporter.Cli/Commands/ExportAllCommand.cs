@@ -10,7 +10,8 @@ namespace DiscordChatExporter.Cli.Commands
     [Command("exportall", Description = "Export all accessible channels.")]
     public class ExportAllCommand : ExportMultipleCommandBase
     {
-        [CommandOption("include-dm", Description = "Whether to also export direct message channels.")]
+        [CommandOption("include-dm",
+            Description = "Include direct message channels.")]
         public bool IncludeDirectMessages { get; set; } = true;
 
         public override async ValueTask ExecuteAsync(IConsole console)

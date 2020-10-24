@@ -65,15 +65,15 @@
                 IsChecked="{Binding IsTokenPersisted}" />
         </DockPanel>
 
-        <!--  Reuse Media  -->
+        <!--  Reuse media  -->
         <DockPanel
             Background="Transparent"
             LastChildFill="False"
-            ToolTip="If the media folder already exists, reuse media inside it to skip downloads">
+            ToolTip="Reuse already existing media content to skip redundant downloads">
             <TextBlock
                 Margin="16,8"
                 DockPanel.Dock="Left"
-                Text="Reuse previously downloaded media" />
+                Text="Reuse downloaded media" />
             <ToggleButton
                 Margin="16,8"
                 DockPanel.Dock="Right"
@@ -86,7 +86,7 @@
             materialDesign:HintAssist.Hint="Date format"
             materialDesign:HintAssist.IsFloating="True"
             Text="{Binding DateFormat}"
-            ToolTip="Format used when rendering dates (uses .NET date formatting rules)" />
+            ToolTip="Format used when writing dates (uses .NET date formatting rules)" />
 
         <!--  Parallel limit  -->
         <StackPanel Background="Transparent" ToolTip="How many channels can be exported at the same time">

@@ -9,50 +9,33 @@ using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exceptions;
 using DiscordChatExporter.Domain.Internal;
 using DiscordChatExporter.Domain.Internal.Extensions;
-using Polly;
 
 namespace DiscordChatExporter.Domain.Discord
 {
     public class DiscordClient
     {
+        private readonly HttpClient _httpClient;
         private readonly AuthToken _token;
-        private readonly HttpClient _httpClient = Singleton.HttpClient;
-        private readonly IAsyncPolicy<HttpResponseMessage> _httpRequestPolicy;
 
         private readonly Uri _baseUri = new Uri("https://discord.com/api/v6/", UriKind.Absolute);
 
-        public DiscordClient(AuthToken token)
+        public DiscordClient(HttpClient httpClient, AuthToken token)
         {
+            _httpClient = httpClient;
             _token = token;
-
-            // Discord seems to always respond with 429 on the first request with unreasonable wait time (10+ minutes).
-            // For that reason the policy will ignore such errors at first, then wait a constant amount of time, and
-            // finally wait the specified amount of time, based on how many requests have failed in a row.
-            _httpRequestPolicy = Policy
-                .HandleResult<HttpResponseMessage>(m => m.StatusCode == HttpStatusCode.TooManyRequests)
-                .OrResult(m => m.StatusCode >= HttpStatusCode.InternalServerError)
-                .WaitAndRetryAsync(6,
-                    (i, result, ctx) =>
-                    {
-                        if (i <= 3)
-                            return TimeSpan.FromSeconds(2 * i);
-
-                        if (i <= 5)
-                            return TimeSpan.FromSeconds(5 * i);
-
-                        return result.Result.Headers.RetryAfter.Delta ?? TimeSpan.FromSeconds(10 * i);
-                    },
-                    (response, timespan, retryCount, context) => Task.CompletedTask
-                );
         }
 
-        private async ValueTask<HttpResponseMessage> GetResponseAsync(string url) => await _httpRequestPolicy.ExecuteAsync(async () =>
-        {
-            using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, url));
-            request.Headers.Authorization = _token.GetAuthorizationHeader();
+        public DiscordClient(AuthToken token)
+            : this(Http.Client, token) {}
 
-            return await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-        });
+        private async ValueTask<HttpResponseMessage> GetResponseAsync(string url) =>
+            await Http.ResponsePolicy.ExecuteAsync(async () =>
+            {
+                using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, url));
+                request.Headers.Authorization = _token.GetAuthorizationHeader();
+
+                return await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+            });
 
         private async ValueTask<JsonElement> GetJsonResponseAsync(string url)
         {

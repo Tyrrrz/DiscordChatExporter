@@ -40,7 +40,7 @@ namespace DiscordChatExporter.Domain.Exporting
         {
             "unix" => date.ToUnixTimeSeconds().ToString(),
             "unixms" => date.ToUnixTimeMilliseconds().ToString(),
-            var df => date.ToLocalString(df),
+            var dateFormat => date.ToLocalString(dateFormat)
         };
 
         public Member? TryGetMember(string id) =>
@@ -86,7 +86,7 @@ namespace DiscordChatExporter.Domain.Exporting
                 // We want relative path so that the output files can be copied around without breaking
                 var relativeFilePath = Path.GetRelativePath(Request.OutputBaseDirPath, filePath);
 
-                // For HTML, we need to format the URL properly
+                // HACK: for HTML, we need to format the URL properly
                 if (forHtmlOutput)
                 {
                     // Need to escape each path segment while keeping the directory separators intact
@@ -103,6 +103,7 @@ namespace DiscordChatExporter.Domain.Exporting
             // https://github.com/Tyrrrz/DiscordChatExporter/issues/372
             catch (Exception ex) when (ex is HttpRequestException || ex is OperationCanceledException)
             {
+                // TODO: add logging so we can be more liberal with catching exceptions
                 // We don't want this to crash the exporting process in case of failure
                 return url;
             }

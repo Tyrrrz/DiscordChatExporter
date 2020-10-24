@@ -31,9 +31,9 @@ namespace DiscordChatExporter.Gui.Behaviors
         private bool _viewHandled;
         private bool _modelHandled;
 
-        public IList SelectedItems
+        public IList? SelectedItems
         {
-            get => (IList) GetValue(SelectedItemsProperty);
+            get => (IList?) GetValue(SelectedItemsProperty);
             set => SetValue(SelectedItemsProperty, value);
         }
 

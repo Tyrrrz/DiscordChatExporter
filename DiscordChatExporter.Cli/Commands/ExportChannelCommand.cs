@@ -8,9 +8,11 @@ namespace DiscordChatExporter.Cli.Commands
     [Command("export", Description = "Export a channel.")]
     public class ExportChannelCommand : ExportCommandBase
     {
-        [CommandOption("channel", 'c', IsRequired = true, Description = "Channel ID.")]
+        [CommandOption("channel", 'c', IsRequired = true,
+            Description = "Channel ID.")]
         public string ChannelId { get; set; } = "";
 
-        public override async ValueTask ExecuteAsync(IConsole console) => await ExportAsync(console, ChannelId);
+        public override async ValueTask ExecuteAsync(IConsole console) =>
+            await ExportAsync(console, ChannelId);
     }
 }

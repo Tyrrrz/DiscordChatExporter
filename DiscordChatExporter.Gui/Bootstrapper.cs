@@ -17,7 +17,8 @@ namespace DiscordChatExporter.Gui
         {
             base.OnStart();
 
-            // Light theme is the default
+            // Set default theme
+            // (preferred theme will be chosen later, once the settings are loaded)
             App.SetLightTheme();
         }
 

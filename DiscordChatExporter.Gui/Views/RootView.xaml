@@ -191,10 +191,11 @@
                                     Foreground="{DynamicResource PrimaryHueMidBrush}"
                                     Kind="Account" />
                             </InlineUIContainer>
+                            <Run Text="in the text box above." />
                         </TextBlock>
                         <TextBlock Margin="0,24,0,0" FontSize="14">
                             <Run Text="For more information, check out the" />
-                            <Hyperlink NavigateUri="https://github.com/Tyrrrz/DiscordChatExporter/wiki" RequestNavigate="Hyperlink_OnRequestNavigate">wiki</Hyperlink><Run Text="." />
+                            <Hyperlink Command="{s:Action ShowHelp}">wiki</Hyperlink><Run Text="." />
                         </TextBlock>
                     </StackPanel>
 
@@ -229,10 +230,11 @@
                                     Foreground="{DynamicResource PrimaryHueMidBrush}"
                                     Kind="Robot" />
                             </InlineUIContainer>
+                            <Run Text="in the text box above." />
                         </TextBlock>
                         <TextBlock Margin="0,24,0,0" FontSize="14">
                             <Run Text="For more information, check out the" />
-                            <Hyperlink NavigateUri="https://github.com/Tyrrrz/DiscordChatExporter/wiki" RequestNavigate="Hyperlink_OnRequestNavigate">wiki</Hyperlink><Run Text="." />
+                            <Hyperlink Command="{s:Action ShowHelp}">wiki</Hyperlink><Run Text="." />
                         </TextBlock>
                     </StackPanel>
                 </Grid>

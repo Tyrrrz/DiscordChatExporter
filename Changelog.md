@@ -1,3 +1,13 @@
+### v2.24 (24-Oct-2020)
+
+- [CLI] Updated to [CliFx v1.5](https://github.com/Tyrrrz/CliFx), which brings some UX improvements.
+- [GUI] Added dark mode, which can be enabled in settings. (Thanks [@Andrew Kolos](https://github.com/andrewkolos))
+- [GUI] Improved the UX in a few minor places.
+- [JSON] Added `embed.color` property to the output. (Thanks [@Andrew Kolos](https://github.com/andrewkolos))
+- Added additional date formats: `unix` to write dates as a unix timestamp and `unixms` for the milliseconds version. (Thanks [@Andrew Kolos](https://github.com/andrewkolos))
+- Added retry policy for downloading media content. This is mostly a workaround for transient failures that sometimes may occur when downloading assets referenced from embeds. (Thanks [@Andrew Kolos](https://github.com/andrewkolos))
+- Added an option to reuse already downloaded media to avoid redundant network requests. It can be enabled in settings in GUI, or by passing `--reuse-media` in CLI. To facilitate this feature, the file name strategy has been changed as well -- now instead of relying on the original file name and adding `(n)` to the end in case of duplicates, a URL hash is injected in every file name. This also means that when the "reuse media" option is disabled, existing files inside the media directory may be overwritten. (Thanks [@Andrew Kolos](https://github.com/andrewkolos))
+
 ### v2.23 (14-Sep-2020)
 
 - [CLI] Added a command to export all channels across all servers. Use `exportall` to do it. (Thanks [@wyattscarpenter](https://github.com/wyattscarpenter))

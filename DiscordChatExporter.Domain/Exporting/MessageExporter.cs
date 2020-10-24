@@ -87,7 +87,9 @@ namespace DiscordChatExporter.Domain.Exporting
 
     internal partial class MessageExporter
     {
-        private static string GetPartitionFilePath(string baseFilePath, int partitionIndex)
+        private static string GetPartitionFilePath(
+            string baseFilePath,
+            int partitionIndex)
         {
             // First partition - don't change file name
             if (partitionIndex <= 0)
@@ -97,16 +99,17 @@ namespace DiscordChatExporter.Domain.Exporting
             var fileNameWithoutExt = Path.GetFileNameWithoutExtension(baseFilePath);
             var fileExt = Path.GetExtension(baseFilePath);
             var fileName = $"{fileNameWithoutExt} [part {partitionIndex + 1}]{fileExt}";
-
-            // Generate new path
             var dirPath = Path.GetDirectoryName(baseFilePath);
-            if (!string.IsNullOrWhiteSpace(dirPath))
-                return Path.Combine(dirPath, fileName);
 
-            return fileName;
+            return !string.IsNullOrWhiteSpace(dirPath)
+                ? Path.Combine(dirPath, fileName)
+                : fileName;
         }
 
-        private static MessageWriter CreateMessageWriter(string filePath, ExportFormat format, ExportContext context)
+        private static MessageWriter CreateMessageWriter(
+            string filePath,
+            ExportFormat format,
+            ExportContext context)
         {
             // Stream will be disposed by the underlying writer
             var stream = File.Create(filePath);

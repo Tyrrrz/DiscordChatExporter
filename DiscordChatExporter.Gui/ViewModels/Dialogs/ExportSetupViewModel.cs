@@ -75,10 +75,16 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             _settingsService.LastShouldDownloadMedia = ShouldDownloadMedia;
 
             // If single channel - prompt file path
-            if (IsSingleChannel)
+            if (Channels != null && IsSingleChannel)
             {
                 var channel = Channels.Single();
-                var defaultFileName = ExportRequest.GetDefaultOutputFileName(Guild!, channel, SelectedFormat, After, Before);
+                var defaultFileName = ExportRequest.GetDefaultOutputFileName(
+                    Guild!,
+                    channel,
+                    SelectedFormat,
+                    After,
+                    Before
+                );
 
                 // Filter
                 var ext = SelectedFormat.GetFileExtension();
@@ -92,11 +98,24 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
                 OutputPath = _dialogManager.PromptDirectoryPath();
             }
 
-            // If canceled - return
             if (string.IsNullOrWhiteSpace(OutputPath))
                 return;
 
             Close(true);
+        }
+    }
+
+    public static class ExportSetupViewModelExtensions
+    {
+        public static ExportSetupViewModel CreateExportSetupViewModel(this IViewModelFactory factory,
+            Guild guild, IReadOnlyList<Channel> channels)
+        {
+            var viewModel = factory.CreateExportSetupViewModel();
+
+            viewModel.Guild = guild;
+            viewModel.Channels = channels;
+
+            return viewModel;
         }
     }
 }

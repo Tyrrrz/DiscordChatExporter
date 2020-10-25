@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors;
 using DiscordChatExporter.Domain.Internal.Extensions;
+using DiscordChatExporter.Domain.Markdown.Ast;
 
 namespace DiscordChatExporter.Domain.Exporting.Writers
 {
@@ -159,6 +160,20 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             await _writer.FlushAsync();
         }
 
+        private async ValueTask WriteMentionAsync(User mentionedUser)
+        {
+            _writer.WriteStartObject();
+
+            _writer.WriteString("id", mentionedUser.Id);
+            _writer.WriteString("name", mentionedUser.Name);
+            _writer.WriteNumber("discriminator", mentionedUser.Discriminator);
+            _writer.WriteString("nickname", Context.TryGetMember(mentionedUser.Id)?.Nick ?? mentionedUser.Name);
+            _writer.WriteBoolean("isBot", mentionedUser.IsBot);
+
+            _writer.WriteEndObject();
+            await _writer.FlushAsync();
+        }
+
         public override async ValueTask WritePreambleAsync()
         {
             // Root object (start)
@@ -236,6 +251,13 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
             foreach (var reaction in message.Reactions)
                 await WriteReactionAsync(reaction);
+
+            _writer.WriteEndArray();
+
+            // Mentions
+            _writer.WriteStartArray("mentions");
+            foreach (var mention in message.MentionedUsers)
+                await WriteMentionAsync(mention);
 
             _writer.WriteEndArray();
 

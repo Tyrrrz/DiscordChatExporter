@@ -7,28 +7,28 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2.3.3
+      - name: Checkout
+        uses: actions/checkout@v2.3.3
 
-    - name: Install .NET Core
-      uses: actions/setup-dotnet@v1.7.2
-      with:
-        dotnet-version: 3.1.100
+      - name: Install .NET
+        uses: actions/setup-dotnet@v1.7.2
+        with:
+          dotnet-version: 5.0.100
 
-    - name: Build & publish (CLI)
-      run: dotnet publish DiscordChatExporter.Cli/ -o DiscordChatExporter.Cli/bin/Publish/ --configuration Release
+      - name: Build & publish (CLI)
+        run: dotnet publish DiscordChatExporter.Cli/ -o DiscordChatExporter.Cli/bin/Publish/ --configuration Release
 
-    - name: Build & publish (GUI)
-      run: dotnet publish DiscordChatExporter.Gui/ -o DiscordChatExporter.Gui/bin/Publish/ --configuration Release
+      - name: Build & publish (GUI)
+        run: dotnet publish DiscordChatExporter.Gui/ -o DiscordChatExporter.Gui/bin/Publish/ --configuration Release
 
-    - name: Upload build artifacts (CLI)
-      uses: actions/upload-artifact@v1
-      with:
-        name: DiscordChatExporter.CLI
-        path: DiscordChatExporter.Cli/bin/Publish/
+      - name: Upload build artifacts (CLI)
+        uses: actions/upload-artifact@v1
+        with:
+          name: DiscordChatExporter.CLI
+          path: DiscordChatExporter.Cli/bin/Publish/
 
-    - name: Upload build artifact (GUI)
-      uses: actions/upload-artifact@v1
-      with:
-        name: DiscordChatExporter
-        path: DiscordChatExporter.Gui/bin/Publish/
+      - name: Upload build artifact (GUI)
+        uses: actions/upload-artifact@v1
+        with:
+          name: DiscordChatExporter
+          path: DiscordChatExporter.Gui/bin/Publish/

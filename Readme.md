@@ -19,11 +19,11 @@ Have questions or need help? Check out the [wiki](https://github.com/Tyrrrz/Disc
 - [AUR](https://aur.archlinux.org/packages/discord-chat-exporter-cli/): `yay -S discord-chat-exporter-cli`
 - [CI build](https://github.com/Tyrrrz/DiscordChatExporter/actions)
 
-Note: This application requires .NET Core runtime in order to run:
+Note: This application requires .NET Core v3.1 runtime in order to run:
 
-- .NET Core runtime for Windows: [x64](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.0-windows-x64-installer) | [x86](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.0-windows-x86-installer)
-- .NET Core runtime for macOS (for CLI version only): [x64](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-3.1.0-macos-x64-installer)
-- .NET Core runtime for Linux (for CLI version only): [Ubuntu/Debian](https://docs.microsoft.com/en-us/dotnet/core/install/linux-package-manager-ubuntu-1904#install-the-net-core-runtime)
+- .NET Runtime for Windows: [x64](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.0-windows-x64-installer) | [x86](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.0-windows-x86-installer)
+- .NET Runtime for macOS (for CLI version only): [x64](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-3.1.0-macos-x64-installer)
+- .NET Runtime for Linux (for CLI version only): [Ubuntu/Debian](https://docs.microsoft.com/en-us/dotnet/core/install/linux-package-manager-ubuntu-1904#install-the-net-core-runtime)
 
 ## Features
 

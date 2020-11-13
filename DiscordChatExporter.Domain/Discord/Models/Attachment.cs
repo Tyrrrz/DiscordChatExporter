@@ -23,6 +23,11 @@ namespace DiscordChatExporter.Domain.Discord.Models
         public bool IsImage =>
             ImageFileExtensions.Contains(Path.GetExtension(FileName), StringComparer.OrdinalIgnoreCase);
 
+        public bool IsVideo =>
+            WebSafeVideoFileExtensions.Contains(Path.GetExtension(FileName), StringComparer.OrdinalIgnoreCase);
+        public bool IsAudio =>
+            WebSafeAudioFileExtensions.Contains(Path.GetExtension(FileName), StringComparer.OrdinalIgnoreCase);
+
         public bool IsSpoiler =>
             IsImage && FileName.StartsWith("SPOILER_", StringComparison.Ordinal);
 
@@ -43,7 +48,9 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
     public partial class Attachment
     {
-        private static readonly string[] ImageFileExtensions = {".jpg", ".jpeg", ".png", ".gif", ".bmp"};
+        private static readonly string[] ImageFileExtensions = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"};
+        private static readonly string[] WebSafeVideoFileExtensions = { ".mp4", ".webm" };
+        private static readonly string[] WebSafeAudioFileExtensions = { ".mp3", ".wav", ".ogg", ".flac", ".m4a" };
 
         public static Attachment Parse(JsonElement json)
         {

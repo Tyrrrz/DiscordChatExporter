@@ -59,16 +59,38 @@
                         }
                         else
                         {
-                            <a href="@await ResolveUrlAsync(attachment.Url)">
-                                @if (attachment.IsImage)
-                                {
+                            @if (attachment.IsImage)
+                            {
+                                <a href="@await ResolveUrlAsync(attachment.Url)">
+                                    @($"Image: {attachment.FileName} ({attachment.FileSize})")
+                                    <br/>
                                     <img class="chatlog__attachment-thumbnail" src="@await ResolveUrlAsync(attachment.Url)" alt="Attachment">
-                                }
-                                else
-                                {
+                                </a>
+                            }
+                            else if (attachment.IsVideo)
+                            {
+                                <a href="@await ResolveUrlAsync(attachment.Url)">
+                                    @($"Video: {attachment.FileName} ({attachment.FileSize})")
+                                </a>
+                                <br/>
+                                <video controls class="chatlog__attachment-thumbnail">
+                                    <source src="@await ResolveUrlAsync(attachment.Url)" alt="Video Attachment">
+                                </video>
+                            }
+                            else if (attachment.IsAudio)
+                            {
+                                <a href="@await ResolveUrlAsync(attachment.Url)">
+                                    @($"Audio: {attachment.FileName} ({attachment.FileSize})")
+                                </a>
+                                <br/>
+                                <audio controls class="chatlog__attachment-thumbnail" src="@await ResolveUrlAsync(attachment.Url)" alt="Audio Attachment" />
+                            }
+                            else
+                            {
+                                <a href="@await ResolveUrlAsync(attachment.Url)">
                                     @($"Attachment: {attachment.FileName} ({attachment.FileSize})")
-                                }
-                            </a>
+                                </a>
+                            }
                         }
                     </div>
                 }

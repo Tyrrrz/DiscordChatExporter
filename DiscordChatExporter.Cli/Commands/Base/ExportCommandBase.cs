@@ -69,6 +69,34 @@ namespace DiscordChatExporter.Cli.Commands.Base
             console.Output.WriteLine("Done.");
         }
 
+        public void ExecuteAsync()
+        {
+            if (ShouldReuseMedia && !ShouldDownloadMedia)
+            {
+                var shouldDownloadMediaOptionName = GetAttributeName(nameof(ShouldDownloadMedia));
+                var shouldReuseMediaOptionName = GetAttributeName(nameof(ShouldReuseMedia));
+
+                Console.WriteLine($"The \"--{shouldReuseMediaOptionName}\" option cannot be used without the \"--{shouldDownloadMediaOptionName}\" option.");
+                Environment.Exit(1);
+            }
+
+            string GetAttributeName(string name)
+            {
+                var property = typeof(ExportCommandBase).GetProperty(name);
+                if (property == null) throw new Exception("Could not find property: " + name);
+
+                var attributes = property.GetCustomAttributes(true);
+                foreach (var attribute in attributes)
+                {
+                    var commandOptionAttribute = attribute as CommandOptionAttribute;
+                    if (commandOptionAttribute != null && commandOptionAttribute.Name != null)
+                    {
+                        return commandOptionAttribute.Name;
+                    }
+                }
+                throw new Exception("Unable to find name of property");
+            }
+        }
         protected async ValueTask ExportAsync(IConsole console, Channel channel)
         {
             var guild = await GetDiscordClient().GetGuildAsync(channel.GuildId);

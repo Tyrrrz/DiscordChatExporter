@@ -29,7 +29,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
             WebSafeAudioFileExtensions.Contains(Path.GetExtension(FileName), StringComparer.OrdinalIgnoreCase);
 
         public bool IsSpoiler =>
-            IsImage && FileName.StartsWith("SPOILER_", StringComparison.Ordinal);
+            (IsImage || IsVideo || IsAudio) && FileName.StartsWith("SPOILER_", StringComparison.Ordinal);
 
         public FileSize FileSize { get; }
 

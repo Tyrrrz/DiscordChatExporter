@@ -55,7 +55,9 @@ img {
 }
 
 .spoiler {
-    width: fit-content;
+    /* width: fit-content; */
+    display: inline-block;
+    /* This is more consistent across browsers, the old attribute worked well under Chrome but not FireFox. */
 }
 
 .spoiler--hidden {
@@ -84,24 +86,28 @@ img {
     box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
-.spoiler--hidden .spoiler-image img {
+.spoiler--hidden .spoiler-image * {
     filter: blur(44px);
 }
 
-.spoiler--hidden .spoiler-image:after {
-    content: "SPOILER";
-    color: #dcddde;
-    background-color: rgba(0, 0, 0, 0.6);
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    font-weight: 600;
-    padding: 0.5em 0.7em;
-    border-radius: 20px;
-    letter-spacing: 0.05em;
-    font-size: 0.9em;
-}
+    .spoiler--hidden .spoiler-image:after {
+        content: "SPOILER";
+        color: #dcddde;
+        background-color: rgba(0, 0, 0, 0.6);
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        font-weight: 600;
+        /* padding: 0.5em 0.7em; */
+        padding: 100%;
+        /* This ruins those beutifully rounded buttons, but it's needed to prevent a FireFox bug with video and audio elemnts. */
+        /* The bug is that you can click trough the spoiler layer and play the video or audio, I could not identify the cause. */
+        /* I leave this here, in case someone is brave enough to venture in to madness that is undocumented browser behaviour. */
+        border-radius: 20px;
+        letter-spacing: 0.05em;
+        font-size: 0.9em;
+    }
 
 .spoiler--hidden:hover .spoiler-image:after {
     color: #fff;

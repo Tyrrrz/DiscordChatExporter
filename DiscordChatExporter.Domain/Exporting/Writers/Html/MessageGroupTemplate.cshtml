@@ -41,35 +41,52 @@
 
             <div class="chatlog__message @isPinnedStyle" data-message-id="@message.Id" id="message-@message.Id">
                 <div class="chatlog__content">
-                    <div class="markdown">@Raw(FormatMarkdown(message.Content)) @if (message.EditedTimestamp != null) {<span class="chatlog__edited-timestamp" title="@FormatDate(message.EditedTimestamp.Value)">(edited)</span>}</div>
+                    <div class="markdown">@Raw(FormatMarkdown(message.Content)) @if (message.EditedTimestamp != null)
+                    {<span class="chatlog__edited-timestamp" title="@FormatDate(message.EditedTimestamp.Value)">(edited)</span>}</div>
                 </div>
+
 
                 @foreach (var attachment in message.Attachments)
                 {
                     <div class="chatlog__attachment">
-                        @if (attachment.IsSpoiler)
-                        {
-                            <div class="spoiler spoiler--hidden" onclick="showSpoiler(event, this)">
-                                <div class="spoiler-image">
-                                    <a href="@await ResolveUrlAsync(attachment.Url)">
-                                        <img class="chatlog__attachment-thumbnail" src="@await ResolveUrlAsync(attachment.Url)" alt="Attachment">
-                                    </a>
-                                </div>
-                            </div>
-                        }
-                        else
-                        {
-                            <a href="@await ResolveUrlAsync(attachment.Url)">
+                        <div class="@((attachment.IsSpoiler ? "spoiler spoiler--hidden" : ""))" onclick="@((attachment.IsSpoiler ? "showSpoiler(event, this)" : ""))">
+                            <div class="@((attachment.IsSpoiler ? "spoiler-image" : ""))">
+
                                 @if (attachment.IsImage)
                                 {
-                                    <img class="chatlog__attachment-thumbnail" src="@await ResolveUrlAsync(attachment.Url)" alt="Attachment">
+                                    <a href="@await ResolveUrlAsync(attachment.Url)">
+                                        @($"Image: {attachment.FileName} ({attachment.FileSize})")
+                                        <br />
+                                        <img class="chatlog__attachment-thumbnail" src="@await ResolveUrlAsync(attachment.Url)" alt="Attachment">
+                                    </a>
+                                }
+                                else if (attachment.IsVideo)
+                                {
+                                    <a href="@await ResolveUrlAsync(attachment.Url)">
+                                        @($"Video: {attachment.FileName} ({attachment.FileSize})")
+                                    </a>
+                                    <br />
+                                    <video controls class="chatlog__attachment-thumbnail">
+                                        <source src="@await ResolveUrlAsync(attachment.Url)" alt="Video Attachment">
+                                    </video>
+                                }
+                                else if (attachment.IsAudio)
+                                {
+                                    <a href="@await ResolveUrlAsync(attachment.Url)">
+                                        @($"Audio: {attachment.FileName} ({attachment.FileSize})")
+                                    </a>
+                                    <br />
+                                    <audio controls class="chatlog__attachment-thumbnail" src="@await ResolveUrlAsync(attachment.Url)" alt="Audio Attachment" />
                                 }
                                 else
                                 {
-                                    @($"Attachment: {attachment.FileName} ({attachment.FileSize})")
+                                    <a href="@await ResolveUrlAsync(attachment.Url)">
+                                        @($"Attachment: {attachment.FileName} ({attachment.FileSize})")
+                                    </a>
                                 }
-                            </a>
-                        }
+
+                            </div>
+                        </div>
                     </div>
                 }
 
@@ -190,22 +207,22 @@
                                         <img class="chatlog__embed-footer-icon" src="@await ResolveUrlAsync(embed.Footer.IconUrl)" alt="Footer icon">
                                     }
 
-                                        <span class="chatlog__embed-footer-text">
-                                            @if (!string.IsNullOrWhiteSpace(embed.Footer?.Text))
-                                            {
-                                                @embed.Footer.Text
-                                            }
+                                    <span class="chatlog__embed-footer-text">
+                                        @if (!string.IsNullOrWhiteSpace(embed.Footer?.Text))
+                                        {
+                                            @embed.Footer.Text
+                                        }
 
-                                            @if (!string.IsNullOrWhiteSpace(embed.Footer?.Text) && embed.Timestamp != null)
-                                            {
-                                                @(" • ")
-                                            }
+                                        @if (!string.IsNullOrWhiteSpace(embed.Footer?.Text) && embed.Timestamp != null)
+                                        {
+                                            @(" • ")
+                                        }
 
-                                            @if (embed.Timestamp != null)
-                                            {
-                                                @FormatDate(embed.Timestamp.Value)
-                                            }
-                                        </span>
+                                        @if (embed.Timestamp != null)
+                                        {
+                                            @FormatDate(embed.Timestamp.Value)
+                                        }
+                                    </span>
                                 </div>
                             }
                         </div>

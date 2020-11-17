@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using CliFx;
 using CliFx.Attributes;
+using CliFx.Exceptions;
 using CliFx.Utilities;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exporting;
@@ -11,6 +12,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
 {
     public abstract class ExportCommandBase : TokenCommandBase
     {
+
         [CommandOption("output", 'o',
             Description = "Output file or directory path.")]
         public string OutputPath { get; set; } = Directory.GetCurrentDirectory();
@@ -73,28 +75,8 @@ namespace DiscordChatExporter.Cli.Commands.Base
         {
             if (ShouldReuseMedia && !ShouldDownloadMedia)
             {
-                var shouldDownloadMediaOptionName = GetAttributeName(nameof(ShouldDownloadMedia));
-                var shouldReuseMediaOptionName = GetAttributeName(nameof(ShouldReuseMedia));
-
-                Console.WriteLine($"The \"--{shouldReuseMediaOptionName}\" option cannot be used without the \"--{shouldDownloadMediaOptionName}\" option.");
+                Console.WriteLine("The \"--reuse-media\" option cannot be used without the \"--media\" option.");
                 Environment.Exit(1);
-            }
-
-            string GetAttributeName(string name)
-            {
-                var property = typeof(ExportCommandBase).GetProperty(name);
-                if (property == null) throw new Exception("Could not find property: " + name);
-
-                var attributes = property.GetCustomAttributes(true);
-                foreach (var attribute in attributes)
-                {
-                    var commandOptionAttribute = attribute as CommandOptionAttribute;
-                    if (commandOptionAttribute != null && commandOptionAttribute.Name != null)
-                    {
-                        return commandOptionAttribute.Name;
-                    }
-                }
-                throw new Exception("Unable to find name of property");
             }
         }
         protected async ValueTask ExportAsync(IConsole console, Channel channel)

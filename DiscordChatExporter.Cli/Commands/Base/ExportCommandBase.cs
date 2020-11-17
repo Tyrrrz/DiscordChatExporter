@@ -75,8 +75,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
         {
             if (ShouldReuseMedia && !ShouldDownloadMedia)
             {
-                Console.WriteLine("The \"--reuse-media\" option cannot be used without the \"--media\" option.");
-                Environment.Exit(1);
+                throw new CommandException("The --reuse-media option cannot be used without the --media option.");
             }
         }
         protected async ValueTask ExportAsync(IConsole console, Channel channel)

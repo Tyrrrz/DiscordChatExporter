@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using DiscordChatExporter.Domain.Discord.Models.Common;
 using DiscordChatExporter.Domain.Internal.Extensions;
@@ -20,13 +20,11 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
         public int? Height { get; }
 
-        public bool IsImage =>
-            ImageFileExtensions.Contains(Path.GetExtension(FileName), StringComparer.OrdinalIgnoreCase);
+        public bool IsImage => ImageFileExtensions.Contains(Path.GetExtension(FileName));
 
-        public bool IsVideo =>
-            WebSafeVideoFileExtensions.Contains(Path.GetExtension(FileName), StringComparer.OrdinalIgnoreCase);
-        public bool IsAudio =>
-            WebSafeAudioFileExtensions.Contains(Path.GetExtension(FileName), StringComparer.OrdinalIgnoreCase);
+        public bool IsVideo => VideoFileExtensions.Contains(Path.GetExtension(FileName));
+
+        public bool IsAudio => AudioFileExtensions.Contains(Path.GetExtension(FileName));
 
         public bool IsSpoiler =>
             (IsImage || IsVideo || IsAudio) && FileName.StartsWith("SPOILER_", StringComparison.Ordinal);
@@ -48,9 +46,17 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
     public partial class Attachment
     {
-        private static readonly string[] ImageFileExtensions = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"};
-        private static readonly string[] WebSafeVideoFileExtensions = { ".mp4", ".webm" };
-        private static readonly string[] WebSafeAudioFileExtensions = { ".mp3", ".wav", ".ogg", ".flac", ".m4a" };
+        private static readonly HashSet<string> ImageFileExtensions =
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"};
+
+        private static readonly HashSet<string> VideoFileExtensions =
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                {".mp4", ".webm"};
+
+        private static readonly HashSet<string> AudioFileExtensions =
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                {".mp3", ".wav", ".ogg", ".flac", ".m4a"};
 
         public static Attachment Parse(JsonElement json)
         {

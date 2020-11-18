@@ -12,7 +12,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Framework
 
         public void Close(T dialogResult = default)
         {
-            DialogResult = dialogResult;
+            DialogResult = dialogResult!;
             Closed?.Invoke(this, EventArgs.Empty);
         }
     }

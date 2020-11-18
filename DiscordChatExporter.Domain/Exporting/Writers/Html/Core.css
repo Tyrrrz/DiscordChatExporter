@@ -49,9 +49,12 @@ img {
 
 .markdown {
     max-width: 100%;
-    white-space: pre-wrap;
     line-height: 1.3;
     overflow-wrap: break-word;
+}
+
+.preserve-whitespace {
+    white-space: pre-wrap;
 }
 
 .spoiler {

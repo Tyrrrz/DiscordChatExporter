@@ -14,7 +14,7 @@
 
     var userMember = Model.ExportContext.TryGetMember(Model.MessageGroup.Author.Id);
     var userColor = Model.ExportContext.TryGetUserColor(Model.MessageGroup.Author.Id);
-    var userNick = (Model.MessageGroup.Author.IsBot ? Model.MessageGroup.Author.Name : (userMember?.Nick ?? Model.MessageGroup.Author.Name));
+    var userNick = Model.MessageGroup.Author.IsBot ? Model.MessageGroup.Author.Name : userMember?.Nick ?? Model.MessageGroup.Author.Name;
 
     var userColorStyle = userColor != null
         ? $"color: rgb({userColor?.R},{userColor?.G},{userColor?.B})"
@@ -40,43 +40,42 @@
             var isPinnedStyle = message.IsPinned ? "chatlog__message--pinned" : null;
 
             <div class="chatlog__message @isPinnedStyle" data-message-id="@message.Id" id="message-@message.Id">
-                <div class="chatlog__content">
-                    <div class="markdown">@Raw(FormatMarkdown(message.Content)) @if (message.EditedTimestamp != null)
-                    {<span class="chatlog__edited-timestamp" title="@FormatDate(message.EditedTimestamp.Value)">(edited)</span>}</div>
-                </div>
+                @if (!string.IsNullOrWhiteSpace(message.Content) || message.EditedTimestamp != null)
+                {
+                    <div class="chatlog__content">
+                        <div class="markdown">
+                            <span class="preserve-whitespace">@Raw(FormatMarkdown(message.Content))</span>
 
+                            @if (message.EditedTimestamp != null)
+                            {
+                                <span class="chatlog__edited-timestamp" title="@FormatDate(message.EditedTimestamp.Value)">(edited)</span>
+                            }
+                        </div>
+                    </div>
+                }
 
                 @foreach (var attachment in message.Attachments)
                 {
                     <div class="chatlog__attachment">
-                        <div class="@((attachment.IsSpoiler ? "spoiler spoiler--hidden" : ""))" onclick="@((attachment.IsSpoiler ? "showSpoiler(event, this)" : ""))">
-                            <div class="@((attachment.IsSpoiler ? "spoiler-image" : ""))">
-
+                        <div class="@(attachment.IsSpoiler ? "spoiler spoiler--hidden" : "")" onclick="@(attachment.IsSpoiler ? "showSpoiler(event, this)" : "")">
+                            <div class="@(attachment.IsSpoiler ? "spoiler-image" : "")">
                                 @if (attachment.IsImage)
                                 {
                                     <a href="@await ResolveUrlAsync(attachment.Url)">
-                                        @($"Image: {attachment.FileName} ({attachment.FileSize})")
-                                        <br />
-                                        <img class="chatlog__attachment-thumbnail" src="@await ResolveUrlAsync(attachment.Url)" alt="Attachment">
+                                        <img class="chatlog__attachment-thumbnail" src="@await ResolveUrlAsync(attachment.Url)" alt="Image attachment" title="@($"Image: {attachment.FileName} ({attachment.FileSize})")">
                                     </a>
                                 }
                                 else if (attachment.IsVideo)
                                 {
-                                    <a href="@await ResolveUrlAsync(attachment.Url)">
-                                        @($"Video: {attachment.FileName} ({attachment.FileSize})")
-                                    </a>
-                                    <br />
                                     <video controls class="chatlog__attachment-thumbnail">
-                                        <source src="@await ResolveUrlAsync(attachment.Url)" alt="Video Attachment">
+                                        <source src="@await ResolveUrlAsync(attachment.Url)" alt="Video attachment" title="@($"Video: {attachment.FileName} ({attachment.FileSize})")">
                                     </video>
                                 }
                                 else if (attachment.IsAudio)
                                 {
-                                    <a href="@await ResolveUrlAsync(attachment.Url)">
-                                        @($"Audio: {attachment.FileName} ({attachment.FileSize})")
-                                    </a>
-                                    <br />
-                                    <audio controls class="chatlog__attachment-thumbnail" src="@await ResolveUrlAsync(attachment.Url)" alt="Audio Attachment" />
+                                    <audio controls class="chatlog__attachment-thumbnail">
+                                        <source src="@await ResolveUrlAsync(attachment.Url)" alt="Audio attachment" title="@($"Audio: {attachment.FileName} ({attachment.FileSize})")">
+                                    </audio>
                                 }
                                 else
                                 {
@@ -84,7 +83,6 @@
                                         @($"Attachment: {attachment.FileName} ({attachment.FileSize})")
                                     </a>
                                 }
-
                             </div>
                         </div>
                     </div>
@@ -136,12 +134,12 @@
                                             @if (!string.IsNullOrWhiteSpace(embed.Url))
                                             {
                                                 <a class="chatlog__embed-title-link" href="@embed.Url">
-                                                    <div class="markdown">@Raw(FormatEmbedMarkdown(embed.Title))</div>
+                                                    <div class="markdown preserve-whitespace">@Raw(FormatEmbedMarkdown(embed.Title))</div>
                                                 </a>
                                             }
                                             else
                                             {
-                                                <div class="markdown">@Raw(FormatEmbedMarkdown(embed.Title))</div>
+                                                <div class="markdown preserve-whitespace">@Raw(FormatEmbedMarkdown(embed.Title))</div>
                                             }
                                         </div>
                                     }
@@ -149,7 +147,7 @@
                                     @if (!string.IsNullOrWhiteSpace(embed.Description))
                                     {
                                         <div class="chatlog__embed-description">
-                                            <div class="markdown">@Raw(FormatEmbedMarkdown(embed.Description))</div>
+                                            <div class="markdown preserve-whitespace">@Raw(FormatEmbedMarkdown(embed.Description))</div>
                                         </div>
                                     }
 
@@ -164,14 +162,14 @@
                                                     @if (!string.IsNullOrWhiteSpace(field.Name))
                                                     {
                                                         <div class="chatlog__embed-field-name">
-                                                            <div class="markdown">@Raw(FormatEmbedMarkdown(field.Name))</div>
+                                                            <div class="markdown preserve-whitespace">@Raw(FormatEmbedMarkdown(field.Name))</div>
                                                         </div>
                                                     }
 
                                                     @if (!string.IsNullOrWhiteSpace(field.Value))
                                                     {
                                                         <div class="chatlog__embed-field-value">
-                                                            <div class="markdown">@Raw(FormatEmbedMarkdown(field.Value))</div>
+                                                            <div class="markdown preserve-whitespace">@Raw(FormatEmbedMarkdown(field.Value))</div>
                                                         </div>
                                                     }
                                                 </div>

@@ -74,8 +74,11 @@ namespace DiscordChatExporter.Domain.Exporting
             {
                 var filePath = await _mediaDownloader.DownloadAsync(url);
 
-                // We want relative path so that the output files can be copied around without breaking
-                var relativeFilePath = Path.GetRelativePath(Request.OutputBaseDirPath, filePath);
+                // We want relative path so that the output files can be copied around without breaking.
+                // Base directory path may be null if the file is stored at the root or relative to working directory.
+                var relativeFilePath = !string.IsNullOrWhiteSpace(Request.OutputBaseDirPath)
+                    ? Path.GetRelativePath(Request.OutputBaseDirPath, filePath)
+                    : filePath;
 
                 // HACK: for HTML, we need to format the URL properly
                 if (Request.Format == ExportFormat.HtmlDark || Request.Format == ExportFormat.HtmlLight)

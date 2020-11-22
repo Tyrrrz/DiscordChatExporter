@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using CliFx;
 using CliFx.Attributes;
+using CliFx.Exceptions;
 using CliFx.Utilities;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exporting;
@@ -11,6 +12,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
 {
     public abstract class ExportCommandBase : TokenCommandBase
     {
+
         [CommandOption("output", 'o',
             Description = "Output file or directory path.")]
         public string OutputPath { get; set; } = Directory.GetCurrentDirectory();
@@ -69,6 +71,13 @@ namespace DiscordChatExporter.Cli.Commands.Base
             console.Output.WriteLine("Done.");
         }
 
+        public void ExecuteAsync()
+        {
+            if (ShouldReuseMedia && !ShouldDownloadMedia)
+            {
+                throw new CommandException("The --reuse-media option cannot be used without the --media option.");
+            }
+        }
         protected async ValueTask ExportAsync(IConsole console, Channel channel)
         {
             var guild = await GetDiscordClient().GetGuildAsync(channel.GuildId);

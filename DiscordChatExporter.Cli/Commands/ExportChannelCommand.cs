@@ -12,7 +12,10 @@ namespace DiscordChatExporter.Cli.Commands
             Description = "Channel ID.")]
         public string ChannelId { get; set; } = "";
 
-        public override async ValueTask ExecuteAsync(IConsole console) =>
+        public override async ValueTask ExecuteAsync(IConsole console)
+        {
+            base.ExecuteAsync();
             await ExportAsync(console, ChannelId);
+        }
     }
 }

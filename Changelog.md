@@ -1,3 +1,10 @@
+### v2.25 (23-Nov-2020)
+
+- [JSON] Added `mentions` property to the output. This contains users referenced inside the message text, but doesn't include mentions in embeds. (Thanks [@Andrew Kolos](https://github.com/andrewkolos))
+- [HTML] Added better previews for attached video and audio. They are now rendered using a browser native player element. The actual file path can still be retrieved by right clicking and selecting "Copy file path". (Thanks [@sas41](https://github.com/sas41))
+- [CLI] Fixed an issue where using `--media` option without providing a rooted path via `--output` option triggered an error.
+- [CLI] Fixed an issue where using `--reuse-media` option without also providing `--media` option was accepted, but didn't actually do anything. Now this produces an error instead. (Thanks [@Andrew Kolos](https://github.com/andrewkolos))
+
 ### v2.24 (24-Oct-2020)
 
 - [CLI] Updated to [CliFx v1.5](https://github.com/Tyrrrz/CliFx), which brings some UX improvements.

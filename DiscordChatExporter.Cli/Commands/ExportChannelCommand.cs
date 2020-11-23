@@ -14,7 +14,7 @@ namespace DiscordChatExporter.Cli.Commands
 
         public override async ValueTask ExecuteAsync(IConsole console)
         {
-            base.ExecuteAsync();
+            await base.ExecuteAsync(console);
             await ExportAsync(console, ChannelId);
         }
     }

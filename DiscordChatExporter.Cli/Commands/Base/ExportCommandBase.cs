@@ -12,7 +12,6 @@ namespace DiscordChatExporter.Cli.Commands.Base
 {
     public abstract class ExportCommandBase : TokenCommandBase
     {
-
         [CommandOption("output", 'o',
             Description = "Output file or directory path.")]
         public string OutputPath { get; set; } = Directory.GetCurrentDirectory();
@@ -71,13 +70,6 @@ namespace DiscordChatExporter.Cli.Commands.Base
             console.Output.WriteLine("Done.");
         }
 
-        public void ExecuteAsync()
-        {
-            if (ShouldReuseMedia && !ShouldDownloadMedia)
-            {
-                throw new CommandException("The --reuse-media option cannot be used without the --media option.");
-            }
-        }
         protected async ValueTask ExportAsync(IConsole console, Channel channel)
         {
             var guild = await GetDiscordClient().GetGuildAsync(channel.GuildId);
@@ -88,6 +80,18 @@ namespace DiscordChatExporter.Cli.Commands.Base
         {
             var channel = await GetDiscordClient().GetChannelAsync(channelId);
             await ExportAsync(console, channel);
+        }
+
+        public override ValueTask ExecuteAsync(IConsole console)
+        {
+            if (ShouldReuseMedia && !ShouldDownloadMedia)
+            {
+                throw new CommandException(
+                    "The --reuse-media option cannot be used without the --media option."
+                );
+            }
+
+            return default;
         }
     }
 }

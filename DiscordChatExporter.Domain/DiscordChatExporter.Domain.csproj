@@ -2,7 +2,7 @@
   <Import Project="../DiscordChatExporter.props" />
 
   <ItemGroup>
-    <PackageReference Include="JsonExtensions" Version="1.0.0" />
+    <PackageReference Include="JsonExtensions" Version="1.0.1" />
     <PackageReference Include="MiniRazor" Version="1.1.0" />
     <PackageReference Include="Polly" Version="7.2.1" />
     <PackageReference Include="Tyrrrz.Extensions" Version="1.6.5" />

@@ -54,7 +54,7 @@ namespace DiscordChatExporter.Domain.Discord
                 };
             }
 
-            return await response.Content.ReadAsJsonAsync(default);
+            return await response.Content.ReadAsJsonAsync();
         }
 
         private async ValueTask<JsonElement?> TryGetJsonResponseAsync(string url)
@@ -62,7 +62,7 @@ namespace DiscordChatExporter.Domain.Discord
             using var response = await GetResponseAsync(url);
 
             return response.IsSuccessStatusCode
-                ? await response.Content.ReadAsJsonAsync(default)
+                ? await response.Content.ReadAsJsonAsync()
                 : (JsonElement?) null;
         }
 

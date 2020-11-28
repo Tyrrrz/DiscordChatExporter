@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors;
 using DiscordChatExporter.Domain.Internal.Extensions;
-using DiscordChatExporter.Domain.Markdown.Ast;
+using JsonExtensions.Writing;
 
 namespace DiscordChatExporter.Domain.Exporting.Writers
 {

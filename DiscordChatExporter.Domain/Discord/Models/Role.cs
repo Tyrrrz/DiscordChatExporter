@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Text.Json;
 using DiscordChatExporter.Domain.Internal.Extensions;
+using JsonExtensions.Reading;
 
 namespace DiscordChatExporter.Domain.Discord.Models
 {

@@ -9,6 +9,8 @@ using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exceptions;
 using DiscordChatExporter.Domain.Internal;
 using DiscordChatExporter.Domain.Internal.Extensions;
+using JsonExtensions.Http;
+using JsonExtensions.Reading;
 
 namespace DiscordChatExporter.Domain.Discord
 {
@@ -52,7 +54,7 @@ namespace DiscordChatExporter.Domain.Discord
                 };
             }
 
-            return await response.Content.ReadAsJsonAsync();
+            return await response.Content.ReadAsJsonAsync(default);
         }
 
         private async ValueTask<JsonElement?> TryGetJsonResponseAsync(string url)
@@ -60,7 +62,7 @@ namespace DiscordChatExporter.Domain.Discord
             using var response = await GetResponseAsync(url);
 
             return response.IsSuccessStatusCode
-                ? await response.Content.ReadAsJsonAsync()
+                ? await response.Content.ReadAsJsonAsync(default)
                 : (JsonElement?) null;
         }
 

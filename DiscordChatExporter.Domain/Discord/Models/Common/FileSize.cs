@@ -52,7 +52,7 @@ namespace DiscordChatExporter.Domain.Discord.Models.Common
             if (Math.Abs(TotalKiloBytes) >= 1)
                 return "KB";
 
-            return "B";
+            return "bytes";
         }
 
         public override string ToString() => $"{GetLargestWholeNumberValue():0.##} {GetLargestWholeNumberSymbol()}";

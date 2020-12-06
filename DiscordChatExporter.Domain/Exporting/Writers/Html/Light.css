@@ -64,6 +64,11 @@ a {
     background-color: rgba(249, 168, 37, 0.05);
 }
 
+.chatlog__attachment-container {
+    background-color: #f2f3f5;
+    border-color: #ebedef;
+}
+
 .chatlog__edited-timestamp {
     color: #747f8d;
 }

@@ -79,9 +79,38 @@
                                 }
                                 else
                                 {
-                                    <a href="@await ResolveUrlAsync(attachment.Url)">
-                                        @($"Attachment: {attachment.FileName} ({attachment.FileSize})")
-                                    </a>
+                                    <div class="chatlog__attachment-container">
+                                        <svg class="chatlog__attachment-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 960">
+                                            <defs>
+                                                <style>
+                                                    .a {
+                                                        fill: #f4f5fb;
+                                                        fill-rule: evenodd;
+                                                    }
+                                                   
+                                                    .b {
+                                                        fill: #7789c4;
+                                                    }
+                                                </style>
+                                            </defs>
+                                            <g>
+                                                <path class="a" d="M50,935a25,25,0,0,1-25-25V50A25,25,0,0,1,50,25H519.6L695,201.32V910a25,25,0,0,1-25,25Z" transform="translate(0 0)"/>
+                                                <path class="b" d="M509.21,50,670,211.63V910H50V50H509.21M530,0H50A50,50,0,0,0,0,50V910a50,50,0,0,0,50,50H670a50,50,0,0,0,50-50V191L530,0Z" transform="translate(0 0)"/>
+                                            </g>
+                                            <g>
+                                                <path class="a" d="M530,215a25,25,0,0,1-25-25V50a25,25,0,0,1,16.23-23.41L693.41,198.77A25,25,0,0,1,670,215Z" transform="translate(0 0)"/>
+                                                <path class="b" d="M530,70.71,649.29,190H530V70.71M530,0a50,50,0,0,0-50,50V190a50,50,0,0,0,50,50H670a50,50,0,0,0,50-50L530,0Z" transform="translate(0 0)"/>
+                                            </g>
+                                        </svg>
+                                        <div class="chatlog__attachment-filename">
+                                            <a href="@await ResolveUrlAsync(attachment.Url)">
+                                                @attachment.FileName
+                                            </a>
+                                        </div>
+                                        <div class="chatlog__attachment-filesize">
+                                            @attachment.FileSize
+                                        </div>
+                                    </div>
                                 }
                             </div>
                         </div>

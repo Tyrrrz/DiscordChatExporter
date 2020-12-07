@@ -79,9 +79,22 @@
                                 }
                                 else
                                 {
-                                    <a href="@await ResolveUrlAsync(attachment.Url)">
-                                        @($"Attachment: {attachment.FileName} ({attachment.FileSize})")
-                                    </a>
+                                    <div class="chatlog__attachment-container">
+                                        <svg class="chatlog__attachment-icon" viewBox="0 0 720 960">
+                                            <path class="a"/>
+                                            <path class="b"/>
+                                            <path class="c"/>
+                                            <path class="d"/>
+                                        </svg>
+                                        <div class="chatlog__attachment-filename">
+                                            <a href="@await ResolveUrlAsync(attachment.Url)">
+                                                @attachment.FileName
+                                            </a>
+                                        </div>
+                                        <div class="chatlog__attachment-filesize">
+                                            @attachment.FileSize
+                                        </div>
+                                    </div>
                                 }
                             </div>
                         </div>

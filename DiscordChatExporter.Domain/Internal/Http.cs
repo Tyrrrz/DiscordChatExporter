@@ -24,7 +24,7 @@ namespace DiscordChatExporter.Domain.Internal
                     (i, result, ctx) =>
                     {
                         // If rate-limited, use retry-after as a guide
-                        if (result.Result.StatusCode == HttpStatusCode.TooManyRequests)
+                        if (result.Result?.StatusCode == HttpStatusCode.TooManyRequests)
                         {
                             // Only start respecting retry-after after a few attempts.
                             // The reason is that Discord often sends unreasonable (20+ minutes) retry-after

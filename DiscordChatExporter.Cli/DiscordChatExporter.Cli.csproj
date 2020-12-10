@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="../DiscordChatExporter.props" />
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -7,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CliFx" Version="1.5.0" />
+    <PackageReference Include="CliFx" Version="1.6.0" />
     <PackageReference Include="Gress" Version="1.2.0" />
     <PackageReference Include="Tyrrrz.Extensions" Version="1.6.5" />
   </ItemGroup>

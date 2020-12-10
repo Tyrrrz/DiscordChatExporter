@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
 
 COPY favicon.ico ./
-COPY DiscordChatExporter.props ./
+COPY Directory.Build.props ./
 COPY DiscordChatExporter.Domain DiscordChatExporter.Domain
 COPY DiscordChatExporter.Cli DiscordChatExporter.Cli
 

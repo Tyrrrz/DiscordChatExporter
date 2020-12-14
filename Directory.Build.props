@@ -5,7 +5,7 @@
     <Version>2.25</Version>
     <Company>Tyrrrz</Company>
     <Copyright>Copyright (c) Alexey Golub</Copyright>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
     <WarningsAsErrors>nullable</WarningsAsErrors>
   </PropertyGroup>

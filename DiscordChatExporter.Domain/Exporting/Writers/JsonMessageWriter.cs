@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Text.Encodings.Web;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors;
 using DiscordChatExporter.Domain.Internal.Extensions;
@@ -19,6 +20,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         {
             _writer = new Utf8JsonWriter(stream, new JsonWriterOptions
             {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                 Indented = true
             });
         }

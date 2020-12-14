@@ -46,9 +46,9 @@ Failed to perform an HTTP request.
             return new DiscordChatExporterException(message);
         }
 
-        internal static DiscordChatExporterException ChannelIsEmpty(string channel)
+        internal static DiscordChatExporterException ChannelIsEmpty()
         {
-            var message = $"Channel '{channel}' contains no messages for the specified period.";
+            var message = $"No messages for the specified period.";
             return new DiscordChatExporterException(message);
         }
     }

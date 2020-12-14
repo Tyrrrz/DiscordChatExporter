@@ -59,7 +59,7 @@ namespace DiscordChatExporter.Domain.Exporting
 
             // Throw if no messages were exported
             if (!exportedAnything)
-                throw DiscordChatExporterException.ChannelIsEmpty(request.Channel.Name);
+                throw DiscordChatExporterException.ChannelIsEmpty();
         }
     }
 }

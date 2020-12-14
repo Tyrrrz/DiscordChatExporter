@@ -32,7 +32,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
             var operations = progress.Wrap().CreateOperations(channels.Count);
 
             var successfulExportCount = 0;
-            var errors = new ConcurrentBag<string>();
+            var errors = new ConcurrentBag<(Channel, string)>();
 
             await channels.Zip(operations).ParallelForEachAsync(async tuple =>
             {
@@ -61,7 +61,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
                 }
                 catch (DiscordChatExporterException ex) when (!ex.IsCritical)
                 {
-                    errors.Add(ex.Message);
+                    errors.Add((channel, ex.Message));
                 }
                 finally
                 {
@@ -71,8 +71,8 @@ namespace DiscordChatExporter.Cli.Commands.Base
 
             console.Output.WriteLine();
 
-            foreach (var error in errors)
-                console.Error.WriteLine(error);
+            foreach (var (channel, error) in errors)
+                console.Error.WriteLine($"Channel '{channel}': {error}");
 
             console.Output.WriteLine($"Successfully exported {successfulExportCount} channel(s).");
         }

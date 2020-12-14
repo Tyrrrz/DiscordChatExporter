@@ -25,7 +25,7 @@ namespace DiscordChatExporter.Domain.Markdown.Matching
         {
         }
 
-        public StringPart Slice(int newStartIndex, int newLength) => new StringPart(Target, newStartIndex, newLength);
+        public StringPart Slice(int newStartIndex, int newLength) => new(Target, newStartIndex, newLength);
 
         public StringPart Slice(int newStartIndex) => Slice(newStartIndex, EndIndex - newStartIndex);
 

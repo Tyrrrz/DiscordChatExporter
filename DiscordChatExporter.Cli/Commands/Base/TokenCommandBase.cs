@@ -17,14 +17,14 @@ namespace DiscordChatExporter.Cli.Commands.Base
             Description = "Authorize as a bot.")]
         public bool IsBotToken { get; set; }
 
-        protected AuthToken GetAuthToken() => new AuthToken(
+        protected AuthToken GetAuthToken() => new(
             IsBotToken
                 ? AuthTokenType.Bot
                 : AuthTokenType.User,
             TokenValue
         );
 
-        protected DiscordClient GetDiscordClient() => new DiscordClient(GetAuthToken());
+        protected DiscordClient GetDiscordClient() => new(GetAuthToken());
 
         public abstract ValueTask ExecuteAsync(IConsole console);
     }

@@ -7,7 +7,7 @@ namespace DiscordChatExporter.Gui.Converters
     [ValueConversion(typeof(DateTimeOffset?), typeof(DateTime?))]
     public class DateTimeOffsetToDateTimeConverter : IValueConverter
     {
-        public static DateTimeOffsetToDateTimeConverter Instance { get; } = new DateTimeOffsetToDateTimeConverter();
+        public static DateTimeOffsetToDateTimeConverter Instance { get; } = new();
 
         public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

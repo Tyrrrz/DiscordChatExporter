@@ -44,7 +44,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
             Description = "Format used when writing dates.")]
         public string DateFormat { get; set; } = "dd-MMM-yy hh:mm tt";
 
-        protected ChannelExporter GetChannelExporter() => new ChannelExporter(GetDiscordClient());
+        protected ChannelExporter GetChannelExporter() => new(GetDiscordClient());
 
         protected async ValueTask ExportAsync(IConsole console, Guild guild, Channel channel)
         {

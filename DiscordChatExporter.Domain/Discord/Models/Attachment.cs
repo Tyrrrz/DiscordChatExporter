@@ -47,17 +47,14 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
     public partial class Attachment
     {
-        private static readonly HashSet<string> ImageFileExtensions =
-            new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-                {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"};
+        private static readonly HashSet<string> ImageFileExtensions = new(StringComparer.OrdinalIgnoreCase)
+            {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"};
 
-        private static readonly HashSet<string> VideoFileExtensions =
-            new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-                {".mp4", ".webm"};
+        private static readonly HashSet<string> VideoFileExtensions = new(StringComparer.OrdinalIgnoreCase)
+            {".mp4", ".webm"};
 
-        private static readonly HashSet<string> AudioFileExtensions =
-            new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-                {".mp3", ".wav", ".ogg", ".flac", ".m4a"};
+        private static readonly HashSet<string> AudioFileExtensions = new(StringComparer.OrdinalIgnoreCase)
+            {".mp3", ".wav", ".ogg", ".flac", ".m4a"};
 
         public static Attachment Parse(JsonElement json)
         {

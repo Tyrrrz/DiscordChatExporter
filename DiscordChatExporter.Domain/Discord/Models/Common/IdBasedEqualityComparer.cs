@@ -12,6 +12,6 @@ namespace DiscordChatExporter.Domain.Discord.Models.Common
 
     public partial class IdBasedEqualityComparer
     {
-        public static IdBasedEqualityComparer Instance { get; } = new IdBasedEqualityComparer();
+        public static IdBasedEqualityComparer Instance { get; } = new();
     }
 }

@@ -11,7 +11,7 @@ namespace DiscordChatExporter.Domain.Internal
 {
     internal static class Http
     {
-        public static HttpClient Client { get; } = new HttpClient();
+        public static HttpClient Client { get; } = new();
 
         public static IAsyncPolicy<HttpResponseMessage> ResponsePolicy { get; } =
             Policy
@@ -21,7 +21,7 @@ namespace DiscordChatExporter.Domain.Internal
                 .OrResult(m => m.StatusCode == HttpStatusCode.RequestTimeout)
                 .OrResult(m => m.StatusCode >= HttpStatusCode.InternalServerError)
                 .WaitAndRetryAsync(8,
-                    (i, result, ctx) =>
+                    (i, result, _) =>
                     {
                         // If rate-limited, use retry-after as a guide
                         if (result.Result?.StatusCode == HttpStatusCode.TooManyRequests)
@@ -39,7 +39,7 @@ namespace DiscordChatExporter.Domain.Internal
 
                         return TimeSpan.FromSeconds(Math.Pow(2, i) + 1);
                     },
-                    (response, timespan, retryCount, context) => Task.CompletedTask);
+                    (_, _, _, _) => Task.CompletedTask);
 
         private static HttpStatusCode? TryGetStatusCodeFromException(HttpRequestException ex)
         {

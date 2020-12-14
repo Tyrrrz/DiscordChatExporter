@@ -18,8 +18,7 @@ namespace DiscordChatExporter.Domain.Exporting
         private readonly bool _reuseMedia;
 
         // URL -> Local file path
-        private readonly Dictionary<string, string> _pathCache =
-            new Dictionary<string, string>(StringComparer.Ordinal);
+        private readonly Dictionary<string, string> _pathCache = new(StringComparer.Ordinal);
 
         public MediaDownloader(HttpClient httpClient, string workingDirPath, bool reuseMedia)
         {

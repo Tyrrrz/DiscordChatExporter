@@ -31,8 +31,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
     public partial class Member
     {
-        public static Member CreateForUser(User user) =>
-            new Member(user, null, Array.Empty<string>());
+        public static Member CreateForUser(User user) => new(user, null, Array.Empty<string>());
 
         public static Member Parse(JsonElement json)
         {

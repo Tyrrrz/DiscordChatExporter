@@ -60,6 +60,6 @@ namespace DiscordChatExporter.Domain.Discord.Models.Common
 
     public partial struct FileSize
     {
-        public static FileSize FromBytes(long bytes) => new FileSize(bytes);
+        public static FileSize FromBytes(long bytes) => new(bytes);
     }
 }

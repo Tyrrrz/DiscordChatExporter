@@ -7,7 +7,7 @@ namespace DiscordChatExporter.Gui.Converters
     [ValueConversion(typeof(TimeSpan?), typeof(DateTime?))]
     public class TimeSpanToDateTimeConverter : IValueConverter
     {
-        public static TimeSpanToDateTimeConverter Instance { get; } = new TimeSpanToDateTimeConverter();
+        public static TimeSpanToDateTimeConverter Instance { get; } = new();
 
         public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

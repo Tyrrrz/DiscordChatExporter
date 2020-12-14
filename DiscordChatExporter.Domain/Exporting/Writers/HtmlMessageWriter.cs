@@ -12,7 +12,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         private readonly TextWriter _writer;
         private readonly string _themeName;
 
-        private readonly List<Message> _messageGroupBuffer = new List<Message>();
+        private readonly List<Message> _messageGroupBuffer = new();
 
         private long _messageCount;
 

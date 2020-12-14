@@ -10,8 +10,7 @@ namespace DiscordChatExporter.Domain.Internal
     {
         private string _path = "";
 
-        private readonly Dictionary<string, string?> _queryParameters =
-            new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, string?> _queryParameters = new(StringComparer.OrdinalIgnoreCase);
 
         public UrlBuilder SetPath(string path)
         {

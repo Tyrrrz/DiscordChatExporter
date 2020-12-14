@@ -24,8 +24,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
     public partial class Guild
     {
-        public static Guild DirectMessages { get; } =
-            new Guild("@me", "Direct Messages", GetDefaultIconUrl());
+        public static Guild DirectMessages { get; } = new("@me", "Direct Messages", GetDefaultIconUrl());
 
         private static string GetDefaultIconUrl() =>
             "https://cdn.discordapp.com/embed/avatars/0.png";

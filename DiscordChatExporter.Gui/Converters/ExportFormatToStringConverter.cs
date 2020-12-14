@@ -8,7 +8,7 @@ namespace DiscordChatExporter.Gui.Converters
     [ValueConversion(typeof(ExportFormat), typeof(string))]
     public class ExportFormatToStringConverter : IValueConverter
     {
-        public static ExportFormatToStringConverter Instance { get; } = new ExportFormatToStringConverter();
+        public static ExportFormatToStringConverter Instance { get; } = new();
 
         public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

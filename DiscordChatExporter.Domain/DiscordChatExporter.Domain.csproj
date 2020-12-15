@@ -1,8 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <PropertyGroup>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="JsonExtensions" Version="1.0.1" />
-    <PackageReference Include="MiniRazor" Version="1.1.0" />
+    <PackageReference Include="MiniRazor" Version="2.0.3" />
     <PackageReference Include="Polly" Version="7.2.1" />
     <PackageReference Include="Tyrrrz.Extensions" Version="1.6.5" />
   </ItemGroup>
@@ -11,9 +15,9 @@
     <EmbeddedResource Include="Exporting\Writers\Html\Core.css" />
     <EmbeddedResource Include="Exporting\Writers\Html\Dark.css" />
     <EmbeddedResource Include="Exporting\Writers\Html\Light.css" />
-    <EmbeddedResource Include="Exporting\Writers\Html\PreambleTemplate.cshtml" />
-    <EmbeddedResource Include="Exporting\Writers\Html\PostambleTemplate.cshtml" />
-    <EmbeddedResource Include="Exporting\Writers\Html\MessageGroupTemplate.cshtml" />
+    <AdditionalFiles Include="Exporting\Writers\Html\PreambleTemplate.cshtml" IsRazorTemplate="true" />
+    <AdditionalFiles Include="Exporting\Writers\Html\PostambleTemplate.cshtml" IsRazorTemplate="true" />
+    <AdditionalFiles Include="Exporting\Writers\Html\MessageGroupTemplate.cshtml" IsRazorTemplate="true" />
   </ItemGroup>
 
 </Project>

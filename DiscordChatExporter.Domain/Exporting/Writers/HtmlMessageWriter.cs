@@ -26,20 +26,18 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         public override async ValueTask WritePreambleAsync()
         {
             var templateContext = new LayoutTemplateContext(Context, _themeName, _messageCount);
-            var templateBundle = await TemplateBundle.ResolveAsync();
 
             await _writer.WriteLineAsync(
-                await templateBundle.PreambleTemplate.RenderAsync(templateContext)
+                await PreambleTemplate.RenderAsync(templateContext)
             );
         }
 
         private async ValueTask WriteMessageGroupAsync(MessageGroup messageGroup)
         {
             var templateContext = new MessageGroupTemplateContext(Context, messageGroup);
-            var templateBundle = await TemplateBundle.ResolveAsync();
 
             await _writer.WriteLineAsync(
-                await templateBundle.MessageGroupTemplate.RenderAsync(templateContext)
+                await MessageGroupTemplate.RenderAsync(templateContext)
             );
         }
 
@@ -70,10 +68,9 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
                 await WriteMessageGroupAsync(MessageGroup.Join(_messageGroupBuffer));
 
             var templateContext = new LayoutTemplateContext(Context, _themeName, _messageCount);
-            var templateBundle = await TemplateBundle.ResolveAsync();
 
             await _writer.WriteLineAsync(
-                await templateBundle.PostambleTemplate.RenderAsync(templateContext)
+                await PostambleTemplate.RenderAsync(templateContext)
             );
         }
 

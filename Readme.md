@@ -10,20 +10,27 @@
 
 DiscordChatExporter can be used to export message history from a [Discord](https://discord.com) channel to a file. It works with direct messages, group messages, server channels, supports Discord's dialect of markdown and all other rich media features.
 
-Have questions or need help? Check out the [wiki](https://github.com/Tyrrrz/DiscordChatExporter/wiki).
+**If you have questions or issues, please check out the [wiki](https://github.com/Tyrrrz/DiscordChatExporter/wiki)**.
 
 ## Download
 
-- **[Latest release](https://github.com/Tyrrrz/DiscordChatExporter/releases/latest)**
-- [Docker image](https://hub.docker.com/r/tyrrrz/discordchatexporter): `docker pull tyrrrz/discordchatexporter`
-- [AUR](https://aur.archlinux.org/packages/discord-chat-exporter-cli/): `yay -S discord-chat-exporter-cli`
-- [CI build](https://github.com/Tyrrrz/DiscordChatExporter/actions)
+DiscordChatExporter comes in two flavors: graphical user interface (**GUI**) and command line interface (**CLI**).
 
-Note: This application requires .NET Core v3.1 runtime in order to run:
+- **Graphical user interface** (Windows-only)
+  - Recommended: [Download `DiscordChatExporter.zip` from latest release](https://github.com/Tyrrrz/DiscordChatExporter/releases/latest) [requires .NET runtime]
+  - [Download `DiscordChatExporter.zip` from latest CI build](https://github.com/Tyrrrz/DiscordChatExporter/actions?query=workflow%3ACI) [requires .NET runtime]
+    
+- **Command line interface** (Windows, Linux, and macOS)
+  - Recommended: [Download `DiscordChatExporter.CLI.zip` from latest release](https://github.com/Tyrrrz/DiscordChatExporter/releases/latest) [requires .NET runtime]
+  - [Download `DiscordChatExporter.CLI.zip` from latest CI build](https://github.com/Tyrrrz/DiscordChatExporter/actions?query=workflow%3ACI) [requires .NET runtime]
+  - [Install from Docker Hub](https://hub.docker.com/r/tyrrrz/discordchatexporter): `docker pull tyrrrz/discordchatexporter`
+  - [Install from Arch Linux User Repository](https://aur.archlinux.org/packages/discord-chat-exporter-cli): `yay -S discord-chat-exporter-cli` [community-maintained]
 
-- .NET Runtime for Windows: [x64](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.0-windows-x64-installer) | [x86](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.0-windows-x86-installer)
-- .NET Runtime for macOS (for CLI version only): [x64](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-3.1.0-macos-x64-installer)
-- .NET Runtime for Linux (for CLI version only): [Ubuntu/Debian](https://docs.microsoft.com/en-us/dotnet/core/install/linux-package-manager-ubuntu-1904#install-the-net-core-runtime)
+**Important**: This application requires **.NET Core v3.1** runtime in order to run. Some download options come with the runtime pre-packaged, but those marked with `[requires .NET runtime]` do not. To install the runtime, find the suitable download option below:
+
+- Windows: [x64](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.0-windows-x64-installer) | [x86](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.0-windows-x86-installer)
+- macOS: [x64](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-3.1.0-macos-x64-installer)
+- Linux: [list of downloads](https://docs.microsoft.com/en-us/dotnet/core/install/linux-package-manager-ubuntu-1904#install-the-net-core-runtime)
 
 ## Features
 

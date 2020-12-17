@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -8,11 +11,17 @@ namespace DiscordChatExporter.Domain.Internal.Extensions
     {
         public static async ValueTask DownloadAsync(this HttpClient httpClient, string uri, string outputFilePath)
         {
-            await using var input = await httpClient.GetStreamAsync(uri);
+            using var response = await httpClient.GetAsync(uri);
             var output = File.Create(outputFilePath);
 
-            await input.CopyToAsync(output);
-            await output.DisposeAsync();
+            await response.Content.CopyToAsync(output);
+
+            IEnumerable<string> lastModifiedHeaderValues;
+            if (response.Content.Headers.TryGetValues("Last-Modified", out lastModifiedHeaderValues))
+            {
+                await output.DisposeAsync();
+                File.SetLastWriteTime(outputFilePath, DateTime.Parse(lastModifiedHeaderValues.First()));
+            }
         }
     }
 }

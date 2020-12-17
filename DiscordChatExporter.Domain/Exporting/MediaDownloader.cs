@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Net.Http;
 using System.Security.Cryptography;
@@ -42,12 +43,31 @@ namespace DiscordChatExporter.Domain.Exporting
             if (_reuseMedia && File.Exists(filePath))
                 return _pathCache[url] = filePath;
 
-            // Download it
             Directory.CreateDirectory(_workingDirPath);
+
+            // This catches IOExceptions which is dangerous as we're working also with files
             await Http.ExceptionPolicy.ExecuteAsync(async () =>
             {
-                // This catches IOExceptions which is dangerous as we're working also with files
-                await _httpClient.DownloadAsync(url, filePath);
+                // Download the file
+                using var response = await _httpClient.GetAsync(url);
+                await using (var output = File.Create(filePath))
+                {
+                    await response.Content.CopyToAsync(output);
+                }
+
+                // Try to set the file date according to the last-modified header
+                var lastModified = response.Content.Headers.TryGetValue("Last-Modified")?.Pipe(s =>
+                    DateTimeOffset.TryParse(s, CultureInfo.InvariantCulture, DateTimeStyles.None, out var date)
+                        ? date
+                        : (DateTimeOffset?) null
+                );
+
+                if (lastModified != null)
+                {
+                    File.SetCreationTimeUtc(filePath, lastModified.Value.UtcDateTime);
+                    File.SetLastWriteTimeUtc(filePath, lastModified.Value.UtcDateTime);
+                    File.SetLastAccessTimeUtc(filePath, lastModified.Value.UtcDateTime);
+                }
             });
 
             return _pathCache[url] = filePath;

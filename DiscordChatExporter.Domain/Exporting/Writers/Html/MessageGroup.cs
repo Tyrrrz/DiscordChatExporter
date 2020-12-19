@@ -14,10 +14,21 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.Html
 
         public IReadOnlyList<Message> Messages { get; }
 
-        public MessageGroup(User author, DateTimeOffset timestamp, IReadOnlyList<Message> messages)
+        public MessageReference? Reference { get; }
+
+        public Message? ReferencedMessage {get; }
+
+        public MessageGroup(
+            User author,
+            DateTimeOffset timestamp,
+            MessageReference? reference,
+            Message? referenced_message,
+            IReadOnlyList<Message> messages)
         {
             Author = author;
             Timestamp = timestamp;
+            Reference = reference;
+            ReferencedMessage = referenced_message;
             Messages = messages;
         }
     }
@@ -27,7 +38,8 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.Html
         public static bool CanJoin(Message message1, Message message2) =>
             string.Equals(message1.Author.Id, message2.Author.Id, StringComparison.Ordinal) &&
             string.Equals(message1.Author.FullName, message2.Author.FullName, StringComparison.Ordinal) &&
-            (message2.Timestamp - message1.Timestamp).Duration().TotalMinutes <= 7;
+            (message2.Timestamp - message1.Timestamp).Duration().TotalMinutes <= 7 &&
+            message2.Reference is null;
 
         public static MessageGroup Join(IReadOnlyList<Message> messages)
         {
@@ -36,6 +48,8 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.Html
             return new MessageGroup(
                 first.Author,
                 first.Timestamp,
+                first.Reference,
+                first.ReferencedMessage,
                 messages
             );
         }

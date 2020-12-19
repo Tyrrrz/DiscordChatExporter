@@ -15,6 +15,7 @@
     var userMember = Model.ExportContext.TryGetMember(Model.MessageGroup.Author.Id);
     var userColor = Model.ExportContext.TryGetUserColor(Model.MessageGroup.Author.Id);
     var userNick = Model.MessageGroup.Author.IsBot ? Model.MessageGroup.Author.Name : userMember?.Nick ?? Model.MessageGroup.Author.Name;
+    var referencedUserNick = Model.MessageGroup.Author.IsBot ? Model.MessageGroup.Author.Name : userMember?.Nick ?? Model.MessageGroup.Author.Name;
 
     var userColorStyle = userColor != null
         ? $"color: rgb({userColor?.R},{userColor?.G},{userColor?.B})"
@@ -22,6 +23,27 @@
 }
 
 <div class="chatlog__message-group">
+    @if (Model.MessageGroup.Reference != null)
+    {
+        <div class="chatlog__reference-symbol">
+        </div>
+        <div class="chatlog__reference">
+            @if (Model.MessageGroup.ReferencedMessage != null)
+            {
+                <img class="chatlog__reference-avatar" src="@await ResolveUrlAsync(Model.MessageGroup.ReferencedMessage.Author.AvatarUrl)" alt="Avatar">
+                <span class="chatlog__reference-name" title="@Model.MessageGroup.ReferencedMessage.Author.FullName" data-user-id="@Model.MessageGroup.ReferencedMessage.Author.Id">@Model.MessageGroup.ReferencedMessage.Author.FullName</span>
+                <span class="chatlog__reference-content">
+                    @Raw(FormatMarkdown(Model.MessageGroup.ReferencedMessage.Content))
+                </span>
+            }
+            else
+            {
+                <span class="chatlog__reference-unknown">
+                    In reply to an unknown message
+                </span>
+            }
+        </div>
+    }
     <div class="chatlog__author-avatar-container">
         <img class="chatlog__author-avatar" src="@await ResolveUrlAsync(Model.MessageGroup.Author.AvatarUrl)" alt="Avatar">
     </div>

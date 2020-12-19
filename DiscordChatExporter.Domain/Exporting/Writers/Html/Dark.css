@@ -46,6 +46,14 @@ a {
     border-color: rgba(255, 255, 255, 0.1);
 }
 
+.chatlog__reference-symbol {
+    border-color: #4f545c;
+}
+
+.chatlog__reference {
+    color: #b5b6b8;
+}
+
 .chatlog__author-name {
     color: #ffffff;
 }

@@ -224,6 +224,9 @@ img {
     grid-column: 2;
     margin-left: 1.2em;
     font-size: smaller;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .chatlog__reference-avatar {

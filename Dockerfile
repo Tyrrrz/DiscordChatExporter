@@ -1,5 +1,5 @@
 # Build
-FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 
 COPY favicon.ico ./

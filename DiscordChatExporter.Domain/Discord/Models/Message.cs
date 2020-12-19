@@ -18,7 +18,8 @@ namespace DiscordChatExporter.Domain.Discord.Models
         ChannelNameChange,
         ChannelIconChange,
         ChannelPinnedMessage,
-        GuildMemberJoin
+        GuildMemberJoin,
+        Reply = 19
     }
 
     // https://discord.com/developers/docs/resources/channel#message-object
@@ -50,6 +51,8 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
         public MessageReference? Reference {get; }
 
+        public Message? ReferencedMessage {get; }
+
         public Message(
             string id,
             MessageType type,
@@ -63,7 +66,8 @@ namespace DiscordChatExporter.Domain.Discord.Models
             IReadOnlyList<Embed> embeds,
             IReadOnlyList<Reaction> reactions,
             IReadOnlyList<User> mentionedUsers,
-            MessageReference? messageReference)
+            MessageReference? messageReference,
+            Message? referencedMessage)
         {
             Id = id;
             Type = type;
@@ -78,6 +82,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
             Reactions = reactions;
             MentionedUsers = mentionedUsers;
             Reference = messageReference;
+            ReferencedMessage = referencedMessage;
         }
 
         public override string ToString() => Content;
@@ -95,6 +100,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
             var type = (MessageType) json.GetProperty("type").GetInt32();
             var isPinned = json.GetPropertyOrNull("pinned")?.GetBoolean() ?? false;
             var messageReference = json.GetPropertyOrNull("message_reference")?.Pipe(MessageReference.Parse);
+            var referencedMessage = json.GetPropertyOrNull("referenced_message")?.Pipe(Message.Parse);
 
             var content = type switch
             {
@@ -138,7 +144,8 @@ namespace DiscordChatExporter.Domain.Discord.Models
                 embeds,
                 reactions,
                 mentionedUsers,
-                messageReference
+                messageReference,
+                referencedMessage
             );
         }
     }

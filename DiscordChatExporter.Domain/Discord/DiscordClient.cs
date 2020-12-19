@@ -28,7 +28,7 @@ namespace DiscordChatExporter.Domain.Discord
         }
 
         public DiscordClient(AuthToken token)
-            : this(Http.Client, token) {}
+            : this(Http.Client, token) { }
 
         private async ValueTask<HttpResponseMessage> GetResponseAsync(string url) =>
             await Http.ResponsePolicy.ExecuteAsync(async () =>
@@ -63,7 +63,7 @@ namespace DiscordChatExporter.Domain.Discord
 
             return response.IsSuccessStatusCode
                 ? await response.Content.ReadAsJsonAsync()
-                : (JsonElement?) null;
+                : (JsonElement?)null;
         }
 
         public async IAsyncEnumerable<Guild> GetUserGuildsAsync()
@@ -247,6 +247,15 @@ namespace DiscordChatExporter.Domain.Discord
                     afterId = message.Id;
                 }
             }
+        }
+
+        public async ValueTask<Message> GetMessageAsync(string channelId, string messageId)
+        {
+            var url = $"channels/{channelId}/messages/{messageId}";
+            var response = await GetJsonResponseAsync(url);
+            var message = Message.Parse(response);
+            return message;
+            // TODO: add handling of bad channelId/messageId
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CliFx;
 using CliFx.Attributes;
@@ -10,7 +11,7 @@ using DiscordChatExporter.Domain.Exporting;
 
 namespace DiscordChatExporter.Cli.Commands.Base
 {
-    public abstract class ExportCommandBase : TokenCommandBase
+    public abstract partial class ExportCommandBase : TokenCommandBase
     {
         [CommandOption("output", 'o',
             Description = "Output file or directory path.")]
@@ -21,12 +22,12 @@ namespace DiscordChatExporter.Cli.Commands.Base
         public ExportFormat ExportFormat { get; set; } = ExportFormat.HtmlDark;
 
         [CommandOption("after",
-            Description = "Only include messages sent after this date.")]
-        public DateTimeOffset? After { get; set; }
+            Description = "Only include messages sent after this date. Alternatively, provide the ID of a message.")]
+        public string? After { get; set; }
 
         [CommandOption("before",
-            Description = "Only include messages sent before this date.")]
-        public DateTimeOffset? Before { get; set; }
+            Description = "Only include messages sent before this date. Alternatively, provide the ID of a message.")]
+        public string? Before { get; set; }
 
         [CommandOption("partition", 'p',
             Description = "Split output into partitions limited to this number of messages.")]
@@ -56,8 +57,8 @@ namespace DiscordChatExporter.Cli.Commands.Base
                 channel,
                 OutputPath,
                 ExportFormat,
-                After,
-                Before,
+                ParseRangeOption(After, "--after"),
+                ParseRangeOption(Before, "--before"),
                 PartitionLimit,
                 ShouldDownloadMedia,
                 ShouldReuseMedia,
@@ -86,12 +87,35 @@ namespace DiscordChatExporter.Cli.Commands.Base
         {
             if (ShouldReuseMedia && !ShouldDownloadMedia)
             {
-                throw new CommandException(
-                    "The --reuse-media option cannot be used without the --media option."
-                );
+                throw new CommandException("The --reuse-media option cannot be used without the --media option.");
             }
 
             return default;
         }
     }
+
+    public abstract partial class ExportCommandBase : TokenCommandBase
+    {
+        protected static DateTimeOffset? ParseRangeOption(string? value, string optionName)
+        {
+            if (value == null) return null;
+
+            var isSnowflake = Regex.IsMatch(value, @"^\d{18}$");
+            var isDate = DateTimeOffset.TryParse(value, out var datetime);
+
+            if (!isSnowflake && !isDate)
+            {
+                throw new ArgumentException($"Value for ${optionName} must be either a date or a message ID.");
+            }
+
+            return isSnowflake ? ExtractDateTimeFromSnowflake() : datetime;
+
+            DateTimeOffset ExtractDateTimeFromSnowflake()
+            {
+                var unixTimestampMs = (long.Parse(value) / 4194304 + 1420070400000);
+                return DateTimeOffset.FromUnixTimeMilliseconds(unixTimestampMs);
+            }
+        }
+    }
+
 }

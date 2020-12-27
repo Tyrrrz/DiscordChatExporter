@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exceptions;
 using DiscordChatExporter.Domain.Internal;
-using DiscordChatExporter.Domain.Internal.Extensions;
+using DiscordChatExporter.Domain.Utilities;
 using JsonExtensions.Http;
 using JsonExtensions.Reading;
 
@@ -70,13 +70,14 @@ namespace DiscordChatExporter.Domain.Discord
         {
             yield return Guild.DirectMessages;
 
-            var afterId = "";
+            var currentAfter = Snowflake.Zero;
+
             while (true)
             {
                 var url = new UrlBuilder()
                     .SetPath("users/@me/guilds")
                     .SetQueryParameter("limit", "100")
-                    .SetQueryParameter("after", afterId)
+                    .SetQueryParameter("after", currentAfter.ToString())
                     .Build();
 
                 var response = await GetJsonResponseAsync(url);
@@ -86,7 +87,7 @@ namespace DiscordChatExporter.Domain.Discord
                 {
                     yield return guild;
 
-                    afterId = guild.Id;
+                    currentAfter = guild.Id;
                     isEmpty = false;
                 }
 
@@ -95,7 +96,7 @@ namespace DiscordChatExporter.Domain.Discord
             }
         }
 
-        public async ValueTask<Guild> GetGuildAsync(string guildId)
+        public async ValueTask<Guild> GetGuildAsync(Snowflake guildId)
         {
             if (guildId == Guild.DirectMessages.Id)
                 return Guild.DirectMessages;
@@ -104,7 +105,7 @@ namespace DiscordChatExporter.Domain.Discord
             return Guild.Parse(response);
         }
 
-        public async IAsyncEnumerable<Channel> GetGuildChannelsAsync(string guildId)
+        public async IAsyncEnumerable<Channel> GetGuildChannelsAsync(Snowflake guildId)
         {
             if (guildId == Guild.DirectMessages.Id)
             {
@@ -141,7 +142,7 @@ namespace DiscordChatExporter.Domain.Discord
             }
         }
 
-        public async IAsyncEnumerable<Role> GetGuildRolesAsync(string guildId)
+        public async IAsyncEnumerable<Role> GetGuildRolesAsync(Snowflake guildId)
         {
             if (guildId == Guild.DirectMessages.Id)
                 yield break;
@@ -152,7 +153,7 @@ namespace DiscordChatExporter.Domain.Discord
                 yield return Role.Parse(roleJson);
         }
 
-        public async ValueTask<Member?> TryGetGuildMemberAsync(string guildId, User user)
+        public async ValueTask<Member?> TryGetGuildMemberAsync(Snowflake guildId, User user)
         {
             if (guildId == Guild.DirectMessages.Id)
                 return Member.CreateForUser(user);
@@ -161,30 +162,31 @@ namespace DiscordChatExporter.Domain.Discord
             return response?.Pipe(Member.Parse);
         }
 
-        private async ValueTask<string> GetChannelCategoryAsync(string channelParentId)
+        private async ValueTask<string> GetChannelCategoryAsync(Snowflake channelParentId)
         {
             var response = await GetJsonResponseAsync($"channels/{channelParentId}");
             return response.GetProperty("name").GetString();
         }
 
-        public async ValueTask<Channel> GetChannelAsync(string channelId)
+        public async ValueTask<Channel> GetChannelAsync(Snowflake channelId)
         {
             var response = await GetJsonResponseAsync($"channels/{channelId}");
 
-            var parentId = response.GetPropertyOrNull("parent_id")?.GetString();
-            var category = !string.IsNullOrWhiteSpace(parentId)
-                ? await GetChannelCategoryAsync(parentId)
+            var parentId = response.GetPropertyOrNull("parent_id")?.GetString().Pipe(Snowflake.Parse);
+
+            var category = parentId != null
+                ? await GetChannelCategoryAsync(parentId.Value)
                 : null;
 
             return Channel.Parse(response, category);
         }
 
-        private async ValueTask<Message?> TryGetLastMessageAsync(string channelId, DateTimeOffset? before = null)
+        private async ValueTask<Message?> TryGetLastMessageAsync(Snowflake channelId, Snowflake? before = null)
         {
             var url = new UrlBuilder()
                 .SetPath($"channels/{channelId}/messages")
                 .SetQueryParameter("limit", "1")
-                .SetQueryParameter("before", before?.ToSnowflake())
+                .SetQueryParameter("before", before?.ToString())
                 .Build();
 
             var response = await GetJsonResponseAsync(url);
@@ -192,9 +194,9 @@ namespace DiscordChatExporter.Domain.Discord
         }
 
         public async IAsyncEnumerable<Message> GetMessagesAsync(
-            string channelId,
-            DateTimeOffset? after = null,
-            DateTimeOffset? before = null,
+            Snowflake channelId,
+            Snowflake? after = null,
+            Snowflake? before = null,
             IProgress<double>? progress = null)
         {
             // Get the last message in the specified range.
@@ -202,19 +204,19 @@ namespace DiscordChatExporter.Domain.Discord
             // will not appear in the output.
             // Additionally, it provides the date of the last message, which is used to calculate progress.
             var lastMessage = await TryGetLastMessageAsync(channelId, before);
-            if (lastMessage == null || lastMessage.Timestamp < after)
+            if (lastMessage == null || lastMessage.Timestamp < after?.ToDate())
                 yield break;
 
             // Keep track of first message in range in order to calculate progress
             var firstMessage = default(Message);
-            var afterId = after?.ToSnowflake() ?? "0";
+            var currentAfter = after ?? Snowflake.Zero;
 
             while (true)
             {
                 var url = new UrlBuilder()
                     .SetPath($"channels/{channelId}/messages")
                     .SetQueryParameter("limit", "100")
-                    .SetQueryParameter("after", afterId)
+                    .SetQueryParameter("after", currentAfter.ToString())
                     .Build();
 
                 var response = await GetJsonResponseAsync(url);
@@ -244,7 +246,7 @@ namespace DiscordChatExporter.Domain.Discord
                     );
 
                     yield return message;
-                    afterId = message.Id;
+                    currentAfter = message.Id;
                 }
             }
         }

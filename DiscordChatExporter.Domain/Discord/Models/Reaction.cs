@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using DiscordChatExporter.Domain.Internal.Extensions;
+using DiscordChatExporter.Domain.Utilities;
 
 namespace DiscordChatExporter.Domain.Discord.Models
 {

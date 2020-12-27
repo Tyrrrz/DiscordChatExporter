@@ -119,10 +119,10 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
                 await _writer.WriteLineAsync($"Topic: {Context.Request.Channel.Topic}");
 
             if (Context.Request.After != null)
-                await _writer.WriteLineAsync($"After: {Context.FormatDate(Context.Request.After.Value)}");
+                await _writer.WriteLineAsync($"After: {Context.FormatDate(Context.Request.After.Value.ToDate())}");
 
             if (Context.Request.Before != null)
-                await _writer.WriteLineAsync($"Before: {Context.FormatDate(Context.Request.Before.Value)}");
+                await _writer.WriteLineAsync($"Before: {Context.FormatDate(Context.Request.Before.Value.ToDate())}");
 
             await _writer.WriteLineAsync('='.Repeat(62));
             await _writer.WriteLineAsync();

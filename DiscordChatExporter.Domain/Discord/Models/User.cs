@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json;
 using DiscordChatExporter.Domain.Discord.Models.Common;
-using DiscordChatExporter.Domain.Internal.Extensions;
+using DiscordChatExporter.Domain.Utilities;
 using JsonExtensions.Reading;
 
 namespace DiscordChatExporter.Domain.Discord.Models
@@ -9,7 +9,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
     // https://discord.com/developers/docs/resources/user#user-object
     public partial class User : IHasId
     {
-        public string Id { get; }
+        public Snowflake Id { get; }
 
         public bool IsBot { get; }
 
@@ -21,7 +21,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
         public string AvatarUrl { get; }
 
-        public User(string id, bool isBot, int discriminator, string name, string avatarUrl)
+        public User(Snowflake id, bool isBot, int discriminator, string name, string avatarUrl)
         {
             Id = id;
             IsBot = isBot;
@@ -38,7 +38,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
         private static string GetDefaultAvatarUrl(int discriminator) =>
             $"https://cdn.discordapp.com/embed/avatars/{discriminator % 5}.png";
 
-        private static string GetAvatarUrl(string id, string avatarHash)
+        private static string GetAvatarUrl(Snowflake id, string avatarHash)
         {
             // Animated
             if (avatarHash.StartsWith("a_", StringComparison.Ordinal))
@@ -50,7 +50,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
         public static User Parse(JsonElement json)
         {
-            var id = json.GetProperty("id").GetString();
+            var id = json.GetProperty("id").GetString().Pipe(Snowflake.Parse);
             var discriminator = json.GetProperty("discriminator").GetString().Pipe(int.Parse);
             var name = json.GetProperty("username").GetString();
             var avatarHash = json.GetProperty("avatar").GetString();

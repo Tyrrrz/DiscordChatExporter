@@ -1,18 +1,19 @@
 ﻿using System.Text.Json;
 using DiscordChatExporter.Domain.Discord.Models.Common;
+using DiscordChatExporter.Domain.Utilities;
 
 namespace DiscordChatExporter.Domain.Discord.Models
 {
     // https://discord.com/developers/docs/resources/guild#guild-object
     public partial class Guild : IHasId
     {
-        public string Id { get; }
+        public Snowflake Id { get; }
 
         public string Name { get; }
 
         public string IconUrl { get; }
 
-        public Guild(string id, string name, string iconUrl)
+        public Guild(Snowflake id, string name, string iconUrl)
         {
             Id = id;
             Name = name;
@@ -24,17 +25,17 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
     public partial class Guild
     {
-        public static Guild DirectMessages { get; } = new("@me", "Direct Messages", GetDefaultIconUrl());
+        public static Guild DirectMessages { get; } = new(Snowflake.Zero, "Direct Messages", GetDefaultIconUrl());
 
         private static string GetDefaultIconUrl() =>
             "https://cdn.discordapp.com/embed/avatars/0.png";
 
-        private static string GetIconUrl(string id, string iconHash) =>
+        private static string GetIconUrl(Snowflake id, string iconHash) =>
             $"https://cdn.discordapp.com/icons/{id}/{iconHash}.png";
 
         public static Guild Parse(JsonElement json)
         {
-            var id = json.GetProperty("id").GetString();
+            var id = json.GetProperty("id").GetString().Pipe(Snowflake.Parse);
             var name = json.GetProperty("name").GetString();
             var iconHash = json.GetProperty("icon").GetString();
 

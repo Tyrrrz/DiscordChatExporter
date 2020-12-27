@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using DiscordChatExporter.Domain.Discord;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Markdown;
 using DiscordChatExporter.Domain.Markdown.Ast;
@@ -84,7 +85,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
             }
             else if (mention.Type == MentionType.User)
             {
-                var member = _context.TryGetMember(mention.Id);
+                var member = _context.TryGetMember(Snowflake.Parse(mention.Id));
                 var fullName = member?.User.FullName ?? "Unknown";
                 var nick = member?.Nick ?? "Unknown";
 
@@ -95,7 +96,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
             }
             else if (mention.Type == MentionType.Channel)
             {
-                var channel = _context.TryGetChannel(mention.Id);
+                var channel = _context.TryGetChannel(Snowflake.Parse(mention.Id));
                 var name = channel?.Name ?? "deleted-channel";
 
                 _buffer
@@ -105,7 +106,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
             }
             else if (mention.Type == MentionType.Role)
             {
-                var role = _context.TryGetRole(mention.Id);
+                var role = _context.TryGetRole(Snowflake.Parse(mention.Id));
                 var name = role?.Name ?? "deleted-role";
                 var color = role?.Color;
 

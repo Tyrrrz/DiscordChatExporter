@@ -25,7 +25,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.Html
     internal partial class MessageGroup
     {
         public static bool CanJoin(Message message1, Message message2) =>
-            string.Equals(message1.Author.Id, message2.Author.Id, StringComparison.Ordinal) &&
+            message1.Author.Id == message2.Author.Id &&
             string.Equals(message1.Author.FullName, message2.Author.FullName, StringComparison.Ordinal) &&
             (message2.Timestamp - message1.Timestamp).Duration().TotalMinutes <= 7;
 

@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Text.Json;
 using DiscordChatExporter.Domain.Discord.Models.Common;
+using DiscordChatExporter.Domain.Utilities;
 using JsonExtensions.Reading;
 using Tyrrrz.Extensions;
 
@@ -22,7 +23,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
     // https://discord.com/developers/docs/resources/channel#channel-object
     public partial class Channel : IHasId
     {
-        public string Id { get; }
+        public Snowflake Id { get; }
 
         public ChannelType Type { get; }
 
@@ -33,7 +34,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
             Type == ChannelType.GuildNews ||
             Type == ChannelType.GuildStore;
 
-        public string GuildId { get; }
+        public Snowflake GuildId { get; }
 
         public string Category { get; }
 
@@ -41,7 +42,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
         public string? Topic { get; }
 
-        public Channel(string id, ChannelType type, string guildId, string category, string name, string? topic)
+        public Channel(Snowflake id, ChannelType type, Snowflake guildId, string category, string name, string? topic)
         {
             Id = id;
             Type = type;
@@ -68,8 +69,8 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
         public static Channel Parse(JsonElement json, string? category = null)
         {
-            var id = json.GetProperty("id").GetString();
-            var guildId = json.GetPropertyOrNull("guild_id")?.GetString();
+            var id = json.GetProperty("id").GetString().Pipe(Snowflake.Parse);
+            var guildId = json.GetPropertyOrNull("guild_id")?.GetString().Pipe(Snowflake.Parse);
             var topic = json.GetPropertyOrNull("topic")?.GetString();
 
             var type = (ChannelType) json.GetProperty("type").GetInt32();
@@ -77,7 +78,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
             var name =
                 json.GetPropertyOrNull("name")?.GetString() ??
                 json.GetPropertyOrNull("recipients")?.EnumerateArray().Select(User.Parse).Select(u => u.Name).JoinToString(", ") ??
-                id;
+                id.ToString();
 
             return new Channel(
                 id,

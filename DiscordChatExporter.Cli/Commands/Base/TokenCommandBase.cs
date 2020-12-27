@@ -7,15 +7,11 @@ namespace DiscordChatExporter.Cli.Commands.Base
 {
     public abstract class TokenCommandBase : ICommand
     {
-        [CommandOption("token", 't', IsRequired = true,
-            EnvironmentVariableName = "DISCORD_TOKEN",
-            Description = "Authorization token.")]
-        public string TokenValue { get; set; } = "";
+        [CommandOption("token", 't', IsRequired = true, EnvironmentVariableName = "DISCORD_TOKEN", Description = "Authorization token.")]
+        public string TokenValue { get; init; } = "";
 
-        [CommandOption("bot", 'b',
-            EnvironmentVariableName = "DISCORD_TOKEN_BOT",
-            Description = "Authorize as a bot.")]
-        public bool IsBotToken { get; set; }
+        [CommandOption("bot", 'b', EnvironmentVariableName = "DISCORD_TOKEN_BOT", Description = "Authorize as a bot.")]
+        public bool IsBotToken { get; init; }
 
         protected AuthToken GetAuthToken() => new(
             IsBotToken

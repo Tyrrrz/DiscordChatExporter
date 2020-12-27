@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using DiscordChatExporter.Domain.Discord.Models.Common;
-using DiscordChatExporter.Domain.Internal.Extensions;
+using DiscordChatExporter.Domain.Utilities;
 using JsonExtensions.Reading;
 
 namespace DiscordChatExporter.Domain.Discord.Models
@@ -11,15 +11,15 @@ namespace DiscordChatExporter.Domain.Discord.Models
     // https://discord.com/developers/docs/resources/guild#guild-member-object
     public partial class Member : IHasId
     {
-        public string Id => User.Id;
+        public Snowflake Id => User.Id;
 
         public User User { get; }
 
         public string Nick { get; }
 
-        public IReadOnlyList<string> RoleIds { get; }
+        public IReadOnlyList<Snowflake> RoleIds { get; }
 
-        public Member(User user, string? nick, IReadOnlyList<string> roleIds)
+        public Member(User user, string? nick, IReadOnlyList<Snowflake> roleIds)
         {
             User = user;
             Nick = nick ?? user.Name;
@@ -31,7 +31,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
     public partial class Member
     {
-        public static Member CreateForUser(User user) => new(user, null, Array.Empty<string>());
+        public static Member CreateForUser(User user) => new(user, null, Array.Empty<Snowflake>());
 
         public static Member Parse(JsonElement json)
         {
@@ -39,8 +39,8 @@ namespace DiscordChatExporter.Domain.Discord.Models
             var nick = json.GetPropertyOrNull("nick")?.GetString();
 
             var roleIds =
-                json.GetPropertyOrNull("roles")?.EnumerateArray().Select(j => j.GetString()).ToArray() ??
-                Array.Empty<string>();
+                json.GetPropertyOrNull("roles")?.EnumerateArray().Select(j => j.GetString().Pipe(Snowflake.Parse)).ToArray() ??
+                Array.Empty<Snowflake>();
 
             return new Member(
                 user,

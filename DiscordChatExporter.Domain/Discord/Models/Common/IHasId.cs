@@ -2,6 +2,6 @@
 {
     public interface IHasId
     {
-        string Id { get; }
+        Snowflake Id { get; }
     }
 }

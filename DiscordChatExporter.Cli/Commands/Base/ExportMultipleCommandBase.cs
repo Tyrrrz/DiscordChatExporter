@@ -17,9 +17,8 @@ namespace DiscordChatExporter.Cli.Commands.Base
 {
     public abstract class ExportMultipleCommandBase : ExportCommandBase
     {
-        [CommandOption("parallel",
-            Description = "Limits how many channels can be exported in parallel.")]
-        public int ParallelLimit { get; set; } = 1;
+        [CommandOption("parallel", Description = "Limits how many channels can be exported in parallel.")]
+        public int ParallelLimit { get; init; } = 1;
 
         protected async ValueTask ExportMultipleAsync(IConsole console, IReadOnlyList<Channel> channels)
         {
@@ -47,8 +46,8 @@ namespace DiscordChatExporter.Cli.Commands.Base
                         channel,
                         OutputPath,
                         ExportFormat,
-                        ParseRangeOption(After, "--after"),
-                        ParseRangeOption(Before, "--before"),
+                        After,
+                        Before,
                         PartitionLimit,
                         ShouldDownloadMedia,
                         ShouldReuseMedia,

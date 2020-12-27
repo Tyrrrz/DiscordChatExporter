@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Internal;
 using DiscordChatExporter.Domain.Internal.Extensions;
+using DiscordChatExporter.Domain.Utilities;
 
 namespace DiscordChatExporter.Domain.Exporting
 {

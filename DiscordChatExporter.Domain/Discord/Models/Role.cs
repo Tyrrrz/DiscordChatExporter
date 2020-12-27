@@ -1,14 +1,16 @@
 ﻿using System.Drawing;
 using System.Text.Json;
+using DiscordChatExporter.Domain.Discord.Models.Common;
 using DiscordChatExporter.Domain.Internal.Extensions;
+using DiscordChatExporter.Domain.Utilities;
 using JsonExtensions.Reading;
 
 namespace DiscordChatExporter.Domain.Discord.Models
 {
     // https://discord.com/developers/docs/topics/permissions#role-object
-    public partial class Role
+    public partial class Role : IHasId
     {
-        public string Id { get; }
+        public Snowflake Id { get; }
 
         public string Name { get; }
 
@@ -16,7 +18,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
         public Color? Color { get; }
 
-        public Role(string id, string name, int position, Color? color)
+        public Role(Snowflake id, string name, int position, Color? color)
         {
             Id = id;
             Name = name;
@@ -31,7 +33,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
     {
         public static Role Parse(JsonElement json)
         {
-            var id = json.GetProperty("id").GetString();
+            var id = json.GetProperty("id").GetString().Pipe(Snowflake.Parse);
             var name = json.GetProperty("name").GetString();
             var position = json.GetProperty("position").GetInt32();
 

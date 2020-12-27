@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using DiscordChatExporter.Domain.Discord.Models.Common;
-using DiscordChatExporter.Domain.Internal.Extensions;
+using DiscordChatExporter.Domain.Utilities;
 using JsonExtensions.Reading;
 
 namespace DiscordChatExporter.Domain.Discord.Models
@@ -24,7 +24,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
     // https://discord.com/developers/docs/resources/channel#message-object
     public partial class Message : IHasId
     {
-        public string Id { get; }
+        public Snowflake Id { get; }
 
         public MessageType Type { get; }
 
@@ -49,7 +49,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
         public IReadOnlyList<User> MentionedUsers { get; }
 
         public Message(
-            string id,
+            Snowflake id,
             MessageType type,
             User author,
             DateTimeOffset timestamp,
@@ -83,7 +83,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
     {
         public static Message Parse(JsonElement json)
         {
-            var id = json.GetProperty("id").GetString();
+            var id = json.GetProperty("id").GetString().Pipe(Snowflake.Parse);
             var author = json.GetProperty("author").Pipe(User.Parse);
             var timestamp = json.GetProperty("timestamp").GetDateTimeOffset();
             var editedTimestamp = json.GetPropertyOrNull("edited_timestamp")?.GetDateTimeOffset();

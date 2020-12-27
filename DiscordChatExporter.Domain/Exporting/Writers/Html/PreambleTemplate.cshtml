@@ -83,15 +83,15 @@
             <div class="preamble__entry preamble__entry--small">
             @if (Model.ExportContext.Request.After != null && Model.ExportContext.Request.Before != null)
             {
-                @($"Between {FormatDate(Model.ExportContext.Request.After.Value)} and {FormatDate(Model.ExportContext.Request.Before.Value)}")
+                @($"Between {FormatDate(Model.ExportContext.Request.After.Value.ToDate())} and {FormatDate(Model.ExportContext.Request.Before.Value.ToDate())}")
             }
             else if (Model.ExportContext.Request.After != null)
             {
-                @($"After {FormatDate(Model.ExportContext.Request.After.Value)}")
+                @($"After {FormatDate(Model.ExportContext.Request.After.Value.ToDate())}")
             }
             else if (Model.ExportContext.Request.Before != null)
             {
-                @($"Before {FormatDate(Model.ExportContext.Request.Before.Value)}")
+                @($"Before {FormatDate(Model.ExportContext.Request.Before.Value.ToDate())}")
             }
             </div>
         }

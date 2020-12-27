@@ -32,7 +32,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         {
             _writer.WriteStartObject();
 
-            _writer.WriteString("id", attachment.Id);
+            _writer.WriteString("id", attachment.Id.ToString());
             _writer.WriteString("url", await Context.ResolveMediaUrlAsync(attachment.Url));
             _writer.WriteString("fileName", attachment.FileName);
             _writer.WriteNumber("fileSizeBytes", attachment.FileSize.TotalBytes);
@@ -166,7 +166,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         {
             _writer.WriteStartObject();
 
-            _writer.WriteString("id", mentionedUser.Id);
+            _writer.WriteString("id", mentionedUser.Id.ToString());
             _writer.WriteString("name", mentionedUser.Name);
             _writer.WriteNumber("discriminator", mentionedUser.Discriminator);
             _writer.WriteString("nickname", Context.TryGetMember(mentionedUser.Id)?.Nick ?? mentionedUser.Name);
@@ -183,14 +183,14 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
             // Guild
             _writer.WriteStartObject("guild");
-            _writer.WriteString("id", Context.Request.Guild.Id);
+            _writer.WriteString("id", Context.Request.Guild.Id.ToString());
             _writer.WriteString("name", Context.Request.Guild.Name);
             _writer.WriteString("iconUrl", await Context.ResolveMediaUrlAsync(Context.Request.Guild.IconUrl));
             _writer.WriteEndObject();
 
             // Channel
             _writer.WriteStartObject("channel");
-            _writer.WriteString("id", Context.Request.Channel.Id);
+            _writer.WriteString("id", Context.Request.Channel.Id.ToString());
             _writer.WriteString("type", Context.Request.Channel.Type.ToString());
             _writer.WriteString("category", Context.Request.Channel.Category);
             _writer.WriteString("name", Context.Request.Channel.Name);
@@ -199,8 +199,8 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
             // Date range
             _writer.WriteStartObject("dateRange");
-            _writer.WriteString("after", Context.Request.After);
-            _writer.WriteString("before", Context.Request.Before);
+            _writer.WriteString("after", Context.Request.After?.ToDate());
+            _writer.WriteString("before", Context.Request.Before?.ToDate());
             _writer.WriteEndObject();
 
             // Message array (start)
@@ -213,7 +213,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer.WriteStartObject();
 
             // Metadata
-            _writer.WriteString("id", message.Id);
+            _writer.WriteString("id", message.Id.ToString());
             _writer.WriteString("type", message.Type.ToString());
             _writer.WriteString("timestamp", message.Timestamp);
             _writer.WriteString("timestampEdited", message.EditedTimestamp);
@@ -225,7 +225,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
             // Author
             _writer.WriteStartObject("author");
-            _writer.WriteString("id", message.Author.Id);
+            _writer.WriteString("id", message.Author.Id.ToString());
             _writer.WriteString("name", message.Author.Name);
             _writer.WriteString("discriminator", $"{message.Author.Discriminator:0000}");
             _writer.WriteBoolean("isBot", message.Author.IsBot);

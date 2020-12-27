@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DiscordChatExporter.Domain.Discord;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exporting;
+using DiscordChatExporter.Domain.Utilities;
 using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.ViewModels.Framework;
 
@@ -82,8 +84,8 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
                     Guild!,
                     channel,
                     SelectedFormat,
-                    After,
-                    Before
+                    After?.Pipe(Snowflake.FromDate),
+                    Before?.Pipe(Snowflake.FromDate)
                 );
 
                 // Filter

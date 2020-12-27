@@ -1,6 +1,6 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
+using DiscordChatExporter.Domain.Discord;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Internal;
 
@@ -22,9 +22,9 @@ namespace DiscordChatExporter.Domain.Exporting
 
         public ExportFormat Format { get; }
 
-        public DateTimeOffset? After { get; }
+        public Snowflake? After { get; }
 
-        public DateTimeOffset? Before { get; }
+        public Snowflake? Before { get; }
 
         public int? PartitionLimit { get; }
 
@@ -39,8 +39,8 @@ namespace DiscordChatExporter.Domain.Exporting
             Channel channel,
             string outputPath,
             ExportFormat format,
-            DateTimeOffset? after,
-            DateTimeOffset? before,
+            Snowflake? after,
+            Snowflake? before,
             int? partitionLimit,
             bool shouldDownloadMedia,
             bool shouldReuseMedia,
@@ -78,8 +78,8 @@ namespace DiscordChatExporter.Domain.Exporting
             Channel channel,
             string outputPath,
             ExportFormat format,
-            DateTimeOffset? after = null,
-            DateTimeOffset? before = null)
+            Snowflake? after = null,
+            Snowflake? before = null)
         {
             // Output is a directory
             if (Directory.Exists(outputPath) || string.IsNullOrWhiteSpace(Path.GetExtension(outputPath)))
@@ -96,8 +96,8 @@ namespace DiscordChatExporter.Domain.Exporting
             Guild guild,
             Channel channel,
             ExportFormat format,
-            DateTimeOffset? after = null,
-            DateTimeOffset? before = null)
+            Snowflake? after = null,
+            Snowflake? before = null)
         {
             var buffer = new StringBuilder();
 
@@ -112,17 +112,17 @@ namespace DiscordChatExporter.Domain.Exporting
                 // Both 'after' and 'before' are set
                 if (after != null && before != null)
                 {
-                    buffer.Append($"{after:yyyy-MM-dd} to {before:yyyy-MM-dd}");
+                    buffer.Append($"{after?.ToDate():yyyy-MM-dd} to {before?.ToDate():yyyy-MM-dd}");
                 }
                 // Only 'after' is set
                 else if (after != null)
                 {
-                    buffer.Append($"after {after:yyyy-MM-dd}");
+                    buffer.Append($"after {after?.ToDate():yyyy-MM-dd}");
                 }
                 // Only 'before' is set
                 else
                 {
-                    buffer.Append($"before {before:yyyy-MM-dd}");
+                    buffer.Append($"before {before?.ToDate():yyyy-MM-dd}");
                 }
 
                 buffer.Append(")");

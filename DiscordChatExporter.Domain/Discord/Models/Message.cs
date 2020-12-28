@@ -18,7 +18,8 @@ namespace DiscordChatExporter.Domain.Discord.Models
         ChannelNameChange,
         ChannelIconChange,
         ChannelPinnedMessage,
-        GuildMemberJoin
+        GuildMemberJoin,
+        Reply = 19
     }
 
     // https://discord.com/developers/docs/resources/channel#message-object
@@ -48,6 +49,10 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
         public IReadOnlyList<User> MentionedUsers { get; }
 
+        public MessageReference? Reference {get; }
+
+        public Message? ReferencedMessage {get; }
+
         public Message(
             Snowflake id,
             MessageType type,
@@ -60,7 +65,9 @@ namespace DiscordChatExporter.Domain.Discord.Models
             IReadOnlyList<Attachment> attachments,
             IReadOnlyList<Embed> embeds,
             IReadOnlyList<Reaction> reactions,
-            IReadOnlyList<User> mentionedUsers)
+            IReadOnlyList<User> mentionedUsers,
+            MessageReference? messageReference,
+            Message? referencedMessage)
         {
             Id = id;
             Type = type;
@@ -74,6 +81,8 @@ namespace DiscordChatExporter.Domain.Discord.Models
             Embeds = embeds;
             Reactions = reactions;
             MentionedUsers = mentionedUsers;
+            Reference = messageReference;
+            ReferencedMessage = referencedMessage;
         }
 
         public override string ToString() => Content;
@@ -90,6 +99,8 @@ namespace DiscordChatExporter.Domain.Discord.Models
             var callEndedTimestamp = json.GetPropertyOrNull("call")?.GetPropertyOrNull("ended_timestamp")?.GetDateTimeOffset();
             var type = (MessageType) json.GetProperty("type").GetInt32();
             var isPinned = json.GetPropertyOrNull("pinned")?.GetBoolean() ?? false;
+            var messageReference = json.GetPropertyOrNull("message_reference")?.Pipe(MessageReference.Parse);
+            var referencedMessage = json.GetPropertyOrNull("referenced_message")?.Pipe(Message.Parse);
 
             var content = type switch
             {
@@ -132,7 +143,9 @@ namespace DiscordChatExporter.Domain.Discord.Models
                 attachments,
                 embeds,
                 reactions,
-                mentionedUsers
+                mentionedUsers,
+                messageReference,
+                referencedMessage
             );
         }
     }

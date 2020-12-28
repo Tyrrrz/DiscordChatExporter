@@ -263,6 +263,17 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
             _writer.WriteEndArray();
 
+            // Reference
+
+            if (message.Reference is not null)
+            {
+                _writer.WriteStartObject("reference");
+                _writer.WriteString("messageId", message.Reference.MessageId);
+                _writer.WriteString("channelId", message.Reference.ChannelId);
+                _writer.WriteString("guildId", message.Reference.GuildId);
+                _writer.WriteEndObject();
+            }
+
             _writer.WriteEndObject();
             await _writer.FlushAsync();
 

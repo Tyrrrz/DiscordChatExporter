@@ -211,6 +211,39 @@ img {
     grid-template-columns: auto 1fr;
 }
 
+.chatlog__reference-symbol {
+    grid-column: 1;
+    border-style: solid;
+    border-width: 2px 0 0 2px;
+    border-radius: 8px 0 0 0;
+    margin-left: 16px;
+    margin-top: 8px;
+}
+
+.chatlog__reference {
+    grid-column: 2;
+    margin-left: 1.2em;
+    font-size: smaller;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chatlog__reference-avatar {
+    border-radius: 50%;
+    height: 16px;
+    width: 16px;
+    vertical-align: middle;
+}
+
+.chatlog__reference-name {
+    font-weight: 500;
+}
+
+.chatlog__reference-content {
+    margin-left: .2em;
+}
+
 .chatlog__author-avatar-container {
     grid-column: 1;
     width: 40px;

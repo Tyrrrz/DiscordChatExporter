@@ -11,14 +11,14 @@ namespace DiscordChatExporter.Domain.Discord.Models
     // https://discord.com/developers/docs/resources/channel#message-object-message-types
     public enum MessageType
     {
-        Default,
-        RecipientAdd,
-        RecipientRemove,
-        Call,
-        ChannelNameChange,
-        ChannelIconChange,
-        ChannelPinnedMessage,
-        GuildMemberJoin,
+        Default = 0,
+        RecipientAdd = 1,
+        RecipientRemove = 2,
+        Call = 3,
+        ChannelNameChange = 4,
+        ChannelIconChange = 5,
+        ChannelPinnedMessage = 6,
+        GuildMemberJoin = 7,
         Reply = 19
     }
 
@@ -49,9 +49,9 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
         public IReadOnlyList<User> MentionedUsers { get; }
 
-        public MessageReference? Reference {get; }
+        public MessageReference? Reference { get; }
 
-        public Message? ReferencedMessage {get; }
+        public Message? ReferencedMessage { get; }
 
         public Message(
             Snowflake id,
@@ -107,7 +107,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
                 MessageType.RecipientAdd => "Added a recipient.",
                 MessageType.RecipientRemove => "Removed a recipient.",
                 MessageType.Call =>
-                $"Started a call that lasted {callEndedTimestamp?.Pipe(t => t - timestamp).Pipe(t => (int) t.TotalMinutes) ?? 0} minutes.",
+                    $"Started a call that lasted {callEndedTimestamp?.Pipe(t => t - timestamp).Pipe(t => (int) t.TotalMinutes) ?? 0} minutes.",
                 MessageType.ChannelNameChange => "Changed the channel name.",
                 MessageType.ChannelIconChange => "Changed the channel icon.",
                 MessageType.ChannelPinnedMessage => "Pinned a message.",

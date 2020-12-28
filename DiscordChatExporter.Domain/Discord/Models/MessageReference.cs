@@ -1,37 +1,37 @@
 using System.Text.Json;
+using DiscordChatExporter.Domain.Utilities;
 using JsonExtensions.Reading;
 
 namespace DiscordChatExporter.Domain.Discord.Models
 {
-    // reference data sent with crossposted messages and replies
     // https://discord.com/developers/docs/resources/channel#message-object-message-reference-structure
     public partial class MessageReference
     {
-        public string? MessageId { get; }
+        public Snowflake? MessageId { get; }
 
-        public string? ChannelId { get; }
+        public Snowflake? ChannelId { get; }
 
-        public string? GuildId { get; }
+        public Snowflake? GuildId { get; }
 
-        public MessageReference(string? message_id, string? channel_id, string? guild_id)
+        public MessageReference(Snowflake? messageId, Snowflake? channelId, Snowflake? guildId)
         {
-            MessageId = message_id;
-            ChannelId = channel_id;
-            GuildId = guild_id;
+            MessageId = messageId;
+            ChannelId = channelId;
+            GuildId = guildId;
         }
 
-        public override string ToString() => MessageId ?? "?";
+        public override string ToString() => MessageId?.ToString() ?? "<unknown reference>";
     }
 
     public partial class MessageReference
     {
         public static MessageReference Parse(JsonElement json)
         {
-            var message_id = json.GetPropertyOrNull("message_id")?.GetString();
-            var channel_id = json.GetPropertyOrNull("channel_id")?.GetString();
-            var guild_id = json.GetPropertyOrNull("guild_id")?.GetString();
+            var messageId = json.GetPropertyOrNull("message_id")?.GetString().Pipe(Snowflake.Parse);
+            var channelId = json.GetPropertyOrNull("channel_id")?.GetString().Pipe(Snowflake.Parse);
+            var guildId = json.GetPropertyOrNull("guild_id")?.GetString().Pipe(Snowflake.Parse);
 
-            return new MessageReference(message_id, channel_id, guild_id);
+            return new MessageReference(messageId, channelId, guildId);
         }
     }
 }

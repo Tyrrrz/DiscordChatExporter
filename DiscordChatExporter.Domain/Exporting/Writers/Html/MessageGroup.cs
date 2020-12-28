@@ -22,13 +22,13 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.Html
             User author,
             DateTimeOffset timestamp,
             MessageReference? reference,
-            Message? referenced_message,
+            Message? referencedMessage,
             IReadOnlyList<Message> messages)
         {
             Author = author;
             Timestamp = timestamp;
             Reference = reference;
-            ReferencedMessage = referenced_message;
+            ReferencedMessage = referencedMessage;
             Messages = messages;
         }
     }

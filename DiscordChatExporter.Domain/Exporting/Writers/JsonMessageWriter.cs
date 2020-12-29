@@ -258,19 +258,19 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
 
             // Mentions
             _writer.WriteStartArray("mentions");
+
             foreach (var mention in message.MentionedUsers)
                 await WriteMentionAsync(mention);
 
             _writer.WriteEndArray();
 
-            // Reference
-
-            if (message.Reference is not null)
+            // Message reference
+            if (message.Reference != null)
             {
                 _writer.WriteStartObject("reference");
-                _writer.WriteString("messageId", message.Reference.MessageId);
-                _writer.WriteString("channelId", message.Reference.ChannelId);
-                _writer.WriteString("guildId", message.Reference.GuildId);
+                _writer.WriteString("messageId", message.Reference.MessageId?.ToString());
+                _writer.WriteString("channelId", message.Reference.ChannelId?.ToString());
+                _writer.WriteString("guildId", message.Reference.GuildId?.ToString());
                 _writer.WriteEndObject();
             }
 

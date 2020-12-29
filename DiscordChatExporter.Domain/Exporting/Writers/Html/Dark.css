@@ -54,6 +54,18 @@ a {
     color: #b5b6b8;
 }
 
+.chatlog__reference-link {
+    color: #b5b6b8;
+}
+
+.chatlog__reference-link:hover {
+    color: #ffffff;
+}
+
+.chatlog__reference-edited-timestamp {
+    color: rgba(255, 255, 255, 0.2);
+}
+
 .chatlog__author-name {
     color: #ffffff;
 }

@@ -93,24 +93,20 @@ img {
     filter: blur(44px);
 }
 
-    .spoiler--hidden .spoiler-image:after {
-        content: "SPOILER";
-        color: #dcddde;
-        background-color: rgba(0, 0, 0, 0.6);
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        font-weight: 600;
-        /* padding: 0.5em 0.7em; */
-        padding: 100%;
-        /* This ruins those beutifully rounded buttons, but it's needed to prevent a FireFox bug with video and audio elemnts. */
-        /* The bug is that you can click trough the spoiler layer and play the video or audio, I could not identify the cause. */
-        /* I leave this here, in case someone is brave enough to venture in to madness that is undocumented browser behaviour. */
-        border-radius: 20px;
-        letter-spacing: 0.05em;
-        font-size: 0.9em;
-    }
+.spoiler--hidden .spoiler-image:after {
+    content: "SPOILER";
+    color: #dcddde;
+    background-color: rgba(0, 0, 0, 0.6);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: 600;
+    padding: 100%;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+    font-size: 0.9em;
+}
 
 .spoiler--hidden:hover .spoiler-image:after {
     color: #fff;
@@ -221,27 +217,46 @@ img {
 }
 
 .chatlog__reference {
+    display: flex;
     grid-column: 2;
     margin-left: 1.2em;
-    font-size: smaller;
+    margin-bottom: 0.25em;
+    font-size: 0.875em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    align-items: center;
 }
 
 .chatlog__reference-avatar {
     border-radius: 50%;
     height: 16px;
     width: 16px;
-    vertical-align: middle;
+    margin-right: 0.25em;
 }
 
 .chatlog__reference-name {
-    font-weight: 500;
+    margin-right: 0.25em;
+    font-weight: 600;
 }
 
-.chatlog__reference-content {
-    margin-left: .2em;
+.chatlog__reference-link {
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chatlog__reference-link:hover {
+    text-decoration: none;
+}
+
+.chatlog__reference-content > * {
+    display: inline;
+}
+
+.chatlog__reference-edited-timestamp {
+    margin-left: 0.25em;
+    font-size: 0.8em;
 }
 
 .chatlog__author-avatar-container {

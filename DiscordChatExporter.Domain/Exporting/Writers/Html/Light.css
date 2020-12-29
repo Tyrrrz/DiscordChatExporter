@@ -55,6 +55,18 @@ a {
     color: #5f5f60;
 }
 
+.chatlog__reference-link {
+    color: #5f5f60;
+}
+
+.chatlog__reference-link:hover {
+    color: #2f3136;
+}
+
+.chatlog__reference-edited-timestamp {
+    color: #747f8d;
+}
+
 .chatlog__author-name {
     font-weight: 600;
     color: #2f3136;

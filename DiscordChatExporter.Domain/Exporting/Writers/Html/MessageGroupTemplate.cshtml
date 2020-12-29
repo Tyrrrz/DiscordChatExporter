@@ -14,12 +14,33 @@
     ValueTask<string> ResolveUrlAsync(string url) => Model.ExportContext.ResolveMediaUrlAsync(url);
 
     var userMember = Model.ExportContext.TryGetMember(Model.MessageGroup.Author.Id);
+
     var userColor = Model.ExportContext.TryGetUserColor(Model.MessageGroup.Author.Id);
-    var userNick = Model.MessageGroup.Author.IsBot ? Model.MessageGroup.Author.Name : userMember?.Nick ?? Model.MessageGroup.Author.Name;
-    var referencedUserNick = Model.MessageGroup.Author.IsBot ? Model.MessageGroup.Author.Name : userMember?.Nick ?? Model.MessageGroup.Author.Name;
 
     var userColorStyle = userColor != null
         ? $"color: rgb({userColor?.R},{userColor?.G},{userColor?.B})"
+        : null;
+
+    var userNick = Model.MessageGroup.Author.IsBot
+        ? Model.MessageGroup.Author.Name
+        : userMember?.Nick ?? Model.MessageGroup.Author.Name;
+
+    var referencedUserMember = Model.MessageGroup.ReferencedMessage != null
+        ? Model.ExportContext.TryGetMember(Model.MessageGroup.ReferencedMessage.Author.Id)
+        : null;
+
+    var referencedUserColor = Model.MessageGroup.ReferencedMessage != null
+        ? Model.ExportContext.TryGetUserColor(Model.MessageGroup.ReferencedMessage.Author.Id)
+        : null;
+
+    var referencedUserColorStyle = referencedUserColor != null
+        ? $"color: rgb({referencedUserColor?.R},{referencedUserColor?.G},{referencedUserColor?.B})"
+        : null;
+
+    var referencedUserNick = Model.MessageGroup.ReferencedMessage != null
+        ? Model.MessageGroup.ReferencedMessage.Author.IsBot
+            ? Model.MessageGroup.ReferencedMessage.Author.Name
+            : referencedUserMember?.Nick ?? Model.MessageGroup.ReferencedMessage.Author.Name
         : null;
 }
 
@@ -32,15 +53,29 @@
             @if (Model.MessageGroup.ReferencedMessage != null)
             {
                 <img class="chatlog__reference-avatar" src="@await ResolveUrlAsync(Model.MessageGroup.ReferencedMessage.Author.AvatarUrl)" alt="Avatar">
-                <span class="chatlog__reference-name" title="@Model.MessageGroup.ReferencedMessage.Author.FullName" data-user-id="@Model.MessageGroup.ReferencedMessage.Author.Id">@Model.MessageGroup.ReferencedMessage.Author.FullName</span>
-                <span class="chatlog__reference-content">
-                    @Raw(FormatMarkdown(Model.MessageGroup.ReferencedMessage.Content))
-                </span>
+                <span class="chatlog__reference-name" title="@Model.MessageGroup.ReferencedMessage.Author.FullName" style="@referencedUserColorStyle">@referencedUserNick</span>
+                <a class="chatlog__reference-link" href="#" onclick="scrollToMessage(event, '@Model.MessageGroup.ReferencedMessage.Id')">
+                    <span class="chatlog__reference-content">
+                        @if (!string.IsNullOrWhiteSpace(Model.MessageGroup.ReferencedMessage.Content))
+                        {
+                            @Raw(FormatMarkdown(Model.MessageGroup.ReferencedMessage.Content))
+                        }
+                        else
+                        {
+                            <em>Click to see original message</em>
+                        }
+                    </span>
+
+                    @if (Model.MessageGroup.ReferencedMessage.EditedTimestamp != null)
+                    {
+                        <span class="chatlog__reference-edited-timestamp" title="@FormatDate(Model.MessageGroup.ReferencedMessage.EditedTimestamp.Value)">(edited)</span>
+                    }
+                </a>
             }
             else
             {
                 <span class="chatlog__reference-unknown">
-                    In reply to an unknown message
+                    Original message was deleted.
                 </span>
             }
         </div>

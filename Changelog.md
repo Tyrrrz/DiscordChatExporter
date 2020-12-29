@@ -1,3 +1,16 @@
+### v2.26 (29-Dec-2020)
+
+- [HTML] Added support for replies. (Thanks [@Sanqui](https://github.com/Sanqui))
+- [HTML] Improved styling of non-media attachments (regular files, i.e. not video, audio, or image). (Thanks [@Lucas LaBuff](https://github.com/96-LB))
+- [HTML] Improved initial export performance.
+- [JSON] Relaxed escaping rules for unicode characters. (Thanks [@Sanqui](https://github.com/Sanqui))
+- [JSON] Added support for replies. (Thanks [@Sanqui](https://github.com/Sanqui))
+- [CLI] Added channel names to errors shown on failures when exporting multiple channels. (Thanks [@Sanqui](https://github.com/Sanqui))
+- [CLI] Added support for passing message IDs (snowflakes) to `--after` and `--before` options. (Thanks [@Andrew Kolos](https://github.com/andrewkolos))
+- Files downloaded by the "download referenced media" option now have their dates set according to the `Last-Modified` header provided by Discord CDN. (Thanks [@Andrew Kolos](https://github.com/andrewkolos))
+- Fixed an issue where the application sometimes crashed with `NullReferenceException` when retrying a failed HTTP request.
+- Migrated to Discord API v8.
+
 ### v2.25 (23-Nov-2020)
 
 - [JSON] Added `mentions` property to the output. This contains users referenced inside the message text, but doesn't include mentions in embeds. (Thanks [@Andrew Kolos](https://github.com/andrewkolos))

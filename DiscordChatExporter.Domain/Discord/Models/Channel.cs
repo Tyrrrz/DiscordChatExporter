@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text.Json;
 using DiscordChatExporter.Domain.Discord.Models.Common;
 using DiscordChatExporter.Domain.Utilities;
@@ -21,7 +23,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
     }
 
     // https://discord.com/developers/docs/resources/channel#channel-object
-    public partial class Channel : IHasId
+    public partial class Channel : IHasId, IComparable, IComparable<Channel>
     {
         public Snowflake Id { get; }
 
@@ -40,19 +42,33 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
         public string Name { get; }
 
+        public int Position { get; }
+
         public string? Topic { get; }
 
-        public Channel(Snowflake id, ChannelType type, Snowflake guildId, Channel? category, string name, string? topic)
+        public Channel(Snowflake id, ChannelType type, Snowflake guildId, Channel? category, string name, int position, string? topic)
         {
             Id = id;
             Type = type;
             GuildId = guildId;
             Category = category;
             Name = name;
+            Position = position;
             Topic = topic;
         }
 
+        public int CompareTo(Channel? other)
+        {
+            return other != null ? Position.CompareTo(other.Position) : 1;
+        }
+
+        public int CompareTo(object? obj)
+        {
+            return obj is Channel other ? CompareTo(other) : 1;
+        }
+
         public override string ToString() => Name;
+
     }
 
     public partial class Channel
@@ -71,6 +87,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
                     ChannelType.GuildStore => "Store",
                     _ => "Default"
                 },
+                -1,
                 null
             );
 
@@ -78,6 +95,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
         {
             var id = json.GetProperty("id").GetString().Pipe(Snowflake.Parse);
             var guildId = json.GetPropertyOrNull("guild_id")?.GetString().Pipe(Snowflake.Parse);
+            var position = json.GetProperty("position").GetInt32();
             var topic = json.GetPropertyOrNull("topic")?.GetString();
 
             var type = (ChannelType)json.GetProperty("type").GetInt32();
@@ -93,6 +111,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
                 guildId ?? Guild.DirectMessages.Id,
                 category ?? GetDefaultCategory(type, guildId ?? Guild.DirectMessages.Id),
                 name,
+                position,
                 topic
             );
         }

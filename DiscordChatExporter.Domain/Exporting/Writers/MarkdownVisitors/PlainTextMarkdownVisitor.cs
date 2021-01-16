@@ -30,21 +30,21 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
             }
             else if (mention.Type == MentionType.User)
             {
-                var member = _context.TryGetMember(Snowflake.Parse(mention.Id));
+                var member = _context.TryGetMember(Snowflake.TryParse(mention.Id));
                 var name = member?.User.Name ?? "Unknown";
 
                 _buffer.Append($"@{name}");
             }
             else if (mention.Type == MentionType.Channel)
             {
-                var channel = _context.TryGetChannel(Snowflake.Parse(mention.Id));
+                var channel = _context.TryGetChannel(Snowflake.TryParse(mention.Id));
                 var name = channel?.Name ?? "deleted-channel";
 
                 _buffer.Append($"#{name}");
             }
             else if (mention.Type == MentionType.Role)
             {
-                var role = _context.TryGetRole(Snowflake.Parse(mention.Id));
+                var role = _context.TryGetRole(Snowflake.TryParse(mention.Id));
                 var name = role?.Name ?? "deleted-role";
 
                 _buffer.Append($"@{name}");

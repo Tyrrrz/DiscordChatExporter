@@ -45,13 +45,13 @@ namespace DiscordChatExporter.Domain.Exporting
             var dateFormat => date.ToLocalString(dateFormat)
         };
 
-        public Member? TryGetMember(Snowflake? id) => Members.FirstOrDefault(m => m.Id == id);
+        public Member? TryGetMember(Snowflake id) => Members.FirstOrDefault(m => m.Id == id);
 
-        public Channel? TryGetChannel(Snowflake? id) => Channels.FirstOrDefault(c => c.Id == id);
+        public Channel? TryGetChannel(Snowflake id) => Channels.FirstOrDefault(c => c.Id == id);
 
-        public Role? TryGetRole(Snowflake? id) => Roles.FirstOrDefault(r => r.Id == id);
+        public Role? TryGetRole(Snowflake id) => Roles.FirstOrDefault(r => r.Id == id);
 
-        public Color? TryGetUserColor(Snowflake? id)
+        public Color? TryGetUserColor(Snowflake id)
         {
             var member = TryGetMember(id);
             var roles = member?.RoleIds.Join(Roles, i => i, r => r.Id, (_, role) => role);

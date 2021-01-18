@@ -7,6 +7,7 @@ using DiscordChatExporter.Domain.Discord;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Markdown;
 using DiscordChatExporter.Domain.Markdown.Ast;
+using DiscordChatExporter.Domain.Utilities;
 
 namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
 {
@@ -76,6 +77,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
 
         protected override MarkdownNode VisitMention(MentionNode mention)
         {
+            var mentionId = Snowflake.TryParse(mention.Id);
             if (mention.Type == MentionType.Meta)
             {
                 _buffer
@@ -85,7 +87,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
             }
             else if (mention.Type == MentionType.User)
             {
-                var member = _context.TryGetMember(Snowflake.TryParse(mention.Id));
+                var member = mentionId?.Pipe(_context.TryGetMember);
                 var fullName = member?.User.FullName ?? "Unknown";
                 var nick = member?.Nick ?? "Unknown";
 
@@ -96,7 +98,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
             }
             else if (mention.Type == MentionType.Channel)
             {
-                var channel = _context.TryGetChannel(Snowflake.TryParse(mention.Id));
+                var channel = mentionId?.Pipe(_context.TryGetChannel);
                 var name = channel?.Name ?? "deleted-channel";
 
                 _buffer
@@ -106,7 +108,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers.MarkdownVisitors
             }
             else if (mention.Type == MentionType.Role)
             {
-                var role = _context.TryGetRole(Snowflake.TryParse(mention.Id));
+                var role = mentionId?.Pipe(_context.TryGetRole);
                 var name = role?.Name ?? "deleted-role";
                 var color = role?.Color;
 

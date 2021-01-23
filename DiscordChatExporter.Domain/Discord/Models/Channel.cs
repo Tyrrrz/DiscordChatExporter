@@ -37,7 +37,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
         public Snowflake GuildId { get; }
 
-        public Channel? Category { get; }
+        public Channel Category { get; }
 
         public string Name { get; }
 
@@ -50,7 +50,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
             Id = id;
             Type = type;
             GuildId = guildId;
-            Category = category;
+            Category = category ?? (type != ChannelType.GuildCategory ? GetDefaultCategory(type, guildId) : this);
             Name = name;
             Position = position;
             Topic = topic;

@@ -85,7 +85,7 @@ namespace DiscordChatExporter.Domain.Exporting
         {
 
             // Formats path
-            outputPath = Regex.Replace(outputPath, "%.", delegate (Match m)
+            outputPath = Regex.Replace(outputPath, "%.", m =>
             {
                 return PathEx.EscapePath(m.Value switch
                 {

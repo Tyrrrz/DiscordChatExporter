@@ -119,10 +119,10 @@ namespace DiscordChatExporter.Domain.Discord
 
                 var categories = response
                     .EnumerateArray()
-                    .Where(j => j.GetProperty("type").GetInt32() == (int)ChannelType.GuildCategory)
+                    .Select(j => Channel.Parse(j))
+                    .Where(j => j.Type == ChannelType.GuildCategory)
                     .ToDictionary(
-                        j => j.GetProperty("id").GetString(),
-                        j => Channel.Parse(j)
+                        j => j.Id.ToString()
                     );
 
                 foreach (var channelJson in response.EnumerateArray())
@@ -131,7 +131,7 @@ namespace DiscordChatExporter.Domain.Discord
                     var category = !string.IsNullOrWhiteSpace(parentId)
                         ? categories.GetValueOrDefault(parentId)
                         : null;
-
+                    
                     var channel = Channel.Parse(channelJson, category);
 
                     // Skip non-text channels
@@ -163,12 +163,6 @@ namespace DiscordChatExporter.Domain.Discord
             return response?.Pipe(Member.Parse);
         }
 
-        private async ValueTask<Channel> GetChannelCategoryAsync(Snowflake channelParentId)
-        {
-            var response = await GetJsonResponseAsync($"channels/{channelParentId}");
-            return Channel.Parse(response);
-        }
-
         public async ValueTask<Channel> GetChannelAsync(Snowflake channelId)
         {
             var response = await GetJsonResponseAsync($"channels/{channelId}");
@@ -176,7 +170,7 @@ namespace DiscordChatExporter.Domain.Discord
             var parentId = response.GetPropertyOrNull("parent_id")?.GetString().Pipe(Snowflake.Parse);
 
             var category = parentId != null
-                ? await GetChannelCategoryAsync(parentId.Value)
+                ? await GetChannelAsync(parentId.Value)
                 : null;
 
             return Channel.Parse(response, category);

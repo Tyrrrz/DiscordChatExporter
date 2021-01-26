@@ -22,7 +22,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
     }
 
     // https://discord.com/developers/docs/resources/channel#channel-object
-    public partial class Channel : IHasId, IComparable, IComparable<Channel>
+    public partial class Channel : IHasId
     {
         public Snowflake Id { get; }
 
@@ -54,16 +54,6 @@ namespace DiscordChatExporter.Domain.Discord.Models
             Name = name;
             Position = position;
             Topic = topic;
-        }
-
-        public int CompareTo(Channel? other)
-        {
-            return other != null ? Position.CompareTo(other.Position) : 1;
-        }
-
-        public int CompareTo(object? obj)
-        {
-            return obj is Channel other ? CompareTo(other) : 1;
         }
 
         public override string ToString() => Name;

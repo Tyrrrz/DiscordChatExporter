@@ -113,7 +113,7 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
         {
             await _writer.WriteLineAsync('='.Repeat(62));
             await _writer.WriteLineAsync($"Guild: {Context.Request.Guild.Name}");
-            await _writer.WriteLineAsync($"Channel: {Context.Request.Channel.Category!.Name} / {Context.Request.Channel.Name}");
+            await _writer.WriteLineAsync($"Channel: {Context.Request.Channel.Category.Name} / {Context.Request.Channel.Name}");
 
             if (!string.IsNullOrWhiteSpace(Context.Request.Channel.Topic))
                 await _writer.WriteLineAsync($"Topic: {Context.Request.Channel.Topic}");

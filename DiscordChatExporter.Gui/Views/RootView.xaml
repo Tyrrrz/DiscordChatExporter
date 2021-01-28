@@ -30,7 +30,7 @@
                 <PropertyGroupDescription PropertyName="Category" />
             </CollectionViewSource.GroupDescriptions>
             <CollectionViewSource.SortDescriptions>
-                <componentModel:SortDescription Direction="Ascending" PropertyName="Category" />
+                <componentModel:SortDescription Direction="Ascending" PropertyName="Position" />
                 <componentModel:SortDescription Direction="Ascending" PropertyName="Name" />
             </CollectionViewSource.SortDescriptions>
         </CollectionViewSource>

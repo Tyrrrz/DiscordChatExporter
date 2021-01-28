@@ -117,25 +117,32 @@ namespace DiscordChatExporter.Domain.Discord
             {
                 var response = await GetJsonResponseAsync($"guilds/{guildId}/channels");
 
-                var categories = response
+                var orderedResponse = response
                     .EnumerateArray()
-                    .ToDictionary(
-                        j => j.GetProperty("id").GetString(),
-                        j => j.GetProperty("name").GetString()
-                    );
+                    .OrderBy(j => j.GetProperty("position").GetInt32())
+                    .ThenBy(j => ulong.Parse(j.GetProperty("id").GetString()));
 
-                foreach (var channelJson in response.EnumerateArray())
+                var categories = orderedResponse
+                    .Where(j => j.GetProperty("type").GetInt32() == (int)ChannelType.GuildCategory)
+                    .Select((j, index) => ChannelCategory.Parse(j, index + 1))
+                    .ToDictionary(j => j.Id.ToString());
+
+                var position = 0;
+
+                foreach (var channelJson in orderedResponse)
                 {
                     var parentId = channelJson.GetPropertyOrNull("parent_id")?.GetString();
                     var category = !string.IsNullOrWhiteSpace(parentId)
                         ? categories.GetValueOrDefault(parentId)
                         : null;
-
-                    var channel = Channel.Parse(channelJson, category);
+                    
+                    var channel = Channel.Parse(channelJson, category, position);
 
                     // Skip non-text channels
                     if (!channel.IsTextChannel)
                         continue;
+
+                    position++;
 
                     yield return channel;
                 }
@@ -162,10 +169,11 @@ namespace DiscordChatExporter.Domain.Discord
             return response?.Pipe(Member.Parse);
         }
 
-        private async ValueTask<string> GetChannelCategoryAsync(Snowflake channelParentId)
+        public async ValueTask<ChannelCategory> GetChannelCategoryAsync(Snowflake channelId)
         {
-            var response = await GetJsonResponseAsync($"channels/{channelParentId}");
-            return response.GetProperty("name").GetString();
+            var response = await GetJsonResponseAsync($"channels/{channelId}");
+
+            return ChannelCategory.Parse(response);
         }
 
         public async ValueTask<Channel> GetChannelAsync(Snowflake channelId)

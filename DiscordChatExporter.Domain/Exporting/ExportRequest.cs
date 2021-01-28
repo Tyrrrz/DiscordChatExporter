@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using DiscordChatExporter.Domain.Discord;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Internal;
@@ -81,6 +83,26 @@ namespace DiscordChatExporter.Domain.Exporting
             Snowflake? after = null,
             Snowflake? before = null)
         {
+
+            // Formats path
+            outputPath = Regex.Replace(outputPath, "%.", m =>
+                PathEx.EscapePath(m.Value switch
+                {
+                    "%g" => guild.Id.ToString(),
+                    "%G" => guild.Name,
+                    "%t" => channel.Category.Id.ToString(),
+                    "%T" => channel.Category.Name,
+                    "%c" => channel.Id.ToString(),
+                    "%C" => channel.Name,
+                    "%p" => channel.Position.ToString(),
+                    "%P" => channel.Category.Position.ToString(),
+                    "%a" => (after ?? Snowflake.Zero).ToDate().ToString("yyyy-MM-dd"),
+                    "%b" => (before?.ToDate() ?? DateTime.Now).ToString("yyyy-MM-dd"),
+                    "%%" => "%",
+                    _ => m.Value
+                })
+            );
+
             // Output is a directory
             if (Directory.Exists(outputPath) || string.IsNullOrWhiteSpace(Path.GetExtension(outputPath)))
             {
@@ -102,7 +124,7 @@ namespace DiscordChatExporter.Domain.Exporting
             var buffer = new StringBuilder();
 
             // Guild and channel names
-            buffer.Append($"{guild.Name} - {channel.Category} - {channel.Name} [{channel.Id}]");
+            buffer.Append($"{guild.Name} - {channel.Category.Name} - {channel.Name} [{channel.Id}]");
 
             // Date range
             if (after != null || before != null)

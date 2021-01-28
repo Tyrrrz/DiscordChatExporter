@@ -117,25 +117,32 @@ namespace DiscordChatExporter.Domain.Discord
             {
                 var response = await GetJsonResponseAsync($"guilds/{guildId}/channels");
 
-                var categories = response
+                var orderedResponse = response
                     .EnumerateArray()
-                    .Select(j => ChannelCategory.Parse(j))
-                    .ToDictionary(
-                        j => j.Id.ToString()
-                    );
+                    .OrderBy(j => j.GetProperty("position").GetInt32())
+                    .ThenBy(j => ulong.Parse(j.GetProperty("id").GetString()));
 
-                foreach (var channelJson in response.EnumerateArray())
+                var categories = orderedResponse
+                    .Where(j => j.GetProperty("type").GetInt32() == (int)ChannelType.GuildCategory)
+                    .Select((j, index) => ChannelCategory.Parse(j, index + 1))
+                    .ToDictionary(j => j.Id.ToString());
+
+                var position = 0;
+
+                foreach (var channelJson in orderedResponse)
                 {
                     var parentId = channelJson.GetPropertyOrNull("parent_id")?.GetString();
                     var category = !string.IsNullOrWhiteSpace(parentId)
                         ? categories.GetValueOrDefault(parentId)
                         : null;
                     
-                    var channel = Channel.Parse(channelJson, category);
+                    var channel = Channel.Parse(channelJson, category, position);
 
                     // Skip non-text channels
                     if (!channel.IsTextChannel)
                         continue;
+
+                    position++;
 
                     yield return channel;
                 }

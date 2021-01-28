@@ -73,14 +73,13 @@ namespace DiscordChatExporter.Domain.Discord.Models
                     ChannelType.GuildStore => "Store",
                     _ => "Default"
                 },
-                -1
+                0
             );
 
-        public static Channel Parse(JsonElement json, ChannelCategory? category = null)
+        public static Channel Parse(JsonElement json, ChannelCategory? category = null, int? position = null)
         {
             var id = json.GetProperty("id").GetString().Pipe(Snowflake.Parse);
             var guildId = json.GetPropertyOrNull("guild_id")?.GetString().Pipe(Snowflake.Parse);
-            var position = json.GetProperty("position").GetInt32();
             var topic = json.GetPropertyOrNull("topic")?.GetString();
 
             var type = (ChannelType)json.GetProperty("type").GetInt32();
@@ -90,13 +89,15 @@ namespace DiscordChatExporter.Domain.Discord.Models
                 json.GetPropertyOrNull("recipients")?.EnumerateArray().Select(User.Parse).Select(u => u.Name).JoinToString(", ") ??
                 id.ToString();
 
+            position ??= json.GetProperty("position").GetInt32();
+            
             return new Channel(
                 id,
                 type,
                 guildId ?? Guild.DirectMessages.Id,
                 category ?? GetDefaultCategory(type),
                 name,
-                position,
+                position.Value,
                 topic
             );
         }

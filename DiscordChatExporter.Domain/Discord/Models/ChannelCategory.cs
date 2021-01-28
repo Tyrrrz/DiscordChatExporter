@@ -29,10 +29,10 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
     public partial class ChannelCategory
     {
-        public static ChannelCategory Parse(JsonElement json)
+        public static ChannelCategory Parse(JsonElement json, int? position = null)
         {
             var id = json.GetProperty("id").GetString().Pipe(Snowflake.Parse);
-            var position = json.GetProperty("position").GetInt32();
+            position ??= json.GetProperty("position").GetInt32();
 
             var name = json.GetPropertyOrNull("name")?.GetString() ??
                 json.GetPropertyOrNull("recipients")?.EnumerateArray().Select(User.Parse).Select(u => u.Name).JoinToString(", ") ??
@@ -41,7 +41,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
             return new ChannelCategory(
                 id,
                 name,
-                position
+                position.Value
             );
         }
     }

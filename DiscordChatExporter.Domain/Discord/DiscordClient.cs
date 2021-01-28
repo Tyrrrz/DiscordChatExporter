@@ -119,8 +119,7 @@ namespace DiscordChatExporter.Domain.Discord
 
                 var categories = response
                     .EnumerateArray()
-                    .Select(j => Channel.Parse(j))
-                    .Where(j => j.Type == ChannelType.GuildCategory)
+                    .Select(j => ChannelCategory.Parse(j))
                     .ToDictionary(
                         j => j.Id.ToString()
                     );
@@ -163,6 +162,13 @@ namespace DiscordChatExporter.Domain.Discord
             return response?.Pipe(Member.Parse);
         }
 
+        public async ValueTask<ChannelCategory> GetChannelCategoryAsync(Snowflake channelId)
+        {
+            var response = await GetJsonResponseAsync($"channels/{channelId}");
+
+            return ChannelCategory.Parse(response);
+        }
+
         public async ValueTask<Channel> GetChannelAsync(Snowflake channelId)
         {
             var response = await GetJsonResponseAsync($"channels/{channelId}");
@@ -170,7 +176,7 @@ namespace DiscordChatExporter.Domain.Discord
             var parentId = response.GetPropertyOrNull("parent_id")?.GetString().Pipe(Snowflake.Parse);
 
             var category = parentId != null
-                ? await GetChannelAsync(parentId.Value)
+                ? await GetChannelCategoryAsync(parentId.Value)
                 : null;
 
             return Channel.Parse(response, category);

@@ -37,7 +37,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
         public Snowflake GuildId { get; }
 
-        public Channel Category { get; }
+        public ChannelCategory Category { get; }
 
         public string Name { get; }
 
@@ -45,12 +45,12 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
         public string? Topic { get; }
 
-        public Channel(Snowflake id, ChannelType type, Snowflake guildId, Channel? category, string name, int position, string? topic)
+        public Channel(Snowflake id, ChannelType type, Snowflake guildId, ChannelCategory? category, string name, int position, string? topic)
         {
             Id = id;
             Type = type;
             GuildId = guildId;
-            Category = category ?? (type != ChannelType.GuildCategory ? GetDefaultCategory(type, guildId) : this);
+            Category = category ?? GetDefaultCategory(type);
             Name = name;
             Position = position;
             Topic = topic;
@@ -62,11 +62,8 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
     public partial class Channel
     {
-        private static Channel GetDefaultCategory(ChannelType channelType, Snowflake guildId) => new(
+        private static ChannelCategory GetDefaultCategory(ChannelType channelType) => new(
                 Snowflake.Zero,
-                ChannelType.GuildCategory,
-                guildId,
-                null,
                 channelType switch
                 {
                     ChannelType.GuildTextChat => "Text",
@@ -76,11 +73,10 @@ namespace DiscordChatExporter.Domain.Discord.Models
                     ChannelType.GuildStore => "Store",
                     _ => "Default"
                 },
-                -1,
-                null
+                -1
             );
 
-        public static Channel Parse(JsonElement json, Channel? category = null)
+        public static Channel Parse(JsonElement json, ChannelCategory? category = null)
         {
             var id = json.GetProperty("id").GetString().Pipe(Snowflake.Parse);
             var guildId = json.GetPropertyOrNull("guild_id")?.GetString().Pipe(Snowflake.Parse);
@@ -98,7 +94,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
                 id,
                 type,
                 guildId ?? Guild.DirectMessages.Id,
-                category ?? GetDefaultCategory(type, guildId ?? Guild.DirectMessages.Id),
+                category ?? GetDefaultCategory(type),
                 name,
                 position,
                 topic

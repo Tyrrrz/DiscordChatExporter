@@ -8,7 +8,7 @@ using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Domain.Discord.Models
 {
-    public partial class ChannelCategory : IHasId
+    public partial class ChannelCategory : IHasIdAndPosition
     {
         public Snowflake Id { get; }
 

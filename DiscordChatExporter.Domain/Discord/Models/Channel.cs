@@ -22,7 +22,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
     }
 
     // https://discord.com/developers/docs/resources/channel#channel-object
-    public partial class Channel : IHasId
+    public partial class Channel : IHasIdAndPosition
     {
         public Snowflake Id { get; }
 

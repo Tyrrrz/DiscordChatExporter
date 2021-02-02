@@ -176,7 +176,7 @@ namespace DiscordChatExporter.Domain.Discord
                 var response = await GetJsonResponseAsync($"channels/{channelId}");
                 return ChannelCategory.Parse(response);
             }
-            catch (DiscordChatExporterException exception)
+            catch (DiscordChatExporterException)
             {
                 return ChannelCategory.Empty();
             }

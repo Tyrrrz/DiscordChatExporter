@@ -44,5 +44,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
                 position.Value
             );
         }
+
+        public static ChannelCategory Empty { get; } = new(Snowflake.Zero, "Missing", 0);
     }
 }

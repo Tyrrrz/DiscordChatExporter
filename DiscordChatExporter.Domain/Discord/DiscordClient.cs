@@ -171,9 +171,20 @@ namespace DiscordChatExporter.Domain.Discord
 
         public async ValueTask<ChannelCategory> GetChannelCategoryAsync(Snowflake channelId)
         {
-            var response = await GetJsonResponseAsync($"channels/{channelId}");
+            try
+            {
+                var response = await GetJsonResponseAsync($"channels/{channelId}");
+                return ChannelCategory.Parse(response);
+            }
+            /***
+             * In some cases, the Discord API returns an empty body when requesting some channel category info.
+             * Instead, we use an empty channel category as a fallback.
+             */
+            catch (DiscordChatExporterException)
+            {
+                return ChannelCategory.Empty;
+            }
 
-            return ChannelCategory.Parse(response);
         }
 
         public async ValueTask<Channel> GetChannelAsync(Snowflake channelId)

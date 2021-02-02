@@ -171,9 +171,16 @@ namespace DiscordChatExporter.Domain.Discord
 
         public async ValueTask<ChannelCategory> GetChannelCategoryAsync(Snowflake channelId)
         {
-            var response = await GetJsonResponseAsync($"channels/{channelId}");
+            try
+            {
+                var response = await GetJsonResponseAsync($"channels/{channelId}");
+                return ChannelCategory.Parse(response);
+            }
+            catch (DiscordChatExporterException exception)
+            {
+                return ChannelCategory.Empty();
+            }
 
-            return ChannelCategory.Parse(response);
         }
 
         public async ValueTask<Channel> GetChannelAsync(Snowflake channelId)

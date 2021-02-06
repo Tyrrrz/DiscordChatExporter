@@ -14,9 +14,9 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
         public string Name { get; }
 
-        public int Position { get; }
+        public int? Position { get; }
 
-        public ChannelCategory(Snowflake id, string name, int position)
+        public ChannelCategory(Snowflake id, string name, int? position)
         {
             Id = id;
             Name = name;
@@ -32,7 +32,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
         public static ChannelCategory Parse(JsonElement json, int? position = null)
         {
             var id = json.GetProperty("id").GetString().Pipe(Snowflake.Parse);
-            position ??= json.GetProperty("position").GetInt32();
+            position ??= json.GetPropertyOrNull("position")?.GetInt32();
 
             var name = json.GetPropertyOrNull("name")?.GetString() ??
                 json.GetPropertyOrNull("recipients")?.EnumerateArray().Select(User.Parse).Select(u => u.Name).JoinToString(", ") ??
@@ -41,7 +41,7 @@ namespace DiscordChatExporter.Domain.Discord.Models
             return new ChannelCategory(
                 id,
                 name,
-                position.Value
+                position
             );
         }
 

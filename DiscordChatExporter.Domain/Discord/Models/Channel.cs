@@ -41,11 +41,11 @@ namespace DiscordChatExporter.Domain.Discord.Models
 
         public string Name { get; }
 
-        public int Position { get; }
+        public int? Position { get; }
 
         public string? Topic { get; }
 
-        public Channel(Snowflake id, ChannelType type, Snowflake guildId, ChannelCategory? category, string name, int position, string? topic)
+        public Channel(Snowflake id, ChannelType type, Snowflake guildId, ChannelCategory? category, string name, int? position, string? topic)
         {
             Id = id;
             Type = type;
@@ -89,15 +89,15 @@ namespace DiscordChatExporter.Domain.Discord.Models
                 json.GetPropertyOrNull("recipients")?.EnumerateArray().Select(User.Parse).Select(u => u.Name).JoinToString(", ") ??
                 id.ToString();
 
-            position ??= json.GetProperty("position").GetInt32();
-            
+            position ??= json.GetPropertyOrNull("position")?.GetInt32();
+
             return new Channel(
                 id,
                 type,
                 guildId ?? Guild.DirectMessages.Id,
                 category ?? GetDefaultCategory(type),
                 name,
-                position.Value,
+                position,
                 topic
             );
         }

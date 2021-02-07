@@ -1,3 +1,8 @@
+### v2.26.1 (06-Feb-2021)
+
+- [CLI] Added support for file name templates, which allow you to dynamically generate output file names based on channel and guild metadata. (Thanks [@Lucas LaBuff](https://github.com/96-LB))
+- Fixed an issue where the application sometimes crashed with `Invalid snowflake` message when exporting chat logs that contained invalid or outdated mentions. (Thanks [@Lucas LaBuff](https://github.com/96-LB))
+
 ### v2.26 (29-Dec-2020)
 
 - [HTML] Added support for replies. (Thanks [@Sanqui](https://github.com/Sanqui))

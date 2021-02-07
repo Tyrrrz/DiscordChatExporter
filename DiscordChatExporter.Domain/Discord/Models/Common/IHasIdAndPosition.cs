@@ -2,6 +2,6 @@
 {
     public interface IHasIdAndPosition : IHasId
     {
-        int Position { get; }
+        int? Position { get; }
     }
 }

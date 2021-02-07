@@ -6,18 +6,10 @@ namespace DiscordChatExporter.Domain.Discord.Models.Common
     {
         public int Compare(IHasIdAndPosition? x, IHasIdAndPosition? y)
         {
-            int result;
-            if (x != null)
+            int result = Comparer<int?>.Default.Compare(x?.Position, y?.Position);
+            if (result == 0)
             {
-                result = x.Position.CompareTo(y?.Position);
-                if(result == 0)
-                {
-                    result = x.Id.Value.CompareTo(y?.Id.Value);
-                }
-            }
-            else
-            {
-                result = y == null ? 0 : -1;
+                result = Comparer<ulong?>.Default.Compare(x?.Id.Value, y?.Id.Value);
             }
             return result;
         }

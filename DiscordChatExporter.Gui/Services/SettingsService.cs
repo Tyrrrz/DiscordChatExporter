@@ -22,7 +22,7 @@ namespace DiscordChatExporter.Gui.Services
 
         public ExportFormat LastExportFormat { get; set; } = ExportFormat.HtmlDark;
 
-        public int? LastPartitionLimit { get; set; }
+        public string? LastPartitionLimit { get; set; }
 
         public bool LastShouldDownloadMedia { get; set; }
 

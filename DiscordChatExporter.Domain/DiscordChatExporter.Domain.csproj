@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FileSize" Version="1.0.0" />
+    <PackageReference Include="ByteSize" Version="2.0.0" />
     <PackageReference Include="JsonExtensions" Version="1.0.1" />
     <PackageReference Include="MiniRazor" Version="2.0.3" />
     <PackageReference Include="Polly" Version="7.2.1" />

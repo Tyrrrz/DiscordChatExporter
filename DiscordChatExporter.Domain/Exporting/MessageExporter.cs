@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using ByteSizeLib;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exporting.Writers;
 
@@ -23,8 +24,15 @@ namespace DiscordChatExporter.Domain.Exporting
             _partitioner = CreatePartitioner(context.Request.PartitionLimit);
         }
 
-        private bool IsPartitionLimitReached() => _partitioner.IsLimitReached(_messageCount, _writer.SizeInBytes);
-           
+        private bool IsPartitionLimitReached()
+        {
+            if (_writer == null)
+            {
+                throw new Exception("Cannot check for partition limit being reached when writer is null.");
+            }
+            return _partitioner.IsLimitReached(_messageCount, _writer.SizeInBytes);
+        }
+
         private async ValueTask ResetWriterAsync()
         {
             if (_writer != null)
@@ -110,20 +118,19 @@ namespace DiscordChatExporter.Domain.Exporting
             };
         }
 
-        private static IPartitioner CreatePartitioner(string? requestedPartitionLimit) 
+        private static IPartitioner CreatePartitioner(string? requestedPartitionLimit)
         {
             if (requestedPartitionLimit == null) return new NullPartitioner();
-
-            var filesize = FileSize.TryParse(requestedPartitionLimit);
-            if (filesize != null)
+            
+            if (ByteSize.TryParse(requestedPartitionLimit, out ByteSize filesize))
             {
-                return new FileSizePartitioner(filesize.Value.Bytes);
+                return new FileSizePartitioner((long) filesize.Bytes);
             }
             else
             {
                 int messageLimit = int.Parse(requestedPartitionLimit);
                 return new MessageCountPartitioner(messageLimit);
             }
-
         }
+    }
 }

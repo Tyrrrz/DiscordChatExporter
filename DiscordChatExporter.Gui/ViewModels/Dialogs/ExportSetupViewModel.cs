@@ -46,7 +46,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
 
         public DateTimeOffset? Before => BeforeDate?.Add(BeforeTime ?? TimeSpan.Zero);
 
-        public int? PartitionLimit { get; set; }
+        public string? PartitionLimit { get; set; }
 
         public bool ShouldDownloadMedia { get; set; }
 

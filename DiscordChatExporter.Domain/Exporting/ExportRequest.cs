@@ -28,7 +28,7 @@ namespace DiscordChatExporter.Domain.Exporting
 
         public Snowflake? Before { get; }
 
-        public int? PartitionLimit { get; }
+        public string? PartitionLimit { get; }
 
         public bool ShouldDownloadMedia { get; }
 
@@ -43,7 +43,7 @@ namespace DiscordChatExporter.Domain.Exporting
             ExportFormat format,
             Snowflake? after,
             Snowflake? before,
-            int? partitionLimit,
+            string? partitionLimit,
             bool shouldDownloadMedia,
             bool shouldReuseMedia,
             string dateFormat)

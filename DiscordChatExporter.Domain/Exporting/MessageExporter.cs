@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DiscordChatExporter.Domain.Discord.Models;
 using DiscordChatExporter.Domain.Exporting.Writers;
@@ -8,23 +9,22 @@ namespace DiscordChatExporter.Domain.Exporting
 {
     internal partial class MessageExporter : IAsyncDisposable
     {
+
         private readonly ExportContext _context;
 
         private long _messageCount;
         private int _partitionIndex;
         private MessageWriter? _writer;
+        private IPartitioner _partitioner;
 
         public MessageExporter(ExportContext context)
         {
             _context = context;
+            _partitioner = CreatePartitioner(context.Request.PartitionLimit);
         }
 
-        private bool IsPartitionLimitReached() =>
-            _messageCount > 0 &&
-            _context.Request.PartitionLimit != null &&
-            _context.Request.PartitionLimit != 0 &&
-            _messageCount % _context.Request.PartitionLimit == 0;
-
+        private bool IsPartitionLimitReached() => _partitioner.IsLimitReached(_messageCount, _writer.SizeInBytes);
+           
         private async ValueTask ResetWriterAsync()
         {
             if (_writer != null)
@@ -109,5 +109,21 @@ namespace DiscordChatExporter.Domain.Exporting
                 _ => throw new ArgumentOutOfRangeException(nameof(format), $"Unknown export format '{format}'.")
             };
         }
-    }
+
+        private static IPartitioner CreatePartitioner(string? requestedPartitionLimit) 
+        {
+            if (requestedPartitionLimit == null) return new NullPartitioner();
+
+            var filesize = FileSize.TryParse(requestedPartitionLimit);
+            if (filesize != null)
+            {
+                return new FileSizePartitioner(filesize.Value.Bytes);
+            }
+            else
+            {
+                int messageLimit = int.Parse(requestedPartitionLimit);
+                return new MessageCountPartitioner(messageLimit);
+            }
+
+        }
 }

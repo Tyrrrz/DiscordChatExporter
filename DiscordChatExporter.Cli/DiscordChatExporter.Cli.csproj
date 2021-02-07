@@ -8,6 +8,7 @@
   <ItemGroup>
     <PackageReference Include="CliFx" Version="1.6.0" />
     <PackageReference Include="Gress" Version="1.2.0" />
+    <PackageReference Include="OneOf" Version="3.0.174" />
     <PackageReference Include="Tyrrrz.Extensions" Version="1.6.5" />
   </ItemGroup>
 

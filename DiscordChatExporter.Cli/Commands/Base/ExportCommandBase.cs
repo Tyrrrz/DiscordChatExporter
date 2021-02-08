@@ -24,7 +24,8 @@ namespace DiscordChatExporter.Cli.Commands.Base
         [CommandOption("before", Description = "Only include messages sent before this date or message ID.")]
         public Snowflake? Before { get; init; }
 
-        [CommandOption("partition", 'p', Description = "Split output into partitions limited to this number of messages or a maximum file size (e.g. \"25mb\").")]
+        [CommandOption("partition", 'p', Description = "Split output into partitions limited to this number of messages or a maximum file size (e.g. \"25mb\").",
+            Validators = new[] { typeof(PartitionValidator) })]
         public string? PartitionLimit { get; init; }
 
         [CommandOption("media", Description = "Download referenced media content.")]

@@ -1,5 +1,6 @@
 ﻿using DiscordChatExporter.Domain.Discord;
 using DiscordChatExporter.Domain.Exporting;
+using DiscordChatExporter.Gui.Internal;
 using Tyrrrz.Settings;
 
 namespace DiscordChatExporter.Gui.Services
@@ -21,6 +22,8 @@ namespace DiscordChatExporter.Gui.Services
         public AuthToken? LastToken { get; set; }
 
         public ExportFormat LastExportFormat { get; set; } = ExportFormat.HtmlDark;
+
+        public PartitionFormat LastPartitionFormat { get; set; } = PartitionFormat.MessageCount;
 
         public string? LastPartitionLimit { get; set; }
 

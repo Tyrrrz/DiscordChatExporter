@@ -52,7 +52,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
 
         public PartitionFormat SelectedPartitionFormat { get; set; }
 
-        public string? PartitionLimit { get; set; }
+        public int? PartitionLimit { get; set; }
 
         public bool ShouldDownloadMedia { get; set; }
 

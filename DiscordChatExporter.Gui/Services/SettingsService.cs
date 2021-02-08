@@ -25,7 +25,7 @@ namespace DiscordChatExporter.Gui.Services
 
         public PartitionFormat LastPartitionFormat { get; set; } = PartitionFormat.MessageCount;
 
-        public string? LastPartitionLimit { get; set; }
+        public int? LastPartitionLimit { get; set; }
 
         public bool LastShouldDownloadMedia { get; set; }
 

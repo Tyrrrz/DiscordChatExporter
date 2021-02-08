@@ -213,7 +213,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                         dialog.SelectedFormat,
                         dialog.After?.Pipe(Snowflake.FromDate),
                         dialog.Before?.Pipe(Snowflake.FromDate),
-                        dialog.SelectedPartitionFormat == PartitionFormat.Filesize ? dialog.PartitionLimit + "mb" : dialog.PartitionLimit,
+                        dialog.SelectedPartitionFormat == PartitionFormat.Filesize ? dialog.PartitionLimit + "mb" : dialog.PartitionLimit.ToString(),
                         dialog.ShouldDownloadMedia,
                         _settingsService.ShouldReuseMedia,
                         _settingsService.DateFormat

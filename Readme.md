@@ -43,7 +43,7 @@ The following table lists all available download options:
         <div>.NET v3.1 Desktop Runtime</div>
         <ul>
           <li><a href="https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.0-windows-x64-installer">Windows <b>x64</b></a></li>
-          <li><a href="https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.0-windows-x86-installer">Windows <b>x64</b></a></li>
+          <li><a href="https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.0-windows-x86-installer">Windows <b>x86</b></a></li>
         </ul>
       </td>
     </tr>

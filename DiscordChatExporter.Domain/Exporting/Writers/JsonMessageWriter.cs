@@ -21,7 +21,8 @@ namespace DiscordChatExporter.Domain.Exporting.Writers
             _writer = new Utf8JsonWriter(stream, new JsonWriterOptions
             {
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                Indented = true
+                Indented = true,
+                SkipValidation = true
             });
         }
 

@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DiscordChatExporter.Domain\DiscordChatExporter.Domain.csproj" />
+    <ProjectReference Include="..\DiscordChatExporter.Core\DiscordChatExporter.Core.csproj" />
   </ItemGroup>
 
   <Target Name="Format XAML" AfterTargets="BeforeBuild">

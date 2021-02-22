@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DiscordChatExporter.Domain.Discord;
-using DiscordChatExporter.Domain.Discord.Models;
-using DiscordChatExporter.Domain.Exporting;
-using DiscordChatExporter.Domain.Utilities;
+using DiscordChatExporter.Core.Discord;
+using DiscordChatExporter.Core.Discord.Data;
+using DiscordChatExporter.Core.Exporting;
+using DiscordChatExporter.Core.Utils.Extensions;
 using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.ViewModels.Framework;
 

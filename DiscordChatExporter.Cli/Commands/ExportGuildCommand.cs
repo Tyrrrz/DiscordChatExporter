@@ -2,8 +2,8 @@
 using CliFx;
 using CliFx.Attributes;
 using DiscordChatExporter.Cli.Commands.Base;
-using DiscordChatExporter.Domain.Discord;
-using DiscordChatExporter.Domain.Utilities;
+using DiscordChatExporter.Core.Discord;
+using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Cli.Commands
 {
@@ -15,7 +15,9 @@ namespace DiscordChatExporter.Cli.Commands
 
         public override async ValueTask ExecuteAsync(IConsole console)
         {
-            var channels = await GetDiscordClient().GetGuildChannelsAsync(GuildId);
+            await base.ExecuteAsync(console);
+
+            var channels = await Discord.GetGuildChannelsAsync(GuildId);
             await ExportMultipleAsync(console, channels);
         }
     }

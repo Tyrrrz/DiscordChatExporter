@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using CliFx;
 using CliFx.Attributes;
 using DiscordChatExporter.Cli.Commands.Base;
-using DiscordChatExporter.Domain.Utilities;
+using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Cli.Commands
 {
@@ -12,10 +12,14 @@ namespace DiscordChatExporter.Cli.Commands
     {
         public override async ValueTask ExecuteAsync(IConsole console)
         {
-            var guilds = await GetDiscordClient().GetUserGuildsAsync();
+            var guilds = await Discord.GetUserGuildsAsync();
 
             foreach (var guild in guilds.OrderBy(g => g.Name))
-                console.Output.WriteLine($"{guild.Id} | {guild.Name}");
+            {
+                await console.Output.WriteLineAsync(
+                    $"{guild.Id} | {guild.Name}"
+                );
+            }
         }
     }
 }

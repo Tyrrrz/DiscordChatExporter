@@ -2,7 +2,7 @@
 using CliFx;
 using CliFx.Attributes;
 using DiscordChatExporter.Cli.Commands.Base;
-using DiscordChatExporter.Domain.Discord;
+using DiscordChatExporter.Core.Discord;
 
 namespace DiscordChatExporter.Cli.Commands
 {

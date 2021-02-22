@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using CliFx;
 using CliFx.Attributes;
 using CliFx.Utilities;
-using DiscordChatExporter.Domain.Discord.Models;
-using DiscordChatExporter.Domain.Exceptions;
-using DiscordChatExporter.Domain.Exporting;
-using DiscordChatExporter.Domain.Utilities;
+using DiscordChatExporter.Core.Discord.Data;
+using DiscordChatExporter.Core.Exceptions;
+using DiscordChatExporter.Core.Exporting;
+using DiscordChatExporter.Core.Utils.Extensions;
 using Gress;
 using Tyrrrz.Extensions;
 
@@ -25,7 +25,10 @@ namespace DiscordChatExporter.Cli.Commands.Base
             // This uses a different route from ExportCommandBase.ExportAsync() because it runs
             // in parallel and needs another way to report progress to console.
 
-            console.Output.Write($"Exporting {channels.Count} channels... ");
+            await console.Output.WriteAsync(
+                $"Exporting {channels.Count} channels... "
+            );
+
             var progress = console.CreateProgressTicker();
 
             var operations = progress.Wrap().CreateOperations(channels.Count);
@@ -39,7 +42,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
 
                 try
                 {
-                    var guild = await GetDiscordClient().GetGuildAsync(channel.GuildId);
+                    var guild = await Discord.GetGuildAsync(channel.GuildId);
 
                     var request = new ExportRequest(
                         guild,
@@ -54,7 +57,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
                         DateFormat
                     );
 
-                    await GetChannelExporter().ExportChannelAsync(request, operation);
+                    await Exporter.ExportChannelAsync(request, operation);
 
                     Interlocked.Increment(ref successfulExportCount);
                 }
@@ -68,12 +71,12 @@ namespace DiscordChatExporter.Cli.Commands.Base
                 }
             }, ParallelLimit.ClampMin(1));
 
-            console.Output.WriteLine();
+            await console.Output.WriteLineAsync();
 
             foreach (var (channel, error) in errors)
-                console.Error.WriteLine($"Channel '{channel}': {error}");
+                await console.Error.WriteLineAsync($"Channel '{channel}': {error}");
 
-            console.Output.WriteLine($"Successfully exported {successfulExportCount} channel(s).");
+            await console.Output.WriteLineAsync($"Successfully exported {successfulExportCount} channel(s).");
         }
     }
 }

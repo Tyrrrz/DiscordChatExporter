@@ -4,9 +4,9 @@ using CliFx;
 using CliFx.Attributes;
 using CliFx.Exceptions;
 using CliFx.Utilities;
-using DiscordChatExporter.Domain.Discord;
-using DiscordChatExporter.Domain.Discord.Models;
-using DiscordChatExporter.Domain.Exporting;
+using DiscordChatExporter.Core.Discord;
+using DiscordChatExporter.Core.Discord.Data;
+using DiscordChatExporter.Core.Exporting;
 
 namespace DiscordChatExporter.Cli.Commands.Base
 {
@@ -36,11 +36,15 @@ namespace DiscordChatExporter.Cli.Commands.Base
         [CommandOption("dateformat", Description = "Format used when writing dates.")]
         public string DateFormat { get; init; } = "dd-MMM-yy hh:mm tt";
 
-        protected ChannelExporter GetChannelExporter() => new(GetDiscordClient());
+        private ChannelExporter? _channelExporter;
+        protected ChannelExporter Exporter => _channelExporter ??= new ChannelExporter(Discord);
 
         protected async ValueTask ExportAsync(IConsole console, Guild guild, Channel channel)
         {
-            console.Output.Write($"Exporting channel '{channel.Category} / {channel.Name}'... ");
+            await console.Output.WriteAsync(
+                $"Exporting channel '{channel.Category} / {channel.Name}'... "
+            );
+
             var progress = console.CreateProgressTicker();
 
             var request = new ExportRequest(
@@ -56,21 +60,21 @@ namespace DiscordChatExporter.Cli.Commands.Base
                 DateFormat
             );
 
-            await GetChannelExporter().ExportChannelAsync(request, progress);
+            await Exporter.ExportChannelAsync(request, progress);
 
-            console.Output.WriteLine();
-            console.Output.WriteLine("Done.");
+            await console.Output.WriteLineAsync();
+            await console.Output.WriteLineAsync("Done.");
         }
 
         protected async ValueTask ExportAsync(IConsole console, Channel channel)
         {
-            var guild = await GetDiscordClient().GetGuildAsync(channel.GuildId);
+            var guild = await Discord.GetGuildAsync(channel.GuildId);
             await ExportAsync(console, guild, channel);
         }
 
         protected async ValueTask ExportAsync(IConsole console, Snowflake channelId)
         {
-            var channel = await GetDiscordClient().GetChannelAsync(channelId);
+            var channel = await Discord.GetChannelAsync(channelId);
             await ExportAsync(console, channel);
         }
 

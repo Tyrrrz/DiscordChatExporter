@@ -77,20 +77,19 @@ The following table lists all available download options:
 - 🚀 - .NET Runtime is already embedded or installed automatically
 - 🦄 - Community-maintained resource
 
-> Note: DiscordChatExporter requires **.NET v3.1 Runtime** in order to work!
+> Note that DiscordChatExporter requires **.NET v3.1 Runtime** in order to work!
 Refer to the **Requirements** column in the above table to download the appropriate installer for your system.
 
 ## Features
 
 - Graphical user interface (Windows)
 - Command line interface (Windows, Linux, macOS)
-- Works with both user and bot tokens
-- Exports on the fly without buffering messages in memory
-- Allows exporting messages in a specified range
-- Supports file partitioning based on message count
-- Uses custom markdown parser compatible with Discord syntax
-- Handles all rich media features, including attachments, embeds, emojis, etc
-- Renders to HTML (dark & light), TXT, CSV, JSON
+- Support for both user and bot tokens
+- Support for Discord's dialect of markdown
+- Support for attachments, embeds, emojis, and other rich media features
+- Multiple output formats: HTML (dark/light), TXT, CSV, JSON
+- File partitioning, date ranges, and other export options
+- Exports messages on the fly without buffering in-memory
 
 ## Screenshots
 

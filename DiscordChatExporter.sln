@@ -16,7 +16,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordChatExporter.Gui", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscordChatExporter.Cli", "DiscordChatExporter.Cli\DiscordChatExporter.Cli.csproj", "{D08624B6-3081-4BCB-91F8-E9832FACC6CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordChatExporter.Domain", "DiscordChatExporter.Domain\DiscordChatExporter.Domain.csproj", "{E19980B9-2B84-4257-A517-540FF1E3FCDD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordChatExporter.Core", "DiscordChatExporter.Core\DiscordChatExporter.Core.csproj", "{E19980B9-2B84-4257-A517-540FF1E3FCDD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -58,7 +58,7 @@ namespace DiscordChatExporter.Gui.Services
             if (!_settingsService.IsAutoUpdateEnabled)
                 return;
 
-            if (_updateVersion == null || !_updatePrepared || _updaterLaunched)
+            if (_updateVersion is null || !_updatePrepared || _updaterLaunched)
                 return;
 
             try

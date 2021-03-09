@@ -62,7 +62,7 @@ namespace DiscordChatExporter.Core.Exporting
                         : (DateTimeOffset?) null
                 );
 
-                if (lastModified != null)
+                if (lastModified is not null)
                 {
                     File.SetCreationTimeUtc(filePath, lastModified.Value.UtcDateTime);
                     File.SetLastWriteTimeUtc(filePath, lastModified.Value.UtcDateTime);

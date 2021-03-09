@@ -57,7 +57,7 @@ namespace DiscordChatExporter.Core.Exporting
             var roles = member?.RoleIds.Join(Roles, i => i, r => r.Id, (_, role) => role);
 
             return roles?
-                .Where(r => r.Color != null)
+                .Where(r => r.Color is not null)
                 .OrderByDescending(r => r.Position)
                 .Select(r => r.Color)
                 .FirstOrDefault();

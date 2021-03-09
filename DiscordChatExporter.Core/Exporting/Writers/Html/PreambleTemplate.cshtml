@@ -78,18 +78,18 @@
             <div class="preamble__entry preamble__entry--small">@Model.ExportContext.Request.Channel.Topic</div>
         }
 
-        @if (Model.ExportContext.Request.After != null || Model.ExportContext.Request.Before != null)
+        @if (Model.ExportContext.Request.After is not null || Model.ExportContext.Request.Before is not null)
         {
             <div class="preamble__entry preamble__entry--small">
-            @if (Model.ExportContext.Request.After != null && Model.ExportContext.Request.Before != null)
+            @if (Model.ExportContext.Request.After is not null && Model.ExportContext.Request.Before is not null)
             {
                 @($"Between {FormatDate(Model.ExportContext.Request.After.Value.ToDate())} and {FormatDate(Model.ExportContext.Request.Before.Value.ToDate())}")
             }
-            else if (Model.ExportContext.Request.After != null)
+            else if (Model.ExportContext.Request.After is not null)
             {
                 @($"After {FormatDate(Model.ExportContext.Request.After.Value.ToDate())}")
             }
-            else if (Model.ExportContext.Request.Before != null)
+            else if (Model.ExportContext.Request.Before is not null)
             {
                 @($"Before {FormatDate(Model.ExportContext.Request.Before.Value.ToDate())}")
             }

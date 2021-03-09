@@ -194,7 +194,7 @@ namespace DiscordChatExporter.Core.Discord
 
             var parentId = response.GetPropertyOrNull("parent_id")?.GetString().Pipe(Snowflake.Parse);
 
-            var category = parentId != null
+            var category = parentId is not null
                 ? await GetChannelCategoryAsync(parentId.Value)
                 : null;
 
@@ -224,7 +224,7 @@ namespace DiscordChatExporter.Core.Discord
             // will not appear in the output.
             // Additionally, it provides the date of the last message, which is used to calculate progress.
             var lastMessage = await TryGetLastMessageAsync(channelId, before);
-            if (lastMessage == null || lastMessage.Timestamp < after?.ToDate())
+            if (lastMessage is null || lastMessage.Timestamp < after?.ToDate())
                 yield break;
 
             // Keep track of first message in range in order to calculate progress

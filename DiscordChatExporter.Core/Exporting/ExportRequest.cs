@@ -127,17 +127,17 @@ namespace DiscordChatExporter.Core.Exporting
             buffer.Append($"{guild.Name} - {channel.Category.Name} - {channel.Name} [{channel.Id}]");
 
             // Date range
-            if (after != null || before != null)
+            if (after is not null || before is not null)
             {
                 buffer.Append(" (");
 
                 // Both 'after' and 'before' are set
-                if (after != null && before != null)
+                if (after is not null && before is not null)
                 {
                     buffer.Append($"{after?.ToDate():yyyy-MM-dd} to {before?.ToDate():yyyy-MM-dd}");
                 }
                 // Only 'after' is set
-                else if (after != null)
+                else if (after is not null)
                 {
                     buffer.Append($"after {after?.ToDate():yyyy-MM-dd}");
                 }

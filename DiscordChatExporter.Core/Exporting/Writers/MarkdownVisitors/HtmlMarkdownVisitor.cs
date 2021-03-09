@@ -112,7 +112,7 @@ namespace DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors
                 var name = role?.Name ?? "deleted-role";
                 var color = role?.Color;
 
-                var style = color != null
+                var style = color is not null
                     ? $"color: rgb({color?.R}, {color?.G}, {color?.B}); background-color: rgba({color?.R}, {color?.G}, {color?.B}, 0.1);"
                     : "";
 

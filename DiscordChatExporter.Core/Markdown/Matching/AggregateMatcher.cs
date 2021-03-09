@@ -27,11 +27,11 @@ namespace DiscordChatExporter.Core.Markdown.Matching
                 var match = matcher.TryMatch(stringPart);
 
                 // If there's no match - continue
-                if (match == null)
+                if (match is null)
                     continue;
 
                 // If this match is earlier than previous earliest - replace
-                if (earliestMatch == null || match.StringPart.StartIndex < earliestMatch.StringPart.StartIndex)
+                if (earliestMatch is null || match.StringPart.StartIndex < earliestMatch.StringPart.StartIndex)
                     earliestMatch = match;
 
                 // If the earliest match starts at the very beginning - break,

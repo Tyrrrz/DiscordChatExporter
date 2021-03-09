@@ -44,7 +44,7 @@ namespace DiscordChatExporter.Gui.ViewModels
 
         public Guild? SelectedGuild { get; set; }
 
-        public IReadOnlyList<Channel>? AvailableChannels => SelectedGuild != null
+        public IReadOnlyList<Channel>? AvailableChannels => SelectedGuild is not null
             ? GuildChannelMap?[SelectedGuild]
             : null;
 
@@ -84,7 +84,7 @@ namespace DiscordChatExporter.Gui.ViewModels
             try
             {
                 var updateVersion = await _updateService.CheckForUpdatesAsync();
-                if (updateVersion == null)
+                if (updateVersion is null)
                     return;
 
                 Notifications.Enqueue($"Downloading update to {App.Name} v{updateVersion}...");
@@ -111,7 +111,7 @@ namespace DiscordChatExporter.Gui.ViewModels
 
             _settingsService.Load();
 
-            if (_settingsService.LastToken != null)
+            if (_settingsService.LastToken is not null)
             {
                 IsBotToken = _settingsService.LastToken.Type == AuthTokenType.Bot;
                 TokenValue = _settingsService.LastToken.Value;
@@ -183,12 +183,12 @@ namespace DiscordChatExporter.Gui.ViewModels
         }
 
         public bool CanExportChannels =>
-            !IsBusy && SelectedGuild != null && SelectedChannels != null && SelectedChannels.Any();
+            !IsBusy && SelectedGuild is not null && SelectedChannels is not null && SelectedChannels.Any();
 
         public async void ExportChannels()
         {
             var token = _settingsService.LastToken;
-            if (token == null || SelectedGuild == null || SelectedChannels == null || !SelectedChannels.Any())
+            if (token is null || SelectedGuild is null || SelectedChannels is null || !SelectedChannels.Any())
                 return;
 
             var dialog = _viewModelFactory.CreateExportSetupViewModel(SelectedGuild, SelectedChannels);

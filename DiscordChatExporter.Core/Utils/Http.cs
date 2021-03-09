@@ -32,7 +32,7 @@ namespace DiscordChatExporter.Core.Utils
                             if (i > 3)
                             {
                                 var retryAfterDelay = result.Result.Headers.RetryAfter.Delta;
-                                if (retryAfterDelay != null)
+                                if (retryAfterDelay is not null)
                                     return retryAfterDelay.Value + TimeSpan.FromSeconds(1); // margin just in case
                             }
                         }

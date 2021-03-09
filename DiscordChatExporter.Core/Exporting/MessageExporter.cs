@@ -21,13 +21,13 @@ namespace DiscordChatExporter.Core.Exporting
 
         private bool IsPartitionLimitReached() =>
             _messageCount > 0 &&
-            _context.Request.PartitionLimit != null &&
+            _context.Request.PartitionLimit is not null &&
             _context.Request.PartitionLimit != 0 &&
             _messageCount % _context.Request.PartitionLimit == 0;
 
         private async ValueTask ResetWriterAsync()
         {
-            if (_writer != null)
+            if (_writer is not null)
             {
                 await _writer.WritePostambleAsync();
                 await _writer.DisposeAsync();
@@ -45,7 +45,7 @@ namespace DiscordChatExporter.Core.Exporting
             }
 
             // Writer is still valid - return
-            if (_writer != null)
+            if (_writer is not null)
                 return _writer;
 
             var filePath = GetPartitionFilePath(_context.Request.OutputBaseFilePath, _partitionIndex);

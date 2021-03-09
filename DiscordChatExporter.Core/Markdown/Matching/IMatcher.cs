@@ -21,7 +21,7 @@ namespace DiscordChatExporter.Core.Markdown.Matching
                 var match = matcher.TryMatch(stringPart.Slice(currentIndex, stringPart.EndIndex - currentIndex));
 
                 // If there's no match - break
-                if (match == null)
+                if (match is null)
                     break;
 
                 // If this match doesn't start immediately at current index - transform and yield fallback first

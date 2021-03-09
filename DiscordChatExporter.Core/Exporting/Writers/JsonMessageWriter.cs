@@ -118,19 +118,19 @@ namespace DiscordChatExporter.Core.Exporting.Writers
             _writer.WriteString("timestamp", embed.Timestamp);
             _writer.WriteString("description", FormatMarkdown(embed.Description));
 
-            if (embed.Color != null)
+            if (embed.Color is not null)
                 _writer.WriteString("color", embed.Color.Value.ToHex());
 
-            if (embed.Author != null)
+            if (embed.Author is not null)
                 await WriteEmbedAuthorAsync(embed.Author);
 
-            if (embed.Thumbnail != null)
+            if (embed.Thumbnail is not null)
                 await WriteEmbedThumbnailAsync(embed.Thumbnail);
 
-            if (embed.Image != null)
+            if (embed.Image is not null)
                 await WriteEmbedImageAsync(embed.Image);
 
-            if (embed.Footer != null)
+            if (embed.Footer is not null)
                 await WriteEmbedFooterAsync(embed.Footer);
 
             // Fields
@@ -266,7 +266,7 @@ namespace DiscordChatExporter.Core.Exporting.Writers
             _writer.WriteEndArray();
 
             // Message reference
-            if (message.Reference != null)
+            if (message.Reference is not null)
             {
                 _writer.WriteStartObject("reference");
                 _writer.WriteString("messageId", message.Reference.MessageId?.ToString());

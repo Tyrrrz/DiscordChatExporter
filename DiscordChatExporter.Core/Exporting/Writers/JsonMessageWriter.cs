@@ -169,7 +169,7 @@ namespace DiscordChatExporter.Core.Exporting.Writers
 
             _writer.WriteString("id", mentionedUser.Id.ToString());
             _writer.WriteString("name", mentionedUser.Name);
-            _writer.WriteNumber("discriminator", mentionedUser.Discriminator);
+            _writer.WriteString("discriminator", $"{mentionedUser.Discriminator:0000}");
             _writer.WriteString("nickname", Context.TryGetMember(mentionedUser.Id)?.Nick ?? mentionedUser.Name);
             _writer.WriteBoolean("isBot", mentionedUser.IsBot);
 
@@ -229,6 +229,7 @@ namespace DiscordChatExporter.Core.Exporting.Writers
             _writer.WriteString("id", message.Author.Id.ToString());
             _writer.WriteString("name", message.Author.Name);
             _writer.WriteString("discriminator", $"{message.Author.Discriminator:0000}");
+            _writer.WriteString("nickname", Context.TryGetMember(message.Author.Id)?.Nick ?? message.Author.Name);
             _writer.WriteBoolean("isBot", message.Author.IsBot);
             _writer.WriteString("avatarUrl", await Context.ResolveMediaUrlAsync(message.Author.AvatarUrl));
             _writer.WriteEndObject();

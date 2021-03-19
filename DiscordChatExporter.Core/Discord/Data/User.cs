@@ -15,9 +15,11 @@ namespace DiscordChatExporter.Core.Discord.Data
 
         public int Discriminator { get; }
 
+        public string DiscriminatorFormatted => $"{Discriminator:0000}";
+
         public string Name { get; }
 
-        public string FullName => $"{Name}#{Discriminator:0000}";
+        public string FullName => $"{Name}#{DiscriminatorFormatted}";
 
         public string AvatarUrl { get; }
 

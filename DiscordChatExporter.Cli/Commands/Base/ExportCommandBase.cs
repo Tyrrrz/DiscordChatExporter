@@ -1,12 +1,12 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
-using CliFx;
 using CliFx.Attributes;
 using CliFx.Exceptions;
-using CliFx.Utilities;
+using CliFx.Infrastructure;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exporting;
+using Spectre.Console;
 
 namespace DiscordChatExporter.Cli.Commands.Base
 {
@@ -39,14 +39,8 @@ namespace DiscordChatExporter.Cli.Commands.Base
         private ChannelExporter? _channelExporter;
         protected ChannelExporter Exporter => _channelExporter ??= new ChannelExporter(Discord);
 
-        protected async ValueTask ExportAsync(IConsole console, Guild guild, Channel channel)
+        protected async ValueTask ExportChannelAsync(Guild guild, Channel channel, ProgressContext progressContext)
         {
-            await console.Output.WriteAsync(
-                $"Exporting channel '{channel.Category} / {channel.Name}'... "
-            );
-
-            var progress = console.CreateProgressTicker();
-
             var request = new ExportRequest(
                 guild,
                 channel,
@@ -60,22 +54,19 @@ namespace DiscordChatExporter.Cli.Commands.Base
                 DateFormat
             );
 
-            await Exporter.ExportChannelAsync(request, progress);
+            var progress = progressContext.AddTask(
+                $"{channel.Category} / {channel.Name}",
+                new ProgressTaskSettings {MaxValue = 1}
+            );
 
-            await console.Output.WriteLineAsync();
-            await console.Output.WriteLineAsync("Done.");
-        }
-
-        protected async ValueTask ExportAsync(IConsole console, Channel channel)
-        {
-            var guild = await Discord.GetGuildAsync(channel.GuildId);
-            await ExportAsync(console, guild, channel);
-        }
-
-        protected async ValueTask ExportAsync(IConsole console, Snowflake channelId)
-        {
-            var channel = await Discord.GetChannelAsync(channelId);
-            await ExportAsync(console, channel);
+            try
+            {
+                await Exporter.ExportChannelAsync(request, progress);
+            }
+            finally
+            {
+                progress.StopTask();
+            }
         }
 
         public override ValueTask ExecuteAsync(IConsole console)

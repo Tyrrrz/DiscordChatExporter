@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CliFx;
 using CliFx.Attributes;
+using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands.Base;
 using DiscordChatExporter.Core.Discord.Data;
 
@@ -16,6 +16,9 @@ namespace DiscordChatExporter.Cli.Commands
         public override async ValueTask ExecuteAsync(IConsole console)
         {
             await base.ExecuteAsync(console);
+
+            // Get channel metadata
+            await console.Output.WriteLineAsync("Fetching channels...");
 
             var channels = new List<Channel>();
 
@@ -32,7 +35,8 @@ namespace DiscordChatExporter.Cli.Commands
                 }
             }
 
-            await ExportMultipleAsync(console, channels);
+            // Export
+            await ExportChannelsAsync(console, channels);
         }
     }
 }

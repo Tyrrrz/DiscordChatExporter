@@ -1,16 +1,17 @@
 ﻿using System.Threading.Tasks;
 using CliFx;
 using CliFx.Attributes;
+using CliFx.Infrastructure;
 using DiscordChatExporter.Core.Discord;
 
 namespace DiscordChatExporter.Cli.Commands.Base
 {
     public abstract class TokenCommandBase : ICommand
     {
-        [CommandOption("token", 't', IsRequired = true, EnvironmentVariableName = "DISCORD_TOKEN", Description = "Authentication token.")]
+        [CommandOption("token", 't', IsRequired = true, EnvironmentVariable = "DISCORD_TOKEN", Description = "Authentication token.")]
         public string TokenValue { get; init; } = "";
 
-        [CommandOption("bot", 'b', EnvironmentVariableName = "DISCORD_TOKEN_BOT", Description = "Authenticate as a bot.")]
+        [CommandOption("bot", 'b', EnvironmentVariable = "DISCORD_TOKEN_BOT", Description = "Authenticate as a bot.")]
         public bool IsBotToken { get; init; }
 
         private AuthToken GetAuthToken() => new(

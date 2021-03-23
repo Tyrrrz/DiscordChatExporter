@@ -11,6 +11,7 @@ using DiscordChatExporter.Core.Utils;
 using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Http;
 using JsonExtensions.Reading;
+using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Discord
 {
@@ -259,11 +260,23 @@ namespace DiscordChatExporter.Core.Discord
                     if (message.Timestamp > lastMessage.Timestamp)
                         yield break;
 
-                    // Report progress based on the duration of parsed messages divided by total
-                    progress?.Report(
-                        (message.Timestamp - firstMessage.Timestamp) /
-                        (lastMessage.Timestamp - firstMessage.Timestamp)
-                    );
+                    // Report progress based on the duration of exported messages divided by total
+                    if (progress is not null)
+                    {
+                        var exportedDuration = (message.Timestamp - firstMessage.Timestamp).Duration();
+                        var totalDuration = (lastMessage.Timestamp - firstMessage.Timestamp).Duration();
+
+                        if (totalDuration > TimeSpan.Zero)
+                        {
+                            progress.Report(exportedDuration / totalDuration);
+                        }
+                        // Avoid division by zero if all messages have the exact same timestamp
+                        // (which can happen easily if there's only one message in the channel)
+                        else
+                        {
+                            progress.Report(1);
+                        }
+                    }
 
                     yield return message;
                     currentAfter = message.Id;

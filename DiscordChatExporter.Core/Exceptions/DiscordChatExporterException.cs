@@ -21,35 +21,25 @@ namespace DiscordChatExporter.Core.Exceptions
             var message = $@"
 Failed to perform an HTTP request.
 
+[Request]
 {response.RequestMessage}
 
+[Response]
 {response}";
 
             return new DiscordChatExporterException(message.Trim(), true);
         }
 
-        internal static DiscordChatExporterException Unauthorized()
-        {
-            const string message = "Authentication token is invalid.";
-            return new DiscordChatExporterException(message);
-        }
+        internal static DiscordChatExporterException Unauthorized() =>
+            new("Authentication token is invalid.");
 
-        internal static DiscordChatExporterException Forbidden()
-        {
-            const string message = "Access is forbidden.";
-            return new DiscordChatExporterException(message);
-        }
+        internal static DiscordChatExporterException Forbidden() =>
+            new("Access is forbidden.");
 
-        internal static DiscordChatExporterException NotFound()
-        {
-            const string message = "Requested resource does not exist.";
-            return new DiscordChatExporterException(message);
-        }
+        internal static DiscordChatExporterException NotFound() =>
+            new("Requested resource does not exist.");
 
-        internal static DiscordChatExporterException ChannelIsEmpty()
-        {
-            var message = $"No messages for the specified period.";
-            return new DiscordChatExporterException(message);
-        }
+        internal static DiscordChatExporterException ChannelIsEmpty() =>
+            new("No messages found for the specified period.");
     }
 }

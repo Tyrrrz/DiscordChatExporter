@@ -90,8 +90,6 @@ namespace DiscordChatExporter.Cli.Commands.Base
                 }, ParallelLimit.ClampMin(1));
             });
 
-            await console.Output.WriteLineAsync();
-
             // Print result
             using (console.WithForegroundColor(ConsoleColor.White))
             {

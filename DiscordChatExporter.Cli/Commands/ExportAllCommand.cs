@@ -8,7 +8,7 @@ using DiscordChatExporter.Core.Discord.Data;
 namespace DiscordChatExporter.Cli.Commands
 {
     [Command("exportall", Description = "Export all accessible channels.")]
-    public class ExportAllCommand : ExportMultipleCommandBase
+    public class ExportAllCommand : ExportCommandBase
     {
         [CommandOption("include-dm", Description = "Include direct message channels.")]
         public bool IncludeDirectMessages { get; init; } = true;
@@ -36,7 +36,7 @@ namespace DiscordChatExporter.Cli.Commands
             }
 
             // Export
-            await ExportChannelsAsync(console, channels);
+            await ExportAsync(console, channels);
         }
     }
 }

@@ -1,12 +1,20 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using CliFx.Attributes;
 using CliFx.Exceptions;
 using CliFx.Infrastructure;
+using DiscordChatExporter.Cli.Utils.Extensions;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
+using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Exporting;
+using DiscordChatExporter.Core.Utils.Extensions;
 using Spectre.Console;
+using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Cli.Commands.Base
 {
@@ -27,6 +35,9 @@ namespace DiscordChatExporter.Cli.Commands.Base
         [CommandOption("partition", 'p', Description = "Split output into partitions limited to this number of messages.")]
         public int? PartitionLimit { get; init; }
 
+        [CommandOption("parallel", Description = "Limits how many channels can be exported in parallel.")]
+        public int ParallelLimit { get; init; } = 1;
+
         [CommandOption("media", Description = "Download referenced media content.")]
         public bool ShouldDownloadMedia { get; init; }
 
@@ -39,34 +50,93 @@ namespace DiscordChatExporter.Cli.Commands.Base
         private ChannelExporter? _channelExporter;
         protected ChannelExporter Exporter => _channelExporter ??= new ChannelExporter(Discord);
 
-        protected async ValueTask ExportChannelAsync(Guild guild, Channel channel, ProgressContext progressContext)
+        protected async ValueTask ExportAsync(IConsole console, IReadOnlyList<Channel> channels)
         {
-            var request = new ExportRequest(
-                guild,
-                channel,
-                OutputPath,
-                ExportFormat,
-                After,
-                Before,
-                PartitionLimit,
-                ShouldDownloadMedia,
-                ShouldReuseMedia,
-                DateFormat
-            );
+            await console.Output.WriteLineAsync($"Exporting {channels.Count} channel(s)...");
 
-            var progress = progressContext.AddTask(
-                $"{channel.Category} / {channel.Name}",
-                new ProgressTaskSettings {MaxValue = 1}
-            );
+            var errors = new ConcurrentDictionary<Channel, string>();
 
-            try
+            // Wrap everything in a progress ticker
+            await console.CreateProgressTicker().StartAsync(async progressContext =>
             {
-                await Exporter.ExportChannelAsync(request, progress);
-            }
-            finally
+                await channels.ParallelForEachAsync(async channel =>
+                {
+                    // Export
+                    try
+                    {
+                        var guild = await Discord.GetGuildAsync(channel.GuildId);
+
+                        var request = new ExportRequest(
+                            guild,
+                            channel,
+                            OutputPath,
+                            ExportFormat,
+                            After,
+                            Before,
+                            PartitionLimit,
+                            ShouldDownloadMedia,
+                            ShouldReuseMedia,
+                            DateFormat
+                        );
+
+                        var progress = progressContext.AddTask(
+                            $"{channel.Category} / {channel.Name}",
+                            new ProgressTaskSettings {MaxValue = 1}
+                        );
+
+                        try
+                        {
+                            await Exporter.ExportChannelAsync(request, progress);
+                        }
+                        finally
+                        {
+                            progress.StopTask();
+                        }
+                    }
+                    catch (DiscordChatExporterException ex) when (!ex.IsCritical)
+                    {
+                        errors[channel] = ex.Message;
+                    }
+                }, ParallelLimit.ClampMin(1));
+
+                await console.Output.WriteLineAsync();
+            });
+
+            // Print result
+            using (console.WithForegroundColor(ConsoleColor.Green))
             {
-                progress.StopTask();
+                await console.Output.WriteLineAsync(
+                    $"Successfully exported {channels.Count - errors.Count} channel(s)."
+                );
             }
+
+            // Print errors
+            if (errors.Any())
+            {
+                await console.Output.WriteLineAsync();
+
+                using (console.WithForegroundColor(ConsoleColor.Red))
+                    await console.Output.WriteLineAsync($"Failed to export {errors.Count} channel(s):");
+
+                foreach (var (channel, error) in errors)
+                {
+                    await console.Output.WriteAsync($"{channel.Category} / {channel.Name}: ");
+
+                    using (console.WithForegroundColor(ConsoleColor.Red))
+                        await console.Output.WriteLineAsync(error);
+                }
+
+                await console.Output.WriteLineAsync();
+            }
+
+            // Fail the command if ALL channels failed to export.
+            // Having some of the channels fail to export is fine and expected.
+            if (errors.Count >= channels.Count)
+            {
+                throw new CommandException("Export failed.");
+            }
+
+            await console.Output.WriteLineAsync("Done.");
         }
 
         public override ValueTask ExecuteAsync(IConsole console)

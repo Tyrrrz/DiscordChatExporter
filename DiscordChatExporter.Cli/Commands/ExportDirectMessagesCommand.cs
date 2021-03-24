@@ -8,7 +8,7 @@ using DiscordChatExporter.Core.Utils.Extensions;
 namespace DiscordChatExporter.Cli.Commands
 {
     [Command("exportdm", Description = "Export all direct message channels.")]
-    public class ExportDirectMessagesCommand : ExportMultipleCommandBase
+    public class ExportDirectMessagesCommand : ExportCommandBase
     {
         public override async ValueTask ExecuteAsync(IConsole console)
         {
@@ -19,7 +19,7 @@ namespace DiscordChatExporter.Cli.Commands
             var channels = await Discord.GetGuildChannelsAsync(Guild.DirectMessages.Id);
 
             // Export
-            await ExportChannelsAsync(console, channels);
+            await ExportAsync(console, channels);
         }
     }
 }

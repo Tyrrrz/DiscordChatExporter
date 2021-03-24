@@ -8,7 +8,7 @@ using DiscordChatExporter.Core.Utils.Extensions;
 namespace DiscordChatExporter.Cli.Commands
 {
     [Command("exportguild", Description = "Export all channels within specified guild.")]
-    public class ExportGuildCommand : ExportMultipleCommandBase
+    public class ExportGuildCommand : ExportCommandBase
     {
         [CommandOption("guild", 'g', IsRequired = true, Description = "Guild ID.")]
         public Snowflake GuildId { get; init; }
@@ -22,7 +22,7 @@ namespace DiscordChatExporter.Cli.Commands
             var channels = await Discord.GetGuildChannelsAsync(GuildId);
 
             // Export
-            await ExportChannelsAsync(console, channels);
+            await ExportAsync(console, channels);
         }
     }
 }

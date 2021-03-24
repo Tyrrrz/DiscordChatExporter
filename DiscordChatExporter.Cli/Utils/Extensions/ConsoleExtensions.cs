@@ -1,4 +1,6 @@
-﻿using CliFx.Infrastructure;
+﻿using System;
+using System.Threading.Tasks;
+using CliFx.Infrastructure;
 using Spectre.Console;
 
 namespace DiscordChatExporter.Cli.Utils.Extensions
@@ -34,5 +36,22 @@ namespace DiscordChatExporter.Cli.Utils.Extensions
                 new ProgressBarColumn(),
                 new PercentageColumn()
             });
+
+        public static async ValueTask StartTaskAsync(
+            this ProgressContext progressContext,
+            string description,
+            Func<ProgressTask, ValueTask> performOperationAsync)
+        {
+            var progressTask = progressContext.AddTask(description, new ProgressTaskSettings {MaxValue = 1});
+
+            try
+            {
+                await performOperationAsync(progressTask);
+            }
+            finally
+            {
+                progressTask.StopTask();
+            }
+        }
     }
 }

@@ -13,7 +13,6 @@ using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Core.Utils.Extensions;
-using Spectre.Console;
 using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Cli.Commands.Base
@@ -64,46 +63,37 @@ namespace DiscordChatExporter.Cli.Commands.Base
                     // Export
                     try
                     {
-                        var guild = await Discord.GetGuildAsync(channel.GuildId);
-
-                        var request = new ExportRequest(
-                            guild,
-                            channel,
-                            OutputPath,
-                            ExportFormat,
-                            After,
-                            Before,
-                            PartitionLimit,
-                            ShouldDownloadMedia,
-                            ShouldReuseMedia,
-                            DateFormat
-                        );
-
-                        var progress = progressContext.AddTask(
-                            $"{channel.Category} / {channel.Name}",
-                            new ProgressTaskSettings {MaxValue = 1}
-                        );
-
-                        try
+                        await progressContext.StartTaskAsync($"{channel.Category} / {channel.Name}", async progress =>
                         {
+                            var guild = await Discord.GetGuildAsync(channel.GuildId);
+
+                            var request = new ExportRequest(
+                                guild,
+                                channel,
+                                OutputPath,
+                                ExportFormat,
+                                After,
+                                Before,
+                                PartitionLimit,
+                                ShouldDownloadMedia,
+                                ShouldReuseMedia,
+                                DateFormat
+                            );
+
                             await Exporter.ExportChannelAsync(request, progress);
-                        }
-                        finally
-                        {
-                            progress.StopTask();
-                        }
+                        });
                     }
                     catch (DiscordChatExporterException ex) when (!ex.IsCritical)
                     {
                         errors[channel] = ex.Message;
                     }
                 }, ParallelLimit.ClampMin(1));
-
-                await console.Output.WriteLineAsync();
             });
 
+            await console.Output.WriteLineAsync();
+
             // Print result
-            using (console.WithForegroundColor(ConsoleColor.Green))
+            using (console.WithForegroundColor(ConsoleColor.White))
             {
                 await console.Output.WriteLineAsync(
                     $"Successfully exported {channels.Count - errors.Count} channel(s)."
@@ -116,7 +106,11 @@ namespace DiscordChatExporter.Cli.Commands.Base
                 await console.Output.WriteLineAsync();
 
                 using (console.WithForegroundColor(ConsoleColor.Red))
-                    await console.Output.WriteLineAsync($"Failed to export {errors.Count} channel(s):");
+                {
+                    await console.Output.WriteLineAsync(
+                        $"Failed to export {errors.Count} channel(s):"
+                    );
+                }
 
                 foreach (var (channel, error) in errors)
                 {
@@ -143,7 +137,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
         {
             if (ShouldReuseMedia && !ShouldDownloadMedia)
             {
-                throw new CommandException("The --reuse-media option cannot be used without the --media option.");
+                throw new CommandException("Option --reuse-media cannot be used without --media.");
             }
 
             return default;

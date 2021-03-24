@@ -5,14 +5,22 @@ namespace DiscordChatExporter.Cli.Utils.Extensions
 {
     internal static class ConsoleExtensions
     {
-        public static IAnsiConsole CreateAnsiConsole(this IConsole console) => AnsiConsole.Create(
-            new AnsiConsoleSettings
-            {
-                Ansi = AnsiSupport.Detect,
-                ColorSystem = ColorSystemSupport.Detect,
-                Out = console.Output
-            }
-        );
+        public static IAnsiConsole CreateAnsiConsole(this IConsole console)
+        {
+            var ansiConsole = AnsiConsole.Create(
+                new AnsiConsoleSettings
+                {
+                    Ansi = AnsiSupport.Detect,
+                    ColorSystem = ColorSystemSupport.Detect,
+                    Out = console.Output
+                }
+            );
+
+            // HACK: https://github.com/spectresystems/spectre.console/pull/318
+            ansiConsole.Profile.Encoding = console.Output.Encoding;
+
+            return ansiConsole;
+        }
 
         public static Progress CreateProgressTicker(this IConsole console) => console
             .CreateAnsiConsole()

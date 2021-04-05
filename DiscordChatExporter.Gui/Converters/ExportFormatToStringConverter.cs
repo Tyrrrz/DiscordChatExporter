@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
-using DiscordChatExporter.Domain.Exporting;
+using DiscordChatExporter.Core.Exporting;
 
 namespace DiscordChatExporter.Gui.Converters
 {

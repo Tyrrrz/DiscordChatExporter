@@ -1,0 +1,101 @@
+﻿@using System
+@using System.Threading.Tasks
+@using Tyrrrz.Extensions
+@namespace DiscordChatExporter.Core.Exporting.Writers.Html
+@inherits MiniRazor.TemplateBase<DiscordChatExporter.Core.Exporting.Writers.Html.LayoutTemplateContext>
+
+@{
+    string FormatDate(DateTimeOffset date) => Model.ExportContext.FormatDate(date);
+
+    ValueTask<string> ResolveUrlAsync(string url) => Model.ExportContext.ResolveMediaUrlAsync(url);
+
+    string GetStyleSheet(string name) => Model.GetType().Assembly.GetManifestResourceString($"DiscordChatExporter.Core.Exporting.Writers.Html.{name}.css");
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>@Model.ExportContext.Request.Guild.Name - @Model.ExportContext.Request.Channel.Name</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+
+    <style>
+        @Raw(GetStyleSheet("Core"))
+    </style>
+    <style>
+        @Raw(GetStyleSheet(Model.ThemeName))
+    </style>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/solarized-@(Model.ThemeName.ToLowerInvariant()).min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.pre--multiline').forEach(block => hljs.highlightBlock(block));
+        });
+    </script>
+
+    <script>
+        function scrollToMessage(event, id) {
+            var element = document.getElementById('message-' + id);
+
+            if (element) {
+                event.preventDefault();
+
+                element.classList.add('chatlog__message--highlighted');
+
+                window.scrollTo({
+                    top: element.getBoundingClientRect().top - document.body.getBoundingClientRect().top - (window.innerHeight / 2),
+                    behavior: 'smooth'
+                });
+
+                window.setTimeout(function() {
+                    element.classList.remove('chatlog__message--highlighted');
+                }, 2000);
+            }
+        }
+
+        function showSpoiler(event, element) {
+            if (element && element.classList.contains('spoiler--hidden')) {
+                event.preventDefault();
+                element.classList.remove('spoiler--hidden');
+            }
+        }
+    </script>
+</head>
+<body>
+
+<div class="preamble">
+    <div class="preamble__guild-icon-container">
+        <img class="preamble__guild-icon" src="@await ResolveUrlAsync(Model.ExportContext.Request.Guild.IconUrl)" alt="Guild icon">
+    </div>
+    <div class="preamble__entries-container">
+        <div class="preamble__entry">@Model.ExportContext.Request.Guild.Name</div>
+        <div class="preamble__entry">@Model.ExportContext.Request.Channel.Category / @Model.ExportContext.Request.Channel.Name</div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.ExportContext.Request.Channel.Topic))
+        {
+            <div class="preamble__entry preamble__entry--small">@Model.ExportContext.Request.Channel.Topic</div>
+        }
+
+        @if (Model.ExportContext.Request.After is not null || Model.ExportContext.Request.Before is not null)
+        {
+            <div class="preamble__entry preamble__entry--small">
+            @if (Model.ExportContext.Request.After is not null && Model.ExportContext.Request.Before is not null)
+            {
+                @($"Between {FormatDate(Model.ExportContext.Request.After.Value.ToDate())} and {FormatDate(Model.ExportContext.Request.Before.Value.ToDate())}")
+            }
+            else if (Model.ExportContext.Request.After is not null)
+            {
+                @($"After {FormatDate(Model.ExportContext.Request.After.Value.ToDate())}")
+            }
+            else if (Model.ExportContext.Request.Before is not null)
+            {
+                @($"Before {FormatDate(Model.ExportContext.Request.Before.Value.ToDate())}")
+            }
+            </div>
+        }
+    </div>
+</div>
+
+<div class="chatlog">

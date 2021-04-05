@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Reflection;
-using DiscordChatExporter.Gui.Internal;
+using DiscordChatExporter.Gui.Utils;
 using MaterialDesignThemes.Wpf;
 
 namespace DiscordChatExporter.Gui

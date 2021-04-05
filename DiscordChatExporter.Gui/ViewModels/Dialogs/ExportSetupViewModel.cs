@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DiscordChatExporter.Domain.Discord;
-using DiscordChatExporter.Domain.Discord.Models;
-using DiscordChatExporter.Domain.Exporting;
-using DiscordChatExporter.Domain.Utilities;
 using DiscordChatExporter.Gui.Internal;
+using DiscordChatExporter.Core.Discord;
+using DiscordChatExporter.Core.Discord.Data;
+using DiscordChatExporter.Core.Exporting;
+using DiscordChatExporter.Core.Utils.Extensions;
 using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.ViewModels.Framework;
 
@@ -20,7 +20,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
 
         public IReadOnlyList<Channel>? Channels { get; set; }
 
-        public bool IsSingleChannel => Channels == null || Channels.Count == 1;
+        public bool IsSingleChannel => Channels is null || Channels.Count == 1;
 
         public string? OutputPath { get; set; }
 
@@ -33,7 +33,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
 
         public DateTimeOffset? AfterDate { get; set; }
 
-        public bool IsAfterDateSet => AfterDate != null;
+        public bool IsAfterDateSet => AfterDate is not null;
 
         public TimeSpan? AfterTime { get; set; }
 
@@ -41,7 +41,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
 
         public DateTimeOffset? BeforeDate { get; set; }
 
-        public bool IsBeforeDateSet => BeforeDate != null;
+        public bool IsBeforeDateSet => BeforeDate is not null;
 
         public TimeSpan? BeforeTime { get; set; }
 
@@ -86,7 +86,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             _settingsService.LastShouldDownloadMedia = ShouldDownloadMedia;
 
             // If single channel - prompt file path
-            if (Channels != null && IsSingleChannel)
+            if (Channels is not null && IsSingleChannel)
             {
                 var channel = Channels.Single();
                 var defaultFileName = ExportRequest.GetDefaultOutputFileName(

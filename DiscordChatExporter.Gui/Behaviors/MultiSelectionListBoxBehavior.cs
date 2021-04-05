@@ -20,7 +20,7 @@ namespace DiscordChatExporter.Gui.Behaviors
             var behavior = (MultiSelectionListBoxBehavior<T>) sender;
             if (behavior._modelHandled) return;
 
-            if (behavior.AssociatedObject == null)
+            if (behavior.AssociatedObject is null)
                 return;
 
             behavior._modelHandled = true;
@@ -43,7 +43,7 @@ namespace DiscordChatExporter.Gui.Behaviors
             _viewHandled = true;
 
             AssociatedObject.SelectedItems.Clear();
-            if (SelectedItems != null)
+            if (SelectedItems is not null)
             {
                 foreach (var item in SelectedItems)
                     AssociatedObject.SelectedItems.Add(item);
@@ -56,7 +56,7 @@ namespace DiscordChatExporter.Gui.Behaviors
         private void OnListBoxSelectionChanged(object sender, SelectionChangedEventArgs args)
         {
             if (_viewHandled) return;
-            if (AssociatedObject.Items.SourceCollection == null) return;
+            if (AssociatedObject.Items.SourceCollection is null) return;
 
             SelectedItems = AssociatedObject.SelectedItems.Cast<T>().ToArray();
         }
@@ -65,7 +65,7 @@ namespace DiscordChatExporter.Gui.Behaviors
         private void OnListBoxItemsChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
             if (_viewHandled) return;
-            if (AssociatedObject.Items.SourceCollection == null) return;
+            if (AssociatedObject.Items.SourceCollection is null) return;
             SelectItems();
         }
 
@@ -82,7 +82,7 @@ namespace DiscordChatExporter.Gui.Behaviors
         {
             base.OnDetaching();
 
-            if (AssociatedObject != null)
+            if (AssociatedObject is not null)
             {
                 AssociatedObject.SelectionChanged -= OnListBoxSelectionChanged;
                 ((INotifyCollectionChanged) AssociatedObject.Items).CollectionChanged -= OnListBoxItemsChanged;

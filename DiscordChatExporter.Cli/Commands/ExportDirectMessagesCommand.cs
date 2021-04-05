@@ -1,19 +1,25 @@
 ﻿using System.Threading.Tasks;
-using CliFx;
 using CliFx.Attributes;
+using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands.Base;
-using DiscordChatExporter.Domain.Discord.Models;
-using DiscordChatExporter.Domain.Utilities;
+using DiscordChatExporter.Core.Discord.Data;
+using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Cli.Commands
 {
     [Command("exportdm", Description = "Export all direct message channels.")]
-    public class ExportDirectMessagesCommand : ExportMultipleCommandBase
+    public class ExportDirectMessagesCommand : ExportCommandBase
     {
         public override async ValueTask ExecuteAsync(IConsole console)
         {
-            var channels = await GetDiscordClient().GetGuildChannelsAsync(Guild.DirectMessages.Id);
-            await ExportMultipleAsync(console, channels);
+            await base.ExecuteAsync(console);
+
+            // Get channel metadata
+            await console.Output.WriteLineAsync("Fetching channels...");
+            var channels = await Discord.GetGuildChannelsAsync(Guild.DirectMessages.Id);
+
+            // Export
+            await ExportAsync(console, channels);
         }
     }
 }

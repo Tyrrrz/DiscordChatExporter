@@ -1,12 +1,19 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
-using CliFx;
 using CliFx.Attributes;
 using CliFx.Exceptions;
-using CliFx.Utilities;
-using DiscordChatExporter.Domain.Discord;
-using DiscordChatExporter.Domain.Discord.Models;
-using DiscordChatExporter.Domain.Exporting;
+using CliFx.Infrastructure;
+using DiscordChatExporter.Cli.Utils.Extensions;
+using DiscordChatExporter.Core.Discord;
+using DiscordChatExporter.Core.Discord.Data;
+using DiscordChatExporter.Core.Exceptions;
+using DiscordChatExporter.Core.Exporting;
+using DiscordChatExporter.Core.Utils.Extensions;
+using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Cli.Commands.Base
 {
@@ -28,6 +35,9 @@ namespace DiscordChatExporter.Cli.Commands.Base
             Validators = new[] { typeof(PartitionValidator) })]
         public string? PartitionLimit { get; init; }
 
+        [CommandOption("parallel", Description = "Limits how many channels can be exported in parallel.")]
+        public int ParallelLimit { get; init; } = 1;
+
         [CommandOption("media", Description = "Download referenced media content.")]
         public bool ShouldDownloadMedia { get; init; }
 
@@ -37,49 +47,96 @@ namespace DiscordChatExporter.Cli.Commands.Base
         [CommandOption("dateformat", Description = "Format used when writing dates.")]
         public string DateFormat { get; init; } = "dd-MMM-yy hh:mm tt";
 
-        protected ChannelExporter GetChannelExporter() => new(GetDiscordClient());
+        private ChannelExporter? _channelExporter;
+        protected ChannelExporter Exporter => _channelExporter ??= new ChannelExporter(Discord);
 
-        protected async ValueTask ExportAsync(IConsole console, Guild guild, Channel channel)
+        protected async ValueTask ExportAsync(IConsole console, IReadOnlyList<Channel> channels)
         {
-            console.Output.Write($"Exporting channel '{channel.Category} / {channel.Name}'... ");
-            var progress = console.CreateProgressTicker();
+            await console.Output.WriteLineAsync($"Exporting {channels.Count} channel(s)...");
 
-            var request = new ExportRequest(
-                guild,
-                channel,
-                OutputPath,
-                ExportFormat,
-                After,
-                Before,
-                PartitionLimit,
-                ShouldDownloadMedia,
-                ShouldReuseMedia,
-                DateFormat
-            );
+            var errors = new ConcurrentDictionary<Channel, string>();
 
-            await GetChannelExporter().ExportChannelAsync(request, progress);
+            // Wrap everything in a progress ticker
+            await console.CreateProgressTicker().StartAsync(async progressContext =>
+            {
+                await channels.ParallelForEachAsync(async channel =>
+                {
+                    // Export
+                    try
+                    {
+                        await progressContext.StartTaskAsync($"{channel.Category} / {channel.Name}", async progress =>
+                        {
+                            var guild = await Discord.GetGuildAsync(channel.GuildId);
 
-            console.Output.WriteLine();
-            console.Output.WriteLine("Done.");
-        }
+                            var request = new ExportRequest(
+                                guild,
+                                channel,
+                                OutputPath,
+                                ExportFormat,
+                                After,
+                                Before,
+                                PartitionLimit,
+                                ShouldDownloadMedia,
+                                ShouldReuseMedia,
+                                DateFormat
+                            );
 
-        protected async ValueTask ExportAsync(IConsole console, Channel channel)
-        {
-            var guild = await GetDiscordClient().GetGuildAsync(channel.GuildId);
-            await ExportAsync(console, guild, channel);
-        }
+                            await Exporter.ExportChannelAsync(request, progress);
+                        });
+                    }
+                    catch (DiscordChatExporterException ex) when (!ex.IsCritical)
+                    {
+                        errors[channel] = ex.Message;
+                    }
+                }, ParallelLimit.ClampMin(1));
+            });
 
-        protected async ValueTask ExportAsync(IConsole console, Snowflake channelId)
-        {
-            var channel = await GetDiscordClient().GetChannelAsync(channelId);
-            await ExportAsync(console, channel);
+            // Print result
+            using (console.WithForegroundColor(ConsoleColor.White))
+            {
+                await console.Output.WriteLineAsync(
+                    $"Successfully exported {channels.Count - errors.Count} channel(s)."
+                );
+            }
+
+            // Print errors
+            if (errors.Any())
+            {
+                await console.Output.WriteLineAsync();
+
+                using (console.WithForegroundColor(ConsoleColor.Red))
+                {
+                    await console.Output.WriteLineAsync(
+                        $"Failed to export {errors.Count} channel(s):"
+                    );
+                }
+
+                foreach (var (channel, error) in errors)
+                {
+                    await console.Output.WriteAsync($"{channel.Category} / {channel.Name}: ");
+
+                    using (console.WithForegroundColor(ConsoleColor.Red))
+                        await console.Output.WriteLineAsync(error);
+                }
+
+                await console.Output.WriteLineAsync();
+            }
+
+            // Fail the command if ALL channels failed to export.
+            // Having some of the channels fail to export is fine and expected.
+            if (errors.Count >= channels.Count)
+            {
+                throw new CommandException("Export failed.");
+            }
+
+            await console.Output.WriteLineAsync("Done.");
         }
 
         public override ValueTask ExecuteAsync(IConsole console)
         {
             if (ShouldReuseMedia && !ShouldDownloadMedia)
             {
-                throw new CommandException("The --reuse-media option cannot be used without the --media option.");
+                throw new CommandException("Option --reuse-media cannot be used without --media.");
             }
 
             return default;

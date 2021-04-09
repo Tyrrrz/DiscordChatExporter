@@ -1,5 +1,6 @@
 ﻿using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Exporting;
+using DiscordChatExporter.Gui.Internal;
 using Tyrrrz.Settings;
 
 namespace DiscordChatExporter.Gui.Services

@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ByteSizeLib;
 using DiscordChatExporter.Core.Discord.Data;
+using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Core.Exporting.Writers;
 
 namespace DiscordChatExporter.Core.Exporting
@@ -26,10 +27,11 @@ namespace DiscordChatExporter.Core.Exporting
 
         private bool IsPartitionLimitReached()
         {
-            if (_writer is not null)
+            if (_writer is null)
             {
-                throw new Exception("Cannot check for partition limit being reached when writer is null.");
+                return false;
             }
+
             return _partitioner.IsLimitReached(_messageCount, _writer.SizeInBytes);
         }
 

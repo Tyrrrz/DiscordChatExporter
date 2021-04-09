@@ -1,4 +1,4 @@
-﻿using DiscordChatExporter.Domain.Exporting;
+﻿using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Gui.Internal;
 using System;
 using System.Collections.Generic;

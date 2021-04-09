@@ -1,9 +1,9 @@
-﻿using DiscordChatExporter.Domain.Exporting;
+﻿using DiscordChatExporter.Core.Exporting;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DiscordChatExporter.Domain
+namespace DiscordChatExporter.Core
 {
     class NullPartitioner : IPartitioner
     {

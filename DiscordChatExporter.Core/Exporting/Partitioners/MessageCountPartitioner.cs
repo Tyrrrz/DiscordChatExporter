@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DiscordChatExporter.Domain.Exporting
+namespace DiscordChatExporter.Core.Exporting
 {
     class MessageCountPartitioner : IPartitioner
     {

@@ -17,7 +17,7 @@ namespace DiscordChatExporter.Gui.Converters
             if (value is PartitionFormat partitionFormat)
                 return partitionFormat switch
                 {
-                    PartitionFormat.Filesize => "MB per partition",
+                    PartitionFormat.FileSize => "MB per partition",
                     PartitionFormat.MessageCount => "Messages per partition",
                     _ => default(string)
                 };

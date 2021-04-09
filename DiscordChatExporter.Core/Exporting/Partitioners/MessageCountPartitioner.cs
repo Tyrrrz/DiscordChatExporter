@@ -1,10 +1,11 @@
-﻿using System;
+﻿using DiscordChatExporter.Core.Exporting.Partitioners;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace DiscordChatExporter.Core.Exporting
 {
-    class MessageCountPartitioner : IPartitioner
+    public class MessageCountPartitioner : IPartitioner
     {
 
         private int _messagesPerPartition;
@@ -14,11 +15,11 @@ namespace DiscordChatExporter.Core.Exporting
             _messagesPerPartition = messagesPerPartition;
         }
 
-        public bool IsLimitReached(long messageCount, long sizeInBytes)
+        public bool IsLimitReached(ExportPartitioningContext context)
         {
-            return messageCount > 0 &&
+            return context.MessageCount > 0 &&
             _messagesPerPartition != 0 &&
-            messageCount % _messagesPerPartition == 0;
+            context.MessageCount % _messagesPerPartition == 0;
         }
     }
 }

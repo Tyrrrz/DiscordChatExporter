@@ -17,7 +17,7 @@ namespace DiscordChatExporter.Gui.Converters
             if (value is PartitionFormat partitionFormat)
                 return partitionFormat switch
                 {
-                    PartitionFormat.Filesize => "Split output into partitions close to this file size",
+                    PartitionFormat.FileSize => "Split output into partitions close to this file size",
                     PartitionFormat.MessageCount => "Split output into partitions limited to this number of messages",
                     _ => default(string)
                 };

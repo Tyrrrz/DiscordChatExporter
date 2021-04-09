@@ -31,9 +31,10 @@ namespace DiscordChatExporter.Cli.Commands.Base
         [CommandOption("before", Description = "Only include messages sent before this date or message ID.")]
         public Snowflake? Before { get; init; }
 
-        [CommandOption("partition", 'p', Description = "Split output into partitions limited to this number of messages or a maximum file size (e.g. \"25mb\").",
+        [CommandOption("partition", 'p', Converter = typeof(PartitionConverter),
+            Description = "Split output into partitions limited to this number of messages or a maximum file size (e.g. \"25mb\").",
             Validators = new[] { typeof(PartitionValidator) })]
-        public string? PartitionLimit { get; init; }
+        public IPartitioner Partitoner { get; init; } = new NullPartitioner();
 
         [CommandOption("parallel", Description = "Limits how many channels can be exported in parallel.")]
         public int ParallelLimit { get; init; } = 1;
@@ -75,7 +76,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
                                 ExportFormat,
                                 After,
                                 Before,
-                                PartitionLimit,
+                                Partitoner,
                                 ShouldDownloadMedia,
                                 ShouldReuseMedia,
                                 DateFormat

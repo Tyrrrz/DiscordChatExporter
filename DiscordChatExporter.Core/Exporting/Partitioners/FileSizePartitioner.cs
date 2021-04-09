@@ -1,10 +1,11 @@
-﻿using System;
+﻿using DiscordChatExporter.Core.Exporting.Partitioners;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace DiscordChatExporter.Core.Exporting
 {
-    class FileSizePartitioner : IPartitioner
+    public class FileSizePartitioner : IPartitioner
     {
         private long _bytesPerFile;
 
@@ -12,9 +13,9 @@ namespace DiscordChatExporter.Core.Exporting
         {
             _bytesPerFile = bytesPerFile;
         }
-        public bool IsLimitReached(long messageCount, long sizeInBytes)
+        public bool IsLimitReached(ExportPartitioningContext context)
         {
-            return sizeInBytes >= _bytesPerFile;
+            return context.SizeInBytes >= _bytesPerFile;
         }
     }
 }

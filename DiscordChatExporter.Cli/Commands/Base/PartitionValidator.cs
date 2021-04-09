@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace DiscordChatExporter.Cli.Commands.Base
 {
-    class PartitionValidator : BindingValidator<string>
+    public class PartitionValidator : BindingValidator<string>
     {
         public override BindingValidationError? Validate(string value)
         {

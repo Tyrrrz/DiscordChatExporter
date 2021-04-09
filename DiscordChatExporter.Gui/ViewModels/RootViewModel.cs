@@ -214,7 +214,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                         dialog.SelectedFormat,
                         dialog.After?.Pipe(Snowflake.FromDate),
                         dialog.Before?.Pipe(Snowflake.FromDate),
-                        dialog.SelectedPartitionFormat == PartitionFormat.Filesize ? dialog.PartitionLimit + "mb" : dialog.PartitionLimit.ToString(),
+                        CreatePartitioner(),
                         dialog.ShouldDownloadMedia,
                         _settingsService.ShouldReuseMedia,
                         _settingsService.DateFormat
@@ -237,6 +237,25 @@ namespace DiscordChatExporter.Gui.ViewModels
             // Notify of overall completion
             if (successfulExportCount > 0)
                 Notifications.Enqueue($"Successfully exported {successfulExportCount} channel(s)");
+
+            IPartitioner CreatePartitioner()
+            {
+                var partitionFormat = dialog.SelectedPartitionFormat;
+                var partitionLimit = dialog.PartitionLimit;
+                if (partitionLimit == null)
+                {
+                    return new NullPartitioner();
+                }
+
+                if (partitionFormat == PartitionFormat.MessageCount)
+                {
+                    return new MessageCountPartitioner((int)partitionLimit);
+                }
+                else
+                {
+                    return new FileSizePartitioner((int)partitionLimit);
+                }
+            }
         }
     }
 }

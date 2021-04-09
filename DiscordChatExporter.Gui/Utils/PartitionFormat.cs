@@ -7,7 +7,7 @@ namespace DiscordChatExporter.Gui.Internal
     public enum PartitionFormat
     {
         MessageCount,
-        Filesize,
+        FileSize,
     }
 
     public static class PartitionFormatExtensions
@@ -15,7 +15,7 @@ namespace DiscordChatExporter.Gui.Internal
         public static string GetDisplayName(this PartitionFormat format) => format switch
         {
             PartitionFormat.MessageCount => "Message count",
-            PartitionFormat.Filesize => "File size (MB)",
+            PartitionFormat.FileSize => "File size (MB)",
             _ => throw new ArgumentOutOfRangeException(nameof(format))
         };
     }

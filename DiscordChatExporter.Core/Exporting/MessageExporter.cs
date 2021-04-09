@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ByteSizeLib;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exporting;
+using DiscordChatExporter.Core.Exporting.Partitioners;
 using DiscordChatExporter.Core.Exporting.Writers;
 
 namespace DiscordChatExporter.Core.Exporting
@@ -17,12 +18,10 @@ namespace DiscordChatExporter.Core.Exporting
         private long _messageCount;
         private int _partitionIndex;
         private MessageWriter? _writer;
-        private IPartitioner _partitioner;
 
         public MessageExporter(ExportContext context)
         {
             _context = context;
-            _partitioner = CreatePartitioner(context.Request.PartitionLimit);
         }
 
         private bool IsPartitionLimitReached()
@@ -32,7 +31,8 @@ namespace DiscordChatExporter.Core.Exporting
                 return false;
             }
 
-            return _partitioner.IsLimitReached(_messageCount, _writer.SizeInBytes);
+            return _context.Request.Partitoner.IsLimitReached(
+                new ExportPartitioningContext(_messageCount, _writer.SizeInBytes));
         }
 
         private async ValueTask ResetWriterAsync()
@@ -118,21 +118,6 @@ namespace DiscordChatExporter.Core.Exporting
                 ExportFormat.Json => new JsonMessageWriter(stream, context),
                 _ => throw new ArgumentOutOfRangeException(nameof(format), $"Unknown export format '{format}'.")
             };
-        }
-
-        private static IPartitioner CreatePartitioner(string? requestedPartitionLimit)
-        {
-            if (requestedPartitionLimit == null) return new NullPartitioner();
-            
-            if (ByteSize.TryParse(requestedPartitionLimit, out ByteSize filesize))
-            {
-                return new FileSizePartitioner((long) filesize.Bytes);
-            }
-            else
-            {
-                int messageLimit = int.Parse(requestedPartitionLimit);
-                return new MessageCountPartitioner(messageLimit);
-            }
         }
     }
 }

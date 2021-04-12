@@ -28,7 +28,7 @@ namespace DiscordChatExporter.Core.Exporting
 
         public Snowflake? Before { get; }
 
-        public int? PartitionLimit { get; }
+        public IPartitioner Partitoner { get; }
 
         public bool ShouldDownloadMedia { get; }
 
@@ -43,7 +43,7 @@ namespace DiscordChatExporter.Core.Exporting
             ExportFormat format,
             Snowflake? after,
             Snowflake? before,
-            int? partitionLimit,
+            IPartitioner partitioner,
             bool shouldDownloadMedia,
             bool shouldReuseMedia,
             string dateFormat)
@@ -54,7 +54,7 @@ namespace DiscordChatExporter.Core.Exporting
             Format = format;
             After = after;
             Before = before;
-            PartitionLimit = partitionLimit;
+            Partitoner = partitioner;
             ShouldDownloadMedia = shouldDownloadMedia;
             ShouldReuseMedia = shouldReuseMedia;
             DateFormat = dateFormat;

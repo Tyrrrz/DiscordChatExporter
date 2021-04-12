@@ -17,6 +17,8 @@ namespace DiscordChatExporter.Core.Exporting.Writers
             Context = context;
         }
 
+        public long SizeInBytes => Stream.Length;
+
         public virtual ValueTask WritePreambleAsync() => default;
 
         public abstract ValueTask WriteMessageAsync(Message message);

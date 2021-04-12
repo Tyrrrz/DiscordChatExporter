@@ -1,4 +1,4 @@
-﻿namespace DiscordChatExporter.Gui.Views.Dialogs
+namespace DiscordChatExporter.Gui.Views.Dialogs
 {
     public partial class ExportSetupView
     {

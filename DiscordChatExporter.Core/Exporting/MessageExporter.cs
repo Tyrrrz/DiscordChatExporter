@@ -1,13 +1,18 @@
 ﻿using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using ByteSizeLib;
 using DiscordChatExporter.Core.Discord.Data;
+using DiscordChatExporter.Core.Exporting;
+using DiscordChatExporter.Core.Exporting.Partitioners;
 using DiscordChatExporter.Core.Exporting.Writers;
 
 namespace DiscordChatExporter.Core.Exporting
 {
     internal partial class MessageExporter : IAsyncDisposable
     {
+
         private readonly ExportContext _context;
 
         private long _messageCount;
@@ -19,11 +24,16 @@ namespace DiscordChatExporter.Core.Exporting
             _context = context;
         }
 
-        private bool IsPartitionLimitReached() =>
-            _messageCount > 0 &&
-            _context.Request.PartitionLimit is not null &&
-            _context.Request.PartitionLimit != 0 &&
-            _messageCount % _context.Request.PartitionLimit == 0;
+        private bool IsPartitionLimitReached()
+        {
+            if (_writer is null)
+            {
+                return false;
+            }
+
+            return _context.Request.Partitoner.IsLimitReached(
+                new ExportPartitioningContext(_messageCount, _writer.SizeInBytes));
+        }
 
         private async ValueTask ResetWriterAsync()
         {
@@ -38,7 +48,7 @@ namespace DiscordChatExporter.Core.Exporting
         private async ValueTask<MessageWriter> GetWriterAsync()
         {
             // Ensure partition limit has not been exceeded
-            if (IsPartitionLimitReached())
+            if (_writer != null && IsPartitionLimitReached())
             {
                 await ResetWriterAsync();
                 _partitionIndex++;

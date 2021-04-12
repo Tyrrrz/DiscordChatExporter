@@ -8,6 +8,7 @@ using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Core.Utils.Extensions;
+using DiscordChatExporter.Gui.Internal;
 using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.Utils;
 using DiscordChatExporter.Gui.ViewModels.Dialogs;
@@ -213,7 +214,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                         dialog.SelectedFormat,
                         dialog.After?.Pipe(Snowflake.FromDate),
                         dialog.Before?.Pipe(Snowflake.FromDate),
-                        dialog.PartitionLimit,
+                        CreatePartitioner(),
                         dialog.ShouldDownloadMedia,
                         _settingsService.ShouldReuseMedia,
                         _settingsService.DateFormat
@@ -236,6 +237,19 @@ namespace DiscordChatExporter.Gui.ViewModels
             // Notify of overall completion
             if (successfulExportCount > 0)
                 Notifications.Enqueue($"Successfully exported {successfulExportCount} channel(s)");
+
+            IPartitioner CreatePartitioner()
+            {
+                var partitionFormat = dialog.SelectedPartitionFormat;
+                var partitionLimit = dialog.PartitionLimit;
+
+                return (partitionFormat, partitionLimit) switch
+                {
+                    (PartitionFormat.MessageCount, int messageLimit) => new MessageCountPartitioner(messageLimit),
+                    (PartitionFormat.FileSize, int fileSizeLimit) => new FileSizePartitioner(fileSizeLimit),
+                    _ => new NullPartitioner()
+                };
+            }
         }
     }
 }

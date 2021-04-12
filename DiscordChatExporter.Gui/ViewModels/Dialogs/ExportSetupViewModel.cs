@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DiscordChatExporter.Gui.Internal;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exporting;
@@ -46,6 +47,11 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
 
         public DateTimeOffset? Before => BeforeDate?.Add(BeforeTime ?? TimeSpan.Zero);
 
+        public IReadOnlyList<PartitionFormat> AvailablePartitionFormats =>
+            Enum.GetValues(typeof(PartitionFormat)).Cast<PartitionFormat>().ToArray();
+
+        public PartitionFormat SelectedPartitionFormat { get; set; }
+
         public int? PartitionLimit { get; set; }
 
         public bool ShouldDownloadMedia { get; set; }
@@ -67,6 +73,8 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             SelectedFormat = _settingsService.LastExportFormat;
             PartitionLimit = _settingsService.LastPartitionLimit;
             ShouldDownloadMedia = _settingsService.LastShouldDownloadMedia;
+            SelectedPartitionFormat = _settingsService.LastPartitionFormat;
+
         }
 
         public void Confirm()
@@ -74,6 +82,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             // Persist preferences
             _settingsService.LastExportFormat = SelectedFormat;
             _settingsService.LastPartitionLimit = PartitionLimit;
+            _settingsService.LastPartitionFormat = SelectedPartitionFormat;
             _settingsService.LastShouldDownloadMedia = ShouldDownloadMedia;
 
             // If single channel - prompt file path

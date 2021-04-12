@@ -32,8 +32,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
         public Snowflake? Before { get; init; }
 
         [CommandOption("partition", 'p', Converter = typeof(PartitionConverter),
-            Description = "Split output into partitions limited to this number of messages or a maximum file size (e.g. \"25mb\").",
-            Validators = new[] { typeof(PartitionValidator) })]
+            Description = "Split output into partitions limited to this number of messages or a maximum file size (e.g. \"25mb\").")]
         public IPartitioner Partitoner { get; init; } = new NullPartitioner();
 
         [CommandOption("parallel", Description = "Limits how many channels can be exported in parallel.")]

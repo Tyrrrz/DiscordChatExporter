@@ -7,6 +7,6 @@ namespace DiscordChatExporter.Core.Exporting
 {
     public interface IPartitioner
     {
-        public bool IsLimitReached(ExportPartitioningContext context);
+        bool IsLimitReached(ExportPartitioningContext context);
     }
 }

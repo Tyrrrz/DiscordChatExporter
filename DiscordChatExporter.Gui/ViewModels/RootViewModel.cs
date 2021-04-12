@@ -242,19 +242,13 @@ namespace DiscordChatExporter.Gui.ViewModels
             {
                 var partitionFormat = dialog.SelectedPartitionFormat;
                 var partitionLimit = dialog.PartitionLimit;
-                if (partitionLimit == null)
-                {
-                    return new NullPartitioner();
-                }
 
-                if (partitionFormat == PartitionFormat.MessageCount)
+                return (partitionFormat, partitionLimit) switch
                 {
-                    return new MessageCountPartitioner((int)partitionLimit);
-                }
-                else
-                {
-                    return new FileSizePartitioner((int)partitionLimit);
-                }
+                    (PartitionFormat.MessageCount, int messageLimit) => new MessageCountPartitioner(messageLimit),
+                    (PartitionFormat.FileSize, int fileSizeLimit) => new FileSizePartitioner(fileSizeLimit),
+                    _ => new NullPartitioner()
+                };
             }
         }
     }

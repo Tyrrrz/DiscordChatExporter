@@ -23,9 +23,6 @@ jobs:
         with:
           dotnet-version: 5.0.x
 
-      - name: Reset NuGet locals
-        run: dotnet nuget locals all --clear
-
       - name: Build & publish (CLI)
         run: dotnet publish DiscordChatExporter.Cli/ -o DiscordChatExporter.Cli/bin/Publish/ --configuration Release
 

@@ -37,7 +37,7 @@ The following table lists all available download options:
       </td>
       <td>
         <ul>
-          <li>Windows <b>7</b>+</li>
+          <li>Windows <b>7</b> or higher</li>
         </ul>
       </td>
       <td>

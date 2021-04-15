@@ -26,7 +26,7 @@ namespace DiscordChatExporter.Core.Exporting.Writers
             });
         }
 
-        private string FormatMarkdown(string? markdown) =>
+        protected virtual string FormatMarkdown(string? markdown) =>
             PlainTextMarkdownVisitor.Format(Context, markdown ?? "");
 
         private async ValueTask WriteAttachmentAsync(Attachment attachment)

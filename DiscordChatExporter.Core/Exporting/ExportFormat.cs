@@ -8,7 +8,8 @@ namespace DiscordChatExporter.Core.Exporting
         HtmlDark,
         HtmlLight,
         Csv,
-        Json
+        Json,
+        JsonRaw
     }
 
     public static class ExportFormatExtensions
@@ -20,6 +21,7 @@ namespace DiscordChatExporter.Core.Exporting
             ExportFormat.HtmlLight => "html",
             ExportFormat.Csv => "csv",
             ExportFormat.Json => "json",
+            ExportFormat.JsonRaw => "json",
             _ => throw new ArgumentOutOfRangeException(nameof(format))
         };
 
@@ -30,6 +32,7 @@ namespace DiscordChatExporter.Core.Exporting
             ExportFormat.HtmlLight => "HTML (Light)",
             ExportFormat.Csv => "CSV",
             ExportFormat.Json => "JSON",
+            ExportFormat.JsonRaw => "JSON (no-formatting)",
             _ => throw new ArgumentOutOfRangeException(nameof(format))
         };
     }

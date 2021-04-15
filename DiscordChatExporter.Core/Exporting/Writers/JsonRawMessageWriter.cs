@@ -7,6 +7,5 @@ namespace DiscordChatExporter.Core.Exporting.Writers
         public JsonRawMessageWriter(Stream stream, ExportContext context) : base(stream, context) {}
 
         protected override string FormatMarkdown(string? markdown) => markdown ?? "";
-
     }
 }

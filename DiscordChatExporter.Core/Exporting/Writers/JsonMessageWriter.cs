@@ -230,7 +230,7 @@ namespace DiscordChatExporter.Core.Exporting.Writers
             _writer.WriteString("name", message.Author.Name);
             _writer.WriteString("discriminator", message.Author.DiscriminatorFormatted);
             _writer.WriteString("nickname", Context.TryGetMember(message.Author.Id)?.Nick ?? message.Author.Name);
-            _writer.WriteString("color", Context.TryGetUserColor(message.Author.Id)?.ToHex() ?? "#FFFFFF");
+            _writer.WriteString("color", Context.TryGetUserColor(message.Author.Id)?.ToHex());
             _writer.WriteBoolean("isBot", message.Author.IsBot);
             _writer.WriteString("avatarUrl", await Context.ResolveMediaUrlAsync(message.Author.AvatarUrl));
             _writer.WriteEndObject();

@@ -57,6 +57,16 @@ namespace DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors
 
         protected override MarkdownNode VisitEmoji(EmojiNode emoji)
         {
+            // Force the emoji to be downloaded if needed
+            if (emoji.IsAnimated)
+            {
+                _context.ResolveMediaUrlAsync($"https://cdn.discordapp.com/emojis/{emoji.Id}.gif");
+            }
+            else
+            {
+                _context.ResolveMediaUrlAsync($"https://cdn.discordapp.com/emojis/{emoji.Id}.png");
+            }
+
             _buffer.Append(
                 emoji.IsCustomEmoji
                     ? $":{emoji.Name}:"

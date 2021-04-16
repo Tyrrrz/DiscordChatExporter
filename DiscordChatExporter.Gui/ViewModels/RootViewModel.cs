@@ -7,7 +7,6 @@ using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Exporting;
-using DiscordChatExporter.Core.Exporting.Partitioning;
 using DiscordChatExporter.Core.Utils.Extensions;
 using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.Utils;
@@ -205,10 +204,6 @@ namespace DiscordChatExporter.Gui.ViewModels
 
                 try
                 {
-                    var partitionLimit = !string.IsNullOrWhiteSpace(dialog.PartitionLimitValue)
-                        ? PartitionLimit.Parse(dialog.PartitionLimitValue)
-                        : NullPartitionLimit.Instance;
-
                     var request = new ExportRequest(
                         dialog.Guild!,
                         channel!,
@@ -216,7 +211,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                         dialog.SelectedFormat,
                         dialog.After?.Pipe(Snowflake.FromDate),
                         dialog.Before?.Pipe(Snowflake.FromDate),
-                        partitionLimit,
+                        dialog.PartitionLimit,
                         dialog.ShouldDownloadMedia,
                         _settingsService.ShouldReuseMedia,
                         _settingsService.DateFormat

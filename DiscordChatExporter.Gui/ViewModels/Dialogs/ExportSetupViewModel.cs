@@ -4,6 +4,7 @@ using System.Linq;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exporting;
+using DiscordChatExporter.Core.Exporting.Partitioning;
 using DiscordChatExporter.Core.Utils.Extensions;
 using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.ViewModels.Framework;
@@ -47,6 +48,10 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
         public DateTimeOffset? Before => BeforeDate?.Add(BeforeTime ?? TimeSpan.Zero);
 
         public string? PartitionLimitValue { get; set; }
+
+        public PartitionLimit PartitionLimit => !string.IsNullOrWhiteSpace(PartitionLimitValue)
+            ? PartitionLimit.Parse(PartitionLimitValue)
+            : NullPartitionLimit.Instance;
 
         public bool ShouldDownloadMedia { get; set; }
 

@@ -11,17 +11,23 @@ namespace DiscordChatExporter.Core.Exporting.Writers
 
         protected ExportContext Context { get; }
 
+        public long MessagesWritten { get; private set; }
+
+        public long BytesWritten => Stream.Length;
+
         protected MessageWriter(Stream stream, ExportContext context)
         {
             Stream = stream;
             Context = context;
         }
 
-        public long SizeInBytes => Stream.Length;
-
         public virtual ValueTask WritePreambleAsync() => default;
 
-        public abstract ValueTask WriteMessageAsync(Message message);
+        public virtual ValueTask WriteMessageAsync(Message message)
+        {
+            MessagesWritten++;
+            return default;
+        }
 
         public virtual ValueTask WritePostambleAsync() => default;
 

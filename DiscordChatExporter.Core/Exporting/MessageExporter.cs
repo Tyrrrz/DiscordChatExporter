@@ -1,38 +1,21 @@
 ﻿using System;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using ByteSizeLib;
 using DiscordChatExporter.Core.Discord.Data;
-using DiscordChatExporter.Core.Exporting;
-using DiscordChatExporter.Core.Exporting.Partitioners;
 using DiscordChatExporter.Core.Exporting.Writers;
 
 namespace DiscordChatExporter.Core.Exporting
 {
     internal partial class MessageExporter : IAsyncDisposable
     {
-
         private readonly ExportContext _context;
 
-        private long _messageCount;
         private int _partitionIndex;
         private MessageWriter? _writer;
 
         public MessageExporter(ExportContext context)
         {
             _context = context;
-        }
-
-        private bool IsPartitionLimitReached()
-        {
-            if (_writer is null)
-            {
-                return false;
-            }
-
-            return _context.Request.Partitoner.IsLimitReached(
-                new ExportPartitioningContext(_messageCount, _writer.SizeInBytes));
         }
 
         private async ValueTask ResetWriterAsync()
@@ -48,7 +31,8 @@ namespace DiscordChatExporter.Core.Exporting
         private async ValueTask<MessageWriter> GetWriterAsync()
         {
             // Ensure partition limit has not been exceeded
-            if (_writer != null && IsPartitionLimitReached())
+            if (_writer is not null &&
+                _context.Request.PartitionLimit.IsReached(_writer.MessagesWritten, _writer.BytesWritten))
             {
                 await ResetWriterAsync();
                 _partitionIndex++;
@@ -74,7 +58,6 @@ namespace DiscordChatExporter.Core.Exporting
         {
             var writer = await GetWriterAsync();
             await writer.WriteMessageAsync(message);
-            _messageCount++;
         }
 
         public async ValueTask DisposeAsync() => await ResetWriterAsync();
@@ -82,9 +65,7 @@ namespace DiscordChatExporter.Core.Exporting
 
     internal partial class MessageExporter
     {
-        private static string GetPartitionFilePath(
-            string baseFilePath,
-            int partitionIndex)
+        private static string GetPartitionFilePath(string baseFilePath, int partitionIndex)
         {
             // First partition - don't change file name
             if (partitionIndex <= 0)

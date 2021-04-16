@@ -1,10 +1,10 @@
 ﻿@namespace DiscordChatExporter.Core.Exporting.Writers.Html
-@inherits MiniRazor.TemplateBase<DiscordChatExporter.Core.Exporting.Writers.Html.LayoutTemplateContext>
+@inherits MiniRazor.TemplateBase<DiscordChatExporter.Core.Exporting.Writers.Html.PostambleTemplateContext>
 
 </div>
 
 <div class="postamble">
-    <div class="postamble__entry">Exported @Model.MessageCount.ToString("N0") message(s)</div>
+    <div class="postamble__entry">Exported @Model.MessagesWritten.ToString("N0") message(s)</div>
 </div>
 
 </body>

@@ -1,18 +1,15 @@
 ﻿namespace DiscordChatExporter.Core.Exporting.Writers.Html
 {
-    internal class LayoutTemplateContext
+    internal class PreambleTemplateContext
     {
         public ExportContext ExportContext { get; }
 
         public string ThemeName { get; }
 
-        public long MessageCount { get; }
-
-        public LayoutTemplateContext(ExportContext exportContext, string themeName, long messageCount)
+        public PreambleTemplateContext(ExportContext exportContext, string themeName)
         {
             ExportContext = exportContext;
             ThemeName = themeName;
-            MessageCount = messageCount;
         }
     }
 }

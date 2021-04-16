@@ -126,43 +126,12 @@
             </Grid>
 
             <!--  Partitioning  -->
-            <Grid Name="PartitioningGrid">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-
-                <ComboBox
-                    Name="PartitionFormatComboBox"
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    Margin="16,8"
-                    materialDesign:HintAssist.Hint="Partition by"
-                    materialDesign:HintAssist.IsFloating="True"
-                    IsReadOnly="True"
-                    ItemsSource="{Binding AvailablePartitionFormats}"
-                    SelectedItem="{Binding SelectedPartitionFormat}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Converter={x:Static converters:PartitionFormatToStringConverter.Instance}}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-
-                <TextBox
-                    Name="PartitionTextBox"
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    Margin="16,8"
-                    materialDesign:HintAssist.Hint="{Binding SelectedPartitionFormat, Converter={x:Static converters:PartitionFormatToTooltipConverter.Instance}}"
-                    materialDesign:HintAssist.IsFloating="True"
-                    Text="{Binding PartitionLimit, TargetNullValue=''}"
-                    ToolTip="{Binding SelectedPartitionFormat, Converter={x:Static converters:PartitionFormatToTooltipConverter.Instance}}" />
-
-            </Grid>
+            <TextBox
+                Margin="16,8"
+                materialDesign:HintAssist.Hint="Partition limit"
+                materialDesign:HintAssist.IsFloating="True"
+                Text="{Binding PartitionLimitValue}"
+                ToolTip="Split output into partitions, each limited to this number of message (e.g. 100) or file size (e.g. 10mb)" />
 
             <!--  Download media  -->
             <Grid Margin="16,16" ToolTip="Download referenced media content (user avatars, attached files, embedded images, etc)">

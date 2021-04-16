@@ -58,6 +58,8 @@ namespace DiscordChatExporter.Core.Exporting.Writers
 
         public override async ValueTask WriteMessageAsync(Message message)
         {
+            await base.WriteMessageAsync(message);
+
             // Author ID
             await _writer.WriteAsync(CsvEncode(message.Author.Id.ToString()));
             await _writer.WriteAsync(',');

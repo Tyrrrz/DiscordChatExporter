@@ -2,7 +2,7 @@
 @using System.Threading.Tasks
 @using Tyrrrz.Extensions
 @namespace DiscordChatExporter.Core.Exporting.Writers.Html
-@inherits MiniRazor.TemplateBase<DiscordChatExporter.Core.Exporting.Writers.Html.LayoutTemplateContext>
+@inherits MiniRazor.TemplateBase<DiscordChatExporter.Core.Exporting.Writers.Html.PreambleTemplateContext>
 
 @{
     string FormatDate(DateTimeOffset date) => Model.ExportContext.FormatDate(date);

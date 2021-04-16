@@ -14,8 +14,6 @@ namespace DiscordChatExporter.Core.Exporting.Writers
 
         private readonly List<Message> _messageGroupBuffer = new();
 
-        private long _messageCount;
-
         public HtmlMessageWriter(Stream stream, ExportContext context, string themeName)
             : base(stream, context)
         {
@@ -25,7 +23,7 @@ namespace DiscordChatExporter.Core.Exporting.Writers
 
         public override async ValueTask WritePreambleAsync()
         {
-            var templateContext = new LayoutTemplateContext(Context, _themeName, _messageCount);
+            var templateContext = new PreambleTemplateContext(Context, _themeName);
 
             await _writer.WriteLineAsync(
                 await PreambleTemplate.RenderAsync(templateContext)
@@ -43,6 +41,8 @@ namespace DiscordChatExporter.Core.Exporting.Writers
 
         public override async ValueTask WriteMessageAsync(Message message)
         {
+            await base.WriteMessageAsync(message);
+
             // If message group is empty or the given message can be grouped, buffer the given message
             if (!_messageGroupBuffer.Any() || MessageGroup.CanJoin(_messageGroupBuffer.Last(), message))
             {
@@ -56,9 +56,6 @@ namespace DiscordChatExporter.Core.Exporting.Writers
                 _messageGroupBuffer.Clear();
                 _messageGroupBuffer.Add(message);
             }
-
-            // Increment message count
-            _messageCount++;
         }
 
         public override async ValueTask WritePostambleAsync()
@@ -67,7 +64,7 @@ namespace DiscordChatExporter.Core.Exporting.Writers
             if (_messageGroupBuffer.Any())
                 await WriteMessageGroupAsync(MessageGroup.Join(_messageGroupBuffer));
 
-            var templateContext = new LayoutTemplateContext(Context, _themeName, _messageCount);
+            var templateContext = new PostambleTemplateContext(Context, MessagesWritten);
 
             await _writer.WriteLineAsync(
                 await PostambleTemplate.RenderAsync(templateContext)

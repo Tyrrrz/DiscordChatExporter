@@ -5,7 +5,6 @@ using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Reading;
-using FileSize = DiscordChatExporter.Core.Discord.Data.Common.FileSize;
 
 namespace DiscordChatExporter.Core.Discord.Data
 {

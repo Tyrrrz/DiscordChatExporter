@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
+using DiscordChatExporter.Core.Exporting.Partitioning;
 using DiscordChatExporter.Core.Utils;
 
 namespace DiscordChatExporter.Core.Exporting
@@ -28,7 +29,7 @@ namespace DiscordChatExporter.Core.Exporting
 
         public Snowflake? Before { get; }
 
-        public IPartitioner Partitoner { get; }
+        public PartitionLimit PartitionLimit { get; }
 
         public bool ShouldDownloadMedia { get; }
 
@@ -43,7 +44,7 @@ namespace DiscordChatExporter.Core.Exporting
             ExportFormat format,
             Snowflake? after,
             Snowflake? before,
-            IPartitioner partitioner,
+            PartitionLimit partitionLimit,
             bool shouldDownloadMedia,
             bool shouldReuseMedia,
             string dateFormat)
@@ -54,7 +55,7 @@ namespace DiscordChatExporter.Core.Exporting
             Format = format;
             After = after;
             Before = before;
-            Partitoner = partitioner;
+            PartitionLimit = partitionLimit;
             ShouldDownloadMedia = shouldDownloadMedia;
             ShouldReuseMedia = shouldReuseMedia;
             DateFormat = dateFormat;

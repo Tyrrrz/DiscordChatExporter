@@ -48,7 +48,7 @@ namespace DiscordChatExporter.Core.Discord
         }
 
         public static Snowflake Parse(string str, IFormatProvider? formatProvider) =>
-            TryParse(str, formatProvider) ?? throw new FormatException($"Invalid snowflake: {str}.");
+            TryParse(str, formatProvider) ?? throw new FormatException($"Invalid snowflake '{str}'.");
 
         public static Snowflake Parse(string str) => Parse(str, null);
     }

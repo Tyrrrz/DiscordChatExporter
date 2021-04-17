@@ -191,6 +191,7 @@ namespace DiscordChatExporter.Core.Exporting.Writers
             _writer.WriteStartObject("channel");
             _writer.WriteString("id", Context.Request.Channel.Id.ToString());
             _writer.WriteString("type", Context.Request.Channel.Type.ToString());
+            _writer.WriteString("categoryId", Context.Request.Channel.Category.Id.ToString());
             _writer.WriteString("category", Context.Request.Channel.Category.Name);
             _writer.WriteString("name", Context.Request.Channel.Name);
             _writer.WriteString("topic", Context.Request.Channel.Topic);

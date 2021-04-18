@@ -41,7 +41,7 @@
             <Style BasedOn="{StaticResource MaterialDesignLinearProgressBar}" TargetType="{x:Type ProgressBar}">
                 <Setter Property="BorderThickness" Value="0" />
                 <Setter Property="Background" Value="Transparent" />
-                <Setter Property="Foreground" Value="{DynamicResource SecondaryAccentBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource SecondaryHueMidBrush}" />
                 <Setter Property="Height" Value="2" />
                 <Setter Property="Maximum" Value="1" />
                 <Setter Property="Minimum" Value="0" />
@@ -68,7 +68,7 @@
                             <Setter Property="Height" Value="36" />
                             <Setter Property="Margin" Value="8,-10,-8,-10" />
                             <Setter Property="Padding" Value="8" />
-                            <Setter Property="Foreground" Value="{DynamicResource SecondaryAccentBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource SecondaryHueMidBrush}" />
                             <Setter Property="materialDesign:RippleAssist.Feedback" Value="{DynamicResource MaterialDesignSnackbarRipple}" />
                         </Style>
                     </Setter.Value>
@@ -122,7 +122,7 @@
                                         IsChecked="{Binding Path=IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                         IsTabStop="False"
                                         Opacity=".87"
-                                        Style="{StaticResource MaterialDesignExpanderDownHeaderStyle}"
+                                        Style="{StaticResource MaterialDesignExpanderToggleButton}"
                                         TextElement.FontSize="15" />
                                     <Border
                                         Name="ContentSite"
@@ -152,7 +152,7 @@
                                     <Setter TargetName="ContentSite" Property="DockPanel.Dock" Value="Right" />
                                     <Setter TargetName="ContentPanel" Property="Orientation" Value="Horizontal" />
                                     <Setter TargetName="ContentPanel" Property="Height" Value="Auto" />
-                                    <Setter TargetName="HeaderSite" Property="Style" Value="{StaticResource MaterialDesignExpanderRightHeaderStyle}" />
+                                    <Setter TargetName="HeaderSite" Property="Style" Value="{StaticResource MaterialDesignVerticalHeaderStyle}" />
                                 </Trigger>
 
                                 <Trigger Property="ExpandDirection" Value="Left">
@@ -160,7 +160,7 @@
                                     <Setter TargetName="ContentSite" Property="DockPanel.Dock" Value="Left" />
                                     <Setter TargetName="ContentPanel" Property="Orientation" Value="Horizontal" />
                                     <Setter TargetName="ContentPanel" Property="Height" Value="Auto" />
-                                    <Setter TargetName="HeaderSite" Property="Style" Value="{StaticResource MaterialDesignExpanderLeftHeaderStyle}" />
+                                    <Setter TargetName="HeaderSite" Property="Style" Value="{StaticResource MaterialDesignVerticalHeaderStyle}" />
                                 </Trigger>
 
                                 <Trigger Property="ExpandDirection" Value="Up">
@@ -168,7 +168,7 @@
                                     <Setter TargetName="ContentSite" Property="DockPanel.Dock" Value="Top" />
                                     <Setter TargetName="ContentPanel" Property="Orientation" Value="Vertical" />
                                     <Setter TargetName="ContentPanel" Property="Width" Value="Auto" />
-                                    <Setter TargetName="HeaderSite" Property="Style" Value="{StaticResource MaterialDesignExpanderUpHeaderStyle}" />
+                                    <Setter TargetName="HeaderSite" Property="Style" Value="{StaticResource MaterialDesignHorizontalHeaderStyle}" />
                                 </Trigger>
 
                                 <Trigger Property="ExpandDirection" Value="Down">
@@ -176,7 +176,7 @@
                                     <Setter TargetName="ContentSite" Property="DockPanel.Dock" Value="Bottom" />
                                     <Setter TargetName="ContentPanel" Property="Orientation" Value="Vertical" />
                                     <Setter TargetName="ContentPanel" Property="Width" Value="Auto" />
-                                    <Setter TargetName="HeaderSite" Property="Style" Value="{StaticResource MaterialDesignExpanderDownHeaderStyle}" />
+                                    <Setter TargetName="HeaderSite" Property="Style" Value="{StaticResource MaterialDesignHorizontalHeaderStyle}" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>

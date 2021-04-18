@@ -17,7 +17,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Framework
             _viewManager = viewManager;
         }
 
-        public async ValueTask<T> ShowDialogAsync<T>(DialogScreen<T> dialogScreen)
+        public async ValueTask<T?> ShowDialogAsync<T>(DialogScreen<T> dialogScreen)
         {
             var view = _viewManager.CreateAndBindViewForModelIfNecessary(dialogScreen);
 

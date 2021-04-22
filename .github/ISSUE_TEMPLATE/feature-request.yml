@@ -1,7 +1,6 @@
-name: "\U1F5E8 Feature request"
-description: Report broken functionality.
+name: "\U00002728 Feature request"
+description: Request a new feature.
 labels: [enhancement]
-issue_body: false
 body:
 - type: markdown
   attributes:

@@ -1,7 +1,6 @@
-name: "\U1F41E Bug report"
+name: "\U0001F41E Bug report"
 description: Report broken functionality.
 labels: [bug]
-issue_body: false
 body:
 - type: markdown
   attributes:

@@ -1,0 +1,43 @@
+name: "\U1F41E Bug report"
+description: Report broken functionality.
+labels: [bug]
+issue_body: false
+body:
+- type: markdown
+  attributes:
+    value: |
+      - Please check existing issues (both opened and closed) to ensure that this bug hasn't been reported before.
+      - Refer to the [contribution guidelines](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/Contributing.md) for info on how to file a good issue.
+      - If you want to ask a question instead of reporting a bug, use [**discussions**](https://github.com/Tyrrrz/DiscordChatExporter/discussions/new) instead.
+
+- type: input
+  attributes:
+    label: Version
+    description: "Which version(s) of DiscordChatExporter does this bug affect?"
+  validations:
+    required: true
+
+- type: dropdown
+  attributes:
+    label: Flavor
+    description: "Which flavor(s) of DiscordChatExporter does this bug affect?"
+    multiple: true
+    options:
+    - GUI (Graphical User Interface)
+    - CLI (Command Line Interface)
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: Details
+    description: "Clear and thorough explanation of the bug. If relevant, include screenshots or screen recordings."
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: Steps to reproduce
+    description: "Minimum steps required to reproduce the bug."
+  validations:
+    required: true

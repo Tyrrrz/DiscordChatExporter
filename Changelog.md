@@ -1,3 +1,14 @@
+### v2.27 (24-Apr-2021)
+
+- Added partitioning by file size. You can now use values such as `10mb` to indicate a size-based cut off point, in addition to values like `10` to indicate a number of messages. (Thanks [@Andrew Kolos](https://github.com/andrewkolos))
+- [CLI] Improved formatting and progress reporting.
+- [CLI] Changed `export` command so that it can accept multiple channel IDs passed to `-c|--channel` option. This makes it possible to export multiple channels at once while benefiting from parallelization.
+- [JSON] Added `color` field to message author. This is a hex string that represents user's color, inherited from their roles. (Thanks [@rtm516](https://github.com/rtm516))
+- [JSON] Added `categoryId` field to the root. This represents the ID of the category channel that the currently exported channel belongs to. (Thanks [@rtm516](https://github.com/rtm516))
+- [JSON] Fixed an issue where user discriminator was written without leading zeroes. (Thanks [@Lucas LaBuff](https://github.com/96-LB))
+- [JSON] Fixed an issue where the application sometimes crashed with an error saying `']' invalid without a matching open`, which was just a validation message that masked the actual error behind the failure. (Thanks [@Lucas LaBuff](https://github.com/96-LB))
+- Fixed an issue where progress was not reported correctly if the channel didn't have any messages in the specified time range.
+
 ### v2.26.1 (06-Feb-2021)
 
 - [CLI] Added support for file name templates, which allow you to dynamically generate output file names based on channel and guild metadata. (Thanks [@Lucas LaBuff](https://github.com/96-LB))

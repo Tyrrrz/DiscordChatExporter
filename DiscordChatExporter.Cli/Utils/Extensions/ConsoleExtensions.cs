@@ -33,7 +33,11 @@ namespace DiscordChatExporter.Cli.Utils.Extensions
             string description,
             Func<ProgressTask, ValueTask> performOperationAsync)
         {
-            var progressTask = progressContext.AddTask(description, new ProgressTaskSettings {MaxValue = 1});
+            var progressTask = progressContext.AddTask(
+                // Don't recognize random square brackets as style tags
+                Markup.Escape(description),
+                new ProgressTaskSettings {MaxValue = 1}
+            );
 
             try
             {

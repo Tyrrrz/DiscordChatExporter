@@ -14,6 +14,7 @@ using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Core.Exporting.Partitioning;
 using DiscordChatExporter.Core.Utils.Extensions;
+using Spectre.Console;
 using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Cli.Commands.Base
@@ -64,7 +65,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
                     // Export
                     try
                     {
-                        await progressContext.StartTaskAsync($"{channel.Category} / {channel.Name}", async progress =>
+                        await progressContext.StartTaskAsync(Markup.Escape($"{channel.Category} / {channel.Name}"), async progress =>
                         {
                             var guild = await Discord.GetGuildAsync(channel.GuildId);
 

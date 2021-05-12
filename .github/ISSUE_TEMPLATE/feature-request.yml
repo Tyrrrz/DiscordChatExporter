@@ -5,22 +5,35 @@ body:
 - type: markdown
   attributes:
     value: |
+      Important:
+
       - Please check existing issues (both opened and closed) to ensure that this feature hasn't been requested before.
       - Refer to the [contribution guidelines](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/Contributing.md) for info on how to file a good issue.
-      - If you want to ask a question instead of requesting a feature, use [**discussions**](https://github.com/Tyrrrz/DiscordChatExporter/discussions/new) instead.
+      - If you want to ask a question instead of requesting a feature, please use [discussions](https://github.com/Tyrrrz/DiscordChatExporter/discussions/new) instead.
 
 - type: dropdown
   attributes:
     label: Flavor
-    description: "Which flavor(s) of DiscordChatExporter does this feature request apply to?"
+    description: "Which flavor(s) of DiscordChatExporter does this feature request apply to? If this feature is not related to any specific flavor, leave this blank."
     multiple: true
     options:
     - GUI (Graphical User Interface)
     - CLI (Command Line Interface)
 
+- type: dropdown
+  attributes:
+    label: Export format
+    description: "Which export format(s) does this feature request apply to? If this feature is not related to any specific export format, leave this blank."
+    multiple: true
+    options:
+    - HTML
+    - TXT
+    - JSON
+    - CSV
+
 - type: textarea
   attributes:
     label: Details
-    description: "Clear and thorough explanation of the feature you have in mind."
+    description: "Clear and thorough explanation of the feature you have in mind. If relevant, include screenshots or screen recordings."
   validations:
     required: true

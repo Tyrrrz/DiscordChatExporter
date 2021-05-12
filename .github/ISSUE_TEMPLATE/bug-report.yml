@@ -5,9 +5,11 @@ body:
 - type: markdown
   attributes:
     value: |
+      Important:
+
       - Please check existing issues (both opened and closed) to ensure that this bug hasn't been reported before.
       - Refer to the [contribution guidelines](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/Contributing.md) for info on how to file a good issue.
-      - If you want to ask a question instead of reporting a bug, use [**discussions**](https://github.com/Tyrrrz/DiscordChatExporter/discussions/new) instead.
+      - If you want to ask a question instead of reporting a bug, please use [discussions](https://github.com/Tyrrrz/DiscordChatExporter/discussions/new) instead.
 
 - type: input
   attributes:
@@ -26,6 +28,17 @@ body:
     - CLI (Command Line Interface)
   validations:
     required: true
+
+- type: dropdown
+  attributes:
+    label: Export format
+    description: "Which export format(s) does this bug affect? If this bug is not related to any specific export format, leave this blank."
+    multiple: true
+    options:
+    - HTML
+    - TXT
+    - JSON
+    - CSV
 
 - type: textarea
   attributes:

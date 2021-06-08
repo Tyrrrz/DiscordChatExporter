@@ -41,7 +41,7 @@ The following table lists all available download options:
         </ul>
       </td>
       <td>
-        <div>.NET v3.1 Desktop Runtime</div>
+        <div>.NET Core v3.1 Desktop Runtime</div>
         <ul>
           <li><a href="https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.0-windows-x64-installer">Windows <b>x64</b></a></li>
           <li><a href="https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.0-windows-x86-installer">Windows <b>x86</b></a></li>
@@ -66,7 +66,7 @@ The following table lists all available download options:
         </ul>
       </td>
       <td>
-        <div>.NET v3.1 Base Runtime</div>
+        <div>.NET Core v3.1 Base Runtime</div>
         <ul>
           <li><a href="https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.0-windows-x64-installer">Windows <b>x64</b></a></li>
           <li><a href="https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.0-windows-x86-installer">Windows <b>x86</b></a></li>
@@ -81,7 +81,7 @@ The following table lists all available download options:
 - 🚀 - .NET Runtime is already embedded or installed automatically
 - 🦄 - Community-maintained resource
 
-> Note that DiscordChatExporter requires **.NET v3.1 Runtime** in order to work!
+> Note that DiscordChatExporter requires **.NET Core v3.1 Runtime** in order to work!
 Refer to the **Requirements** column in the above table to download the appropriate installer for your system.
 
 ## Features

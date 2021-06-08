@@ -1,3 +1,8 @@
+### v2.27.1 (08-Jun-2021)
+
+- [GUI] Application will now detect if the required .NET Runtime or any of its prerequisites are missing and prompt the user to download and install them automatically. **Experimental feature, please test it out and report any issues you may find!**
+- [CLI] Fixed an issue where the application crashed when exporting a channel that had square brackets as part of its name or category name. (Thanks [@Lucas LaBuff](https://github.com/96-LB))
+
 ### v2.27 (24-Apr-2021)
 
 - Added partitioning by file size. You can now use values such as `10mb` to indicate a size-based cut off point, in addition to values like `10` to indicate a number of messages. (Thanks [@Andrew Kolos](https://github.com/andrewkolos))

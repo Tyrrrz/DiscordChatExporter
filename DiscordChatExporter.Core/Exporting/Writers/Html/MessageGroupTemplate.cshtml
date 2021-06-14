@@ -54,7 +54,7 @@
             {
                 <img class="chatlog__reference-avatar" src="@await ResolveUrlAsync(Model.MessageGroup.ReferencedMessage.Author.AvatarUrl)" alt="Avatar">
                 <span class="chatlog__reference-name" title="@Model.MessageGroup.ReferencedMessage.Author.FullName" style="@referencedUserColorStyle">@referencedUserNick</span>
-                <a class="chatlog__reference-link" href="#" onclick="scrollToMessage(event, '@Model.MessageGroup.ReferencedMessage.Id')">
+                <div class="chatlog__reference-link" onclick="scrollToMessage(event, '@Model.MessageGroup.ReferencedMessage.Id')">
                     <span class="chatlog__reference-content">
                         @if (!string.IsNullOrWhiteSpace(Model.MessageGroup.ReferencedMessage.Content))
                         {
@@ -70,7 +70,7 @@
                     {
                         <span class="chatlog__reference-edited-timestamp" title="@FormatDate(Model.MessageGroup.ReferencedMessage.EditedTimestamp.Value)">(edited)</span>
                     }
-                </a>
+                </div>
             }
             else
             {

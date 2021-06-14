@@ -480,6 +480,7 @@ img {
 }
 
 .chatlog__embed-footer-text {
+    vertical-align: middle;
     font-size: 0.75em;
     font-weight: 500;
 }

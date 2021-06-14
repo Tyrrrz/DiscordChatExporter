@@ -10,10 +10,13 @@ namespace DiscordChatExporter.Core.Discord.Data
 
         public string? IconUrl { get; }
 
-        public EmbedFooter(string text, string? iconUrl)
+        public string? IconProxyUrl { get; }
+
+        public EmbedFooter(string text, string? iconUrl, string? iconProxyUrl)
         {
             Text = text;
             IconUrl = iconUrl;
+            IconProxyUrl = iconProxyUrl;
         }
 
         public override string ToString() => Text;
@@ -25,8 +28,9 @@ namespace DiscordChatExporter.Core.Discord.Data
         {
             var text = json.GetProperty("text").GetString();
             var iconUrl = json.GetPropertyOrNull("icon_url")?.GetString();
+            var iconProxyUrl = json.GetPropertyOrNull("proxy_icon_url")?.GetString();
 
-            return new EmbedFooter(text, iconUrl);
+            return new EmbedFooter(text, iconUrl, iconProxyUrl);
         }
     }
 }

@@ -12,11 +12,14 @@ namespace DiscordChatExporter.Core.Discord.Data
 
         public string? IconUrl { get; }
 
-        public EmbedAuthor(string? name, string? url, string? iconUrl)
+        public string? IconProxyUrl { get; }
+
+        public EmbedAuthor(string? name, string? url, string? iconUrl, string? iconProxyUrl)
         {
             Name = name;
             Url = url;
             IconUrl = iconUrl;
+            IconProxyUrl = iconProxyUrl;
         }
 
         public override string ToString() => Name ?? "<unnamed author>";
@@ -29,8 +32,9 @@ namespace DiscordChatExporter.Core.Discord.Data
             var name = json.GetPropertyOrNull("name")?.GetString();
             var url = json.GetPropertyOrNull("url")?.GetString();
             var iconUrl = json.GetPropertyOrNull("icon_url")?.GetString();
+            var iconProxyUrl = json.GetPropertyOrNull("proxy_icon_url")?.GetString();
 
-            return new EmbedAuthor(name, url, iconUrl);
+            return new EmbedAuthor(name, url, iconUrl, iconProxyUrl);
         }
     }
 }

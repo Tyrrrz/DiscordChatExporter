@@ -45,7 +45,7 @@ namespace DiscordChatExporter.Core.Exporting
 
             Directory.CreateDirectory(_workingDirPath);
 
-            // This catches IOExceptions which is dangerous as we're working also with files
+            // This retries on IOExceptions which is dangerous as we're also working with files
             await Http.ExceptionPolicy.ExecuteAsync(async () =>
             {
                 // Download the file
@@ -56,17 +56,27 @@ namespace DiscordChatExporter.Core.Exporting
                 }
 
                 // Try to set the file date according to the last-modified header
-                var lastModified = response.Content.Headers.TryGetValue("Last-Modified")?.Pipe(s =>
-                    DateTimeOffset.TryParse(s, CultureInfo.InvariantCulture, DateTimeStyles.None, out var date)
-                        ? date
-                        : (DateTimeOffset?) null
-                );
-
-                if (lastModified is not null)
+                try
                 {
-                    File.SetCreationTimeUtc(filePath, lastModified.Value.UtcDateTime);
-                    File.SetLastWriteTimeUtc(filePath, lastModified.Value.UtcDateTime);
-                    File.SetLastAccessTimeUtc(filePath, lastModified.Value.UtcDateTime);
+                    var lastModified = response.Content.Headers.TryGetValue("Last-Modified")?.Pipe(s =>
+                        DateTimeOffset.TryParse(s, CultureInfo.InvariantCulture, DateTimeStyles.None, out var date)
+                            ? date
+                            : (DateTimeOffset?) null
+                    );
+
+                    if (lastModified is not null)
+                    {
+                        File.SetCreationTimeUtc(filePath, lastModified.Value.UtcDateTime);
+                        File.SetLastWriteTimeUtc(filePath, lastModified.Value.UtcDateTime);
+                        File.SetLastAccessTimeUtc(filePath, lastModified.Value.UtcDateTime);
+                    }
+                }
+                catch
+                {
+                    // This can apparently fail for some reason.
+                    // https://github.com/Tyrrrz/DiscordChatExporter/issues/585
+                    // Updating file dates is not a critical task, so we'll just
+                    // ignore exceptions thrown here.
                 }
             });
 

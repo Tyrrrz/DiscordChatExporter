@@ -97,7 +97,7 @@
         {
             var isPinnedStyle = message.IsPinned ? "chatlog__message--pinned" : null;
 
-            <div class="chatlog__message @isPinnedStyle" data-message-id="@message.Id" id="message-@message.Id">
+            <div class="chatlog__message @isPinnedStyle" data-message-id="@message.Id" id="message-@message.Id" title="@FormatDate(message.Timestamp)">
                 @if (!string.IsNullOrWhiteSpace(message.Content) || message.EditedTimestamp is not null)
                 {
                     <div class="chatlog__content">

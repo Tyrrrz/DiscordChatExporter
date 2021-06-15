@@ -214,20 +214,15 @@
                                             }
                                         </div>
                                     }
-                                    @if (!string.IsNullOrWhiteSpace(embed.Url))
+                                    @if (!string.IsNullOrWhiteSpace(embed.Url) && embed.Url.IndexOf("youtube.com/watch?v=") != -1)
                                     {
-                                        if (embed.Url.IndexOf("youtube.com/watch?v=") != -1)
+
+                                        if (embed.Thumbnail is not null && !string.IsNullOrWhiteSpace(embed.Thumbnail.Url))
                                         {
                                             <div class="chatlog__embed-youtube-container">
                                                 <iframe class="chatlog__embed-youtube" width="400" height="225"
                                                         src="@embed.Url.Replace("/watch?v=", "/embed/")">
                                                 </iframe>
-                                            </div>
-                                        }
-                                        else if (!string.IsNullOrWhiteSpace(embed.Description))
-                                        {
-                                            <div class="chatlog__embed-description">
-                                                <div class="markdown preserve-whitespace">@Raw(FormatEmbedMarkdown(embed.Description))</div>
                                             </div>
                                         }
                                     }
@@ -267,18 +262,7 @@
 
                                 @if (embed.Thumbnail is not null && !string.IsNullOrWhiteSpace(embed.Thumbnail.Url))
                                 {
-                                    if (!string.IsNullOrWhiteSpace(embed.Url))
-                                    {
-                                        if (embed.Url.IndexOf("youtube.com/watch?v=") == -1)
-                                        {
-                                            <div class="chatlog__embed-thumbnail-container">
-                                                <a class="chatlog__embed-thumbnail-link" href="@await ResolveUrlAsync(embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url)">
-                                                    <img class="chatlog__embed-thumbnail" src="@await ResolveUrlAsync(embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url)" alt="Thumbnail">
-                                                </a>
-                                            </div>
-                                        }
-                                    }
-                                    else
+                                    if (string.IsNullOrWhiteSpace(embed.Url) || embed.Url.IndexOf("youtube.com/watch?v=") == -1)
                                     {
                                         <div class="chatlog__embed-thumbnail-container">
                                             <a class="chatlog__embed-thumbnail-link" href="@await ResolveUrlAsync(embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url)">

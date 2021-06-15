@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="CliFx" Version="2.0.4" />
-    <PackageReference Include="Spectre.Console" Version="0.39.0" />
+    <PackageReference Include="Spectre.Console" Version="0.40.0" />
     <PackageReference Include="Gress" Version="1.2.0" />
     <PackageReference Include="Tyrrrz.Extensions" Version="1.6.5" />
   </ItemGroup>

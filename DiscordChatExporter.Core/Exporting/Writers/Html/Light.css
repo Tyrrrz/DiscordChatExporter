@@ -7,7 +7,7 @@ body {
 }
 
 a {
-    color: #00b0f4;
+    color: #0068e0;
 }
 
 .spoiler-text {
@@ -115,7 +115,7 @@ a {
 }
 
 .chatlog__embed-description {
-    color: #737f8d;
+    color: #2e3338;
 }
 
 .chatlog__embed-field-name {
@@ -123,11 +123,11 @@ a {
 }
 
 .chatlog__embed-field-value {
-    color: #737f8d;
+    color: #2e3338;
 }
 
 .chatlog__embed-footer {
-    color: rgba(79, 83, 91, 0.6);
+    color: #2e3338;
 }
 
 .chatlog__reaction {

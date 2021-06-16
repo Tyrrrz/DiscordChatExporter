@@ -6,7 +6,7 @@ body {
 }
 
 a {
-    color: #0096cf;
+    color: #00aff4;
 }
 
 .spoiler-text {
@@ -34,7 +34,7 @@ a {
     color: #b9bbbe !important;
 }
 
-/* === Preamble === */
+/* Preamble */
 
 .preamble__entry {
     color: #ffffff;
@@ -92,7 +92,7 @@ a {
 }
 
 .chatlog__embed-color-pill--default {
-    background-color: rgba(79, 84, 92, 1);
+    background-color: #202225;
 }
 
 .chatlog__embed-content-container {
@@ -113,7 +113,7 @@ a {
 }
 
 .chatlog__embed-description {
-    color: rgba(255, 255, 255, 0.6);
+    color: #dcddde;
 }
 
 .chatlog__embed-field-name {
@@ -121,11 +121,11 @@ a {
 }
 
 .chatlog__embed-field-value {
-    color: rgba(255, 255, 255, 0.6);
+    color: #dcddde;
 }
 
 .chatlog__embed-footer {
-    color: rgba(255, 255, 255, 0.6);
+    color: #dcddde;
 }
 
 .chatlog__reaction {

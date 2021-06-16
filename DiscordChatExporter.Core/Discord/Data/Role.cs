@@ -40,7 +40,8 @@ namespace DiscordChatExporter.Core.Discord.Data
             var name = json.GetProperty("name").GetString();
             var position = json.GetProperty("position").GetInt32();
 
-            var color = json.GetPropertyOrNull("color")?
+            var color = json
+                .GetPropertyOrNull("color")?
                 .GetInt32()
                 .Pipe(System.Drawing.Color.FromArgb)
                 .ResetAlpha()

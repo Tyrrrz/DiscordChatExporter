@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using DiscordChatExporter.Core.Utils.Extensions;
 using Polly;
 
 namespace DiscordChatExporter.Core.Utils
@@ -41,21 +42,24 @@ namespace DiscordChatExporter.Core.Utils
                     },
                     (_, _, _, _) => Task.CompletedTask);
 
-        private static HttpStatusCode? TryGetStatusCodeFromException(HttpRequestException ex)
-        {
+        private static HttpStatusCode? TryGetStatusCodeFromException(HttpRequestException ex) =>
             // This is extremely frail, but there's no other way
-            var statusCodeRaw = Regex.Match(ex.Message, @": (\d+) \(").Groups[1].Value;
-            return !string.IsNullOrWhiteSpace(statusCodeRaw)
-                ? (HttpStatusCode) int.Parse(statusCodeRaw, CultureInfo.InvariantCulture)
-                : (HttpStatusCode?) null;
-        }
+            Regex
+                .Match(ex.Message, @": (\d+) \(")
+                .Groups[1]
+                .Value
+                .NullIfWhiteSpace()?
+                .Pipe(s => (HttpStatusCode) int.Parse(s, CultureInfo.InvariantCulture));
 
         public static IAsyncPolicy ExceptionPolicy { get; } =
             Policy
                 .Handle<IOException>() // dangerous
-                .Or<HttpRequestException>(ex => TryGetStatusCodeFromException(ex) == HttpStatusCode.TooManyRequests)
-                .Or<HttpRequestException>(ex => TryGetStatusCodeFromException(ex) == HttpStatusCode.RequestTimeout)
-                .Or<HttpRequestException>(ex => TryGetStatusCodeFromException(ex) >= HttpStatusCode.InternalServerError)
+                .Or<HttpRequestException>(ex =>
+                    TryGetStatusCodeFromException(ex) is
+                        HttpStatusCode.TooManyRequests or
+                        HttpStatusCode.RequestTimeout or
+                        HttpStatusCode.InternalServerError
+                )
                 .WaitAndRetryAsync(4, i => TimeSpan.FromSeconds(Math.Pow(2, i) + 1));
     }
 }

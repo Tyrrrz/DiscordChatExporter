@@ -18,13 +18,12 @@ namespace DiscordChatExporter.Core.Discord.Data
 
         public string ImageUrl { get; }
 
-        public Emoji(string? id, string name, bool isAnimated)
+        public Emoji(string? id, string name, bool isAnimated, string imageUrl)
         {
             Id = id;
             Name = name;
             IsAnimated = isAnimated;
-
-            ImageUrl = GetImageUrl(id, name, isAnimated);
+            ImageUrl = imageUrl;
         }
 
         public override string ToString() => Name;
@@ -53,12 +52,9 @@ namespace DiscordChatExporter.Core.Discord.Data
             // Custom emoji
             if (!string.IsNullOrWhiteSpace(id))
             {
-                // Animated
-                if (isAnimated)
-                    return $"https://cdn.discordapp.com/emojis/{id}.gif";
-
-                // Non-animated
-                return $"https://cdn.discordapp.com/emojis/{id}.png";
+                return isAnimated
+                    ? $"https://cdn.discordapp.com/emojis/{id}.gif"
+                    : $"https://cdn.discordapp.com/emojis/{id}.png";
             }
 
             // Standard emoji
@@ -73,7 +69,9 @@ namespace DiscordChatExporter.Core.Discord.Data
             var name = json.GetProperty("name").GetString();
             var isAnimated = json.GetPropertyOrNull("animated")?.GetBoolean() ?? false;
 
-            return new Emoji(id, name, isAnimated);
+            var imageUrl = GetImageUrl(id, name, isAnimated);
+
+            return new Emoji(id, name, isAnimated, imageUrl);
         }
     }
 }

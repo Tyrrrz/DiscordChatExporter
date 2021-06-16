@@ -19,10 +19,10 @@ namespace DiscordChatExporter.Core.Discord.Data
 
         public IReadOnlyList<Snowflake> RoleIds { get; }
 
-        public Member(User user, string? nick, IReadOnlyList<Snowflake> roleIds)
+        public Member(User user, string nick, IReadOnlyList<Snowflake> roleIds)
         {
             User = user;
-            Nick = nick ?? user.Name;
+            Nick = nick;
             RoleIds = roleIds;
         }
 
@@ -33,7 +33,7 @@ namespace DiscordChatExporter.Core.Discord.Data
     {
         public static Member CreateForUser(User user) => new(
             user,
-            null,
+            user.Name,
             Array.Empty<Snowflake>()
         );
 
@@ -43,12 +43,12 @@ namespace DiscordChatExporter.Core.Discord.Data
             var nick = json.GetPropertyOrNull("nick")?.GetString();
 
             var roleIds =
-                json.GetPropertyOrNull("roles")?.EnumerateArray().Select(j => j.GetString().Pipe(Snowflake.Parse)).ToArray() ??
+                json.GetPropertyOrNull("roles")?.EnumerateArray().Select(j => j.GetString()).Select(Snowflake.Parse).ToArray() ??
                 Array.Empty<Snowflake>();
 
             return new Member(
                 user,
-                nick,
+                nick ?? user.Name,
                 roleIds
             );
         }

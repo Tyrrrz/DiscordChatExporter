@@ -4,9 +4,14 @@ namespace DiscordChatExporter.Core.Utils.Extensions
 {
     public static class StringExtensions
     {
+        public static string? NullIfWhiteSpace(this string str) =>
+            !string.IsNullOrWhiteSpace(str)
+                ? str
+                : null;
+
         public static string Truncate(this string str, int charCount) =>
             str.Length > charCount
-                ? str.Substring(0, charCount)
+                ? str[..charCount]
                 : str;
 
         public static StringBuilder AppendIfNotEmpty(this StringBuilder builder, char value) =>

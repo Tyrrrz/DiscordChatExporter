@@ -100,7 +100,7 @@ namespace DiscordChatExporter.Core.Discord.Data
             var type = (MessageType) json.GetProperty("type").GetInt32();
             var isPinned = json.GetPropertyOrNull("pinned")?.GetBoolean() ?? false;
             var messageReference = json.GetPropertyOrNull("message_reference")?.Pipe(MessageReference.Parse);
-            var referencedMessage = json.GetPropertyOrNull("referenced_message")?.Pipe(Message.Parse);
+            var referencedMessage = json.GetPropertyOrNull("referenced_message")?.Pipe(Parse);
 
             var content = type switch
             {

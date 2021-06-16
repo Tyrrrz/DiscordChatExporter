@@ -63,10 +63,10 @@ namespace DiscordChatExporter.Core.Discord.Data
         public static Embed Parse(JsonElement json)
         {
             var title = json.GetPropertyOrNull("title")?.GetString();
-            var description = json.GetPropertyOrNull("description")?.GetString();
             var url = json.GetPropertyOrNull("url")?.GetString();
             var timestamp = json.GetPropertyOrNull("timestamp")?.GetDateTimeOffset();
             var color = json.GetPropertyOrNull("color")?.GetInt32().Pipe(System.Drawing.Color.FromArgb).ResetAlpha();
+            var description = json.GetPropertyOrNull("description")?.GetString();
 
             var author = json.GetPropertyOrNull("author")?.Pipe(EmbedAuthor.Parse);
             var thumbnail = json.GetPropertyOrNull("thumbnail")?.Pipe(EmbedImage.Parse);

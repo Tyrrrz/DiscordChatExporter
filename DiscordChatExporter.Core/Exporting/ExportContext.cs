@@ -79,7 +79,7 @@ namespace DiscordChatExporter.Core.Exporting
                     : filePath;
 
                 // HACK: for HTML, we need to format the URL properly
-                if (Request.Format == ExportFormat.HtmlDark || Request.Format == ExportFormat.HtmlLight)
+                if (Request.Format is ExportFormat.HtmlDark or ExportFormat.HtmlLight)
                 {
                     // Need to escape each path segment while keeping the directory separators intact
                     return relativeFilePath
@@ -93,7 +93,7 @@ namespace DiscordChatExporter.Core.Exporting
             // Try to catch only exceptions related to failed HTTP requests
             // https://github.com/Tyrrrz/DiscordChatExporter/issues/332
             // https://github.com/Tyrrrz/DiscordChatExporter/issues/372
-            catch (Exception ex) when (ex is HttpRequestException || ex is OperationCanceledException)
+            catch (Exception ex) when (ex is HttpRequestException or OperationCanceledException)
             {
                 // TODO: add logging so we can be more liberal with catching exceptions
                 // We don't want this to crash the exporting process in case of failure

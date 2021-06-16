@@ -58,10 +58,10 @@ namespace DiscordChatExporter.Core.Discord.Data
         public static User Parse(JsonElement json)
         {
             var id = json.GetProperty("id").GetString().Pipe(Snowflake.Parse);
+            var isBot = json.GetPropertyOrNull("bot")?.GetBoolean() ?? false;
             var discriminator = json.GetProperty("discriminator").GetString().Pipe(int.Parse);
             var name = json.GetProperty("username").GetString();
             var avatarHash = json.GetProperty("avatar").GetString();
-            var isBot = json.GetPropertyOrNull("bot")?.GetBoolean() ?? false;
 
             var avatarUrl = !string.IsNullOrWhiteSpace(avatarHash)
                 ? GetAvatarUrl(id, avatarHash)

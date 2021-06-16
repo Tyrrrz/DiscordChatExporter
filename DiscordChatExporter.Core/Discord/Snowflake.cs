@@ -10,8 +10,9 @@ namespace DiscordChatExporter.Core.Discord
 
         public Snowflake(ulong value) => Value = value;
 
-        public DateTimeOffset ToDate() =>
-            DateTimeOffset.FromUnixTimeMilliseconds((long) ((Value >> 22) + 1420070400000UL)).ToLocalTime();
+        public DateTimeOffset ToDate() => DateTimeOffset.FromUnixTimeMilliseconds(
+            (long) ((Value >> 22) + 1420070400000UL)
+        ).ToLocalTime();
 
         public override string ToString() => Value.ToString(CultureInfo.InvariantCulture);
     }
@@ -53,9 +54,11 @@ namespace DiscordChatExporter.Core.Discord
         public static Snowflake Parse(string str) => Parse(str, null);
     }
 
-    public partial struct Snowflake : IEquatable<Snowflake>
+    public partial struct Snowflake : IComparable<Snowflake>, IEquatable<Snowflake>
     {
-        public bool Equals(Snowflake other) => Value == other.Value;
+        public int CompareTo(Snowflake other) => Value.CompareTo(other.Value);
+
+        public bool Equals(Snowflake other) => CompareTo(other) == 0;
 
         public override bool Equals(object? obj) => obj is Snowflake other && Equals(other);
 

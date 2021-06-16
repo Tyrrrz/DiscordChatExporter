@@ -23,8 +23,8 @@ namespace DiscordChatExporter.Core.Discord.Data
     {
         public static Reaction Parse(JsonElement json)
         {
-            var count = json.GetProperty("count").GetInt32();
             var emoji = json.GetProperty("emoji").Pipe(Emoji.Parse);
+            var count = json.GetProperty("count").GetInt32();
 
             return new Reaction(emoji, count);
         }

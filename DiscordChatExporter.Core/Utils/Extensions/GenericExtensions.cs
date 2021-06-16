@@ -9,6 +9,6 @@ namespace DiscordChatExporter.Core.Utils.Extensions
         public static T? NullIf<T>(this T value, Func<T, bool> predicate) where T : struct =>
             !predicate(value)
                 ? value
-                : (T?) null;
+                : null;
     }
 }

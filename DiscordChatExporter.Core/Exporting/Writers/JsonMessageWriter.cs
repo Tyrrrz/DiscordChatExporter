@@ -20,6 +20,8 @@ namespace DiscordChatExporter.Core.Exporting.Writers
             {
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                 Indented = true,
+                // Validation errors may mask actual failures
+                // https://github.com/Tyrrrz/DiscordChatExporter/issues/413
                 SkipValidation = true
             });
         }

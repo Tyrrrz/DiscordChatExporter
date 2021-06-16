@@ -458,10 +458,6 @@ img {
     border-radius: 3px;
 }
 
-.chatlog__embed-youtube-container {
-    margin-top: 0.6em;
-}
-
 .chatlog__embed-image-container {
     margin-top: 0.6em;
 }
@@ -488,6 +484,15 @@ img {
     vertical-align: middle;
     font-size: 0.75em;
     font-weight: 500;
+}
+
+.chatlog__embed-youtube-container {
+    margin-top: 0.6em;
+}
+
+.chatlog__embed-youtube {
+    border: 0;
+    border-radius: 3px;
 }
 
 .chatlog__reactions {

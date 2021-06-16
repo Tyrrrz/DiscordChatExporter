@@ -161,6 +161,8 @@
 
                 @foreach (var embed in message.Embeds)
                 {
+                    var youTubeVideo = embed.TryGetYouTubeVideo();
+
                     <div class="chatlog__embed">
                         @if (embed.Color is not null)
                         {
@@ -214,17 +216,12 @@
                                             }
                                         </div>
                                     }
-                                    @if (!string.IsNullOrWhiteSpace(embed.Url) && embed.Url.IndexOf("youtube.com/watch?v=") != -1)
-                                    {
 
-                                        if (embed.Thumbnail is not null && !string.IsNullOrWhiteSpace(embed.Thumbnail.Url))
-                                        {
-                                            <div class="chatlog__embed-youtube-container">
-                                                <iframe class="chatlog__embed-youtube" width="400" height="225" frameBorder="0" style="border-radius: 5px"
-                                                        src="@embed.Url.Replace("/watch?v=", "/embed/")">
-                                                </iframe>
-                                            </div>
-                                        }
+                                    @if (youTubeVideo is not null)
+                                    {
+                                        <div class="chatlog__embed-youtube-container">
+                                            <iframe class="chatlog__embed-youtube" src="@youTubeVideo.Url" width="400" height="225"></iframe>
+                                        </div>
                                     }
                                     else if (!string.IsNullOrWhiteSpace(embed.Description))
                                     {
@@ -260,16 +257,13 @@
                                     }
                                 </div>
 
-                                @if (embed.Thumbnail is not null && !string.IsNullOrWhiteSpace(embed.Thumbnail.Url))
+                                @if (embed.Thumbnail is not null && !string.IsNullOrWhiteSpace(embed.Thumbnail.Url) && youTubeVideo is null)
                                 {
-                                    if (string.IsNullOrWhiteSpace(embed.Url) || embed.Url.IndexOf("youtube.com/watch?v=") == -1)
-                                    {
-                                        <div class="chatlog__embed-thumbnail-container">
-                                            <a class="chatlog__embed-thumbnail-link" href="@await ResolveUrlAsync(embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url)">
-                                                <img class="chatlog__embed-thumbnail" src="@await ResolveUrlAsync(embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url)" alt="Thumbnail">
-                                            </a>
-                                        </div>
-                                    }
+                                    <div class="chatlog__embed-thumbnail-container">
+                                        <a class="chatlog__embed-thumbnail-link" href="@await ResolveUrlAsync(embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url)">
+                                            <img class="chatlog__embed-thumbnail" src="@await ResolveUrlAsync(embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url)" alt="Thumbnail">
+                                        </a>
+                                    </div>
                                 }
                             </div>
 

@@ -55,6 +55,8 @@ namespace DiscordChatExporter.Core.Discord.Data
             Footer = footer;
         }
 
+        public YouTubeVideoEmbedProjection? TryGetYouTubeVideo() => YouTubeVideoEmbedProjection.TryResolve(this);
+
         public override string ToString() => Title ?? "<untitled embed>";
     }
 

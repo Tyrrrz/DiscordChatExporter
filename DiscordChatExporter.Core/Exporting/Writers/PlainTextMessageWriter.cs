@@ -75,10 +75,10 @@ namespace DiscordChatExporter.Core.Exporting.Writers
                 }
 
                 if (!string.IsNullOrWhiteSpace(embed.Thumbnail?.Url))
-                    await _writer.WriteLineAsync(await Context.ResolveMediaUrlAsync(embed.Thumbnail.Url));
+                    await _writer.WriteLineAsync(await Context.ResolveMediaUrlAsync(embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url));
 
                 if (!string.IsNullOrWhiteSpace(embed.Image?.Url))
-                    await _writer.WriteLineAsync(await Context.ResolveMediaUrlAsync(embed.Image.Url));
+                    await _writer.WriteLineAsync(await Context.ResolveMediaUrlAsync(embed.Image.ProxyUrl ?? embed.Image.Url));
 
                 if (!string.IsNullOrWhiteSpace(embed.Footer?.Text))
                     await _writer.WriteLineAsync(embed.Footer.Text);

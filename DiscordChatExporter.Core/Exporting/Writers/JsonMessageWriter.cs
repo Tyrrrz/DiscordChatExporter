@@ -50,7 +50,7 @@ namespace DiscordChatExporter.Core.Exporting.Writers
             _writer.WriteString("url", embedAuthor.Url);
 
             if (!string.IsNullOrWhiteSpace(embedAuthor.IconUrl))
-                _writer.WriteString("iconUrl", await Context.ResolveMediaUrlAsync(embedAuthor.IconUrl));
+                _writer.WriteString("iconUrl", await Context.ResolveMediaUrlAsync(embedAuthor.IconProxyUrl ?? embedAuthor.IconUrl));
 
             _writer.WriteEndObject();
             await _writer.FlushAsync();
@@ -61,7 +61,7 @@ namespace DiscordChatExporter.Core.Exporting.Writers
             _writer.WriteStartObject("thumbnail");
 
             if (!string.IsNullOrWhiteSpace(embedThumbnail.Url))
-                _writer.WriteString("url", await Context.ResolveMediaUrlAsync(embedThumbnail.Url));
+                _writer.WriteString("url", await Context.ResolveMediaUrlAsync(embedThumbnail.ProxyUrl ?? embedThumbnail.Url));
 
             _writer.WriteNumber("width", embedThumbnail.Width);
             _writer.WriteNumber("height", embedThumbnail.Height);
@@ -75,7 +75,7 @@ namespace DiscordChatExporter.Core.Exporting.Writers
             _writer.WriteStartObject("image");
 
             if (!string.IsNullOrWhiteSpace(embedImage.Url))
-                _writer.WriteString("url", await Context.ResolveMediaUrlAsync(embedImage.Url));
+                _writer.WriteString("url", await Context.ResolveMediaUrlAsync(embedImage.ProxyUrl ?? embedImage.Url));
 
             _writer.WriteNumber("width", embedImage.Width);
             _writer.WriteNumber("height", embedImage.Height);
@@ -91,7 +91,7 @@ namespace DiscordChatExporter.Core.Exporting.Writers
             _writer.WriteString("text", embedFooter.Text);
 
             if (!string.IsNullOrWhiteSpace(embedFooter.IconUrl))
-                _writer.WriteString("iconUrl", await Context.ResolveMediaUrlAsync(embedFooter.IconUrl));
+                _writer.WriteString("iconUrl", await Context.ResolveMediaUrlAsync(embedFooter.IconProxyUrl ?? embedFooter.IconUrl));
 
             _writer.WriteEndObject();
             await _writer.FlushAsync();

@@ -146,8 +146,8 @@ img {
 }
 
 .emoji {
-    width: 1.25em;
-    height: 1.25em;
+    width: 1.325em;
+    height: 1.325em;
     margin: 0 0.06em;
     vertical-align: -0.4em;
 }
@@ -256,8 +256,8 @@ img {
 }
 
 .chatlog__reference-content > .emoji {
-    width: 1.25em;
-    height: 1.25em;
+    width: 1.325em;
+    height: 1.325em;
 }
 
 .chatlog__reference-edited-timestamp {

@@ -57,7 +57,7 @@ namespace DiscordChatExporter.Core.Discord.Data
 
             // Standard emoji
             var twemojiName = GetTwemojiName(name);
-            return $"https://twemoji.maxcdn.com/2/72x72/{twemojiName}.png";
+            return $"https://twemoji.maxcdn.com/2/svg/{twemojiName}.svg";
         }
 
         public static Emoji Parse(JsonElement json)

@@ -256,11 +256,6 @@ img {
     text-decoration: none;
 }
 
-.chatlog__reference-content > .emoji {
-    width: 1.325em;
-    height: 1.325em;
-}
-
 .chatlog__reference-edited-timestamp {
     margin-left: 0.25em;
     font-size: 0.8em;

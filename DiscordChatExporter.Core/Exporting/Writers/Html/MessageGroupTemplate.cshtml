@@ -58,7 +58,7 @@
                     <span class="chatlog__reference-content">
                         @if (!string.IsNullOrWhiteSpace(Model.MessageGroup.ReferencedMessage.Content))
                         {
-                            @Raw(FormatMarkdown(Model.MessageGroup.ReferencedMessage.Content))
+                            @Raw(FormatEmbedMarkdown(Model.MessageGroup.ReferencedMessage.Content))
                         }
                         else
                         {

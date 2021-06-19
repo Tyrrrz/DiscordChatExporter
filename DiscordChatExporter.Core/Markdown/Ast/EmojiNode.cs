@@ -1,10 +1,19 @@
-﻿namespace DiscordChatExporter.Core.Markdown.Ast
+﻿using DiscordChatExporter.Core.Utils;
+
+namespace DiscordChatExporter.Core.Markdown.Ast
 {
     internal class EmojiNode : MarkdownNode
     {
+        // Only present on custom emoji
         public string? Id { get; }
 
+        // Name of custom emoji (e.g. LUL) or actual representation of standard emoji (e.g. 🙂)
         public string Name { get; }
+
+        // Name of custom emoji (e.g. LUL) or name of standard emoji (e.g. slight_smile)
+        public string Code => !string.IsNullOrWhiteSpace(Id)
+            ? Name
+            : EmojiIndex.TryGetCode(Name) ?? Name;
 
         public bool IsAnimated { get; }
 

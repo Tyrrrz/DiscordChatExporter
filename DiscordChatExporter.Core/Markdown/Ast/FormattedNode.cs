@@ -2,16 +2,6 @@
 
 namespace DiscordChatExporter.Core.Markdown.Ast
 {
-    internal enum TextFormatting
-    {
-        Bold,
-        Italic,
-        Underline,
-        Strikethrough,
-        Spoiler,
-        Quote
-    }
-
     internal class FormattedNode : MarkdownNode
     {
         public TextFormatting Formatting { get; }

@@ -10,14 +10,13 @@ namespace DiscordChatExporter.Core.Markdown.Matching
 
         public int Length { get; }
 
-        public int EndIndex { get; }
+        public int EndIndex => StartIndex + Length;
 
         public StringPart(string target, int startIndex, int length)
         {
             Target = target;
             StartIndex = startIndex;
             Length = length;
-            EndIndex = startIndex + length;
         }
 
         public StringPart(string target)

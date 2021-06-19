@@ -311,7 +311,7 @@
                     <div class="chatlog__reactions">
                         @foreach (var reaction in message.Reactions)
                         {
-                            <div class="chatlog__reaction" title="@reaction.Emoji.Name">
+                            <div class="chatlog__reaction" title="@reaction.Emoji.Code">
                                 <img class="emoji emoji--small" alt="@reaction.Emoji.Name" src="@await ResolveUrlAsync(reaction.Emoji.ImageUrl)">
                                 <span class="chatlog__reaction-count">@reaction.Count</span>
                             </div>

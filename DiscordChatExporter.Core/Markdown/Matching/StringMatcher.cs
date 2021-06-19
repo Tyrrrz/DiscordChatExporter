@@ -6,9 +6,9 @@ namespace DiscordChatExporter.Core.Markdown.Matching
     {
         private readonly string _needle;
         private readonly StringComparison _comparison;
-        private readonly Func<StringPart, T> _transform;
+        private readonly Func<StringPart, T?> _transform;
 
-        public StringMatcher(string needle, StringComparison comparison, Func<StringPart, T> transform)
+        public StringMatcher(string needle, StringComparison comparison, Func<StringPart, T?> transform)
         {
             _needle = needle;
             _comparison = comparison;
@@ -23,14 +23,15 @@ namespace DiscordChatExporter.Core.Markdown.Matching
         public ParsedMatch<T>? TryMatch(StringPart stringPart)
         {
             var index = stringPart.Target.IndexOf(_needle, stringPart.StartIndex, stringPart.Length, _comparison);
+            if (index < 0)
+                return null;
 
-            if (index >= 0)
-            {
-                var stringPartMatch = stringPart.Slice(index, _needle.Length);
-                return new ParsedMatch<T>(stringPartMatch, _transform(stringPartMatch));
-            }
+            var stringPartMatch = stringPart.Slice(index, _needle.Length);
+            var value = _transform(stringPartMatch);
 
-            return null;
+            return value is not null
+                ? new ParsedMatch<T>(stringPartMatch, value)
+                : null;
         }
     }
 }

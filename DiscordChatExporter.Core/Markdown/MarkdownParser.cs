@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using DiscordChatExporter.Core.Markdown.Ast;
 using DiscordChatExporter.Core.Markdown.Matching;
+using DiscordChatExporter.Core.Utils;
 
 namespace DiscordChatExporter.Core.Markdown
 {
@@ -103,7 +104,7 @@ namespace DiscordChatExporter.Core.Markdown
         // There can be either one or two backticks, but equal number on both sides
         private static readonly IMatcher<MarkdownNode> InlineCodeBlockNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("(`{1,2})([^`]+)\\1", DefaultRegexOptions | RegexOptions.Singleline),
-            m => new InlineCodeBlockNode(m.Groups[2].Value.Trim('\r', '\n'))
+            (_, m) => new InlineCodeBlockNode(m.Groups[2].Value.Trim('\r', '\n'))
         );
 
         // Capture language identifier and then any character until the earliest triple backtick
@@ -111,7 +112,7 @@ namespace DiscordChatExporter.Core.Markdown
         // Blank lines at the beginning and end of content are trimmed
         private static readonly IMatcher<MarkdownNode> MultiLineCodeBlockNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("```(?:(\\w*)\\n)?(.+?)```", DefaultRegexOptions | RegexOptions.Singleline),
-            m => new MultiLineCodeBlockNode(m.Groups[1].Value, m.Groups[2].Value.Trim('\r', '\n'))
+            (_, m) => new MultiLineCodeBlockNode(m.Groups[1].Value, m.Groups[2].Value.Trim('\r', '\n'))
         );
 
         /* Mentions */
@@ -131,19 +132,19 @@ namespace DiscordChatExporter.Core.Markdown
         // Capture <@123456> or <@!123456>
         private static readonly IMatcher<MarkdownNode> UserMentionNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("<@!?(\\d+)>", DefaultRegexOptions),
-            m => new MentionNode(m.Groups[1].Value, MentionType.User)
+            (_, m) => new MentionNode(m.Groups[1].Value, MentionType.User)
         );
 
         // Capture <#123456>
         private static readonly IMatcher<MarkdownNode> ChannelMentionNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("<#(\\d+)>", DefaultRegexOptions),
-            m => new MentionNode(m.Groups[1].Value, MentionType.Channel)
+            (_, m) => new MentionNode(m.Groups[1].Value, MentionType.Channel)
         );
 
         // Capture <@&123456>
         private static readonly IMatcher<MarkdownNode> RoleMentionNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("<@&(\\d+)>", DefaultRegexOptions),
-            m => new MentionNode(m.Groups[1].Value, MentionType.Role)
+            (_, m) => new MentionNode(m.Groups[1].Value, MentionType.Role)
         );
 
         /* Emojis */
@@ -154,15 +155,26 @@ namespace DiscordChatExporter.Core.Markdown
         // ... or digit followed by enclosing mark
         // (this does not match all emojis in Discord but it's reasonably accurate enough)
         private static readonly IMatcher<MarkdownNode> StandardEmojiNodeMatcher = new RegexMatcher<MarkdownNode>(
-            new Regex("((?:[\\uD83C][\\uDDE6-\\uDDFF]){2}|[\\u2600-\\u26FF]|\\p{Cs}{2}|\\d\\p{Me})",
-                DefaultRegexOptions),
-            m => new EmojiNode(m.Groups[1].Value)
+            new Regex("((?:[\\uD83C][\\uDDE6-\\uDDFF]){2}|[\\u2600-\\u26FF]|\\p{Cs}{2}|\\d\\p{Me})", DefaultRegexOptions),
+            (_, m) => new EmojiNode(m.Groups[1].Value)
+        );
+
+        // Capture :thinking: (but only for known emoji codes)
+        private static readonly IMatcher<MarkdownNode> CodedStandardEmojiNodeMatcher = new RegexMatcher<MarkdownNode>(
+            new Regex(":([\\w_]+):", DefaultRegexOptions),
+            (_, m) =>
+            {
+                var name = EmojiIndex.TryGetName(m.Groups[1].Value);
+                return name is not null
+                    ? new EmojiNode(name)
+                    : null;
+            }
         );
 
         // Capture <:lul:123456> or <a:lul:123456>
         private static readonly IMatcher<MarkdownNode> CustomEmojiNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("<(a)?:(.+?):(\\d+?)>", DefaultRegexOptions),
-            m => new EmojiNode(m.Groups[3].Value, m.Groups[2].Value, !string.IsNullOrWhiteSpace(m.Groups[1].Value))
+            (_, m) => new EmojiNode(m.Groups[3].Value, m.Groups[2].Value, !string.IsNullOrWhiteSpace(m.Groups[1].Value))
         );
 
         /* Links */
@@ -170,19 +182,19 @@ namespace DiscordChatExporter.Core.Markdown
         // Capture [title](link)
         private static readonly IMatcher<MarkdownNode> TitledLinkNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("\\[(.+?)\\]\\((.+?)\\)", DefaultRegexOptions),
-            m => new LinkNode(m.Groups[2].Value, m.Groups[1].Value)
+            (_, m) => new LinkNode(m.Groups[2].Value, m.Groups[1].Value)
         );
 
         // Capture any non-whitespace character after http:// or https:// until the last punctuation character or whitespace
         private static readonly IMatcher<MarkdownNode> AutoLinkNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("(https?://\\S*[^\\.,:;\"\'\\s])", DefaultRegexOptions),
-            m => new LinkNode(m.Groups[1].Value)
+            (_, m) => new LinkNode(m.Groups[1].Value)
         );
 
         // Same as auto link but also surrounded by angular brackets
         private static readonly IMatcher<MarkdownNode> HiddenLinkNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("<(https?://\\S*[^\\.,:;\"\'\\s])>", DefaultRegexOptions),
-            m => new LinkNode(m.Groups[1].Value)
+            (_, m) => new LinkNode(m.Groups[1].Value)
         );
 
         /* Text */
@@ -198,21 +210,21 @@ namespace DiscordChatExporter.Core.Markdown
         // This escapes it from matching for emoji
         private static readonly IMatcher<MarkdownNode> IgnoredEmojiTextNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("(\\u26A7|\\u2640|\\u2642|\\u2695|\\u267E|\\u00A9|\\u00AE|\\u2122)", DefaultRegexOptions),
-            m => new TextNode(m.Groups[1].Value)
+            (_, m) => new TextNode(m.Groups[1].Value)
         );
 
         // Capture any "symbol/other" character or surrogate pair preceded by a backslash
         // This escapes it from matching for emoji
         private static readonly IMatcher<MarkdownNode> EscapedSymbolTextNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("\\\\(\\p{So}|\\p{Cs}{2})", DefaultRegexOptions),
-            m => new TextNode(m.Groups[1].Value)
+            (_, m) => new TextNode(m.Groups[1].Value)
         );
 
         // Capture any non-whitespace, non latin alphanumeric character preceded by a backslash
         // This escapes it from matching for formatting or other tokens
         private static readonly IMatcher<MarkdownNode> EscapedCharacterTextNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("\\\\([^a-zA-Z0-9\\s])", DefaultRegexOptions),
-            m => new TextNode(m.Groups[1].Value)
+            (_, m) => new TextNode(m.Groups[1].Value)
         );
 
         // Combine all matchers into one
@@ -255,7 +267,8 @@ namespace DiscordChatExporter.Core.Markdown
 
             // Emoji
             StandardEmojiNodeMatcher,
-            CustomEmojiNodeMatcher
+            CustomEmojiNodeMatcher,
+            CodedStandardEmojiNodeMatcher
         );
 
         // Minimal set of matchers for non-multimedia formats (e.g. plain text)

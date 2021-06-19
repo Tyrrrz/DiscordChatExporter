@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Text.Json;
+using DiscordChatExporter.Core.Utils;
+using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Reading;
 using Tyrrrz.Extensions;
 
@@ -10,9 +10,16 @@ namespace DiscordChatExporter.Core.Discord.Data
     // https://discord.com/developers/docs/resources/emoji#emoji-object
     public partial class Emoji
     {
+        // Only present on custom emoji
         public string? Id { get; }
 
+        // Name of custom emoji (e.g. LUL) or actual representation of standard emoji (e.g. 🙂)
         public string Name { get; }
+
+        // Name of custom emoji (e.g. LUL) or name of standard emoji (e.g. slight_smile)
+        public string Code => !string.IsNullOrWhiteSpace(Id)
+            ? Name
+            : EmojiIndex.TryGetCode(Name) ?? Name;
 
         public bool IsAnimated { get; }
 
@@ -31,21 +38,12 @@ namespace DiscordChatExporter.Core.Discord.Data
 
     public partial class Emoji
     {
-        private static IEnumerable<Rune> GetRunes(string emoji)
-        {
-            var lastIndex = 0;
-            while (lastIndex < emoji.Length && Rune.TryGetRuneAt(emoji, lastIndex, out var rune))
-            {
-                // Skip variant selector rune
-                if (rune.Value != 0xfe0f)
-                    yield return rune;
-
-                lastIndex += rune.Utf16SequenceLength;
-            }
-        }
-
-        private static string GetTwemojiName(IEnumerable<Rune> runes) =>
-            runes.Select(r => r.Value.ToString("x")).JoinToString("-");
+        private static string GetTwemojiName(string name) => name
+            .GetRunes()
+            // Variant selector rune is skipped in Twemoji names
+            .Where(r => r.Value != 0xfe0f)
+            .Select(r => r.Value.ToString("x"))
+            .JoinToString("-");
 
         public static string GetImageUrl(string? id, string name, bool isAnimated)
         {
@@ -58,8 +56,7 @@ namespace DiscordChatExporter.Core.Discord.Data
             }
 
             // Standard emoji
-            var emojiRunes = GetRunes(name).ToArray();
-            var twemojiName = GetTwemojiName(emojiRunes);
+            var twemojiName = GetTwemojiName(name);
             return $"https://twemoji.maxcdn.com/2/72x72/{twemojiName}.png";
         }
 

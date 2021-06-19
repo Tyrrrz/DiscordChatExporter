@@ -1,13 +1,5 @@
 ﻿namespace DiscordChatExporter.Core.Markdown.Ast
 {
-    internal enum MentionType
-    {
-        Meta,
-        User,
-        Channel,
-        Role
-    }
-
     internal class MentionNode : MarkdownNode
     {
         public string Id { get; }

@@ -67,7 +67,7 @@
 
 <div class="preamble">
     <div class="preamble__guild-icon-container">
-        <img class="preamble__guild-icon" src="@await ResolveUrlAsync(Model.ExportContext.Request.Guild.IconUrl)" alt="Guild icon">
+        <img loading="lazy" class="preamble__guild-icon" src="@await ResolveUrlAsync(Model.ExportContext.Request.Guild.IconUrl)" alt="Guild icon">
     </div>
     <div class="preamble__entries-container">
         <div class="preamble__entry">@Model.ExportContext.Request.Guild.Name</div>

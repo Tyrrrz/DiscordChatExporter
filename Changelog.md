@@ -1,3 +1,21 @@
+### v2.28 (19-Jun-2021)
+
+- [HTML] Added special casing for YouTube video embeds to render them directly using an embedded player. (Thanks [@quentinmay](https://github.com/quentinmay))
+- [HTML] Added support for rendering standard emoji by code. Such emoji may sometimes be found in messages sent by bots or through webhooks. (Thanks [@CanePlayz](https://github.com/CanePlayz) and [@Lucas LaBuff](https://github.com/96-LB))
+- [HTML] Changed tooltips on standard emoji to show emoji code instead of their raw string representation. (Thanks [@CanePlayz](https://github.com/CanePlayz) and [@Lucas LaBuff](https://github.com/96-LB))
+- [HTML] Added tooltips on individual messages to show when those messages were sent. 
+- [HTML] Updated colors and minor styling elements to match Discord's new style direction after rebranding.
+- [HTML] Updated Twemoji URLs to use SVG image variants for better rendering quality.
+- [HTML] Changed user avatar URLs to include predetermined size query parameter for better rendering quality.
+- Changed embed rendering logic to prefer Discord-proxied URLs for external content, in order to avoid unnecessary HTTP requests to third parties.
+- Fixed an issue where exporting with media sometimes resulted in a crash due to lack of permissions to change file attributes. These errors are now ignored, which means that the creation, write, and access dates of downloaded files may sometimes not match the dates provided by Discord's CDN.
+- [HTML] Fixed styling issues when rendering embed footers.
+- [HTML] Fixed an issue where links didn't render properly inside referenced messages.
+- [HTML] Fixed an issue where standalone emoji were incorrectly enlarged inside referenced messages.
+- [HTML] Fixed an issue where clicking on a referenced message revealed spoilers inside of it.
+- [GUI] Fixed an issue where the list of missing components, reported by the prerequisite check at application startup, included Windows updates that were not applicable to the user's system due to the fact that other superseding updates have already been installed. This issue only affected users running DiscordChatExporter on Windows 7.
+- [GUI] Fixed a few other minor issues related to the prerequisite installation window.
+
 ### v2.27.1 (08-Jun-2021)
 
 - [GUI] Application will now detect if the required .NET Runtime or any of its prerequisites are missing and prompt the user to download and install them automatically. **Experimental feature, please test it out and report any issues you may find!**

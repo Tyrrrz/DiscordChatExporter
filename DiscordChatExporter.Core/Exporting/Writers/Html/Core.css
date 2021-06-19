@@ -249,6 +249,7 @@ img {
 
 .chatlog__reference-content > * {
     display: inline;
+    pointer-events: none;
 }
 
 .chatlog__reference-content > a:hover {

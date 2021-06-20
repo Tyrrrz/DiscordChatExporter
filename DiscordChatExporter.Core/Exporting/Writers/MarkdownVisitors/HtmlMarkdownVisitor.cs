@@ -131,7 +131,7 @@ namespace DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors
             var jumboClass = _isJumbo ? "emoji--large" : "";
 
             _buffer
-                .Append($"<img class=\"emoji {jumboClass}\" alt=\"{emoji.Name}\" title=\"{emoji.Code}\" src=\"{emojiImageUrl}\">");
+                .Append($"<img loading=\"lazy\" class=\"emoji {jumboClass}\" alt=\"{emoji.Name}\" title=\"{emoji.Code}\" src=\"{emojiImageUrl}\">");
 
             return base.VisitEmoji(emoji);
         }

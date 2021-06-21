@@ -12,12 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Exporting\Writers\Html\Core.css" />
-    <EmbeddedResource Include="Exporting\Writers\Html\Dark.css" />
-    <EmbeddedResource Include="Exporting\Writers\Html\Light.css" />
     <AdditionalFiles Include="Exporting\Writers\Html\PreambleTemplate.cshtml" IsRazorTemplate="true" />
     <AdditionalFiles Include="Exporting\Writers\Html\PostambleTemplate.cshtml" IsRazorTemplate="true" />
     <AdditionalFiles Include="Exporting\Writers\Html\MessageGroupTemplate.cshtml" IsRazorTemplate="true" />
+    <AdditionalFiles Include="Exporting\Writers\Html\StylesheetTemplate.cshtml" IsRazorTemplate="true" />
   </ItemGroup>
 
 </Project>

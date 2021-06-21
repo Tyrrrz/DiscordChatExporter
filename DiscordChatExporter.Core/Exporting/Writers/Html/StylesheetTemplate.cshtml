@@ -4,11 +4,11 @@
 
 @{
     var isDarkTheme = string.Equals(Model.ThemeName, "Dark", StringComparison.OrdinalIgnoreCase);
+
+    string Themed(string darkVariant, string lightVariant) => isDarkTheme ? darkVariant : lightVariant;
 }
 
 <style>
-    /* General */
-
     @@font-face {
         font-family: Whitney;
         src: url(https://cdn.jsdelivr.net/gh/Tyrrrz/DiscordFonts@master/whitney-300.woff);
@@ -40,11 +40,15 @@
     }
 
     body {
+        background-color: @Themed("#36393e", "#ffffff");
+        color: @Themed("#dcddde", "#23262a");
         font-family: "Whitney", "Helvetica Neue", Helvetica, Arial, sans-serif;
         font-size: 17px;
+        font-weight: @Themed("400", "500");
     }
 
     a {
+        color: @Themed("#00aff4", "#0068e0");
         text-decoration: none;
     }
 
@@ -67,9 +71,7 @@
     }
 
     .spoiler {
-        /* width: fit-content; */
         display: inline-block;
-        /* This is more consistent across browsers, the old attribute worked well under Chrome but not FireFox. */
     }
 
     .spoiler--hidden {
@@ -77,11 +79,17 @@
     }
 
     .spoiler-text {
+        background-color: @Themed("rgba(255, 255, 255, 0.1)", "rgba(0, 0, 0, 0.1)");
         border-radius: 3px;
     }
 
     .spoiler--hidden .spoiler-text {
+        background-color: @Themed("#202225", "#b9bbbe");
         color: rgba(0, 0, 0, 0);
+    }
+
+    .spoiler--hidden:hover .spoiler-text {
+        background-color: @Themed("rgba(32, 34, 37, 0.8)", "rgba(185, 187, 190, 0.8)");
     }
 
     .spoiler--hidden .spoiler-text::selection {
@@ -125,19 +133,21 @@
     .quote {
         margin: 0.1em 0;
         padding-left: 0.6em;
-        border-left: 4px solid;
+        border-left: 4px solid @Themed("#4f545c", "#c7ccd1");
         border-radius: 3px;
     }
 
     .pre {
+        background-color: @Themed("#2f3136", "#f9f9f9") !important;
         font-family: "Consolas", "Courier New", Courier, monospace;
     }
 
     .pre--multiline {
         margin-top: 0.25em;
         padding: 0.5em;
-        border: 2px solid;
+        border: 2px solid @Themed("#282b30", "#f3f3f3") !important;
         border-radius: 5px;
+        color: @Themed("#b9bbbe", "#657b83") !important;
     }
 
     .pre--inline {
@@ -171,8 +181,6 @@
         height: 2.8em;
     }
 
-    /* Preamble */
-
     .preamble {
         display: grid;
         margin: 0 0.3em 0.6em 0.3em;
@@ -196,13 +204,12 @@
 
     .preamble__entry {
         font-size: 1.4em;
+        color: @Themed("#ffffff", "#2f3136");
     }
 
     .preamble__entry--small {
         font-size: 1em;
     }
-
-    /* Chatlog */
 
     .chatlog {
         max-width: 100%;
@@ -212,14 +219,13 @@
         display: grid;
         margin: 0 0.6em;
         padding: 0.9em 0;
-        border-top: 1px solid;
+        border-top: 1px solid @Themed("rgba(255, 255, 255, 0.1)", "#eceeef");
         grid-template-columns: auto 1fr;
     }
 
     .chatlog__reference-symbol {
         grid-column: 1;
-        border-style: solid;
-        border-width: 2px 0 0 2px;
+        border: 2px 0 0 2px solid @Themed("#4f545c", "#c7ccd1");
         border-radius: 8px 0 0 0;
         margin-left: 16px;
         margin-top: 8px;
@@ -235,6 +241,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         align-items: center;
+        color: @Themed("#b5b6b8", "#5f5f60");
     }
 
     .chatlog__reference-avatar {
@@ -254,20 +261,26 @@
         overflow: hidden;
         text-overflow: ellipsis;
         cursor: pointer;
+        color: @Themed("#b5b6b8", "#5f5f60");
     }
 
-    .chatlog__reference-content>* {
+    .chatlog__reference-link:hover {
+        color: @Themed("#ffffff", "#2f3136");
+    }
+
+    .chatlog__reference-content > * {
         display: inline;
         pointer-events: none;
     }
 
-    .chatlog__reference-content>a:hover {
+    .chatlog__reference-content > a:hover {
         text-decoration: none;
     }
 
     .chatlog__reference-edited-timestamp {
         margin-left: 0.25em;
         font-size: 0.8em;
+        color: @Themed("rgba(255, 255, 255, 0.2)", "#747f8d");
     }
 
     .chatlog__author-avatar-container {
@@ -289,12 +302,14 @@
     }
 
     .chatlog__author-name {
-        font-weight: 500;
+        font-weight: @Themed("500", "600");
+        color: @Themed("#ffffff", "#2f3136");
     }
 
     .chatlog__timestamp {
         margin-left: 0.3em;
         font-size: 0.75em;
+        color: @Themed("rgba(255, 255, 255, 0.2)", "#747f8d");
     }
 
     .chatlog__message {
@@ -302,6 +317,14 @@
         margin: 0 -0.3em;
         background-color: transparent;
         transition: background-color 1s ease;
+    }
+
+    .chatlog__message--highlighted {
+        background-color: @Themed("rgba(114, 137, 218, 0.2)", "rgba(114, 137, 218, 0.2)") !important;
+    }
+
+    .chatlog__message--pinned {
+        background-color: @Themed("rgba(249, 168, 37, 0.05)", "rgba(249, 168, 37, 0.05)");
     }
 
     .chatlog__content {
@@ -330,7 +353,8 @@
         width: 100%;
         max-width: 520px;
         padding: 10px;
-        border: 1px solid;
+        background-color: @Themed("#2f3136", "#f2f3f5");
+        border: 1px solid @Themed("#292b2f", "#ebedef");
         border-radius: 3px;
         overflow: hidden;
     }
@@ -372,6 +396,10 @@
         text-overflow: ellipsis;
     }
 
+    .chatlog__edited-timestamp {
+        color: @Themed("rgba(255, 255, 255, 0.2)", "#747f8d");
+    }
+
     .chatlog__embed {
         display: flex;
         margin-top: 0.3em;
@@ -385,11 +413,16 @@
         border-bottom-left-radius: 3px;
     }
 
+    .chatlog__embed-color-pill--default {
+        background-color: @Themed("#202225", "rgba(227, 229, 232, 1)");
+    }
+
     .chatlog__embed-content-container {
         display: flex;
         flex-direction: column;
         padding: 0.5em 0.6em;
-        border: 1px solid;
+        background-color: @Themed("rgba(46, 48, 54, 0.3)", "rgba(249, 249, 249, 0.3)");
+        border: 1px solid @Themed("rgba(46, 48, 54, 0.6)", "rgba(204, 204, 204, 0.3)");
         border-top-right-radius: 3px;
         border-bottom-right-radius: 3px;
     }
@@ -419,17 +452,24 @@
     .chatlog__embed-author-name {
         font-size: 0.875em;
         font-weight: 600;
+        color: @Themed("#ffffff", "#4f545c")
+    }
+
+    .chatlog__embed-author-name-link {
+        color: @Themed("#ffffff", "#4f545c");
     }
 
     .chatlog__embed-title {
         margin-bottom: 0.2em;
         font-size: 0.875em;
         font-weight: 600;
+        color: @Themed("#ffffff", "#4f545c");
     }
 
     .chatlog__embed-description {
         font-weight: 500;
         font-size: 0.85em;
+        color: @Themed("#dcddde", "#2e3338");
     }
 
     .chatlog__embed-fields {
@@ -454,10 +494,12 @@
     .chatlog__embed-field-name {
         margin-bottom: 0.2em;
         font-weight: 600;
+        color: @Themed("#ffffff", "#36393e");
     }
 
     .chatlog__embed-field-value {
         font-weight: 500;
+        color: @Themed("#dcddde", "#2e3338");
     }
 
     .chatlog__embed-thumbnail {
@@ -480,6 +522,7 @@
 
     .chatlog__embed-footer {
         margin-top: 0.6em;
+        color: @Themed("#dcddde", "#2e3338");
     }
 
     .chatlog__embed-footer-icon {
@@ -514,6 +557,7 @@
         align-items: center;
         margin: 0.35em 0.1em 0.1em 0.1em;
         padding: 0.2em 0.35em;
+        background-color: @Themed("rgba(255, 255, 255, 0.05)", "rgba(79, 84, 92, 0.06)");
         border-radius: 3px;
     }
 
@@ -521,6 +565,7 @@
         min-width: 9px;
         margin-left: 0.35em;
         font-size: 0.875em;
+        color: @Themed("rgba(255, 255, 255, 0.3)", "#747f8d");
     }
 
     .chatlog__bot-tag {
@@ -537,318 +582,13 @@
         font-weight: 500;
     }
 
-    /* Postamble */
-
     .postamble {
         margin: 1.4em 0.3em 0.6em 0.3em;
         padding: 1em;
-        border-top: 1px solid;
+        border-top: 1px solid @Themed("rgba(255, 255, 255, 0.1)", "#eceeef");
+    }
+
+    .postamble__entry {
+        color: @Themed("#ffffff", "#2f3136");
     }
 </style>
-
-@if (isDarkTheme)
-{
-    <style>
-        /* General */
-
-        body {
-            background-color: #36393e;
-            color: #dcddde;
-        }
-
-        a {
-            color: #00aff4;
-        }
-
-        .spoiler-text {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .spoiler--hidden .spoiler-text {
-            background-color: #202225;
-        }
-
-        .spoiler--hidden:hover .spoiler-text {
-            background-color: rgba(32, 34, 37, 0.8);
-        }
-
-        .quote {
-            border-color: #4f545c;
-        }
-
-        .pre {
-            background-color: #2f3136 !important;
-        }
-
-        .pre--multiline {
-            border-color: #282b30 !important;
-            color: #b9bbbe !important;
-        }
-
-        /* Preamble */
-
-        .preamble__entry {
-            color: #ffffff;
-        }
-
-        /* Chatlog */
-
-        .chatlog__message-group {
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .chatlog__reference-symbol {
-            border-color: #4f545c;
-        }
-
-        .chatlog__reference {
-            color: #b5b6b8;
-        }
-
-        .chatlog__reference-link {
-            color: #b5b6b8;
-        }
-
-        .chatlog__reference-link:hover {
-            color: #ffffff;
-        }
-
-        .chatlog__reference-edited-timestamp {
-            color: rgba(255, 255, 255, 0.2);
-        }
-
-        .chatlog__author-name {
-            color: #ffffff;
-        }
-
-        .chatlog__timestamp {
-            color: rgba(255, 255, 255, 0.2);
-        }
-
-        .chatlog__message--highlighted {
-            background-color: rgba(114, 137, 218, 0.2) !important;
-        }
-
-        .chatlog__message--pinned {
-            background-color: rgba(249, 168, 37, 0.05);
-        }
-
-        .chatlog__attachment-container {
-            background-color: #2f3136;
-            border-color: #292b2f;
-        }
-
-        .chatlog__edited-timestamp {
-            color: rgba(255, 255, 255, 0.2);
-        }
-
-        .chatlog__embed-color-pill--default {
-            background-color: #202225;
-        }
-
-        .chatlog__embed-content-container {
-            background-color: rgba(46, 48, 54, 0.3);
-            border-color: rgba(46, 48, 54, 0.6);
-        }
-
-        .chatlog__embed-author-name {
-            color: #ffffff;
-        }
-
-        .chatlog__embed-author-name-link {
-            color: #ffffff;
-        }
-
-        .chatlog__embed-title {
-            color: #ffffff;
-        }
-
-        .chatlog__embed-description {
-            color: #dcddde;
-        }
-
-        .chatlog__embed-field-name {
-            color: #ffffff;
-        }
-
-        .chatlog__embed-field-value {
-            color: #dcddde;
-        }
-
-        .chatlog__embed-footer {
-            color: #dcddde;
-        }
-
-        .chatlog__reaction {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-
-        .chatlog__reaction-count {
-            color: rgba(255, 255, 255, 0.3);
-        }
-
-        /* Postamble */
-
-        .postamble {
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .postamble__entry {
-            color: #ffffff;
-        }
-    </style>
-}
-else
-{
-    <style>
-        /* General */
-
-        body {
-            background-color: #ffffff;
-            color: #23262a;
-            font-weight: 500;
-        }
-
-        a {
-            color: #0068e0;
-        }
-
-        .spoiler-text {
-            background-color: rgba(0, 0, 0, 0.1);
-        }
-
-        .spoiler--hidden .spoiler-text {
-            background-color: #b9bbbe;
-        }
-
-        .spoiler--hidden:hover .spoiler-text {
-            background-color: rgba(185, 187, 190, 0.8);
-        }
-
-        .quote {
-            border-color: #c7ccd1;
-        }
-
-        .pre {
-            background-color: #f9f9f9 !important;
-        }
-
-        .pre--multiline {
-            border-color: #f3f3f3 !important;
-            color: #657b83 !important;
-        }
-
-        /* Preamble */
-
-        .preamble__entry {
-            color: #2f3136;
-        }
-
-        /* Chatlog */
-
-        .chatlog__message-group {
-            border-color: #eceeef;
-        }
-
-        .chatlog__reference-symbol {
-            border-color: #c7ccd1;
-        }
-
-        .chatlog__reference {
-            color: #5f5f60;
-        }
-
-        .chatlog__reference-link {
-            color: #5f5f60;
-        }
-
-        .chatlog__reference-link:hover {
-            color: #2f3136;
-        }
-
-        .chatlog__reference-edited-timestamp {
-            color: #747f8d;
-        }
-
-        .chatlog__author-name {
-            font-weight: 600;
-            color: #2f3136;
-        }
-
-        .chatlog__timestamp {
-            color: #747f8d;
-        }
-
-        .chatlog__message--highlighted {
-            background-color: rgba(114, 137, 218, 0.2) !important;
-        }
-
-        .chatlog__message--pinned {
-            background-color: rgba(249, 168, 37, 0.05);
-        }
-
-        .chatlog__attachment-container {
-            background-color: #f2f3f5;
-            border-color: #ebedef;
-        }
-
-        .chatlog__edited-timestamp {
-            color: #747f8d;
-        }
-
-        .chatlog__embed-color-pill--default {
-            background-color: rgba(227, 229, 232, 1);
-        }
-
-        .chatlog__embed-content-container {
-            background-color: rgba(249, 249, 249, 0.3);
-            border-color: rgba(204, 204, 204, 0.3);
-        }
-
-        .chatlog__embed-author-name {
-            color: #4f545c;
-        }
-
-        .chatlog__embed-author-name-link {
-            color: #4f545c;
-        }
-
-        .chatlog__embed-title {
-            color: #4f545c;
-        }
-
-        .chatlog__embed-description {
-            color: #2e3338;
-        }
-
-        .chatlog__embed-field-name {
-            color: #36393e;
-        }
-
-        .chatlog__embed-field-value {
-            color: #2e3338;
-        }
-
-        .chatlog__embed-footer {
-            color: #2e3338;
-        }
-
-        .chatlog__reaction {
-            background-color: rgba(79, 84, 92, 0.06);
-        }
-
-        .chatlog__reaction-count {
-            color: #747f8d;
-        }
-
-        /* Postamble */
-
-        .postamble {
-            border-color: #eceeef;
-        }
-
-        .postamble__entry {
-            color: #2f3136;
-        }
-    </style>
-}

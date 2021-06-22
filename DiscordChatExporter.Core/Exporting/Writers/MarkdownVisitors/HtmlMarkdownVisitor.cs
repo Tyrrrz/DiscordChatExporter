@@ -39,7 +39,7 @@ namespace DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors
                 TextFormatting.Underline => ("<u>", "</u>"),
                 TextFormatting.Strikethrough => ("<s>", "</s>"),
                 TextFormatting.Spoiler => (
-                    "<span class=\"spoiler spoiler--hidden\" onclick=\"showSpoiler(event, this)\"><span class=\"spoiler-text\">", "</span></span>"),
+                    "<span class=\"spoiler-text spoiler-text--hidden\" onclick=\"showSpoiler(event, this)\">", "</span>"),
                 TextFormatting.Quote => ("<div class=\"quote\">", "</div>"),
                 _ => throw new ArgumentOutOfRangeException(nameof(formatted.Formatting))
             };

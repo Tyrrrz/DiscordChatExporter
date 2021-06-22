@@ -12,10 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="Exporting\Writers\Html\PreambleTemplate.cshtml" IsRazorTemplate="true" />
-    <AdditionalFiles Include="Exporting\Writers\Html\PostambleTemplate.cshtml" IsRazorTemplate="true" />
-    <AdditionalFiles Include="Exporting\Writers\Html\MessageGroupTemplate.cshtml" IsRazorTemplate="true" />
-    <AdditionalFiles Include="Exporting\Writers\Html\StylesheetTemplate.cshtml" IsRazorTemplate="true" />
+    <AdditionalFiles Include="Exporting\Writers\Html\*.cshtml" IsRazorTemplate="true" />
   </ItemGroup>
 
 </Project>

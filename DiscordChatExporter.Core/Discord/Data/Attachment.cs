@@ -17,18 +17,19 @@ namespace DiscordChatExporter.Core.Discord.Data
 
         public string FileName { get; }
 
+        public string FileExtension => Path.GetExtension(FileName);
+
         public int? Width { get; }
 
         public int? Height { get; }
 
-        public bool IsImage => ImageFileExtensions.Contains(Path.GetExtension(FileName));
+        public bool IsImage => ImageFileExtensions.Contains(FileExtension);
 
-        public bool IsVideo => VideoFileExtensions.Contains(Path.GetExtension(FileName));
+        public bool IsVideo => VideoFileExtensions.Contains(FileExtension);
 
-        public bool IsAudio => AudioFileExtensions.Contains(Path.GetExtension(FileName));
+        public bool IsAudio => AudioFileExtensions.Contains(FileExtension);
 
-        public bool IsSpoiler =>
-            (IsImage || IsVideo || IsAudio) && FileName.StartsWith("SPOILER_", StringComparison.Ordinal);
+        public bool IsSpoiler => FileName.StartsWith("SPOILER_", StringComparison.Ordinal);
 
         public FileSize FileSize { get; }
 

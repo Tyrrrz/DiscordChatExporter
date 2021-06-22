@@ -1,8 +1,9 @@
 @using System
 @using System.Linq
 @using System.Threading.Tasks
+
 @namespace DiscordChatExporter.Core.Exporting.Writers.Html
-@inherits MiniRazor.TemplateBase<DiscordChatExporter.Core.Exporting.Writers.Html.MessageGroupTemplateContext>
+@inherits MiniRazor.TemplateBase<MessageGroupTemplateContext>
 
 @{
     string FormatDate(DateTimeOffset date) => Model.ExportContext.FormatDate(date);

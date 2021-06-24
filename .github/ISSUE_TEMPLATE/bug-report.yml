@@ -17,14 +17,15 @@ body:
 - type: input
   attributes:
     label: Version
-    description: "Which version of DiscordChatExporter does this bug affect?"
+    description: Which version of DiscordChatExporter does this bug affect?
+    placeholder: ver X.Y.Z
   validations:
     required: true
 
 - type: dropdown
   attributes:
     label: Flavor
-    description: "Does this bug affect the GUI version, the CLI version, or both?"
+    description: Does this bug affect the GUI version, the CLI version, or both?
     multiple: true
     options:
     - GUI (Graphical User Interface)
@@ -35,7 +36,7 @@ body:
 - type: dropdown
   attributes:
     label: Export format
-    description: "Does this bug affect specific export format(s)? If not applicable, leave this field blank."
+    description: Does this bug affect specific export format(s)? If not applicable, leave this field blank.
     multiple: true
     options:
     - HTML
@@ -46,14 +47,15 @@ body:
 - type: textarea
   attributes:
     label: Details
-    description: "Clear and thorough explanation of the bug."
+    description: Clear and thorough explanation of the bug.
+    placeholder: I was doing X expecting Y to happen, but Z happened instead.
   validations:
     required: true
 
 - type: textarea
   attributes:
     label: Steps to reproduce
-    description: "Minimum steps required to reproduce the bug."
+    description: Minimum steps required to reproduce the bug.
     placeholder: |
       - Step 1
       - Step 2

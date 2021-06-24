@@ -17,7 +17,7 @@ body:
 - type: dropdown
   attributes:
     label: Flavor
-    description: "Is this feature request related to specific flavor(s) of DiscordChatExporter? If not applicable, leave this field blank."
+    description: Is this feature request related to specific flavor(s) of DiscordChatExporter? If not applicable, leave this field blank.
     multiple: true
     options:
     - GUI (Graphical User Interface)
@@ -26,7 +26,7 @@ body:
 - type: dropdown
   attributes:
     label: Export format
-    description: "Is this feature request related to specific export format(s)? If not applicable, leave this field blank."
+    description: Is this feature request related to specific export format(s)? If not applicable, leave this field blank.
     multiple: true
     options:
     - HTML
@@ -37,6 +37,6 @@ body:
 - type: textarea
   attributes:
     label: Details
-    description: "Clear and thorough explanation of the feature you have in mind."
+    description: Clear and thorough explanation of the feature you have in mind.
   validations:
     required: true

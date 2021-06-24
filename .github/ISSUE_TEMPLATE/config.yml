@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: "\U0001F4D6 Read the wiki"
+  - name: 📖 Wiki
     url: https://github.com/Tyrrrz/DiscordChatExporter/wiki
-    about: Find answers to most common questions.
-  - name: "\U0001F5E8 Ask a question"
+    about: Find usage guides and frequently asked questions.
+  - name: 🗨 Discussions
     url: https://github.com/Tyrrrz/DiscordChatExporter/discussions/new
-    about: Please ask and answer questions here.
+    about: Ask and answer questions.

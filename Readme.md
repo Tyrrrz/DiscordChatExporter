@@ -61,12 +61,12 @@ The following table lists all available download options:
   </tbody>
 </table>
 
-- 🦄 - Community-maintained resource
 - ⚙️ - Requires .NET runtime to be installed manually:
   - [.NET Core v3.1 Runtime for **Windows x64**](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.0-windows-x64-installer)
   - [.NET Core v3.1 Runtime for **Windows x86**](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.0-windows-x86-installer)
   - [.NET Core v3.1 Runtime for **macOS x64**](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-3.1.0-macos-x64-installer)
   - [.NET Core v3.1 Runtime for **Linux**](https://docs.microsoft.com/en-us/dotnet/core/install/linux) (find your distro)
+- 🦄 - Community-maintained resource
 
 ## Features
 
@@ -83,3 +83,32 @@ The following table lists all available download options:
 
 ![channel list](.screenshots/list.png)
 ![rendered output](.screenshots/output.png)
+
+## Building the project locally
+
+Prerequisites:
+
+- [.NET 5.0 SDK](https://dotnet.microsoft.com/download/dotnet/5.0)
+- [.NET 3.1 SDK](https://dotnet.microsoft.com/download/dotnet/3.1) (temporarily as the app still targets .NET 3.1, but requires .NET 5.0 to build)
+- _(Recommended)_ C#/.NET IDE, such as [JetBrains Rider](https://www.jetbrains.com/rider), [VS Code](https://code.visualstudio.com/docs/languages/csharp), or [Visual Studio](https://visualstudio.microsoft.com).
+
+To build the entire solution run the following command in the root of the repository:
+
+```sh
+> dotnet build
+```
+
+This will generate runtime artifacts for each project:
+
+```plaintext
+./DiscordChatExporter.Gui/bin/[Debug|Release]/[runtime]/*
+./DiscordChatExporter.Cli/bin/[Debug|Release]/[runtime]/*
+```
+
+You can also build and run a specific project directly.
+To do that, navigate to its directory and use `dotnet run`:
+
+```sh
+> cd DiscordChatExporter.Gui
+> dotnet run
+```

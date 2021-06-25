@@ -39,6 +39,10 @@ namespace DiscordChatExporter.Core.Exporting
             var encounteredUsers = new HashSet<User>(IdBasedEqualityComparer.Instance);
             await foreach (var message in _discord.GetMessagesAsync(request.Channel.Id, request.After, request.Before, progress))
             {
+                // Skips any messages that fail to pass the supplied filter
+                if (!request.MessageFilter.Filter(message))
+                    continue;
+
                 // Resolve members for referenced users
                 foreach (var referencedUser in message.MentionedUsers.Prepend(message.Author))
                 {

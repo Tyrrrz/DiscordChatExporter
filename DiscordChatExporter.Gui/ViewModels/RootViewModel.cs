@@ -212,6 +212,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                         dialog.After?.Pipe(Snowflake.FromDate),
                         dialog.Before?.Pipe(Snowflake.FromDate),
                         dialog.PartitionLimit,
+                        dialog.MessageFilter,
                         dialog.ShouldDownloadMedia,
                         _settingsService.ShouldReuseMedia,
                         _settingsService.DateFormat

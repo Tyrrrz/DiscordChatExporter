@@ -4,6 +4,7 @@ using System.Linq;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exporting;
+using DiscordChatExporter.Core.Exporting.Filtering;
 using DiscordChatExporter.Core.Exporting.Partitioning;
 using DiscordChatExporter.Core.Utils.Extensions;
 using DiscordChatExporter.Gui.Services;
@@ -52,6 +53,12 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
         public PartitionLimit PartitionLimit => !string.IsNullOrWhiteSpace(PartitionLimitValue)
             ? PartitionLimit.Parse(PartitionLimitValue)
             : NullPartitionLimit.Instance;
+
+        public string? MessageFilterValue { get; set; }
+
+        public MessageFilter MessageFilter => !string.IsNullOrWhiteSpace(MessageFilterValue)
+            ? MessageFilter.Parse(MessageFilterValue)
+            : NullMessageFilter.Instance;
 
         public bool ShouldDownloadMedia { get; set; }
 

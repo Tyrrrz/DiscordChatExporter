@@ -5,7 +5,7 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
 {
     public class HasMessageFilter : MessageFilter
     {
-        private string _value;
+        private readonly string _value;
 
         public HasMessageFilter(string value)
         {
@@ -13,9 +13,8 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
             _value = value;
         }
 
-        public override bool Filter(Message message)
-        {
-            return _value switch
+        public override bool Filter(Message message) =>
+            _value switch
             {
                 "link" => throw new System.NotImplementedException(), //how do we do this?
                 "embed" => message.Embeds.Any(),
@@ -25,6 +24,5 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
                 "sound" => message.Attachments.Any(file => file.IsAudio),
                 _ => false
             };
-        }
     }
 }

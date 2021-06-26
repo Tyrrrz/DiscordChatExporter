@@ -17,6 +17,7 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
         {
             return key.ToLower() switch
             {
+                "contains" => new ContainsMessageFilter(value);
                 "from" => new FromMessageFilter(value),
                 "has" => new HasMessageFilter(value),
                 "mentions" => new MentionsMessageFilter(value),

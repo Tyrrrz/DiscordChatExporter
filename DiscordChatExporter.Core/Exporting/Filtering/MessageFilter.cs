@@ -10,6 +10,17 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
 
     public partial class MessageFilter
     {
+        public static MessageFilter CreateFilter(string key, string value)
+        {
+            return key.ToLower() switch
+            {
+                "from" => new FromMessageFilter(value),
+                "has" => new HasMessageFilter(value),
+                "mentions" => new MentionsMessageFilter(value),
+                _ => throw new ArgumentException($"Invalid filter type '{key}'.", "key")
+            };
+        }
+
         public static MessageFilter? TryParse(string value, IFormatProvider? formatProvider = null)
         {
             throw new NotImplementedException();

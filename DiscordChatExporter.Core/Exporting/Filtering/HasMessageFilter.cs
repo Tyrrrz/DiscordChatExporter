@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace DiscordChatExporter.Core.Exporting.Filtering
 {
-    internal class HasMessageFilter : MessageFilter
+    public class HasMessageFilter : MessageFilter
     {
         private string _value;
 

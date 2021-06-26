@@ -1,5 +1,8 @@
 ﻿using System;
 using DiscordChatExporter.Core.Discord.Data;
+using DiscordChatExporter.Core.Exporting.Filtering.Parsing;
+using Superpower;
+using Superpower.Model;
 
 namespace DiscordChatExporter.Core.Exporting.Filtering
 {
@@ -21,12 +24,8 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
             };
         }
 
-        public static MessageFilter? TryParse(string value, IFormatProvider? formatProvider = null)
-        {
-            throw new NotImplementedException();
-        }
-
         public static MessageFilter Parse(string value, IFormatProvider? formatProvider = null) =>
-            TryParse(value, formatProvider) ?? throw new FormatException($"Invalid message filter '{value}'."); ///TODO: better error reporting
+            FilterParser.TryParse(value, out var filter, out var error, out var position) ? filter : throw new ParseException(error, position);
+
     }
 }

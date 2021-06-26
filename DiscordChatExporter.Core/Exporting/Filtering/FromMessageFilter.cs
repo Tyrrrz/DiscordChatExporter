@@ -2,7 +2,7 @@
 
 namespace DiscordChatExporter.Core.Exporting.Filtering
 {
-    internal class FromMessageFilter : MessageFilter
+    public class FromMessageFilter : MessageFilter
     {
         private string _value;
 

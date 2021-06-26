@@ -12,7 +12,7 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
             _value = value;
         }
 
-            //match either a username + discriminator or an id
+        //match either a username + discriminator or an id
         public override bool Filter(Message message) =>
             _value == message.Author.FullName || _value == message.Author.Id.ToString();
     }

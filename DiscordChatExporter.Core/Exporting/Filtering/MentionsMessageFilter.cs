@@ -5,7 +5,7 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
 {
     public class MentionsMessageFilter : MessageFilter
     {
-        private string _value;
+        private readonly string _value;
 
         public MentionsMessageFilter(string value)
         {
@@ -13,10 +13,8 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
             _value = value;
         }
 
-        public override bool Filter(Message message)
-        {
-            //match either a username + discriminator or an id
-            return message.MentionedUsers.Any(user => _value == user.FullName || _value == user.Id.ToString());
-        }
+        //match either a username + discriminator or an id
+        public override bool Filter(Message message) =>
+            message.MentionedUsers.Any(user => _value == user.FullName || _value == user.Id.ToString());
     }
 }

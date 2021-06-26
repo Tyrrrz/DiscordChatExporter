@@ -49,25 +49,21 @@ namespace DiscordChatExporter.Core.Exporting.Filtering.Parsing
 
         public static bool TryParse(string input, [MaybeNullWhen(false)] out MessageFilter value, [MaybeNullWhen(true)] out string error, out Position errorPosition)
         {
-            Console.WriteLine("tokenizing...");
             var tokens = FilterTokenizer.Instance.TryTokenize(input);
             if (!tokens.HasValue)
             {
                 value = null;
                 error = tokens.ToString();
                 errorPosition = tokens.ErrorPosition;
-                Console.WriteLine(error);
                 return false;
             }
 
-            Console.WriteLine("parsing...");
             var parsed = Instance.TryParse(tokens.Value);
             if (!parsed.HasValue)
             {
                 value = null;
                 error = parsed.ToString();
                 errorPosition = parsed.ErrorPosition;
-                Console.WriteLine(error);
                 return false;
             }
 

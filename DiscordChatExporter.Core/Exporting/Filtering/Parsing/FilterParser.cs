@@ -28,7 +28,7 @@ namespace DiscordChatExporter.Core.Exporting.Filtering.Parsing
 
         public static TokenListParser<FilterToken, MessageFilter> TextFilter { get; } =
             from value in AnyString
-            select MessageFilter.CreateFilter("contains", value);
+            select MessageFilter.CreateFilter(value);
 
         public static TokenListParser<FilterToken, MessageFilter> MultipleFilter { get; } =
             from first in AnyFilter

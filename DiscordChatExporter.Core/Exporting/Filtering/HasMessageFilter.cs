@@ -7,11 +7,7 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
     {
         private readonly string _value;
 
-        public HasMessageFilter(string value)
-        {
-            ///TODO: should we validate input here?
-            _value = value;
-        }
+        public HasMessageFilter(string value) => _value = value;
 
         public override bool Filter(Message message) =>
             _value switch

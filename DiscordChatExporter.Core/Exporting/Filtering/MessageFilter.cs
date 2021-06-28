@@ -2,7 +2,6 @@
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exporting.Filtering.Parsing;
 using Superpower;
-using Superpower.Model;
 
 namespace DiscordChatExporter.Core.Exporting.Filtering
 {
@@ -13,11 +12,12 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
 
     public partial class MessageFilter
     {
+        public static MessageFilter CreateFilter(string text) => new ContainsMessageFilter(text);
+
         public static MessageFilter CreateFilter(string key, string value)
         {
             return key.ToLower() switch
             {
-                "contains" => new ContainsMessageFilter(value),
                 "from" => new FromMessageFilter(value),
                 "has" => new HasMessageFilter(value),
                 "mentions" => new MentionsMessageFilter(value),

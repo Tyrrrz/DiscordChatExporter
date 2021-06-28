@@ -7,14 +7,12 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
     {
         private readonly string _value;
 
-        public MentionsMessageFilter(string value)
-        {
-            ///TODO: should we validate input here?
-            _value = value;
-        }
+        public MentionsMessageFilter(string value) => _value = value;
 
-        //match either a username + discriminator or an id
         public override bool Filter(Message message) =>
-            message.MentionedUsers.Any(user => _value == user.FullName || _value == user.Id.ToString());
+            message.MentionedUsers.Any(user =>
+                _value == user.Name ||
+                _value == user.FullName ||
+                _value == user.Id.ToString());
     }
 }

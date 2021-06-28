@@ -16,12 +16,12 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
 
         public static MessageFilter CreateFilter(string key, string value)
         {
-            return key.ToLower() switch
+            return key.ToLowerInvariant() switch
             {
                 "from" => new FromMessageFilter(value),
                 "has" => new HasMessageFilter(value),
                 "mentions" => new MentionsMessageFilter(value),
-                _ => throw new ArgumentException($"Invalid filter type '{key}'.", "key")
+                _ => throw new ArgumentException($"Invalid filter type '{key}'.", nameof(key))
             };
         }
 

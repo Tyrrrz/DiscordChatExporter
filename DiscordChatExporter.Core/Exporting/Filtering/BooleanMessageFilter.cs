@@ -17,8 +17,8 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
 
         public override bool Filter(Message message)
         {
-            bool first = _first.Filter(message);
-            bool second = _second.Filter(message);
+            var first = _first.Filter(message);
+            var second = _second.Filter(message);
             return _unioned ?
                 first || second :
                 first && second;

@@ -30,17 +30,9 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
 
         public static MessageFilter Parse(string value, IFormatProvider? formatProvider = null)
         {
-            try
-            {
-                var tokens = FilterTokenizer.Instance.Tokenize(value);
-                var parsed = FilterParser.Instance.Parse(tokens);
-                return parsed;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            var tokens = FilterTokenizer.Instance.Tokenize(value);
+            var parsed = FilterParser.Instance.Parse(tokens);
+            return parsed;
         }
     }
 }

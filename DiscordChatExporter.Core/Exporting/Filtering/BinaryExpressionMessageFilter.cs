@@ -2,24 +2,24 @@
 
 namespace DiscordChatExporter.Core.Exporting.Filtering
 {
-    public class BooleanMessageFilter : MessageFilter
+    public class BinaryExpressionMessageFilter : MessageFilter
     {
         private readonly MessageFilter _first;
         private readonly MessageFilter _second;
-        private readonly bool _unioned;
+        private readonly BinaryExpressionKind _kind;
 
-        public BooleanMessageFilter(MessageFilter first, MessageFilter second, bool unioned)
+        public BinaryExpressionMessageFilter(MessageFilter first, MessageFilter second, BinaryExpressionKind kind)
         {
             _first = first;
             _second = second;
-            _unioned = unioned;
+            _kind = kind;
         }
 
         public override bool Filter(Message message)
         {
             var first = _first.Filter(message);
             var second = _second.Filter(message);
-            return _unioned ?
+            return _kind == BinaryExpressionKind.Or ?
                 first || second :
                 first && second;
         }

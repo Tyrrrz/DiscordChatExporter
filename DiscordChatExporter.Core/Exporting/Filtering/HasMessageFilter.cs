@@ -1,5 +1,6 @@
 ﻿using DiscordChatExporter.Core.Discord.Data;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace DiscordChatExporter.Core.Exporting.Filtering
 {
@@ -12,7 +13,7 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
         public override bool Filter(Message message) =>
             _value switch
             {
-                "link" => throw new System.NotImplementedException(), //how do we do this?
+                "link" => Regex.IsMatch(message.Content, "https?://\\S*[^\\.,:;\"\'\\s]", DefaultRegexOptions),
                 "embed" => message.Embeds.Any(),
                 "file" => message.Attachments.Any(),
                 "video" => message.Attachments.Any(file => file.IsVideo),

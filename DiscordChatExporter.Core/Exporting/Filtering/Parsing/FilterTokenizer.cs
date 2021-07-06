@@ -16,8 +16,8 @@ namespace DiscordChatExporter.Core.Exporting.Filtering.Parsing
             .Match(Character.EqualTo(':'), FilterToken.Colon)
             .Match(Character.EqualTo('-'), FilterToken.Minus)
             .Match(Character.EqualTo('|'), FilterToken.VBar)
-            .Match(FilterTextParsers.QuotedString, FilterToken.QuotedString)
-            .Match(FilterTextParsers.UnquotedString, FilterToken.UnquotedString)
+            .Match(FilterParser.QuotedString, FilterToken.QuotedString)
+            .Match(FilterParser.UnquotedString, FilterToken.UnquotedString)
             .Build();
     }
 }

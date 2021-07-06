@@ -9,6 +9,7 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
 
         public ContainsMessageFilter(string value) => _value = value;
 
-        public override bool Filter(Message message) => Regex.IsMatch(message.Content, $@"\b{Regex.Escape(_value)}\b", RegexOptions.IgnoreCase);
+        public override bool Filter(Message message) =>
+            Regex.IsMatch(message.Content, $@"\b{Regex.Escape(_value)}\b", RegexOptions.IgnoreCase | DefaultRegexOptions);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exporting.Filtering.Parsing;
 using Superpower;
@@ -12,6 +13,8 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
 
     public partial class MessageFilter
     {
+        protected const RegexOptions DefaultRegexOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline;
+
         public static MessageFilter CreateFilter(string text) => new ContainsMessageFilter(text);
 
         public static MessageFilter CreateFilter(string key, string value)
@@ -25,8 +28,19 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
             };
         }
 
-        public static MessageFilter Parse(string value, IFormatProvider? formatProvider = null) =>
-            FilterParser.TryParse(value, out var filter, out var error, out var position) ? filter : throw new ParseException(error, position);
-
+        public static MessageFilter Parse(string value, IFormatProvider? formatProvider = null)
+        {
+            try
+            {
+                var tokens = FilterTokenizer.Instance.Tokenize(value);
+                var parsed = FilterParser.Instance.Parse(tokens);
+                return parsed;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
     }
 }

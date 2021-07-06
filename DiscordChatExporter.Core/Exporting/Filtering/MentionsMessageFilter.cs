@@ -1,4 +1,5 @@
 ﻿using DiscordChatExporter.Core.Discord.Data;
+using System;
 using System.Linq;
 
 namespace DiscordChatExporter.Core.Exporting.Filtering
@@ -11,8 +12,8 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
 
         public override bool Filter(Message message) =>
             message.MentionedUsers.Any(user =>
-                _value == user.Name ||
-                _value == user.FullName ||
-                _value == user.Id.ToString());
+                string.Equals(_value, user.Name, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(_value, user.FullName, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(_value, user.Id.ToString(), StringComparison.OrdinalIgnoreCase));
     }
 }

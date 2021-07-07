@@ -4,6 +4,7 @@ using System.Linq;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exporting;
+using DiscordChatExporter.Core.Exporting.Filtering;
 using DiscordChatExporter.Core.Exporting.Partitioning;
 using DiscordChatExporter.Core.Utils.Extensions;
 using DiscordChatExporter.Gui.Services;
@@ -53,6 +54,12 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             ? PartitionLimit.Parse(PartitionLimitValue)
             : NullPartitionLimit.Instance;
 
+        public string? MessageFilterValue { get; set; }
+
+        public MessageFilter MessageFilter => !string.IsNullOrWhiteSpace(MessageFilterValue)
+            ? MessageFilter.Parse(MessageFilterValue)
+            : NullMessageFilter.Instance;
+
         public bool ShouldDownloadMedia { get; set; }
 
         // Whether to show the "advanced options" by default when the dialog opens.
@@ -61,6 +68,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             After != default ||
             Before != default ||
             !string.IsNullOrWhiteSpace(PartitionLimitValue) ||
+            !string.IsNullOrWhiteSpace(MessageFilterValue) ||
             ShouldDownloadMedia != default;
 
         public ExportSetupViewModel(DialogManager dialogManager, SettingsService settingsService)
@@ -71,6 +79,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             // Persist preferences
             SelectedFormat = _settingsService.LastExportFormat;
             PartitionLimitValue = _settingsService.LastPartitionLimitValue;
+            MessageFilterValue = _settingsService.LastMessageFilterValue;
             ShouldDownloadMedia = _settingsService.LastShouldDownloadMedia;
         }
 
@@ -79,6 +88,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             // Persist preferences
             _settingsService.LastExportFormat = SelectedFormat;
             _settingsService.LastPartitionLimitValue = PartitionLimitValue;
+            _settingsService.LastMessageFilterValue = MessageFilterValue;
             _settingsService.LastShouldDownloadMedia = ShouldDownloadMedia;
 
             // If single channel - prompt file path

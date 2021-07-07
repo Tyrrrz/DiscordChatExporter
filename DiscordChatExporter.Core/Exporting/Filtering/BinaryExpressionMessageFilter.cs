@@ -1,4 +1,5 @@
 ﻿using DiscordChatExporter.Core.Discord.Data;
+using System;
 
 namespace DiscordChatExporter.Core.Exporting.Filtering
 {

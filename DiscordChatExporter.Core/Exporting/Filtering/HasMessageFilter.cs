@@ -19,7 +19,7 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
                 "video" => message.Attachments.Any(file => file.IsVideo),
                 "image" => message.Attachments.Any(file => file.IsImage),
                 "sound" => message.Attachments.Any(file => file.IsAudio),
-                _ => false
+                _ => throw new InvalidOperationException($"Invalid value provided for the 'has' message filter: '{_value}'");
             };
     }
 }

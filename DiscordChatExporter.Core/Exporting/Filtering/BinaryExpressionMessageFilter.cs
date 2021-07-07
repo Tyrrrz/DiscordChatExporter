@@ -15,13 +15,11 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
             _kind = kind;
         }
 
-        public override bool Filter(Message message)
+        public override bool Filter(Message message) => _kind switch
         {
-            var first = _first.Filter(message);
-            var second = _second.Filter(message);
-            return _kind == BinaryExpressionKind.Or ?
-                first || second :
-                first && second;
-        }
+            BinaryExpressionKind.Or => _first.Filter(message) || _second.Filter(message),
+            BinaryExpressionKind.And => _first.Filter(message) && _second.Filter(message), 
+            _ => throw new InvalidOperationException($"Unknown binary expression kind '{_kind}'.")
+        };
     }
 }

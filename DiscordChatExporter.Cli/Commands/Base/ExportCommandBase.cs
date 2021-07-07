@@ -36,7 +36,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
         [CommandOption("partition", 'p', Description = "Split output into partitions, each limited to this number of messages (e.g. 100) or file size (e.g. 10mb).")]
         public PartitionLimit PartitionLimit { get; init; } = NullPartitionLimit.Instance;
 
-        [CommandOption("filter", Description = "Only include messages that satisfy this filter (e.g. user:foo#1234).")]
+        [CommandOption("filter", Description = "Only include messages that satisfy this filter (e.g. from:foo#1234).")]
         public MessageFilter MessageFilter { get; init; } = NullMessageFilter.Instance;
 
         [CommandOption("parallel", Description = "Limits how many channels can be exported in parallel.")]

@@ -68,6 +68,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             After != default ||
             Before != default ||
             !string.IsNullOrWhiteSpace(PartitionLimitValue) ||
+            !string.IsNullOrWhiteSpace(MessageFilterValue) ||
             ShouldDownloadMedia != default;
 
         public ExportSetupViewModel(DialogManager dialogManager, SettingsService settingsService)
@@ -78,6 +79,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             // Persist preferences
             SelectedFormat = _settingsService.LastExportFormat;
             PartitionLimitValue = _settingsService.LastPartitionLimitValue;
+            MessageFilterValue = _settingsService.LastMessageFilterValue;
             ShouldDownloadMedia = _settingsService.LastShouldDownloadMedia;
         }
 
@@ -86,6 +88,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
             // Persist preferences
             _settingsService.LastExportFormat = SelectedFormat;
             _settingsService.LastPartitionLimitValue = PartitionLimitValue;
+            _settingsService.LastMessageFilterValue = MessageFilterValue;
             _settingsService.LastShouldDownloadMedia = ShouldDownloadMedia;
 
             // If single channel - prompt file path

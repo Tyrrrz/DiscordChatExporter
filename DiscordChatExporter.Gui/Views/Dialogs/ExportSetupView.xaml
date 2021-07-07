@@ -133,6 +133,14 @@
                 Text="{Binding PartitionLimitValue}"
                 ToolTip="Split output into partitions, each limited to this number of messages (e.g. 100) or file size (e.g. 10mb)" />
 
+            <!--  Filtering  -->
+            <TextBox
+                Margin="16,8"
+                materialDesign:HintAssist.Hint="Message filter"
+                materialDesign:HintAssist.IsFloating="True"
+                Text="{Binding MessageFilterValue}"
+                ToolTip="Only include messages that satisfy this filter (e.g. from:foo#1234)." />
+
             <!--  Download media  -->
             <Grid Margin="16,16" ToolTip="Download referenced media content (user avatars, attached files, embedded images, etc)">
                 <Grid.ColumnDefinitions>

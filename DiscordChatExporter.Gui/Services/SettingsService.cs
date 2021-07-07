@@ -25,6 +25,8 @@ namespace DiscordChatExporter.Gui.Services
 
         public string? LastPartitionLimitValue { get; set; }
 
+        public string? LastMessageFilterValue { get; set; }
+
         public bool LastShouldDownloadMedia { get; set; }
 
         public SettingsService()

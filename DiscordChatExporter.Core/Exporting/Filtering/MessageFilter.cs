@@ -15,9 +15,9 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
     {
         protected const RegexOptions DefaultRegexOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline;
 
-        public static MessageFilter CreateFilter(string text) => new ContainsMessageFilter(text);
+        internal static MessageFilter CreateFilter(string text) => new ContainsMessageFilter(text);
 
-        public static MessageFilter CreateFilter(string key, string value)
+        internal static MessageFilter CreateFilter(string key, string value)
         {
             return key.ToLowerInvariant() switch
             {

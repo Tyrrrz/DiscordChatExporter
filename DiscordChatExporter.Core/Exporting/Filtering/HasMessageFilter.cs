@@ -1,4 +1,5 @@
 ﻿using DiscordChatExporter.Core.Discord.Data;
+using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -19,7 +20,7 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
                 "video" => message.Attachments.Any(file => file.IsVideo),
                 "image" => message.Attachments.Any(file => file.IsImage),
                 "sound" => message.Attachments.Any(file => file.IsAudio),
-                _ => throw new InvalidOperationException($"Invalid value provided for the 'has' message filter: '{_value}'");
+                _ => throw new InvalidOperationException($"Invalid value provided for the 'has' message filter: '{_value}'")
             };
     }
 }

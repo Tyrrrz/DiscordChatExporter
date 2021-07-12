@@ -1,4 +1,4 @@
-﻿<Window
+<Window
     x:Class="DiscordChatExporter.Gui.Views.RootView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -163,23 +163,32 @@
                             <Run FontWeight="SemiBold" Text="Ctrl+Shift+I" />
                             <Run Text="to show developer tools" />
                             <LineBreak />
-                            <Run Text="3. Navigate to the" />
+                            <Run Text="3. Press" />
+                            <Run FontWeight="SemiBold" Text="Ctrl+Shift+M" />
+                            <Run Text="to toggle device toolbar" />
+                            <LineBreak />
+                            <Run Text="4. Navigate to the" />
                             <Run FontWeight="SemiBold" Text="Application" />
                             <Run Text="tab" />
                             <LineBreak />
-                            <Run Text="4. Select" />
+                            <Run Text="5. On the left, expand" />
                             <Run FontWeight="SemiBold" Text="Local Storage" />
-                            <Run Text="&gt;" />
+                            <Run Text="and select" />
                             <Run FontWeight="SemiBold" Text="https://discord.com" />
-                            <Run Text="on the left" />
                             <LineBreak />
-                            <Run Text="5. Press" />
+                            <Run Text="6. Type" />
+                            <Run FontWeight="SemiBold" Text="token" />
+                            <Run Text="into the" />
+                            <Run FontWeight="SemiBold" Text="Filter" />
+                            <Run Text="box" />
+                            <LineBreak />
+                            <Run Text="7. If the token key does not appear, press" />
                             <Run FontWeight="SemiBold" Text="Ctrl+R" />
                             <Run Text="to reload" />
                             <LineBreak />
-                            <Run Text="6. Find" />
-                            <Run FontWeight="SemiBold" Text="token" />
-                            <Run Text="at the bottom and copy the value" />
+                            <Run Text="8. Copy the" />
+                            <Run FontWeight="SemiBold" Text="value" />
+                            <Run Text="of the token key" />
                         </TextBlock>
                         <TextBlock Margin="0,24,0,0" FontSize="14">
                             <Run Text="Automating user accounts is technically against TOS, use at your own risk." />

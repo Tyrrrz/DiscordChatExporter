@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using CliFx;
 using CliFx.Attributes;
@@ -16,10 +16,12 @@ namespace DiscordChatExporter.Cli.Commands
 
             console.Output.WriteLine(" 1. Open Discord");
             console.Output.WriteLine(" 2. Press Ctrl+Shift+I to show developer tools");
-            console.Output.WriteLine(" 3. Navigate to the Application tab");
-            console.Output.WriteLine(" 4. Select \"Local Storage\" > \"https://discord.com\" on the left");
-            console.Output.WriteLine(" 5. Press Ctrl+R to reload");
-            console.Output.WriteLine(" 6. Find \"token\" at the bottom and copy the value");
+            console.Output.WriteLine(" 3. Press Ctrl+Shift+M to toggle device toolbar");
+            console.Output.WriteLine(" 4. Navigate to the Application tab");
+            console.Output.WriteLine(" 5. On the left, expand Local Storage and select https://discord.com");
+            console.Output.WriteLine(" 6. Type \"token\" into the Filter box");
+            console.Output.WriteLine(" 7. If the token key does not appear, press Ctrl+R to reload");
+            console.Output.WriteLine(" 8. Copy the value of the token key");
             console.Output.WriteLine(" *  Automating user accounts is technically against TOS, use at your own risk.");
             console.Output.WriteLine();
 

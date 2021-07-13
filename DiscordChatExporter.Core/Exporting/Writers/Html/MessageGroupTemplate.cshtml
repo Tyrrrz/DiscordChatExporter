@@ -193,7 +193,7 @@
                                         <div class="chatlog__embed-author">
                                             @if (!string.IsNullOrWhiteSpace(embed.Author.IconUrl))
                                             {
-                                                <img class="chatlog__embed-author-icon" src="@await ResolveUrlAsync(embed.Author.IconProxyUrl ?? embed.Author.IconUrl)" alt="Author icon" loading="lazy">
+                                                <img class="chatlog__embed-author-icon" src="@await ResolveUrlAsync(embed.Author.IconProxyUrl ?? embed.Author.IconUrl)" alt="Author icon" loading="lazy" onerror="this.style.visibility='hidden'">
                                             }
 
                                             @if (!string.IsNullOrWhiteSpace(embed.Author.Name))

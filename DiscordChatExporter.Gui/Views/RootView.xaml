@@ -186,9 +186,9 @@
                             <Run FontWeight="SemiBold" Text="Ctrl+R" />
                             <Run Text="to reload" />
                             <LineBreak />
-                            <Run Text="8. Copy the" />
-                            <Run FontWeight="SemiBold" Text="value" />
-                            <Run Text="of the token key" />
+                            <Run Text="8. Copy the value of the" />
+                            <Run FontWeight="SemiBold" Text="token" />
+                            <Run Text="key" />
                         </TextBlock>
                         <TextBlock Margin="0,24,0,0" FontSize="14">
                             <Run Text="Automating user accounts is technically against TOS, use at your own risk." />

@@ -51,7 +51,7 @@ namespace DiscordChatExporter.Core.Discord
                 {
                     HttpStatusCode.Unauthorized => DiscordChatExporterException.Unauthorized(),
                     HttpStatusCode.Forbidden => DiscordChatExporterException.Forbidden(),
-                    HttpStatusCode.NotFound => DiscordChatExporterException.NotFound(),
+                    HttpStatusCode.NotFound => DiscordChatExporterException.NotFound(url),
                     _ => DiscordChatExporterException.FailedHttpRequest(response)
                 };
             }

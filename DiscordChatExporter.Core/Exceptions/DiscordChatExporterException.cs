@@ -36,8 +36,8 @@ Failed to perform an HTTP request.
         internal static DiscordChatExporterException Forbidden() =>
             new("Access is forbidden.");
 
-        internal static DiscordChatExporterException NotFound() =>
-            new("Requested resource does not exist.");
+        internal static DiscordChatExporterException NotFound(string resourceId) =>
+            new($"Requested resource ({resourceId}) does not exist.");
 
         internal static DiscordChatExporterException ChannelIsEmpty() =>
             new("No messages found for the specified period.");

@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Markdown;
-using DiscordChatExporter.Core.Markdown.Ast;
+using DiscordChatExporter.Core.Markdown.Parsing;
 using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors
@@ -78,14 +78,14 @@ namespace DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors
         protected override MarkdownNode VisitMention(MentionNode mention)
         {
             var mentionId = Snowflake.TryParse(mention.Id);
-            if (mention.Type == MentionType.Meta)
+            if (mention.Kind == MentionKind.Meta)
             {
                 _buffer
                     .Append("<span class=\"mention\">")
                     .Append("@").Append(HtmlEncode(mention.Id))
                     .Append("</span>");
             }
-            else if (mention.Type == MentionType.User)
+            else if (mention.Kind == MentionKind.User)
             {
                 var member = mentionId?.Pipe(_context.TryGetMember);
                 var fullName = member?.User.FullName ?? "Unknown";
@@ -96,7 +96,7 @@ namespace DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors
                     .Append("@").Append(HtmlEncode(nick))
                     .Append("</span>");
             }
-            else if (mention.Type == MentionType.Channel)
+            else if (mention.Kind == MentionKind.Channel)
             {
                 var channel = mentionId?.Pipe(_context.TryGetChannel);
                 var name = channel?.Name ?? "deleted-channel";
@@ -106,7 +106,7 @@ namespace DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors
                     .Append("#").Append(HtmlEncode(name))
                     .Append("</span>");
             }
-            else if (mention.Type == MentionType.Role)
+            else if (mention.Kind == MentionKind.Role)
             {
                 var role = mentionId?.Pipe(_context.TryGetRole);
                 var name = role?.Name ?? "deleted-role";

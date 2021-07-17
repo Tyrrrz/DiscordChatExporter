@@ -1,15 +1,18 @@
-﻿using DiscordChatExporter.Core.Discord.Data;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
+using DiscordChatExporter.Core.Discord.Data;
 
 namespace DiscordChatExporter.Core.Exporting.Filtering
 {
-    public class ContainsMessageFilter : MessageFilter
+    internal class ContainsMessageFilter : MessageFilter
     {
-        private readonly string _value;
+        private readonly string _text;
 
-        public ContainsMessageFilter(string value) => _value = value;
+        public ContainsMessageFilter(string text) => _text = text;
 
-        public override bool Filter(Message message) =>
-            Regex.IsMatch(message.Content, $@"\b{Regex.Escape(_value)}\b", RegexOptions.IgnoreCase | DefaultRegexOptions);
+        public override bool Filter(Message message) => Regex.IsMatch(
+            message.Content,
+            "\\b" + _text + "\\b",
+            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant
+        );
     }
 }

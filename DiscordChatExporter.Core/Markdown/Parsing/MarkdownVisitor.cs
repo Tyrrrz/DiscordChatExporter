@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using DiscordChatExporter.Core.Markdown.Ast;
 
-namespace DiscordChatExporter.Core.Markdown
+namespace DiscordChatExporter.Core.Markdown.Parsing
 {
     internal abstract class MarkdownVisitor
     {

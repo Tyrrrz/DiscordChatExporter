@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Markdown;
-using DiscordChatExporter.Core.Markdown.Ast;
+using DiscordChatExporter.Core.Markdown.Parsing;
 using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors
@@ -26,25 +26,25 @@ namespace DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors
         protected override MarkdownNode VisitMention(MentionNode mention)
         {
             var mentionId = Snowflake.TryParse(mention.Id);
-            if (mention.Type == MentionType.Meta)
+            if (mention.Kind == MentionKind.Meta)
             {
                 _buffer.Append($"@{mention.Id}");
             }
-            else if (mention.Type == MentionType.User)
+            else if (mention.Kind == MentionKind.User)
             {
                 var member = mentionId?.Pipe(_context.TryGetMember);
                 var name = member?.User.Name ?? "Unknown";
 
                 _buffer.Append($"@{name}");
             }
-            else if (mention.Type == MentionType.Channel)
+            else if (mention.Kind == MentionKind.Channel)
             {
                 var channel = mentionId?.Pipe(_context.TryGetChannel);
                 var name = channel?.Name ?? "deleted-channel";
 
                 _buffer.Append($"#{name}");
             }
-            else if (mention.Type == MentionType.Role)
+            else if (mention.Kind == MentionKind.Role)
             {
                 var role = mentionId?.Pipe(_context.TryGetRole);
                 var name = role?.Name ?? "deleted-role";

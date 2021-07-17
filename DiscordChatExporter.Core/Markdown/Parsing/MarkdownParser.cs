@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using DiscordChatExporter.Core.Markdown.Ast;
-using DiscordChatExporter.Core.Markdown.Matching;
 using DiscordChatExporter.Core.Utils;
 
-namespace DiscordChatExporter.Core.Markdown
+namespace DiscordChatExporter.Core.Markdown.Parsing
 {
     // The following parsing logic is meant to replicate Discord's markdown grammar as close as possible
     internal static partial class MarkdownParser
@@ -120,31 +118,31 @@ namespace DiscordChatExporter.Core.Markdown
         // Capture @everyone
         private static readonly IMatcher<MarkdownNode> EveryoneMentionNodeMatcher = new StringMatcher<MarkdownNode>(
             "@everyone",
-            _ => new MentionNode("everyone", MentionType.Meta)
+            _ => new MentionNode("everyone", MentionKind.Meta)
         );
 
         // Capture @here
         private static readonly IMatcher<MarkdownNode> HereMentionNodeMatcher = new StringMatcher<MarkdownNode>(
             "@here",
-            _ => new MentionNode("here", MentionType.Meta)
+            _ => new MentionNode("here", MentionKind.Meta)
         );
 
         // Capture <@123456> or <@!123456>
         private static readonly IMatcher<MarkdownNode> UserMentionNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("<@!?(\\d+)>", DefaultRegexOptions),
-            (_, m) => new MentionNode(m.Groups[1].Value, MentionType.User)
+            (_, m) => new MentionNode(m.Groups[1].Value, MentionKind.User)
         );
 
         // Capture <#123456>
         private static readonly IMatcher<MarkdownNode> ChannelMentionNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("<#(\\d+)>", DefaultRegexOptions),
-            (_, m) => new MentionNode(m.Groups[1].Value, MentionType.Channel)
+            (_, m) => new MentionNode(m.Groups[1].Value, MentionKind.Channel)
         );
 
         // Capture <@&123456>
         private static readonly IMatcher<MarkdownNode> RoleMentionNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("<@&(\\d+)>", DefaultRegexOptions),
-            (_, m) => new MentionNode(m.Groups[1].Value, MentionType.Role)
+            (_, m) => new MentionNode(m.Groups[1].Value, MentionKind.Role)
         );
 
         /* Emojis */
@@ -293,12 +291,16 @@ namespace DiscordChatExporter.Core.Markdown
 
     internal static partial class MarkdownParser
     {
-        private static IReadOnlyList<MarkdownNode> Parse(StringPart stringPart) => Parse(stringPart, AggregateNodeMatcher);
+        private static IReadOnlyList<MarkdownNode> Parse(StringPart stringPart) =>
+            Parse(stringPart, AggregateNodeMatcher);
 
-        private static IReadOnlyList<MarkdownNode> ParseMinimal(StringPart stringPart) => Parse(stringPart, MinimalAggregateNodeMatcher);
+        private static IReadOnlyList<MarkdownNode> ParseMinimal(StringPart stringPart) =>
+            Parse(stringPart, MinimalAggregateNodeMatcher);
 
-        public static IReadOnlyList<MarkdownNode> Parse(string input) => Parse(new StringPart(input));
+        public static IReadOnlyList<MarkdownNode> Parse(string input) =>
+            Parse(new StringPart(input));
 
-        public static IReadOnlyList<MarkdownNode> ParseMinimal(string input) => ParseMinimal(new StringPart(input));
+        public static IReadOnlyList<MarkdownNode> ParseMinimal(string input) =>
+            ParseMinimal(new StringPart(input));
     }
 }

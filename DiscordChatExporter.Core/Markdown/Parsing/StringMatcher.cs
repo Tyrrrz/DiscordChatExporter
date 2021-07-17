@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DiscordChatExporter.Core.Markdown.Matching
+namespace DiscordChatExporter.Core.Markdown.Parsing
 {
     internal class StringMatcher<T> : IMatcher<T>
     {

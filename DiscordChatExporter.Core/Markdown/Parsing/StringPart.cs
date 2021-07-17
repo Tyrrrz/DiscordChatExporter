@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace DiscordChatExporter.Core.Markdown.Matching
+namespace DiscordChatExporter.Core.Markdown.Parsing
 {
     internal readonly struct StringPart
     {

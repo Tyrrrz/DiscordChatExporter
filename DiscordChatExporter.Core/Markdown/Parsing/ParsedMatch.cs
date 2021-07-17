@@ -1,4 +1,4 @@
-﻿namespace DiscordChatExporter.Core.Markdown.Matching
+﻿namespace DiscordChatExporter.Core.Markdown.Parsing
 {
     internal class ParsedMatch<T>
     {

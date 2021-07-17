@@ -1,4 +1,4 @@
-﻿namespace DiscordChatExporter.Core.Markdown.Ast
+﻿namespace DiscordChatExporter.Core.Markdown
 {
     internal enum TextFormatting
     {

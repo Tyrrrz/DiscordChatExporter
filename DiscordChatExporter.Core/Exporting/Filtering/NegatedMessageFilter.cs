@@ -2,7 +2,7 @@
 
 namespace DiscordChatExporter.Core.Exporting.Filtering
 {
-    public class NegatedMessageFilter : MessageFilter
+    internal class NegatedMessageFilter : MessageFilter
     {
         private readonly MessageFilter _filter;
 

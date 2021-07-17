@@ -11,6 +11,8 @@ namespace DiscordChatExporter.Core.Exporting.Partitioning
 
     public partial class PartitionLimit
     {
+        public static PartitionLimit Null { get; } = new NullPartitionLimit();
+
         private static long? TryParseFileSizeBytes(string value, IFormatProvider? formatProvider = null)
         {
             var match = Regex.Match(value, @"^\s*(\d+[\.,]?\d*)\s*(\w)?b\s*$", RegexOptions.IgnoreCase);

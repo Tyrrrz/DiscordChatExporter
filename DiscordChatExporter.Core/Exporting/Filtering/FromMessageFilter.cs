@@ -1,9 +1,9 @@
-﻿using DiscordChatExporter.Core.Discord.Data;
-using System;
+﻿using System;
+using DiscordChatExporter.Core.Discord.Data;
 
 namespace DiscordChatExporter.Core.Exporting.Filtering
 {
-    public class FromMessageFilter : MessageFilter
+    internal class FromMessageFilter : MessageFilter
     {
         private readonly string _value;
 

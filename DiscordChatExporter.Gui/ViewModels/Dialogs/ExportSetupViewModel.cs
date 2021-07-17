@@ -52,13 +52,13 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
 
         public PartitionLimit PartitionLimit => !string.IsNullOrWhiteSpace(PartitionLimitValue)
             ? PartitionLimit.Parse(PartitionLimitValue)
-            : NullPartitionLimit.Instance;
+            : PartitionLimit.Null;
 
         public string? MessageFilterValue { get; set; }
 
         public MessageFilter MessageFilter => !string.IsNullOrWhiteSpace(MessageFilterValue)
             ? MessageFilter.Parse(MessageFilterValue)
-            : NullMessageFilter.Instance;
+            : MessageFilter.Null;
 
         public bool ShouldDownloadMedia { get; set; }
 

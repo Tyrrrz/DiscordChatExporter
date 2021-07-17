@@ -1,26 +1,25 @@
-﻿using DiscordChatExporter.Core.Discord.Data;
-using System;
+﻿using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using DiscordChatExporter.Core.Discord.Data;
 
 namespace DiscordChatExporter.Core.Exporting.Filtering
 {
-    public class HasMessageFilter : MessageFilter
+    internal class HasMessageFilter : MessageFilter
     {
-        private readonly string _value;
+        private readonly MessageContentMatchKind _kind;
 
-        public HasMessageFilter(string value) => _value = value;
+        public HasMessageFilter(MessageContentMatchKind kind) => _kind = kind;
 
-        public override bool Filter(Message message) =>
-            _value switch
-            {
-                "link" => Regex.IsMatch(message.Content, "https?://\\S*[^\\.,:;\"\'\\s]", DefaultRegexOptions),
-                "embed" => message.Embeds.Any(),
-                "file" => message.Attachments.Any(),
-                "video" => message.Attachments.Any(file => file.IsVideo),
-                "image" => message.Attachments.Any(file => file.IsImage),
-                "sound" => message.Attachments.Any(file => file.IsAudio),
-                _ => throw new InvalidOperationException($"Invalid value provided for the 'has' message filter: '{_value}'")
-            };
+        public override bool Filter(Message message) => _kind switch
+        {
+            MessageContentMatchKind.Link => Regex.IsMatch(message.Content, "https?://\\S*[^\\.,:;\"\'\\s]"),
+            MessageContentMatchKind.Embed => message.Embeds.Any(),
+            MessageContentMatchKind.File => message.Attachments.Any(),
+            MessageContentMatchKind.Video => message.Attachments.Any(file => file.IsVideo),
+            MessageContentMatchKind.Image => message.Attachments.Any(file => file.IsImage),
+            MessageContentMatchKind.Sound => message.Attachments.Any(file => file.IsAudio),
+            _ => throw new InvalidOperationException($"Unknown message content match kind '{_kind}'.")
+        };
     }
 }

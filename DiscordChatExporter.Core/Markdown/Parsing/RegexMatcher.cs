@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
-namespace DiscordChatExporter.Core.Markdown.Matching
+namespace DiscordChatExporter.Core.Markdown.Parsing
 {
     internal class RegexMatcher<T> : IMatcher<T>
     {

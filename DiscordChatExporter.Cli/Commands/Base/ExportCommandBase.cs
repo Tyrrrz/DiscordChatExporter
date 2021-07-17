@@ -33,11 +33,11 @@ namespace DiscordChatExporter.Cli.Commands.Base
         [CommandOption("before", Description = "Only include messages sent before this date or message ID.")]
         public Snowflake? Before { get; init; }
 
-        [CommandOption("partition", 'p', Description = "Split output into partitions, each limited to this number of messages (e.g. 100) or file size (e.g. 10mb).")]
-        public PartitionLimit PartitionLimit { get; init; } = NullPartitionLimit.Instance;
+        [CommandOption("partition", 'p', Description = "Split output into partitions, each limited to this number of messages (e.g. '100') or file size (e.g. '10mb').")]
+        public PartitionLimit PartitionLimit { get; init; } = PartitionLimit.Null;
 
-        [CommandOption("filter", Description = "Only include messages that satisfy this filter (e.g. from:foo#1234).")]
-        public MessageFilter MessageFilter { get; init; } = NullMessageFilter.Instance;
+        [CommandOption("filter", Description = "Only include messages that satisfy this filter (e.g. 'from:foo#1234' or 'has:image').")]
+        public MessageFilter MessageFilter { get; init; } = MessageFilter.Null;
 
         [CommandOption("parallel", Description = "Limits how many channels can be exported in parallel.")]
         public int ParallelLimit { get; init; } = 1;
@@ -133,8 +133,6 @@ namespace DiscordChatExporter.Cli.Commands.Base
             {
                 throw new CommandException("Export failed.");
             }
-
-            await console.Output.WriteLineAsync("Done.");
         }
 
         public override ValueTask ExecuteAsync(IConsole console)

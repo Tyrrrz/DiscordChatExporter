@@ -1,9 +1,9 @@
-﻿using DiscordChatExporter.Core.Discord.Data;
-using System;
+﻿using System;
+using DiscordChatExporter.Core.Discord.Data;
 
 namespace DiscordChatExporter.Core.Exporting.Filtering
 {
-    public class BinaryExpressionMessageFilter : MessageFilter
+    internal class BinaryExpressionMessageFilter : MessageFilter
     {
         private readonly MessageFilter _first;
         private readonly MessageFilter _second;
@@ -19,7 +19,7 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
         public override bool Filter(Message message) => _kind switch
         {
             BinaryExpressionKind.Or => _first.Filter(message) || _second.Filter(message),
-            BinaryExpressionKind.And => _first.Filter(message) && _second.Filter(message), 
+            BinaryExpressionKind.And => _first.Filter(message) && _second.Filter(message),
             _ => throw new InvalidOperationException($"Unknown binary expression kind '{_kind}'.")
         };
     }

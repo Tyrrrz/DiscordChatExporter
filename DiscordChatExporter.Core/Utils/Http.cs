@@ -21,14 +21,15 @@ namespace DiscordChatExporter.Core.Utils
                 .OrResult<HttpResponseMessage>(m => m.StatusCode == HttpStatusCode.TooManyRequests)
                 .OrResult(m => m.StatusCode == HttpStatusCode.RequestTimeout)
                 .OrResult(m => m.StatusCode >= HttpStatusCode.InternalServerError)
-                .WaitAndRetryAsync(8,
+                .WaitAndRetryAsync(
+                    8,
                     (i, result, _) =>
                     {
                         // If rate-limited, use retry-after as a guide
                         if (result.Result?.StatusCode == HttpStatusCode.TooManyRequests)
                         {
-                            // Only start respecting retry-after after a few attempts.
-                            // The reason is that Discord often sends unreasonable (20+ minutes) retry-after
+                            // Only start respecting retry-after after a few attempts, because
+                            // Discord often sends unreasonable (20+ minutes) retry-after
                             // on the very first request.
                             if (i > 3)
                             {
@@ -40,7 +41,8 @@ namespace DiscordChatExporter.Core.Utils
 
                         return TimeSpan.FromSeconds(Math.Pow(2, i) + 1);
                     },
-                    (_, _, _, _) => Task.CompletedTask);
+                    (_, _, _, _) => Task.CompletedTask
+                );
 
         private static HttpStatusCode? TryGetStatusCodeFromException(HttpRequestException ex) =>
             // This is extremely frail, but there's no other way

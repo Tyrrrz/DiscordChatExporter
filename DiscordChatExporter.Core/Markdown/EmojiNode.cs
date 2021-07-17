@@ -1,6 +1,6 @@
 ﻿using DiscordChatExporter.Core.Utils;
 
-namespace DiscordChatExporter.Core.Markdown.Ast
+namespace DiscordChatExporter.Core.Markdown
 {
     internal class EmojiNode : MarkdownNode
     {

@@ -2,10 +2,8 @@
 
 namespace DiscordChatExporter.Core.Exporting.Filtering
 {
-    public class NullMessageFilter : MessageFilter
+    internal class NullMessageFilter : MessageFilter
     {
-        public static NullMessageFilter Instance { get; } = new();
-
         public override bool Filter(Message message) => true;
     }
 }

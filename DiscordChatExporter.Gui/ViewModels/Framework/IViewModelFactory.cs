@@ -7,6 +7,8 @@ namespace DiscordChatExporter.Gui.ViewModels.Framework
     {
         ExportSetupViewModel CreateExportSetupViewModel();
 
+        MessageBoxViewModel CreateMessageBoxViewModel();
+
         SettingsViewModel CreateSettingsViewModel();
     }
 }

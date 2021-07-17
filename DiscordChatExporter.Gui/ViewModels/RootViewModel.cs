@@ -178,6 +178,15 @@ namespace DiscordChatExporter.Gui.ViewModels
             {
                 Notifications.Enqueue(ex.Message.TrimEnd('.'));
             }
+            catch (Exception ex)
+            {
+                var dialog = _viewModelFactory.CreateMessageBoxViewModel(
+                    "Error pulling guilds and channels",
+                    ex.ToString()
+                );
+
+                await _dialogManager.ShowDialogAsync(dialog);
+            }
         }
 
         public bool CanExportChannels =>
@@ -185,56 +194,68 @@ namespace DiscordChatExporter.Gui.ViewModels
 
         public async void ExportChannels()
         {
-            var token = _settingsService.LastToken;
-            if (token is null || SelectedGuild is null || SelectedChannels is null || !SelectedChannels.Any())
-                return;
-
-            var dialog = _viewModelFactory.CreateExportSetupViewModel(SelectedGuild, SelectedChannels);
-            if (await _dialogManager.ShowDialogAsync(dialog) != true)
-                return;
-
-            var exporter = new ChannelExporter(token);
-
-            var operations = ProgressManager.CreateOperations(dialog.Channels!.Count);
-            var successfulExportCount = 0;
-
-            await dialog.Channels.Zip(operations).ParallelForEachAsync(async tuple =>
+            try
             {
-                var (channel, operation) = tuple;
+                var token = _settingsService.LastToken;
+                if (token is null || SelectedGuild is null || SelectedChannels is null || !SelectedChannels.Any())
+                    return;
 
-                try
+                var dialog = _viewModelFactory.CreateExportSetupViewModel(SelectedGuild, SelectedChannels);
+                if (await _dialogManager.ShowDialogAsync(dialog) != true)
+                    return;
+
+                var exporter = new ChannelExporter(token);
+
+                var operations = ProgressManager.CreateOperations(dialog.Channels!.Count);
+                var successfulExportCount = 0;
+
+                await dialog.Channels.Zip(operations).ParallelForEachAsync(async tuple =>
                 {
-                    var request = new ExportRequest(
-                        dialog.Guild!,
-                        channel!,
-                        dialog.OutputPath!,
-                        dialog.SelectedFormat,
-                        dialog.After?.Pipe(Snowflake.FromDate),
-                        dialog.Before?.Pipe(Snowflake.FromDate),
-                        dialog.PartitionLimit,
-                        dialog.MessageFilter,
-                        dialog.ShouldDownloadMedia,
-                        _settingsService.ShouldReuseMedia,
-                        _settingsService.DateFormat
-                    );
+                    var (channel, operation) = tuple;
 
-                    await exporter.ExportChannelAsync(request, operation);
+                    try
+                    {
+                        var request = new ExportRequest(
+                            dialog.Guild!,
+                            channel!,
+                            dialog.OutputPath!,
+                            dialog.SelectedFormat,
+                            dialog.After?.Pipe(Snowflake.FromDate),
+                            dialog.Before?.Pipe(Snowflake.FromDate),
+                            dialog.PartitionLimit,
+                            dialog.MessageFilter,
+                            dialog.ShouldDownloadMedia,
+                            _settingsService.ShouldReuseMedia,
+                            _settingsService.DateFormat
+                        );
 
-                    Interlocked.Increment(ref successfulExportCount);
-                }
-                catch (DiscordChatExporterException ex) when (!ex.IsCritical)
-                {
-                    Notifications.Enqueue(ex.Message.TrimEnd('.'));
-                }
-                finally
-                {
-                    operation.Dispose();
-                }
-            }, _settingsService.ParallelLimit.ClampMin(1));
+                        await exporter.ExportChannelAsync(request, operation);
 
-            // Notify of overall completion
-            if (successfulExportCount > 0)
-                Notifications.Enqueue($"Successfully exported {successfulExportCount} channel(s)");
+                        Interlocked.Increment(ref successfulExportCount);
+                    }
+                    catch (DiscordChatExporterException ex) when (!ex.IsCritical)
+                    {
+                        Notifications.Enqueue(ex.Message.TrimEnd('.'));
+                    }
+                    finally
+                    {
+                        operation.Dispose();
+                    }
+                }, _settingsService.ParallelLimit.ClampMin(1));
+
+                // Notify of overall completion
+                if (successfulExportCount > 0)
+                    Notifications.Enqueue($"Successfully exported {successfulExportCount} channel(s)");
+            }
+            catch (Exception ex)
+            {
+                var dialog = _viewModelFactory.CreateMessageBoxViewModel(
+                    "Error exporting channel(s)",
+                    ex.ToString()
+                );
+
+                await _dialogManager.ShowDialogAsync(dialog);
+            }
         }
     }
 }

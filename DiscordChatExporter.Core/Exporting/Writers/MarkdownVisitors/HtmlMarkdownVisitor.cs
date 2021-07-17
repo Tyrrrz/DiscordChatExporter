@@ -99,11 +99,12 @@ namespace DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors
             else if (mention.Kind == MentionKind.Channel)
             {
                 var channel = mentionId?.Pipe(_context.TryGetChannel);
+                var symbol = channel?.IsVoiceChannel == true ? "🔊" : "#";
                 var name = channel?.Name ?? "deleted-channel";
 
                 _buffer
                     .Append("<span class=\"mention\">")
-                    .Append("#").Append(HtmlEncode(name))
+                    .Append(symbol).Append(HtmlEncode(name))
                     .Append("</span>");
             }
             else if (mention.Kind == MentionKind.Role)

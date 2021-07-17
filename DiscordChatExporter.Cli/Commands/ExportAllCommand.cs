@@ -31,6 +31,10 @@ namespace DiscordChatExporter.Cli.Commands
 
                 await foreach (var channel in Discord.GetGuildChannelsAsync(guild.Id))
                 {
+                    // Skip non-text channels
+                    if (!channel.IsTextChannel)
+                        continue;
+
                     channels.Add(channel);
                 }
             }

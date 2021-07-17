@@ -21,6 +21,8 @@ namespace DiscordChatExporter.Core.Discord.Data
             ChannelType.GuildNews or
             ChannelType.GuildStore;
 
+        public bool IsVoiceChannel => !IsTextChannel;
+
         public Snowflake GuildId { get; }
 
         public ChannelCategory Category { get; }

@@ -142,10 +142,6 @@ namespace DiscordChatExporter.Core.Discord
 
                     var channel = Channel.Parse(channelJson, category, position);
 
-                    // We are only interested in text channels
-                    if (!channel.IsTextChannel)
-                        continue;
-
                     position++;
 
                     yield return channel;

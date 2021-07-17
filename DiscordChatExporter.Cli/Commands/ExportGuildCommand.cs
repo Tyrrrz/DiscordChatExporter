@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using CliFx.Attributes;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands.Base;
@@ -20,9 +21,10 @@ namespace DiscordChatExporter.Cli.Commands
             // Get channel metadata
             await console.Output.WriteLineAsync("Fetching channels...");
             var channels = await Discord.GetGuildChannelsAsync(GuildId);
+            var textChannels = channels.Where(c => c.IsTextChannel).ToArray();
 
             // Export
-            await ExportAsync(console, channels);
+            await ExportAsync(console, textChannels);
         }
     }
 }

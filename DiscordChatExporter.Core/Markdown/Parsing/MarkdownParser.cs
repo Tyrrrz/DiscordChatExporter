@@ -135,7 +135,7 @@ namespace DiscordChatExporter.Core.Markdown.Parsing
 
         // Capture <#123456>
         private static readonly IMatcher<MarkdownNode> ChannelMentionNodeMatcher = new RegexMatcher<MarkdownNode>(
-            new Regex("<#(\\d+)>", DefaultRegexOptions),
+            new Regex("<#!?(\\d+)>", DefaultRegexOptions),
             (_, m) => new MentionNode(m.Groups[1].Value, MentionKind.Channel)
         );
 

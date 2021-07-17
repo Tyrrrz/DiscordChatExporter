@@ -43,6 +43,10 @@ namespace DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors
                 var name = channel?.Name ?? "deleted-channel";
 
                 _buffer.Append($"#{name}");
+
+                // Voice channel marker
+                if (channel?.IsVoiceChannel == true)
+                    _buffer.Append(" [voice]");
             }
             else if (mention.Kind == MentionKind.Role)
             {

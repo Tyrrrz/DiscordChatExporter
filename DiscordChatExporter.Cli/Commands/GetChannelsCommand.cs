@@ -19,7 +19,13 @@ namespace DiscordChatExporter.Cli.Commands
         {
             var channels = await Discord.GetGuildChannelsAsync(GuildId);
 
-            foreach (var channel in channels.OrderBy(c => c.Category.Position).ThenBy(c => c.Name))
+            var textChannels = channels
+                .Where(c => c.IsTextChannel)
+                .OrderBy(c => c.Category.Position)
+                .ThenBy(c => c.Name)
+                .ToArray();
+
+            foreach (var channel in textChannels)
             {
                 // Channel ID
                 await console.Output.WriteAsync(channel.Id.ToString());

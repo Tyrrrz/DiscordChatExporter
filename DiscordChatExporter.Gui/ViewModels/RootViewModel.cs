@@ -168,7 +168,8 @@ namespace DiscordChatExporter.Gui.ViewModels
                 var guildChannelMap = new Dictionary<Guild, IReadOnlyList<Channel>>();
                 await foreach (var guild in discord.GetUserGuildsAsync())
                 {
-                    guildChannelMap[guild] = await discord.GetGuildChannelsAsync(guild.Id);
+                    var channels = await discord.GetGuildChannelsAsync(guild.Id);
+                    guildChannelMap[guild] = channels.Where(c => c.IsTextChannel).ToArray();
                 }
 
                 GuildChannelMap = guildChannelMap;

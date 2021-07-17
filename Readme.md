@@ -74,6 +74,7 @@ The following table lists all available download options:
 - Command line interface (Windows, Linux, macOS)
 - Support for both user and bot tokens
 - Support for Discord's dialect of markdown
+- Support for Discord's message filter syntax
 - Support for attachments, embeds, emojis, and other rich media features
 - Multiple output formats: HTML (dark/light), TXT, CSV, JSON
 - File partitioning, date ranges, and other export options

@@ -192,7 +192,7 @@ namespace DiscordChatExporter.Core.Exporting.Writers
             // Channel
             _writer.WriteStartObject("channel");
             _writer.WriteString("id", Context.Request.Channel.Id.ToString());
-            _writer.WriteString("type", Context.Request.Channel.Type.ToString());
+            _writer.WriteString("type", Context.Request.Channel.Kind.ToString());
             _writer.WriteString("categoryId", Context.Request.Channel.Category.Id.ToString());
             _writer.WriteString("category", Context.Request.Channel.Category.Name);
             _writer.WriteString("name", Context.Request.Channel.Name);
@@ -218,7 +218,7 @@ namespace DiscordChatExporter.Core.Exporting.Writers
 
             // Metadata
             _writer.WriteString("id", message.Id.ToString());
-            _writer.WriteString("type", message.Type.ToString());
+            _writer.WriteString("type", message.Kind.ToString());
             _writer.WriteString("timestamp", message.Timestamp);
             _writer.WriteString("timestampEdited", message.EditedTimestamp);
             _writer.WriteString("callEndedTimestamp", message.CallEndedTimestamp);

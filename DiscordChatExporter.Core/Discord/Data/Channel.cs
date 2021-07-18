@@ -12,14 +12,14 @@ namespace DiscordChatExporter.Core.Discord.Data
     {
         public Snowflake Id { get; }
 
-        public ChannelType Type { get; }
+        public ChannelKind Kind { get; }
 
-        public bool IsTextChannel => Type is
-            ChannelType.GuildTextChat or
-            ChannelType.DirectTextChat or
-            ChannelType.DirectGroupTextChat or
-            ChannelType.GuildNews or
-            ChannelType.GuildStore;
+        public bool IsTextChannel => Kind is
+            ChannelKind.GuildTextChat or
+            ChannelKind.DirectTextChat or
+            ChannelKind.DirectGroupTextChat or
+            ChannelKind.GuildNews or
+            ChannelKind.GuildStore;
 
         public bool IsVoiceChannel => !IsTextChannel;
 
@@ -35,7 +35,7 @@ namespace DiscordChatExporter.Core.Discord.Data
 
         public Channel(
             Snowflake id,
-            ChannelType type,
+            ChannelKind kind,
             Snowflake guildId,
             ChannelCategory category,
             string name,
@@ -43,7 +43,7 @@ namespace DiscordChatExporter.Core.Discord.Data
             string? topic)
         {
             Id = id;
-            Type = type;
+            Kind = kind;
             GuildId = guildId;
             Category = category;
             Name = name;
@@ -56,15 +56,15 @@ namespace DiscordChatExporter.Core.Discord.Data
 
     public partial class Channel
     {
-        private static ChannelCategory GetFallbackCategory(ChannelType channelType) => new(
+        private static ChannelCategory GetFallbackCategory(ChannelKind channelKind) => new(
             Snowflake.Zero,
-            channelType switch
+            channelKind switch
             {
-                ChannelType.GuildTextChat => "Text",
-                ChannelType.DirectTextChat => "Private",
-                ChannelType.DirectGroupTextChat => "Group",
-                ChannelType.GuildNews => "News",
-                ChannelType.GuildStore => "Store",
+                ChannelKind.GuildTextChat => "Text",
+                ChannelKind.DirectTextChat => "Private",
+                ChannelKind.DirectGroupTextChat => "Group",
+                ChannelKind.GuildNews => "News",
+                ChannelKind.GuildStore => "Store",
                 _ => "Default"
             },
             null
@@ -75,7 +75,7 @@ namespace DiscordChatExporter.Core.Discord.Data
             var id = json.GetProperty("id").GetString().Pipe(Snowflake.Parse);
             var guildId = json.GetPropertyOrNull("guild_id")?.GetString().Pipe(Snowflake.Parse);
             var topic = json.GetPropertyOrNull("topic")?.GetString();
-            var type = (ChannelType) json.GetProperty("type").GetInt32();
+            var kind = (ChannelKind) json.GetProperty("type").GetInt32();
 
             var name =
                 // Guild channel
@@ -87,9 +87,9 @@ namespace DiscordChatExporter.Core.Discord.Data
 
             return new Channel(
                 id,
-                type,
+                kind,
                 guildId ?? Guild.DirectMessages.Id,
-                category ?? GetFallbackCategory(type),
+                category ?? GetFallbackCategory(kind),
                 name,
                 position ?? json.GetPropertyOrNull("position")?.GetInt32(),
                 topic

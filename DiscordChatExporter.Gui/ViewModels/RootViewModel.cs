@@ -111,7 +111,7 @@ namespace DiscordChatExporter.Gui.ViewModels
 
             if (_settingsService.LastToken is not null)
             {
-                IsBotToken = _settingsService.LastToken.Type == AuthTokenType.Bot;
+                IsBotToken = _settingsService.LastToken.Kind == AuthTokenKind.Bot;
                 TokenValue = _settingsService.LastToken.Value;
             }
 
@@ -157,7 +157,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                     return;
 
                 var token = new AuthToken(
-                    IsBotToken ? AuthTokenType.Bot : AuthTokenType.User,
+                    IsBotToken ? AuthTokenKind.Bot : AuthTokenKind.User,
                     tokenValue
                 );
 

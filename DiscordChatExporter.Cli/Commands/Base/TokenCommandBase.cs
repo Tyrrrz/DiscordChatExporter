@@ -16,8 +16,8 @@ namespace DiscordChatExporter.Cli.Commands.Base
 
         private AuthToken GetAuthToken() => new(
             IsBotToken
-                ? AuthTokenType.Bot
-                : AuthTokenType.User,
+                ? AuthTokenKind.Bot
+                : AuthTokenKind.User,
             TokenValue
         );
 

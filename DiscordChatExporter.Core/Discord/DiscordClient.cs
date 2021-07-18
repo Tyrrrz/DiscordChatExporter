@@ -126,7 +126,7 @@ namespace DiscordChatExporter.Core.Discord
                     .ToArray();
 
                 var categories = responseOrdered
-                    .Where(j => j.GetProperty("type").GetInt32() == (int) ChannelType.GuildCategory)
+                    .Where(j => j.GetProperty("type").GetInt32() == (int) ChannelKind.GuildCategory)
                     .Select((j, index) => ChannelCategory.Parse(j, index + 1))
                     .ToDictionary(j => j.Id.ToString(), StringComparer.Ordinal);
 

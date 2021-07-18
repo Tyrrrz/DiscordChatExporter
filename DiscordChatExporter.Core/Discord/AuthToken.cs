@@ -4,19 +4,19 @@ namespace DiscordChatExporter.Core.Discord
 {
     public class AuthToken
     {
-        public AuthTokenType Type { get; }
+        public AuthTokenKind Kind { get; }
 
         public string Value { get; }
 
-        public AuthToken(AuthTokenType type, string value)
+        public AuthToken(AuthTokenKind kind, string value)
         {
-            Type = type;
+            Kind = kind;
             Value = value;
         }
 
-        public AuthenticationHeaderValue GetAuthenticationHeader() => Type switch
+        public AuthenticationHeaderValue GetAuthenticationHeader() => Kind switch
         {
-            AuthTokenType.Bot => new AuthenticationHeaderValue("Bot", Value),
+            AuthTokenKind.Bot => new AuthenticationHeaderValue("Bot", Value),
             _ => new AuthenticationHeaderValue(Value)
         };
 

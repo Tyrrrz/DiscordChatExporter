@@ -23,6 +23,17 @@ namespace DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors
             return base.VisitText(text);
         }
 
+        protected override MarkdownNode VisitEmoji(EmojiNode emoji)
+        {
+            _buffer.Append(
+                emoji.IsCustomEmoji
+                    ? $":{emoji.Name}:"
+                    : emoji.Name
+            );
+
+            return base.VisitEmoji(emoji);
+        }
+
         protected override MarkdownNode VisitMention(MentionNode mention)
         {
             var mentionId = Snowflake.TryParse(mention.Id);
@@ -59,15 +70,13 @@ namespace DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors
             return base.VisitMention(mention);
         }
 
-        protected override MarkdownNode VisitEmoji(EmojiNode emoji)
+        protected override MarkdownNode VisitUnixTimestamp(UnixTimestampNode timestamp)
         {
             _buffer.Append(
-                emoji.IsCustomEmoji
-                    ? $":{emoji.Name}:"
-                    : emoji.Name
+                _context.FormatDate(timestamp.Value)
             );
 
-            return base.VisitEmoji(emoji);
+            return base.VisitUnixTimestamp(timestamp);
         }
     }
 

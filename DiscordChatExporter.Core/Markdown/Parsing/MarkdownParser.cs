@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using DiscordChatExporter.Core.Utils;
@@ -225,6 +227,26 @@ namespace DiscordChatExporter.Core.Markdown.Parsing
             (_, m) => new TextNode(m.Groups[1].Value)
         );
 
+        /* Misc */
+
+        // Capture <t:12345678> or <t:12345678:R>
+        private static readonly IMatcher<MarkdownNode> UnixTimestampNodeMatcher = new RegexMatcher<MarkdownNode>(
+            new Regex("<t:(\\d+)(?::\\w)?>", DefaultRegexOptions),
+            (_, m) =>
+            {
+                // We don't care about the 'R' parameter because we're not going to
+                // show relative timestamps in an export anyway.
+
+                if (!long.TryParse(m.Groups[1].Value, NumberStyles.Integer, CultureInfo.InvariantCulture,
+                    out var offset))
+                {
+                    return null;
+                }
+
+                return new UnixTimestampNode(DateTimeOffset.UnixEpoch + TimeSpan.FromSeconds(offset));
+            }
+        );
+
         // Combine all matchers into one
         // Matchers that have similar patterns are ordered from most specific to least specific
         private static readonly IMatcher<MarkdownNode> AggregateNodeMatcher = new AggregateMatcher<MarkdownNode>(
@@ -266,7 +288,10 @@ namespace DiscordChatExporter.Core.Markdown.Parsing
             // Emoji
             StandardEmojiNodeMatcher,
             CustomEmojiNodeMatcher,
-            CodedStandardEmojiNodeMatcher
+            CodedStandardEmojiNodeMatcher,
+
+            // Misc
+            UnixTimestampNodeMatcher
         );
 
         // Minimal set of matchers for non-multimedia formats (e.g. plain text)
@@ -279,7 +304,10 @@ namespace DiscordChatExporter.Core.Markdown.Parsing
             RoleMentionNodeMatcher,
 
             // Emoji
-            CustomEmojiNodeMatcher
+            CustomEmojiNodeMatcher,
+
+            // Misc
+            UnixTimestampNodeMatcher
         );
 
         private static IReadOnlyList<MarkdownNode> Parse(StringPart stringPart, IMatcher<MarkdownNode> matcher) =>

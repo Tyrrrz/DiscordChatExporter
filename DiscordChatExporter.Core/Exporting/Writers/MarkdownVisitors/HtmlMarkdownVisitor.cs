@@ -75,6 +75,40 @@ namespace DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors
             return base.VisitMultiLineCodeBlock(multiLineCodeBlock);
         }
 
+        protected override MarkdownNode VisitLink(LinkNode link)
+        {
+            // Extract message ID if the link points to a Discord message
+            var linkedMessageId = Regex.Match(link.Url, "^https?://(?:discord|discordapp).com/channels/.*?/(\\d+)/?$").Groups[1].Value;
+
+            if (!string.IsNullOrWhiteSpace(linkedMessageId))
+            {
+                _buffer
+                    .Append($"<a href=\"{Uri.EscapeUriString(link.Url)}\" onclick=\"scrollToMessage(event, '{linkedMessageId}')\">")
+                    .Append(HtmlEncode(link.Title))
+                    .Append("</a>");
+            }
+            else
+            {
+                _buffer
+                    .Append($"<a href=\"{Uri.EscapeUriString(link.Url)}\">")
+                    .Append(HtmlEncode(link.Title))
+                    .Append("</a>");
+            }
+
+            return base.VisitLink(link);
+        }
+
+        protected override MarkdownNode VisitEmoji(EmojiNode emoji)
+        {
+            var emojiImageUrl = Emoji.GetImageUrl(emoji.Id, emoji.Name, emoji.IsAnimated);
+            var jumboClass = _isJumbo ? "emoji--large" : "";
+
+            _buffer
+                .Append($"<img loading=\"lazy\" class=\"emoji {jumboClass}\" alt=\"{emoji.Name}\" title=\"{emoji.Code}\" src=\"{emojiImageUrl}\">");
+
+            return base.VisitEmoji(emoji);
+        }
+
         protected override MarkdownNode VisitMention(MentionNode mention)
         {
             var mentionId = Snowflake.TryParse(mention.Id);
@@ -126,38 +160,14 @@ namespace DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors
             return base.VisitMention(mention);
         }
 
-        protected override MarkdownNode VisitEmoji(EmojiNode emoji)
+        protected override MarkdownNode VisitUnixTimestamp(UnixTimestampNode timestamp)
         {
-            var emojiImageUrl = Emoji.GetImageUrl(emoji.Id, emoji.Name, emoji.IsAnimated);
-            var jumboClass = _isJumbo ? "emoji--large" : "";
-
             _buffer
-                .Append($"<img loading=\"lazy\" class=\"emoji {jumboClass}\" alt=\"{emoji.Name}\" title=\"{emoji.Code}\" src=\"{emojiImageUrl}\">");
+                .Append("<span class=\"timestamp\">")
+                .Append(HtmlEncode(_context.FormatDate(timestamp.Value)))
+                .Append("</span>");
 
-            return base.VisitEmoji(emoji);
-        }
-
-        protected override MarkdownNode VisitLink(LinkNode link)
-        {
-            // Extract message ID if the link points to a Discord message
-            var linkedMessageId = Regex.Match(link.Url, "^https?://(?:discord|discordapp).com/channels/.*?/(\\d+)/?$").Groups[1].Value;
-
-            if (!string.IsNullOrWhiteSpace(linkedMessageId))
-            {
-                _buffer
-                    .Append($"<a href=\"{Uri.EscapeUriString(link.Url)}\" onclick=\"scrollToMessage(event, '{linkedMessageId}')\">")
-                    .Append(HtmlEncode(link.Title))
-                    .Append("</a>");
-            }
-            else
-            {
-                _buffer
-                    .Append($"<a href=\"{Uri.EscapeUriString(link.Url)}\">")
-                    .Append(HtmlEncode(link.Title))
-                    .Append("</a>");
-            }
-
-            return base.VisitLink(link);
+            return base.VisitUnixTimestamp(timestamp);
         }
     }
 

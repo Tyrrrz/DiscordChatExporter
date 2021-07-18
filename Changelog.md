@@ -1,3 +1,17 @@
+### v2.29 (19-Jul-2021)
+
+- Added support for message filtering, which is accessible as an additional export parameter in the GUI and as the `--filter` option in the CLI. Message filters use a special syntax similar to Discord's search query syntax to allow specifying which messages should be included in the export. For example, you can limit the export to only include messages that contain image attachments (`has:image`) or messages from a certain user (`from:Tyrrrz`) or messages containing certain words (`hello world`), etc. You can also combine filters together (`hi mentions:Tyrrrz`, `from:Tyrrrz | from:96-LB`, `(mentions:Tyrrrz | from:Tyrrrz) has:image`) or negate them (`-has:link`). More thorough documentation coming soon. (Thanks [@Lucas LaBuff](https://github.com/96-LB))
+- Added support for rendering mentions of voice channels, in addition to text channels.
+- Added support for rendering unix timestamp markers. Currently, style markers are ignored and timestamps are always rendered with the format configured in settings (or provided via `--date-format` option).
+- Updated in-app instructions for obtaining a user token. (Thanks [@Yudi](https://github.com/Yudi) and [@virtuallyvlad](https://github.com/virtuallyvlad))
+- [HTML] Improved visual appearance of the reference symbol (Г-shaped line in replies) to make it more closely resemble Discord's styling.
+- [HTML] Added more specific fallback text used when rendering referenced messages that contain no text content but have attachments or embeds.
+- [HTML] Fixed an issue where a broken embed author icon occupied visual space, ruining the embed layout. (Thanks [@Cliff J.](https://github.com/CliffJameston))
+- [GUI] Improved handling for fatal errors that may occur when attempting to export a channel. These errors are now displayed in a popup, allowing the user to try again instead of having the application crash completely.
+- [CLI] Fixed an issue where an attempt to export a channel resulted in `NotSupportedException` when the default encoding was set to `UTF8`.
+- [CLI] Fixed an issue where providing an incorrectly formatted partition limit via `-p|--partition` option resulted in a non-descriptive and unhelpful error.
+- Improved "Requested resource does not exist" error message by including the ID of the requested resource.
+
 ### v2.28 (19-Jun-2021)
 
 - [HTML] Added special casing for YouTube video embeds to render them directly using an embedded player. (Thanks [@quentinmay](https://github.com/quentinmay))

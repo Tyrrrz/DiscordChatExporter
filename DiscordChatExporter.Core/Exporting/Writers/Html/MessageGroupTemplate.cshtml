@@ -1,6 +1,7 @@
 @using System
 @using System.Linq
 @using System.Threading.Tasks
+@using DiscordChatExporter.Core.Exporting.Writers.Html;
 
 @namespace DiscordChatExporter.Core.Exporting.Writers.Html
 @inherits MiniRazor.TemplateBase<MessageGroupTemplateContext>
@@ -60,6 +61,10 @@
                         @if (!string.IsNullOrWhiteSpace(Model.MessageGroup.ReferencedMessage.Content))
                         {
                             @Raw(FormatEmbedMarkdown(Model.MessageGroup.ReferencedMessage.Content))
+                        }
+                        else if (Model.MessageGroup.ReferencedMessage.Attachments.Any() || Model.MessageGroup.ReferencedMessage.Embeds.Any())
+                        {
+                            <em>Click to see attachment</em> <span>🖼️</span>
                         }
                         else
                         {

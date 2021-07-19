@@ -36,16 +36,20 @@ namespace DiscordChatExporter.Cli.Tests
             var outputFilePath = Path.ChangeExtension(_tempOutput.GetTempFilePath(), "json");
 
             // Act
-            await new ExportChannelsCommand
+            var jsonData = await GlobalCache.WrapAsync("mention-specs-output-json", async () =>
             {
-                TokenValue = Secrets.DiscordToken,
-                IsBotToken = Secrets.IsDiscordTokenBot,
-                ChannelIds = new[] {Snowflake.Parse(ChannelIds.MentionTestCases)},
-                ExportFormat = ExportFormat.Json,
-                OutputPath = outputFilePath
-            }.ExecuteAsync(new FakeConsole());
+                await new ExportChannelsCommand
+                {
+                    TokenValue = Secrets.DiscordToken,
+                    IsBotToken = Secrets.IsDiscordTokenBot,
+                    ChannelIds = new[] {Snowflake.Parse(ChannelIds.MentionTestCases)},
+                    ExportFormat = ExportFormat.Json,
+                    OutputPath = outputFilePath
+                }.ExecuteAsync(new FakeConsole());
 
-            var jsonData = await File.ReadAllTextAsync(outputFilePath);
+                return await File.ReadAllTextAsync(outputFilePath);
+            });
+
             _testOutput.WriteLine(jsonData);
 
             var json = Json.Parse(jsonData);
@@ -81,16 +85,20 @@ namespace DiscordChatExporter.Cli.Tests
             var outputFilePath = Path.ChangeExtension(_tempOutput.GetTempFilePath(), "html");
 
             // Act
-            await new ExportChannelsCommand
+            var htmlData = await GlobalCache.WrapAsync("mention-specs-output-html", async () =>
             {
-                TokenValue = Secrets.DiscordToken,
-                IsBotToken = Secrets.IsDiscordTokenBot,
-                ChannelIds = new[] {Snowflake.Parse(ChannelIds.MentionTestCases)},
-                ExportFormat = ExportFormat.HtmlDark,
-                OutputPath = outputFilePath
-            }.ExecuteAsync(new FakeConsole());
+                await new ExportChannelsCommand
+                {
+                    TokenValue = Secrets.DiscordToken,
+                    IsBotToken = Secrets.IsDiscordTokenBot,
+                    ChannelIds = new[] {Snowflake.Parse(ChannelIds.MentionTestCases)},
+                    ExportFormat = ExportFormat.HtmlDark,
+                    OutputPath = outputFilePath
+                }.ExecuteAsync(new FakeConsole());
 
-            var htmlData = await File.ReadAllTextAsync(outputFilePath);
+                return await File.ReadAllTextAsync(outputFilePath);
+            });
+
             _testOutput.WriteLine(htmlData);
 
             var html = Html.Parse(htmlData);
@@ -110,16 +118,20 @@ namespace DiscordChatExporter.Cli.Tests
             var outputFilePath = Path.ChangeExtension(_tempOutput.GetTempFilePath(), "json");
 
             // Act
-            await new ExportChannelsCommand
+            var jsonData = await GlobalCache.WrapAsync("mention-specs-output-json", async () =>
             {
-                TokenValue = Secrets.DiscordToken,
-                IsBotToken = Secrets.IsDiscordTokenBot,
-                ChannelIds = new[] {Snowflake.Parse(ChannelIds.MentionTestCases)},
-                ExportFormat = ExportFormat.Json,
-                OutputPath = outputFilePath
-            }.ExecuteAsync(new FakeConsole());
+                await new ExportChannelsCommand
+                {
+                    TokenValue = Secrets.DiscordToken,
+                    IsBotToken = Secrets.IsDiscordTokenBot,
+                    ChannelIds = new[] {Snowflake.Parse(ChannelIds.MentionTestCases)},
+                    ExportFormat = ExportFormat.Json,
+                    OutputPath = outputFilePath
+                }.ExecuteAsync(new FakeConsole());
 
-            var jsonData = await File.ReadAllTextAsync(outputFilePath);
+                return await File.ReadAllTextAsync(outputFilePath);
+            });
+
             _testOutput.WriteLine(jsonData);
 
             var json = Json.Parse(jsonData);
@@ -148,16 +160,20 @@ namespace DiscordChatExporter.Cli.Tests
             var outputFilePath = Path.ChangeExtension(_tempOutput.GetTempFilePath(), "html");
 
             // Act
-            await new ExportChannelsCommand
+            var htmlData = await GlobalCache.WrapAsync("mention-specs-output-html", async () =>
             {
-                TokenValue = Secrets.DiscordToken,
-                IsBotToken = Secrets.IsDiscordTokenBot,
-                ChannelIds = new[] {Snowflake.Parse(ChannelIds.MentionTestCases)},
-                ExportFormat = ExportFormat.HtmlDark,
-                OutputPath = outputFilePath
-            }.ExecuteAsync(new FakeConsole());
+                await new ExportChannelsCommand
+                {
+                    TokenValue = Secrets.DiscordToken,
+                    IsBotToken = Secrets.IsDiscordTokenBot,
+                    ChannelIds = new[] {Snowflake.Parse(ChannelIds.MentionTestCases)},
+                    ExportFormat = ExportFormat.HtmlDark,
+                    OutputPath = outputFilePath
+                }.ExecuteAsync(new FakeConsole());
 
-            var htmlData = await File.ReadAllTextAsync(outputFilePath);
+                return await File.ReadAllTextAsync(outputFilePath);
+            });
+
             _testOutput.WriteLine(htmlData);
 
             var html = Html.Parse(htmlData);
@@ -176,16 +192,20 @@ namespace DiscordChatExporter.Cli.Tests
             var outputFilePath = Path.ChangeExtension(_tempOutput.GetTempFilePath(), "json");
 
             // Act
-            await new ExportChannelsCommand
+            var jsonData = await GlobalCache.WrapAsync("mention-specs-output-json", async () =>
             {
-                TokenValue = Secrets.DiscordToken,
-                IsBotToken = Secrets.IsDiscordTokenBot,
-                ChannelIds = new[] {Snowflake.Parse(ChannelIds.MentionTestCases)},
-                ExportFormat = ExportFormat.Json,
-                OutputPath = outputFilePath
-            }.ExecuteAsync(new FakeConsole());
+                await new ExportChannelsCommand
+                {
+                    TokenValue = Secrets.DiscordToken,
+                    IsBotToken = Secrets.IsDiscordTokenBot,
+                    ChannelIds = new[] {Snowflake.Parse(ChannelIds.MentionTestCases)},
+                    ExportFormat = ExportFormat.Json,
+                    OutputPath = outputFilePath
+                }.ExecuteAsync(new FakeConsole());
 
-            var jsonData = await File.ReadAllTextAsync(outputFilePath);
+                return await File.ReadAllTextAsync(outputFilePath);
+            });
+
             _testOutput.WriteLine(jsonData);
 
             var json = Json.Parse(jsonData);
@@ -214,16 +234,20 @@ namespace DiscordChatExporter.Cli.Tests
             var outputFilePath = Path.ChangeExtension(_tempOutput.GetTempFilePath(), "html");
 
             // Act
-            await new ExportChannelsCommand
+            var htmlData = await GlobalCache.WrapAsync("mention-specs-output-html", async () =>
             {
-                TokenValue = Secrets.DiscordToken,
-                IsBotToken = Secrets.IsDiscordTokenBot,
-                ChannelIds = new[] {Snowflake.Parse(ChannelIds.MentionTestCases)},
-                ExportFormat = ExportFormat.HtmlDark,
-                OutputPath = outputFilePath
-            }.ExecuteAsync(new FakeConsole());
+                await new ExportChannelsCommand
+                {
+                    TokenValue = Secrets.DiscordToken,
+                    IsBotToken = Secrets.IsDiscordTokenBot,
+                    ChannelIds = new[] {Snowflake.Parse(ChannelIds.MentionTestCases)},
+                    ExportFormat = ExportFormat.HtmlDark,
+                    OutputPath = outputFilePath
+                }.ExecuteAsync(new FakeConsole());
 
-            var htmlData = await File.ReadAllTextAsync(outputFilePath);
+                return await File.ReadAllTextAsync(outputFilePath);
+            });
+
             _testOutput.WriteLine(htmlData);
 
             var html = Html.Parse(htmlData);
@@ -242,16 +266,20 @@ namespace DiscordChatExporter.Cli.Tests
             var outputFilePath = Path.ChangeExtension(_tempOutput.GetTempFilePath(), "json");
 
             // Act
-            await new ExportChannelsCommand
+            var jsonData = await GlobalCache.WrapAsync("mention-specs-output-json", async () =>
             {
-                TokenValue = Secrets.DiscordToken,
-                IsBotToken = Secrets.IsDiscordTokenBot,
-                ChannelIds = new[] {Snowflake.Parse(ChannelIds.MentionTestCases)},
-                ExportFormat = ExportFormat.Json,
-                OutputPath = outputFilePath
-            }.ExecuteAsync(new FakeConsole());
+                await new ExportChannelsCommand
+                {
+                    TokenValue = Secrets.DiscordToken,
+                    IsBotToken = Secrets.IsDiscordTokenBot,
+                    ChannelIds = new[] {Snowflake.Parse(ChannelIds.MentionTestCases)},
+                    ExportFormat = ExportFormat.Json,
+                    OutputPath = outputFilePath
+                }.ExecuteAsync(new FakeConsole());
 
-            var jsonData = await File.ReadAllTextAsync(outputFilePath);
+                return await File.ReadAllTextAsync(outputFilePath);
+            });
+
             _testOutput.WriteLine(jsonData);
 
             var json = Json.Parse(jsonData);
@@ -280,16 +308,20 @@ namespace DiscordChatExporter.Cli.Tests
             var outputFilePath = Path.ChangeExtension(_tempOutput.GetTempFilePath(), "html");
 
             // Act
-            await new ExportChannelsCommand
+            var htmlData = await GlobalCache.WrapAsync("mention-specs-output-html", async () =>
             {
-                TokenValue = Secrets.DiscordToken,
-                IsBotToken = Secrets.IsDiscordTokenBot,
-                ChannelIds = new[] {Snowflake.Parse(ChannelIds.MentionTestCases)},
-                ExportFormat = ExportFormat.HtmlDark,
-                OutputPath = outputFilePath
-            }.ExecuteAsync(new FakeConsole());
+                await new ExportChannelsCommand
+                {
+                    TokenValue = Secrets.DiscordToken,
+                    IsBotToken = Secrets.IsDiscordTokenBot,
+                    ChannelIds = new[] {Snowflake.Parse(ChannelIds.MentionTestCases)},
+                    ExportFormat = ExportFormat.HtmlDark,
+                    OutputPath = outputFilePath
+                }.ExecuteAsync(new FakeConsole());
 
-            var htmlData = await File.ReadAllTextAsync(outputFilePath);
+                return await File.ReadAllTextAsync(outputFilePath);
+            });
+
             _testOutput.WriteLine(htmlData);
 
             var html = Html.Parse(htmlData);

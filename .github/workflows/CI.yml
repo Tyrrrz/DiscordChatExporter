@@ -22,6 +22,9 @@ jobs:
 
       - name: Build & test
         run: dotnet test --configuration Release --logger GitHubActions
+        env:
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          DISCORD_TOKEN_BOT: true
 
       - name: Upload coverage
         uses: codecov/codecov-action@v1.0.5

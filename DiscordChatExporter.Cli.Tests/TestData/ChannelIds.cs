@@ -2,8 +2,10 @@
 {
     public static class ChannelIds
     {
-        public static string MentionTestCases { get; } = "866458801389174794";
+        public static string EmbedTestCases => "866472452459462687";
 
-        public static string ReplyTestCases { get; } = "866459871934677052";
+        public static string MentionTestCases => "866458801389174794";
+
+        public static string ReplyTestCases => "866459871934677052";
     }
 }

@@ -103,7 +103,7 @@ namespace DiscordChatExporter.Cli.Tests
 
             var html = Html.Parse(htmlData);
 
-            var messageHtml = html.GetElementById("message-866458840245076028");
+            var messageHtml = html.QuerySelector("#message-866458840245076028");
 
             // Assert
             messageHtml.Should().NotBeNull();
@@ -178,7 +178,7 @@ namespace DiscordChatExporter.Cli.Tests
 
             var html = Html.Parse(htmlData);
 
-            var messageHtml = html.GetElementById("message-866459040480624680");
+            var messageHtml = html.QuerySelector("#message-866459040480624680");
 
             // Assert
             messageHtml.Should().NotBeNull();
@@ -252,7 +252,7 @@ namespace DiscordChatExporter.Cli.Tests
 
             var html = Html.Parse(htmlData);
 
-            var messageHtml = html.GetElementById("message-866459175462633503");
+            var messageHtml = html.QuerySelector("#message-866459175462633503");
 
             // Assert
             messageHtml.Should().NotBeNull();
@@ -326,7 +326,7 @@ namespace DiscordChatExporter.Cli.Tests
 
             var html = Html.Parse(htmlData);
 
-            var messageHtml = html.GetElementById("message-866459254693429258");
+            var messageHtml = html.QuerySelector("#message-866459254693429258");
 
             // Assert
             messageHtml.Should().NotBeNull();

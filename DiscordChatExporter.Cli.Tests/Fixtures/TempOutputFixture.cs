@@ -7,19 +7,25 @@ namespace DiscordChatExporter.Cli.Tests.Fixtures
     {
         public string DirPath => Path.Combine(
             Path.GetDirectoryName(typeof(TempOutputFixture).Assembly.Location) ?? Directory.GetCurrentDirectory(),
-            "Temp"
+            "Temp",
+            Guid.NewGuid().ToString()
         );
 
         public TempOutputFixture() => Directory.CreateDirectory(DirPath);
 
-        public string GetTempFilePath(string fileName) => Path.Combine(DirPath, fileName);
+        public string GetTempFilePath() => Path.Combine(DirPath, Guid.NewGuid().ToString());
 
-        public string GetTempFilePath() => GetTempFilePath(Guid.NewGuid().ToString());
+        public string GetTempFilePath(string extension) => Path.ChangeExtension(GetTempFilePath(), extension);
 
         public void Dispose()
         {
-            if (Directory.Exists(DirPath))
+            try
+            {
                 Directory.Delete(DirPath, true);
+            }
+            catch (DirectoryNotFoundException)
+            {
+            }
         }
     }
 }

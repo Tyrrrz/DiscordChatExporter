@@ -30,7 +30,7 @@ namespace DiscordChatExporter.Cli.Tests
         public async Task Reply_to_a_normal_message_is_rendered_correctly_in_HTML()
         {
             // Arrange
-            var outputFilePath = Path.ChangeExtension(_tempOutput.GetTempFilePath(), "html");
+            var outputFilePath = _tempOutput.GetTempFilePath("html");
 
             // Act
             var htmlData = await GlobalCache.WrapAsync("reply-specs-output-html", async () =>
@@ -64,7 +64,7 @@ namespace DiscordChatExporter.Cli.Tests
         public async Task Reply_to_a_deleted_message_is_rendered_correctly_in_HTML()
         {
             // Arrange
-            var outputFilePath = Path.ChangeExtension(_tempOutput.GetTempFilePath(), "html");
+            var outputFilePath = _tempOutput.GetTempFilePath("html");
 
             // Act
             var htmlData = await GlobalCache.WrapAsync("reply-specs-output-html", async () =>
@@ -98,7 +98,7 @@ namespace DiscordChatExporter.Cli.Tests
         public async Task Reply_to_a_empty_message_with_attachment_is_rendered_correctly_in_HTML()
         {
             // Arrange
-            var outputFilePath = Path.ChangeExtension(_tempOutput.GetTempFilePath(), "html");
+            var outputFilePath = _tempOutput.GetTempFilePath("html");
 
             // Act
             var htmlData = await GlobalCache.WrapAsync("reply-specs-output-html", async () =>

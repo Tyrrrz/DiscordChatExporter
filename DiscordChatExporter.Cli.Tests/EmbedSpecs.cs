@@ -29,7 +29,7 @@ namespace DiscordChatExporter.Cli.Tests
         public async Task Message_with_YouTube_video_is_rendered_with_a_player_in_HTML()
         {
             // Arrange
-            var outputFilePath = Path.ChangeExtension(_tempOutput.GetTempFilePath(), "html");
+            var outputFilePath = _tempOutput.GetTempFilePath("html");
 
             // Act
             var htmlData = await GlobalCache.WrapAsync("embed-specs-output-html", async () =>

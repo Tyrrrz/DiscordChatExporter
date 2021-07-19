@@ -33,7 +33,7 @@ namespace DiscordChatExporter.Cli.Tests
         public async Task User_mention_is_rendered_correctly_in_JSON()
         {
             // Arrange
-            var outputFilePath = Path.ChangeExtension(_tempOutput.GetTempFilePath(), "json");
+            var outputFilePath = _tempOutput.GetTempFilePath("json");
 
             // Act
             var jsonData = await GlobalCache.WrapAsync("mention-specs-output-json", async () =>
@@ -82,7 +82,7 @@ namespace DiscordChatExporter.Cli.Tests
         public async Task User_mention_is_rendered_correctly_in_HTML()
         {
             // Arrange
-            var outputFilePath = Path.ChangeExtension(_tempOutput.GetTempFilePath(), "html");
+            var outputFilePath = _tempOutput.GetTempFilePath("html");
 
             // Act
             var htmlData = await GlobalCache.WrapAsync("mention-specs-output-html", async () =>
@@ -115,7 +115,7 @@ namespace DiscordChatExporter.Cli.Tests
         public async Task Text_channel_mention_is_rendered_correctly_in_JSON()
         {
             // Arrange
-            var outputFilePath = Path.ChangeExtension(_tempOutput.GetTempFilePath(), "json");
+            var outputFilePath = _tempOutput.GetTempFilePath("json");
 
             // Act
             var jsonData = await GlobalCache.WrapAsync("mention-specs-output-json", async () =>
@@ -157,7 +157,7 @@ namespace DiscordChatExporter.Cli.Tests
         public async Task Text_channel_mention_is_rendered_correctly_in_HTML()
         {
             // Arrange
-            var outputFilePath = Path.ChangeExtension(_tempOutput.GetTempFilePath(), "html");
+            var outputFilePath = _tempOutput.GetTempFilePath("html");
 
             // Act
             var htmlData = await GlobalCache.WrapAsync("mention-specs-output-html", async () =>
@@ -189,7 +189,7 @@ namespace DiscordChatExporter.Cli.Tests
         public async Task Voice_channel_mention_is_rendered_correctly_in_JSON()
         {
             // Arrange
-            var outputFilePath = Path.ChangeExtension(_tempOutput.GetTempFilePath(), "json");
+            var outputFilePath = _tempOutput.GetTempFilePath("json");
 
             // Act
             var jsonData = await GlobalCache.WrapAsync("mention-specs-output-json", async () =>
@@ -231,7 +231,7 @@ namespace DiscordChatExporter.Cli.Tests
         public async Task Voice_channel_mention_is_rendered_correctly_in_HTML()
         {
             // Arrange
-            var outputFilePath = Path.ChangeExtension(_tempOutput.GetTempFilePath(), "html");
+            var outputFilePath = _tempOutput.GetTempFilePath("html");
 
             // Act
             var htmlData = await GlobalCache.WrapAsync("mention-specs-output-html", async () =>
@@ -263,7 +263,7 @@ namespace DiscordChatExporter.Cli.Tests
         public async Task Role_mention_is_rendered_correctly_in_JSON()
         {
             // Arrange
-            var outputFilePath = Path.ChangeExtension(_tempOutput.GetTempFilePath(), "json");
+            var outputFilePath = _tempOutput.GetTempFilePath("json");
 
             // Act
             var jsonData = await GlobalCache.WrapAsync("mention-specs-output-json", async () =>
@@ -305,7 +305,7 @@ namespace DiscordChatExporter.Cli.Tests
         public async Task Role_mention_is_rendered_correctly_in_HTML()
         {
             // Arrange
-            var outputFilePath = Path.ChangeExtension(_tempOutput.GetTempFilePath(), "html");
+            var outputFilePath = _tempOutput.GetTempFilePath("html");
 
             // Act
             var htmlData = await GlobalCache.WrapAsync("mention-specs-output-html", async () =>

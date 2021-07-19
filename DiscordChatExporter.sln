@@ -18,6 +18,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscordChatExporter.Cli", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordChatExporter.Core", "DiscordChatExporter.Core\DiscordChatExporter.Core.csproj", "{E19980B9-2B84-4257-A517-540FF1E3FCDD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordChatExporter.Cli.Tests", "DiscordChatExporter.Cli.Tests\DiscordChatExporter.Cli.Tests.csproj", "{C5064B8B-692E-4515-BA55-A9BE392EE540}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +38,10 @@ Global
 		{E19980B9-2B84-4257-A517-540FF1E3FCDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E19980B9-2B84-4257-A517-540FF1E3FCDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E19980B9-2B84-4257-A517-540FF1E3FCDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5064B8B-692E-4515-BA55-A9BE392EE540}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5064B8B-692E-4515-BA55-A9BE392EE540}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5064B8B-692E-4515-BA55-A9BE392EE540}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5064B8B-692E-4515-BA55-A9BE392EE540}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

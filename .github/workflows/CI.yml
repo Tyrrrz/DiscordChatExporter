@@ -20,6 +20,14 @@ jobs:
         with:
           dotnet-version: 5.0.x
 
+      - name: Build & test
+        run: dotnet test --configuration Release --logger GitHubActions
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v1.0.5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
       - name: Build & publish (CLI)
         run: dotnet publish DiscordChatExporter.Cli/ -o DiscordChatExporter.Cli/bin/Publish/ --configuration Release
 

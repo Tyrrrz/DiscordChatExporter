@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DiscordChatExporter.Core.Utils
 {
     // Data sourced from: https://github.com/Tyrrrz/DiscordChatExporter/issues/599#issuecomment-863431045
+    [ExcludeFromCodeCoverage]
     internal static class EmojiIndex
     {
         private static Dictionary<string, string> _toCodes = new(5000, StringComparer.Ordinal)

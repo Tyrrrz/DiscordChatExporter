@@ -63,19 +63,14 @@ namespace DiscordChatExporter.Cli.Tests
                     StringComparison.OrdinalIgnoreCase
                 ));
 
-            var content = messageJson
-                .GetProperty("content")
-                .GetString();
+            // Assert
+            messageJson.GetProperty("content").GetString().Should().Be("User mention: @Tyrrrz");
 
-            var mentionedUserIds = messageJson
+            messageJson
                 .GetProperty("mentions")
                 .EnumerateArray()
                 .Select(j => j.GetProperty("id").GetString())
-                .ToArray();
-
-            // Assert
-            content.Should().Be("User mention: @Tyrrrz");
-            mentionedUserIds.Should().Contain("128178626683338752");
+                .Should().Contain("128178626683338752");
         }
 
         [Fact]
@@ -145,12 +140,8 @@ namespace DiscordChatExporter.Cli.Tests
                     StringComparison.OrdinalIgnoreCase
                 ));
 
-            var content = messageJson
-                .GetProperty("content")
-                .GetString();
-
             // Assert
-            content.Should().Be("Text channel mention: #mention-tests");
+            messageJson.GetProperty("content").GetString().Should().Be("Text channel mention: #mention-tests");
         }
 
         [Fact]
@@ -219,12 +210,8 @@ namespace DiscordChatExporter.Cli.Tests
                     StringComparison.OrdinalIgnoreCase
                 ));
 
-            var content = messageJson
-                .GetProperty("content")
-                .GetString();
-
             // Assert
-            content.Should().Be("Voice channel mention: #chaos-vc [voice]");
+            messageJson.GetProperty("content").GetString().Should().Be("Voice channel mention: #chaos-vc [voice]");
         }
 
         [Fact]
@@ -293,12 +280,8 @@ namespace DiscordChatExporter.Cli.Tests
                     StringComparison.OrdinalIgnoreCase
                 ));
 
-            var content = messageJson
-                .GetProperty("content")
-                .GetString();
-
             // Assert
-            content.Should().Be("Role mention: @Role 1");
+            messageJson.GetProperty("content").GetString().Should().Be("Role mention: @Role 1");
         }
 
         [Fact]

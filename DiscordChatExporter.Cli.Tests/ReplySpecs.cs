@@ -52,12 +52,11 @@ namespace DiscordChatExporter.Cli.Tests
             var html = Html.Parse(htmlData);
 
             var messageHtml = html.QuerySelector("#message-866460738239725598");
-            var referenceHtml = messageHtml?.QuerySelector(".chatlog__reference-link");
 
             // Assert
             messageHtml.Should().NotBeNull();
             messageHtml?.Text().Trim().Should().Be("reply to original");
-            referenceHtml?.Text().Trim().Should().Be("original");
+            messageHtml?.QuerySelector(".chatlog__reference-link")?.Text().Trim().Should().Be("original");
         }
 
         [Fact]
@@ -86,12 +85,12 @@ namespace DiscordChatExporter.Cli.Tests
             var html = Html.Parse(htmlData);
 
             var messageHtml = html.QuerySelector("#message-866460975388819486");
-            var referenceHtml = messageHtml?.QuerySelector(".chatlog__reference-link");
 
             // Assert
             messageHtml.Should().NotBeNull();
             messageHtml?.Text().Trim().Should().Be("reply to deleted");
-            referenceHtml?.Text().Trim().Should().Be("Original message was deleted or could not be loaded.");
+            messageHtml?.QuerySelector(".chatlog__reference-link")?.Text().Trim().Should()
+                .Be("Original message was deleted or could not be loaded.");
         }
 
         [Fact]
@@ -120,12 +119,12 @@ namespace DiscordChatExporter.Cli.Tests
             var html = Html.Parse(htmlData);
 
             var messageHtml = html.QuerySelector("#message-866462470335627294");
-            var referenceHtml = messageHtml?.QuerySelector(".chatlog__reference-link");
 
             // Assert
             messageHtml.Should().NotBeNull();
             messageHtml?.Text().Trim().Should().Be("reply to attachment");
-            referenceHtml?.Text().Trim().Should().Be("Click to see attachment 🖼️");
+            messageHtml?.QuerySelector(".chatlog__reference-link")?.Text().Trim().Should()
+                .Be("Click to see attachment 🖼️");
         }
     }
 }

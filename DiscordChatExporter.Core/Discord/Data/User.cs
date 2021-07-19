@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Utils.Extensions;
@@ -37,6 +38,7 @@ namespace DiscordChatExporter.Core.Discord.Data
             AvatarUrl = avatarUrl;
         }
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => FullName;
     }
 

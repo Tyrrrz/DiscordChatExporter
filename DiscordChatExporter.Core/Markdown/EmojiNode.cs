@@ -1,4 +1,5 @@
-﻿using DiscordChatExporter.Core.Utils;
+﻿using System.Diagnostics.CodeAnalysis;
+using DiscordChatExporter.Core.Utils;
 
 namespace DiscordChatExporter.Core.Markdown
 {
@@ -31,6 +32,7 @@ namespace DiscordChatExporter.Core.Markdown
         {
         }
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => $"<Emoji> {Name}";
     }
 }

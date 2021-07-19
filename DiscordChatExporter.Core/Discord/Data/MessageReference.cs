@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Reading;
@@ -20,6 +21,7 @@ namespace DiscordChatExporter.Core.Discord.Data
             GuildId = guildId;
         }
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => MessageId?.ToString() ?? "<unknown reference>";
     }
 

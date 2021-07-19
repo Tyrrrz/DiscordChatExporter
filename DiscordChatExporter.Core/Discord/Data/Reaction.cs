@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Core.Discord.Data
@@ -16,6 +17,7 @@ namespace DiscordChatExporter.Core.Discord.Data
             Count = count;
         }
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => $"{Emoji} ({Count})";
     }
 

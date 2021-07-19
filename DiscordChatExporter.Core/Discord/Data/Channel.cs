@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Utils.Extensions;
@@ -51,6 +52,7 @@ namespace DiscordChatExporter.Core.Discord.Data
             Topic = topic;
         }
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => Name;
     }
 

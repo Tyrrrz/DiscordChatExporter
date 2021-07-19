@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Net.Http.Headers;
 
 namespace DiscordChatExporter.Core.Discord
 {
@@ -20,6 +21,7 @@ namespace DiscordChatExporter.Core.Discord
             _ => new AuthenticationHeaderValue(Value)
         };
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => Value;
     }
 }

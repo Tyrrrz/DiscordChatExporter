@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DiscordChatExporter.Core.Markdown
 {
@@ -14,6 +15,7 @@ namespace DiscordChatExporter.Core.Markdown
             Children = children;
         }
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => $"<{Formatting}> (+{Children.Count})";
     }
 }

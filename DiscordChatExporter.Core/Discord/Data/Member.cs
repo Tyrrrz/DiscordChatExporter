@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
@@ -26,6 +27,7 @@ namespace DiscordChatExporter.Core.Discord.Data
             RoleIds = roleIds;
         }
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => Nick;
     }
 

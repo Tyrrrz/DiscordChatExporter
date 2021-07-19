@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
@@ -14,6 +15,7 @@ namespace DiscordChatExporter.Core.Discord
             (long) ((Value >> 22) + 1420070400000UL)
         ).ToLocalTime();
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => Value.ToString(CultureInfo.InvariantCulture);
     }
 

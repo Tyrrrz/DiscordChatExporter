@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 
 namespace DiscordChatExporter.Core.Discord.Data
 {
@@ -6,14 +7,11 @@ namespace DiscordChatExporter.Core.Discord.Data
     {
         public string VideoId { get; }
 
-        public string Url { get; }
+        public string Url => $"https://www.youtube.com/embed/{VideoId}";
 
-        public YouTubeVideoEmbedProjection(string videoId, string url)
-        {
-            VideoId = videoId;
-            Url = url;
-        }
+        public YouTubeVideoEmbedProjection(string videoId) => VideoId = videoId;
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => Url;
     }
 
@@ -53,9 +51,7 @@ namespace DiscordChatExporter.Core.Discord.Data
             if (string.IsNullOrWhiteSpace(videoId))
                 return null;
 
-            var url = $"https://www.youtube.com/embed/{videoId}";
-
-            return new YouTubeVideoEmbedProjection(videoId, url);
+            return new YouTubeVideoEmbedProjection(videoId);
         }
     }
 }

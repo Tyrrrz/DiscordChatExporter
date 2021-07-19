@@ -1,4 +1,6 @@
-﻿namespace DiscordChatExporter.Core.Markdown
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace DiscordChatExporter.Core.Markdown
 {
     internal class InlineCodeBlockNode : MarkdownNode
     {
@@ -9,6 +11,7 @@
             Code = code;
         }
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => $"<Code> {Code}";
     }
 }

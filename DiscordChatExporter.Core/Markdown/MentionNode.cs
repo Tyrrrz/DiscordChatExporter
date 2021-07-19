@@ -1,4 +1,6 @@
-﻿namespace DiscordChatExporter.Core.Markdown
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace DiscordChatExporter.Core.Markdown
 {
     internal class MentionNode : MarkdownNode
     {
@@ -12,6 +14,7 @@
             Kind = kind;
         }
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => $"<{Kind} mention> {Id}";
     }
 }

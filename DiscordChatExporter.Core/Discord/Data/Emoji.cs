@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text.Json;
 using DiscordChatExporter.Core.Utils;
 using DiscordChatExporter.Core.Utils.Extensions;
@@ -33,6 +34,7 @@ namespace DiscordChatExporter.Core.Discord.Data
             ImageUrl = imageUrl;
         }
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => Name;
     }
 

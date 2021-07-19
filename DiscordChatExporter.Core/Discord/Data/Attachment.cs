@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
@@ -49,6 +50,7 @@ namespace DiscordChatExporter.Core.Discord.Data
             FileSize = fileSize;
         }
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => FileName;
     }
 

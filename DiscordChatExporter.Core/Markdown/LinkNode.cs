@@ -1,4 +1,6 @@
-﻿namespace DiscordChatExporter.Core.Markdown
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace DiscordChatExporter.Core.Markdown
 {
     internal class LinkNode : MarkdownNode
     {
@@ -17,6 +19,7 @@
         {
         }
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => $"<Link> {Title}";
     }
 }

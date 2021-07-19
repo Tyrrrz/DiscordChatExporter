@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text.Json;
@@ -57,6 +58,7 @@ namespace DiscordChatExporter.Core.Discord.Data
 
         public YouTubeVideoEmbedProjection? TryGetYouTubeVideo() => YouTubeVideoEmbedProjection.TryResolve(this);
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => Title ?? "<untitled embed>";
     }
 

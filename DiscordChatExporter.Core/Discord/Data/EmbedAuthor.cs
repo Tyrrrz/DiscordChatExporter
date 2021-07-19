@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using JsonExtensions.Reading;
 
@@ -22,6 +23,7 @@ namespace DiscordChatExporter.Core.Discord.Data
             IconProxyUrl = iconProxyUrl;
         }
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => Name ?? "<unnamed author>";
     }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DiscordChatExporter.Core.Discord.Data.Common
 {
@@ -41,6 +42,7 @@ namespace DiscordChatExporter.Core.Discord.Data.Common
             return "bytes";
         }
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => $"{GetLargestWholeNumberValue():0.##} {GetLargestWholeNumberSymbol()}";
     }
 

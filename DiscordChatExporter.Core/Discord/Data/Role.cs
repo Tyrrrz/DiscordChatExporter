@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Utils.Extensions;
@@ -29,6 +30,7 @@ namespace DiscordChatExporter.Core.Discord.Data
             Color = color;
         }
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => Name;
     }
 

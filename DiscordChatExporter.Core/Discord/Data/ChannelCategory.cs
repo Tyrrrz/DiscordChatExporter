@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Reading;
@@ -20,6 +21,7 @@ namespace DiscordChatExporter.Core.Discord.Data
             Position = position;
         }
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => Name;
     }
 

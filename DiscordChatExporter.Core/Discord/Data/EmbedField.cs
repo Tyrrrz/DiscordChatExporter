@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using JsonExtensions.Reading;
 
@@ -19,6 +20,7 @@ namespace DiscordChatExporter.Core.Discord.Data
             IsInline = isInline;
         }
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => $"{Name} | {Value}";
     }
 

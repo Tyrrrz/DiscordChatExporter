@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DiscordChatExporter.Core.Markdown
 {
@@ -8,6 +9,7 @@ namespace DiscordChatExporter.Core.Markdown
 
         public UnixTimestampNode(DateTimeOffset value) => Value = value;
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => Value.ToString();
     }
 }

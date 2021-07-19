@@ -26,7 +26,7 @@ namespace DiscordChatExporter.Cli.Tests
         }
 
         [Fact]
-        public async Task Message_with_YouTube_video_is_rendered_with_a_player_in_HTML()
+        public async Task Message_with_YouTube_video_is_rendered_using_an_iframe_player_in_HTML()
         {
             // Arrange
             var outputFilePath = _tempOutput.GetTempFilePath("html");

@@ -17,7 +17,7 @@ namespace DiscordChatExporter.Cli.Utils.Extensions
         public static IAnsiConsole CreateAnsiConsole(this IConsole console)
         {
             // Don't require exclusivity in tests.
-            // Workaround for: https://github.com/spectreconsole/spectre.console/issues/494
+            // Workaround for https://github.com/spectreconsole/spectre.console/issues/494
             var exclusivityMode = console is FakeConsole
                 ? new NoopExclusivityMode()
                 : null;

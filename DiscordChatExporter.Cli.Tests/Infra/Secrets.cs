@@ -3,7 +3,7 @@ using System.IO;
 
 namespace DiscordChatExporter.Cli.Tests.Infra
 {
-    public static class Secrets
+    internal static class Secrets
     {
         private static readonly Lazy<string> DiscordTokenLazy = new(() =>
         {

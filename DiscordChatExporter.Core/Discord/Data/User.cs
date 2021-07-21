@@ -49,12 +49,11 @@ namespace DiscordChatExporter.Core.Discord.Data
 
         private static string GetAvatarUrl(Snowflake id, string avatarHash)
         {
-            // Animated
-            if (avatarHash.StartsWith("a_", StringComparison.Ordinal))
-                return $"https://cdn.discordapp.com/avatars/{id}/{avatarHash}.gif?size=40";
+            var extension = avatarHash.StartsWith("a_", StringComparison.Ordinal)
+                ? "gif"
+                : "png";
 
-            // Non-animated
-            return $"https://cdn.discordapp.com/avatars/{id}/{avatarHash}.png?size=40";
+            return $"https://cdn.discordapp.com/avatars/{id}/{avatarHash}.{extension}?size=40";
         }
 
         public static User Parse(JsonElement json)

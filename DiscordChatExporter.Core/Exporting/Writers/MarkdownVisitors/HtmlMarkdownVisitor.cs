@@ -162,8 +162,11 @@ namespace DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors
 
         protected override MarkdownNode VisitUnixTimestamp(UnixTimestampNode timestamp)
         {
+            // Timestamp tooltips always use full date regardless of the configured format
+            var longDateString = timestamp.Value.ToLocalString("dddd, MMMM d, yyyy h:mm tt");
+
             _buffer
-                .Append("<span class=\"timestamp\">")
+                .Append($"<span class=\"timestamp\" title=\"{HtmlEncode(longDateString)}\">")
                 .Append(HtmlEncode(_context.FormatDate(timestamp.Value)))
                 .Append("</span>");
 

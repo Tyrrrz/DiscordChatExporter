@@ -176,8 +176,17 @@
                 @{/* Embeds */}
                 @foreach (var embed in message.Embeds)
                 {
+                    // Plain image embed
+                    if (embed.TryGetPlainImage() is { } plainImageEmbed)
+                    {
+                        <div class="chatlog__embed">
+                            <a href="@await ResolveUrlAsync(plainImageEmbed.Url)">
+                                <img class="chatlog__embed-plainimage" src="@await ResolveUrlAsync(plainImageEmbed.Url)" alt="Embedded image" loading="lazy">
+                            </a>
+                        </div>
+                    }
                     // Spotify embed
-                    if (embed.TryGetSpotifyTrack() is { } spotifyTrackEmbed)
+                    else if (embed.TryGetSpotifyTrack() is { } spotifyTrackEmbed)
                     {
                         <div class="chatlog__embed">
                             <div class="chatlog__embed-spotify-container">

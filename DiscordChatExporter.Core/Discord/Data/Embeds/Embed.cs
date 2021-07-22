@@ -56,6 +56,8 @@ namespace DiscordChatExporter.Core.Discord.Data.Embeds
             Footer = footer;
         }
 
+        public PlainImageEmbedProjection? TryGetPlainImage() => PlainImageEmbedProjection.TryResolve(this);
+
         public SpotifyTrackEmbedProjection? TryGetSpotifyTrack() => SpotifyTrackEmbedProjection.TryResolve(this);
 
         public YouTubeVideoEmbedProjection? TryGetYouTubeVideo() => YouTubeVideoEmbedProjection.TryResolve(this);

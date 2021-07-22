@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
+using DiscordChatExporter.Core.Utils;
 using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Reading;
 
@@ -24,11 +24,11 @@ namespace DiscordChatExporter.Core.Discord.Data
 
         public int? Height { get; }
 
-        public bool IsImage => ImageFileExtensions.Contains(FileExtension);
+        public bool IsImage => FileFormat.IsImage(FileExtension);
 
-        public bool IsVideo => VideoFileExtensions.Contains(FileExtension);
+        public bool IsVideo => FileFormat.IsVideo(FileExtension);
 
-        public bool IsAudio => AudioFileExtensions.Contains(FileExtension);
+        public bool IsAudio => FileFormat.IsAudio(FileExtension);
 
         public bool IsSpoiler => FileName.StartsWith("SPOILER_", StringComparison.Ordinal);
 
@@ -56,15 +56,6 @@ namespace DiscordChatExporter.Core.Discord.Data
 
     public partial class Attachment
     {
-        private static readonly HashSet<string> ImageFileExtensions = new(StringComparer.OrdinalIgnoreCase)
-        { ".jpg", ".jpeg", ".png", ".gif", ".gifv", ".bmp", ".webp" };
-
-        private static readonly HashSet<string> VideoFileExtensions = new(StringComparer.OrdinalIgnoreCase)
-        { ".mp4", ".webm", ".mov" };
-
-        private static readonly HashSet<string> AudioFileExtensions = new(StringComparer.OrdinalIgnoreCase)
-        { ".mp3", ".wav", ".ogg", ".flac", ".m4a" };
-
         public static Attachment Parse(JsonElement json)
         {
             var id = json.GetProperty("id").GetString().Pipe(Snowflake.Parse);

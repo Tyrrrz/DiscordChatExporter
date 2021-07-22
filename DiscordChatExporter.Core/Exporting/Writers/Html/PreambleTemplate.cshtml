@@ -107,9 +107,14 @@
         }
 
         .quote {
-            margin: 0.1em 0;
-            padding-left: 0.6em;
-            border-left: 4px solid @Themed("#4f545c", "#c7ccd1");
+            display: flex;
+            margin: 0.05em 0;
+        }
+
+        .quote::before {
+            content: "";
+            margin-right: 0.5em;
+            border: 2px solid @Themed("#4f545c", "#c7ccd1");
             border-radius: 3px;
         }
 
@@ -239,7 +244,7 @@
         }
 
         .chatlog__reference-name {
-            margin-right: 0.25em;
+            margin-right: 0.3em;
             font-weight: 600;
         }
 

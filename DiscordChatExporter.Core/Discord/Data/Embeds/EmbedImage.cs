@@ -1,7 +1,7 @@
 using System.Text.Json;
 using JsonExtensions.Reading;
 
-namespace DiscordChatExporter.Core.Discord.Data
+namespace DiscordChatExporter.Core.Discord.Data.Embeds
 {
     // https://discord.com/developers/docs/resources/channel#embed-object-embed-image-structure
     public partial class EmbedImage

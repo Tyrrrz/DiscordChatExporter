@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
+using DiscordChatExporter.Core.Discord.Data.Embeds;
 using DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors;
 using Tyrrrz.Extensions;
 

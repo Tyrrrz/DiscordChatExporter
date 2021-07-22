@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
+using DiscordChatExporter.Core.Discord.Data.Embeds;
 using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Reading;
 

@@ -3,6 +3,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
+using DiscordChatExporter.Core.Discord.Data.Embeds;
 using DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors;
 using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Writing;

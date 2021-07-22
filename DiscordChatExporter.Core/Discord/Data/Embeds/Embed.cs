@@ -7,7 +7,7 @@ using System.Text.Json;
 using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Reading;
 
-namespace DiscordChatExporter.Core.Discord.Data
+namespace DiscordChatExporter.Core.Discord.Data.Embeds
 {
     // https://discord.com/developers/docs/resources/channel#embed-object
     public partial class Embed
@@ -55,6 +55,8 @@ namespace DiscordChatExporter.Core.Discord.Data
             Image = image;
             Footer = footer;
         }
+
+        public SpotifyTrackEmbedProjection? TryGetSpotifyTrack() => SpotifyTrackEmbedProjection.TryResolve(this);
 
         public YouTubeVideoEmbedProjection? TryGetYouTubeVideo() => YouTubeVideoEmbedProjection.TryResolve(this);
 

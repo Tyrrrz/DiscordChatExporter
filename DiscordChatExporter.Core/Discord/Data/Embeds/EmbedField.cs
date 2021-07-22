@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using JsonExtensions.Reading;
 
-namespace DiscordChatExporter.Core.Discord.Data
+namespace DiscordChatExporter.Core.Discord.Data.Embeds
 {
     // https://discord.com/developers/docs/resources/channel#embed-object-embed-field-structure
     public partial class EmbedField

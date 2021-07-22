@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
-namespace DiscordChatExporter.Core.Discord.Data
+namespace DiscordChatExporter.Core.Discord.Data.Embeds
 {
     public partial class YouTubeVideoEmbedProjection
     {

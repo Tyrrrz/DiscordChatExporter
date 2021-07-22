@@ -140,7 +140,41 @@ namespace DiscordChatExporter.Cli.Tests
         }
 
         [Fact]
-        public async Task Message_with_YouTube_video_is_rendered_using_an_iframe_player_in_HTML()
+        public async Task Message_with_a_Spotify_track_is_rendered_using_an_iframe_in_HTML()
+        {
+            // Arrange
+            var outputFilePath = _tempOutput.GetTempFilePath("html");
+
+            // Act
+            var htmlData = await GlobalCache.WrapAsync("embed-specs-output-html", async () =>
+            {
+                await new ExportChannelsCommand
+                {
+                    TokenValue = Secrets.DiscordToken,
+                    IsBotToken = Secrets.IsDiscordTokenBot,
+                    ChannelIds = new[] {Snowflake.Parse(ChannelIds.EmbedTestCases)},
+                    ExportFormat = ExportFormat.HtmlDark,
+                    OutputPath = outputFilePath
+                }.ExecuteAsync(new FakeConsole());
+
+                return await File.ReadAllTextAsync(outputFilePath);
+            });
+
+            _testOutput.WriteLine(htmlData);
+
+            var html = Html.Parse(htmlData);
+
+            var messageHtml = html.QuerySelector("#message-867886632203976775");
+            var iframeHtml = messageHtml?.QuerySelector("iframe");
+
+            // Assert
+            iframeHtml.Should().NotBeNull();
+            iframeHtml?.GetAttribute("src").Should()
+                .StartWithEquivalent("https://open.spotify.com/embed/track/1LHZMWefF9502NPfArRfvP");
+        }
+
+        [Fact]
+        public async Task Message_with_a_YouTube_video_is_rendered_using_an_iframe_in_HTML()
         {
             // Arrange
             var outputFilePath = _tempOutput.GetTempFilePath("html");

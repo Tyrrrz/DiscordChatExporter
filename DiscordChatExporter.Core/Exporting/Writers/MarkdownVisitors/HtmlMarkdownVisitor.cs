@@ -30,22 +30,22 @@ namespace DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors
             return base.VisitText(text);
         }
 
-        protected override MarkdownNode VisitFormatted(FormattedNode formatted)
+        protected override MarkdownNode VisitFormatting(FormattingNode formatting)
         {
-            var (tagOpen, tagClose) = formatted.Formatting switch
+            var (tagOpen, tagClose) = formatting.Kind switch
             {
-                TextFormatting.Bold => ("<strong>", "</strong>"),
-                TextFormatting.Italic => ("<em>", "</em>"),
-                TextFormatting.Underline => ("<u>", "</u>"),
-                TextFormatting.Strikethrough => ("<s>", "</s>"),
-                TextFormatting.Spoiler => (
+                FormattingKind.Bold => ("<strong>", "</strong>"),
+                FormattingKind.Italic => ("<em>", "</em>"),
+                FormattingKind.Underline => ("<u>", "</u>"),
+                FormattingKind.Strikethrough => ("<s>", "</s>"),
+                FormattingKind.Spoiler => (
                     "<span class=\"spoiler-text spoiler-text--hidden\" onclick=\"showSpoiler(event, this)\">", "</span>"),
-                TextFormatting.Quote => ("<div class=\"quote\">", "</div>"),
-                _ => throw new ArgumentOutOfRangeException(nameof(formatted.Formatting))
+                FormattingKind.Quote => ("<div class=\"quote\">", "</div>"),
+                _ => throw new ArgumentOutOfRangeException(nameof(formatting.Kind))
             };
 
             _buffer.Append(tagOpen);
-            var result = base.VisitFormatted(formatted);
+            var result = base.VisitFormatting(formatting);
             _buffer.Append(tagClose);
 
             return result;
@@ -77,25 +77,22 @@ namespace DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors
 
         protected override MarkdownNode VisitLink(LinkNode link)
         {
-            // Extract message ID if the link points to a Discord message
-            var linkedMessageId = Regex.Match(link.Url, "^https?://(?:discord|discordapp).com/channels/.*?/(\\d+)/?$").Groups[1].Value;
+            // Try to extract message ID if the link refers to a Discord message
+            var linkedMessageId = Regex.Match(
+                link.Url,
+                "^https?://(?:discord|discordapp).com/channels/.*?/(\\d+)/?$"
+            ).Groups[1].Value;
 
-            if (!string.IsNullOrWhiteSpace(linkedMessageId))
-            {
-                _buffer
-                    .Append($"<a href=\"{Uri.EscapeUriString(link.Url)}\" onclick=\"scrollToMessage(event, '{linkedMessageId}')\">")
-                    .Append(HtmlEncode(link.Title))
-                    .Append("</a>");
-            }
-            else
-            {
-                _buffer
-                    .Append($"<a href=\"{Uri.EscapeUriString(link.Url)}\">")
-                    .Append(HtmlEncode(link.Title))
-                    .Append("</a>");
-            }
+            _buffer.Append(
+                !string.IsNullOrWhiteSpace(linkedMessageId)
+                    ? $"<a href=\"{Uri.EscapeUriString(link.Url)}\" onclick=\"scrollToMessage(event, '{linkedMessageId}')\">"
+                    : $"<a href=\"{Uri.EscapeUriString(link.Url)}\">"
+            );
 
-            return base.VisitLink(link);
+            var result = base.VisitLink(link);
+            _buffer.Append("</a>");
+
+            return result;
         }
 
         protected override MarkdownNode VisitEmoji(EmojiNode emoji)

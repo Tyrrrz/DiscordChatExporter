@@ -8,10 +8,10 @@ namespace DiscordChatExporter.Core.Markdown.Parsing
         protected virtual MarkdownNode VisitText(TextNode text) =>
             text;
 
-        protected virtual MarkdownNode VisitFormatted(FormattedNode formatted)
+        protected virtual MarkdownNode VisitFormatting(FormattingNode formatting)
         {
-            Visit(formatted.Children);
-            return formatted;
+            Visit(formatting.Children);
+            return formatting;
         }
 
         protected virtual MarkdownNode VisitInlineCodeBlock(InlineCodeBlockNode inlineCodeBlock) =>
@@ -20,8 +20,11 @@ namespace DiscordChatExporter.Core.Markdown.Parsing
         protected virtual MarkdownNode VisitMultiLineCodeBlock(MultiLineCodeBlockNode multiLineCodeBlock) =>
             multiLineCodeBlock;
 
-        protected virtual MarkdownNode VisitLink(LinkNode link) =>
-            link;
+        protected virtual MarkdownNode VisitLink(LinkNode link)
+        {
+            Visit(link.Children);
+            return link;
+        }
 
         protected virtual MarkdownNode VisitEmoji(EmojiNode emoji) =>
             emoji;
@@ -35,7 +38,7 @@ namespace DiscordChatExporter.Core.Markdown.Parsing
         public MarkdownNode Visit(MarkdownNode node) => node switch
         {
             TextNode text => VisitText(text),
-            FormattedNode formatted => VisitFormatted(formatted),
+            FormattingNode formatting => VisitFormatting(formatting),
             InlineCodeBlockNode inlineCodeBlock => VisitInlineCodeBlock(inlineCodeBlock),
             MultiLineCodeBlockNode multiLineCodeBlock => VisitMultiLineCodeBlock(multiLineCodeBlock),
             LinkNode link => VisitLink(link),

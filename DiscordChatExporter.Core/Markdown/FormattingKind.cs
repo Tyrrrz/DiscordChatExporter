@@ -1,6 +1,6 @@
 ﻿namespace DiscordChatExporter.Core.Markdown
 {
-    internal enum TextFormatting
+    internal enum FormattingKind
     {
         Bold,
         Italic,

@@ -4,21 +4,16 @@ using System.Linq;
 
 namespace DiscordChatExporter.Core.Markdown
 {
-    internal class LinkNode : MarkdownNode
+    internal class FormattingNode : MarkdownNode
     {
-        public string Url { get; }
+        public FormattingKind Kind { get; }
 
         public IReadOnlyList<MarkdownNode> Children { get; }
 
-        public LinkNode(string url, IReadOnlyList<MarkdownNode> children)
+        public FormattingNode(FormattingKind kind, IReadOnlyList<MarkdownNode> children)
         {
-            Url = url;
+            Kind = kind;
             Children = children;
-        }
-
-        public LinkNode(string url)
-            : this(url, new[] {new TextNode(url)})
-        {
         }
 
         [ExcludeFromCodeCoverage]
@@ -28,7 +23,7 @@ namespace DiscordChatExporter.Core.Markdown
                 ? Children.Single().ToString()
                 : "+" + Children.Count;
 
-            return $"<Link> ({childrenFormatted})";
+            return $"<{Kind}> ({childrenFormatted})";
         }
     }
 }

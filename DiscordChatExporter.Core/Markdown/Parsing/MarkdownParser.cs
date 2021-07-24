@@ -7,7 +7,10 @@ using DiscordChatExporter.Core.Utils;
 
 namespace DiscordChatExporter.Core.Markdown.Parsing
 {
-    // The following parsing logic is meant to replicate Discord's markdown grammar as close as possible
+    // Discord does NOT use a recursive-descent parser for markdown which becomes evident in some
+    // scenarios, like when multiple formatting nodes are nested together.
+    // To replicate Discord's behavior, we're employing a special parser that uses a set of regular
+    // expressions that are executed sequentially in a first-match-first-serve manner.
     internal static partial class MarkdownParser
     {
         private const RegexOptions DefaultRegexOptions =
@@ -18,64 +21,64 @@ namespace DiscordChatExporter.Core.Markdown.Parsing
         /* Formatting */
 
         // Capture any character until the earliest double asterisk not followed by an asterisk
-        private static readonly IMatcher<MarkdownNode> BoldFormattedNodeMatcher = new RegexMatcher<MarkdownNode>(
+        private static readonly IMatcher<MarkdownNode> BoldFormattingNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("\\*\\*(.+?)\\*\\*(?!\\*)", DefaultRegexOptions | RegexOptions.Singleline),
-            (p, m) => new FormattedNode(TextFormatting.Bold, Parse(p.Slice(m.Groups[1])))
+            (p, m) => new FormattingNode(FormattingKind.Bold, Parse(p.Slice(m.Groups[1])))
         );
 
         // Capture any character until the earliest single asterisk not preceded or followed by an asterisk
         // Opening asterisk must not be followed by whitespace
         // Closing asterisk must not be preceded by whitespace
-        private static readonly IMatcher<MarkdownNode> ItalicFormattedNodeMatcher = new RegexMatcher<MarkdownNode>(
+        private static readonly IMatcher<MarkdownNode> ItalicFormattingNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("\\*(?!\\s)(.+?)(?<!\\s|\\*)\\*(?!\\*)", DefaultRegexOptions | RegexOptions.Singleline),
-            (p, m) => new FormattedNode(TextFormatting.Italic, Parse(p.Slice(m.Groups[1])))
+            (p, m) => new FormattingNode(FormattingKind.Italic, Parse(p.Slice(m.Groups[1])))
         );
 
         // Capture any character until the earliest triple asterisk not followed by an asterisk
-        private static readonly IMatcher<MarkdownNode> ItalicBoldFormattedNodeMatcher = new RegexMatcher<MarkdownNode>(
+        private static readonly IMatcher<MarkdownNode> ItalicBoldFormattingNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("\\*(\\*\\*.+?\\*\\*)\\*(?!\\*)", DefaultRegexOptions | RegexOptions.Singleline),
-            (p, m) => new FormattedNode(TextFormatting.Italic, Parse(p.Slice(m.Groups[1]), BoldFormattedNodeMatcher))
+            (p, m) => new FormattingNode(FormattingKind.Italic, Parse(p.Slice(m.Groups[1]), BoldFormattingNodeMatcher))
         );
 
         // Capture any character except underscore until an underscore
         // Closing underscore must not be followed by a word character
-        private static readonly IMatcher<MarkdownNode> ItalicAltFormattedNodeMatcher = new RegexMatcher<MarkdownNode>(
+        private static readonly IMatcher<MarkdownNode> ItalicAltFormattingNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("_([^_]+)_(?!\\w)", DefaultRegexOptions | RegexOptions.Singleline),
-            (p, m) => new FormattedNode(TextFormatting.Italic, Parse(p.Slice(m.Groups[1])))
+            (p, m) => new FormattingNode(FormattingKind.Italic, Parse(p.Slice(m.Groups[1])))
         );
 
         // Capture any character until the earliest double underscore not followed by an underscore
-        private static readonly IMatcher<MarkdownNode> UnderlineFormattedNodeMatcher = new RegexMatcher<MarkdownNode>(
+        private static readonly IMatcher<MarkdownNode> UnderlineFormattingNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("__(.+?)__(?!_)", DefaultRegexOptions | RegexOptions.Singleline),
-            (p, m) => new FormattedNode(TextFormatting.Underline, Parse(p.Slice(m.Groups[1])))
+            (p, m) => new FormattingNode(FormattingKind.Underline, Parse(p.Slice(m.Groups[1])))
         );
 
         // Capture any character until the earliest triple underscore not followed by an underscore
-        private static readonly IMatcher<MarkdownNode> ItalicUnderlineFormattedNodeMatcher =
+        private static readonly IMatcher<MarkdownNode> ItalicUnderlineFormattingNodeMatcher =
             new RegexMatcher<MarkdownNode>(
                 new Regex("_(__.+?__)_(?!_)", DefaultRegexOptions | RegexOptions.Singleline),
-                (p, m) => new FormattedNode(TextFormatting.Italic,
-                    Parse(p.Slice(m.Groups[1]), UnderlineFormattedNodeMatcher))
+                (p, m) => new FormattingNode(FormattingKind.Italic,
+                    Parse(p.Slice(m.Groups[1]), UnderlineFormattingNodeMatcher))
             );
 
         // Capture any character until the earliest double tilde
-        private static readonly IMatcher<MarkdownNode> StrikethroughFormattedNodeMatcher =
+        private static readonly IMatcher<MarkdownNode> StrikethroughFormattingNodeMatcher =
             new RegexMatcher<MarkdownNode>(
                 new Regex("~~(.+?)~~", DefaultRegexOptions | RegexOptions.Singleline),
-                (p, m) => new FormattedNode(TextFormatting.Strikethrough, Parse(p.Slice(m.Groups[1])))
+                (p, m) => new FormattingNode(FormattingKind.Strikethrough, Parse(p.Slice(m.Groups[1])))
             );
 
         // Capture any character until the earliest double pipe
-        private static readonly IMatcher<MarkdownNode> SpoilerFormattedNodeMatcher = new RegexMatcher<MarkdownNode>(
+        private static readonly IMatcher<MarkdownNode> SpoilerFormattingNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("\\|\\|(.+?)\\|\\|", DefaultRegexOptions | RegexOptions.Singleline),
-            (p, m) => new FormattedNode(TextFormatting.Spoiler, Parse(p.Slice(m.Groups[1])))
+            (p, m) => new FormattingNode(FormattingKind.Spoiler, Parse(p.Slice(m.Groups[1])))
         );
 
         // Capture any character until the end of the line
         // Opening 'greater than' character must be followed by whitespace
         private static readonly IMatcher<MarkdownNode> SingleLineQuoteNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("^>\\s(.+\n?)", DefaultRegexOptions),
-            (p, m) => new FormattedNode(TextFormatting.Quote, Parse(p.Slice(m.Groups[1])))
+            (p, m) => new FormattingNode(FormattingKind.Quote, Parse(p.Slice(m.Groups[1])))
         );
 
         // Repeatedly capture any character until the end of the line
@@ -86,7 +89,7 @@ namespace DiscordChatExporter.Core.Markdown.Parsing
                 (_, m) =>
                 {
                     var content = string.Concat(m.Groups[1].Captures.Select(c => c.Value));
-                    return new FormattedNode(TextFormatting.Quote, Parse(content));
+                    return new FormattingNode(FormattingKind.Quote, Parse(content));
                 }
             );
 
@@ -94,7 +97,7 @@ namespace DiscordChatExporter.Core.Markdown.Parsing
         // Opening 'greater than' characters must be followed by whitespace
         private static readonly IMatcher<MarkdownNode> MultiLineQuoteNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("^>>>\\s(.+)", DefaultRegexOptions | RegexOptions.Singleline),
-            (p, m) => new FormattedNode(TextFormatting.Quote, Parse(p.Slice(m.Groups[1])))
+            (p, m) => new FormattingNode(FormattingKind.Quote, Parse(p.Slice(m.Groups[1])))
         );
 
         /* Code blocks */
@@ -147,7 +150,7 @@ namespace DiscordChatExporter.Core.Markdown.Parsing
             (_, m) => new MentionNode(m.Groups[1].Value, MentionKind.Role)
         );
 
-        /* Emojis */
+        /* Emoji */
 
         // Capture any country flag emoji (two regional indicator surrogate pairs)
         // ... or "miscellaneous symbol" character
@@ -165,7 +168,7 @@ namespace DiscordChatExporter.Core.Markdown.Parsing
             (_, m) =>
             {
                 var name = EmojiIndex.TryGetName(m.Groups[1].Value);
-                return name is not null
+                return !string.IsNullOrWhiteSpace(name)
                     ? new EmojiNode(name)
                     : null;
             }
@@ -182,10 +185,11 @@ namespace DiscordChatExporter.Core.Markdown.Parsing
         // Capture [title](link)
         private static readonly IMatcher<MarkdownNode> TitledLinkNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("\\[(.+?)\\]\\((.+?)\\)", DefaultRegexOptions),
-            (_, m) => new LinkNode(m.Groups[2].Value, m.Groups[1].Value)
+            (p, m) => new LinkNode(m.Groups[2].Value, Parse(p.Slice(m.Groups[1])))
         );
 
-        // Capture any non-whitespace character after http:// or https:// until the last punctuation character or whitespace
+        // Capture any non-whitespace character after http:// or https://
+        // until the last punctuation character or whitespace
         private static readonly IMatcher<MarkdownNode> AutoLinkNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("(https?://\\S*[^\\.,:;\"\'\\s])", DefaultRegexOptions),
             (_, m) => new LinkNode(m.Groups[1].Value)
@@ -199,14 +203,14 @@ namespace DiscordChatExporter.Core.Markdown.Parsing
 
         /* Text */
 
-        // Capture the shrug emoticon
+        // Capture the shrug kaomoji
         // This escapes it from matching for formatting
         private static readonly IMatcher<MarkdownNode> ShrugTextNodeMatcher = new StringMatcher<MarkdownNode>(
             @"¯\_(ツ)_/¯",
             p => new TextNode(p.ToString())
         );
 
-        // Capture some specific emojis that don't get rendered
+        // Capture some specific emoji that don't get rendered
         // This escapes it from matching for emoji
         private static readonly IMatcher<MarkdownNode> IgnoredEmojiTextNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("(\\u26A7|\\u2640|\\u2642|\\u2695|\\u267E|\\u00A9|\\u00AE|\\u2122)", DefaultRegexOptions),
@@ -257,14 +261,14 @@ namespace DiscordChatExporter.Core.Markdown.Parsing
             EscapedCharacterTextNodeMatcher,
 
             // Formatting
-            ItalicBoldFormattedNodeMatcher,
-            ItalicUnderlineFormattedNodeMatcher,
-            BoldFormattedNodeMatcher,
-            ItalicFormattedNodeMatcher,
-            UnderlineFormattedNodeMatcher,
-            ItalicAltFormattedNodeMatcher,
-            StrikethroughFormattedNodeMatcher,
-            SpoilerFormattedNodeMatcher,
+            ItalicBoldFormattingNodeMatcher,
+            ItalicUnderlineFormattingNodeMatcher,
+            BoldFormattingNodeMatcher,
+            ItalicFormattingNodeMatcher,
+            UnderlineFormattingNodeMatcher,
+            ItalicAltFormattingNodeMatcher,
+            StrikethroughFormattingNodeMatcher,
+            SpoilerFormattingNodeMatcher,
             MultiLineQuoteNodeMatcher,
             RepeatedSingleLineQuoteNodeMatcher,
             SingleLineQuoteNodeMatcher,

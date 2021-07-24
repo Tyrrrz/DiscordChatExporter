@@ -24,12 +24,19 @@ namespace DiscordChatExporter.Cli.Tests.Infra
 
         private static readonly Lazy<bool> IsDiscordTokenBotLazy = new(() =>
         {
-            // Default to true
             var fromEnvironment = Environment.GetEnvironmentVariable("DISCORD_TOKEN_BOT");
-            if (string.IsNullOrWhiteSpace(fromEnvironment))
+            if (!string.IsNullOrWhiteSpace(fromEnvironment))
+                return string.Equals(fromEnvironment, "true", StringComparison.OrdinalIgnoreCase);
+
+            var secretFilePath = Path.Combine(
+                Path.GetDirectoryName(typeof(Secrets).Assembly.Location) ?? Directory.GetCurrentDirectory(),
+                "DiscordTokenBot.secret"
+            );
+
+            if (File.Exists(secretFilePath))
                 return true;
 
-            return string.Equals(fromEnvironment, "true", StringComparison.OrdinalIgnoreCase);
+            return false;
         });
 
         public static string DiscordToken => DiscordTokenLazy.Value;

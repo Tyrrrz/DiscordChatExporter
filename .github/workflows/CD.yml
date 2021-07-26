@@ -72,6 +72,10 @@ jobs:
 
       - name: Notify Discord
         run: |
-          curl '${{ secrets.DISCORD_WEBHOOK }}' \
-            --data-raw '{"content":"[**DiscordChatExporter** ver. ${{ github.ref }} released](https://github.com/Tyrrrz/DiscordChatExporter/releases/latest)"}' \
-            -H 'content-type: application/json'
+          Invoke-WebRequest `
+           -Uri "${{ secrets.DISCORD_WEBHOOK }}" `
+           -Method "POST" `
+           -ContentType "application/json; charset=UTF-8" `
+           -Body "{`"content`":`"[**DiscordChatExporter** ver. ${{ github.ref }} released](https://github.com/Tyrrrz/DiscordChatExporter/releases/latest)`"}" `
+           -UseBasicParsing
+        shell: pwsh

@@ -1,4 +1,4 @@
-name: CD (Docker)
+name: Docker CD
 
 on:
   push:
@@ -12,6 +12,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2.3.3
+
+      - name: Login
+        run: docker login -u tyrrrz -p ${{ secrets.DOCKER_TOKEN }}
 
       - name: Build
         run: docker build -t tyrrrz/discordchatexporter:${{ github.ref }} -t tyrrrz/discordchatexporter:stable .

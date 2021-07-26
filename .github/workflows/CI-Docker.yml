@@ -1,0 +1,20 @@
+name: CI (Docker)
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.3
+
+      - name: Build
+        run: docker build -t tyrrrz/discordchatexporter:latest .
+
+      - name: Deploy
+        run: docker push tyrrrz/discordchatexporter:latest

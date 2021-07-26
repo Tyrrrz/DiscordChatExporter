@@ -156,7 +156,7 @@ namespace DiscordChatExporter.Core.Markdown.Parsing
         // ... or "miscellaneous symbol" character
         // ... or surrogate pair
         // ... or digit followed by enclosing mark
-        // (this does not match all emojis in Discord but it's reasonably accurate enough)
+        // (this does not match all emoji in Discord but it's reasonably accurate enough)
         private static readonly IMatcher<MarkdownNode> StandardEmojiNodeMatcher = new RegexMatcher<MarkdownNode>(
             new Regex("((?:[\\uD83C][\\uDDE6-\\uDDFF]){2}|[\\u2600-\\u26FF]|\\p{Cs}{2}|\\d\\p{Me})", DefaultRegexOptions),
             (_, m) => new EmojiNode(m.Groups[1].Value)

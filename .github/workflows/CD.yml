@@ -69,3 +69,9 @@ jobs:
           asset_path: DiscordChatExporter.Gui/bin/Publish/Archive.zip
           asset_name: DiscordChatExporter.zip
           asset_content_type: application/zip
+
+      - name: Notify Discord
+        run: |
+          curl '${{ secrets.DISCORD_WEBHOOK }}' \
+            --data-raw '{"content":"[**DiscordChatExporter** ver. ${{ github.ref }} released](https://github.com/Tyrrrz/DiscordChatExporter/releases/latest)"}' \
+            -H 'content-type: application/json'

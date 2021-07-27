@@ -25,6 +25,8 @@ namespace DiscordChatExporter.Core.Exporting.Writers
         {
             var templateContext = new PreambleTemplateContext(Context, _themeName);
 
+            // We are not writing directly to output because Razor
+            // does not actually do asynchronous writes to stream.
             await _writer.WriteLineAsync(
                 await PreambleTemplate.RenderAsync(templateContext)
             );
@@ -34,6 +36,8 @@ namespace DiscordChatExporter.Core.Exporting.Writers
         {
             var templateContext = new MessageGroupTemplateContext(Context, messageGroup);
 
+            // We are not writing directly to output because Razor
+            // does not actually do asynchronous writes to stream.
             await _writer.WriteLineAsync(
                 await MessageGroupTemplate.RenderAsync(templateContext)
             );
@@ -66,6 +70,8 @@ namespace DiscordChatExporter.Core.Exporting.Writers
 
             var templateContext = new PostambleTemplateContext(Context, MessagesWritten);
 
+            // We are not writing directly to output because Razor
+            // does not actually do asynchronous writes to stream.
             await _writer.WriteLineAsync(
                 await PostambleTemplate.RenderAsync(templateContext)
             );

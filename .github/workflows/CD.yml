@@ -76,6 +76,6 @@ jobs:
            -Uri "${{ secrets.DISCORD_WEBHOOK }}" `
            -Method "POST" `
            -ContentType "application/json; charset=UTF-8" `
-           -Body "{`"content`":`"[**DiscordChatExporter** ver. ${{ github.ref }} released](https://github.com/Tyrrrz/DiscordChatExporter/releases/latest)`"}" `
+           -Body '{"content":"**DiscordChatExporter** new version released!\nRef: `${{ github.ref }}`\nChangelog: <https://github.com/Tyrrrz/DiscordChatExporter/blob/${{ github.sha }}/Changelog.md>"}' `
            -UseBasicParsing
         shell: pwsh

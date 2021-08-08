@@ -54,6 +54,7 @@ namespace DiscordChatExporter.Core.Exporting.Filtering.Parsing
             .IgnoreThen(Choice(
                 Span.EqualToIgnoreCase("link").IgnoreThen(Parse.Return(MessageContentMatchKind.Link)),
                 Span.EqualToIgnoreCase("embed").IgnoreThen(Parse.Return(MessageContentMatchKind.Embed)),
+                Span.EqualToIgnoreCase("file").IgnoreThen(Parse.Return(MessageContentMatchKind.File)),
                 Span.EqualToIgnoreCase("video").IgnoreThen(Parse.Return(MessageContentMatchKind.Video)),
                 Span.EqualToIgnoreCase("image").IgnoreThen(Parse.Return(MessageContentMatchKind.Image)),
                 Span.EqualToIgnoreCase("sound").IgnoreThen(Parse.Return(MessageContentMatchKind.Sound))

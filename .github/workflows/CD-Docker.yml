@@ -13,13 +13,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2.3.3
 
+      - name: Get release version
+        id: get-version
+        uses: dawidd6/action-get-tag@v1
+
       - name: Login
         run: docker login -u tyrrrz -p ${{ secrets.DOCKER_TOKEN }}
 
       - name: Build
-        run: docker build -t tyrrrz/discordchatexporter:${{ github.ref }} -t tyrrrz/discordchatexporter:stable .
+        run: docker build -t tyrrrz/discordchatexporter:${{ steps.get-version.outputs.tag }} -t tyrrrz/discordchatexporter:stable .
 
       - name: Deploy
         run: |
-          docker push tyrrrz/discordchatexporter:${{ github.ref }}
+          docker push tyrrrz/discordchatexporter:${{ steps.get-version.outputs.tag }}
           docker push tyrrrz/discordchatexporter:stable

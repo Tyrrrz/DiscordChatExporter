@@ -1,3 +1,15 @@
+### v2.30 (08-Aug-2021)
+
+- [HTML] Added special casing for Spotify track embeds to render them directly using an embedded player.
+- [HTML] Added special casing for plain image embeds to render them like image attachments.
+- [HTML] Added tooltip text for unix timestamp markers which shows the full date represented by the timestamp, regardless of configured date format. 
+- [HTML] Updated the fallback text shown when the referenced message could not be loaded to make it more explicit.
+- [HTML] Updated styling of quoted text in markdown to more closely resemble how it looks in Discord.
+- [HTML] Fixed an issue where some file formats were not correctly recognized as image or video attachments, which affected how they were rendered.
+- [HTML] Fixed an issue where formatting inside named links (e.g. `[**Bold link**](https://example.com)`) was not being parsed.
+- [HTML] Fixed an issue where inline embed fields were missing horizontal spacing between columns.
+- [HTML] Fixed other minor styling issues.
+
 ### v2.29 (19-Jul-2021)
 
 - Added support for message filtering, which is accessible as an additional export parameter in the GUI and as the `--filter` option in the CLI. Message filters use a special syntax similar to Discord's search query syntax to allow specifying which messages should be included in the export. For example, you can limit the export to only include messages that contain image attachments (`has:image`) or messages from a certain user (`from:Tyrrrz`) or messages containing certain words (`hello world`), etc. You can also combine filters together (`hi mentions:Tyrrrz`, `from:Tyrrrz | from:96-LB`, `(mentions:Tyrrrz | from:Tyrrrz) has:image`) or negate them (`-has:link`). More thorough documentation coming soon. (Thanks [@Lucas LaBuff](https://github.com/96-LB))

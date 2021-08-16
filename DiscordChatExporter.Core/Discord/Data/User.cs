@@ -53,7 +53,7 @@ namespace DiscordChatExporter.Core.Discord.Data
                 ? "gif"
                 : "png";
 
-            return $"https://cdn.discordapp.com/avatars/{id}/{avatarHash}.{extension}?size=40";
+            return $"https://cdn.discordapp.com/avatars/{id}/{avatarHash}.{extension}?size=128";
         }
 
         public static User Parse(JsonElement json)

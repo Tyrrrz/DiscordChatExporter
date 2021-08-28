@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Threading.Tasks;
 
 namespace DiscordChatExporter.Cli.Tests.Utils
 {
     internal static class GlobalCache
     {
-        private static readonly Dictionary<string, object?> Dictionary = new();
+        private static readonly ConcurrentDictionary<string, object?> Dictionary = new();
 
         public static async Task<T> WrapAsync<T>(string key, Func<Task<T>> getAsync)
         {

@@ -170,7 +170,7 @@ namespace DiscordChatExporter.Cli.Tests
             // Assert
             iframeHtml.Should().NotBeNull();
             iframeHtml?.GetAttribute("src").Should()
-                .StartWithEquivalent("https://open.spotify.com/embed/track/1LHZMWefF9502NPfArRfvP");
+                .StartWithEquivalentOf("https://open.spotify.com/embed/track/1LHZMWefF9502NPfArRfvP");
         }
 
         [Fact]
@@ -203,7 +203,8 @@ namespace DiscordChatExporter.Cli.Tests
 
             // Assert
             iframeHtml.Should().NotBeNull();
-            iframeHtml?.GetAttribute("src").Should().StartWithEquivalent("https://www.youtube.com/embed/qOWW4OlgbvE");
+            iframeHtml?.GetAttribute("src").Should()
+                .StartWithEquivalentOf("https://www.youtube.com/embed/qOWW4OlgbvE");
         }
     }
 }

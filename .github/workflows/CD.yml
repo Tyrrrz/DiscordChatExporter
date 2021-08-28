@@ -75,11 +75,15 @@ jobs:
           asset_content_type: application/zip
 
       - name: Notify Discord
-        run: |
-          Invoke-WebRequest `
-           -Uri "${{ secrets.DISCORD_WEBHOOK }}" `
-           -Method "POST" `
-           -ContentType "application/json; charset=UTF-8" `
-           -Body '{"content":"**DiscordChatExporter** new version released!\nVersion: `${{ steps.get-version.outputs.tag }}`\nChangelog: <https://github.com/Tyrrrz/DiscordChatExporter/blob/${{ steps.get-version.outputs.tag }}/Changelog.md>"}' `
-           -UseBasicParsing
-        shell: pwsh
+        uses: satak/webrequest-action@v1.2.4
+        with:
+          url: ${{ secrets.DISCORD_WEBHOOK }}
+          method: POST
+          headers: |
+            {
+              "ContentType": "application/json; charset=UTF-8"
+            }
+          payload: |
+            {
+              "content": "**DiscordChatExporter** new version released!\nVersion: `${{ steps.get-version.outputs.tag }}`\nChangelog: <https://github.com/Tyrrrz/DiscordChatExporter/blob/${{ steps.get-version.outputs.tag }}/Changelog.md>"
+            }

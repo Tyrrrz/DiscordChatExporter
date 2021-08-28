@@ -1,3 +1,9 @@
+### v2.30.1 (28-Aug-2021)
+
+- [HTML] Changed user avatars to render using higher resolution images. (Thanks [@Chris Helder](https://github.com/TheDude53))
+- Fixed an issue where `has:file` message filter was not recognized. (Thanks [@Lucas LaBuff](https://github.com/96-LB))
+- Fixed an issue where a unix timestamp marker with an invalid offset crashed the export process.
+
 ### v2.30 (08-Aug-2021)
 
 - [HTML] Added special casing for Spotify track embeds to render them directly using an embedded player.

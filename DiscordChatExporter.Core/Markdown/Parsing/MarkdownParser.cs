@@ -238,11 +238,18 @@ namespace DiscordChatExporter.Core.Markdown.Parsing
             new Regex("<t:(\\d+)(?::\\w)?>", DefaultRegexOptions),
             (_, m) =>
             {
-                // We don't care about the 'R' parameter because we're not going to
-                // show relative timestamps in an export anyway.
+                // TODO: support formatting parameters
+                // See: https://github.com/Tyrrrz/DiscordChatExporter/issues/662
 
                 if (!long.TryParse(m.Groups[1].Value, NumberStyles.Integer, CultureInfo.InvariantCulture,
                     out var offset))
+                {
+                    return null;
+                }
+
+                // Bound check
+                // https://github.com/Tyrrrz/DiscordChatExporter/issues/681
+                if (offset < TimeSpan.MinValue.TotalSeconds || offset > TimeSpan.MaxValue.TotalSeconds)
                 {
                     return null;
                 }

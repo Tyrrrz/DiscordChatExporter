@@ -6,7 +6,7 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
 {
     public abstract partial class MessageFilter
     {
-        public abstract bool Filter(Message message);
+        public abstract bool IsMatch(Message message);
     }
 
     public partial class MessageFilter

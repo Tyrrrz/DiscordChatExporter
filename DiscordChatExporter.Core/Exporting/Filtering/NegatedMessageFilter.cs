@@ -8,6 +8,6 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
 
         public NegatedMessageFilter(MessageFilter filter) => _filter = filter;
 
-        public override bool Filter(Message message) => !_filter.Filter(message);
+        public override bool IsMatch(Message message) => !_filter.IsMatch(message);
     }
 }

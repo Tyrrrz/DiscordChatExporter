@@ -10,7 +10,7 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
 
         public ContainsMessageFilter(string text) => _text = text;
 
-        private bool Filter(string? content) =>
+        private bool IsMatch(string? content) =>
             !string.IsNullOrWhiteSpace(content) &&
             Regex.IsMatch(
                 content,
@@ -18,16 +18,16 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
                 RegexOptions.IgnoreCase | RegexOptions.CultureInvariant
             );
 
-        public override bool Filter(Message message) =>
-            Filter(message.Content) ||
+        public override bool IsMatch(Message message) =>
+            IsMatch(message.Content) ||
             message.Embeds.Any(e =>
-                Filter(e.Title) ||
-                Filter(e.Author?.Name) ||
-                Filter(e.Description) ||
-                Filter(e.Footer?.Text) ||
+                IsMatch(e.Title) ||
+                IsMatch(e.Author?.Name) ||
+                IsMatch(e.Description) ||
+                IsMatch(e.Footer?.Text) ||
                 e.Fields.Any(f =>
-                    Filter(f.Name) ||
-                    Filter(f.Value)
+                    IsMatch(f.Name) ||
+                    IsMatch(f.Value)
                 )
             );
     }

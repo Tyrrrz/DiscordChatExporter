@@ -40,7 +40,7 @@ namespace DiscordChatExporter.Core.Exporting
             await foreach (var message in _discord.GetMessagesAsync(request.Channel.Id, request.After, request.Before, progress))
             {
                 // Skips any messages that fail to pass the supplied filter
-                if (!request.MessageFilter.Filter(message))
+                if (!request.MessageFilter.IsMatch(message))
                     continue;
 
                 // Resolve members for referenced users

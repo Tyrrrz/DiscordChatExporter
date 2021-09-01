@@ -9,7 +9,7 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
 
         public FromMessageFilter(string value) => _value = value;
 
-        public override bool Filter(Message message) =>
+        public override bool IsMatch(Message message) =>
             string.Equals(_value, message.Author.Name, StringComparison.OrdinalIgnoreCase) ||
             string.Equals(_value, message.Author.FullName, StringComparison.OrdinalIgnoreCase) ||
             string.Equals(_value, message.Author.Id.ToString(), StringComparison.OrdinalIgnoreCase);

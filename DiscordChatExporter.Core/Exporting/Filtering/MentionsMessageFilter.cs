@@ -10,7 +10,7 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
 
         public MentionsMessageFilter(string value) => _value = value;
 
-        public override bool Filter(Message message) => message.MentionedUsers.Any(user =>
+        public override bool IsMatch(Message message) => message.MentionedUsers.Any(user =>
             string.Equals(_value, user.Name, StringComparison.OrdinalIgnoreCase) ||
             string.Equals(_value, user.FullName, StringComparison.OrdinalIgnoreCase) ||
             string.Equals(_value, user.Id.ToString(), StringComparison.OrdinalIgnoreCase)

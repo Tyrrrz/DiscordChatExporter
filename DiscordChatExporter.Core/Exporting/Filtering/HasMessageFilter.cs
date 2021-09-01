@@ -11,7 +11,7 @@ namespace DiscordChatExporter.Core.Exporting.Filtering
 
         public HasMessageFilter(MessageContentMatchKind kind) => _kind = kind;
 
-        public override bool Filter(Message message) => _kind switch
+        public override bool IsMatch(Message message) => _kind switch
         {
             MessageContentMatchKind.Link => Regex.IsMatch(message.Content, "https?://\\S*[^\\.,:;\"\'\\s]"),
             MessageContentMatchKind.Embed => message.Embeds.Any(),

@@ -22,15 +22,13 @@ namespace DiscordChatExporter.Cli.Utils.Extensions
                 ? new NoopExclusivityMode()
                 : null;
 
-            return AnsiConsole.Create(
-                new AnsiConsoleSettings
-                {
-                    Ansi = AnsiSupport.Detect,
-                    ColorSystem = ColorSystemSupport.Detect,
-                    Out = new AnsiConsoleOutput(console.Output),
-                    ExclusivityMode = exclusivityMode
-                }
-            );
+            return AnsiConsole.Create(new AnsiConsoleSettings
+            {
+                Ansi = AnsiSupport.Detect,
+                ColorSystem = ColorSystemSupport.Detect,
+                Out = new AnsiConsoleOutput(console.Output),
+                ExclusivityMode = exclusivityMode
+            });
         }
 
         public static Progress CreateProgressTicker(this IConsole console) => console

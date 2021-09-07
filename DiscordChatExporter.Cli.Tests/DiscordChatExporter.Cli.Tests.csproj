@@ -5,6 +5,7 @@
     <IsTestProject>true</IsTestProject>
     <CollectCoverage>true</CollectCoverage>
     <CoverletOutputFormat>opencover</CoverletOutputFormat>
+    <NoWarn>$(NoWarn);xUnit1013</NoWarn>
   </PropertyGroup>
   
   <ItemGroup>

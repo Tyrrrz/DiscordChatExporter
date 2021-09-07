@@ -1,69 +1,26 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
-using CliFx.Infrastructure;
-using DiscordChatExporter.Cli.Commands;
 using DiscordChatExporter.Cli.Tests.Fixtures;
-using DiscordChatExporter.Cli.Tests.Infra;
 using DiscordChatExporter.Cli.Tests.TestData;
-using DiscordChatExporter.Cli.Tests.Utils;
 using DiscordChatExporter.Core.Discord;
-using DiscordChatExporter.Core.Exporting;
 using FluentAssertions;
-using JsonExtensions;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace DiscordChatExporter.Cli.Tests
 {
-    public class EmbedSpecs : IClassFixture<TempOutputFixture>
+    public record EmbedSpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<ExportWrapperFixture>
     {
-        private readonly ITestOutputHelper _testOutput;
-        private readonly TempOutputFixture _tempOutput;
-
-        public EmbedSpecs(ITestOutputHelper testOutput, TempOutputFixture tempOutput)
-        {
-            _testOutput = testOutput;
-            _tempOutput = tempOutput;
-        }
-
         [Fact]
         public async Task Message_with_an_embed_is_rendered_correctly_in_JSON()
         {
-            // Arrange
-            var outputFilePath = _tempOutput.GetTempFilePath("json");
-
             // Act
-            var jsonData = await GlobalCache.WrapAsync("embed-specs-output-json", async () =>
-            {
-                await new ExportChannelsCommand
-                {
-                    TokenValue = Secrets.DiscordToken,
-                    IsBotToken = Secrets.IsDiscordTokenBot,
-                    ChannelIds = new[] {Snowflake.Parse(ChannelIds.EmbedTestCases)},
-                    ExportFormat = ExportFormat.Json,
-                    OutputPath = outputFilePath
-                }.ExecuteAsync(new FakeConsole());
+            var message = await ExportWrapper.GetMessageAsJsonAsync(
+                ChannelIds.EmbedTestCases,
+                Snowflake.Parse("866769910729146400")
+            );
 
-                return await File.ReadAllTextAsync(outputFilePath);
-            });
-
-            _testOutput.WriteLine(jsonData);
-
-            var json = Json.Parse(jsonData);
-
-            var messageJson = json
-                .GetProperty("messages")
-                .EnumerateArray()
-                .Single(j => string.Equals(
-                    j.GetProperty("id").GetString(),
-                    "866769910729146400",
-                    StringComparison.OrdinalIgnoreCase
-                ));
-
-            var embed = messageJson
+            var embed = message
                 .GetProperty("embeds")
                 .EnumerateArray()
                 .Single();
@@ -102,33 +59,14 @@ namespace DiscordChatExporter.Cli.Tests
         [Fact]
         public async Task Message_with_an_embed_is_rendered_correctly_in_HTML()
         {
-            // Arrange
-            var outputFilePath = _tempOutput.GetTempFilePath("html");
-
             // Act
-            var htmlData = await GlobalCache.WrapAsync("embed-specs-output-html", async () =>
-            {
-                await new ExportChannelsCommand
-                {
-                    TokenValue = Secrets.DiscordToken,
-                    IsBotToken = Secrets.IsDiscordTokenBot,
-                    ChannelIds = new[] {Snowflake.Parse(ChannelIds.EmbedTestCases)},
-                    ExportFormat = ExportFormat.HtmlDark,
-                    OutputPath = outputFilePath
-                }.ExecuteAsync(new FakeConsole());
-
-                return await File.ReadAllTextAsync(outputFilePath);
-            });
-
-            _testOutput.WriteLine(htmlData);
-
-            var html = Html.Parse(htmlData);
-
-            var messageHtml = html.QuerySelector("#message-866769910729146400");
-            var messageText = messageHtml?.Text();
+            var message = await ExportWrapper.GetMessageAsHtmlAsync(
+                ChannelIds.EmbedTestCases,
+                Snowflake.Parse("866769910729146400")
+            );
 
             // Assert
-            messageText.Should().ContainAll(
+            message.Text().Should().ContainAll(
                 "Embed author",
                 "Embed title",
                 "Embed description",
@@ -142,30 +80,13 @@ namespace DiscordChatExporter.Cli.Tests
         [Fact]
         public async Task Message_with_a_Spotify_track_is_rendered_using_an_iframe_in_HTML()
         {
-            // Arrange
-            var outputFilePath = _tempOutput.GetTempFilePath("html");
-
             // Act
-            var htmlData = await GlobalCache.WrapAsync("embed-specs-output-html", async () =>
-            {
-                await new ExportChannelsCommand
-                {
-                    TokenValue = Secrets.DiscordToken,
-                    IsBotToken = Secrets.IsDiscordTokenBot,
-                    ChannelIds = new[] {Snowflake.Parse(ChannelIds.EmbedTestCases)},
-                    ExportFormat = ExportFormat.HtmlDark,
-                    OutputPath = outputFilePath
-                }.ExecuteAsync(new FakeConsole());
+            var message = await ExportWrapper.GetMessageAsHtmlAsync(
+                ChannelIds.EmbedTestCases,
+                Snowflake.Parse("867886632203976775")
+            );
 
-                return await File.ReadAllTextAsync(outputFilePath);
-            });
-
-            _testOutput.WriteLine(htmlData);
-
-            var html = Html.Parse(htmlData);
-
-            var messageHtml = html.QuerySelector("#message-867886632203976775");
-            var iframeHtml = messageHtml?.QuerySelector("iframe");
+            var iframeHtml = message.QuerySelector("iframe");
 
             // Assert
             iframeHtml.Should().NotBeNull();
@@ -176,30 +97,13 @@ namespace DiscordChatExporter.Cli.Tests
         [Fact]
         public async Task Message_with_a_YouTube_video_is_rendered_using_an_iframe_in_HTML()
         {
-            // Arrange
-            var outputFilePath = _tempOutput.GetTempFilePath("html");
-
             // Act
-            var htmlData = await GlobalCache.WrapAsync("embed-specs-output-html", async () =>
-            {
-                await new ExportChannelsCommand
-                {
-                    TokenValue = Secrets.DiscordToken,
-                    IsBotToken = Secrets.IsDiscordTokenBot,
-                    ChannelIds = new[] {Snowflake.Parse(ChannelIds.EmbedTestCases)},
-                    ExportFormat = ExportFormat.HtmlDark,
-                    OutputPath = outputFilePath
-                }.ExecuteAsync(new FakeConsole());
+            var message = await ExportWrapper.GetMessageAsHtmlAsync(
+                ChannelIds.EmbedTestCases,
+                Snowflake.Parse("866472508588294165")
+            );
 
-                return await File.ReadAllTextAsync(outputFilePath);
-            });
-
-            _testOutput.WriteLine(htmlData);
-
-            var html = Html.Parse(htmlData);
-
-            var messageHtml = html.QuerySelector("#message-866472508588294165");
-            var iframeHtml = messageHtml?.QuerySelector("iframe");
+            var iframeHtml = message.QuerySelector("iframe");
 
             // Assert
             iframeHtml.Should().NotBeNull();

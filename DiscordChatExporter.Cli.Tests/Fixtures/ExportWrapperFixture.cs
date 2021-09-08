@@ -45,22 +45,6 @@ namespace DiscordChatExporter.Cli.Tests.Fixtures
             return Html.Parse(data);
         }
 
-        public async ValueTask<IElement> GetMessageAsHtmlAsync(Snowflake channelId, Snowflake messageId)
-        {
-            var document = await ExportAsHtmlAsync(channelId);
-
-            var message = document.QuerySelector("#message-" + messageId);
-
-            if (message is null)
-            {
-                throw new InvalidOperationException(
-                    $"Message '{messageId}' does not exist in export of channel '{channelId}'."
-                );
-            }
-
-            return message;
-        }
-
         public async ValueTask<JsonElement> ExportAsJsonAsync(Snowflake channelId)
         {
             var filePath = Path.Combine(DirPath, channelId + ".json");
@@ -81,6 +65,62 @@ namespace DiscordChatExporter.Cli.Tests.Fixtures
             var data = await File.ReadAllTextAsync(filePath);
 
             return Json.Parse(data);
+        }
+
+        public async ValueTask<string> ExportAsPlainTextAsync(Snowflake channelId)
+        {
+            var filePath = Path.Combine(DirPath, channelId + ".txt");
+
+            // Perform export only if it hasn't been done before
+            if (!File.Exists(filePath))
+            {
+                await new ExportChannelsCommand
+                {
+                    TokenValue = Secrets.DiscordToken,
+                    IsBotToken = Secrets.IsDiscordTokenBot,
+                    ChannelIds = new[] { channelId },
+                    ExportFormat = ExportFormat.PlainText,
+                    OutputPath = filePath
+                }.ExecuteAsync(new FakeConsole());
+            }
+
+            return await File.ReadAllTextAsync(filePath);
+        }
+
+        public async ValueTask<string> ExportAsCsvAsync(Snowflake channelId)
+        {
+            var filePath = Path.Combine(DirPath, channelId + ".csv");
+
+            // Perform export only if it hasn't been done before
+            if (!File.Exists(filePath))
+            {
+                await new ExportChannelsCommand
+                {
+                    TokenValue = Secrets.DiscordToken,
+                    IsBotToken = Secrets.IsDiscordTokenBot,
+                    ChannelIds = new[] { channelId },
+                    ExportFormat = ExportFormat.Csv,
+                    OutputPath = filePath
+                }.ExecuteAsync(new FakeConsole());
+            }
+
+            return await File.ReadAllTextAsync(filePath);
+        }
+
+        public async ValueTask<IElement> GetMessageAsHtmlAsync(Snowflake channelId, Snowflake messageId)
+        {
+            var document = await ExportAsHtmlAsync(channelId);
+
+            var message = document.QuerySelector("#message-" + messageId);
+
+            if (message is null)
+            {
+                throw new InvalidOperationException(
+                    $"Message '{messageId}' does not exist in export of channel '{channelId}'."
+                );
+            }
+
+            return message;
         }
 
         public async ValueTask<JsonElement> GetMessageAsJsonAsync(Snowflake channelId, Snowflake messageId)

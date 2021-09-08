@@ -6,12 +6,12 @@ using DiscordChatExporter.Core.Discord;
 using FluentAssertions;
 using Xunit;
 
-namespace DiscordChatExporter.Cli.Tests
+namespace DiscordChatExporter.Cli.Tests.Specs.HtmlWriting
 {
     public record ReplySpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<ExportWrapperFixture>
     {
         [Fact]
-        public async Task Reply_to_a_normal_message_is_rendered_correctly_in_HTML()
+        public async Task Reply_to_a_normal_message_is_rendered_correctly()
         {
             // Act
             var message = await ExportWrapper.GetMessageAsHtmlAsync(
@@ -25,7 +25,7 @@ namespace DiscordChatExporter.Cli.Tests
         }
 
         [Fact]
-        public async Task Reply_to_a_deleted_message_is_rendered_correctly_in_HTML()
+        public async Task Reply_to_a_deleted_message_is_rendered_correctly()
         {
             // Act
             var message = await ExportWrapper.GetMessageAsHtmlAsync(
@@ -40,7 +40,7 @@ namespace DiscordChatExporter.Cli.Tests
         }
 
         [Fact]
-        public async Task Reply_to_a_empty_message_with_attachment_is_rendered_correctly_in_HTML()
+        public async Task Reply_to_a_empty_message_with_attachment_is_rendered_correctly()
         {
             // Act
             var message = await ExportWrapper.GetMessageAsHtmlAsync(

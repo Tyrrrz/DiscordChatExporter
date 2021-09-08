@@ -4,6 +4,8 @@ namespace DiscordChatExporter.Cli.Tests.TestData
 {
     public static class ChannelIds
     {
+        public static Snowflake DateRangeTestCases { get; } = Snowflake.Parse("866674248747319326");
+
         public static Snowflake EmbedTestCases { get; } = Snowflake.Parse("866472452459462687");
 
         public static Snowflake MentionTestCases { get; } = Snowflake.Parse("866458801389174794");

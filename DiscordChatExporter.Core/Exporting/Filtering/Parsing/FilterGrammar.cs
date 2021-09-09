@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using DiscordChatExporter.Core.Utils.Extensions;
+﻿using DiscordChatExporter.Core.Utils.Extensions;
 using Superpower;
 using Superpower.Parsers;
 
@@ -7,16 +6,12 @@ namespace DiscordChatExporter.Core.Exporting.Filtering.Parsing
 {
     internal static class FilterGrammar
     {
-        // Choice(a, b) looks cleaner than a.Or(b)
-        private static TextParser<T> Choice<T>(params TextParser<T>[] parsers) =>
-            parsers.Aggregate((current, next) => current.Or(next));
-
         private static readonly TextParser<char> EscapedCharacter =
             Character.EqualTo('\\').IgnoreThen(Character.AnyChar);
 
         private static readonly TextParser<string> QuotedString =
             from open in Character.In('"', '\'')
-            from value in Choice(EscapedCharacter, Character.Except(open)).Many().Text()
+            from value in Parse.OneOf(EscapedCharacter, Character.Except(open)).Many().Text()
             from close in Character.EqualTo(open)
             select value;
 
@@ -29,10 +24,10 @@ namespace DiscordChatExporter.Core.Exporting.Filtering.Parsing
             );
 
         private static readonly TextParser<string> UnquotedString =
-            Choice(EscapedCharacter, FreeCharacter).AtLeastOnce().Text();
+            Parse.OneOf(EscapedCharacter, FreeCharacter).AtLeastOnce().Text();
 
         private static readonly TextParser<string> String =
-            Choice(QuotedString, UnquotedString).Named("text string");
+            Parse.OneOf(QuotedString, UnquotedString).Named("text string");
 
         private static readonly TextParser<MessageFilter> ContainsFilter =
             String.Select(v => (MessageFilter) new ContainsMessageFilter(v));
@@ -51,7 +46,7 @@ namespace DiscordChatExporter.Core.Exporting.Filtering.Parsing
 
         private static readonly TextParser<MessageFilter> HasFilter = Span
             .EqualToIgnoreCase("has:")
-            .IgnoreThen(Choice(
+            .IgnoreThen(Parse.OneOf(
                 Span.EqualToIgnoreCase("link").IgnoreThen(Parse.Return(MessageContentMatchKind.Link)),
                 Span.EqualToIgnoreCase("embed").IgnoreThen(Parse.Return(MessageContentMatchKind.Embed)),
                 Span.EqualToIgnoreCase("file").IgnoreThen(Parse.Return(MessageContentMatchKind.File)),
@@ -64,16 +59,16 @@ namespace DiscordChatExporter.Core.Exporting.Filtering.Parsing
 
         private static readonly TextParser<MessageFilter> NegatedFilter = Character
             .EqualTo('-')
-            .IgnoreThen(Parse.Ref(() => StandaloneFilter))
+            .IgnoreThen(Parse.Ref(() => StandaloneFilter!))
             .Select(f => (MessageFilter) new NegatedMessageFilter(f));
 
         private static readonly TextParser<MessageFilter> GroupedFilter =
             from open in Character.EqualTo('(')
-            from content in Parse.Ref(() => BinaryExpressionFilter).Token()
+            from content in Parse.Ref(() => BinaryExpressionFilter!).Token()
             from close in Character.EqualTo(')')
             select content;
 
-        private static readonly TextParser<MessageFilter> StandaloneFilter = Choice(
+        private static readonly TextParser<MessageFilter> StandaloneFilter = Parse.OneOf(
             GroupedFilter,
             FromFilter,
             MentionsFilter,
@@ -81,13 +76,13 @@ namespace DiscordChatExporter.Core.Exporting.Filtering.Parsing
             ContainsFilter
         );
 
-        private static readonly TextParser<MessageFilter> UnaryExpressionFilter = Choice(
+        private static readonly TextParser<MessageFilter> UnaryExpressionFilter = Parse.OneOf(
             NegatedFilter,
             StandaloneFilter
         );
 
         private static readonly TextParser<MessageFilter> BinaryExpressionFilter = Parse.Chain(
-            Choice(
+            Parse.OneOf(
                 // Explicit operator
                 Character.In('|', '&').Token().Try(),
                 // Implicit operator (resolves to 'and')

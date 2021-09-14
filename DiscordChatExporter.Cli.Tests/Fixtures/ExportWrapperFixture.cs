@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -23,9 +24,12 @@ namespace DiscordChatExporter.Cli.Tests.Fixtures
             Guid.NewGuid().ToString()
         );
 
-        public async ValueTask<IHtmlDocument> ExportAsHtmlAsync(Snowflake channelId)
+        public ExportWrapperFixture() => DirectoryEx.Reset(DirPath);
+
+        private async ValueTask<string> ExportAsync(Snowflake channelId, ExportFormat format)
         {
-            var filePath = Path.Combine(DirPath, channelId + ".html");
+            var fileName = channelId.ToString() + '.' + format.GetFileExtension();
+            var filePath = Path.Combine(DirPath, fileName);
 
             // Perform export only if it hasn't been done before
             if (!File.Exists(filePath))
@@ -35,83 +39,61 @@ namespace DiscordChatExporter.Cli.Tests.Fixtures
                     TokenValue = Secrets.DiscordToken,
                     IsBotToken = Secrets.IsDiscordTokenBot,
                     ChannelIds = new[] { channelId },
-                    ExportFormat = ExportFormat.HtmlDark,
+                    ExportFormat = format,
                     OutputPath = filePath
                 }.ExecuteAsync(new FakeConsole());
             }
 
-            var data = await File.ReadAllTextAsync(filePath);
+            return await File.ReadAllTextAsync(filePath);
+        }
 
+        public async ValueTask<IHtmlDocument> ExportAsHtmlAsync(Snowflake channelId)
+        {
+            var data = await ExportAsync(channelId, ExportFormat.HtmlDark);
             return Html.Parse(data);
         }
 
         public async ValueTask<JsonElement> ExportAsJsonAsync(Snowflake channelId)
         {
-            var filePath = Path.Combine(DirPath, channelId + ".json");
-
-            // Perform export only if it hasn't been done before
-            if (!File.Exists(filePath))
-            {
-                await new ExportChannelsCommand
-                {
-                    TokenValue = Secrets.DiscordToken,
-                    IsBotToken = Secrets.IsDiscordTokenBot,
-                    ChannelIds = new[] { channelId },
-                    ExportFormat = ExportFormat.Json,
-                    OutputPath = filePath
-                }.ExecuteAsync(new FakeConsole());
-            }
-
-            var data = await File.ReadAllTextAsync(filePath);
-
+            var data = await ExportAsync(channelId, ExportFormat.Json);
             return Json.Parse(data);
         }
 
         public async ValueTask<string> ExportAsPlainTextAsync(Snowflake channelId)
         {
-            var filePath = Path.Combine(DirPath, channelId + ".txt");
-
-            // Perform export only if it hasn't been done before
-            if (!File.Exists(filePath))
-            {
-                await new ExportChannelsCommand
-                {
-                    TokenValue = Secrets.DiscordToken,
-                    IsBotToken = Secrets.IsDiscordTokenBot,
-                    ChannelIds = new[] { channelId },
-                    ExportFormat = ExportFormat.PlainText,
-                    OutputPath = filePath
-                }.ExecuteAsync(new FakeConsole());
-            }
-
-            return await File.ReadAllTextAsync(filePath);
+            var data = await ExportAsync(channelId, ExportFormat.PlainText);
+            return data;
         }
 
         public async ValueTask<string> ExportAsCsvAsync(Snowflake channelId)
         {
-            var filePath = Path.Combine(DirPath, channelId + ".csv");
+            var data = await ExportAsync(channelId, ExportFormat.Csv);
+            return data;
+        }
 
-            // Perform export only if it hasn't been done before
-            if (!File.Exists(filePath))
-            {
-                await new ExportChannelsCommand
-                {
-                    TokenValue = Secrets.DiscordToken,
-                    IsBotToken = Secrets.IsDiscordTokenBot,
-                    ChannelIds = new[] { channelId },
-                    ExportFormat = ExportFormat.Csv,
-                    OutputPath = filePath
-                }.ExecuteAsync(new FakeConsole());
-            }
+        public async ValueTask<IReadOnlyList<IElement>> GetMessagesAsHtmlAsync(Snowflake channelId)
+        {
+            var document = await ExportAsHtmlAsync(channelId);
+            return document.QuerySelectorAll("[data-message-id]").ToArray();
+        }
 
-            return await File.ReadAllTextAsync(filePath);
+        public async ValueTask<IReadOnlyList<JsonElement>> GetMessagesAsJsonAsync(Snowflake channelId)
+        {
+            var document = await ExportAsJsonAsync(channelId);
+            return document.GetProperty("messages").EnumerateArray().ToArray();
         }
 
         public async ValueTask<IElement> GetMessageAsHtmlAsync(Snowflake channelId, Snowflake messageId)
         {
-            var document = await ExportAsHtmlAsync(channelId);
+            var messages = await GetMessagesAsHtmlAsync(channelId);
 
-            var message = document.QuerySelector("#message-" + messageId);
+            var message = messages.SingleOrDefault(e =>
+                string.Equals(
+                    e.GetAttribute("data-message-id"),
+                    messageId.ToString(),
+                    StringComparison.OrdinalIgnoreCase
+                )
+            );
 
             if (message is null)
             {
@@ -125,16 +107,15 @@ namespace DiscordChatExporter.Cli.Tests.Fixtures
 
         public async ValueTask<JsonElement> GetMessageAsJsonAsync(Snowflake channelId, Snowflake messageId)
         {
-            var document = await ExportAsJsonAsync(channelId);
+            var messages = await GetMessagesAsJsonAsync(channelId);
 
-            var message = document
-                .GetProperty("messages")
-                .EnumerateArray()
-                .SingleOrDefault(j => string.Equals(
+            var message = messages.FirstOrDefault(j =>
+                string.Equals(
                     j.GetProperty("id").GetString(),
                     messageId.ToString(),
                     StringComparison.OrdinalIgnoreCase
-                ));
+                )
+            );
 
             if (message.ValueKind == JsonValueKind.Undefined)
             {
@@ -146,15 +127,6 @@ namespace DiscordChatExporter.Cli.Tests.Fixtures
             return message;
         }
 
-        public void Dispose()
-        {
-            try
-            {
-                Directory.Delete(DirPath, true);
-            }
-            catch (DirectoryNotFoundException)
-            {
-            }
-        }
+        public void Dispose() => DirectoryEx.DeleteIfExists(DirPath);
     }
 }

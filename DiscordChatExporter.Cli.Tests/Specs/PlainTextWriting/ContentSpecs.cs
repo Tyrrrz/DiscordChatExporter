@@ -4,15 +4,15 @@ using DiscordChatExporter.Cli.Tests.TestData;
 using FluentAssertions;
 using Xunit;
 
-namespace DiscordChatExporter.Cli.Tests.Specs.CsvWriting
+namespace DiscordChatExporter.Cli.Tests.Specs.PlainTextWriting
 {
-    public record GeneralSpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<ExportWrapperFixture>
+    public record ContentSpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<ExportWrapperFixture>
     {
         [Fact]
         public async Task Messages_are_exported_correctly()
         {
             // Act
-            var document = await ExportWrapper.ExportAsCsvAsync(ChannelIds.DateRangeTestCases);
+            var document = await ExportWrapper.ExportAsPlainTextAsync(ChannelIds.DateRangeTestCases);
 
             // Assert
             document.Should().ContainAll(

@@ -1,34 +1,23 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using AngleSharp.Dom;
 using DiscordChatExporter.Cli.Tests.Fixtures;
 using DiscordChatExporter.Cli.Tests.TestData;
 using FluentAssertions;
 using Xunit;
 
-namespace DiscordChatExporter.Cli.Tests.Specs.JsonWriting
+namespace DiscordChatExporter.Cli.Tests.Specs.HtmlWriting
 {
-    public record GeneralSpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<ExportWrapperFixture>
+    public record ContentSpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<ExportWrapperFixture>
     {
         [Fact]
         public async Task Messages_are_exported_correctly()
         {
             // Act
-            var document = await ExportWrapper.ExportAsJsonAsync(ChannelIds.DateRangeTestCases);
-
-            var messageIds = document
-                .GetProperty("messages")
-                .EnumerateArray()
-                .Select(j => j.GetProperty("id").GetString())
-                .ToArray();
-
-            var messageTexts = document
-                .GetProperty("messages")
-                .EnumerateArray()
-                .Select(j => j.GetProperty("content").GetString())
-                .ToArray();
+            var messages = await ExportWrapper.GetMessagesAsHtmlAsync(ChannelIds.DateRangeTestCases);
 
             // Assert
-            messageIds.Should().Equal(
+            messages.Select(e => e.GetAttribute("data-message-id")).Should().Equal(
                 "866674314627121232",
                 "866710679758045195",
                 "866732113319428096",
@@ -39,7 +28,7 @@ namespace DiscordChatExporter.Cli.Tests.Specs.JsonWriting
                 "885169254029213696"
             );
 
-            messageTexts.Should().Equal(
+            messages.Select(e => e.QuerySelector(".chatlog__content")?.Text().Trim()).Should().Equal(
                 "Hello world",
                 "Goodbye world",
                 "Foo bar",

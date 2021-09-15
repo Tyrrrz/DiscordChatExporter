@@ -11,6 +11,7 @@ namespace DiscordChatExporter.Cli.Commands
     {
         public ValueTask ExecuteAsync(IConsole console)
         {
+            // User token
             using (console.WithForegroundColor(ConsoleColor.White))
                 console.Output.WriteLine("To get user token:");
 
@@ -25,6 +26,7 @@ namespace DiscordChatExporter.Cli.Commands
             console.Output.WriteLine(" *  Automating user accounts is technically against TOS, use at your own risk.");
             console.Output.WriteLine();
 
+            // Bot token
             using (console.WithForegroundColor(ConsoleColor.White))
                 console.Output.WriteLine("To get bot token:");
 
@@ -34,6 +36,7 @@ namespace DiscordChatExporter.Cli.Commands
             console.Output.WriteLine(" 4. Under Token click Copy");
             console.Output.WriteLine();
 
+            // Guild or channel ID
             using (console.WithForegroundColor(ConsoleColor.White))
                 console.Output.WriteLine("To get guild ID or guild channel ID:");
 
@@ -44,6 +47,7 @@ namespace DiscordChatExporter.Cli.Commands
             console.Output.WriteLine(" 5. Right click on the desired guild or channel and click Copy ID");
             console.Output.WriteLine();
 
+            // Direct message channel ID
             using (console.WithForegroundColor(ConsoleColor.White))
                 console.Output.WriteLine("To get direct message channel ID:");
 
@@ -55,9 +59,9 @@ namespace DiscordChatExporter.Cli.Commands
             console.Output.WriteLine(" 6. Copy the first long sequence of numbers inside the URL");
             console.Output.WriteLine();
 
+            // Wiki link
             using (console.WithForegroundColor(ConsoleColor.White))
                 console.Output.WriteLine("For more information, check out the wiki:");
-
             using (console.WithForegroundColor(ConsoleColor.DarkCyan))
                 console.Output.WriteLine("https://github.com/Tyrrrz/DiscordChatExporter/wiki");
 

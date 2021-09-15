@@ -13,15 +13,11 @@ namespace DiscordChatExporter.Cli.Commands
     {
         public override async ValueTask ExecuteAsync(IConsole console)
         {
-            await base.ExecuteAsync(console);
-
-            // Get channel metadata
             await console.Output.WriteLineAsync("Fetching channels...");
             var channels = await Discord.GetGuildChannelsAsync(Guild.DirectMessages.Id);
             var textChannels = channels.Where(c => c.IsTextChannel).ToArray();
 
-            // Export
-            await ExportAsync(console, textChannels);
+            await base.ExecuteAsync(console, textChannels);
         }
     }
 }

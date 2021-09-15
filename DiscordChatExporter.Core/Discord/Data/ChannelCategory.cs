@@ -27,6 +27,8 @@ namespace DiscordChatExporter.Core.Discord.Data
 
     public partial class ChannelCategory
     {
+        public static ChannelCategory Unknown { get; } = new(Snowflake.Zero, "<unknown category>", 0);
+
         public static ChannelCategory Parse(JsonElement json, int? position = null)
         {
             var id = json.GetProperty("id").GetString().Pipe(Snowflake.Parse);
@@ -41,7 +43,5 @@ namespace DiscordChatExporter.Core.Discord.Data
                 position ?? json.GetPropertyOrNull("position")?.GetInt32()
             );
         }
-
-        public static ChannelCategory Empty { get; } = new(Snowflake.Zero, "<unknown category>", 0);
     }
 }

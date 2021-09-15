@@ -5,12 +5,12 @@ namespace DiscordChatExporter.Core.Exceptions
 {
     public partial class DiscordChatExporterException : Exception
     {
-        public bool IsCritical { get; }
+        public bool IsFatal { get; }
 
-        public DiscordChatExporterException(string message, bool isCritical = false)
+        public DiscordChatExporterException(string message, bool isFatal = false)
             : base(message)
         {
-            IsCritical = isCritical;
+            IsFatal = isFatal;
         }
     }
 
@@ -31,7 +31,7 @@ Failed to perform an HTTP request.
         }
 
         internal static DiscordChatExporterException Unauthorized() =>
-            new("Authentication token is invalid.");
+            new("Authentication token is invalid.", true);
 
         internal static DiscordChatExporterException Forbidden() =>
             new("Access is forbidden.");

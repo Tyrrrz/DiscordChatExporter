@@ -160,13 +160,13 @@ namespace DiscordChatExporter.Core.Discord
                 yield return Role.Parse(roleJson);
         }
 
-        public async ValueTask<Member?> TryGetGuildMemberAsync(Snowflake guildId, User user)
+        public async ValueTask<Member> GetGuildMemberAsync(Snowflake guildId, User user)
         {
             if (guildId == Guild.DirectMessages.Id)
                 return Member.CreateForUser(user);
 
             var response = await TryGetJsonResponseAsync($"guilds/{guildId}/members/{user.Id}");
-            return response?.Pipe(Member.Parse);
+            return response?.Pipe(Member.Parse) ?? Member.CreateForUser(user);
         }
 
         public async ValueTask<ChannelCategory> GetChannelCategoryAsync(Snowflake channelId)
@@ -180,7 +180,7 @@ namespace DiscordChatExporter.Core.Discord
             // Instead, we use an empty channel category as a fallback.
             catch (DiscordChatExporterException)
             {
-                return ChannelCategory.Empty;
+                return ChannelCategory.Unknown;
             }
         }
 

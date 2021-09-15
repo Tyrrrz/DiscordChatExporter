@@ -14,7 +14,8 @@ namespace DiscordChatExporter.Cli.Commands.Base
         [CommandOption("bot", 'b', EnvironmentVariable = "DISCORD_TOKEN_BOT", Description = "Authenticate as a bot.")]
         public bool IsBotToken { get; init; }
 
-        private AuthToken GetAuthToken() => new(
+        private AuthToken? _authToken;
+        private AuthToken AuthToken => _authToken ??= new AuthToken(
             IsBotToken
                 ? AuthTokenKind.Bot
                 : AuthTokenKind.User,
@@ -22,7 +23,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
         );
 
         private DiscordClient? _discordClient;
-        protected DiscordClient Discord => _discordClient ??= new DiscordClient(GetAuthToken());
+        protected DiscordClient Discord => _discordClient ??= new DiscordClient(AuthToken);
 
         public abstract ValueTask ExecuteAsync(IConsole console);
     }

@@ -54,18 +54,21 @@ namespace DiscordChatExporter.Cli.Commands.Base
         private ChannelExporter? _channelExporter;
         protected ChannelExporter Exporter => _channelExporter ??= new ChannelExporter(Discord);
 
-        protected async ValueTask ExportAsync(IConsole console, IReadOnlyList<Channel> channels)
+        protected async ValueTask ExecuteAsync(IConsole console, IReadOnlyList<Channel> channels)
         {
-            await console.Output.WriteLineAsync($"Exporting {channels.Count} channel(s)...");
+            if (ShouldReuseMedia && !ShouldDownloadMedia)
+            {
+                throw new CommandException("Option --reuse-media cannot be used without --media.");
+            }
 
             var errors = new ConcurrentDictionary<Channel, string>();
 
-            // Wrap everything in a progress ticker
+            // Export
+            await console.Output.WriteLineAsync($"Exporting {channels.Count} channel(s)...");
             await console.CreateProgressTicker().StartAsync(async progressContext =>
             {
                 await channels.ParallelForEachAsync(async channel =>
                 {
-                    // Export
                     try
                     {
                         await progressContext.StartTaskAsync($"{channel.Category} / {channel.Name}", async progress =>
@@ -89,7 +92,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
                             await Exporter.ExportChannelAsync(request, progress);
                         });
                     }
-                    catch (DiscordChatExporterException ex) when (!ex.IsCritical)
+                    catch (DiscordChatExporterException ex) when (!ex.IsFatal)
                     {
                         errors[channel] = ex.Message;
                     }
@@ -127,22 +130,25 @@ namespace DiscordChatExporter.Cli.Commands.Base
                 await console.Output.WriteLineAsync();
             }
 
-            // Fail the command if ALL channels failed to export.
-            // Having some of the channels fail to export is fine and expected.
+            // Fail the command only if ALL channels failed to export.
+            // Having some of the channels fail to export is expected.
             if (errors.Count >= channels.Count)
             {
                 throw new CommandException("Export failed.");
             }
         }
 
-        public override ValueTask ExecuteAsync(IConsole console)
+        protected async ValueTask ExecuteAsync(IConsole console, IReadOnlyList<Snowflake> channelIds)
         {
-            if (ShouldReuseMedia && !ShouldDownloadMedia)
+            var channels = new List<Channel>();
+
+            foreach (var channelId in channelIds)
             {
-                throw new CommandException("Option --reuse-media cannot be used without --media.");
+                var channel = await Discord.GetChannelAsync(channelId);
+                channels.Add(channel);
             }
 
-            return default;
+            await ExecuteAsync(console, channels);
         }
     }
 }

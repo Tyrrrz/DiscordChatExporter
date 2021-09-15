@@ -175,7 +175,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                 GuildChannelMap = guildChannelMap;
                 SelectedGuild = guildChannelMap.Keys.FirstOrDefault();
             }
-            catch (DiscordChatExporterException ex) when (!ex.IsCritical)
+            catch (DiscordChatExporterException ex) when (!ex.IsFatal)
             {
                 Notifications.Enqueue(ex.Message.TrimEnd('.'));
             }
@@ -234,7 +234,7 @@ namespace DiscordChatExporter.Gui.ViewModels
 
                         Interlocked.Increment(ref successfulExportCount);
                     }
-                    catch (DiscordChatExporterException ex) when (!ex.IsCritical)
+                    catch (DiscordChatExporterException ex) when (!ex.IsFatal)
                     {
                         Notifications.Enqueue(ex.Message.TrimEnd('.'));
                     }

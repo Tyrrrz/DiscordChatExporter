@@ -30,7 +30,7 @@ namespace DiscordChatExporter.Core.Exporting
 
         private async ValueTask<MessageWriter> GetWriterAsync()
         {
-            // Ensure partition limit has not been exceeded
+            // Ensure partition limit has not been reached
             if (_writer is not null &&
                 _context.Request.PartitionLimit.IsReached(_writer.MessagesWritten, _writer.BytesWritten))
             {

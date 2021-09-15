@@ -15,14 +15,9 @@ namespace DiscordChatExporter.Cli.Commands
 
         public override async ValueTask ExecuteAsync(IConsole console)
         {
-            await base.ExecuteAsync(console);
-
-            // Get channel metadata
-            await console.Output.WriteLineAsync("Fetching channels...");
-
             var channels = new List<Channel>();
 
-            // Aggregate channels from all guilds
+            await console.Output.WriteLineAsync("Fetching channels...");
             await foreach (var guild in Discord.GetUserGuildsAsync())
             {
                 // Skip DMs if instructed to
@@ -39,8 +34,7 @@ namespace DiscordChatExporter.Cli.Commands
                 }
             }
 
-            // Export
-            await ExportAsync(console, channels);
+            await base.ExecuteAsync(console, channels);
         }
     }
 }

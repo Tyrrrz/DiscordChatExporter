@@ -40,12 +40,10 @@ namespace DiscordChatExporter.Cli.Tests.Specs.HtmlWriting
                 Snowflake.Parse("867886632203976775")
             );
 
-            var iframe = message.QuerySelector("iframe");
+            var iframeSrc = message.QuerySelector("iframe")?.GetAttribute("src");
 
             // Assert
-            iframe.Should().NotBeNull();
-            iframe?.GetAttribute("src").Should()
-                .StartWithEquivalentOf("https://open.spotify.com/embed/track/1LHZMWefF9502NPfArRfvP");
+            iframeSrc.Should().StartWithEquivalentOf("https://open.spotify.com/embed/track/1LHZMWefF9502NPfArRfvP");
         }
 
         [Fact]
@@ -57,12 +55,10 @@ namespace DiscordChatExporter.Cli.Tests.Specs.HtmlWriting
                 Snowflake.Parse("866472508588294165")
             );
 
-            var iframe = message.QuerySelector("iframe");
+            var iframeSrc = message.QuerySelector("iframe")?.GetAttribute("src");
 
             // Assert
-            iframe.Should().NotBeNull();
-            iframe?.GetAttribute("src").Should()
-                .StartWithEquivalentOf("https://www.youtube.com/embed/qOWW4OlgbvE");
+            iframeSrc.Should().StartWithEquivalentOf("https://www.youtube.com/embed/qOWW4OlgbvE");
         }
     }
 }

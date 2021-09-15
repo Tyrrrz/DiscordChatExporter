@@ -26,9 +26,7 @@ namespace DiscordChatExporter.Cli.Commands
 
                 // Guild name
                 using (console.WithForegroundColor(ConsoleColor.White))
-                    await console.Output.WriteAsync(guild.Name);
-
-                await console.Output.WriteLineAsync();
+                    await console.Output.WriteLineAsync(guild.Name);
             }
         }
     }

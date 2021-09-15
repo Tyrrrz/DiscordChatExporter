@@ -49,10 +49,7 @@ namespace DiscordChatExporter.Core.Exporting
                     if (!encounteredUsers.Add(referencedUser))
                         continue;
 
-                    var member =
-                        await _discord.TryGetGuildMemberAsync(request.Guild.Id, referencedUser) ??
-                        Member.CreateForUser(referencedUser);
-
+                    var member = await _discord.GetGuildMemberAsync(request.Guild.Id, referencedUser);
                     contextMembers.Add(member);
                 }
 

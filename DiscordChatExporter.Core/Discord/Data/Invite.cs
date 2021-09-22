@@ -1,91 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Globalization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using DiscordChatExporter.Core.Discord.Data.Common;
+using DiscordChatExporter.Core.Discord.Data.Embeds;
+using DiscordChatExporter.Core.Utils.Extensions;
+using JsonExtensions.Reading;
+
 
 namespace DiscordChatExporter.Core.Discord.Data
 {
-    
 
-    public partial class Temperatures
+    // https://discord.com/developers/docs/resources/invite
+    public partial class Invite
     {
-        [JsonProperty("code")]
         public string Code { get; set; }
-
-        [JsonProperty("guild")]
         public Guild Guild { get; set; }
-
-        [JsonProperty("channel")]
         public Channel Channel { get; set; }
 
-        [JsonProperty("inviter")]
-        public Inviter Inviter { get; set; }
-
-        [JsonProperty("target_type")]
-        public long TargetType { get; set; }
-
-        [JsonProperty("target_user")]
-        public Inviter TargetUser { get; set; }
+        public static Invite Parse(JsonElement json)
+        {
+            var code = json.GetProperty("code").GetString();
+            var guild = json.GetProperty("guild").Pipe(Guild.Parse);
+            var channel = json.GetProperty("channel").Pipe(Channel.Parse);
+            return new Invite(code, guild, channel);
+        }
+        public Invite(string code, Guild guild, Channel channel)
+        {
+            Code = code;
+            Guild = guild;
+            Channel = channel;
+        }        
     }
 
-    public partial class Channel
+    public partial class Message
     {
-        [JsonProperty("id")]
-        public string Id { get; set; }
-
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
-        [JsonProperty("type")]
-        public long Type { get; set; }
+        private bool CheckForInvite(string content)
+        {
+            Regex inviteRegex = new Regex(@"(https?:\/\/)?(www\.)?(discord\.(gg|io|me|li)|discordapp\.com\/invite)\/(.+[a-z])");
+            var splitContent = content.Split(' ');
+            var match = inviteRegex.Match(content);
+            if (match.Success)
+                return true;
+            return false;
+        }
     }
 
     public partial class Guild
     {
-        [JsonProperty("id")]
-        public string Id { get; set; }
+        public string? Splash { get; set; }
 
-        [JsonProperty("name")]
-        public string Name { get; set; }
+        public string? Banner { get; set; }
 
-        [JsonProperty("splash")]
-        public object Splash { get; set; }
+        public string? Description { get; set; }
 
-        [JsonProperty("banner")]
-        public object Banner { get; set; }
-
-        [JsonProperty("description")]
-        public string Description { get; set; }
-
-        [JsonProperty("icon")]
-        public object Icon { get; set; }
-
-        [JsonProperty("features")]
-        public List<string> Features { get; set; }
-
-        [JsonProperty("verification_level")]
-        public long VerificationLevel { get; set; }
-
-        [JsonProperty("vanity_url_code")]
-        public object VanityUrlCode { get; set; }
+        public object? Icon { get; set; }
     }
-
-    public partial class Inviter
-    {
-        [JsonProperty("id")]
-        public string Id { get; set; }
-
-        [JsonProperty("username")]
-        public string Username { get; set; }
-
-        [JsonProperty("avatar")]
-        public string Avatar { get; set; }
-
-        [JsonProperty("discriminator")]
-        [JsonConverter(typeof(ParseStringConverter))]
-        public long Discriminator { get; set; }
-
-        [JsonProperty("public_flags")]
-    }
+}

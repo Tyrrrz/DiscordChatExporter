@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Globalization;
+using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Discord.Data.Embeds;
 using DiscordChatExporter.Core.Utils.Extensions;
@@ -31,11 +33,26 @@ namespace DiscordChatExporter.Core.Discord.Data
             Code = code;
             Guild = guild;
             Channel = channel;
-        }        
+        }
+        public static async ValueTask<List<Invite>> ParseInvites(Message message, DiscordClient context)
+        {
+            List<Invite>? parsedInvites = new List<Invite>();
+            Regex inviteRegex = new Regex(@"(https?:\/\/)?(www\.)?(discord\.(gg|io|me|li)|discordapp\.com\/invite)\/(.+[a-z])");
+            var splitContent = message.Content.Split(' ');
+            MatchCollection matches = inviteRegex.Matches(message.Content);
+            if (matches.Count == 0)
+                throw new Exception();
+            foreach (var match in matches)
+            {
+                var invite = await context.GetInviteAsync(match.ToString());
+            }
+            return parsedInvites;
+        }
     }
 
     public partial class Message
     {
+        public List<Invite>? Invites { get; set; }
         private bool CheckForInvite(string content)
         {
             Regex inviteRegex = new Regex(@"(https?:\/\/)?(www\.)?(discord\.(gg|io|me|li)|discordapp\.com\/invite)\/(.+[a-z])");

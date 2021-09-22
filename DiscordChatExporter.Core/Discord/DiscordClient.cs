@@ -197,6 +197,12 @@ namespace DiscordChatExporter.Core.Discord
             return Channel.Parse(response, category);
         }
 
+        public async ValueTask<Invite> GetInviteAsync(string inviteid)
+        {
+            var response = await GetJsonResponseAsync($"invites/{inviteid}");
+            return Invite.Parse(response);
+        }
+
         private async ValueTask<Message?> TryGetLastMessageAsync(Snowflake channelId, Snowflake? before = null)
         {
             var url = new UrlBuilder()
@@ -254,6 +260,11 @@ namespace DiscordChatExporter.Core.Discord
                     // Ensure messages are in range (take into account that last message could have been deleted)
                     if (message.Timestamp > lastMessage.Timestamp)
                         yield break;
+
+                    if(message.ContainsInvites)
+                    {
+                        message.Invites = await Invite.ParseInvites(message, this);
+                    }
 
                     // Report progress based on the duration of exported messages divided by total
                     if (progress is not null)

@@ -27,7 +27,7 @@ namespace DiscordChatExporter.Core.Discord.Data
 
         public bool IsPinned { get; }
 
-        public bool ContainsInvite => CheckForInvite(Content);
+        public bool ContainsInvites { get; }
 
         public string Content { get; }
 
@@ -73,6 +73,7 @@ namespace DiscordChatExporter.Core.Discord.Data
             MentionedUsers = mentionedUsers;
             Reference = messageReference;
             ReferencedMessage = referencedMessage;
+            ContainsInvites = CheckForInvite(content);
         }
 
         [ExcludeFromCodeCoverage]

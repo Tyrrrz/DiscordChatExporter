@@ -37,15 +37,23 @@ namespace DiscordChatExporter.Core.Discord.Data
         public static async ValueTask<List<Invite>> ParseInvites(Message message, DiscordClient context)
         {
             List<Invite>? parsedInvites = new List<Invite>();
-            Regex inviteRegex = new Regex(@"(https?:\/\/)?(www\.)?(discord\.(gg|io|me|li)|discordapp\.com\/invite)\/(.+[a-z])");
+            List<string> ids = new List<string>();
+            Regex inviteRegex = new Regex(@"(https?:\/\/)?(www\.)?(discord\.(gg|io|me|li)|discordapp\.com\/invite)\/.+[^\s\/]+?");
             var splitContent = message.Content.Split(' ');
-            MatchCollection matches = inviteRegex.Matches(message.Content);
-            if (matches.Count == 0)
-                throw new Exception();
-            foreach (var match in matches)
+            foreach(string part in splitContent)
             {
-                var invite = await context.GetInviteAsync(match.ToString());
-            }
+                MatchCollection matches = inviteRegex.Matches(part);
+                for (int current = 0; current < matches.Count; current++)
+                {
+                    string[] temp = matches[current].Value.Split('/');
+                    ids.Add(temp[temp.Length - 1]);
+                }
+                foreach (string id in ids)
+                {
+                    var invite = await context.GetInviteAsync(id);
+                    parsedInvites.Add(invite);
+                }
+            }         
             return parsedInvites;
         }
     }

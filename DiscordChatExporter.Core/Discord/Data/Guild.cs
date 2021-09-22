@@ -2,6 +2,7 @@
 using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Utils.Extensions;
+using JsonExtensions.Reading;
 
 namespace DiscordChatExporter.Core.Discord.Data
 {
@@ -44,7 +45,10 @@ namespace DiscordChatExporter.Core.Discord.Data
             var id = json.GetProperty("id").GetString().Pipe(Snowflake.Parse);
             var name = json.GetProperty("name").GetString();
             var iconHash = json.GetProperty("icon").GetString();
-
+            var splash = json.GetPropertyOrNull("splash").ToString();
+            var banner = json.GetPropertyOrNull("banner").ToString();
+            var description = json.GetPropertyOrNull("description").ToString();
+            var icon = json.GetPropertyOrNull("icon").ToString();            
             var iconUrl = !string.IsNullOrWhiteSpace(iconHash)
                 ? GetIconUrl(id, iconHash)
                 : GetDefaultIconUrl();

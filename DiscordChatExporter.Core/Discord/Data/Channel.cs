@@ -51,6 +51,20 @@ namespace DiscordChatExporter.Core.Discord.Data
             Position = position;
             Topic = topic;
         }
+        public Channel(
+            Snowflake id,
+            ChannelKind kind,
+            Snowflake guildId,
+            string name,
+            string? topic)
+        {
+            Id = id;
+            Kind = kind;
+            GuildId = guildId;
+            Name = name;
+            Topic = topic;
+            Category = ChannelCategory.Unknown;
+        }
 
         [ExcludeFromCodeCoverage]
         public override string ToString() => Name;
@@ -94,6 +108,26 @@ namespace DiscordChatExporter.Core.Discord.Data
                 category ?? GetFallbackCategory(kind),
                 name,
                 position ?? json.GetPropertyOrNull("position")?.GetInt32(),
+                topic
+            );
+        }
+        public static Channel Parse(JsonElement json)
+        {
+            var id = json.GetProperty("id").GetString().Pipe(Snowflake.Parse);
+            var guildId = json.GetPropertyOrNull("guild_id")?.GetString().Pipe(Snowflake.Parse);
+            var topic = json.GetPropertyOrNull("topic")?.GetString();
+            var kind = (ChannelKind)json.GetProperty("type").GetInt32();
+
+            var name =
+                 json.GetPropertyOrNull("name")?.GetString() ??
+                 json.GetPropertyOrNull("recipients")?.EnumerateArray().Select(User.Parse).Select(u => u.Name).JoinToString(", ") ??
+                 id.ToString();
+
+            return new Channel(
+                id,
+                kind,
+                guildId ?? Guild.DirectMessages.Id,
+                name,
                 topic
             );
         }

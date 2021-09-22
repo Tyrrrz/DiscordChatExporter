@@ -27,6 +27,8 @@ namespace DiscordChatExporter.Core.Discord.Data
 
         public bool IsPinned { get; }
 
+        public bool ContainsInvite => CheckForInvite(Content);
+
         public string Content { get; }
 
         public IReadOnlyList<Attachment> Attachments { get; }

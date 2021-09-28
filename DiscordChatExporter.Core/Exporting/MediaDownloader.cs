@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -14,22 +13,17 @@ namespace DiscordChatExporter.Core.Exporting
 {
     internal partial class MediaDownloader
     {
-        private readonly HttpClient _httpClient;
         private readonly string _workingDirPath;
         private readonly bool _reuseMedia;
 
-        // URL -> Local file path
+        // File paths of already downloaded media
         private readonly Dictionary<string, string> _pathCache = new(StringComparer.Ordinal);
 
-        public MediaDownloader(HttpClient httpClient, string workingDirPath, bool reuseMedia)
+        public MediaDownloader(string workingDirPath, bool reuseMedia)
         {
-            _httpClient = httpClient;
             _workingDirPath = workingDirPath;
             _reuseMedia = reuseMedia;
         }
-
-        public MediaDownloader(string workingDirPath, bool reuseMedia)
-            : this(Http.Client, workingDirPath, reuseMedia) {}
 
         public async ValueTask<string> DownloadAsync(string url)
         {
@@ -49,7 +43,7 @@ namespace DiscordChatExporter.Core.Exporting
             await Http.ExceptionPolicy.ExecuteAsync(async () =>
             {
                 // Download the file
-                using var response = await _httpClient.GetAsync(url);
+                using var response = await Http.Client.GetAsync(url);
                 await using (var output = File.Create(filePath))
                 {
                     await response.Content.CopyToAsync(output);

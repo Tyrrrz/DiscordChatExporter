@@ -16,21 +16,10 @@ namespace DiscordChatExporter.Core.Discord
 {
     public class DiscordClient
     {
-        private readonly HttpClient _httpClient;
         private readonly AuthToken _token;
-
         private readonly Uri _baseUri = new("https://discord.com/api/v8/", UriKind.Absolute);
 
-        public DiscordClient(HttpClient httpClient, AuthToken token)
-        {
-            _httpClient = httpClient;
-            _token = token;
-        }
-
-        public DiscordClient(AuthToken token)
-            : this(Http.Client, token)
-        {
-        }
+        public DiscordClient(AuthToken token) => _token = token;
 
         private async ValueTask<HttpResponseMessage> GetResponseAsync(string url) =>
             await Http.ResponsePolicy.ExecuteAsync(async () =>
@@ -38,7 +27,7 @@ namespace DiscordChatExporter.Core.Discord
                 using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, url));
                 request.Headers.Authorization = _token.GetAuthenticationHeader();
 
-                return await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+                return await Http.Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
             });
 
         private async ValueTask<JsonElement> GetJsonResponseAsync(string url)

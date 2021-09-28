@@ -21,6 +21,8 @@ jobs:
           dotnet-version: 5.0.x
 
       - name: Build & test
+        # Tests need access to secrets, so we can't run them against PRs because of limited trust
+        if: ${{ github.event_name != 'pull_request' }}
         run: dotnet test --configuration Release --logger GitHubActions
         env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}

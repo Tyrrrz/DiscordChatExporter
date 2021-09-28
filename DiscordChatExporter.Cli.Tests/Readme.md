@@ -10,8 +10,5 @@ In order to run these tests locally, you need to join the test server and config
     - **Using an environment variable**: set `DISCORD_TOKEN` variable to your token
 4. Run the tests: `dotnet test`
 
-> If you're submitting a pull request, you don't _have_ to run the tests locally -- they are executed automatically by CI.
-Running them locally can still sometimes be useful for debugging purposes though.
- 
 > If you want to have a new test case or a scenario added, please let me know in your pull request.
 Currently, it's not possible to add them by yourself.

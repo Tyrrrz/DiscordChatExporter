@@ -19,5 +19,5 @@ jobs:
       - name: Build
         run: docker build -t tyrrrz/discordchatexporter:latest .
 
-      - name: Deploy
+      - name: Deploy (latest)
         run: docker push tyrrrz/discordchatexporter:latest

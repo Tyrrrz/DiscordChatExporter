@@ -94,7 +94,8 @@ namespace DiscordChatExporter.Gui.ViewModels
                     {
                         _updateService.FinalizeUpdate(true);
                         RequestClose();
-                    });
+                    }
+                );
             }
             catch
             {

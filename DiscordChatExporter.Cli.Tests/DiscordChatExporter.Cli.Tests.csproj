@@ -14,7 +14,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="AngleSharp" Version="0.16.0" />
+    <PackageReference Include="AngleSharp" Version="0.16.1" />
     <PackageReference Include="FluentAssertions" Version="6.1.0" />
     <PackageReference Include="GitHubActionsTestLogger" Version="1.2.0" />
     <PackageReference Include="JsonExtensions" Version="1.1.0" />

@@ -15,16 +15,17 @@ namespace DiscordChatExporter.Cli.Commands
 
         public override async ValueTask ExecuteAsync(IConsole console)
         {
+            var cancellationToken = console.RegisterCancellationHandler();
             var channels = new List<Channel>();
 
             await console.Output.WriteLineAsync("Fetching channels...");
-            await foreach (var guild in Discord.GetUserGuildsAsync())
+            await foreach (var guild in Discord.GetUserGuildsAsync(cancellationToken))
             {
                 // Skip DMs if instructed to
                 if (!IncludeDirectMessages && guild.Id == Guild.DirectMessages.Id)
                     continue;
 
-                await foreach (var channel in Discord.GetGuildChannelsAsync(guild.Id))
+                await foreach (var channel in Discord.GetGuildChannelsAsync(guild.Id, cancellationToken))
                 {
                     // Skip non-text channels
                     if (!channel.IsTextChannel)

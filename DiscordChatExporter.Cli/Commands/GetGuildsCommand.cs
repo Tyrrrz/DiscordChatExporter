@@ -13,7 +13,9 @@ namespace DiscordChatExporter.Cli.Commands
     {
         public override async ValueTask ExecuteAsync(IConsole console)
         {
-            var guilds = await Discord.GetUserGuildsAsync();
+            var cancellationToken = console.RegisterCancellationHandler();
+
+            var guilds = await Discord.GetUserGuildsAsync(cancellationToken);
 
             foreach (var guild in guilds.OrderBy(g => g.Name))
             {

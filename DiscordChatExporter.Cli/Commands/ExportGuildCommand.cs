@@ -16,8 +16,10 @@ namespace DiscordChatExporter.Cli.Commands
 
         public override async ValueTask ExecuteAsync(IConsole console)
         {
+            var cancellationToken = console.RegisterCancellationHandler();
+
             await console.Output.WriteLineAsync("Fetching channels...");
-            var channels = await Discord.GetGuildChannelsAsync(GuildId);
+            var channels = await Discord.GetGuildChannelsAsync(GuildId, cancellationToken);
             var textChannels = channels.Where(c => c.IsTextChannel).ToArray();
 
             await base.ExecuteAsync(console, textChannels);

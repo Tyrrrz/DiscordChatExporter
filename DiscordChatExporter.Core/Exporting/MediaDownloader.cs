@@ -5,6 +5,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Utils;
 using DiscordChatExporter.Core.Utils.Extensions;
@@ -25,7 +26,7 @@ namespace DiscordChatExporter.Core.Exporting
             _reuseMedia = reuseMedia;
         }
 
-        public async ValueTask<string> DownloadAsync(string url)
+        public async ValueTask<string> DownloadAsync(string url, CancellationToken cancellationToken = default)
         {
             if (_pathCache.TryGetValue(url, out var cachedFilePath))
                 return cachedFilePath;
@@ -43,7 +44,7 @@ namespace DiscordChatExporter.Core.Exporting
             await Http.ExceptionPolicy.ExecuteAsync(async () =>
             {
                 // Download the file
-                using var response = await Http.Client.GetAsync(url);
+                using var response = await Http.Client.GetAsync(url, cancellationToken);
                 await using (var output = File.Create(filePath))
                 {
                     await response.Content.CopyToAsync(output);

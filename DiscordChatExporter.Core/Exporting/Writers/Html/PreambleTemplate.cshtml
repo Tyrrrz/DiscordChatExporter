@@ -13,7 +13,7 @@
 
     string FormatDate(DateTimeOffset date) => Model.ExportContext.FormatDate(date);
 
-    ValueTask<string> ResolveUrlAsync(string url) => Model.ExportContext.ResolveMediaUrlAsync(url);
+    ValueTask<string> ResolveUrlAsync(string url) => Model.ExportContext.ResolveMediaUrlAsync(url, CancellationToken);
 }
 
 <!DOCTYPE html>

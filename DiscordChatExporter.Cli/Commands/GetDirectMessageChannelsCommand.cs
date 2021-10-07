@@ -14,7 +14,9 @@ namespace DiscordChatExporter.Cli.Commands
     {
         public override async ValueTask ExecuteAsync(IConsole console)
         {
-            var channels = await Discord.GetGuildChannelsAsync(Guild.DirectMessages.Id);
+            var cancellationToken = console.RegisterCancellationHandler();
+
+            var channels = await Discord.GetGuildChannelsAsync(Guild.DirectMessages.Id, cancellationToken);
 
             var textChannels = channels
                 .Where(c => c.IsTextChannel)

@@ -4,11 +4,11 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Utils.Extensions;
-using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting
 {
@@ -63,14 +63,14 @@ namespace DiscordChatExporter.Core.Exporting
                 .FirstOrDefault();
         }
 
-        public async ValueTask<string> ResolveMediaUrlAsync(string url)
+        public async ValueTask<string> ResolveMediaUrlAsync(string url, CancellationToken cancellationToken = default)
         {
             if (!Request.ShouldDownloadMedia)
                 return url;
 
             try
             {
-                var filePath = await _mediaDownloader.DownloadAsync(url);
+                var filePath = await _mediaDownloader.DownloadAsync(url, cancellationToken);
 
                 // We want relative path so that the output files can be copied around without breaking.
                 // Base directory path may be null if the file is stored at the root or relative to working directory.
@@ -82,10 +82,12 @@ namespace DiscordChatExporter.Core.Exporting
                 if (Request.Format is ExportFormat.HtmlDark or ExportFormat.HtmlLight)
                 {
                     // Need to escape each path segment while keeping the directory separators intact
-                    return relativeFilePath
-                        .Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
-                        .Select(Uri.EscapeDataString)
-                        .JoinToString(Path.AltDirectorySeparatorChar.ToString());
+                    return string.Join(
+                        Path.AltDirectorySeparatorChar,
+                        relativeFilePath
+                            .Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                            .Select(Uri.EscapeDataString)
+                    );
                 }
 
                 return relativeFilePath;

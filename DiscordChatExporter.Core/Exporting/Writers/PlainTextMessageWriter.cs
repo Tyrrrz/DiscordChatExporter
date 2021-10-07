@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Discord.Data.Embeds;
@@ -35,7 +36,9 @@ namespace DiscordChatExporter.Core.Exporting.Writers
             await _writer.WriteLineAsync();
         }
 
-        private async ValueTask WriteAttachmentsAsync(IReadOnlyList<Attachment> attachments)
+        private async ValueTask WriteAttachmentsAsync(
+            IReadOnlyList<Attachment> attachments,
+            CancellationToken cancellationToken = default)
         {
             if (!attachments.Any())
                 return;
@@ -43,15 +46,23 @@ namespace DiscordChatExporter.Core.Exporting.Writers
             await _writer.WriteLineAsync("{Attachments}");
 
             foreach (var attachment in attachments)
-                await _writer.WriteLineAsync(await Context.ResolveMediaUrlAsync(attachment.Url));
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                await _writer.WriteLineAsync(await Context.ResolveMediaUrlAsync(attachment.Url, cancellationToken));
+            }
 
             await _writer.WriteLineAsync();
         }
 
-        private async ValueTask WriteEmbedsAsync(IReadOnlyList<Embed> embeds)
+        private async ValueTask WriteEmbedsAsync(
+            IReadOnlyList<Embed> embeds,
+            CancellationToken cancellationToken = default)
         {
             foreach (var embed in embeds)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 await _writer.WriteLineAsync("{Embed}");
 
                 if (!string.IsNullOrWhiteSpace(embed.Author?.Name))
@@ -76,10 +87,10 @@ namespace DiscordChatExporter.Core.Exporting.Writers
                 }
 
                 if (!string.IsNullOrWhiteSpace(embed.Thumbnail?.Url))
-                    await _writer.WriteLineAsync(await Context.ResolveMediaUrlAsync(embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url));
+                    await _writer.WriteLineAsync(await Context.ResolveMediaUrlAsync(embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url, cancellationToken));
 
                 if (!string.IsNullOrWhiteSpace(embed.Image?.Url))
-                    await _writer.WriteLineAsync(await Context.ResolveMediaUrlAsync(embed.Image.ProxyUrl ?? embed.Image.Url));
+                    await _writer.WriteLineAsync(await Context.ResolveMediaUrlAsync(embed.Image.ProxyUrl ?? embed.Image.Url, cancellationToken));
 
                 if (!string.IsNullOrWhiteSpace(embed.Footer?.Text))
                     await _writer.WriteLineAsync(embed.Footer.Text);
@@ -88,7 +99,9 @@ namespace DiscordChatExporter.Core.Exporting.Writers
             }
         }
 
-        private async ValueTask WriteReactionsAsync(IReadOnlyList<Reaction> reactions)
+        private async ValueTask WriteReactionsAsync(
+            IReadOnlyList<Reaction> reactions,
+            CancellationToken cancellationToken = default)
         {
             if (!reactions.Any())
                 return;
@@ -97,6 +110,8 @@ namespace DiscordChatExporter.Core.Exporting.Writers
 
             foreach (var reaction in reactions)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 await _writer.WriteAsync(reaction.Emoji.Name);
 
                 if (reaction.Count > 1)
@@ -108,7 +123,7 @@ namespace DiscordChatExporter.Core.Exporting.Writers
             await _writer.WriteLineAsync();
         }
 
-        public override async ValueTask WritePreambleAsync()
+        public override async ValueTask WritePreambleAsync(CancellationToken cancellationToken = default)
         {
             await _writer.WriteLineAsync('='.Repeat(62));
             await _writer.WriteLineAsync($"Guild: {Context.Request.Guild.Name}");
@@ -127,9 +142,11 @@ namespace DiscordChatExporter.Core.Exporting.Writers
             await _writer.WriteLineAsync();
         }
 
-        public override async ValueTask WriteMessageAsync(Message message)
+        public override async ValueTask WriteMessageAsync(
+            Message message,
+            CancellationToken cancellationToken = default)
         {
-            await base.WriteMessageAsync(message);
+            await base.WriteMessageAsync(message, cancellationToken);
 
             // Header
             await WriteMessageHeaderAsync(message);
@@ -141,14 +158,14 @@ namespace DiscordChatExporter.Core.Exporting.Writers
             await _writer.WriteLineAsync();
 
             // Attachments, embeds, reactions
-            await WriteAttachmentsAsync(message.Attachments);
-            await WriteEmbedsAsync(message.Embeds);
-            await WriteReactionsAsync(message.Reactions);
+            await WriteAttachmentsAsync(message.Attachments, cancellationToken);
+            await WriteEmbedsAsync(message.Embeds, cancellationToken);
+            await WriteReactionsAsync(message.Reactions, cancellationToken);
 
             await _writer.WriteLineAsync();
         }
 
-        public override async ValueTask WritePostambleAsync()
+        public override async ValueTask WritePostambleAsync(CancellationToken cancellationToken = default)
         {
             await _writer.WriteLineAsync('='.Repeat(62));
             await _writer.WriteLineAsync($"Exported {MessagesWritten:N0} message(s)");

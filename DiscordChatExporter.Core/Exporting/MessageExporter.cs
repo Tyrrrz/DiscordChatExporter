@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exporting.Writers;
@@ -18,23 +19,23 @@ namespace DiscordChatExporter.Core.Exporting
             _context = context;
         }
 
-        private async ValueTask ResetWriterAsync()
+        private async ValueTask ResetWriterAsync(CancellationToken cancellationToken = default)
         {
             if (_writer is not null)
             {
-                await _writer.WritePostambleAsync();
+                await _writer.WritePostambleAsync(cancellationToken);
                 await _writer.DisposeAsync();
                 _writer = null;
             }
         }
 
-        private async ValueTask<MessageWriter> GetWriterAsync()
+        private async ValueTask<MessageWriter> GetWriterAsync(CancellationToken cancellationToken = default)
         {
             // Ensure partition limit has not been reached
             if (_writer is not null &&
                 _context.Request.PartitionLimit.IsReached(_writer.MessagesWritten, _writer.BytesWritten))
             {
-                await ResetWriterAsync();
+                await ResetWriterAsync(cancellationToken);
                 _partitionIndex++;
             }
 
@@ -49,15 +50,15 @@ namespace DiscordChatExporter.Core.Exporting
                 Directory.CreateDirectory(dirPath);
 
             var writer = CreateMessageWriter(filePath, _context.Request.Format, _context);
-            await writer.WritePreambleAsync();
+            await writer.WritePreambleAsync(cancellationToken);
 
             return _writer = writer;
         }
 
-        public async ValueTask ExportMessageAsync(Message message)
+        public async ValueTask ExportMessageAsync(Message message, CancellationToken cancellationToken = default)
         {
-            var writer = await GetWriterAsync();
-            await writer.WriteMessageAsync(message);
+            var writer = await GetWriterAsync(cancellationToken);
+            await writer.WriteMessageAsync(message, cancellationToken);
         }
 
         public async ValueTask DisposeAsync() => await ResetWriterAsync();

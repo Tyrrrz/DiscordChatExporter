@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
@@ -18,12 +19,15 @@ namespace DiscordChatExporter.Core.Exporting
 
         public ChannelExporter(AuthToken token) : this(new DiscordClient(token)) {}
 
-        public async ValueTask ExportChannelAsync(ExportRequest request, IProgress<double>? progress = null)
+        public async ValueTask ExportChannelAsync(
+            ExportRequest request,
+            IProgress<double>? progress = null,
+            CancellationToken cancellationToken = default)
         {
             // Build context
             var contextMembers = new HashSet<Member>(IdBasedEqualityComparer.Instance);
-            var contextChannels = await _discord.GetGuildChannelsAsync(request.Guild.Id);
-            var contextRoles = await _discord.GetGuildRolesAsync(request.Guild.Id);
+            var contextChannels = await _discord.GetGuildChannelsAsync(request.Guild.Id, cancellationToken);
+            var contextRoles = await _discord.GetGuildRolesAsync(request.Guild.Id, cancellationToken);
 
             var context = new ExportContext(
                 request,
@@ -37,8 +41,16 @@ namespace DiscordChatExporter.Core.Exporting
 
             var exportedAnything = false;
             var encounteredUsers = new HashSet<User>(IdBasedEqualityComparer.Instance);
-            await foreach (var message in _discord.GetMessagesAsync(request.Channel.Id, request.After, request.Before, progress))
+
+            await foreach (var message in _discord.GetMessagesAsync(
+                request.Channel.Id,
+                request.After,
+                request.Before,
+                progress,
+                cancellationToken))
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 // Skips any messages that fail to pass the supplied filter
                 if (!request.MessageFilter.IsMatch(message))
                     continue;
@@ -49,12 +61,17 @@ namespace DiscordChatExporter.Core.Exporting
                     if (!encounteredUsers.Add(referencedUser))
                         continue;
 
-                    var member = await _discord.GetGuildMemberAsync(request.Guild.Id, referencedUser);
+                    var member = await _discord.GetGuildMemberAsync(
+                        request.Guild.Id,
+                        referencedUser,
+                        cancellationToken
+                    );
+
                     contextMembers.Add(member);
                 }
 
                 // Export message
-                await messageExporter.ExportMessageAsync(message);
+                await messageExporter.ExportMessageAsync(message, cancellationToken);
                 exportedAnything = true;
             }
 

@@ -15,7 +15,6 @@ using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Core.Exporting.Filtering;
 using DiscordChatExporter.Core.Exporting.Partitioning;
 using DiscordChatExporter.Core.Utils.Extensions;
-using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Cli.Commands.Base
 {
@@ -56,6 +55,8 @@ namespace DiscordChatExporter.Cli.Commands.Base
 
         protected async ValueTask ExecuteAsync(IConsole console, IReadOnlyList<Channel> channels)
         {
+            var cancellationToken = console.RegisterCancellationHandler();
+
             if (ShouldReuseMedia && !ShouldDownloadMedia)
             {
                 throw new CommandException("Option --reuse-media cannot be used without --media.");
@@ -73,7 +74,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
                     {
                         await progressContext.StartTaskAsync($"{channel.Category} / {channel.Name}", async progress =>
                         {
-                            var guild = await Discord.GetGuildAsync(channel.GuildId);
+                            var guild = await Discord.GetGuildAsync(channel.GuildId, cancellationToken);
 
                             var request = new ExportRequest(
                                 guild,
@@ -89,14 +90,14 @@ namespace DiscordChatExporter.Cli.Commands.Base
                                 DateFormat
                             );
 
-                            await Exporter.ExportChannelAsync(request, progress);
+                            await Exporter.ExportChannelAsync(request, progress, cancellationToken);
                         });
                     }
                     catch (DiscordChatExporterException ex) when (!ex.IsFatal)
                     {
                         errors[channel] = ex.Message;
                     }
-                }, ParallelLimit.ClampMin(1));
+                }, Math.Max(ParallelLimit, 1), cancellationToken);
             });
 
             // Print result
@@ -140,11 +141,12 @@ namespace DiscordChatExporter.Cli.Commands.Base
 
         protected async ValueTask ExecuteAsync(IConsole console, IReadOnlyList<Snowflake> channelIds)
         {
+            var cancellationToken = console.RegisterCancellationHandler();
             var channels = new List<Channel>();
 
             foreach (var channelId in channelIds)
             {
-                var channel = await Discord.GetChannelAsync(channelId);
+                var channel = await Discord.GetChannelAsync(channelId, cancellationToken);
                 channels.Add(channel);
             }
 

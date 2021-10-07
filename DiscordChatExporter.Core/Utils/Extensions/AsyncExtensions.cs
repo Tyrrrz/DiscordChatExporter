@@ -27,14 +27,15 @@ namespace DiscordChatExporter.Core.Utils.Extensions
         public static async ValueTask ParallelForEachAsync<T>(
             this IEnumerable<T> source,
             Func<T, ValueTask> handleAsync,
-            int degreeOfParallelism)
+            int degreeOfParallelism,
+            CancellationToken cancellationToken = default)
         {
             using var semaphore = new SemaphoreSlim(degreeOfParallelism);
 
             await Task.WhenAll(source.Select(async item =>
             {
                 // ReSharper disable once AccessToDisposedClosure
-                await semaphore.WaitAsync();
+                await semaphore.WaitAsync(cancellationToken);
 
                 try
                 {

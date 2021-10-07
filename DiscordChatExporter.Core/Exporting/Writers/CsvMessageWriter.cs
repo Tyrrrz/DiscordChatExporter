@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors;
@@ -21,29 +22,37 @@ namespace DiscordChatExporter.Core.Exporting.Writers
         private string FormatMarkdown(string? markdown) =>
             PlainTextMarkdownVisitor.Format(Context, markdown ?? "");
 
-        public override async ValueTask WritePreambleAsync() =>
+        public override async ValueTask WritePreambleAsync(CancellationToken cancellationToken = default) =>
             await _writer.WriteLineAsync("AuthorID,Author,Date,Content,Attachments,Reactions");
 
-        private async ValueTask WriteAttachmentsAsync(IReadOnlyList<Attachment> attachments)
+        private async ValueTask WriteAttachmentsAsync(
+            IReadOnlyList<Attachment> attachments,
+            CancellationToken cancellationToken = default)
         {
             var buffer = new StringBuilder();
 
             foreach (var attachment in attachments)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 buffer
                     .AppendIfNotEmpty(',')
-                    .Append(await Context.ResolveMediaUrlAsync(attachment.Url));
+                    .Append(await Context.ResolveMediaUrlAsync(attachment.Url, cancellationToken));
             }
 
             await _writer.WriteAsync(CsvEncode(buffer.ToString()));
         }
 
-        private async ValueTask WriteReactionsAsync(IReadOnlyList<Reaction> reactions)
+        private async ValueTask WriteReactionsAsync(
+            IReadOnlyList<Reaction> reactions,
+            CancellationToken cancellationToken = default)
         {
             var buffer = new StringBuilder();
 
             foreach (var reaction in reactions)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 buffer
                     .AppendIfNotEmpty(',')
                     .Append(reaction.Emoji.Name)
@@ -56,9 +65,11 @@ namespace DiscordChatExporter.Core.Exporting.Writers
             await _writer.WriteAsync(CsvEncode(buffer.ToString()));
         }
 
-        public override async ValueTask WriteMessageAsync(Message message)
+        public override async ValueTask WriteMessageAsync(
+            Message message,
+            CancellationToken cancellationToken = default)
         {
-            await base.WriteMessageAsync(message);
+            await base.WriteMessageAsync(message, cancellationToken);
 
             // Author ID
             await _writer.WriteAsync(CsvEncode(message.Author.Id.ToString()));
@@ -77,11 +88,11 @@ namespace DiscordChatExporter.Core.Exporting.Writers
             await _writer.WriteAsync(',');
 
             // Attachments
-            await WriteAttachmentsAsync(message.Attachments);
+            await WriteAttachmentsAsync(message.Attachments, cancellationToken);
             await _writer.WriteAsync(',');
 
             // Reactions
-            await WriteReactionsAsync(message.Reactions);
+            await WriteReactionsAsync(message.Reactions, cancellationToken);
 
             // Finish row
             await _writer.WriteLineAsync();

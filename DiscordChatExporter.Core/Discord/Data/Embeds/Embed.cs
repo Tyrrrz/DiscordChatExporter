@@ -29,7 +29,6 @@ namespace DiscordChatExporter.Core.Discord.Data.Embeds
         public EmbedImage? Thumbnail { get; }
 
         public EmbedImage? Image { get; }
-
         public EmbedFooter? Footer { get; }
 
         public Embed(
@@ -58,6 +57,8 @@ namespace DiscordChatExporter.Core.Discord.Data.Embeds
 
         public PlainImageEmbedProjection? TryGetPlainImage() => PlainImageEmbedProjection.TryResolve(this);
 
+        public TenorEmbedProjection? TryGetGif() => TenorEmbedProjection.TryResolve(this);
+
         public SpotifyTrackEmbedProjection? TryGetSpotifyTrack() => SpotifyTrackEmbedProjection.TryResolve(this);
 
         public YouTubeVideoEmbedProjection? TryGetYouTubeVideo() => YouTubeVideoEmbedProjection.TryResolve(this);
@@ -79,6 +80,14 @@ namespace DiscordChatExporter.Core.Discord.Data.Embeds
             var author = json.GetPropertyOrNull("author")?.Pipe(EmbedAuthor.Parse);
             var thumbnail = json.GetPropertyOrNull("thumbnail")?.Pipe(EmbedImage.Parse);
             var image = json.GetPropertyOrNull("image")?.Pipe(EmbedImage.Parse);
+            if(image is null)
+            {
+                try
+                {
+                    image = json.GetPropertyOrNull("video")?.Pipe(EmbedImage.Parse);
+                }
+                catch {} //meh
+            }
             var footer = json.GetPropertyOrNull("footer")?.Pipe(EmbedFooter.Parse);
 
             var fields =

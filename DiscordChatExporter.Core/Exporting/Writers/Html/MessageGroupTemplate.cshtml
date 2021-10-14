@@ -108,323 +108,332 @@
         @{/* Messages in a group */}
         @foreach (var message in Model.MessageGroup.Messages)
         {
-            <div class="chatlog__message @(message.IsPinned ? "chatlog__message--pinned" : null)" data-message-id="@message.Id" id="message-@message.Id" title="Message sent: @FormatDate(message.Timestamp)">
-                @if (!string.IsNullOrWhiteSpace(message.Content) || message.EditedTimestamp is not null)
-                {
-                    <div class="chatlog__content">
-                        <div class="markdown">
-                            @{/* Message content */}
-                            <span class="preserve-whitespace">@Raw(FormatMarkdown(message.Content))</span>
+    <div class="chatlog__message @(message.IsPinned ? "chatlog__message--pinned" : null)" data-message-id="@message.Id" id="message-@message.Id" title="Message sent: @FormatDate(message.Timestamp)">
+        @if (!string.IsNullOrWhiteSpace(message.Content) || message.EditedTimestamp is not null)
+        {
+            <div class="chatlog__content">
+                <div class="markdown">
+                    @{/* Message content */}
+                    <span class="preserve-whitespace">@Raw(FormatMarkdown(message.Content))</span>
 
-                            @{/* Edit timestamp */}
-                            @if (message.EditedTimestamp is not null)
-                            {
-                                <span class="chatlog__edited-timestamp" title="@FormatDate(message.EditedTimestamp.Value)">(edited)</span>
-                            }
-                        </div>
-                    </div>
+                    @{/* Edit timestamp */}
+                    @if (message.EditedTimestamp is not null)
+                    {
+                        <span class="chatlog__edited-timestamp" title="@FormatDate(message.EditedTimestamp.Value)">(edited)</span>
+                    }
+                </div>
+            </div>
+        }
+
+        @{/* Attachments */}
+        @foreach (var attachment in message.Attachments)
+        {
+            <div class="chatlog__attachment @(attachment.IsSpoiler ? "chatlog__attachment--hidden" : "")" onclick="@(attachment.IsSpoiler ? "showSpoiler(event, this)" : "")">
+                @{/* Spoiler caption */}
+                @if (attachment.IsSpoiler)
+                {
+                    <div class="chatlog__attachment-spoiler-caption">SPOILER</div>
                 }
 
-                @{/* Attachments */}
-                @foreach (var attachment in message.Attachments)
+                @{/* Attachment preview */}
+                @if (attachment.IsImage)
                 {
-                    <div class="chatlog__attachment @(attachment.IsSpoiler ? "chatlog__attachment--hidden" : "")" onclick="@(attachment.IsSpoiler ? "showSpoiler(event, this)" : "")">
-                        @{/* Spoiler caption */}
-                        @if (attachment.IsSpoiler)
-                        {
-                            <div class="chatlog__attachment-spoiler-caption">SPOILER</div>
-                        }
-
-                        @{/* Attachment preview */}
-                        @if (attachment.IsImage)
-                        {
+                    <a href="@await ResolveUrlAsync(attachment.Url)">
+                        <img class="chatlog__attachment-media" src="@await ResolveUrlAsync(attachment.Url)" alt="Image attachment" title="@($"Image: {attachment.FileName} ({attachment.FileSize})")" loading="lazy">
+                    </a>
+                }
+                else if (attachment.IsVideo)
+                {
+                    <video class="chatlog__attachment-media" controls>
+                        <source src="@await ResolveUrlAsync(attachment.Url)" alt="Video attachment" title="@($"Video: {attachment.FileName} ({attachment.FileSize})")">
+                    </video>
+                }
+                else if (attachment.IsAudio)
+                {
+                    <audio class="chatlog__attachment-media" controls>
+                        <source src="@await ResolveUrlAsync(attachment.Url)" alt="Audio attachment" title="@($"Audio: {attachment.FileName} ({attachment.FileSize})")">
+                    </audio>
+                }
+                else
+                {
+                    <div class="chatlog__attachment-generic">
+                        <svg class="chatlog__attachment-generic-icon">
+                            <use href="#icon-attachment" />
+                        </svg>
+                        <div class="chatlog__attachment-generic-name">
                             <a href="@await ResolveUrlAsync(attachment.Url)">
-                                <img class="chatlog__attachment-media" src="@await ResolveUrlAsync(attachment.Url)" alt="Image attachment" title="@($"Image: {attachment.FileName} ({attachment.FileSize})")" loading="lazy">
+                                @attachment.FileName
                             </a>
-                        }
-                        else if (attachment.IsVideo)
-                        {
-                            <video class="chatlog__attachment-media" controls>
-                                <source src="@await ResolveUrlAsync(attachment.Url)" alt="Video attachment" title="@($"Video: {attachment.FileName} ({attachment.FileSize})")">
-                            </video>
-                        }
-                        else if (attachment.IsAudio)
-                        {
-                            <audio class="chatlog__attachment-media" controls>
-                                <source src="@await ResolveUrlAsync(attachment.Url)" alt="Audio attachment" title="@($"Audio: {attachment.FileName} ({attachment.FileSize})")">
-                            </audio>
-                        }
-                        else
-                        {
-                            <div class="chatlog__attachment-generic">
-                                <svg class="chatlog__attachment-generic-icon">
-                                    <use href="#icon-attachment" />
-                                </svg>
-                                <div class="chatlog__attachment-generic-name">
-                                    <a href="@await ResolveUrlAsync(attachment.Url)">
-                                        @attachment.FileName
-                                    </a>
-                                </div>
-                                <div class="chatlog__attachment-generic-size">
-                                    @attachment.FileSize
-                                </div>
-                            </div>
-                        }
+                        </div>
+                        <div class="chatlog__attachment-generic-size">
+                            @attachment.FileSize
+                        </div>
                     </div>
                 }
+            </div>
+        }
 
-                @{/* Embeds */}
-                @foreach (var embed in message.Embeds)
-                {
-                    // Plain image embed
-                    if (embed.TryGetPlainImage() is { } plainImageEmbed)
+        @{/* Embeds */}
+        @foreach (var embed in message.Embeds)
+        {
+            // Plain image embed
+            if (embed.TryGetPlainImage() is { } plainImageEmbed)
+            {
+                <div class="chatlog__embed">
+                    <a href="@await ResolveUrlAsync(plainImageEmbed.Url)">
+                        <img class="chatlog__embed-plainimage" src="@await ResolveUrlAsync(plainImageEmbed.Url)" alt="Embedded image" loading="lazy">
+                    </a>
+                </div>
+            }
+            // Plain image embed
+            else if (embed.TryGetGif() is { } gif)
+            {
+                <div class="chatlog__embed">
+                    <a href="@await ResolveUrlAsync(gif.Url)">
+                        <video autoplay loop muted playsinline controls src="@await ResolveUrlAsync(gif.Url)"></video>
+                    </a>
+                </div>
+            }
+            // Spotify embed
+            else if (embed.TryGetSpotifyTrack() is { } spotifyTrackEmbed)
+            {
+                <div class="chatlog__embed">
+                    <div class="chatlog__embed-spotify-container">
+                        <iframe class="chatlog__embed-spotify" src="@spotifyTrackEmbed.Url"  width="400" height="80" allowtransparency="true" allow="encrypted-media"></iframe>
+                    </div>
+                </div>
+            }
+            // YouTube embed
+            else if (embed.TryGetYouTubeVideo() is { } youTubeVideoEmbed)
+            {
+                <div class="chatlog__embed">
+                    @{/* Color pill */}
+                    @if (embed.Color is not null)
                     {
-                        <div class="chatlog__embed">
-                            <a href="@await ResolveUrlAsync(plainImageEmbed.Url)">
-                                <img class="chatlog__embed-plainimage" src="@await ResolveUrlAsync(plainImageEmbed.Url)" alt="Embedded image" loading="lazy">
-                            </a>
-                        </div>
+                        <div class="chatlog__embed-color-pill" style="background-color: rgba(@embed.Color?.R,@embed.Color?.G,@embed.Color?.B,@embed.Color?.A)"></div>
                     }
-                    // Spotify embed
-                    else if (embed.TryGetSpotifyTrack() is { } spotifyTrackEmbed)
-                    {
-                        <div class="chatlog__embed">
-                            <div class="chatlog__embed-spotify-container">
-                                <iframe class="chatlog__embed-spotify" src="@spotifyTrackEmbed.Url" width="400" height="80" allowtransparency="true" allow="encrypted-media"></iframe>
-                            </div>
-                        </div>
-                    }
-                    // YouTube embed
-                    else if (embed.TryGetYouTubeVideo() is { } youTubeVideoEmbed)
-                    {
-                        <div class="chatlog__embed">
-                            @{/* Color pill */}
-                            @if (embed.Color is not null)
-                            {
-                                <div class="chatlog__embed-color-pill" style="background-color: rgba(@embed.Color?.R,@embed.Color?.G,@embed.Color?.B,@embed.Color?.A)"></div>
-                            }
-                            else
-                            {
-                                <div class="chatlog__embed-color-pill chatlog__embed-color-pill--default"></div>
-                            }
-
-                            <div class="chatlog__embed-content-container">
-                                <div class="chatlog__embed-content">
-                                    <div class="chatlog__embed-text">
-                                        @{/* Embed author */}
-                                        @if (embed.Author is not null)
-                                        {
-                                            <div class="chatlog__embed-author">
-                                                @if (!string.IsNullOrWhiteSpace(embed.Author.IconUrl))
-                                                {
-                                                    <img class="chatlog__embed-author-icon" src="@await ResolveUrlAsync(embed.Author.IconProxyUrl ?? embed.Author.IconUrl)" alt="Author icon" loading="lazy" onerror="this.style.visibility='hidden'">
-                                                }
-
-                                                @if (!string.IsNullOrWhiteSpace(embed.Author.Name))
-                                                {
-                                                    <span class="chatlog__embed-author-name">
-                                                        @if (!string.IsNullOrWhiteSpace(embed.Author.Url))
-                                                        {
-                                                            <a class="chatlog__embed-author-name-link" href="@embed.Author.Url">@embed.Author.Name</a>
-                                                        }
-                                                        else
-                                                        {
-                                                            @embed.Author.Name
-                                                        }
-                                                    </span>
-                                                }
-                                            </div>
-                                        }
-
-                                        @{/* Embed title */}
-                                        @if (!string.IsNullOrWhiteSpace(embed.Title))
-                                        {
-                                            <div class="chatlog__embed-title">
-                                                @if (!string.IsNullOrWhiteSpace(embed.Url))
-                                                {
-                                                    <a class="chatlog__embed-title-link" href="@embed.Url">
-                                                        <div class="markdown preserve-whitespace">@Raw(FormatEmbedMarkdown(embed.Title))</div>
-                                                    </a>
-                                                }
-                                                else
-                                                {
-                                                    <div class="markdown preserve-whitespace">@Raw(FormatEmbedMarkdown(embed.Title))</div>
-                                                }
-                                            </div>
-                                        }
-
-                                        @{/* Video player */}
-                                        <div class="chatlog__embed-youtube-container">
-                                            <iframe class="chatlog__embed-youtube" src="@youTubeVideoEmbed.Url" width="400" height="225"></iframe>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                    // Generic embed
                     else
                     {
-                        <div class="chatlog__embed">
-                            @{/* Color pill */}
-                            @if (embed.Color is not null)
-                            {
-                                <div class="chatlog__embed-color-pill" style="background-color: rgba(@embed.Color?.R,@embed.Color?.G,@embed.Color?.B,@embed.Color?.A)"></div>
-                            }
-                            else
-                            {
-                                <div class="chatlog__embed-color-pill chatlog__embed-color-pill--default"></div>
-                            }
+                        <div class="chatlog__embed-color-pill chatlog__embed-color-pill--default"></div>
+                    }
 
-                            <div class="chatlog__embed-content-container">
-                                <div class="chatlog__embed-content">
-                                    <div class="chatlog__embed-text">
-                                        @{/* Embed author */}
-                                        @if (embed.Author is not null)
+                    <div class="chatlog__embed-content-container">
+                        <div class="chatlog__embed-content">
+                            <div class="chatlog__embed-text">
+                                @{/* Embed author */}
+                                @if (embed.Author is not null)
+                                {
+                                    <div class="chatlog__embed-author">
+                                        @if (!string.IsNullOrWhiteSpace(embed.Author.IconUrl))
                                         {
-                                            <div class="chatlog__embed-author">
-                                                @if (!string.IsNullOrWhiteSpace(embed.Author.IconUrl))
-                                                {
-                                                    <img class="chatlog__embed-author-icon" src="@await ResolveUrlAsync(embed.Author.IconProxyUrl ?? embed.Author.IconUrl)" alt="Author icon" loading="lazy" onerror="this.style.visibility='hidden'">
-                                                }
-
-                                                @if (!string.IsNullOrWhiteSpace(embed.Author.Name))
-                                                {
-                                                    <span class="chatlog__embed-author-name">
-                                                        @if (!string.IsNullOrWhiteSpace(embed.Author.Url))
-                                                        {
-                                                            <a class="chatlog__embed-author-name-link" href="@embed.Author.Url">@embed.Author.Name</a>
-                                                        }
-                                                        else
-                                                        {
-                                                            @embed.Author.Name
-                                                        }
-                                                    </span>
-                                                }
-                                            </div>
+                                            <img class="chatlog__embed-author-icon" src="@await ResolveUrlAsync(embed.Author.IconProxyUrl ?? embed.Author.IconUrl)" alt="Author icon" loading="lazy" onerror="this.style.visibility='hidden'">
                                         }
 
-                                        @{/* Embed title */}
-                                        @if (!string.IsNullOrWhiteSpace(embed.Title))
+                                        @if (!string.IsNullOrWhiteSpace(embed.Author.Name))
                                         {
-                                            <div class="chatlog__embed-title">
-                                                @if (!string.IsNullOrWhiteSpace(embed.Url))
+                                            <span class="chatlog__embed-author-name">
+                                                @if (!string.IsNullOrWhiteSpace(embed.Author.Url))
                                                 {
-                                                    <a class="chatlog__embed-title-link" href="@embed.Url">
-                                                        <div class="markdown preserve-whitespace">@Raw(FormatEmbedMarkdown(embed.Title))</div>
-                                                    </a>
+                                                    <a class="chatlog__embed-author-name-link" href="@embed.Author.Url">@embed.Author.Name</a>
                                                 }
                                                 else
                                                 {
-                                                    <div class="markdown preserve-whitespace">@Raw(FormatEmbedMarkdown(embed.Title))</div>
+                                                    @embed.Author.Name
                                                 }
-                                            </div>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+
+                                @{/* Embed title */}
+                                @if (!string.IsNullOrWhiteSpace(embed.Title))
+                                {
+                                    <div class="chatlog__embed-title">
+                                        @if (!string.IsNullOrWhiteSpace(embed.Url))
+                                        {
+                                            <a class="chatlog__embed-title-link" href="@embed.Url">
+                                                <div class="markdown preserve-whitespace">@Raw(FormatEmbedMarkdown(embed.Title))</div>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <div class="markdown preserve-whitespace">@Raw(FormatEmbedMarkdown(embed.Title))</div>
+                                        }
+                                    </div>
+                                }
+
+                                @{/* Video player */}
+                                <div class="chatlog__embed-youtube-container">
+                                    <iframe class="chatlog__embed-youtube" src="@youTubeVideoEmbed.Url" width="400" height="225"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            // Generic embed
+            else
+            {
+                <div class="chatlog__embed">
+                    @{/* Color pill */}
+                    @if (embed.Color is not null)
+                    {
+                        <div class="chatlog__embed-color-pill" style="background-color: rgba(@embed.Color?.R,@embed.Color?.G,@embed.Color?.B,@embed.Color?.A)"></div>
+                    }
+                    else
+                    {
+                        <div class="chatlog__embed-color-pill chatlog__embed-color-pill--default"></div>
+                    }
+
+                    <div class="chatlog__embed-content-container">
+                        <div class="chatlog__embed-content">
+                            <div class="chatlog__embed-text">
+                                @{/* Embed author */}
+                                @if (embed.Author is not null)
+                                {
+                                    <div class="chatlog__embed-author">
+                                        @if (!string.IsNullOrWhiteSpace(embed.Author.IconUrl))
+                                        {
+                                            <img class="chatlog__embed-author-icon" src="@await ResolveUrlAsync(embed.Author.IconProxyUrl ?? embed.Author.IconUrl)" alt="Author icon" loading="lazy" onerror="this.style.visibility='hidden'">
                                         }
 
-                                        @{/* Embed description */}
-                                        @if (!string.IsNullOrWhiteSpace(embed.Description))
+                                        @if (!string.IsNullOrWhiteSpace(embed.Author.Name))
                                         {
-                                            <div class="chatlog__embed-description">
-                                                <div class="markdown preserve-whitespace">@Raw(FormatEmbedMarkdown(embed.Description))</div>
-                                            </div>
-                                        }
-
-                                        @{/* Embed fields */}
-                                        @if (embed.Fields.Any())
-                                        {
-                                            <div class="chatlog__embed-fields">
-                                                @foreach (var field in embed.Fields)
+                                            <span class="chatlog__embed-author-name">
+                                                @if (!string.IsNullOrWhiteSpace(embed.Author.Url))
                                                 {
-                                                    <div class="chatlog__embed-field @(field.IsInline ? "chatlog__embed-field--inline" : null)">
-                                                        @if (!string.IsNullOrWhiteSpace(field.Name))
-                                                        {
-                                                            <div class="chatlog__embed-field-name">
-                                                                <div class="markdown preserve-whitespace">@Raw(FormatEmbedMarkdown(field.Name))</div>
-                                                            </div>
-                                                        }
+                                                    <a class="chatlog__embed-author-name-link" href="@embed.Author.Url">@embed.Author.Name</a>
+                                                }
+                                                else
+                                                {
+                                                    @embed.Author.Name
+                                                }
+                                            </span>
+                                        }
+                                    </div>
+                                }
 
-                                                        @if (!string.IsNullOrWhiteSpace(field.Value))
-                                                        {
-                                                            <div class="chatlog__embed-field-value">
-                                                                <div class="markdown preserve-whitespace">@Raw(FormatEmbedMarkdown(field.Value))</div>
-                                                            </div>
-                                                        }
+                                @{/* Embed title */}
+                                @if (!string.IsNullOrWhiteSpace(embed.Title))
+                                {
+                                    <div class="chatlog__embed-title">
+                                        @if (!string.IsNullOrWhiteSpace(embed.Url))
+                                        {
+                                            <a class="chatlog__embed-title-link" href="@embed.Url">
+                                                <div class="markdown preserve-whitespace">@Raw(FormatEmbedMarkdown(embed.Title))</div>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <div class="markdown preserve-whitespace">@Raw(FormatEmbedMarkdown(embed.Title))</div>
+                                        }
+                                    </div>
+                                }
+
+                                @{/* Embed description */}
+                                @if (!string.IsNullOrWhiteSpace(embed.Description))
+                                {
+                                    <div class="chatlog__embed-description">
+                                        <div class="markdown preserve-whitespace">@Raw(FormatEmbedMarkdown(embed.Description))</div>
+                                    </div>
+                                }
+
+                                @{/* Embed fields */}
+                                @if (embed.Fields.Any())
+                                {
+                                    <div class="chatlog__embed-fields">
+                                        @foreach (var field in embed.Fields)
+                                        {
+                                            <div class="chatlog__embed-field @(field.IsInline ? "chatlog__embed-field--inline" : null)">
+                                                @if (!string.IsNullOrWhiteSpace(field.Name))
+                                                {
+                                                    <div class="chatlog__embed-field-name">
+                                                        <div class="markdown preserve-whitespace">@Raw(FormatEmbedMarkdown(field.Name))</div>
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrWhiteSpace(field.Value))
+                                                {
+                                                    <div class="chatlog__embed-field-value">
+                                                        <div class="markdown preserve-whitespace">@Raw(FormatEmbedMarkdown(field.Value))</div>
                                                     </div>
                                                 }
                                             </div>
                                         }
                                     </div>
-
-                                    @{/* Embed content */}
-                                    @if (embed.Thumbnail is not null && !string.IsNullOrWhiteSpace(embed.Thumbnail.Url))
-                                    {
-                                        <div class="chatlog__embed-thumbnail-container">
-                                            <a class="chatlog__embed-thumbnail-link" href="@await ResolveUrlAsync(embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url)">
-                                                <img class="chatlog__embed-thumbnail" src="@await ResolveUrlAsync(embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url)" alt="Thumbnail" loading="lazy">
-                                            </a>
-                                        </div>
-                                    }
-                                </div>
-
-                                @{/* Embed image */}
-                                @if (embed.Image is not null && !string.IsNullOrWhiteSpace(embed.Image.Url))
-                                {
-                                    <div class="chatlog__embed-image-container">
-                                        <a class="chatlog__embed-image-link" href="@await ResolveUrlAsync(embed.Image.ProxyUrl ?? embed.Image.Url)">
-                                            <img class="chatlog__embed-image" src="@await ResolveUrlAsync(embed.Image.ProxyUrl ?? embed.Image.Url)" alt="Image" loading="lazy">
-                                        </a>
-                                    </div>
-                                }
-
-                                @{/* Embed footer & icon */}
-                                @if (embed.Footer is not null || embed.Timestamp is not null)
-                                {
-                                    <div class="chatlog__embed-footer">
-                                        @{/* Footer icon */}
-                                        @if (!string.IsNullOrWhiteSpace(embed.Footer?.IconUrl))
-                                        {
-                                            <img class="chatlog__embed-footer-icon" src="@await ResolveUrlAsync(embed.Footer.IconProxyUrl ?? embed.Footer.IconUrl)" alt="Footer icon" loading="lazy">
-                                        }
-
-                                        <span class="chatlog__embed-footer-text">
-                                            @{/* Footer text */}
-                                            @if (!string.IsNullOrWhiteSpace(embed.Footer?.Text))
-                                            {
-                                                @embed.Footer.Text
-                                            }
-
-                                            @if (!string.IsNullOrWhiteSpace(embed.Footer?.Text) && embed.Timestamp is not null)
-                                            {
-                                                @(" • ")
-                                            }
-
-                                            @{/* Embed timestamp */}
-                                            @if (embed.Timestamp is not null)
-                                            {
-                                                @FormatDate(embed.Timestamp.Value)
-                                            }
-                                        </span>
-                                    </div>
                                 }
                             </div>
-                        </div>
-                    }
-                }
 
-                @{/* Message reactions */}
-                @if (message.Reactions.Any())
-                {
-                    <div class="chatlog__reactions">
-                        @foreach (var reaction in message.Reactions)
+                            @{/* Embed content */}
+                            @if (embed.Thumbnail is not null && !string.IsNullOrWhiteSpace(embed.Thumbnail.Url))
+                            {
+                                <div class="chatlog__embed-thumbnail-container">
+                                    <a class="chatlog__embed-thumbnail-link" href="@await ResolveUrlAsync(embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url)">
+                                        <img class="chatlog__embed-thumbnail" src="@await ResolveUrlAsync(embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url)" alt="Thumbnail" loading="lazy">
+                                    </a>
+                                </div>
+                            }
+                        </div>
+
+                        @{/* Embed image */}
+                        @if (embed.Image is not null && !string.IsNullOrWhiteSpace(embed.Image.Url))
                         {
-                            <div class="chatlog__reaction" title="@reaction.Emoji.Code">
-                                <img class="emoji emoji--small" alt="@reaction.Emoji.Name" src="@await ResolveUrlAsync(reaction.Emoji.ImageUrl)" loading="lazy">
-                                <span class="chatlog__reaction-count">@reaction.Count</span>
+                            <div class="chatlog__embed-image-container">
+                                <a class="chatlog__embed-image-link" href="@await ResolveUrlAsync(embed.Image.ProxyUrl ?? embed.Image.Url)">
+                                    <img class="chatlog__embed-image" src="@await ResolveUrlAsync(embed.Image.ProxyUrl ?? embed.Image.Url)" alt="Image" loading="lazy">
+                                </a>
+                            </div>
+                        }
+
+                        @{/* Embed footer & icon */}
+                        @if (embed.Footer is not null || embed.Timestamp is not null)
+                        {
+                            <div class="chatlog__embed-footer">
+                                @{/* Footer icon */}
+                                @if (!string.IsNullOrWhiteSpace(embed.Footer?.IconUrl))
+                                {
+                                    <img class="chatlog__embed-footer-icon" src="@await ResolveUrlAsync(embed.Footer.IconProxyUrl ?? embed.Footer.IconUrl)" alt="Footer icon" loading="lazy">
+                                }
+
+                                <span class="chatlog__embed-footer-text">
+                                    @{/* Footer text */}
+                                    @if (!string.IsNullOrWhiteSpace(embed.Footer?.Text))
+                                    {
+                                        @embed.Footer.Text
+                                    }
+
+                                    @if (!string.IsNullOrWhiteSpace(embed.Footer?.Text) && embed.Timestamp is not null)
+                                    {
+                                        @(" • ")
+                                    }
+
+                                    @{/* Embed timestamp */}
+                                    @if (embed.Timestamp is not null)
+                                    {
+                                        @FormatDate(embed.Timestamp.Value)
+                                    }
+                                </span>
                             </div>
                         }
                     </div>
+                </div>
+            }
+        }
+
+        @{/* Message reactions */}
+        @if (message.Reactions.Any())
+        {
+            <div class="chatlog__reactions">
+                @foreach (var reaction in message.Reactions)
+                {
+                    <div class="chatlog__reaction" title="@reaction.Emoji.Code">
+                        <img class="emoji emoji--small" alt="@reaction.Emoji.Name" src="@await ResolveUrlAsync(reaction.Emoji.ImageUrl)" loading="lazy">
+                        <span class="chatlog__reaction-count">@reaction.Count</span>
+                    </div>
                 }
             </div>
+        }
+    </div>
         }
     </div>
 </div>

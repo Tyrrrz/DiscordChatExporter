@@ -14,6 +14,8 @@
     string FormatDate(DateTimeOffset date) => Model.ExportContext.FormatDate(date);
 
     ValueTask<string> ResolveUrlAsync(string url) => Model.ExportContext.ResolveMediaUrlAsync(url, CancellationToken);
+
+    string FormatMarkdown(string markdown) => Model.FormatMarkdown(markdown);
 }
 
 <!DOCTYPE html>
@@ -692,7 +694,7 @@
 
         @if (!string.IsNullOrWhiteSpace(Model.ExportContext.Request.Channel.Topic))
         {
-            <div class="preamble__entry preamble__entry--small">@Model.ExportContext.Request.Channel.Topic</div>
+    <div class="preamble__entry preamble__entry--small">@Raw(FormatMarkdown(Model.ExportContext.Request.Channel.Topic))</div>
         }
 
         @if (Model.ExportContext.Request.After is not null || Model.ExportContext.Request.Before is not null)

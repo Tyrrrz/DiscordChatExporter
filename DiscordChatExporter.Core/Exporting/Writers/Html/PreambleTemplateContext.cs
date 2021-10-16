@@ -13,6 +13,7 @@ namespace DiscordChatExporter.Core.Exporting.Writers.Html
             ExportContext = exportContext;
             ThemeName = themeName;
         }
+
         public string FormatMarkdown(string? markdown, bool isJumboAllowed = true) =>
             HtmlMarkdownVisitor.Format(ExportContext, markdown ?? "", isJumboAllowed);
     }

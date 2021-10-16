@@ -694,7 +694,7 @@
 
         @if (!string.IsNullOrWhiteSpace(Model.ExportContext.Request.Channel.Topic))
         {
-    <div class="preamble__entry preamble__entry--small">@Raw(FormatMarkdown(Model.ExportContext.Request.Channel.Topic))</div>
+            <div class="preamble__entry preamble__entry--small">@Raw(FormatMarkdown(Model.ExportContext.Request.Channel.Topic))</div>
         }
 
         @if (Model.ExportContext.Request.After is not null || Model.ExportContext.Request.Before is not null)

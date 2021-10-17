@@ -33,7 +33,6 @@ namespace DiscordChatExporter.Core.Discord.Data.Embeds
             {
                 return null;
             }
-            
             // Has to be an image file
             var fileName = Regex.Match(embed.Url, @".+/([^?]*)").Groups[1].Value;
             if (string.IsNullOrWhiteSpace(fileName) || !FileFormat.IsImage(Path.GetExtension(fileName)))

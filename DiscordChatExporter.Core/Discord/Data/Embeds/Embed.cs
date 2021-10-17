@@ -29,6 +29,7 @@ namespace DiscordChatExporter.Core.Discord.Data.Embeds
         public EmbedImage? Thumbnail { get; }
 
         public EmbedImage? Image { get; }
+
         public EmbedFooter? Footer { get; }
 
         public Embed(

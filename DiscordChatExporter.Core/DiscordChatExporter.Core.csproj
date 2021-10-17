@@ -7,6 +7,7 @@
   <ItemGroup>
     <PackageReference Include="JsonExtensions" Version="1.1.0" />
     <PackageReference Include="MiniRazor.CodeGen" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.8" />
     <PackageReference Include="Polly" Version="7.2.2" />
     <PackageReference Include="Superpower" Version="3.0.0" />
     <PackageReference Include="Tyrrrz.Extensions" Version="1.6.5" />

@@ -280,6 +280,7 @@
         .chatlog__reference-edited-timestamp {
             margin-left: 0.25em;
             font-size: 0.8em;
+            unicode-bidi: bidi-override;
             color: @Themed("rgba(255, 255, 255, 0.2)", "#747f8d");
         }
 
@@ -299,6 +300,7 @@
         .chatlog__messages {
             grid-column: 2;
             min-width: 50%;
+            direction: ltr;
         }
 
         .chatlog__author-name {
@@ -309,6 +311,8 @@
         .chatlog__timestamp {
             margin-left: 0.3em;
             font-size: 0.75em;
+            direction: ltr;
+            unicode-bidi: bidi-override;
             color: @Themed("rgba(255, 255, 255, 0.2)", "#747f8d");
         }
 
@@ -478,6 +482,8 @@
         .chatlog__embed-author-name {
             font-size: 0.875em;
             font-weight: 600;
+            direction: ltr;
+            unicode-bidi: bidi-override;
             color: @Themed("#ffffff", "#4f545c")
         }
 

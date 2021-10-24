@@ -27,7 +27,7 @@
     <meta name="viewport" content="width=device-width">
 
     @{/* Styling */}
-<style>
+    <style>
         @@font-face {
             font-family: Whitney;
             src: url(https://cdn.jsdelivr.net/gh/Tyrrrz/DiscordFonts@master/whitney-300.woff);
@@ -152,7 +152,7 @@
             background-color: @Themed("rgba(88, 101, 242, .3)", "rgba(88, 101, 242, .15)");
             font-weight: 500;
         }
-
+        
         .mention:hover {
             background-color: #5865f2;
             color: #ffffff
@@ -653,7 +653,7 @@
         .postamble__entry {
             color: @Themed("#ffffff", "#2f3136");
         }
-</style>
+    </style>
 
     @{/* Syntax highlighting */}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/solarized-@(Model.ThemeName.ToLowerInvariant()).min.css">

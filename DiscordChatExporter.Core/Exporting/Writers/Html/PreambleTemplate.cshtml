@@ -604,17 +604,21 @@
         .chatlog__reaction {
             display: flex;
             align-items: center;
-            margin: 0.35em 0.1em 0.1em 0.1em;
-            padding: 0.2em 0.35em;
-            background-color: @Themed("rgba(255, 255, 255, 0.05)", "rgba(79, 84, 92, 0.06)");
-            border-radius: 3px;
+            margin: 0.35em 0.1em 0.1em 0;
+            border-color: #5865f2;
+            border-width: 1px;
+            padding: .125rem .375rem;
+            background-color: @Themed("rgba(88, 101, 242, 0.15)", "#e7e9fd");
+            border-radius: 8px;
+            border-width: 1px;
+            border-style: solid;
         }
 
         .chatlog__reaction-count {
             min-width: 9px;
             margin-left: 0.35em;
             font-size: 0.875em;
-            color: @Themed("rgba(255, 255, 255, 0.3)", "#747f8d");
+            color: @Themed("#dee0fc", "#5865f2");
         }
 
         .chatlog__bot-tag {

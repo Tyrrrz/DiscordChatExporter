@@ -27,7 +27,7 @@
     <meta name="viewport" content="width=device-width">
 
     @{/* Styling */}
-    <style>
+<style>
         @@font-face {
             font-family: Whitney;
             src: url(https://cdn.jsdelivr.net/gh/Tyrrrz/DiscordFonts@master/whitney-300.woff);
@@ -152,7 +152,7 @@
             background-color: @Themed("rgba(88, 101, 242, .3)", "rgba(88, 101, 242, .15)");
             font-weight: 500;
         }
-        
+
         .mention:hover {
             background-color: #5865f2;
             color: #ffffff
@@ -605,20 +605,30 @@
             display: flex;
             align-items: center;
             margin: 0.35em 0.1em 0.1em 0;
-            border-color: #5865f2;
-            border-width: 1px;
             padding: .125rem .375rem;
-            background-color: @Themed("rgba(88, 101, 242, 0.15)", "#e7e9fd");
+            background-color: @Themed("#2f3136", "#f2f3f5");
             border-radius: 8px;
+            border-color: transparent;
             border-width: 1px;
             border-style: solid;
+        }
+
+        .chatlog__reaction:hover {
+            border-color: @Themed("hsla(0,0%,100%,.2)", "rgba(0, 0, 0, 0.2)");
+            border-width: 1px;
+            border-style: solid;
+            @Themed("", "background-color: white;");
         }
 
         .chatlog__reaction-count {
             min-width: 9px;
             margin-left: 0.35em;
             font-size: 0.875em;
-            color: @Themed("#dee0fc", "#5865f2");
+            color: @Themed("#b9bbbe", "#4f5660");
+        }
+
+        .chatlog__reaction:hover .chatlog__reaction-count {
+            color: @Themed("#dcddde", "#2e3338");
         }
 
         .chatlog__bot-tag {
@@ -643,7 +653,7 @@
         .postamble__entry {
             color: @Themed("#ffffff", "#2f3136");
         }
-    </style>
+</style>
 
     @{/* Syntax highlighting */}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/solarized-@(Model.ThemeName.ToLowerInvariant()).min.css">

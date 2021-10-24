@@ -148,9 +148,14 @@
         .mention {
             border-radius: 3px;
             padding: 0 2px;
-            color: #7289da;
-            background-color: rgba(114, 137, 218, .1);
+            color: @Themed("#dee0fc", "#505cdc");
+            background-color: @Themed("rgba(88, 101, 242, .3)", "rgba(88, 101, 242, .15)");
             font-weight: 500;
+        }
+        
+        .mention:hover {
+            background-color: #5865f2;
+            color: #ffffff
         }
 
         .timestamp {

@@ -148,9 +148,14 @@
         .mention {
             border-radius: 3px;
             padding: 0 2px;
-            color: #7289da;
-            background-color: rgba(114, 137, 218, .1);
+            color: @Themed("#dee0fc", "#505cdc");
+            background-color: @Themed("rgba(88, 101, 242, .3)", "rgba(88, 101, 242, .15)");
             font-weight: 500;
+        }
+        
+        .mention:hover {
+            background-color: #5865f2;
+            color: #ffffff
         }
 
         .timestamp {
@@ -599,17 +604,31 @@
         .chatlog__reaction {
             display: flex;
             align-items: center;
-            margin: 0.35em 0.1em 0.1em 0.1em;
-            padding: 0.2em 0.35em;
-            background-color: @Themed("rgba(255, 255, 255, 0.05)", "rgba(79, 84, 92, 0.06)");
-            border-radius: 3px;
+            margin: 0.35em 0.1em 0.1em 0;
+            padding: .125rem .375rem;
+            background-color: @Themed("#2f3136", "#f2f3f5");
+            border-radius: 8px;
+            border-color: transparent;
+            border-width: 1px;
+            border-style: solid;
+        }
+
+        .chatlog__reaction:hover {
+            border-color: @Themed("hsla(0,0%,100%,.2)", "rgba(0, 0, 0, 0.2)");
+            border-width: 1px;
+            border-style: solid;
+            background-color: @Themed("transparent", "white");
         }
 
         .chatlog__reaction-count {
             min-width: 9px;
             margin-left: 0.35em;
             font-size: 0.875em;
-            color: @Themed("rgba(255, 255, 255, 0.3)", "#747f8d");
+            color: @Themed("#b9bbbe", "#4f5660");
+        }
+
+        .chatlog__reaction:hover .chatlog__reaction-count {
+            color: @Themed("#dcddde", "#2e3338");
         }
 
         .chatlog__bot-tag {

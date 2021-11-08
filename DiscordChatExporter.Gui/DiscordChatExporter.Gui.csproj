@@ -33,9 +33,4 @@
     <ProjectReference Include="..\DiscordChatExporter.Core\DiscordChatExporter.Core.csproj" />
   </ItemGroup>
 
-  <Target Name="Format XAML" AfterTargets="BeforeBuild">
-    <Exec Command="dotnet tool restore" />
-    <Exec Command="dotnet xstyler -r -d $(MSBuildProjectDirectory)" />
-  </Target>
-
 </Project>

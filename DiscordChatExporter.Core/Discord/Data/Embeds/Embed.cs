@@ -70,11 +70,11 @@ namespace DiscordChatExporter.Core.Discord.Data.Embeds
     {
         public static Embed Parse(JsonElement json)
         {
-            var title = json.GetPropertyOrNull("title")?.GetString();
-            var url = json.GetPropertyOrNull("url")?.GetString();
+            var title = json.GetPropertyOrNull("title")?.GetStringOrNull();
+            var url = json.GetPropertyOrNull("url")?.GetStringOrNull();
             var timestamp = json.GetPropertyOrNull("timestamp")?.GetDateTimeOffset();
             var color = json.GetPropertyOrNull("color")?.GetInt32().Pipe(System.Drawing.Color.FromArgb).ResetAlpha();
-            var description = json.GetPropertyOrNull("description")?.GetString();
+            var description = json.GetPropertyOrNull("description")?.GetStringOrNull();
 
             var author = json.GetPropertyOrNull("author")?.Pipe(EmbedAuthor.Parse);
             var thumbnail = json.GetPropertyOrNull("thumbnail")?.Pipe(EmbedImage.Parse);

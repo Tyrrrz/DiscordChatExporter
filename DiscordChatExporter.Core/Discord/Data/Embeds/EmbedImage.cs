@@ -27,8 +27,8 @@ namespace DiscordChatExporter.Core.Discord.Data.Embeds
     {
         public static EmbedImage Parse(JsonElement json)
         {
-            var url = json.GetPropertyOrNull("url")?.GetString();
-            var proxyUrl = json.GetPropertyOrNull("proxy_url")?.GetString();
+            var url = json.GetPropertyOrNull("url")?.GetStringOrNull();
+            var proxyUrl = json.GetPropertyOrNull("proxy_url")?.GetStringOrNull();
             var width = json.GetPropertyOrNull("width")?.GetInt32();
             var height = json.GetPropertyOrNull("height")?.GetInt32();
 

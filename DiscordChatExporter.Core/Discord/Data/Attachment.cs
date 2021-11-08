@@ -58,11 +58,11 @@ namespace DiscordChatExporter.Core.Discord.Data
     {
         public static Attachment Parse(JsonElement json)
         {
-            var id = json.GetProperty("id").GetString().Pipe(Snowflake.Parse);
-            var url = json.GetProperty("url").GetString();
+            var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
+            var url = json.GetProperty("url").GetNonWhiteSpaceString();
             var width = json.GetPropertyOrNull("width")?.GetInt32();
             var height = json.GetPropertyOrNull("height")?.GetInt32();
-            var fileName = json.GetProperty("filename").GetString();
+            var fileName = json.GetProperty("filename").GetNonWhiteSpaceString();
             var fileSize = json.GetProperty("size").GetInt64().Pipe(FileSize.FromBytes);
 
             return new Attachment(id, url, fileName, width, height, fileSize);

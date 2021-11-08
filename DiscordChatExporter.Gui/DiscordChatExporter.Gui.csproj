@@ -1,6 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <TargetFramework>$(TargetFramework)-windows</TargetFramework>
     <OutputType>WinExe</OutputType>
     <AssemblyName>DiscordChatExporter</AssemblyName>
     <UseWPF>true</UseWPF>
@@ -34,7 +35,7 @@
 
   <Target Name="Format XAML" AfterTargets="BeforeBuild">
     <Exec Command="dotnet tool restore" />
-    <Exec Command="dotnet xstyler -r -d ." />
+    <Exec Command="dotnet xstyler -r -d $(MSBuildProjectDirectory)" />
   </Target>
 
 </Project>

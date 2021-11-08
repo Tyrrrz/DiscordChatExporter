@@ -31,10 +31,10 @@ namespace DiscordChatExporter.Core.Discord.Data
 
         public static ChannelCategory Parse(JsonElement json, int? position = null)
         {
-            var id = json.GetProperty("id").GetString().Pipe(Snowflake.Parse);
+            var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
 
             var name =
-                json.GetPropertyOrNull("name")?.GetString() ??
+                json.GetPropertyOrNull("name")?.GetStringOrNull() ??
                 id.ToString();
 
             return new ChannelCategory(

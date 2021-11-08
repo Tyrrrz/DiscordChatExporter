@@ -130,7 +130,7 @@ namespace DiscordChatExporter.Core.Discord
                 var responseOrdered = response
                     .EnumerateArray()
                     .OrderBy(j => j.GetProperty("position").GetInt32())
-                    .ThenBy(j => Snowflake.Parse(j.GetProperty("id").GetString()))
+                    .ThenBy(j => j.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse))
                     .ToArray();
 
                 var categories = responseOrdered
@@ -142,7 +142,7 @@ namespace DiscordChatExporter.Core.Discord
 
                 foreach (var channelJson in responseOrdered)
                 {
-                    var parentId = channelJson.GetPropertyOrNull("parent_id")?.GetString();
+                    var parentId = channelJson.GetPropertyOrNull("parent_id")?.GetStringOrNull();
 
                     var category = !string.IsNullOrWhiteSpace(parentId)
                         ? categories.GetValueOrDefault(parentId)
@@ -205,7 +205,7 @@ namespace DiscordChatExporter.Core.Discord
         {
             var response = await GetJsonResponseAsync($"channels/{channelId}", cancellationToken);
 
-            var parentId = response.GetPropertyOrNull("parent_id")?.GetString().Pipe(Snowflake.Parse);
+            var parentId = response.GetPropertyOrNull("parent_id")?.GetStringOrNull()?.Pipe(Snowflake.Parse);
 
             var category = parentId is not null
                 ? await GetChannelCategoryAsync(parentId.Value, cancellationToken)

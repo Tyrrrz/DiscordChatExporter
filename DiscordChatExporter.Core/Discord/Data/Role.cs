@@ -38,8 +38,8 @@ namespace DiscordChatExporter.Core.Discord.Data
     {
         public static Role Parse(JsonElement json)
         {
-            var id = json.GetProperty("id").GetString().Pipe(Snowflake.Parse);
-            var name = json.GetProperty("name").GetString();
+            var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
+            var name = json.GetProperty("name").GetNonWhiteSpaceString();
             var position = json.GetProperty("position").GetInt32();
 
             var color = json

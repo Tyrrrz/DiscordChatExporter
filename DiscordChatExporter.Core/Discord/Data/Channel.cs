@@ -74,14 +74,14 @@ namespace DiscordChatExporter.Core.Discord.Data
 
         public static Channel Parse(JsonElement json, ChannelCategory? category = null, int? position = null)
         {
-            var id = json.GetProperty("id").GetString().Pipe(Snowflake.Parse);
-            var guildId = json.GetPropertyOrNull("guild_id")?.GetString().Pipe(Snowflake.Parse);
-            var topic = json.GetPropertyOrNull("topic")?.GetString();
+            var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
+            var guildId = json.GetPropertyOrNull("guild_id")?.GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
+            var topic = json.GetPropertyOrNull("topic")?.GetStringOrNull();
             var kind = (ChannelKind) json.GetProperty("type").GetInt32();
 
             var name =
                 // Guild channel
-                json.GetPropertyOrNull("name")?.GetString() ??
+                json.GetPropertyOrNull("name")?.GetStringOrNull() ??
                 // DM channel
                 json.GetPropertyOrNull("recipients")?.EnumerateArray().Select(User.Parse).Select(u => u.Name).JoinToString(", ") ??
                 // Fallback

@@ -29,9 +29,9 @@ namespace DiscordChatExporter.Core.Discord.Data
     {
         public static MessageReference Parse(JsonElement json)
         {
-            var messageId = json.GetPropertyOrNull("message_id")?.GetString().Pipe(Snowflake.Parse);
-            var channelId = json.GetPropertyOrNull("channel_id")?.GetString().Pipe(Snowflake.Parse);
-            var guildId = json.GetPropertyOrNull("guild_id")?.GetString().Pipe(Snowflake.Parse);
+            var messageId = json.GetPropertyOrNull("message_id")?.GetStringOrNull()?.Pipe(Snowflake.Parse);
+            var channelId = json.GetPropertyOrNull("channel_id")?.GetStringOrNull()?.Pipe(Snowflake.Parse);
+            var guildId = json.GetPropertyOrNull("guild_id")?.GetStringOrNull()?.Pipe(Snowflake.Parse);
 
             return new MessageReference(messageId, channelId, guildId);
         }

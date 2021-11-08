@@ -31,10 +31,10 @@ namespace DiscordChatExporter.Core.Discord.Data.Embeds
     {
         public static EmbedAuthor Parse(JsonElement json)
         {
-            var name = json.GetPropertyOrNull("name")?.GetString();
-            var url = json.GetPropertyOrNull("url")?.GetString();
-            var iconUrl = json.GetPropertyOrNull("icon_url")?.GetString();
-            var iconProxyUrl = json.GetPropertyOrNull("proxy_icon_url")?.GetString();
+            var name = json.GetPropertyOrNull("name")?.GetStringOrNull();
+            var url = json.GetPropertyOrNull("url")?.GetStringOrNull();
+            var iconUrl = json.GetPropertyOrNull("icon_url")?.GetStringOrNull();
+            var iconProxyUrl = json.GetPropertyOrNull("proxy_icon_url")?.GetStringOrNull();
 
             return new EmbedAuthor(name, url, iconUrl, iconProxyUrl);
         }

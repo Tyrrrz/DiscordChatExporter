@@ -81,7 +81,7 @@ namespace DiscordChatExporter.Core.Discord.Data
     {
         public static Message Parse(JsonElement json)
         {
-            var id = json.GetProperty("id").GetString().Pipe(Snowflake.Parse);
+            var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
             var author = json.GetProperty("author").Pipe(User.Parse);
             var timestamp = json.GetProperty("timestamp").GetDateTimeOffset();
             var editedTimestamp = json.GetPropertyOrNull("edited_timestamp")?.GetDateTimeOffset();
@@ -101,7 +101,7 @@ namespace DiscordChatExporter.Core.Discord.Data
                 MessageKind.ChannelIconChange => "Changed the channel icon.",
                 MessageKind.ChannelPinnedMessage => "Pinned a message.",
                 MessageKind.GuildMemberJoin => "Joined the server.",
-                _ => json.GetPropertyOrNull("content")?.GetString() ?? ""
+                _ => json.GetPropertyOrNull("content")?.GetStringOrNull() ?? ""
             };
 
             var attachments =

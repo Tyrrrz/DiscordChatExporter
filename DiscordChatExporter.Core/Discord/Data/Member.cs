@@ -42,10 +42,10 @@ namespace DiscordChatExporter.Core.Discord.Data
         public static Member Parse(JsonElement json)
         {
             var user = json.GetProperty("user").Pipe(User.Parse);
-            var nick = json.GetPropertyOrNull("nick")?.GetString();
+            var nick = json.GetPropertyOrNull("nick")?.GetStringOrNull();
 
             var roleIds =
-                json.GetPropertyOrNull("roles")?.EnumerateArray().Select(j => j.GetString()).Select(Snowflake.Parse).ToArray() ??
+                json.GetPropertyOrNull("roles")?.EnumerateArray().Select(j => j.GetNonWhiteSpaceString()).Select(Snowflake.Parse).ToArray() ??
                 Array.Empty<Snowflake>();
 
             return new Member(

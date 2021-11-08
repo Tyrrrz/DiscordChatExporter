@@ -64,8 +64,8 @@ namespace DiscordChatExporter.Core.Discord.Data
 
         public static Emoji Parse(JsonElement json)
         {
-            var id = json.GetPropertyOrNull("id")?.GetString();
-            var name = json.GetProperty("name").GetString();
+            var id = json.GetPropertyOrNull("id")?.GetNonWhiteSpaceString();
+            var name = json.GetProperty("name").GetNonWhiteSpaceString();
             var isAnimated = json.GetPropertyOrNull("animated")?.GetBoolean() ?? false;
 
             var imageUrl = GetImageUrl(id, name, isAnimated);

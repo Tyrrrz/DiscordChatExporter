@@ -2,6 +2,7 @@
 using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Utils.Extensions;
+using JsonExtensions.Reading;
 
 namespace DiscordChatExporter.Core.Discord.Data
 {
@@ -41,9 +42,9 @@ namespace DiscordChatExporter.Core.Discord.Data
 
         public static Guild Parse(JsonElement json)
         {
-            var id = json.GetProperty("id").GetString().Pipe(Snowflake.Parse);
-            var name = json.GetProperty("name").GetString();
-            var iconHash = json.GetProperty("icon").GetString();
+            var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
+            var name = json.GetProperty("name").GetNonWhiteSpaceString();
+            var iconHash = json.GetPropertyOrNull("icon")?.GetStringOrNull();
 
             var iconUrl = !string.IsNullOrWhiteSpace(iconHash)
                 ? GetIconUrl(id, iconHash)

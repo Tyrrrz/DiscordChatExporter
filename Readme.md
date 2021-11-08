@@ -93,8 +93,7 @@ The following table lists all available download options:
 
 Prerequisites:
 
-- [.NET 5.0 SDK](https://dotnet.microsoft.com/download/dotnet/5.0)
-- [.NET 3.1 SDK](https://dotnet.microsoft.com/download/dotnet/3.1) (temporarily as the app still targets .NET 3.1, but requires .NET 5.0 to build)
+- [.NET 6.0 SDK](https://dotnet.microsoft.com/download/dotnet/6.0)
 - _(Recommended)_ C#/.NET IDE, such as [JetBrains Rider](https://www.jetbrains.com/rider), [VS Code](https://code.visualstudio.com/docs/languages/csharp), or [Visual Studio](https://visualstudio.microsoft.com).
 
 To build the entire solution run the following command in the root of the repository:

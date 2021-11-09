@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace DiscordChatExporter.Core.Discord
 {
-    public readonly record struct Snowflake(ulong Value)
+    public readonly partial record struct Snowflake(ulong Value)
     {
         public DateTimeOffset ToDate() => DateTimeOffset.FromUnixTimeMilliseconds(
             (long)((Value >> 22) + 1420070400000UL)
@@ -13,7 +13,10 @@ namespace DiscordChatExporter.Core.Discord
 
         [ExcludeFromCodeCoverage]
         public override string ToString() => Value.ToString(CultureInfo.InvariantCulture);
+    }
 
+    public partial record struct Snowflake
+    {
         public static Snowflake Zero { get; } = new(0);
 
         public static Snowflake FromDate(DateTimeOffset date) => new(
@@ -44,5 +47,10 @@ namespace DiscordChatExporter.Core.Discord
             TryParse(str, formatProvider) ?? throw new FormatException($"Invalid snowflake '{str}'.");
 
         public static Snowflake Parse(string str) => Parse(str, null);
+    }
+
+    public partial record struct Snowflake : IComparable<Snowflake>
+    {
+        public int CompareTo(Snowflake other) => Value.CompareTo(other.Value);
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+﻿using System.Linq;
 using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Utils.Extensions;
@@ -9,12 +8,15 @@ using Tyrrrz.Extensions;
 namespace DiscordChatExporter.Core.Discord.Data
 {
     // https://discord.com/developers/docs/resources/channel#channel-object
-    public partial class Channel : IHasId
+    public partial record Channel(
+        Snowflake Id,
+        ChannelKind Kind,
+        Snowflake GuildId,
+        ChannelCategory Category,
+        string Name,
+        int? Position,
+        string? Topic) : IHasId
     {
-        public Snowflake Id { get; }
-
-        public ChannelKind Kind { get; }
-
         public bool IsTextChannel => Kind is
             ChannelKind.GuildTextChat or
             ChannelKind.DirectTextChat or
@@ -23,40 +25,9 @@ namespace DiscordChatExporter.Core.Discord.Data
             ChannelKind.GuildStore;
 
         public bool IsVoiceChannel => !IsTextChannel;
-
-        public Snowflake GuildId { get; }
-
-        public ChannelCategory Category { get; }
-
-        public string Name { get; }
-
-        public int? Position { get; }
-
-        public string? Topic { get; }
-
-        public Channel(
-            Snowflake id,
-            ChannelKind kind,
-            Snowflake guildId,
-            ChannelCategory category,
-            string name,
-            int? position,
-            string? topic)
-        {
-            Id = id;
-            Kind = kind;
-            GuildId = guildId;
-            Category = category;
-            Name = name;
-            Position = position;
-            Topic = topic;
-        }
-
-        [ExcludeFromCodeCoverage]
-        public override string ToString() => Name;
     }
 
-    public partial class Channel
+    public partial record Channel
     {
         private static ChannelCategory GetFallbackCategory(ChannelKind channelKind) => new(
             Snowflake.Zero,
@@ -77,13 +48,14 @@ namespace DiscordChatExporter.Core.Discord.Data
             var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
             var guildId = json.GetPropertyOrNull("guild_id")?.GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
             var topic = json.GetPropertyOrNull("topic")?.GetStringOrNull();
-            var kind = (ChannelKind) json.GetProperty("type").GetInt32();
+            var kind = (ChannelKind)json.GetProperty("type").GetInt32();
 
             var name =
                 // Guild channel
                 json.GetPropertyOrNull("name")?.GetStringOrNull() ??
                 // DM channel
-                json.GetPropertyOrNull("recipients")?.EnumerateArray().Select(User.Parse).Select(u => u.Name).JoinToString(", ") ??
+                json.GetPropertyOrNull("recipients")?.EnumerateArray().Select(User.Parse).Select(u => u.Name)
+                    .JoinToString(", ") ??
                 // Fallback
                 id.ToString();
 

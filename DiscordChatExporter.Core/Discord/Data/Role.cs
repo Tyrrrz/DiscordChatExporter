@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Utils.Extensions;
@@ -8,33 +7,7 @@ using JsonExtensions.Reading;
 namespace DiscordChatExporter.Core.Discord.Data
 {
     // https://discord.com/developers/docs/topics/permissions#role-object
-    public partial class Role : IHasId
-    {
-        public Snowflake Id { get; }
-
-        public string Name { get; }
-
-        public int Position { get; }
-
-        public Color? Color { get; }
-
-        public Role(
-            Snowflake id,
-            string name,
-            int position,
-            Color? color)
-        {
-            Id = id;
-            Name = name;
-            Position = position;
-            Color = color;
-        }
-
-        [ExcludeFromCodeCoverage]
-        public override string ToString() => Name;
-    }
-
-    public partial class Role
+    public record Role(Snowflake Id, string Name, int Position, Color? Color) : IHasId
     {
         public static Role Parse(JsonElement json)
         {

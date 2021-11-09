@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text.Json;
@@ -10,63 +9,29 @@ using JsonExtensions.Reading;
 namespace DiscordChatExporter.Core.Discord.Data.Embeds
 {
     // https://discord.com/developers/docs/resources/channel#embed-object
-    public partial class Embed
+    public partial record Embed(
+        string? Title,
+        string? Url,
+        DateTimeOffset? Timestamp,
+        Color? Color,
+        EmbedAuthor? Author,
+        string? Description,
+        IReadOnlyList<EmbedField> Fields,
+        EmbedImage? Thumbnail,
+        EmbedImage? Image,
+        EmbedFooter? Footer)
     {
-        public string? Title { get; }
+        public PlainImageEmbedProjection? TryGetPlainImage() =>
+            PlainImageEmbedProjection.TryResolve(this);
 
-        public string? Url { get; }
+        public SpotifyTrackEmbedProjection? TryGetSpotifyTrack() =>
+            SpotifyTrackEmbedProjection.TryResolve(this);
 
-        public DateTimeOffset? Timestamp { get; }
-
-        public Color? Color { get; }
-
-        public EmbedAuthor? Author { get; }
-
-        public string? Description { get; }
-
-        public IReadOnlyList<EmbedField> Fields { get; }
-
-        public EmbedImage? Thumbnail { get; }
-
-        public EmbedImage? Image { get; }
-
-        public EmbedFooter? Footer { get; }
-
-        public Embed(
-            string? title,
-            string? url,
-            DateTimeOffset? timestamp,
-            Color? color,
-            EmbedAuthor? author,
-            string? description,
-            IReadOnlyList<EmbedField> fields,
-            EmbedImage? thumbnail,
-            EmbedImage? image,
-            EmbedFooter? footer)
-        {
-            Title = title;
-            Url = url;
-            Timestamp = timestamp;
-            Color = color;
-            Author = author;
-            Description = description;
-            Fields = fields;
-            Thumbnail = thumbnail;
-            Image = image;
-            Footer = footer;
-        }
-
-        public PlainImageEmbedProjection? TryGetPlainImage() => PlainImageEmbedProjection.TryResolve(this);
-
-        public SpotifyTrackEmbedProjection? TryGetSpotifyTrack() => SpotifyTrackEmbedProjection.TryResolve(this);
-
-        public YouTubeVideoEmbedProjection? TryGetYouTubeVideo() => YouTubeVideoEmbedProjection.TryResolve(this);
-
-        [ExcludeFromCodeCoverage]
-        public override string ToString() => Title ?? "<untitled embed>";
+        public YouTubeVideoEmbedProjection? TryGetYouTubeVideo() =>
+            YouTubeVideoEmbedProjection.TryResolve(this);
     }
 
-    public partial class Embed
+    public partial record Embed
     {
         public static Embed Parse(JsonElement json)
         {

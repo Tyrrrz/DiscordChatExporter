@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+﻿using System.Linq;
 using System.Text.Json;
 using DiscordChatExporter.Core.Utils;
 using DiscordChatExporter.Core.Utils.Extensions;
@@ -9,36 +8,21 @@ using Tyrrrz.Extensions;
 namespace DiscordChatExporter.Core.Discord.Data
 {
     // https://discord.com/developers/docs/resources/emoji#emoji-object
-    public partial class Emoji
-    {
+    public partial record Emoji(
         // Only present on custom emoji
-        public string? Id { get; }
-
+        string? Id,
         // Name of custom emoji (e.g. LUL) or actual representation of standard emoji (e.g. 🙂)
-        public string Name { get; }
-
+        string Name,
+        bool IsAnimated,
+        string ImageUrl)
+    {
         // Name of custom emoji (e.g. LUL) or name of standard emoji (e.g. slight_smile)
         public string Code => !string.IsNullOrWhiteSpace(Id)
             ? Name
             : EmojiIndex.TryGetCode(Name) ?? Name;
-
-        public bool IsAnimated { get; }
-
-        public string ImageUrl { get; }
-
-        public Emoji(string? id, string name, bool isAnimated, string imageUrl)
-        {
-            Id = id;
-            Name = name;
-            IsAnimated = isAnimated;
-            ImageUrl = imageUrl;
-        }
-
-        [ExcludeFromCodeCoverage]
-        public override string ToString() => Name;
     }
 
-    public partial class Emoji
+    public partial record Emoji
     {
         private static string GetTwemojiName(string name) => name
             .GetRunes()

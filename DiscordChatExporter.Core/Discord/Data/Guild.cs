@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Text.Json;
+﻿using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Reading;
@@ -7,26 +6,7 @@ using JsonExtensions.Reading;
 namespace DiscordChatExporter.Core.Discord.Data
 {
     // https://discord.com/developers/docs/resources/guild#guild-object
-    public partial class Guild : IHasId
-    {
-        public Snowflake Id { get; }
-
-        public string Name { get; }
-
-        public string IconUrl { get; }
-
-        public Guild(Snowflake id, string name, string iconUrl)
-        {
-            Id = id;
-            Name = name;
-            IconUrl = iconUrl;
-        }
-
-        [ExcludeFromCodeCoverage]
-        public override string ToString() => Name;
-    }
-
-    public partial class Guild
+    public record Guild(Snowflake Id, string Name, string IconUrl) : IHasId
     {
         public static Guild DirectMessages { get; } = new(
             Snowflake.Zero,

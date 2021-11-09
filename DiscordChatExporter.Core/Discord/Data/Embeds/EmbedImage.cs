@@ -4,26 +4,11 @@ using JsonExtensions.Reading;
 namespace DiscordChatExporter.Core.Discord.Data.Embeds
 {
     // https://discord.com/developers/docs/resources/channel#embed-object-embed-image-structure
-    public partial class EmbedImage
-    {
-        public string? Url { get; }
-
-        public string? ProxyUrl { get; }
-
-        public int? Width { get; }
-
-        public int? Height { get; }
-
-        public EmbedImage(string? url, string? proxyUrl, int? width, int? height)
-        {
-            Url = url;
-            ProxyUrl = proxyUrl;
-            Height = height;
-            Width = width;
-        }
-    }
-
-    public partial class EmbedImage
+    public record EmbedImage(
+        string? Url,
+        string? ProxyUrl,
+        int? Width,
+        int? Height)
     {
         public static EmbedImage Parse(JsonElement json)
         {

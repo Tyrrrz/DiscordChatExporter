@@ -1,22 +1,11 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using DiscordChatExporter.Core.Utils;
 
 namespace DiscordChatExporter.Core.Discord.Data.Embeds
 {
-    public partial class PlainImageEmbedProjection
-    {
-        public string Url { get; }
-
-        public PlainImageEmbedProjection(string url) => Url = url;
-
-        [ExcludeFromCodeCoverage]
-        public override string ToString() => Url;
-    }
-
-    public partial class PlainImageEmbedProjection
+    public record PlainImageEmbedProjection(string Url)
     {
         public static PlainImageEmbedProjection? TryResolve(Embed embed)
         {

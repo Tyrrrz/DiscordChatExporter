@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Utils.Extensions;
@@ -8,41 +7,19 @@ using JsonExtensions.Reading;
 namespace DiscordChatExporter.Core.Discord.Data
 {
     // https://discord.com/developers/docs/resources/user#user-object
-    public partial class User : IHasId
+    public partial record User(
+        Snowflake Id,
+        bool IsBot,
+        int Discriminator,
+        string Name,
+        string AvatarUrl) : IHasId
     {
-        public Snowflake Id { get; }
-
-        public bool IsBot { get; }
-
-        public int Discriminator { get; }
-
         public string DiscriminatorFormatted => $"{Discriminator:0000}";
 
-        public string Name { get; }
-
         public string FullName => $"{Name}#{DiscriminatorFormatted}";
-
-        public string AvatarUrl { get; }
-
-        public User(
-            Snowflake id,
-            bool isBot,
-            int discriminator,
-            string name,
-            string avatarUrl)
-        {
-            Id = id;
-            IsBot = isBot;
-            Discriminator = discriminator;
-            Name = name;
-            AvatarUrl = avatarUrl;
-        }
-
-        [ExcludeFromCodeCoverage]
-        public override string ToString() => FullName;
     }
 
-    public partial class User
+    public partial record User
     {
         private static string GetDefaultAvatarUrl(int discriminator) =>
             $"https://cdn.discordapp.com/embed/avatars/{discriminator % 5}.png";

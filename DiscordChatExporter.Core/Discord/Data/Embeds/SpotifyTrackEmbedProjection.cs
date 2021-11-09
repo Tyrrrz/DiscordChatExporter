@@ -1,21 +1,13 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace DiscordChatExporter.Core.Discord.Data.Embeds
 {
-    public partial class SpotifyTrackEmbedProjection
+    public partial record SpotifyTrackEmbedProjection(string TrackId)
     {
-        public string TrackId { get; }
-
         public string Url => $"https://open.spotify.com/embed/track/{TrackId}";
-
-        public SpotifyTrackEmbedProjection(string trackId) => TrackId = trackId;
-
-        [ExcludeFromCodeCoverage]
-        public override string ToString() => Url;
     }
 
-    public partial class SpotifyTrackEmbedProjection
+    public partial record SpotifyTrackEmbedProjection
     {
         private static string? TryParseTrackId(string embedUrl)
         {

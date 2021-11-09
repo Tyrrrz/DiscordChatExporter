@@ -1,31 +1,11 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Text.Json;
+﻿using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Reading;
 
 namespace DiscordChatExporter.Core.Discord.Data
 {
-    public partial class ChannelCategory : IHasId
-    {
-        public Snowflake Id { get; }
-
-        public string Name { get; }
-
-        public int? Position { get; }
-
-        public ChannelCategory(Snowflake id, string name, int? position)
-        {
-            Id = id;
-            Name = name;
-            Position = position;
-        }
-
-        [ExcludeFromCodeCoverage]
-        public override string ToString() => Name;
-    }
-
-    public partial class ChannelCategory
+    public record ChannelCategory(Snowflake Id, string Name, int? Position) : IHasId
     {
         public static ChannelCategory Unknown { get; } = new(Snowflake.Zero, "<unknown category>", 0);
 

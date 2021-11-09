@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
@@ -10,19 +9,15 @@ using JsonExtensions.Reading;
 namespace DiscordChatExporter.Core.Discord.Data
 {
     // https://discord.com/developers/docs/resources/channel#attachment-object
-    public partial class Attachment : IHasId
+    public partial record Attachment(
+        Snowflake Id,
+        string Url,
+        string FileName,
+        int? Width,
+        int? Height,
+        FileSize FileSize) : IHasId
     {
-        public Snowflake Id { get; }
-
-        public string Url { get; }
-
-        public string FileName { get; }
-
         public string FileExtension => Path.GetExtension(FileName);
-
-        public int? Width { get; }
-
-        public int? Height { get; }
 
         public bool IsImage => FileFormat.IsImage(FileExtension);
 
@@ -31,30 +26,9 @@ namespace DiscordChatExporter.Core.Discord.Data
         public bool IsAudio => FileFormat.IsAudio(FileExtension);
 
         public bool IsSpoiler => FileName.StartsWith("SPOILER_", StringComparison.Ordinal);
-
-        public FileSize FileSize { get; }
-
-        public Attachment(
-            Snowflake id,
-            string url,
-            string fileName,
-            int? width,
-            int? height,
-            FileSize fileSize)
-        {
-            Id = id;
-            Url = url;
-            FileName = fileName;
-            Width = width;
-            Height = height;
-            FileSize = fileSize;
-        }
-
-        [ExcludeFromCodeCoverage]
-        public override string ToString() => FileName;
     }
 
-    public partial class Attachment
+    public partial record Attachment
     {
         public static Attachment Parse(JsonElement json)
         {

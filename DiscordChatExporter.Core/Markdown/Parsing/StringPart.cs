@@ -2,22 +2,9 @@
 
 namespace DiscordChatExporter.Core.Markdown.Parsing
 {
-    internal readonly struct StringPart
+    internal readonly record struct StringPart(string Target, int StartIndex, int Length)
     {
-        public string Target { get; }
-
-        public int StartIndex { get; }
-
-        public int Length { get; }
-
         public int EndIndex => StartIndex + Length;
-
-        public StringPart(string target, int startIndex, int length)
-        {
-            Target = target;
-            StartIndex = startIndex;
-            Length = length;
-        }
 
         public StringPart(string target)
             : this(target, 0, target.Length)

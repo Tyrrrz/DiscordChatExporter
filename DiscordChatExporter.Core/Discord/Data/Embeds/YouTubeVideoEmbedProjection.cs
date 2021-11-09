@@ -1,21 +1,13 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace DiscordChatExporter.Core.Discord.Data.Embeds
 {
-    public partial class YouTubeVideoEmbedProjection
+    public partial record YouTubeVideoEmbedProjection(string VideoId)
     {
-        public string VideoId { get; }
-
         public string Url => $"https://www.youtube.com/embed/{VideoId}";
-
-        public YouTubeVideoEmbedProjection(string videoId) => VideoId = videoId;
-
-        [ExcludeFromCodeCoverage]
-        public override string ToString() => Url;
     }
 
-    public partial class YouTubeVideoEmbedProjection
+    public partial record YouTubeVideoEmbedProjection
     {
         // Adapted from YoutubeExplode
         // https://github.com/Tyrrrz/YoutubeExplode/blob/5be164be20019783913f76fcc98f18c65aebe9f0/YoutubeExplode/Videos/VideoId.cs#L34-L64

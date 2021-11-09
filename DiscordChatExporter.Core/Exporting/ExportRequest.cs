@@ -10,76 +10,35 @@ using DiscordChatExporter.Core.Utils;
 
 namespace DiscordChatExporter.Core.Exporting
 {
-    public partial class ExportRequest
+    public partial record ExportRequest(
+        Guild Guild,
+        Channel Channel,
+        string OutputPath,
+        ExportFormat Format,
+        Snowflake? After,
+        Snowflake? Before,
+        PartitionLimit PartitionLimit,
+        MessageFilter MessageFilter,
+        bool ShouldDownloadMedia,
+        bool ShouldReuseMedia,
+        string DateFormat)
     {
-        public Guild Guild { get; }
+        private string? _outputBaseFilePath;
+        public string OutputBaseFilePath => _outputBaseFilePath ??= GetOutputBaseFilePath(
+            Guild,
+            Channel,
+            OutputPath,
+            Format,
+            After,
+            Before
+        );
 
-        public Channel Channel { get; }
+        public string OutputBaseDirPath => Path.GetDirectoryName(OutputBaseFilePath) ?? OutputPath;
 
-        public string OutputPath { get; }
-
-        public string OutputBaseFilePath { get; }
-
-        public string OutputBaseDirPath { get; }
-
-        public string OutputMediaDirPath { get; }
-
-        public ExportFormat Format { get; }
-
-        public Snowflake? After { get; }
-
-        public Snowflake? Before { get; }
-
-        public PartitionLimit PartitionLimit { get; }
-
-        public MessageFilter MessageFilter { get; }
-
-        public bool ShouldDownloadMedia { get; }
-
-        public bool ShouldReuseMedia { get; }
-
-        public string DateFormat { get; }
-
-        public ExportRequest(
-            Guild guild,
-            Channel channel,
-            string outputPath,
-            ExportFormat format,
-            Snowflake? after,
-            Snowflake? before,
-            PartitionLimit partitionLimit,
-            MessageFilter messageFilter,
-            bool shouldDownloadMedia,
-            bool shouldReuseMedia,
-            string dateFormat)
-        {
-            Guild = guild;
-            Channel = channel;
-            OutputPath = outputPath;
-            Format = format;
-            After = after;
-            Before = before;
-            PartitionLimit = partitionLimit;
-            MessageFilter = messageFilter;
-            ShouldDownloadMedia = shouldDownloadMedia;
-            ShouldReuseMedia = shouldReuseMedia;
-            DateFormat = dateFormat;
-
-            OutputBaseFilePath = GetOutputBaseFilePath(
-                guild,
-                channel,
-                outputPath,
-                format,
-                after,
-                before
-            );
-
-            OutputBaseDirPath = Path.GetDirectoryName(OutputBaseFilePath) ?? OutputPath;
-            OutputMediaDirPath = $"{OutputBaseFilePath}_Files{Path.DirectorySeparatorChar}";
-        }
+        public string OutputMediaDirPath => $"{OutputBaseFilePath}_Files{Path.DirectorySeparatorChar}";
     }
 
-    public partial class ExportRequest
+    public partial record ExportRequest
     {
         private static string GetOutputBaseFilePath(
             Guild guild,
@@ -140,17 +99,17 @@ namespace DiscordChatExporter.Core.Exporting
                 // Both 'after' and 'before' are set
                 if (after is not null && before is not null)
                 {
-                    buffer.Append($"{after?.ToDate():yyyy-MM-dd} to {before?.ToDate():yyyy-MM-dd}");
+                    buffer.Append($"{after.Value.ToDate():yyyy-MM-dd} to {before.Value.ToDate():yyyy-MM-dd}");
                 }
                 // Only 'after' is set
                 else if (after is not null)
                 {
-                    buffer.Append($"after {after?.ToDate():yyyy-MM-dd}");
+                    buffer.Append($"after {after.Value.ToDate():yyyy-MM-dd}");
                 }
                 // Only 'before' is set
-                else
+                else if (before is not null)
                 {
-                    buffer.Append($"before {before?.ToDate():yyyy-MM-dd}");
+                    buffer.Append($"before {before.Value.ToDate():yyyy-MM-dd}");
                 }
 
                 buffer.Append(")");

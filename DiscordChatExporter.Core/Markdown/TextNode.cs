@@ -1,17 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace DiscordChatExporter.Core.Markdown
+﻿namespace DiscordChatExporter.Core.Markdown
 {
-    internal class TextNode : MarkdownNode
-    {
-        public string Text { get; }
-
-        public TextNode(string text)
-        {
-            Text = text;
-        }
-
-        [ExcludeFromCodeCoverage]
-        public override string ToString() => Text;
-    }
+    internal record TextNode(string Text) : MarkdownNode;
 }

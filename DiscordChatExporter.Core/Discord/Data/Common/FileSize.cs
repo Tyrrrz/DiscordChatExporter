@@ -4,15 +4,11 @@ using System.Diagnostics.CodeAnalysis;
 namespace DiscordChatExporter.Core.Discord.Data.Common
 {
     // Loosely based on https://github.com/omar/ByteSize (MIT license)
-    public readonly partial struct FileSize
+    public readonly partial record struct FileSize(long TotalBytes)
     {
-        public long TotalBytes { get; }
-
         public double TotalKiloBytes => TotalBytes / 1024.0;
         public double TotalMegaBytes => TotalKiloBytes / 1024.0;
         public double TotalGigaBytes => TotalMegaBytes / 1024.0;
-
-        public FileSize(long bytes) => TotalBytes = bytes;
 
         private double GetLargestWholeNumberValue()
         {
@@ -46,7 +42,7 @@ namespace DiscordChatExporter.Core.Discord.Data.Common
         public override string ToString() => $"{GetLargestWholeNumberValue():0.##} {GetLargestWholeNumberSymbol()}";
     }
 
-    public partial struct FileSize
+    public partial record struct FileSize
     {
         public static FileSize FromBytes(long bytes) => new(bytes);
     }

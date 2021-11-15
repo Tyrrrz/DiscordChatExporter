@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Discord.Data.Embeds;
 using DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors;
-using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting.Writers
 {
@@ -125,7 +124,7 @@ namespace DiscordChatExporter.Core.Exporting.Writers
 
         public override async ValueTask WritePreambleAsync(CancellationToken cancellationToken = default)
         {
-            await _writer.WriteLineAsync('='.Repeat(62));
+            await _writer.WriteLineAsync(new string('=', 62));
             await _writer.WriteLineAsync($"Guild: {Context.Request.Guild.Name}");
             await _writer.WriteLineAsync($"Channel: {Context.Request.Channel.Category.Name} / {Context.Request.Channel.Name}");
 
@@ -138,7 +137,7 @@ namespace DiscordChatExporter.Core.Exporting.Writers
             if (Context.Request.Before is not null)
                 await _writer.WriteLineAsync($"Before: {Context.FormatDate(Context.Request.Before.Value.ToDate())}");
 
-            await _writer.WriteLineAsync('='.Repeat(62));
+            await _writer.WriteLineAsync(new string('=', 62));
             await _writer.WriteLineAsync();
         }
 
@@ -167,9 +166,9 @@ namespace DiscordChatExporter.Core.Exporting.Writers
 
         public override async ValueTask WritePostambleAsync(CancellationToken cancellationToken = default)
         {
-            await _writer.WriteLineAsync('='.Repeat(62));
+            await _writer.WriteLineAsync(new string('=', 62));
             await _writer.WriteLineAsync($"Exported {MessagesWritten:N0} message(s)");
-            await _writer.WriteLineAsync('='.Repeat(62));
+            await _writer.WriteLineAsync(new string('=', 62));
         }
 
         public override async ValueTask DisposeAsync()

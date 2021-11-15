@@ -1,6 +1,6 @@
-﻿using DiscordChatExporter.Gui.Services;
+﻿using System;
+using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.ViewModels.Framework;
-using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Gui.ViewModels.Dialogs
 {
@@ -35,18 +35,16 @@ namespace DiscordChatExporter.Gui.ViewModels.Dialogs
         public int ParallelLimit
         {
             get => _settingsService.ParallelLimit;
-            set => _settingsService.ParallelLimit = value.Clamp(1, 10);
+            set => _settingsService.ParallelLimit = Math.Clamp(value, 1, 10);
         }
-        
+
         public bool ShouldReuseMedia
         {
             get => _settingsService.ShouldReuseMedia;
             set => _settingsService.ShouldReuseMedia = value;
         }
 
-        public SettingsViewModel(SettingsService settingsService)
-        {
+        public SettingsViewModel(SettingsService settingsService) =>
             _settingsService = settingsService;
-        }
     }
 }

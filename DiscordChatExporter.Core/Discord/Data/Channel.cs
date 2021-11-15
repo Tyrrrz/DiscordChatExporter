@@ -3,7 +3,6 @@ using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Reading;
-using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Discord.Data
 {
@@ -55,7 +54,7 @@ namespace DiscordChatExporter.Core.Discord.Data
                 json.GetPropertyOrNull("name")?.GetStringOrNull() ??
                 // DM channel
                 json.GetPropertyOrNull("recipients")?.EnumerateArray().Select(User.Parse).Select(u => u.Name)
-                    .JoinToString(", ") ??
+                    .Pipe(s => string.Join(", ", s)) ??
                 // Fallback
                 id.ToString();
 

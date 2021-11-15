@@ -3,7 +3,6 @@ using System.Text.Json;
 using DiscordChatExporter.Core.Utils;
 using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Reading;
-using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Core.Discord.Data
 {
@@ -24,12 +23,13 @@ namespace DiscordChatExporter.Core.Discord.Data
 
     public partial record Emoji
     {
-        private static string GetTwemojiName(string name) => name
-            .GetRunes()
-            // Variant selector rune is skipped in Twemoji names
-            .Where(r => r.Value != 0xfe0f)
-            .Select(r => r.Value.ToString("x"))
-            .JoinToString("-");
+        private static string GetTwemojiName(string name) => string.Join("-",
+            name
+                .GetRunes()
+                // Variant selector rune is skipped in Twemoji names
+                .Where(r => r.Value != 0xfe0f)
+                .Select(r => r.Value.ToString("x"))
+        );
 
         public static string GetImageUrl(string? id, string name, bool isAnimated)
         {

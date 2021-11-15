@@ -15,7 +15,6 @@ using DiscordChatExporter.Gui.ViewModels.Framework;
 using Gress;
 using MaterialDesignThemes.Wpf;
 using Stylet;
-using Tyrrrz.Extensions;
 
 namespace DiscordChatExporter.Gui.ViewModels
 {
@@ -69,11 +68,11 @@ namespace DiscordChatExporter.Gui.ViewModels
             );
 
             ProgressManager.Bind(o => o.IsActive, (_, _) =>
-                IsProgressIndeterminate = ProgressManager.IsActive && ProgressManager.Progress.IsEither(0, 1)
+                IsProgressIndeterminate = ProgressManager.IsActive && ProgressManager.Progress is <= 0 or >= 1
             );
 
             ProgressManager.Bind(o => o.Progress, (_, _) =>
-                IsProgressIndeterminate = ProgressManager.IsActive && ProgressManager.Progress.IsEither(0, 1)
+                IsProgressIndeterminate = ProgressManager.IsActive && ProgressManager.Progress is <= 0 or >= 1
             );
         }
 
@@ -243,7 +242,7 @@ namespace DiscordChatExporter.Gui.ViewModels
                     {
                         operation.Dispose();
                     }
-                }, _settingsService.ParallelLimit.ClampMin(1));
+                }, Math.Max(1, _settingsService.ParallelLimit));
 
                 // Notify of overall completion
                 if (successfulExportCount > 0)

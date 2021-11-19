@@ -152,7 +152,7 @@
             background-color: @Themed("rgba(88, 101, 242, .3)", "rgba(88, 101, 242, .15)");
             font-weight: 500;
         }
-        
+
         .mention:hover {
             background-color: #5865f2;
             color: #ffffff
@@ -715,7 +715,7 @@
     </div>
     <div class="preamble__entries-container">
         <div class="preamble__entry">@Model.ExportContext.Request.Guild.Name</div>
-        <div class="preamble__entry">@Model.ExportContext.Request.Channel.Category / @Model.ExportContext.Request.Channel.Name</div>
+        <div class="preamble__entry">@Model.ExportContext.Request.Channel.Category.Name / @Model.ExportContext.Request.Channel.Name</div>
 
         @if (!string.IsNullOrWhiteSpace(Model.ExportContext.Request.Channel.Topic))
         {

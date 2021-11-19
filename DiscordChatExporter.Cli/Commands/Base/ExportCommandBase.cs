@@ -72,7 +72,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
                 {
                     try
                     {
-                        await progressContext.StartTaskAsync($"{channel.Category} / {channel.Name}", async progress =>
+                        await progressContext.StartTaskAsync($"{channel.Category.Name} / {channel.Name}", async progress =>
                         {
                             var guild = await Discord.GetGuildAsync(channel.GuildId, cancellationToken);
 
@@ -122,7 +122,7 @@ namespace DiscordChatExporter.Cli.Commands.Base
 
                 foreach (var (channel, error) in errors)
                 {
-                    await console.Output.WriteAsync($"{channel.Category} / {channel.Name}: ");
+                    await console.Output.WriteAsync($"{channel.Category.Name} / {channel.Name}: ");
 
                     using (console.WithForegroundColor(ConsoleColor.Red))
                         await console.Output.WriteLineAsync(error);

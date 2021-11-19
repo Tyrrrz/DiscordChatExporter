@@ -35,7 +35,7 @@ namespace DiscordChatExporter.Cli.Commands
 
                 // Channel category / name
                 using (console.WithForegroundColor(ConsoleColor.White))
-                    await console.Output.WriteLineAsync($"{channel.Category} / {channel.Name}");
+                    await console.Output.WriteLineAsync($"{channel.Category.Name} / {channel.Name}");
             }
         }
     }

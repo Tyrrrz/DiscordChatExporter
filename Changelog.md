@@ -1,3 +1,12 @@
+### v2.31 (06-Dec-2021)
+
+- Changed target runtime of the application (both GUI and CLI) from .NET 3.1 to .NET 6. Those using the GUI version will not need to take any action as the application should install the necessary prerequisites automatically. Those using the CLI version will need to download and install .NET 6 runtime manually [from here](https://dotnet.microsoft.com/download/dotnet/6.0) (look for ".NET Runtime 6.0.x" section on the right and choose the distribution appropriate for your system).
+- [HTML] Updated layout design to match Discord more closely. (Thanks [@Artem](https://github.com/Scarg))
+- [HTML] Fixed an issue where markdown inside channel topic was not rendered correctly. (Thanks [@Emily](https://github.com/emillly-b))
+- [HTML] Fixed an issue where the layout was broken for messages containing text in right-to-left languages. (Thanks [@Emily](https://github.com/emillly-b))
+- Fixed an issue where text filters weren't matching content inside of embeds.
+- [GUI] Fixed a multitude of issues related to the bootstrapper.
+
 ### v2.30.1 (28-Aug-2021)
 
 - [HTML] Changed user avatars to render using higher resolution images. (Thanks [@Chris Helder](https://github.com/TheDude53))

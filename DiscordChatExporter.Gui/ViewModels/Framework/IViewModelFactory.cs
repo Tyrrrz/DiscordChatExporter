@@ -1,14 +1,13 @@
 ﻿using DiscordChatExporter.Gui.ViewModels.Dialogs;
 
-namespace DiscordChatExporter.Gui.ViewModels.Framework
+namespace DiscordChatExporter.Gui.ViewModels.Framework;
+
+// Used to instantiate new view models while making use of dependency injection
+public interface IViewModelFactory
 {
-    // Used to instantiate new view models while making use of dependency injection
-    public interface IViewModelFactory
-    {
-        ExportSetupViewModel CreateExportSetupViewModel();
+    ExportSetupViewModel CreateExportSetupViewModel();
 
-        MessageBoxViewModel CreateMessageBoxViewModel();
+    MessageBoxViewModel CreateMessageBoxViewModel();
 
-        SettingsViewModel CreateSettingsViewModel();
-    }
+    SettingsViewModel CreateSettingsViewModel();
 }

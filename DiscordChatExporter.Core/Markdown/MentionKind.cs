@@ -1,10 +1,9 @@
-﻿namespace DiscordChatExporter.Core.Markdown
+﻿namespace DiscordChatExporter.Core.Markdown;
+
+internal enum MentionKind
 {
-    internal enum MentionKind
-    {
-        Meta,
-        User,
-        Channel,
-        Role
-    }
+    Meta,
+    User,
+    Channel,
+    Role
 }

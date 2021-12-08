@@ -6,58 +6,57 @@ using Microsoft.Win32;
 using Ookii.Dialogs.Wpf;
 using Stylet;
 
-namespace DiscordChatExporter.Gui.ViewModels.Framework
+namespace DiscordChatExporter.Gui.ViewModels.Framework;
+
+public class DialogManager
 {
-    public class DialogManager
+    private readonly IViewManager _viewManager;
+
+    public DialogManager(IViewManager viewManager)
     {
-        private readonly IViewManager _viewManager;
+        _viewManager = viewManager;
+    }
 
-        public DialogManager(IViewManager viewManager)
+    public async ValueTask<T?> ShowDialogAsync<T>(DialogScreen<T> dialogScreen)
+    {
+        var view = _viewManager.CreateAndBindViewForModelIfNecessary(dialogScreen);
+
+        void OnDialogOpened(object? sender, DialogOpenedEventArgs openArgs)
         {
-            _viewManager = viewManager;
-        }
-
-        public async ValueTask<T?> ShowDialogAsync<T>(DialogScreen<T> dialogScreen)
-        {
-            var view = _viewManager.CreateAndBindViewForModelIfNecessary(dialogScreen);
-
-            void OnDialogOpened(object? sender, DialogOpenedEventArgs openArgs)
+            void OnScreenClosed(object? o, EventArgs closeArgs)
             {
-                void OnScreenClosed(object? o, EventArgs closeArgs)
-                {
-                    openArgs.Session.Close();
-                    dialogScreen.Closed -= OnScreenClosed;
-                }
-
-                dialogScreen.Closed += OnScreenClosed;
+                openArgs.Session.Close();
+                dialogScreen.Closed -= OnScreenClosed;
             }
 
-            await DialogHost.Show(view, OnDialogOpened);
-
-            return dialogScreen.DialogResult;
+            dialogScreen.Closed += OnScreenClosed;
         }
 
-        public string? PromptSaveFilePath(string filter = "All files|*.*", string defaultFilePath = "")
+        await DialogHost.Show(view, OnDialogOpened);
+
+        return dialogScreen.DialogResult;
+    }
+
+    public string? PromptSaveFilePath(string filter = "All files|*.*", string defaultFilePath = "")
+    {
+        var dialog = new SaveFileDialog
         {
-            var dialog = new SaveFileDialog
-            {
-                Filter = filter,
-                AddExtension = true,
-                FileName = defaultFilePath,
-                DefaultExt = Path.GetExtension(defaultFilePath)
-            };
+            Filter = filter,
+            AddExtension = true,
+            FileName = defaultFilePath,
+            DefaultExt = Path.GetExtension(defaultFilePath)
+        };
 
-            return dialog.ShowDialog() == true ? dialog.FileName : null;
-        }
+        return dialog.ShowDialog() == true ? dialog.FileName : null;
+    }
 
-        public string? PromptDirectoryPath(string defaultDirPath = "")
+    public string? PromptDirectoryPath(string defaultDirPath = "")
+    {
+        var dialog = new VistaFolderBrowserDialog
         {
-            var dialog = new VistaFolderBrowserDialog
-            {
-                SelectedPath = defaultDirPath
-            };
+            SelectedPath = defaultDirPath
+        };
 
-            return dialog.ShowDialog() == true ? dialog.SelectedPath : null;
-        }
+        return dialog.ShowDialog() == true ? dialog.SelectedPath : null;
     }
 }

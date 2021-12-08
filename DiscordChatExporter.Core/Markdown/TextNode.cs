@@ -1,4 +1,3 @@
-﻿namespace DiscordChatExporter.Core.Markdown
-{
-    internal record TextNode(string Text) : MarkdownNode;
-}
+﻿namespace DiscordChatExporter.Core.Markdown;
+
+internal record TextNode(string Text) : MarkdownNode;

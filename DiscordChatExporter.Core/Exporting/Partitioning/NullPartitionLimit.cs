@@ -1,7 +1,6 @@
-﻿namespace DiscordChatExporter.Core.Exporting.Partitioning
+﻿namespace DiscordChatExporter.Core.Exporting.Partitioning;
+
+internal class NullPartitionLimit : PartitionLimit
 {
-    internal class NullPartitionLimit : PartitionLimit
-    {
-        public override bool IsReached(long messagesWritten, long bytesWritten) => false;
-    }
+    public override bool IsReached(long messagesWritten, long bytesWritten) => false;
 }

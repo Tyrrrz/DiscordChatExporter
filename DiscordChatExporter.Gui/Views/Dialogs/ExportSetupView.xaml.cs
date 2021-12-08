@@ -1,10 +1,9 @@
-namespace DiscordChatExporter.Gui.Views.Dialogs
+namespace DiscordChatExporter.Gui.Views.Dialogs;
+
+public partial class ExportSetupView
 {
-    public partial class ExportSetupView
+    public ExportSetupView()
     {
-        public ExportSetupView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

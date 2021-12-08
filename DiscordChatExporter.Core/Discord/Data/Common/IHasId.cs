@@ -1,7 +1,6 @@
-﻿namespace DiscordChatExporter.Core.Discord.Data.Common
+﻿namespace DiscordChatExporter.Core.Discord.Data.Common;
+
+public interface IHasId
 {
-    public interface IHasId
-    {
-        Snowflake Id { get; }
-    }
+    Snowflake Id { get; }
 }

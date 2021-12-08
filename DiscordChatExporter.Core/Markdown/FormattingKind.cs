@@ -1,12 +1,11 @@
-﻿namespace DiscordChatExporter.Core.Markdown
+﻿namespace DiscordChatExporter.Core.Markdown;
+
+internal enum FormattingKind
 {
-    internal enum FormattingKind
-    {
-        Bold,
-        Italic,
-        Underline,
-        Strikethrough,
-        Spoiler,
-        Quote
-    }
+    Bold,
+    Italic,
+    Underline,
+    Strikethrough,
+    Spoiler,
+    Quote
 }

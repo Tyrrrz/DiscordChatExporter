@@ -1,12 +1,11 @@
 ﻿using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 
-namespace DiscordChatExporter.Cli.Tests.Utils
-{
-    internal static class Html
-    {
-        private static readonly IHtmlParser Parser = new HtmlParser();
+namespace DiscordChatExporter.Cli.Tests.Utils;
 
-        public static IHtmlDocument Parse(string source) => Parser.ParseDocument(source);
-    }
+internal static class Html
+{
+    private static readonly IHtmlParser Parser = new HtmlParser();
+
+    public static IHtmlDocument Parse(string source) => Parser.ParseDocument(source);
 }

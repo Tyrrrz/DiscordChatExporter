@@ -1,4 +1,3 @@
-﻿namespace DiscordChatExporter.Core.Markdown
-{
-    internal abstract record MarkdownNode;
-}
+﻿namespace DiscordChatExporter.Core.Markdown;
+
+internal abstract record MarkdownNode;

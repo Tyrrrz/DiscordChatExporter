@@ -1,10 +1,9 @@
-﻿namespace DiscordChatExporter.Gui.Views.Dialogs
+﻿namespace DiscordChatExporter.Gui.Views.Dialogs;
+
+public partial class MessageBoxView
 {
-    public partial class MessageBoxView
+    public MessageBoxView()
     {
-        public MessageBoxView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

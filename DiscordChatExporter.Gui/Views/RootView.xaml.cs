@@ -1,10 +1,9 @@
-﻿namespace DiscordChatExporter.Gui.Views
+﻿namespace DiscordChatExporter.Gui.Views;
+
+public partial class RootView
 {
-    public partial class RootView
+    public RootView()
     {
-        public RootView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

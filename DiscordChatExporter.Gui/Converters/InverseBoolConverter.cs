@@ -2,27 +2,26 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace DiscordChatExporter.Gui.Converters
+namespace DiscordChatExporter.Gui.Converters;
+
+[ValueConversion(typeof(bool), typeof(bool))]
+public class InverseBoolConverter : IValueConverter
 {
-    [ValueConversion(typeof(bool), typeof(bool))]
-    public class InverseBoolConverter : IValueConverter
+    public static InverseBoolConverter Instance { get; } = new();
+
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        public static InverseBoolConverter Instance { get; } = new();
+        if (value is bool boolValue)
+            return !boolValue;
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is bool boolValue)
-                return !boolValue;
+        return default(bool);
+    }
 
-            return default(bool);
-        }
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is bool boolValue)
+            return !boolValue;
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is bool boolValue)
-                return !boolValue;
-
-            return default(bool);
-        }
+        return default(bool);
     }
 }

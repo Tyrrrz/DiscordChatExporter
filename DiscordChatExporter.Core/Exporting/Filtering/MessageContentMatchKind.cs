@@ -1,12 +1,11 @@
-﻿namespace DiscordChatExporter.Core.Exporting.Filtering
+﻿namespace DiscordChatExporter.Core.Exporting.Filtering;
+
+internal enum MessageContentMatchKind
 {
-    internal enum MessageContentMatchKind
-    {
-        Link,
-        Embed,
-        File,
-        Video,
-        Image,
-        Sound
-    }
+    Link,
+    Embed,
+    File,
+    Video,
+    Image,
+    Sound
 }

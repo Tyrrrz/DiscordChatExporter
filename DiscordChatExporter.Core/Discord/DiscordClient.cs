@@ -14,289 +14,288 @@ using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Http;
 using JsonExtensions.Reading;
 
-namespace DiscordChatExporter.Core.Discord
+namespace DiscordChatExporter.Core.Discord;
+
+public class DiscordClient
 {
-    public class DiscordClient
+    private readonly AuthToken _token;
+    private readonly Uri _baseUri = new("https://discord.com/api/v8/", UriKind.Absolute);
+
+    public DiscordClient(AuthToken token) => _token = token;
+
+    private async ValueTask<HttpResponseMessage> GetResponseAsync(
+        string url,
+        CancellationToken cancellationToken = default)
     {
-        private readonly AuthToken _token;
-        private readonly Uri _baseUri = new("https://discord.com/api/v8/", UriKind.Absolute);
-
-        public DiscordClient(AuthToken token) => _token = token;
-
-        private async ValueTask<HttpResponseMessage> GetResponseAsync(
-            string url,
-            CancellationToken cancellationToken = default)
+        return await Http.ResponsePolicy.ExecuteAsync(async innerCancellationToken =>
         {
-            return await Http.ResponsePolicy.ExecuteAsync(async innerCancellationToken =>
+            using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, url));
+            request.Headers.Authorization = _token.GetAuthenticationHeader();
+
+            return await Http.Client.SendAsync(
+                request,
+                HttpCompletionOption.ResponseHeadersRead,
+                innerCancellationToken
+            );
+        }, cancellationToken);
+    }
+
+    private async ValueTask<JsonElement> GetJsonResponseAsync(
+        string url,
+        CancellationToken cancellationToken = default)
+    {
+        using var response = await GetResponseAsync(url, cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw response.StatusCode switch
             {
-                using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, url));
-                request.Headers.Authorization = _token.GetAuthenticationHeader();
-
-                return await Http.Client.SendAsync(
-                    request,
-                    HttpCompletionOption.ResponseHeadersRead,
-                    innerCancellationToken
-                );
-            }, cancellationToken);
+                HttpStatusCode.Unauthorized => DiscordChatExporterException.Unauthorized(),
+                HttpStatusCode.Forbidden => DiscordChatExporterException.Forbidden(),
+                HttpStatusCode.NotFound => DiscordChatExporterException.NotFound(url),
+                _ => DiscordChatExporterException.FailedHttpRequest(response)
+            };
         }
 
-        private async ValueTask<JsonElement> GetJsonResponseAsync(
-            string url,
-            CancellationToken cancellationToken = default)
-        {
-            using var response = await GetResponseAsync(url, cancellationToken);
+        return await response.Content.ReadAsJsonAsync(cancellationToken);
+    }
 
-            if (!response.IsSuccessStatusCode)
-            {
-                throw response.StatusCode switch
-                {
-                    HttpStatusCode.Unauthorized => DiscordChatExporterException.Unauthorized(),
-                    HttpStatusCode.Forbidden => DiscordChatExporterException.Forbidden(),
-                    HttpStatusCode.NotFound => DiscordChatExporterException.NotFound(url),
-                    _ => DiscordChatExporterException.FailedHttpRequest(response)
-                };
-            }
+    private async ValueTask<JsonElement?> TryGetJsonResponseAsync(
+        string url,
+        CancellationToken cancellationToken = default)
+    {
+        using var response = await GetResponseAsync(url, cancellationToken);
 
-            return await response.Content.ReadAsJsonAsync(cancellationToken);
-        }
+        return response.IsSuccessStatusCode
+            ? await response.Content.ReadAsJsonAsync(cancellationToken)
+            : null;
+    }
 
-        private async ValueTask<JsonElement?> TryGetJsonResponseAsync(
-            string url,
-            CancellationToken cancellationToken = default)
-        {
-            using var response = await GetResponseAsync(url, cancellationToken);
+    public async IAsyncEnumerable<Guild> GetUserGuildsAsync(
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        yield return Guild.DirectMessages;
 
-            return response.IsSuccessStatusCode
-                ? await response.Content.ReadAsJsonAsync(cancellationToken)
-                : null;
-        }
+        var currentAfter = Snowflake.Zero;
 
-        public async IAsyncEnumerable<Guild> GetUserGuildsAsync(
-            [EnumeratorCancellation] CancellationToken cancellationToken = default)
-        {
-            yield return Guild.DirectMessages;
-
-            var currentAfter = Snowflake.Zero;
-
-            while (true)
-            {
-                var url = new UrlBuilder()
-                    .SetPath("users/@me/guilds")
-                    .SetQueryParameter("limit", "100")
-                    .SetQueryParameter("after", currentAfter.ToString())
-                    .Build();
-
-                var response = await GetJsonResponseAsync(url, cancellationToken);
-
-                var isEmpty = true;
-                foreach (var guild in response.EnumerateArray().Select(Guild.Parse))
-                {
-                    yield return guild;
-
-                    currentAfter = guild.Id;
-                    isEmpty = false;
-                }
-
-                if (isEmpty)
-                    yield break;
-            }
-        }
-
-        public async ValueTask<Guild> GetGuildAsync(
-            Snowflake guildId,
-            CancellationToken cancellationToken = default)
-        {
-            if (guildId == Guild.DirectMessages.Id)
-                return Guild.DirectMessages;
-
-            var response = await GetJsonResponseAsync($"guilds/{guildId}", cancellationToken);
-            return Guild.Parse(response);
-        }
-
-        public async IAsyncEnumerable<Channel> GetGuildChannelsAsync(
-            Snowflake guildId,
-            [EnumeratorCancellation] CancellationToken cancellationToken = default)
-        {
-            if (guildId == Guild.DirectMessages.Id)
-            {
-                var response = await GetJsonResponseAsync("users/@me/channels", cancellationToken);
-                foreach (var channelJson in response.EnumerateArray())
-                    yield return Channel.Parse(channelJson);
-            }
-            else
-            {
-                var response = await GetJsonResponseAsync($"guilds/{guildId}/channels", cancellationToken);
-
-                var responseOrdered = response
-                    .EnumerateArray()
-                    .OrderBy(j => j.GetProperty("position").GetInt32())
-                    .ThenBy(j => j.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse))
-                    .ToArray();
-
-                var categories = responseOrdered
-                    .Where(j => j.GetProperty("type").GetInt32() == (int) ChannelKind.GuildCategory)
-                    .Select((j, index) => ChannelCategory.Parse(j, index + 1))
-                    .ToDictionary(j => j.Id.ToString(), StringComparer.Ordinal);
-
-                var position = 0;
-
-                foreach (var channelJson in responseOrdered)
-                {
-                    var parentId = channelJson.GetPropertyOrNull("parent_id")?.GetStringOrNull();
-
-                    var category = !string.IsNullOrWhiteSpace(parentId)
-                        ? categories.GetValueOrDefault(parentId)
-                        : null;
-
-                    var channel = Channel.Parse(channelJson, category, position);
-
-                    position++;
-
-                    yield return channel;
-                }
-            }
-        }
-
-        public async IAsyncEnumerable<Role> GetGuildRolesAsync(
-            Snowflake guildId,
-            [EnumeratorCancellation] CancellationToken cancellationToken = default)
-        {
-            if (guildId == Guild.DirectMessages.Id)
-                yield break;
-
-            var response = await GetJsonResponseAsync($"guilds/{guildId}/roles", cancellationToken);
-
-            foreach (var roleJson in response.EnumerateArray())
-                yield return Role.Parse(roleJson);
-        }
-
-        public async ValueTask<Member> GetGuildMemberAsync(
-            Snowflake guildId,
-            User user,
-            CancellationToken cancellationToken = default)
-        {
-            if (guildId == Guild.DirectMessages.Id)
-                return Member.CreateForUser(user);
-
-            var response = await TryGetJsonResponseAsync($"guilds/{guildId}/members/{user.Id}", cancellationToken);
-            return response?.Pipe(Member.Parse) ?? Member.CreateForUser(user);
-        }
-
-        public async ValueTask<ChannelCategory> GetChannelCategoryAsync(
-            Snowflake channelId,
-            CancellationToken cancellationToken = default)
-        {
-            try
-            {
-                var response = await GetJsonResponseAsync($"channels/{channelId}", cancellationToken);
-                return ChannelCategory.Parse(response);
-            }
-            // In some cases, the Discord API returns an empty body when requesting channel category.
-            // Instead, we use an empty channel category as a fallback.
-            catch (DiscordChatExporterException)
-            {
-                return ChannelCategory.Unknown;
-            }
-        }
-
-        public async ValueTask<Channel> GetChannelAsync(
-            Snowflake channelId,
-            CancellationToken cancellationToken = default)
-        {
-            var response = await GetJsonResponseAsync($"channels/{channelId}", cancellationToken);
-
-            var parentId = response.GetPropertyOrNull("parent_id")?.GetStringOrNull()?.Pipe(Snowflake.Parse);
-
-            var category = parentId is not null
-                ? await GetChannelCategoryAsync(parentId.Value, cancellationToken)
-                : null;
-
-            return Channel.Parse(response, category);
-        }
-
-        private async ValueTask<Message?> TryGetLastMessageAsync(
-            Snowflake channelId,
-            Snowflake? before = null,
-            CancellationToken cancellationToken = default)
+        while (true)
         {
             var url = new UrlBuilder()
-                .SetPath($"channels/{channelId}/messages")
-                .SetQueryParameter("limit", "1")
-                .SetQueryParameter("before", before?.ToString())
+                .SetPath("users/@me/guilds")
+                .SetQueryParameter("limit", "100")
+                .SetQueryParameter("after", currentAfter.ToString())
                 .Build();
 
             var response = await GetJsonResponseAsync(url, cancellationToken);
-            return response.EnumerateArray().Select(Message.Parse).LastOrDefault();
-        }
 
-        public async IAsyncEnumerable<Message> GetMessagesAsync(
-            Snowflake channelId,
-            Snowflake? after = null,
-            Snowflake? before = null,
-            IProgress<double>? progress = null,
-            [EnumeratorCancellation] CancellationToken cancellationToken = default)
+            var isEmpty = true;
+            foreach (var guild in response.EnumerateArray().Select(Guild.Parse))
+            {
+                yield return guild;
+
+                currentAfter = guild.Id;
+                isEmpty = false;
+            }
+
+            if (isEmpty)
+                yield break;
+        }
+    }
+
+    public async ValueTask<Guild> GetGuildAsync(
+        Snowflake guildId,
+        CancellationToken cancellationToken = default)
+    {
+        if (guildId == Guild.DirectMessages.Id)
+            return Guild.DirectMessages;
+
+        var response = await GetJsonResponseAsync($"guilds/{guildId}", cancellationToken);
+        return Guild.Parse(response);
+    }
+
+    public async IAsyncEnumerable<Channel> GetGuildChannelsAsync(
+        Snowflake guildId,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        if (guildId == Guild.DirectMessages.Id)
         {
-            // Get the last message in the specified range.
-            // This snapshots the boundaries, which means that messages posted after the export started
-            // will not appear in the output.
-            // Additionally, it provides the date of the last message, which is used to calculate progress.
-            var lastMessage = await TryGetLastMessageAsync(channelId, before, cancellationToken);
-            if (lastMessage is null || lastMessage.Timestamp < after?.ToDate())
+            var response = await GetJsonResponseAsync("users/@me/channels", cancellationToken);
+            foreach (var channelJson in response.EnumerateArray())
+                yield return Channel.Parse(channelJson);
+        }
+        else
+        {
+            var response = await GetJsonResponseAsync($"guilds/{guildId}/channels", cancellationToken);
+
+            var responseOrdered = response
+                .EnumerateArray()
+                .OrderBy(j => j.GetProperty("position").GetInt32())
+                .ThenBy(j => j.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse))
+                .ToArray();
+
+            var categories = responseOrdered
+                .Where(j => j.GetProperty("type").GetInt32() == (int) ChannelKind.GuildCategory)
+                .Select((j, index) => ChannelCategory.Parse(j, index + 1))
+                .ToDictionary(j => j.Id.ToString(), StringComparer.Ordinal);
+
+            var position = 0;
+
+            foreach (var channelJson in responseOrdered)
+            {
+                var parentId = channelJson.GetPropertyOrNull("parent_id")?.GetStringOrNull();
+
+                var category = !string.IsNullOrWhiteSpace(parentId)
+                    ? categories.GetValueOrDefault(parentId)
+                    : null;
+
+                var channel = Channel.Parse(channelJson, category, position);
+
+                position++;
+
+                yield return channel;
+            }
+        }
+    }
+
+    public async IAsyncEnumerable<Role> GetGuildRolesAsync(
+        Snowflake guildId,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        if (guildId == Guild.DirectMessages.Id)
+            yield break;
+
+        var response = await GetJsonResponseAsync($"guilds/{guildId}/roles", cancellationToken);
+
+        foreach (var roleJson in response.EnumerateArray())
+            yield return Role.Parse(roleJson);
+    }
+
+    public async ValueTask<Member> GetGuildMemberAsync(
+        Snowflake guildId,
+        User user,
+        CancellationToken cancellationToken = default)
+    {
+        if (guildId == Guild.DirectMessages.Id)
+            return Member.CreateForUser(user);
+
+        var response = await TryGetJsonResponseAsync($"guilds/{guildId}/members/{user.Id}", cancellationToken);
+        return response?.Pipe(Member.Parse) ?? Member.CreateForUser(user);
+    }
+
+    public async ValueTask<ChannelCategory> GetChannelCategoryAsync(
+        Snowflake channelId,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var response = await GetJsonResponseAsync($"channels/{channelId}", cancellationToken);
+            return ChannelCategory.Parse(response);
+        }
+        // In some cases, the Discord API returns an empty body when requesting channel category.
+        // Instead, we use an empty channel category as a fallback.
+        catch (DiscordChatExporterException)
+        {
+            return ChannelCategory.Unknown;
+        }
+    }
+
+    public async ValueTask<Channel> GetChannelAsync(
+        Snowflake channelId,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await GetJsonResponseAsync($"channels/{channelId}", cancellationToken);
+
+        var parentId = response.GetPropertyOrNull("parent_id")?.GetStringOrNull()?.Pipe(Snowflake.Parse);
+
+        var category = parentId is not null
+            ? await GetChannelCategoryAsync(parentId.Value, cancellationToken)
+            : null;
+
+        return Channel.Parse(response, category);
+    }
+
+    private async ValueTask<Message?> TryGetLastMessageAsync(
+        Snowflake channelId,
+        Snowflake? before = null,
+        CancellationToken cancellationToken = default)
+    {
+        var url = new UrlBuilder()
+            .SetPath($"channels/{channelId}/messages")
+            .SetQueryParameter("limit", "1")
+            .SetQueryParameter("before", before?.ToString())
+            .Build();
+
+        var response = await GetJsonResponseAsync(url, cancellationToken);
+        return response.EnumerateArray().Select(Message.Parse).LastOrDefault();
+    }
+
+    public async IAsyncEnumerable<Message> GetMessagesAsync(
+        Snowflake channelId,
+        Snowflake? after = null,
+        Snowflake? before = null,
+        IProgress<double>? progress = null,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        // Get the last message in the specified range.
+        // This snapshots the boundaries, which means that messages posted after the export started
+        // will not appear in the output.
+        // Additionally, it provides the date of the last message, which is used to calculate progress.
+        var lastMessage = await TryGetLastMessageAsync(channelId, before, cancellationToken);
+        if (lastMessage is null || lastMessage.Timestamp < after?.ToDate())
+            yield break;
+
+        // Keep track of first message in range in order to calculate progress
+        var firstMessage = default(Message);
+        var currentAfter = after ?? Snowflake.Zero;
+
+        while (true)
+        {
+            var url = new UrlBuilder()
+                .SetPath($"channels/{channelId}/messages")
+                .SetQueryParameter("limit", "100")
+                .SetQueryParameter("after", currentAfter.ToString())
+                .Build();
+
+            var response = await GetJsonResponseAsync(url, cancellationToken);
+
+            var messages = response
+                .EnumerateArray()
+                .Select(Message.Parse)
+                .Reverse() // reverse because messages appear newest first
+                .ToArray();
+
+            // Break if there are no messages (can happen if messages are deleted during execution)
+            if (!messages.Any())
                 yield break;
 
-            // Keep track of first message in range in order to calculate progress
-            var firstMessage = default(Message);
-            var currentAfter = after ?? Snowflake.Zero;
-
-            while (true)
+            foreach (var message in messages)
             {
-                var url = new UrlBuilder()
-                    .SetPath($"channels/{channelId}/messages")
-                    .SetQueryParameter("limit", "100")
-                    .SetQueryParameter("after", currentAfter.ToString())
-                    .Build();
+                firstMessage ??= message;
 
-                var response = await GetJsonResponseAsync(url, cancellationToken);
-
-                var messages = response
-                    .EnumerateArray()
-                    .Select(Message.Parse)
-                    .Reverse() // reverse because messages appear newest first
-                    .ToArray();
-
-                // Break if there are no messages (can happen if messages are deleted during execution)
-                if (!messages.Any())
+                // Ensure messages are in range (take into account that last message could have been deleted)
+                if (message.Timestamp > lastMessage.Timestamp)
                     yield break;
 
-                foreach (var message in messages)
+                // Report progress based on the duration of exported messages divided by total
+                if (progress is not null)
                 {
-                    firstMessage ??= message;
+                    var exportedDuration = (message.Timestamp - firstMessage.Timestamp).Duration();
+                    var totalDuration = (lastMessage.Timestamp - firstMessage.Timestamp).Duration();
 
-                    // Ensure messages are in range (take into account that last message could have been deleted)
-                    if (message.Timestamp > lastMessage.Timestamp)
-                        yield break;
-
-                    // Report progress based on the duration of exported messages divided by total
-                    if (progress is not null)
+                    if (totalDuration > TimeSpan.Zero)
                     {
-                        var exportedDuration = (message.Timestamp - firstMessage.Timestamp).Duration();
-                        var totalDuration = (lastMessage.Timestamp - firstMessage.Timestamp).Duration();
-
-                        if (totalDuration > TimeSpan.Zero)
-                        {
-                            progress.Report(exportedDuration / totalDuration);
-                        }
-                        // Avoid division by zero if all messages have the exact same timestamp
-                        // (which may be the case if there's only one message in the channel)
-                        else
-                        {
-                            progress.Report(1);
-                        }
+                        progress.Report(exportedDuration / totalDuration);
                     }
-
-                    yield return message;
-                    currentAfter = message.Id;
+                    // Avoid division by zero if all messages have the exact same timestamp
+                    // (which may be the case if there's only one message in the channel)
+                    else
+                    {
+                        progress.Report(1);
+                    }
                 }
+
+                yield return message;
+                currentAfter = message.Id;
             }
         }
     }

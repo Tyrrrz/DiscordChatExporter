@@ -6,30 +6,29 @@ using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands.Base;
 using DiscordChatExporter.Core.Utils.Extensions;
 
-namespace DiscordChatExporter.Cli.Commands
+namespace DiscordChatExporter.Cli.Commands;
+
+[Command("guilds", Description = "Get the list of accessible guilds.")]
+public class GetGuildsCommand : TokenCommandBase
 {
-    [Command("guilds", Description = "Get the list of accessible guilds.")]
-    public class GetGuildsCommand : TokenCommandBase
+    public override async ValueTask ExecuteAsync(IConsole console)
     {
-        public override async ValueTask ExecuteAsync(IConsole console)
+        var cancellationToken = console.RegisterCancellationHandler();
+
+        var guilds = await Discord.GetUserGuildsAsync(cancellationToken);
+
+        foreach (var guild in guilds.OrderBy(g => g.Name))
         {
-            var cancellationToken = console.RegisterCancellationHandler();
+            // Guild ID
+            await console.Output.WriteAsync(guild.Id.ToString());
 
-            var guilds = await Discord.GetUserGuildsAsync(cancellationToken);
+            // Separator
+            using (console.WithForegroundColor(ConsoleColor.DarkGray))
+                await console.Output.WriteAsync(" | ");
 
-            foreach (var guild in guilds.OrderBy(g => g.Name))
-            {
-                // Guild ID
-                await console.Output.WriteAsync(guild.Id.ToString());
-
-                // Separator
-                using (console.WithForegroundColor(ConsoleColor.DarkGray))
-                    await console.Output.WriteAsync(" | ");
-
-                // Guild name
-                using (console.WithForegroundColor(ConsoleColor.White))
-                    await console.Output.WriteLineAsync(guild.Name);
-            }
+            // Guild name
+            using (console.WithForegroundColor(ConsoleColor.White))
+                await console.Output.WriteLineAsync(guild.Name);
         }
     }
 }

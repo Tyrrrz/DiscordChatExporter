@@ -1,15 +1,14 @@
-﻿namespace DiscordChatExporter.Core.Exporting.Writers.Html
+﻿namespace DiscordChatExporter.Core.Exporting.Writers.Html;
+
+internal class PostambleTemplateContext
 {
-    internal class PostambleTemplateContext
+    public ExportContext ExportContext { get; }
+
+    public long MessagesWritten { get; }
+
+    public PostambleTemplateContext(ExportContext exportContext, long messagesWritten)
     {
-        public ExportContext ExportContext { get; }
-
-        public long MessagesWritten { get; }
-
-        public PostambleTemplateContext(ExportContext exportContext, long messagesWritten)
-        {
-            ExportContext = exportContext;
-            MessagesWritten = messagesWritten;
-        }
+        ExportContext = exportContext;
+        MessagesWritten = messagesWritten;
     }
 }

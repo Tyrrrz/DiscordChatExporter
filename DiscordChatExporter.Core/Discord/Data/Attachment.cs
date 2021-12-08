@@ -6,40 +6,39 @@ using DiscordChatExporter.Core.Utils;
 using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Reading;
 
-namespace DiscordChatExporter.Core.Discord.Data
+namespace DiscordChatExporter.Core.Discord.Data;
+
+// https://discord.com/developers/docs/resources/channel#attachment-object
+public partial record Attachment(
+    Snowflake Id,
+    string Url,
+    string FileName,
+    int? Width,
+    int? Height,
+    FileSize FileSize) : IHasId
 {
-    // https://discord.com/developers/docs/resources/channel#attachment-object
-    public partial record Attachment(
-        Snowflake Id,
-        string Url,
-        string FileName,
-        int? Width,
-        int? Height,
-        FileSize FileSize) : IHasId
+    public string FileExtension => Path.GetExtension(FileName);
+
+    public bool IsImage => FileFormat.IsImage(FileExtension);
+
+    public bool IsVideo => FileFormat.IsVideo(FileExtension);
+
+    public bool IsAudio => FileFormat.IsAudio(FileExtension);
+
+    public bool IsSpoiler => FileName.StartsWith("SPOILER_", StringComparison.Ordinal);
+}
+
+public partial record Attachment
+{
+    public static Attachment Parse(JsonElement json)
     {
-        public string FileExtension => Path.GetExtension(FileName);
+        var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
+        var url = json.GetProperty("url").GetNonWhiteSpaceString();
+        var width = json.GetPropertyOrNull("width")?.GetInt32();
+        var height = json.GetPropertyOrNull("height")?.GetInt32();
+        var fileName = json.GetProperty("filename").GetNonWhiteSpaceString();
+        var fileSize = json.GetProperty("size").GetInt64().Pipe(FileSize.FromBytes);
 
-        public bool IsImage => FileFormat.IsImage(FileExtension);
-
-        public bool IsVideo => FileFormat.IsVideo(FileExtension);
-
-        public bool IsAudio => FileFormat.IsAudio(FileExtension);
-
-        public bool IsSpoiler => FileName.StartsWith("SPOILER_", StringComparison.Ordinal);
-    }
-
-    public partial record Attachment
-    {
-        public static Attachment Parse(JsonElement json)
-        {
-            var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
-            var url = json.GetProperty("url").GetNonWhiteSpaceString();
-            var width = json.GetPropertyOrNull("width")?.GetInt32();
-            var height = json.GetPropertyOrNull("height")?.GetInt32();
-            var fileName = json.GetProperty("filename").GetNonWhiteSpaceString();
-            var fileSize = json.GetProperty("size").GetInt64().Pipe(FileSize.FromBytes);
-
-            return new Attachment(id, url, fileName, width, height, fileSize);
-        }
+        return new Attachment(id, url, fileName, width, height, fileSize);
     }
 }

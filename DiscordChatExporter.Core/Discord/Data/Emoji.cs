@@ -48,7 +48,7 @@ public partial record Emoji
 
     public static Emoji Parse(JsonElement json)
     {
-        var id = json.GetPropertyOrNull("id")?.GetNonWhiteSpaceString();
+        var id = json.GetPropertyOrNull("id")?.GetStringOrNull();
         var name = json.GetProperty("name").GetNonWhiteSpaceString();
         var isAnimated = json.GetPropertyOrNull("animated")?.GetBoolean() ?? false;
 

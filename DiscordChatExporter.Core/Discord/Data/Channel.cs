@@ -45,7 +45,7 @@ public partial record Channel
     public static Channel Parse(JsonElement json, ChannelCategory? category = null, int? position = null)
     {
         var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
-        var guildId = json.GetPropertyOrNull("guild_id")?.GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
+        var guildId = json.GetPropertyOrNull("guild_id")?.GetStringOrNull()?.Pipe(Snowflake.Parse);
         var topic = json.GetPropertyOrNull("topic")?.GetStringOrNull();
         var kind = (ChannelKind)json.GetProperty("type").GetInt32();
 

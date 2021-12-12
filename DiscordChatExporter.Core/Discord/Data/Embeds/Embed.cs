@@ -47,7 +47,7 @@ public partial record Embed
         var footer = json.GetPropertyOrNull("footer")?.Pipe(EmbedFooter.Parse);
 
         var fields =
-            json.GetPropertyOrNull("fields")?.EnumerateArray().Select(EmbedField.Parse).ToArray() ??
+            json.GetPropertyOrNull("fields")?.EnumerateArrayOrNull()?.Select(EmbedField.Parse).ToArray() ??
             Array.Empty<EmbedField>();
 
         return new Embed(

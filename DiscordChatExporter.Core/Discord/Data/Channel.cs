@@ -52,9 +52,14 @@ public partial record Channel
         var name =
             // Guild channel
             json.GetPropertyOrNull("name")?.GetStringOrNull() ??
+
             // DM channel
-            json.GetPropertyOrNull("recipients")?.EnumerateArray().Select(User.Parse).Select(u => u.Name)
+            json.GetPropertyOrNull("recipients")?
+                .EnumerateArrayOrNull()?
+                .Select(User.Parse)
+                .Select(u => u.Name)
                 .Pipe(s => string.Join(", ", s)) ??
+
             // Fallback
             id.ToString();
 

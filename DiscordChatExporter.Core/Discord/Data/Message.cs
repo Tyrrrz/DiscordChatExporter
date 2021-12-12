@@ -53,19 +53,19 @@ public record Message(
         };
 
         var attachments =
-            json.GetPropertyOrNull("attachments")?.EnumerateArray().Select(Attachment.Parse).ToArray() ??
+            json.GetPropertyOrNull("attachments")?.EnumerateArrayOrNull()?.Select(Attachment.Parse).ToArray() ??
             Array.Empty<Attachment>();
 
         var embeds =
-            json.GetPropertyOrNull("embeds")?.EnumerateArray().Select(Embed.Parse).ToArray() ??
+            json.GetPropertyOrNull("embeds")?.EnumerateArrayOrNull()?.Select(Embed.Parse).ToArray() ??
             Array.Empty<Embed>();
 
         var reactions =
-            json.GetPropertyOrNull("reactions")?.EnumerateArray().Select(Reaction.Parse).ToArray() ??
+            json.GetPropertyOrNull("reactions")?.EnumerateArrayOrNull()?.Select(Reaction.Parse).ToArray() ??
             Array.Empty<Reaction>();
 
         var mentionedUsers =
-            json.GetPropertyOrNull("mentions")?.EnumerateArray().Select(User.Parse).ToArray() ??
+            json.GetPropertyOrNull("mentions")?.EnumerateArrayOrNull()?.Select(User.Parse).ToArray() ??
             Array.Empty<User>();
 
         return new Message(

@@ -69,7 +69,7 @@
                             Grid.Column="0"
                             Margin="6"
                             IsChecked="{Binding IsBotToken}"
-                            Style="{StaticResource MaterialDesignFlatActionToggleButton}"
+                            Style="{DynamicResource MaterialDesignFlatActionToggleButton}"
                             ToolTip="Switch between user token and bot token">
                             <ToggleButton.Content>
                                 <materialDesign:PackIcon
@@ -380,7 +380,7 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
                     Command="{s:Action ExportChannels}"
-                    Style="{StaticResource MaterialDesignFloatingActionAccentButton}"
+                    Style="{DynamicResource MaterialDesignFloatingActionAccentButton}"
                     Visibility="{Binding CanExportChannels, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
                     <materialDesign:PackIcon
                         Width="32"

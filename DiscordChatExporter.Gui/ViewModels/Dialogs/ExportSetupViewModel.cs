@@ -62,14 +62,7 @@ public class ExportSetupViewModel : DialogScreen
 
     public bool ShouldDownloadMedia { get; set; }
 
-    // Whether to show the "advanced options" by default when the dialog opens.
-    // This is active if any of the advanced options are set to non-default values.
-    public bool IsAdvancedSectionDisplayedByDefault =>
-        After != default ||
-        Before != default ||
-        !string.IsNullOrWhiteSpace(PartitionLimitValue) ||
-        !string.IsNullOrWhiteSpace(MessageFilterValue) ||
-        ShouldDownloadMedia != default;
+    public bool IsAdvancedSectionDisplayed { get; set; }
 
     public ExportSetupViewModel(DialogManager dialogManager, SettingsService settingsService)
     {
@@ -81,7 +74,18 @@ public class ExportSetupViewModel : DialogScreen
         PartitionLimitValue = _settingsService.LastPartitionLimitValue;
         MessageFilterValue = _settingsService.LastMessageFilterValue;
         ShouldDownloadMedia = _settingsService.LastShouldDownloadMedia;
+
+        // Show the "advanced options" by default if any
+        // of the advanced options are set to non-default values.
+        IsAdvancedSectionDisplayed =
+            After != default ||
+            Before != default ||
+            !string.IsNullOrWhiteSpace(PartitionLimitValue) ||
+            !string.IsNullOrWhiteSpace(MessageFilterValue) ||
+            ShouldDownloadMedia != default;
     }
+
+    public void ToggleAdvancedSection() => IsAdvancedSectionDisplayed = !IsAdvancedSectionDisplayed;
 
     public void Confirm()
     {

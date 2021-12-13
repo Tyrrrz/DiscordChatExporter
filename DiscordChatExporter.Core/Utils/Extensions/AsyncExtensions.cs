@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace DiscordChatExporter.Core.Utils.Extensions;
@@ -23,29 +20,4 @@ public static class AsyncExtensions
     public static ValueTaskAwaiter<IReadOnlyList<T>> GetAwaiter<T>(
         this IAsyncEnumerable<T> asyncEnumerable) =>
         asyncEnumerable.AggregateAsync().GetAwaiter();
-
-    public static async ValueTask ParallelForEachAsync<T>(
-        this IEnumerable<T> source,
-        Func<T, ValueTask> handleAsync,
-        int degreeOfParallelism,
-        CancellationToken cancellationToken = default)
-    {
-        using var semaphore = new SemaphoreSlim(degreeOfParallelism);
-
-        await Task.WhenAll(source.Select(async item =>
-        {
-            // ReSharper disable once AccessToDisposedClosure
-            await semaphore.WaitAsync(cancellationToken);
-
-            try
-            {
-                await handleAsync(item);
-            }
-            finally
-            {
-                // ReSharper disable once AccessToDisposedClosure
-                semaphore.Release();
-            }
-        }));
-    }
 }

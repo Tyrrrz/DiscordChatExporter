@@ -210,39 +210,46 @@ public class RootViewModel : Screen
             var operations = ProgressManager.CreateOperations(dialog.Channels!.Count);
             var successfulExportCount = 0;
 
-            await dialog.Channels.Zip(operations).ParallelForEachAsync(async tuple =>
-            {
-                var (channel, operation) = tuple;
-
-                try
+            await Parallel.ForEachAsync(
+                dialog.Channels.Zip(operations),
+                new ParallelOptions
                 {
-                    var request = new ExportRequest(
-                        dialog.Guild!,
-                        channel!,
-                        dialog.OutputPath!,
-                        dialog.SelectedFormat,
-                        dialog.After?.Pipe(Snowflake.FromDate),
-                        dialog.Before?.Pipe(Snowflake.FromDate),
-                        dialog.PartitionLimit,
-                        dialog.MessageFilter,
-                        dialog.ShouldDownloadMedia,
-                        _settingsService.ShouldReuseMedia,
-                        _settingsService.DateFormat
-                    );
-
-                    await exporter.ExportChannelAsync(request, operation);
-
-                    Interlocked.Increment(ref successfulExportCount);
-                }
-                catch (DiscordChatExporterException ex) when (!ex.IsFatal)
+                    MaxDegreeOfParallelism = Math.Max(1, _settingsService.ParallelLimit)
+                },
+                async (tuple, cancellationToken) =>
                 {
-                    Notifications.Enqueue(ex.Message.TrimEnd('.'));
+                    var (channel, operation) = tuple;
+
+                    try
+                    {
+                        var request = new ExportRequest(
+                            dialog.Guild!,
+                            channel,
+                            dialog.OutputPath!,
+                            dialog.SelectedFormat,
+                            dialog.After?.Pipe(Snowflake.FromDate),
+                            dialog.Before?.Pipe(Snowflake.FromDate),
+                            dialog.PartitionLimit,
+                            dialog.MessageFilter,
+                            dialog.ShouldDownloadMedia,
+                            _settingsService.ShouldReuseMedia,
+                            _settingsService.DateFormat
+                        );
+
+                        await exporter.ExportChannelAsync(request, operation, cancellationToken);
+
+                        Interlocked.Increment(ref successfulExportCount);
+                    }
+                    catch (DiscordChatExporterException ex) when (!ex.IsFatal)
+                    {
+                        Notifications.Enqueue(ex.Message.TrimEnd('.'));
+                    }
+                    finally
+                    {
+                        operation.Dispose();
+                    }
                 }
-                finally
-                {
-                    operation.Dispose();
-                }
-            }, Math.Max(1, _settingsService.ParallelLimit));
+            );
 
             // Notify of overall completion
             if (successfulExportCount > 0)

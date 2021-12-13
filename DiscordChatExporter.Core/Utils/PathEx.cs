@@ -1,17 +1,20 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace DiscordChatExporter.Core.Utils;
 
 public static class PathEx
 {
-    public static StringBuilder EscapePath(StringBuilder pathBuffer)
+    private static readonly HashSet<char> InvalidFileNameChars = new(Path.GetInvalidFileNameChars());
+
+    public static string EscapeFileName(string path)
     {
-        foreach (var invalidChar in Path.GetInvalidFileNameChars())
-            pathBuffer.Replace(invalidChar, '_');
+        var buffer = new StringBuilder(path.Length);
 
-        return pathBuffer;
+        foreach (var c in path)
+            buffer.Append(!InvalidFileNameChars.Contains(c) ? c : '_');
+
+        return buffer.ToString();
     }
-
-    public static string EscapePath(string path) => EscapePath(new StringBuilder(path)).ToString();
 }

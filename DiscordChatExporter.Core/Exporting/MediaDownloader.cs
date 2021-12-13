@@ -104,6 +104,6 @@ internal partial class MediaDownloader
         var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
         var fileExtension = Path.GetExtension(fileName);
 
-        return PathEx.EscapePath(fileNameWithoutExtension.Truncate(42) + '-' + urlHash + fileExtension);
+        return PathEx.EscapeFileName(fileNameWithoutExtension.Truncate(42) + '-' + urlHash + fileExtension);
     }
 }

@@ -14,7 +14,6 @@ using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Core.Exporting.Filtering;
 using DiscordChatExporter.Core.Exporting.Partitioning;
-using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Cli.Commands.Base;
 
@@ -68,36 +67,47 @@ public abstract class ExportCommandBase : TokenCommandBase
         await console.Output.WriteLineAsync($"Exporting {channels.Count} channel(s)...");
         await console.CreateProgressTicker().StartAsync(async progressContext =>
         {
-            await channels.ParallelForEachAsync(async channel =>
-            {
-                try
+            await Parallel.ForEachAsync(
+                channels,
+                new ParallelOptions
                 {
-                    await progressContext.StartTaskAsync($"{channel.Category.Name} / {channel.Name}", async progress =>
+                    MaxDegreeOfParallelism = Math.Max(1, ParallelLimit),
+                    CancellationToken = cancellationToken
+                },
+                async (channel, innerCancellationToken) =>
+                {
+                    try
                     {
-                        var guild = await Discord.GetGuildAsync(channel.GuildId, cancellationToken);
+                        await progressContext.StartTaskAsync(
+                            $"{channel.Category.Name} / {channel.Name}",
+                            async progress =>
+                            {
+                                var guild = await Discord.GetGuildAsync(channel.GuildId, innerCancellationToken);
 
-                        var request = new ExportRequest(
-                            guild,
-                            channel,
-                            OutputPath,
-                            ExportFormat,
-                            After,
-                            Before,
-                            PartitionLimit,
-                            MessageFilter,
-                            ShouldDownloadMedia,
-                            ShouldReuseMedia,
-                            DateFormat
+                                var request = new ExportRequest(
+                                    guild,
+                                    channel,
+                                    OutputPath,
+                                    ExportFormat,
+                                    After,
+                                    Before,
+                                    PartitionLimit,
+                                    MessageFilter,
+                                    ShouldDownloadMedia,
+                                    ShouldReuseMedia,
+                                    DateFormat
+                                );
+
+                                await Exporter.ExportChannelAsync(request, progress, innerCancellationToken);
+                            }
                         );
-
-                        await Exporter.ExportChannelAsync(request, progress, cancellationToken);
-                    });
+                    }
+                    catch (DiscordChatExporterException ex) when (!ex.IsFatal)
+                    {
+                        errors[channel] = ex.Message;
+                    }
                 }
-                catch (DiscordChatExporterException ex) when (!ex.IsFatal)
-                {
-                    errors[channel] = ex.Message;
-                }
-            }, Math.Max(ParallelLimit, 1), cancellationToken);
+            );
         });
 
         // Print result

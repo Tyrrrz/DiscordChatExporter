@@ -48,10 +48,9 @@ public partial record ExportRequest
         Snowflake? after = null,
         Snowflake? before = null)
     {
-
         // Formats path
         outputPath = Regex.Replace(outputPath, "%.", m =>
-            PathEx.EscapePath(m.Value switch
+            PathEx.EscapeFileName(m.Value switch
             {
                 "%g" => guild.Id.ToString(),
                 "%G" => guild.Name,
@@ -118,9 +117,6 @@ public partial record ExportRequest
         // File extension
         buffer.Append($".{format.GetFileExtension()}");
 
-        // Replace invalid chars
-        PathEx.EscapePath(buffer);
-
-        return buffer.ToString();
+        return PathEx.EscapeFileName(buffer.ToString());
     }
 }

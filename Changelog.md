@@ -1,3 +1,8 @@
+### v2.31.1 (15-Dec-2021)
+
+- Fixed an issue which caused an exception when parsing certain custom emoji reactions.
+- [GUI] Improved user interface.
+
 ### v2.31 (06-Dec-2021)
 
 - Changed target runtime of the application (both GUI and CLI) from .NET 3.1 to .NET 6. Those using the GUI version will not need to take any action as the application should install the necessary prerequisites automatically. Those using the CLI version will need to download and install .NET 6 runtime manually [from here](https://dotnet.microsoft.com/download/dotnet/6.0) (look for ".NET Runtime 6.0.x" section on the right and choose the distribution appropriate for your system).

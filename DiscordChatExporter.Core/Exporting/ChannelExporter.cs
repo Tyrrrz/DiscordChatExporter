@@ -61,11 +61,7 @@ public class ChannelExporter
                 if (!encounteredUsers.Add(referencedUser))
                     continue;
 
-                var member = await _discord.GetGuildMemberAsync(
-                    request.Guild.Id,
-                    referencedUser,
-                    cancellationToken
-                );
+                var member = new Member(referencedUser, referencedUser.Name, Array.Empty<Snowflake>());
 
                 contextMembers.Add(member);
             }

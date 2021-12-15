@@ -36,9 +36,9 @@ public partial record Embed
     public static Embed Parse(JsonElement json)
     {
         var title = json.GetPropertyOrNull("title")?.GetStringOrNull();
-        var url = json.GetPropertyOrNull("url")?.GetStringOrNull();
+        var url = json.GetPropertyOrNull("url")?.GetNonWhiteSpaceStringOrNull();
         var timestamp = json.GetPropertyOrNull("timestamp")?.GetDateTimeOffset();
-        var color = json.GetPropertyOrNull("color")?.GetInt32().Pipe(System.Drawing.Color.FromArgb).ResetAlpha();
+        var color = json.GetPropertyOrNull("color")?.GetInt32OrNull()?.Pipe(System.Drawing.Color.FromArgb).ResetAlpha();
         var description = json.GetPropertyOrNull("description")?.GetStringOrNull();
 
         var author = json.GetPropertyOrNull("author")?.Pipe(EmbedAuthor.Parse);

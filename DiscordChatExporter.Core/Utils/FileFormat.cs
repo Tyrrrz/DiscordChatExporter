@@ -5,7 +5,7 @@ namespace DiscordChatExporter.Core.Utils;
 
 public static class FileFormat
 {
-    private static readonly HashSet<string> ImageFormats = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly HashSet<string> ImageExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
         ".jpg",
         ".jpeg",
@@ -16,18 +16,18 @@ public static class FileFormat
         ".webp"
     };
 
-    public static bool IsImage(string format) => ImageFormats.Contains(format);
+    public static bool IsImage(string format) => ImageExtensions.Contains(format);
 
-    private static readonly HashSet<string> VideoFormats = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly HashSet<string> VideoExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
         ".mp4",
         ".webm",
         ".mov"
     };
 
-    public static bool IsVideo(string format) => VideoFormats.Contains(format);
+    public static bool IsVideo(string format) => VideoExtensions.Contains(format);
 
-    private static readonly HashSet<string> AudioFormats = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly HashSet<string> AudioExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
         ".mp3",
         ".wav",
@@ -36,5 +36,5 @@ public static class FileFormat
         ".m4a"
     };
 
-    public static bool IsAudio(string format) => AudioFormats.Contains(format);
+    public static bool IsAudio(string format) => AudioExtensions.Contains(format);
 }

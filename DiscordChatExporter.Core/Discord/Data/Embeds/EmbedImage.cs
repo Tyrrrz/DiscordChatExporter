@@ -12,10 +12,10 @@ public record EmbedImage(
 {
     public static EmbedImage Parse(JsonElement json)
     {
-        var url = json.GetPropertyOrNull("url")?.GetStringOrNull();
-        var proxyUrl = json.GetPropertyOrNull("proxy_url")?.GetStringOrNull();
-        var width = json.GetPropertyOrNull("width")?.GetInt32();
-        var height = json.GetPropertyOrNull("height")?.GetInt32();
+        var url = json.GetPropertyOrNull("url")?.GetNonWhiteSpaceStringOrNull();
+        var proxyUrl = json.GetPropertyOrNull("proxy_url")?.GetNonWhiteSpaceStringOrNull();
+        var width = json.GetPropertyOrNull("width")?.GetInt32OrNull();
+        var height = json.GetPropertyOrNull("height")?.GetInt32OrNull();
 
         return new EmbedImage(url, proxyUrl, width, height);
     }

@@ -36,10 +36,10 @@ public partial record User
     public static User Parse(JsonElement json)
     {
         var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
-        var isBot = json.GetPropertyOrNull("bot")?.GetBoolean() ?? false;
+        var isBot = json.GetPropertyOrNull("bot")?.GetBooleanOrNull() ?? false;
         var discriminator = json.GetProperty("discriminator").GetNonWhiteSpaceString().Pipe(int.Parse);
         var name = json.GetProperty("username").GetNonWhiteSpaceString();
-        var avatarHash = json.GetPropertyOrNull("avatar")?.GetStringOrNull();
+        var avatarHash = json.GetPropertyOrNull("avatar")?.GetNonWhiteSpaceStringOrNull();
 
         var avatarUrl = !string.IsNullOrWhiteSpace(avatarHash)
             ? GetAvatarUrl(id, avatarHash)

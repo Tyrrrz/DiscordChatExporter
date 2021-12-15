@@ -28,7 +28,7 @@ public partial record Member
     public static Member Parse(JsonElement json)
     {
         var user = json.GetProperty("user").Pipe(User.Parse);
-        var nick = json.GetPropertyOrNull("nick")?.GetStringOrNull();
+        var nick = json.GetPropertyOrNull("nick")?.GetNonWhiteSpaceStringOrNull();
 
         var roleIds = json
             .GetPropertyOrNull("roles")?

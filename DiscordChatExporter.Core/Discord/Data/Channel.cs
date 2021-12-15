@@ -42,16 +42,16 @@ public partial record Channel
         null
     );
 
-    public static Channel Parse(JsonElement json, ChannelCategory? category = null, int? position = null)
+    public static Channel Parse(JsonElement json, ChannelCategory? category = null, int? positionHint = null)
     {
         var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
-        var guildId = json.GetPropertyOrNull("guild_id")?.GetStringOrNull()?.Pipe(Snowflake.Parse);
+        var guildId = json.GetPropertyOrNull("guild_id")?.GetNonWhiteSpaceStringOrNull()?.Pipe(Snowflake.Parse);
         var topic = json.GetPropertyOrNull("topic")?.GetStringOrNull();
         var kind = (ChannelKind)json.GetProperty("type").GetInt32();
 
         var name =
             // Guild channel
-            json.GetPropertyOrNull("name")?.GetStringOrNull() ??
+            json.GetPropertyOrNull("name")?.GetNonWhiteSpaceStringOrNull() ??
 
             // DM channel
             json.GetPropertyOrNull("recipients")?
@@ -63,13 +63,15 @@ public partial record Channel
             // Fallback
             id.ToString();
 
+        var position = positionHint ?? json.GetPropertyOrNull("position")?.GetInt32OrNull();
+
         return new Channel(
             id,
             kind,
             guildId ?? Guild.DirectMessages.Id,
             category ?? GetFallbackCategory(kind),
             name,
-            position ?? json.GetPropertyOrNull("position")?.GetInt32(),
+            position,
             topic
         );
     }

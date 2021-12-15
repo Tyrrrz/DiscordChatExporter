@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text.Json;
 using DiscordChatExporter.Core.Utils;
 using DiscordChatExporter.Core.Utils.Extensions;
@@ -31,29 +32,41 @@ public partial record Emoji
             .Select(r => r.Value.ToString("x"))
     );
 
-    public static string GetImageUrl(string? id, string name, bool isAnimated)
+    private static string GetImageUrl(string id, bool isAnimated) => isAnimated
+        ? $"https://cdn.discordapp.com/emojis/{id}.gif"
+        : $"https://cdn.discordapp.com/emojis/{id}.png";
+
+    private static string GetImageUrl(string name) =>
+        $"https://twemoji.maxcdn.com/2/svg/{GetTwemojiName(name)}.svg";
+
+    public static string GetImageUrl(string? id, string? name, bool isAnimated)
     {
         // Custom emoji
         if (!string.IsNullOrWhiteSpace(id))
-        {
-            return isAnimated
-                ? $"https://cdn.discordapp.com/emojis/{id}.gif"
-                : $"https://cdn.discordapp.com/emojis/{id}.png";
-        }
+            return GetImageUrl(id, isAnimated);
 
         // Standard emoji
-        var twemojiName = GetTwemojiName(name);
-        return $"https://twemoji.maxcdn.com/2/svg/{twemojiName}.svg";
+        if (!string.IsNullOrWhiteSpace(name))
+            return GetImageUrl(name);
+
+        // Either ID or name should be set
+        throw new ApplicationException("Emoji has neither ID nor name set.");
     }
 
     public static Emoji Parse(JsonElement json)
     {
-        var id = json.GetPropertyOrNull("id")?.GetStringOrNull();
-        var name = json.GetProperty("name").GetNonWhiteSpaceString();
-        var isAnimated = json.GetPropertyOrNull("animated")?.GetBoolean() ?? false;
+        var id = json.GetPropertyOrNull("id")?.GetNonWhiteSpaceStringOrNull();
+        var name = json.GetPropertyOrNull("name")?.GetNonWhiteSpaceStringOrNull();
+        var isAnimated = json.GetPropertyOrNull("animated")?.GetBooleanOrNull() ?? false;
 
         var imageUrl = GetImageUrl(id, name, isAnimated);
 
-        return new Emoji(id, name, isAnimated, imageUrl);
+        return new Emoji(
+            id,
+            // Name may be missing if it's an emoji inside a reaction
+            name ?? "<unknown emoji>",
+            isAnimated,
+            imageUrl
+        );
     }
 }

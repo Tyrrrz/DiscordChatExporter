@@ -142,7 +142,7 @@ public class DiscordClient
 
             foreach (var channelJson in responseOrdered)
             {
-                var parentId = channelJson.GetPropertyOrNull("parent_id")?.GetStringOrNull();
+                var parentId = channelJson.GetPropertyOrNull("parent_id")?.GetNonWhiteSpaceStringOrNull();
 
                 var category = !string.IsNullOrWhiteSpace(parentId)
                     ? categories.GetValueOrDefault(parentId)
@@ -205,7 +205,7 @@ public class DiscordClient
     {
         var response = await GetJsonResponseAsync($"channels/{channelId}", cancellationToken);
 
-        var parentId = response.GetPropertyOrNull("parent_id")?.GetStringOrNull()?.Pipe(Snowflake.Parse);
+        var parentId = response.GetPropertyOrNull("parent_id")?.GetNonWhiteSpaceStringOrNull()?.Pipe(Snowflake.Parse);
 
         var category = parentId is not null
             ? await GetChannelCategoryAsync(parentId.Value, cancellationToken)

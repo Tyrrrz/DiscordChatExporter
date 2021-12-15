@@ -13,9 +13,9 @@ public record EmbedAuthor(
     public static EmbedAuthor Parse(JsonElement json)
     {
         var name = json.GetPropertyOrNull("name")?.GetStringOrNull();
-        var url = json.GetPropertyOrNull("url")?.GetStringOrNull();
-        var iconUrl = json.GetPropertyOrNull("icon_url")?.GetStringOrNull();
-        var iconProxyUrl = json.GetPropertyOrNull("proxy_icon_url")?.GetStringOrNull();
+        var url = json.GetPropertyOrNull("url")?.GetNonWhiteSpaceStringOrNull();
+        var iconUrl = json.GetPropertyOrNull("icon_url")?.GetNonWhiteSpaceStringOrNull();
+        var iconProxyUrl = json.GetPropertyOrNull("proxy_icon_url")?.GetNonWhiteSpaceStringOrNull();
 
         return new EmbedAuthor(name, url, iconUrl, iconProxyUrl);
     }

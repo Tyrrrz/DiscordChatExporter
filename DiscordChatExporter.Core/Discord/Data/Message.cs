@@ -35,7 +35,7 @@ public record Message(
         var callEndedTimestamp = json.GetPropertyOrNull("call")?.GetPropertyOrNull("ended_timestamp")
             ?.GetDateTimeOffset();
         var kind = (MessageKind)json.GetProperty("type").GetInt32();
-        var isPinned = json.GetPropertyOrNull("pinned")?.GetBoolean() ?? false;
+        var isPinned = json.GetPropertyOrNull("pinned")?.GetBooleanOrNull() ?? false;
         var messageReference = json.GetPropertyOrNull("message_reference")?.Pipe(MessageReference.Parse);
         var referencedMessage = json.GetPropertyOrNull("referenced_message")?.Pipe(Parse);
 

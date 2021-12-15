@@ -1,5 +1,4 @@
 using System.Text.Json;
-using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Reading;
 
 namespace DiscordChatExporter.Core.Discord.Data.Embeds;
@@ -12,9 +11,9 @@ public record EmbedFooter(
 {
     public static EmbedFooter Parse(JsonElement json)
     {
-        var text = json.GetProperty("text").GetNonWhiteSpaceString();
-        var iconUrl = json.GetPropertyOrNull("icon_url")?.GetStringOrNull();
-        var iconProxyUrl = json.GetPropertyOrNull("proxy_icon_url")?.GetStringOrNull();
+        var text = json.GetProperty("text").GetNonNullString();
+        var iconUrl = json.GetPropertyOrNull("icon_url")?.GetNonWhiteSpaceStringOrNull();
+        var iconProxyUrl = json.GetPropertyOrNull("proxy_icon_url")?.GetNonWhiteSpaceStringOrNull();
 
         return new EmbedFooter(text, iconUrl, iconProxyUrl);
     }

@@ -24,126 +24,129 @@
             FontWeight="Light"
             Text="Settings" />
 
-        <ScrollViewer
+        <Border
             Grid.Row="1"
-            HorizontalScrollBarVisibility="Disabled"
-            VerticalScrollBarVisibility="Auto">
-            <StackPanel>
-                <!--  Auto-updates  -->
-                <DockPanel
-                    Margin="16,8"
-                    Background="Transparent"
-                    LastChildFill="False"
-                    ToolTip="Perform automatic updates on every launch">
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        DockPanel.Dock="Left"
-                        Text="Auto-updates" />
-                    <ToggleButton
-                        VerticalAlignment="Center"
-                        DockPanel.Dock="Right"
-                        IsChecked="{Binding IsAutoUpdateEnabled}" />
-                </DockPanel>
-
-                <!--  Dark mode  -->
-                <DockPanel
-                    Margin="16,8"
-                    Background="Transparent"
-                    LastChildFill="False"
-                    ToolTip="Use darker colors in the UI">
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        DockPanel.Dock="Left"
-                        Text="Dark mode" />
-                    <ToggleButton
-                        x:Name="DarkModeToggleButton"
-                        VerticalAlignment="Center"
-                        Checked="DarkModeToggleButton_Checked"
-                        DockPanel.Dock="Right"
-                        IsChecked="{Binding IsDarkModeEnabled}"
-                        Unchecked="DarkModeToggleButton_Unchecked" />
-                </DockPanel>
-
-                <!--  Persist token  -->
-                <DockPanel
-                    Margin="16,8"
-                    Background="Transparent"
-                    LastChildFill="False"
-                    ToolTip="Save last used token in a file so that it can be persisted between sessions">
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        DockPanel.Dock="Left"
-                        Text="Save token" />
-                    <ToggleButton
-                        VerticalAlignment="Center"
-                        DockPanel.Dock="Right"
-                        IsChecked="{Binding IsTokenPersisted}" />
-                </DockPanel>
-
-                <!--  Reuse media  -->
-                <DockPanel
-                    Margin="16,8"
-                    Background="Transparent"
-                    LastChildFill="False"
-                    ToolTip="Reuse already existing media content to skip redundant downloads">
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        DockPanel.Dock="Left"
-                        Text="Reuse downloaded media" />
-                    <ToggleButton
-                        VerticalAlignment="Center"
-                        DockPanel.Dock="Right"
-                        IsChecked="{Binding ShouldReuseMedia}" />
-                </DockPanel>
-
-                <!--  Date format  -->
-                <DockPanel
-                    Margin="16,8"
-                    Background="Transparent"
-                    LastChildFill="False"
-                    ToolTip="Format used when writing dates (uses .NET date formatting rules)">
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        DockPanel.Dock="Left"
-                        Text="Date format" />
-                    <TextBox
-                        Width="150"
-                        VerticalAlignment="Center"
-                        DockPanel.Dock="Right"
-                        Text="{Binding DateFormat}" />
-                </DockPanel>
-
-                <!--  Parallel limit  -->
-                <DockPanel
-                    Margin="16,8"
-                    Background="Transparent"
-                    LastChildFill="False"
-                    ToolTip="How many channels can be exported at the same time">
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        DockPanel.Dock="Left"
-                        Text="Parallel limit"
-                        TextAlignment="Right" />
-                    <StackPanel
-                        VerticalAlignment="Center"
-                        DockPanel.Dock="Right"
-                        Orientation="Horizontal">
+            Padding="0,8"
+            BorderBrush="{DynamicResource MaterialDesignDivider}"
+            BorderThickness="0,1">
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <!--  Auto-updates  -->
+                    <DockPanel
+                        Margin="16,8"
+                        Background="Transparent"
+                        LastChildFill="False"
+                        ToolTip="Perform automatic updates on every launch">
                         <TextBlock
-                            Margin="10,0"
                             VerticalAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="{Binding ParallelLimit}" />
-                        <Slider
+                            DockPanel.Dock="Left"
+                            Text="Auto-updates" />
+                        <ToggleButton
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Right"
+                            IsChecked="{Binding IsAutoUpdateEnabled}" />
+                    </DockPanel>
+
+                    <!--  Dark mode  -->
+                    <DockPanel
+                        Margin="16,8"
+                        Background="Transparent"
+                        LastChildFill="False"
+                        ToolTip="Use darker colors in the UI">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Left"
+                            Text="Dark mode" />
+                        <ToggleButton
+                            x:Name="DarkModeToggleButton"
+                            VerticalAlignment="Center"
+                            Checked="DarkModeToggleButton_Checked"
+                            DockPanel.Dock="Right"
+                            IsChecked="{Binding IsDarkModeEnabled}"
+                            Unchecked="DarkModeToggleButton_Unchecked" />
+                    </DockPanel>
+
+                    <!--  Persist token  -->
+                    <DockPanel
+                        Margin="16,8"
+                        Background="Transparent"
+                        LastChildFill="False"
+                        ToolTip="Save last used token in a file so that it can be persisted between sessions">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Left"
+                            Text="Save token" />
+                        <ToggleButton
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Right"
+                            IsChecked="{Binding IsTokenPersisted}" />
+                    </DockPanel>
+
+                    <!--  Reuse media  -->
+                    <DockPanel
+                        Margin="16,8"
+                        Background="Transparent"
+                        LastChildFill="False"
+                        ToolTip="Reuse already existing media content to skip redundant downloads">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Left"
+                            Text="Reuse downloaded media" />
+                        <ToggleButton
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Right"
+                            IsChecked="{Binding ShouldReuseMedia}" />
+                    </DockPanel>
+
+                    <!--  Date format  -->
+                    <DockPanel
+                        Margin="16,8"
+                        Background="Transparent"
+                        LastChildFill="False"
+                        ToolTip="Format used when writing dates (uses .NET date formatting rules)">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Left"
+                            Text="Date format" />
+                        <TextBox
                             Width="150"
                             VerticalAlignment="Center"
-                            Maximum="10"
-                            Minimum="1"
-                            Style="{DynamicResource MaterialDesignThinSlider}"
-                            Value="{Binding ParallelLimit}" />
-                    </StackPanel>
-                </DockPanel>
-            </StackPanel>
-        </ScrollViewer>
+                            DockPanel.Dock="Right"
+                            Text="{Binding DateFormat}" />
+                    </DockPanel>
+
+                    <!--  Parallel limit  -->
+                    <DockPanel
+                        Margin="16,8"
+                        Background="Transparent"
+                        LastChildFill="False"
+                        ToolTip="How many channels can be exported at the same time">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Left"
+                            Text="Parallel limit"
+                            TextAlignment="Right" />
+                        <StackPanel
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Right"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                Margin="10,0"
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold"
+                                Text="{Binding ParallelLimit}" />
+                            <Slider
+                                Width="150"
+                                VerticalAlignment="Center"
+                                Maximum="10"
+                                Minimum="1"
+                                Style="{DynamicResource MaterialDesignThinSlider}"
+                                Value="{Binding ParallelLimit}" />
+                        </StackPanel>
+                    </DockPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
 
         <!--  Save button  -->
         <Button

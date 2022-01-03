@@ -27,8 +27,7 @@ public record DateRangeSpecs(TempOutputFixture TempOutput) : IClassFixture<TempO
         // Act
         await new ExportChannelsCommand
         {
-            TokenValue = Secrets.DiscordToken,
-            IsBotToken = Secrets.IsDiscordTokenBot,
+            Token = Secrets.DiscordToken,
             ChannelIds = new[] { ChannelIds.DateRangeTestCases },
             ExportFormat = ExportFormat.Json,
             OutputPath = filePath,
@@ -74,8 +73,7 @@ public record DateRangeSpecs(TempOutputFixture TempOutput) : IClassFixture<TempO
         // Act
         await new ExportChannelsCommand
         {
-            TokenValue = Secrets.DiscordToken,
-            IsBotToken = Secrets.IsDiscordTokenBot,
+            Token = Secrets.DiscordToken,
             ChannelIds = new[] { ChannelIds.DateRangeTestCases },
             ExportFormat = ExportFormat.Json,
             OutputPath = filePath,
@@ -120,8 +118,7 @@ public record DateRangeSpecs(TempOutputFixture TempOutput) : IClassFixture<TempO
         // Act
         await new ExportChannelsCommand
         {
-            TokenValue = Secrets.DiscordToken,
-            IsBotToken = Secrets.IsDiscordTokenBot,
+            Token = Secrets.DiscordToken,
             ChannelIds = new[] { ChannelIds.DateRangeTestCases },
             ExportFormat = ExportFormat.Json,
             OutputPath = filePath,

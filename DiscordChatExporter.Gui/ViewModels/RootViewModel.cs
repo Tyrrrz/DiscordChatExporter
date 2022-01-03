@@ -25,6 +25,8 @@ public class RootViewModel : Screen
     private readonly SettingsService _settingsService;
     private readonly UpdateService _updateService;
 
+    private DiscordClient? _discord;
+
     public ISnackbarMessageQueue Notifications { get; } = new SnackbarMessageQueue(TimeSpan.FromSeconds(5));
 
     public IProgressManager ProgressManager { get; } = new ProgressManager();
@@ -33,9 +35,7 @@ public class RootViewModel : Screen
 
     public bool IsProgressIndeterminate { get; private set; }
 
-    public bool IsBotToken { get; set; }
-
-    public string? TokenValue { get; set; }
+    public string? Token { get; set; }
 
     private IReadOnlyDictionary<Guild, IReadOnlyList<Channel>>? GuildChannelMap { get; set; }
 
@@ -111,8 +111,7 @@ public class RootViewModel : Screen
 
         if (_settingsService.LastToken is not null)
         {
-            IsBotToken = _settingsService.LastToken.Kind == AuthTokenKind.Bot;
-            TokenValue = _settingsService.LastToken.Value;
+            Token = _settingsService.LastToken;
         }
 
         if (_settingsService.IsDarkModeEnabled)
@@ -144,7 +143,7 @@ public class RootViewModel : Screen
     public void ShowHelp() => ProcessEx.StartShellExecute(App.GitHubProjectWikiUrl);
 
     public bool CanPopulateGuildsAndChannels =>
-        !IsBusy && !string.IsNullOrWhiteSpace(TokenValue);
+        !IsBusy && !string.IsNullOrWhiteSpace(Token);
 
     public async void PopulateGuildsAndChannels()
     {
@@ -152,14 +151,9 @@ public class RootViewModel : Screen
 
         try
         {
-            var tokenValue = TokenValue?.Trim('"', ' ');
-            if (string.IsNullOrWhiteSpace(tokenValue))
+            var token = Token?.Trim('"', ' ');
+            if (string.IsNullOrWhiteSpace(token))
                 return;
-
-            var token = new AuthToken(
-                IsBotToken ? AuthTokenKind.Bot : AuthTokenKind.User,
-                tokenValue
-            );
 
             _settingsService.LastToken = token;
 
@@ -172,6 +166,7 @@ public class RootViewModel : Screen
                 guildChannelMap[guild] = channels.Where(c => c.IsTextChannel).ToArray();
             }
 
+            _discord = discord;
             GuildChannelMap = guildChannelMap;
             SelectedGuild = guildChannelMap.Keys.FirstOrDefault();
         }
@@ -191,21 +186,24 @@ public class RootViewModel : Screen
     }
 
     public bool CanExportChannels =>
-        !IsBusy && SelectedGuild is not null && SelectedChannels is not null && SelectedChannels.Any();
+        !IsBusy &&
+        _discord is not null &&
+        SelectedGuild is not null &&
+        SelectedChannels is not null &&
+        SelectedChannels.Any();
 
     public async void ExportChannels()
     {
         try
         {
-            var token = _settingsService.LastToken;
-            if (token is null || SelectedGuild is null || SelectedChannels is null || !SelectedChannels.Any())
+            if (_discord is null || SelectedGuild is null || SelectedChannels is null || !SelectedChannels.Any())
                 return;
 
             var dialog = _viewModelFactory.CreateExportSetupViewModel(SelectedGuild, SelectedChannels);
             if (await _dialogManager.ShowDialogAsync(dialog) != true)
                 return;
 
-            var exporter = new ChannelExporter(token);
+            var exporter = new ChannelExporter(_discord);
 
             var operations = ProgressManager.CreateOperations(dialog.Channels!.Count);
             var successfulExportCount = 0;

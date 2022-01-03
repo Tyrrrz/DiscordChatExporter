@@ -17,8 +17,6 @@ public class ChannelExporter
 
     public ChannelExporter(DiscordClient discord) => _discord = discord;
 
-    public ChannelExporter(AuthToken token) : this(new DiscordClient(token)) {}
-
     public async ValueTask ExportChannelAsync(
         ExportRequest request,
         IProgress<double>? progress = null,

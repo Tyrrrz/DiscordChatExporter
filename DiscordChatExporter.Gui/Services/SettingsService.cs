@@ -1,5 +1,4 @@
-﻿using DiscordChatExporter.Core.Discord;
-using DiscordChatExporter.Core.Exporting;
+﻿using DiscordChatExporter.Core.Exporting;
 using Tyrrrz.Settings;
 
 namespace DiscordChatExporter.Gui.Services;
@@ -18,7 +17,7 @@ public class SettingsService : SettingsManager
 
     public bool ShouldReuseMedia { get; set; }
 
-    public AuthToken? LastToken { get; set; }
+    public string? LastToken { get; set; }
 
     public ExportFormat LastExportFormat { get; set; } = ExportFormat.HtmlDark;
 

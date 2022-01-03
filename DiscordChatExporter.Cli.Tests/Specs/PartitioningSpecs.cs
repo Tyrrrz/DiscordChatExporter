@@ -25,8 +25,7 @@ public record PartitioningSpecs(TempOutputFixture TempOutput) : IClassFixture<Te
         // Act
         await new ExportChannelsCommand
         {
-            TokenValue = Secrets.DiscordToken,
-            IsBotToken = Secrets.IsDiscordTokenBot,
+            Token = Secrets.DiscordToken,
             ChannelIds = new[] { ChannelIds.DateRangeTestCases },
             ExportFormat = ExportFormat.HtmlDark,
             OutputPath = filePath,
@@ -50,8 +49,7 @@ public record PartitioningSpecs(TempOutputFixture TempOutput) : IClassFixture<Te
         // Act
         await new ExportChannelsCommand
         {
-            TokenValue = Secrets.DiscordToken,
-            IsBotToken = Secrets.IsDiscordTokenBot,
+            Token = Secrets.DiscordToken,
             ChannelIds = new[] { ChannelIds.DateRangeTestCases },
             ExportFormat = ExportFormat.HtmlDark,
             OutputPath = filePath,

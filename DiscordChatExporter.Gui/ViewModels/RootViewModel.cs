@@ -33,9 +33,7 @@ public class RootViewModel : Screen
 
     public bool IsProgressIndeterminate { get; private set; }
 
-    public bool IsBotToken { get; set; }
-
-    public string? TokenValue { get; set; }
+    public string? Token { get; set; }
 
     private IReadOnlyDictionary<Guild, IReadOnlyList<Channel>>? GuildChannelMap { get; set; }
 
@@ -111,8 +109,7 @@ public class RootViewModel : Screen
 
         if (_settingsService.LastToken is not null)
         {
-            IsBotToken = _settingsService.LastToken.Kind == AuthTokenKind.Bot;
-            TokenValue = _settingsService.LastToken.Value;
+            Token = _settingsService.LastToken;
         }
 
         if (_settingsService.IsDarkModeEnabled)
@@ -144,7 +141,7 @@ public class RootViewModel : Screen
     public void ShowHelp() => ProcessEx.StartShellExecute(App.GitHubProjectWikiUrl);
 
     public bool CanPopulateGuildsAndChannels =>
-        !IsBusy && !string.IsNullOrWhiteSpace(TokenValue);
+        !IsBusy && !string.IsNullOrWhiteSpace(Token);
 
     public async void PopulateGuildsAndChannels()
     {
@@ -152,14 +149,9 @@ public class RootViewModel : Screen
 
         try
         {
-            var tokenValue = TokenValue?.Trim('"', ' ');
-            if (string.IsNullOrWhiteSpace(tokenValue))
+            var token = Token?.Trim('"', ' ');
+            if (string.IsNullOrWhiteSpace(token))
                 return;
-
-            var token = new AuthToken(
-                IsBotToken ? AuthTokenKind.Bot : AuthTokenKind.User,
-                tokenValue
-            );
 
             _settingsService.LastToken = token;
 

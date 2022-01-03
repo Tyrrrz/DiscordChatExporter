@@ -61,7 +61,7 @@ public class GuideCommand : ICommand
 
         // Wiki link
         using (console.WithForegroundColor(ConsoleColor.White))
-            console.Output.WriteLine("For more information, check out the wiki:");
+            console.Output.WriteLine("If you have questions or issues, please refer to the wiki:");
         using (console.WithForegroundColor(ConsoleColor.DarkCyan))
             console.Output.WriteLine("https://github.com/Tyrrrz/DiscordChatExporter/wiki");
 

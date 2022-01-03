@@ -1,7 +1,8 @@
 ﻿namespace DiscordChatExporter.Core.Discord;
 
-public enum AuthTokenKind
+public enum TokenKind
 {
+    Unknown,
     User,
     Bot
 }

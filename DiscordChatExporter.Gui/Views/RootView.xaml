@@ -64,39 +64,28 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <!--  Token type  -->
-                        <ToggleButton
+                        <!--  Token icon  -->
+                        <materialDesign:PackIcon
                             Grid.Column="0"
-                            Margin="6"
-                            IsChecked="{Binding IsBotToken}"
-                            Style="{DynamicResource MaterialDesignFlatActionToggleButton}"
-                            ToolTip="Switch between user token and bot token">
-                            <ToggleButton.Content>
-                                <materialDesign:PackIcon
-                                    Width="24"
-                                    Height="24"
-                                    Kind="Account" />
-                            </ToggleButton.Content>
-                            <materialDesign:ToggleButtonAssist.OnContent>
-                                <materialDesign:PackIcon
-                                    Width="24"
-                                    Height="24"
-                                    Kind="Robot" />
-                            </materialDesign:ToggleButtonAssist.OnContent>
-                        </ToggleButton>
+                            Width="24"
+                            Height="24"
+                            Margin="8"
+                            VerticalAlignment="Center"
+                            Foreground="{DynamicResource PrimaryHueMidBrush}"
+                            Kind="Password" />
 
                         <!--  Token value  -->
                         <TextBox
                             x:Name="TokenValueTextBox"
                             Grid.Column="1"
-                            Margin="2,6,6,7"
+                            Margin="0,6,6,8"
                             VerticalAlignment="Bottom"
                             materialDesign:HintAssist.Hint="Token"
                             materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
                             materialDesign:TextFieldAssist.TextBoxViewMargin="0,0,2,0"
                             BorderThickness="0"
                             FontSize="16"
-                            Text="{Binding TokenValue, UpdateSourceTrigger=PropertyChanged}" />
+                            Text="{Binding Token, UpdateSourceTrigger=PropertyChanged}" />
 
                         <!--  Pull data button  -->
                         <Button
@@ -152,11 +141,22 @@
                     </Style>
                 </Grid.Resources>
                 <!--  Placeholder / usage instructions  -->
-                <Grid Margin="32,32,8,8" Visibility="{Binding AvailableGuilds, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}">
-                    <!--  For user token  -->
-                    <StackPanel Visibility="{Binding IsBotToken, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}">
-                        <TextBlock FontSize="18" Text="Please provide your user token to authorize" />
-                        <TextBlock Margin="8,8,0,0" FontSize="14">
+                <Grid Visibility="{Binding AvailableGuilds, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}">
+                    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                        <TextBlock Margin="32,16" FontSize="14">
+                            <Run FontSize="18" Text="Please provide authentication token to continue" />
+                            <LineBreak />
+                            <LineBreak />
+
+                            <!--  User token  -->
+                            <InlineUIContainer>
+                                <materialDesign:PackIcon
+                                    Margin="1,0,0,-2"
+                                    Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                    Kind="Account" />
+                            </InlineUIContainer>
+                            <Run FontSize="16" Text="Authenticate using your personal account:" />
+                            <LineBreak />
                             <Run Text="1. Open Discord" />
                             <LineBreak />
                             <Run Text="2. Press" />
@@ -189,35 +189,20 @@
                             <Run Text="8. Copy the value of the" />
                             <Run FontWeight="SemiBold" Text="token" />
                             <Run Text="key" />
-                        </TextBlock>
-                        <TextBlock Margin="0,24,0,0" FontSize="14">
-                            <Run Text="Automating user accounts is technically against TOS, use at your own risk." />
                             <LineBreak />
-                            <Run Text="To authorize using bot token instead, click" />
+                            <Run Text="*  Automating user accounts is technically against TOS, use at your own risk!" />
+                            <LineBreak />
+                            <LineBreak />
+
+                            <!--  Bot token  -->
                             <InlineUIContainer>
                                 <materialDesign:PackIcon
-                                    Margin="1,0,0,-3"
+                                    Margin="1,0,0,-2"
                                     Foreground="{DynamicResource PrimaryHueMidBrush}"
-                                    Kind="Account" />
+                                    Kind="Robot" />
                             </InlineUIContainer>
-                            <Run Text="in the text box above." />
-                        </TextBlock>
-                        <TextBlock Margin="0,24,0,0" FontSize="14">
-                            <Run Text="For more information, check out the" />
-                            <Hyperlink Command="{s:Action ShowHelp}">wiki</Hyperlink><Run Text="." />
-                        </TextBlock>
-                    </StackPanel>
-
-                    <!--  For bot token  -->
-                    <StackPanel Visibility="{Binding IsBotToken, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
-                        <TextBlock
-                            FontSize="18"
-                            FontWeight="Light"
-                            Text="Please provide your bot token to authorize" />
-                        <TextBlock
-                            Margin="8,8,0,0"
-                            FontSize="14"
-                            FontWeight="Light">
+                            <Run FontSize="16" Text="Authenticate as a bot:" />
+                            <LineBreak />
                             <Run Text="1. Open Discord developer portal" />
                             <LineBreak />
                             <Run Text="2. Open your application's settings" />
@@ -230,22 +215,13 @@
                             <Run FontWeight="SemiBold" Text="Token" />
                             <Run Text="click" />
                             <Run FontWeight="SemiBold" Text="Copy" />
+                            <LineBreak />
+                            <LineBreak />
+
+                            <Run FontSize="16" Text="If you have questions or issues, please refer to the" />
+                            <Hyperlink Command="{s:Action ShowHelp}" FontSize="16">wiki</Hyperlink><Run FontSize="16" Text="." />
                         </TextBlock>
-                        <TextBlock Margin="0,24,0,0" FontSize="14">
-                            <Run Text="To authorize using user token instead, click" />
-                            <InlineUIContainer>
-                                <materialDesign:PackIcon
-                                    Margin="1,0,0,-1"
-                                    Foreground="{DynamicResource PrimaryHueMidBrush}"
-                                    Kind="Robot" />
-                            </InlineUIContainer>
-                            <Run Text="in the text box above." />
-                        </TextBlock>
-                        <TextBlock Margin="0,24,0,0" FontSize="14">
-                            <Run Text="For more information, check out the" />
-                            <Hyperlink Command="{s:Action ShowHelp}">wiki</Hyperlink><Run Text="." />
-                        </TextBlock>
-                    </StackPanel>
+                    </ScrollViewer>
                 </Grid>
 
                 <!--  Guilds and channels  -->

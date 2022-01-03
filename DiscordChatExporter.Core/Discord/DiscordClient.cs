@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading;
@@ -18,10 +19,30 @@ namespace DiscordChatExporter.Core.Discord;
 
 public class DiscordClient
 {
-    private readonly AuthToken _token;
+    private readonly string _token;
     private readonly Uri _baseUri = new("https://discord.com/api/v8/", UriKind.Absolute);
 
-    public DiscordClient(AuthToken token) => _token = token;
+    private TokenKind _tokenKind = TokenKind.Unknown;
+
+    public DiscordClient(string token) => _token = token;
+
+    private async ValueTask<HttpResponseMessage> GetResponseAsync(
+        string url,
+        bool isBot,
+        CancellationToken cancellationToken = default)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, url));
+
+        request.Headers.Authorization = isBot
+            ? new AuthenticationHeaderValue("Bot", _token)
+            : new AuthenticationHeaderValue(_token);
+
+        return await Http.Client.SendAsync(
+            request,
+            HttpCompletionOption.ResponseHeadersRead,
+            cancellationToken
+        );
+    }
 
     private async ValueTask<HttpResponseMessage> GetResponseAsync(
         string url,
@@ -29,14 +50,33 @@ public class DiscordClient
     {
         return await Http.ResponsePolicy.ExecuteAsync(async innerCancellationToken =>
         {
-            using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, url));
-            request.Headers.Authorization = _token.GetAuthenticationHeader();
+            if (_tokenKind == TokenKind.User)
+                return await GetResponseAsync(url, false, innerCancellationToken);
 
-            return await Http.Client.SendAsync(
-                request,
-                HttpCompletionOption.ResponseHeadersRead,
-                innerCancellationToken
-            );
+            if (_tokenKind == TokenKind.Bot)
+                return await GetResponseAsync(url, true, innerCancellationToken);
+
+            // Try to authenticate as user
+            var userResponse = await GetResponseAsync(url, false, innerCancellationToken);
+            if (userResponse.StatusCode != HttpStatusCode.Unauthorized)
+            {
+                _tokenKind = TokenKind.User;
+                return userResponse;
+            }
+
+            userResponse.Dispose();
+
+            // Otherwise, try to authenticate as bot
+            var botResponse = await GetResponseAsync(url, true, innerCancellationToken);
+            if (botResponse.StatusCode != HttpStatusCode.Unauthorized)
+            {
+                _tokenKind = TokenKind.Bot;
+                return botResponse;
+            }
+
+            // The token is probably invalid altogether.
+            // Return the last response anyway,  upstream should handle the error.
+            return botResponse;
         }, cancellationToken);
     }
 

@@ -36,8 +36,7 @@ public class ExportWrapperFixture : IDisposable
         {
             await new ExportChannelsCommand
             {
-                TokenValue = Secrets.DiscordToken,
-                IsBotToken = Secrets.IsDiscordTokenBot,
+                Token = Secrets.DiscordToken,
                 ChannelIds = new[] { channelId },
                 ExportFormat = format,
                 OutputPath = filePath

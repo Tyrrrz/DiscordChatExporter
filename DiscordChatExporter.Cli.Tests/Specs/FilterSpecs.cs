@@ -25,8 +25,7 @@ public record FilterSpecs(TempOutputFixture TempOutput) : IClassFixture<TempOutp
         // Act
         await new ExportChannelsCommand
         {
-            TokenValue = Secrets.DiscordToken,
-            IsBotToken = Secrets.IsDiscordTokenBot,
+            Token = Secrets.DiscordToken,
             ChannelIds = new[] { ChannelIds.FilterTestCases },
             ExportFormat = ExportFormat.Json,
             OutputPath = filePath,
@@ -54,8 +53,7 @@ public record FilterSpecs(TempOutputFixture TempOutput) : IClassFixture<TempOutp
         // Act
         await new ExportChannelsCommand
         {
-            TokenValue = Secrets.DiscordToken,
-            IsBotToken = Secrets.IsDiscordTokenBot,
+            Token = Secrets.DiscordToken,
             ChannelIds = new[] { ChannelIds.FilterTestCases },
             ExportFormat = ExportFormat.Json,
             OutputPath = filePath,
@@ -83,8 +81,7 @@ public record FilterSpecs(TempOutputFixture TempOutput) : IClassFixture<TempOutp
         // Act
         await new ExportChannelsCommand
         {
-            TokenValue = Secrets.DiscordToken,
-            IsBotToken = Secrets.IsDiscordTokenBot,
+            Token = Secrets.DiscordToken,
             ChannelIds = new[] { ChannelIds.FilterTestCases },
             ExportFormat = ExportFormat.Json,
             OutputPath = filePath,
@@ -112,8 +109,7 @@ public record FilterSpecs(TempOutputFixture TempOutput) : IClassFixture<TempOutp
         // Act
         await new ExportChannelsCommand
         {
-            TokenValue = Secrets.DiscordToken,
-            IsBotToken = Secrets.IsDiscordTokenBot,
+            Token = Secrets.DiscordToken,
             ChannelIds = new[] { ChannelIds.FilterTestCases },
             ExportFormat = ExportFormat.Json,
             OutputPath = filePath,

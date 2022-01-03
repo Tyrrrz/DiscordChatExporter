@@ -25,8 +25,7 @@ public record SelfContainedSpecs(TempOutputFixture TempOutput) : IClassFixture<T
         // Act
         await new ExportChannelsCommand
         {
-            TokenValue = Secrets.DiscordToken,
-            IsBotToken = Secrets.IsDiscordTokenBot,
+            Token = Secrets.DiscordToken,
             ChannelIds = new[] { ChannelIds.SelfContainedTestCases },
             ExportFormat = ExportFormat.HtmlDark,
             OutputPath = filePath,

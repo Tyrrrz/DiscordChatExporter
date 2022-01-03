@@ -25,6 +25,8 @@ public class RootViewModel : Screen
     private readonly SettingsService _settingsService;
     private readonly UpdateService _updateService;
 
+    private DiscordClient? _discord;
+
     public ISnackbarMessageQueue Notifications { get; } = new SnackbarMessageQueue(TimeSpan.FromSeconds(5));
 
     public IProgressManager ProgressManager { get; } = new ProgressManager();
@@ -164,6 +166,7 @@ public class RootViewModel : Screen
                 guildChannelMap[guild] = channels.Where(c => c.IsTextChannel).ToArray();
             }
 
+            _discord = discord;
             GuildChannelMap = guildChannelMap;
             SelectedGuild = guildChannelMap.Keys.FirstOrDefault();
         }
@@ -183,21 +186,24 @@ public class RootViewModel : Screen
     }
 
     public bool CanExportChannels =>
-        !IsBusy && SelectedGuild is not null && SelectedChannels is not null && SelectedChannels.Any();
+        !IsBusy &&
+        _discord is not null &&
+        SelectedGuild is not null &&
+        SelectedChannels is not null &&
+        SelectedChannels.Any();
 
     public async void ExportChannels()
     {
         try
         {
-            var token = _settingsService.LastToken;
-            if (token is null || SelectedGuild is null || SelectedChannels is null || !SelectedChannels.Any())
+            if (_discord is null || SelectedGuild is null || SelectedChannels is null || !SelectedChannels.Any())
                 return;
 
             var dialog = _viewModelFactory.CreateExportSetupViewModel(SelectedGuild, SelectedChannels);
             if (await _dialogManager.ShowDialogAsync(dialog) != true)
                 return;
 
-            var exporter = new ChannelExporter(token);
+            var exporter = new ChannelExporter(_discord);
 
             var operations = ProgressManager.CreateOperations(dialog.Channels!.Count);
             var successfulExportCount = 0;

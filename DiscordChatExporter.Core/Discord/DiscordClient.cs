@@ -75,7 +75,7 @@ public class DiscordClient
             }
 
             // The token is probably invalid altogether.
-            // Return the last response anyway,  upstream should handle the error.
+            // Return the last response anyway, upstream should handle the error.
             return botResponse;
         }, cancellationToken);
     }

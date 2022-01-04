@@ -11,8 +11,8 @@ public record EmbedField(
 {
     public static EmbedField Parse(JsonElement json)
     {
-        var name = json.GetProperty("name").GetNonWhiteSpaceString();
-        var value = json.GetProperty("value").GetNonWhiteSpaceString();
+        var name = json.GetProperty("name").GetNonNullString();
+        var value = json.GetProperty("value").GetNonNullString();
         var isInline = json.GetPropertyOrNull("inline")?.GetBooleanOrNull() ?? false;
 
         return new EmbedField(name, value, isInline);

@@ -73,7 +73,9 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
     protected override MarkdownNode VisitUnixTimestamp(UnixTimestampNode timestamp)
     {
         _buffer.Append(
-            _context.FormatDate(timestamp.Value)
+            timestamp.Date is not null
+                ? _context.FormatDate(timestamp.Date.Value)
+                : "Invalid date"
         );
 
         return base.VisitUnixTimestamp(timestamp);

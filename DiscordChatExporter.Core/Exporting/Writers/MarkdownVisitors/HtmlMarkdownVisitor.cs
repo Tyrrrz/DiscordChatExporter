@@ -159,12 +159,18 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
 
     protected override MarkdownNode VisitUnixTimestamp(UnixTimestampNode timestamp)
     {
+        var dateString = timestamp.Date is not null
+            ? _context.FormatDate(timestamp.Date.Value)
+            : "Invalid date";
+
         // Timestamp tooltips always use full date regardless of the configured format
-        var longDateString = timestamp.Value.ToLocalString("dddd, MMMM d, yyyy h:mm tt");
+        var longDateString = timestamp.Date is not null
+            ? timestamp.Date.Value.ToLocalString("dddd, MMMM d, yyyy h:mm tt")
+            : "Invalid date";
 
         _buffer
             .Append($"<span class=\"timestamp\" title=\"{HtmlEncode(longDateString)}\">")
-            .Append(HtmlEncode(_context.FormatDate(timestamp.Value)))
+            .Append(HtmlEncode(dateString))
             .Append("</span>");
 
         return base.VisitUnixTimestamp(timestamp);

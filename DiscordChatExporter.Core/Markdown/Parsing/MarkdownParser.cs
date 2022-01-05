@@ -235,7 +235,7 @@ internal static partial class MarkdownParser
 
     // Capture <t:12345678> or <t:12345678:R>
     private static readonly IMatcher<MarkdownNode> UnixTimestampNodeMatcher = new RegexMatcher<MarkdownNode>(
-        new Regex("<t:(\\d+)(?::\\w)?>", DefaultRegexOptions),
+        new Regex("<t:(-?\\d+)(?::\\w)?>", DefaultRegexOptions),
         (_, m) =>
         {
             // TODO: support formatting parameters
@@ -244,17 +244,19 @@ internal static partial class MarkdownParser
             if (!long.TryParse(m.Groups[1].Value, NumberStyles.Integer, CultureInfo.InvariantCulture,
                     out var offset))
             {
-                return null;
+                return new UnixTimestampNode(null);
             }
 
-            // Bound check
-            // https://github.com/Tyrrrz/DiscordChatExporter/issues/681
-            if (offset < TimeSpan.MinValue.TotalSeconds || offset > TimeSpan.MaxValue.TotalSeconds)
+            try
             {
-                return null;
+                return new UnixTimestampNode(DateTimeOffset.UnixEpoch + TimeSpan.FromSeconds(offset));
             }
-
-            return new UnixTimestampNode(DateTimeOffset.UnixEpoch + TimeSpan.FromSeconds(offset));
+            // https://github.com/Tyrrrz/DiscordChatExporter/issues/681
+            // https://github.com/Tyrrrz/DiscordChatExporter/issues/766
+            catch (Exception ex) when (ex is ArgumentOutOfRangeException or OverflowException)
+            {
+                return new UnixTimestampNode(null);
+            }
         }
     );
 

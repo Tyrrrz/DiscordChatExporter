@@ -12,7 +12,7 @@ public record Role(Snowflake Id, string Name, int Position, Color? Color) : IHas
     public static Role Parse(JsonElement json)
     {
         var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
-        var name = json.GetProperty("name").GetNonWhiteSpaceString();
+        var name = json.GetProperty("name").GetNonNullString();
         var position = json.GetProperty("position").GetInt32();
 
         var color = json

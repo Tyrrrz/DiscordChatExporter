@@ -23,7 +23,7 @@ public record Guild(Snowflake Id, string Name, string IconUrl) : IHasId
     public static Guild Parse(JsonElement json)
     {
         var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
-        var name = json.GetProperty("name").GetNonWhiteSpaceString();
+        var name = json.GetProperty("name").GetNonNullString();
         var iconHash = json.GetPropertyOrNull("icon")?.GetNonWhiteSpaceStringOrNull();
 
         var iconUrl = !string.IsNullOrWhiteSpace(iconHash)

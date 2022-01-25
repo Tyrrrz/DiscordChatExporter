@@ -157,7 +157,9 @@
                             </InlineUIContainer>
                             <Run FontSize="16" Text="Authenticate using your personal account" />
                             <LineBreak />
-                            <Run Text="1. Open Discord" />
+                            <Run Text="1. Open Discord in your" />
+                            <Run FontWeight="SemiBold" Text="web browser" />
+                            <Run Text="and login" />
                             <LineBreak />
                             <Run Text="2. Press" />
                             <Run FontWeight="SemiBold" Text="Ctrl+Shift+I" />

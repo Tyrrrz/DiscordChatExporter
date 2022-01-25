@@ -15,7 +15,7 @@ public class GuideCommand : ICommand
         using (console.WithForegroundColor(ConsoleColor.White))
             console.Output.WriteLine("To get user token:");
 
-        console.Output.WriteLine(" 1. Open Discord");
+        console.Output.WriteLine(" 1. Open Discord your web browser and login");
         console.Output.WriteLine(" 2. Press Ctrl+Shift+I to show developer tools");
         console.Output.WriteLine(" 3. Press Ctrl+Shift+M to toggle device toolbar");
         console.Output.WriteLine(" 4. Navigate to the Application tab");

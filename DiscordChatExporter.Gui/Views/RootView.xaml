@@ -158,6 +158,10 @@
                             <Run FontSize="16" Text="Authenticate using your personal account" />
                             <LineBreak />
                             <Run Text="1. Open Discord" />
+                            <Run FontWeight="SemiBold" Text="(https://discord.com/)" />
+                            <Run Text="in your preferred browser and " />
+                            <Run FontWeight="SemiBold" Text="login" />
+                            <Run Text=" through your credentials" />
                             <LineBreak />
                             <Run Text="2. Press" />
                             <Run FontWeight="SemiBold" Text="Ctrl+Shift+I" />

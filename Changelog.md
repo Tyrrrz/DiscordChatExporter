@@ -1,4 +1,4 @@
-### v2.32 (15-Dec-2021)
+### v2.32 (27-Jan-2022)
 
 - Token kind (user or bot) is now detected automatically. Removed the button to switch token kind in GUI. Option `-b|--bot` in CLI is now deprecated and does nothing.
 - Updated user token extraction guide to reflect the fact that devtools are no longer accessible in the desktop version of Discord client. The recommended workaround is to open Discord in browser. (Thanks [@Dhananjay-JSR](https://github.com/Dhananjay-JSR))

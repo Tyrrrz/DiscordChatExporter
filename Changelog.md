@@ -1,6 +1,15 @@
+### v2.32 (15-Dec-2021)
+
+- Token kind (user or bot) is now detected automatically. Removed the button to switch token kind in GUI. Option `-b|--bot` in CLI is now deprecated and does nothing.
+- Updated user token extraction guide to reflect the fact that devtools are no longer accessible in the desktop version of Discord client. The recommended workaround is to open Discord in browser. (Thanks [@Dhananjay-JSR](https://github.com/Dhananjay-JSR))
+- Fixed an issue which caused an error when parsing invalid date timestamps. Such timestamps are now rendered as "Invalid date", similarly to how the Discord client does it.
+- Fixed an issue which caused an error when parsing certain embed fields.
+- Fixed an issue which caused an error when parsing a mention to a user that has no username.
+- [GUI] Minor visual fixes.
+
 ### v2.31.1 (15-Dec-2021)
 
-- Fixed an issue which caused an exception when parsing certain custom emoji reactions.
+- Fixed an issue which caused an error when parsing certain custom emoji reactions.
 - [GUI] Improved user interface.
 
 ### v2.31 (06-Dec-2021)

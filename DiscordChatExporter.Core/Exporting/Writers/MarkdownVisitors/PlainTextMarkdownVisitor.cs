@@ -1,8 +1,6 @@
 ﻿using System.Text;
-using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Markdown;
 using DiscordChatExporter.Core.Markdown.Parsing;
-using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors;
 
@@ -36,21 +34,20 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
 
     protected override MarkdownNode VisitMention(MentionNode mention)
     {
-        var mentionId = Snowflake.TryParse(mention.Id);
         if (mention.Kind == MentionKind.Meta)
         {
             _buffer.Append($"@{mention.Id}");
         }
         else if (mention.Kind == MentionKind.User)
         {
-            var member = mentionId?.Pipe(_context.TryGetMember);
+            var member = _context.TryGetMember(mention.Id);
             var name = member?.User.Name ?? "Unknown";
 
             _buffer.Append($"@{name}");
         }
         else if (mention.Kind == MentionKind.Channel)
         {
-            var channel = mentionId?.Pipe(_context.TryGetChannel);
+            var channel = _context.TryGetChannel(mention.Id);
             var name = channel?.Name ?? "deleted-channel";
 
             _buffer.Append($"#{name}");
@@ -61,7 +58,7 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
         }
         else if (mention.Kind == MentionKind.Role)
         {
-            var role = mentionId?.Pipe(_context.TryGetRole);
+            var role = _context.TryGetRole(mention.Id);
             var name = role?.Name ?? "deleted-role";
 
             _buffer.Append($"@{name}");

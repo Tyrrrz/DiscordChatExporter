@@ -3,7 +3,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Markdown;
 using DiscordChatExporter.Core.Markdown.Parsing;
@@ -108,17 +107,16 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
 
     protected override MarkdownNode VisitMention(MentionNode mention)
     {
-        var mentionId = Snowflake.TryParse(mention.Id);
         if (mention.Kind == MentionKind.Meta)
         {
             _buffer
                 .Append("<span class=\"mention\">")
-                .Append("@").Append(HtmlEncode(mention.Id))
+                .Append("@").Append(HtmlEncode(mention.Id.ToString()))
                 .Append("</span>");
         }
         else if (mention.Kind == MentionKind.User)
         {
-            var member = mentionId?.Pipe(_context.TryGetMember);
+            var member = _context.TryGetMember(mention.Id);
             var fullName = member?.User.FullName ?? "Unknown";
             var nick = member?.Nick ?? "Unknown";
 
@@ -129,7 +127,7 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
         }
         else if (mention.Kind == MentionKind.Channel)
         {
-            var channel = mentionId?.Pipe(_context.TryGetChannel);
+            var channel = _context.TryGetChannel(mention.Id);
             var symbol = channel?.IsVoiceChannel == true ? "🔊" : "#";
             var name = channel?.Name ?? "deleted-channel";
 
@@ -140,7 +138,7 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
         }
         else if (mention.Kind == MentionKind.Role)
         {
-            var role = mentionId?.Pipe(_context.TryGetRole);
+            var role = _context.TryGetRole(mention.Id);
             var name = role?.Name ?? "deleted-role";
             var color = role?.Color;
 

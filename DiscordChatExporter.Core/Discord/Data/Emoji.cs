@@ -10,14 +10,14 @@ namespace DiscordChatExporter.Core.Discord.Data;
 // https://discord.com/developers/docs/resources/emoji#emoji-object
 public partial record Emoji(
     // Only present on custom emoji
-    string? Id,
+    Snowflake? Id,
     // Name of custom emoji (e.g. LUL) or actual representation of standard emoji (e.g. 🙂)
     string Name,
     bool IsAnimated,
     string ImageUrl)
 {
     // Name of custom emoji (e.g. LUL) or name of standard emoji (e.g. slight_smile)
-    public string Code => !string.IsNullOrWhiteSpace(Id)
+    public string Code => Id is not null
         ? Name
         : EmojiIndex.TryGetCode(Name) ?? Name;
 }
@@ -32,18 +32,18 @@ public partial record Emoji
             .Select(r => r.Value.ToString("x"))
     );
 
-    private static string GetImageUrl(string id, bool isAnimated) => isAnimated
+    private static string GetImageUrl(Snowflake id, bool isAnimated) => isAnimated
         ? $"https://cdn.discordapp.com/emojis/{id}.gif"
         : $"https://cdn.discordapp.com/emojis/{id}.png";
 
     private static string GetImageUrl(string name) =>
         $"https://twemoji.maxcdn.com/2/svg/{GetTwemojiName(name)}.svg";
 
-    public static string GetImageUrl(string? id, string? name, bool isAnimated)
+    public static string GetImageUrl(Snowflake? id, string? name, bool isAnimated)
     {
         // Custom emoji
-        if (!string.IsNullOrWhiteSpace(id))
-            return GetImageUrl(id, isAnimated);
+        if (id is not null)
+            return GetImageUrl(id.Value, isAnimated);
 
         // Standard emoji
         if (!string.IsNullOrWhiteSpace(name))
@@ -55,7 +55,7 @@ public partial record Emoji
 
     public static Emoji Parse(JsonElement json)
     {
-        var id = json.GetPropertyOrNull("id")?.GetNonWhiteSpaceStringOrNull();
+        var id = json.GetPropertyOrNull("id")?.GetNonWhiteSpaceStringOrNull()?.Pipe(Snowflake.Parse);
         var name = json.GetPropertyOrNull("name")?.GetNonWhiteSpaceStringOrNull();
         var isAnimated = json.GetPropertyOrNull("animated")?.GetBooleanOrNull() ?? false;
 

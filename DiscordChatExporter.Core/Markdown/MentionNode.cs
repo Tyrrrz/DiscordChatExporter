@@ -1,3 +1,5 @@
-﻿namespace DiscordChatExporter.Core.Markdown;
+﻿using DiscordChatExporter.Core.Discord;
 
-internal record MentionNode(string Id, MentionKind Kind) : MarkdownNode;
+namespace DiscordChatExporter.Core.Markdown;
+
+internal record MentionNode(Snowflake Id, MentionKind Kind) : MarkdownNode;

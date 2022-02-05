@@ -169,7 +169,7 @@ internal class JsonMessageWriter : MessageWriter
 
         // Emoji
         _writer.WriteStartObject("emoji");
-        _writer.WriteString("id", reaction.Emoji.Id);
+        _writer.WriteString("id", reaction.Emoji.Id.ToString());
         _writer.WriteString("name", reaction.Emoji.Name);
         _writer.WriteBoolean("isAnimated", reaction.Emoji.IsAnimated);
         _writer.WriteString("imageUrl", await Context.ResolveMediaUrlAsync(reaction.Emoji.ImageUrl, cancellationToken));

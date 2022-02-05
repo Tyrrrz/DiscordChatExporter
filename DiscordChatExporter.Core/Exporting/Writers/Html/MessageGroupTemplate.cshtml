@@ -1,6 +1,7 @@
 @using System
 @using System.Linq
 @using System.Threading.Tasks
+@using DiscordChatExporter.Core.Discord.Data
 @using DiscordChatExporter.Core.Exporting.Writers.Html;
 
 @namespace DiscordChatExporter.Core.Exporting.Writers.Html
@@ -409,6 +410,21 @@
                             </div>
                         </div>
                     }
+                }
+
+                @{/* Stickers */}
+                @foreach (var sticker in message.Stickers)
+                {
+                    <div class="chatlog__sticker" title="@sticker.Name">
+                        @if (sticker.Format is StickerFormat.Png or StickerFormat.PngAnimated)
+                        {
+                            <img src="@(await ResolveUrlAsync(sticker.SourceUrl))" alt="Sticker">
+                        }
+                        else if (sticker.Format == StickerFormat.Lottie)
+                        {
+                            <div class="chatlog__sticker--media" data-source="@(await ResolveUrlAsync(sticker.SourceUrl))"></div>
+                        }
+                    </div>
                 }
 
                 @{/* Message reactions */}

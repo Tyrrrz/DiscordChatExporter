@@ -98,6 +98,25 @@ internal class PlainTextMessageWriter : MessageWriter
         }
     }
 
+    private async ValueTask WriteStickersAsync(
+        IReadOnlyList<Sticker> stickers,
+        CancellationToken cancellationToken = default)
+    {
+        if (!stickers.Any())
+            return;
+
+        await _writer.WriteLineAsync("{Stickers}");
+
+        foreach (var sticker in stickers)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            await _writer.WriteLineAsync(await Context.ResolveMediaUrlAsync(sticker.SourceUrl, cancellationToken));
+        }
+
+        await _writer.WriteLineAsync();
+    }
+
     private async ValueTask WriteReactionsAsync(
         IReadOnlyList<Reaction> reactions,
         CancellationToken cancellationToken = default)

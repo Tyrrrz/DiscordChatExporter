@@ -161,6 +161,21 @@ internal class JsonMessageWriter : MessageWriter
         await _writer.FlushAsync(cancellationToken);
     }
 
+    private async ValueTask WriteStickerAsync(
+        Sticker sticker,
+        CancellationToken cancellationToken = default)
+    {
+        _writer.WriteStartObject();
+
+        _writer.WriteString("id", sticker.Id.ToString());
+        _writer.WriteString("name", sticker.Name);
+        _writer.WriteString("format", sticker.Format.ToString());
+        _writer.WriteString("sourceUrl", await Context.ResolveMediaUrlAsync(sticker.SourceUrl, cancellationToken));
+
+        _writer.WriteEndObject();
+        await _writer.FlushAsync(cancellationToken);
+    }
+
     private async ValueTask WriteReactionAsync(
         Reaction reaction,
         CancellationToken cancellationToken = default)
@@ -273,6 +288,14 @@ internal class JsonMessageWriter : MessageWriter
 
         foreach (var embed in message.Embeds)
             await WriteEmbedAsync(embed, cancellationToken);
+
+        _writer.WriteEndArray();
+
+        // Stickers
+        _writer.WriteStartArray("stickers");
+
+        foreach (var sticker in message.Stickers)
+            await WriteStickerAsync(sticker, cancellationToken);
 
         _writer.WriteEndArray();
 

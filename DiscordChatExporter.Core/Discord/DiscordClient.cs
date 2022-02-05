@@ -20,7 +20,7 @@ namespace DiscordChatExporter.Core.Discord;
 public class DiscordClient
 {
     private readonly string _token;
-    private readonly Uri _baseUri = new("https://discord.com/api/v8/", UriKind.Absolute);
+    private readonly Uri _baseUri = new("https://discord.com/api/v9/", UriKind.Absolute);
 
     private TokenKind _tokenKind = TokenKind.Unknown;
 

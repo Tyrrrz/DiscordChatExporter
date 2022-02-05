@@ -23,7 +23,7 @@ internal static partial class MarkdownParser
     // Capture any character until the earliest double asterisk not followed by an asterisk
     private static readonly IMatcher<MarkdownNode> BoldFormattingNodeMatcher = new RegexMatcher<MarkdownNode>(
         new Regex("\\*\\*(.+?)\\*\\*(?!\\*)", DefaultRegexOptions | RegexOptions.Singleline),
-        (p, m) => new FormattingNode(FormattingKind.Bold, Parse(p.Slice(m.Groups[1])))
+        (s, m) => new FormattingNode(FormattingKind.Bold, Parse(s.Relocate(m.Groups[1])))
     );
 
     // Capture any character until the earliest single asterisk not preceded or followed by an asterisk
@@ -31,54 +31,54 @@ internal static partial class MarkdownParser
     // Closing asterisk must not be preceded by whitespace
     private static readonly IMatcher<MarkdownNode> ItalicFormattingNodeMatcher = new RegexMatcher<MarkdownNode>(
         new Regex("\\*(?!\\s)(.+?)(?<!\\s|\\*)\\*(?!\\*)", DefaultRegexOptions | RegexOptions.Singleline),
-        (p, m) => new FormattingNode(FormattingKind.Italic, Parse(p.Slice(m.Groups[1])))
+        (s, m) => new FormattingNode(FormattingKind.Italic, Parse(s.Relocate(m.Groups[1])))
     );
 
     // Capture any character until the earliest triple asterisk not followed by an asterisk
     private static readonly IMatcher<MarkdownNode> ItalicBoldFormattingNodeMatcher = new RegexMatcher<MarkdownNode>(
         new Regex("\\*(\\*\\*.+?\\*\\*)\\*(?!\\*)", DefaultRegexOptions | RegexOptions.Singleline),
-        (p, m) => new FormattingNode(FormattingKind.Italic, Parse(p.Slice(m.Groups[1]), BoldFormattingNodeMatcher))
+        (s, m) => new FormattingNode(FormattingKind.Italic, Parse(s.Relocate(m.Groups[1]), BoldFormattingNodeMatcher))
     );
 
     // Capture any character except underscore until an underscore
     // Closing underscore must not be followed by a word character
     private static readonly IMatcher<MarkdownNode> ItalicAltFormattingNodeMatcher = new RegexMatcher<MarkdownNode>(
         new Regex("_([^_]+)_(?!\\w)", DefaultRegexOptions | RegexOptions.Singleline),
-        (p, m) => new FormattingNode(FormattingKind.Italic, Parse(p.Slice(m.Groups[1])))
+        (s, m) => new FormattingNode(FormattingKind.Italic, Parse(s.Relocate(m.Groups[1])))
     );
 
     // Capture any character until the earliest double underscore not followed by an underscore
     private static readonly IMatcher<MarkdownNode> UnderlineFormattingNodeMatcher = new RegexMatcher<MarkdownNode>(
         new Regex("__(.+?)__(?!_)", DefaultRegexOptions | RegexOptions.Singleline),
-        (p, m) => new FormattingNode(FormattingKind.Underline, Parse(p.Slice(m.Groups[1])))
+        (s, m) => new FormattingNode(FormattingKind.Underline, Parse(s.Relocate(m.Groups[1])))
     );
 
     // Capture any character until the earliest triple underscore not followed by an underscore
     private static readonly IMatcher<MarkdownNode> ItalicUnderlineFormattingNodeMatcher =
         new RegexMatcher<MarkdownNode>(
             new Regex("_(__.+?__)_(?!_)", DefaultRegexOptions | RegexOptions.Singleline),
-            (p, m) => new FormattingNode(FormattingKind.Italic,
-                Parse(p.Slice(m.Groups[1]), UnderlineFormattingNodeMatcher))
+            (s, m) => new FormattingNode(FormattingKind.Italic,
+                Parse(s.Relocate(m.Groups[1]), UnderlineFormattingNodeMatcher))
         );
 
     // Capture any character until the earliest double tilde
     private static readonly IMatcher<MarkdownNode> StrikethroughFormattingNodeMatcher =
         new RegexMatcher<MarkdownNode>(
             new Regex("~~(.+?)~~", DefaultRegexOptions | RegexOptions.Singleline),
-            (p, m) => new FormattingNode(FormattingKind.Strikethrough, Parse(p.Slice(m.Groups[1])))
+            (s, m) => new FormattingNode(FormattingKind.Strikethrough, Parse(s.Relocate(m.Groups[1])))
         );
 
     // Capture any character until the earliest double pipe
     private static readonly IMatcher<MarkdownNode> SpoilerFormattingNodeMatcher = new RegexMatcher<MarkdownNode>(
         new Regex("\\|\\|(.+?)\\|\\|", DefaultRegexOptions | RegexOptions.Singleline),
-        (p, m) => new FormattingNode(FormattingKind.Spoiler, Parse(p.Slice(m.Groups[1])))
+        (s, m) => new FormattingNode(FormattingKind.Spoiler, Parse(s.Relocate(m.Groups[1])))
     );
 
     // Capture any character until the end of the line
     // Opening 'greater than' character must be followed by whitespace
     private static readonly IMatcher<MarkdownNode> SingleLineQuoteNodeMatcher = new RegexMatcher<MarkdownNode>(
         new Regex("^>\\s(.+\n?)", DefaultRegexOptions),
-        (p, m) => new FormattingNode(FormattingKind.Quote, Parse(p.Slice(m.Groups[1])))
+        (s, m) => new FormattingNode(FormattingKind.Quote, Parse(s.Relocate(m.Groups[1])))
     );
 
     // Repeatedly capture any character until the end of the line
@@ -97,7 +97,7 @@ internal static partial class MarkdownParser
     // Opening 'greater than' characters must be followed by whitespace
     private static readonly IMatcher<MarkdownNode> MultiLineQuoteNodeMatcher = new RegexMatcher<MarkdownNode>(
         new Regex("^>>>\\s(.+)", DefaultRegexOptions | RegexOptions.Singleline),
-        (p, m) => new FormattingNode(FormattingKind.Quote, Parse(p.Slice(m.Groups[1])))
+        (s, m) => new FormattingNode(FormattingKind.Quote, Parse(s.Relocate(m.Groups[1])))
     );
 
     /* Code blocks */
@@ -185,7 +185,7 @@ internal static partial class MarkdownParser
     // Capture [title](link)
     private static readonly IMatcher<MarkdownNode> TitledLinkNodeMatcher = new RegexMatcher<MarkdownNode>(
         new Regex("\\[(.+?)\\]\\((.+?)\\)", DefaultRegexOptions),
-        (p, m) => new LinkNode(m.Groups[2].Value, Parse(p.Slice(m.Groups[1])))
+        (s, m) => new LinkNode(m.Groups[2].Value, Parse(s.Relocate(m.Groups[1])))
     );
 
     // Capture any non-whitespace character after http:// or https://
@@ -207,7 +207,7 @@ internal static partial class MarkdownParser
     // This escapes it from matching for formatting
     private static readonly IMatcher<MarkdownNode> ShrugTextNodeMatcher = new StringMatcher<MarkdownNode>(
         @"¯\_(ツ)_/¯",
-        p => new TextNode(p.ToString())
+        s => new TextNode(s.ToString())
     );
 
     // Capture some specific emoji that don't get rendered
@@ -323,24 +323,24 @@ internal static partial class MarkdownParser
         UnixTimestampNodeMatcher
     );
 
-    private static IReadOnlyList<MarkdownNode> Parse(StringPart stringPart, IMatcher<MarkdownNode> matcher) =>
+    private static IReadOnlyList<MarkdownNode> Parse(StringSegment segment, IMatcher<MarkdownNode> matcher) =>
         matcher
-            .MatchAll(stringPart, p => new TextNode(p.ToString()))
+            .MatchAll(segment, s => new TextNode(s.ToString()))
             .Select(r => r.Value)
             .ToArray();
 }
 
 internal static partial class MarkdownParser
 {
-    private static IReadOnlyList<MarkdownNode> Parse(StringPart stringPart) =>
-        Parse(stringPart, AggregateNodeMatcher);
+    private static IReadOnlyList<MarkdownNode> Parse(StringSegment segment) =>
+        Parse(segment, AggregateNodeMatcher);
 
-    private static IReadOnlyList<MarkdownNode> ParseMinimal(StringPart stringPart) =>
-        Parse(stringPart, MinimalAggregateNodeMatcher);
+    private static IReadOnlyList<MarkdownNode> ParseMinimal(StringSegment segment) =>
+        Parse(segment, MinimalAggregateNodeMatcher);
 
     public static IReadOnlyList<MarkdownNode> Parse(string input) =>
-        Parse(new StringPart(input));
+        Parse(new StringSegment(input));
 
     public static IReadOnlyList<MarkdownNode> ParseMinimal(string input) =>
-        ParseMinimal(new StringPart(input));
+        ParseMinimal(new StringSegment(input));
 }

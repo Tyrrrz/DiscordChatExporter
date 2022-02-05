@@ -5,44 +5,57 @@ namespace DiscordChatExporter.Core.Markdown.Parsing;
 
 internal interface IMatcher<T>
 {
-    ParsedMatch<T>? TryMatch(StringPart stringPart);
+    ParsedMatch<T>? TryMatch(StringSegment segment);
 }
 
 internal static class MatcherExtensions
 {
-    public static IEnumerable<ParsedMatch<T>> MatchAll<T>(this IMatcher<T> matcher,
-        StringPart stringPart, Func<StringPart, T> transformFallback)
+    public static IEnumerable<ParsedMatch<T>> MatchAll<T>(
+        this IMatcher<T> matcher,
+        StringSegment segment,
+        Func<StringSegment, T> transformFallback)
     {
         // Loop through segments divided by individual matches
-        var currentIndex = stringPart.StartIndex;
-        while (currentIndex < stringPart.EndIndex)
+        var currentIndex = segment.StartIndex;
+        while (currentIndex < segment.EndIndex)
         {
             // Find a match within this segment
-            var match = matcher.TryMatch(stringPart.Slice(currentIndex, stringPart.EndIndex - currentIndex));
+            var match = matcher.TryMatch(
+                segment.Relocate(
+                    currentIndex,
+                    segment.EndIndex - currentIndex
+                )
+            );
 
-            // If there's no match - break
             if (match is null)
                 break;
 
-            // If this match doesn't start immediately at current index - transform and yield fallback first
-            if (match.StringPart.StartIndex > currentIndex)
+            // If this match doesn't start immediately at the current position - transform and yield fallback first
+            if (match.Segment.StartIndex > currentIndex)
             {
-                var fallbackPart = stringPart.Slice(currentIndex, match.StringPart.StartIndex - currentIndex);
-                yield return new ParsedMatch<T>(fallbackPart, transformFallback(fallbackPart));
+                var fallbackSegment = segment.Relocate(
+                    currentIndex,
+                    match.Segment.StartIndex - currentIndex
+                );
+
+                yield return new ParsedMatch<T>(fallbackSegment, transformFallback(fallbackSegment));
             }
 
-            // Yield match
             yield return match;
 
             // Shift current index to the end of the match
-            currentIndex = match.StringPart.StartIndex + match.StringPart.Length;
+            currentIndex = match.Segment.StartIndex + match.Segment.Length;
         }
 
-        // If EOL wasn't reached - transform and yield remaining part as fallback
-        if (currentIndex < stringPart.EndIndex)
+        // If EOL hasn't been reached - transform and yield remaining part as fallback
+        if (currentIndex < segment.EndIndex)
         {
-            var fallbackPart = stringPart.Slice(currentIndex);
-            yield return new ParsedMatch<T>(fallbackPart, transformFallback(fallbackPart));
+            var fallbackSegment = segment.Relocate(
+                currentIndex,
+                segment.EndIndex - currentIndex
+            );
+
+            yield return new ParsedMatch<T>(fallbackSegment, transformFallback(fallbackSegment));
         }
     }
 }

@@ -602,6 +602,11 @@
             height: 180px;
         }
 
+        .chatlog__sticker--media {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
         .chatlog__reactions {
             display: flex;
         }
@@ -680,12 +685,13 @@
                   container: e,
                   renderer: 'svg',
                   loop: true,
-                  autoplay: false,
+                  autoplay: true,
                   path: imageDataUrl
                 });
 
-                e.addEventListener('mouseenter', () => anim.play());
-                e.addEventListener('mouseleave', () => anim.stop());
+                anim.addEventListener('data_failed', () =>
+                    e.innerHTML = '<strong>[Sticker cannot be rendered]</strong>'
+                );
             });
         });
     </script>

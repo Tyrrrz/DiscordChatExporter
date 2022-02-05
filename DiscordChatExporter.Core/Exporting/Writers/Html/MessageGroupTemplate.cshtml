@@ -418,7 +418,7 @@
                     <div class="chatlog__sticker" title="@sticker.Name">
                         @if (sticker.Format is StickerFormat.Png or StickerFormat.PngAnimated)
                         {
-                            <img src="@(await ResolveUrlAsync(sticker.SourceUrl))" alt="Sticker">
+                            <img class="chatlog__sticker--media" src="@(await ResolveUrlAsync(sticker.SourceUrl))" alt="Sticker">
                         }
                         else if (sticker.Format == StickerFormat.Lottie)
                         {

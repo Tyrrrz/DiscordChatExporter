@@ -21,6 +21,7 @@ public record Message(
     string Content,
     IReadOnlyList<Attachment> Attachments,
     IReadOnlyList<Embed> Embeds,
+    IReadOnlyList<Sticker> Stickers,
     IReadOnlyList<Reaction> Reactions,
     IReadOnlyList<User> MentionedUsers,
     MessageReference? Reference,
@@ -60,6 +61,10 @@ public record Message(
             json.GetPropertyOrNull("embeds")?.EnumerateArrayOrNull()?.Select(Embed.Parse).ToArray() ??
             Array.Empty<Embed>();
 
+        var stickers =
+            json.GetPropertyOrNull("sticker_items")?.EnumerateArrayOrNull()?.Select(Sticker.Parse).ToArray() ??
+            Array.Empty<Sticker>();
+
         var reactions =
             json.GetPropertyOrNull("reactions")?.EnumerateArrayOrNull()?.Select(Reaction.Parse).ToArray() ??
             Array.Empty<Reaction>();
@@ -79,6 +84,7 @@ public record Message(
             content,
             attachments,
             embeds,
+            stickers,
             reactions,
             mentionedUsers,
             messageReference,

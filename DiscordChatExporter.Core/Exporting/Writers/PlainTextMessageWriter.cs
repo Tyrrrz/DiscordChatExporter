@@ -98,6 +98,25 @@ internal class PlainTextMessageWriter : MessageWriter
         }
     }
 
+    private async ValueTask WriteStickersAsync(
+        IReadOnlyList<Sticker> stickers,
+        CancellationToken cancellationToken = default)
+    {
+        if (!stickers.Any())
+            return;
+
+        await _writer.WriteLineAsync("{Stickers}");
+
+        foreach (var sticker in stickers)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            await _writer.WriteLineAsync(await Context.ResolveMediaUrlAsync(sticker.SourceUrl, cancellationToken));
+        }
+
+        await _writer.WriteLineAsync();
+    }
+
     private async ValueTask WriteReactionsAsync(
         IReadOnlyList<Reaction> reactions,
         CancellationToken cancellationToken = default)
@@ -156,9 +175,10 @@ internal class PlainTextMessageWriter : MessageWriter
 
         await _writer.WriteLineAsync();
 
-        // Attachments, embeds, reactions
+        // Attachments, embeds, reactions, etc.
         await WriteAttachmentsAsync(message.Attachments, cancellationToken);
         await WriteEmbedsAsync(message.Embeds, cancellationToken);
+        await WriteStickersAsync(message.Stickers, cancellationToken);
         await WriteReactionsAsync(message.Reactions, cancellationToken);
 
         await _writer.WriteLineAsync();

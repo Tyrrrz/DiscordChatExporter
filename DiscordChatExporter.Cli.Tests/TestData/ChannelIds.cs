@@ -10,6 +10,8 @@ public static class ChannelIds
 
     public static Snowflake EmbedTestCases { get; } = Snowflake.Parse("866472452459462687");
 
+    public static Snowflake StickerTestCases { get; } = Snowflake.Parse("939668868253769729");
+
     public static Snowflake FilterTestCases { get; } = Snowflake.Parse("866744075033641020");
 
     public static Snowflake MentionTestCases { get; } = Snowflake.Parse("866458801389174794");

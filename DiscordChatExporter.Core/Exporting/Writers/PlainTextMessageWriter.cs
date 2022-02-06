@@ -175,9 +175,10 @@ internal class PlainTextMessageWriter : MessageWriter
 
         await _writer.WriteLineAsync();
 
-        // Attachments, embeds, reactions
+        // Attachments, embeds, reactions, etc.
         await WriteAttachmentsAsync(message.Attachments, cancellationToken);
         await WriteEmbedsAsync(message.Embeds, cancellationToken);
+        await WriteStickersAsync(message.Stickers, cancellationToken);
         await WriteReactionsAsync(message.Reactions, cancellationToken);
 
         await _writer.WriteLineAsync();

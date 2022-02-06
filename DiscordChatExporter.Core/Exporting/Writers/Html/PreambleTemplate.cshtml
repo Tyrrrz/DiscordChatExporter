@@ -678,7 +678,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.8.1/lottie.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.chatlog__sticker--media').forEach(e => {
+            document.querySelectorAll('.chatlog__sticker--media[data-source]').forEach(e => {
                 const imageDataUrl = e.getAttribute('data-source');
 
                 const anim = lottie.loadAnimation({

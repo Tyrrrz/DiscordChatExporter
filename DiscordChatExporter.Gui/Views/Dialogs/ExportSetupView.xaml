@@ -1,17 +1,18 @@
 ﻿<UserControl
+    Style="{DynamicResource MaterialDesignRoot}"
+    Width="380"
+    d:DataContext="{d:DesignInstance Type=dialogs:ExportSetupViewModel}"
+    mc:Ignorable="d"
     x:Class="DiscordChatExporter.Gui.Views.Dialogs.ExportSetupView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:DiscordChatExporter.Gui.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dialogs="clr-namespace:DiscordChatExporter.Gui.ViewModels.Dialogs"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:s="https://github.com/canton7/Stylet"
-    Width="380"
-    d:DataContext="{d:DesignInstance Type=dialogs:ExportSetupViewModel}"
-    Style="{DynamicResource MaterialDesignRoot}"
-    mc:Ignorable="d">
+    xmlns:utils="clr-namespace:DiscordChatExporter.Gui.Utils"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -29,8 +30,8 @@
             <!--  Guild icon  -->
             <Ellipse
                 Grid.Column="0"
-                Width="32"
-                Height="32">
+                Height="32"
+                Width="32">
                 <Ellipse.Fill>
                     <ImageBrush ImageSource="{Binding Guild.IconUrl}" />
                 </Ellipse.Fill>
@@ -38,12 +39,12 @@
 
             <!--  Placeholder (for multiple channels)  -->
             <TextBlock
-                Grid.Column="1"
-                Margin="8,0,0,0"
-                VerticalAlignment="Center"
                 FontSize="19"
                 FontWeight="Light"
+                Grid.Column="1"
+                Margin="8,0,0,0"
                 TextTrimming="CharacterEllipsis"
+                VerticalAlignment="Center"
                 Visibility="{Binding IsSingleChannel, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}">
                 <Run Text="{Binding Channels.Count, Mode=OneWay}" />
                 <Run Text="channels selected" />
@@ -51,12 +52,12 @@
 
             <!--  Category and channel name (for single channel)  -->
             <TextBlock
-                Grid.Column="1"
-                Margin="8,0,0,0"
-                VerticalAlignment="Center"
                 FontSize="19"
                 FontWeight="Light"
+                Grid.Column="1"
+                Margin="8,0,0,0"
                 TextTrimming="CharacterEllipsis"
+                VerticalAlignment="Center"
                 Visibility="{Binding IsSingleChannel, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
                 <Run Text="{Binding Channels[0].Category.Name, Mode=OneWay}" ToolTip="{Binding Channels[0].Category.Name, Mode=OneWay}" />
                 <Run Text="/" />
@@ -68,21 +69,21 @@
         </Grid>
 
         <Border
-            Grid.Row="1"
-            Padding="0,8"
             BorderBrush="{DynamicResource MaterialDesignDivider}"
-            BorderThickness="0,1">
+            BorderThickness="0,1"
+            Grid.Row="1"
+            Padding="0,8">
             <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
                     <!--  Format  -->
                     <ComboBox
-                        Margin="16,8"
-                        materialDesign:HintAssist.Hint="Format"
-                        materialDesign:HintAssist.IsFloating="True"
                         IsReadOnly="True"
                         ItemsSource="{Binding AvailableFormats}"
+                        Margin="16,8"
                         SelectedItem="{Binding SelectedFormat}"
-                        Style="{DynamicResource MaterialDesignOutlinedComboBox}">
+                        Style="{DynamicResource MaterialDesignOutlinedComboBox}"
+                        materialDesign:HintAssist.Hint="Format"
+                        materialDesign:HintAssist.IsFloating="True">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Converter={x:Static converters:ExportFormatToStringConverter.Instance}}" />
@@ -104,64 +105,66 @@
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
                             <DatePicker
-                                Grid.Row="0"
-                                Grid.Column="0"
-                                Margin="16,8,16,4"
-                                materialDesign:HintAssist.Hint="After (date)"
-                                materialDesign:HintAssist.IsFloating="True"
                                 DisplayDateEnd="{Binding BeforeDate, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
+                                Grid.Column="0"
+                                Grid.Row="0"
+                                Margin="16,8,16,4"
                                 SelectedDate="{Binding AfterDate, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
                                 Style="{DynamicResource MaterialDesignOutlinedDatePicker}"
-                                ToolTip="Only include messages sent after this date" />
+                                ToolTip="Only include messages sent after this date"
+                                materialDesign:HintAssist.Hint="After (date)"
+                                materialDesign:HintAssist.IsFloating="True" />
                             <DatePicker
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                Margin="16,8,16,4"
-                                materialDesign:HintAssist.Hint="Before (date)"
-                                materialDesign:HintAssist.IsFloating="True"
                                 DisplayDateStart="{Binding AfterDate, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
+                                Grid.Column="1"
+                                Grid.Row="0"
+                                Margin="16,8,16,4"
                                 SelectedDate="{Binding BeforeDate, Converter={x:Static converters:DateTimeOffsetToDateTimeConverter.Instance}}"
                                 Style="{DynamicResource MaterialDesignOutlinedDatePicker}"
-                                ToolTip="Only include messages sent before this date" />
+                                ToolTip="Only include messages sent before this date"
+                                materialDesign:HintAssist.Hint="Before (date)"
+                                materialDesign:HintAssist.IsFloating="True" />
                             <materialDesign:TimePicker
-                                Grid.Row="1"
                                 Grid.Column="0"
-                                Margin="16,4,16,8"
-                                materialDesign:HintAssist.Hint="After (time)"
-                                materialDesign:HintAssist.IsFloating="True"
+                                Grid.Row="1"
+                                Is24Hours="{x:Static utils:Internationalization.Is24Hours}"
                                 IsEnabled="{Binding IsAfterDateSet}"
+                                Margin="16,4,16,8"
                                 SelectedTime="{Binding AfterTime, Converter={x:Static converters:TimeSpanToDateTimeConverter.Instance}}"
                                 Style="{DynamicResource MaterialDesignOutlinedTimePicker}"
-                                ToolTip="Only include messages sent after this time" />
+                                ToolTip="Only include messages sent after this time"
+                                materialDesign:HintAssist.Hint="After (time)"
+                                materialDesign:HintAssist.IsFloating="True" />
                             <materialDesign:TimePicker
-                                Grid.Row="1"
                                 Grid.Column="1"
-                                Margin="16,4,16,8"
-                                materialDesign:HintAssist.Hint="Before (time)"
-                                materialDesign:HintAssist.IsFloating="True"
+                                Grid.Row="1"
+                                Is24Hours="{x:Static utils:Internationalization.Is24Hours}"
                                 IsEnabled="{Binding IsBeforeDateSet}"
+                                Margin="16,4,16,8"
                                 SelectedTime="{Binding BeforeTime, Converter={x:Static converters:TimeSpanToDateTimeConverter.Instance}}"
                                 Style="{DynamicResource MaterialDesignOutlinedTimePicker}"
-                                ToolTip="Only include messages sent before this time" />
+                                ToolTip="Only include messages sent before this time"
+                                materialDesign:HintAssist.Hint="Before (time)"
+                                materialDesign:HintAssist.IsFloating="True" />
                         </Grid>
 
                         <!--  Partitioning  -->
                         <TextBox
                             Margin="16,8"
-                            materialDesign:HintAssist.Hint="Partition limit"
-                            materialDesign:HintAssist.IsFloating="True"
                             Style="{DynamicResource MaterialDesignOutlinedTextBox}"
                             Text="{Binding PartitionLimitValue}"
-                            ToolTip="Split output into partitions, each limited to this number of messages (e.g. '100') or file size (e.g. '10mb')" />
+                            ToolTip="Split output into partitions, each limited to this number of messages (e.g. '100') or file size (e.g. '10mb')"
+                            materialDesign:HintAssist.Hint="Partition limit"
+                            materialDesign:HintAssist.IsFloating="True" />
 
                         <!--  Filtering  -->
                         <TextBox
                             Margin="16,8"
-                            materialDesign:HintAssist.Hint="Message filter"
-                            materialDesign:HintAssist.IsFloating="True"
                             Style="{DynamicResource MaterialDesignOutlinedTextBox}"
                             Text="{Binding MessageFilterValue}"
-                            ToolTip="Only include messages that satisfy this filter (e.g. 'from:foo#1234' or 'has:image')." />
+                            ToolTip="Only include messages that satisfy this filter (e.g. 'from:foo#1234' or 'has:image')."
+                            materialDesign:HintAssist.Hint="Message filter"
+                            materialDesign:HintAssist.IsFloating="True" />
 
                         <!--  Download media  -->
                         <Grid Margin="16,16" ToolTip="Download referenced media content (user avatars, attached files, embedded images, etc)">
@@ -172,13 +175,13 @@
 
                             <TextBlock
                                 Grid.Column="0"
-                                VerticalAlignment="Center"
-                                Text="Download media" />
+                                Text="Download media"
+                                VerticalAlignment="Center" />
                             <ToggleButton
                                 Grid.Column="1"
                                 HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                IsChecked="{Binding ShouldDownloadMedia}" />
+                                IsChecked="{Binding ShouldDownloadMedia}"
+                                VerticalAlignment="Center" />
                         </Grid>
                     </StackPanel>
                 </StackPanel>
@@ -195,8 +198,8 @@
             </Grid.ColumnDefinitions>
 
             <Button
-                Grid.Column="0"
                 Command="{s:Action ToggleAdvancedSection}"
+                Grid.Column="0"
                 IsDefault="True"
                 ToolTip="Toggle advanced options">
                 <Button.Style>
@@ -214,17 +217,17 @@
             </Button>
 
             <Button
-                Grid.Column="2"
                 Command="{s:Action Confirm}"
                 Content="EXPORT"
+                Grid.Column="2"
                 IsDefault="True"
                 Style="{DynamicResource MaterialDesignOutlinedButton}" />
             <Button
-                Grid.Column="3"
-                Margin="8,0,0,0"
                 Command="{s:Action Close}"
                 Content="CANCEL"
+                Grid.Column="3"
                 IsCancel="True"
+                Margin="8,0,0,0"
                 Style="{DynamicResource MaterialDesignOutlinedButton}" />
         </Grid>
     </Grid>

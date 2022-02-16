@@ -12,6 +12,7 @@ using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Utils;
 using DiscordChatExporter.Core.Utils.Extensions;
+using Gress;
 using JsonExtensions.Http;
 using JsonExtensions.Reading;
 
@@ -273,7 +274,7 @@ public class DiscordClient
         Snowflake channelId,
         Snowflake? after = null,
         Snowflake? before = null,
-        IProgress<double>? progress = null,
+        IProgress<Percentage>? progress = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         // Get the last message in the specified range.
@@ -322,16 +323,13 @@ public class DiscordClient
                     var exportedDuration = (message.Timestamp - firstMessage.Timestamp).Duration();
                     var totalDuration = (lastMessage.Timestamp - firstMessage.Timestamp).Duration();
 
-                    if (totalDuration > TimeSpan.Zero)
-                    {
-                        progress.Report(exportedDuration / totalDuration);
-                    }
-                    // Avoid division by zero if all messages have the exact same timestamp
-                    // (which may be the case if there's only one message in the channel)
-                    else
-                    {
-                        progress.Report(1);
-                    }
+                    progress.Report(Percentage.FromFraction(
+                        // Avoid division by zero if all messages have the exact same timestamp
+                        // (which may be the case if there's only one message in the channel)
+                        totalDuration > TimeSpan.Zero
+                            ? exportedDuration / totalDuration
+                            : 1
+                    ));
                 }
 
                 yield return message;

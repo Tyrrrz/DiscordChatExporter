@@ -13,6 +13,7 @@ using DiscordChatExporter.Gui.Utils;
 using DiscordChatExporter.Gui.ViewModels.Dialogs;
 using DiscordChatExporter.Gui.ViewModels.Framework;
 using Gress;
+using Gress.Completable;
 using MaterialDesignThemes.Wpf;
 using Stylet;
 
@@ -25,11 +26,13 @@ public class RootViewModel : Screen
     private readonly SettingsService _settingsService;
     private readonly UpdateService _updateService;
 
+    private readonly AutoResetProgressMuxer _progressMuxer;
+
     private DiscordClient? _discord;
 
-    public ISnackbarMessageQueue Notifications { get; } = new SnackbarMessageQueue(TimeSpan.FromSeconds(5));
+    public SnackbarMessageQueue Notifications { get; } = new(TimeSpan.FromSeconds(5));
 
-    public IProgressManager ProgressManager { get; } = new ProgressManager();
+    public ProgressContainer<Percentage> Progress { get; } = new();
 
     public bool IsBusy { get; private set; }
 
@@ -62,17 +65,14 @@ public class RootViewModel : Screen
 
         DisplayName = $"{App.Name} v{App.VersionString}";
 
-        // Update busy state when progress manager changes
-        ProgressManager.Bind(o => o.IsActive, (_, _) =>
-            IsBusy = ProgressManager.IsActive
+        _progressMuxer = Progress.CreateMuxer().WithAutoReset();
+
+        this.Bind(o => o.IsBusy, (_, _) =>
+            IsProgressIndeterminate = IsBusy && Progress.Current.Fraction is <= 0 or >= 1
         );
 
-        ProgressManager.Bind(o => o.IsActive, (_, _) =>
-            IsProgressIndeterminate = ProgressManager.IsActive && ProgressManager.Progress is <= 0 or >= 1
-        );
-
-        ProgressManager.Bind(o => o.Progress, (_, _) =>
-            IsProgressIndeterminate = ProgressManager.IsActive && ProgressManager.Progress is <= 0 or >= 1
+        Progress.Bind(o => o.Current, (_, _) =>
+            IsProgressIndeterminate = IsBusy && Progress.Current.Fraction is <= 0 or >= 1
         );
     }
 
@@ -147,7 +147,8 @@ public class RootViewModel : Screen
 
     public async void PopulateGuildsAndChannels()
     {
-        using var operation = ProgressManager.CreateOperation();
+        IsBusy = true;
+        var progress = _progressMuxer.CreateInput();
 
         try
         {
@@ -183,6 +184,11 @@ public class RootViewModel : Screen
 
             await _dialogManager.ShowDialogAsync(dialog);
         }
+        finally
+        {
+            progress.ReportCompletion();
+            IsBusy = false;
+        }
     }
 
     public bool CanExportChannels =>
@@ -194,6 +200,8 @@ public class RootViewModel : Screen
 
     public async void ExportChannels()
     {
+        IsBusy = true;
+
         try
         {
             if (_discord is null || SelectedGuild is null || SelectedChannels is null || !SelectedChannels.Any())
@@ -205,18 +213,22 @@ public class RootViewModel : Screen
 
             var exporter = new ChannelExporter(_discord);
 
-            var operations = ProgressManager.CreateOperations(dialog.Channels!.Count);
+            var progresses = Enumerable
+                .Range(0, dialog.Channels!.Count)
+                .Select(_ => _progressMuxer.CreateInput())
+                .ToArray();
+
             var successfulExportCount = 0;
 
             await Parallel.ForEachAsync(
-                dialog.Channels.Zip(operations),
+                dialog.Channels.Zip(progresses),
                 new ParallelOptions
                 {
                     MaxDegreeOfParallelism = Math.Max(1, _settingsService.ParallelLimit)
                 },
                 async (tuple, cancellationToken) =>
                 {
-                    var (channel, operation) = tuple;
+                    var (channel, progress) = tuple;
 
                     try
                     {
@@ -234,7 +246,7 @@ public class RootViewModel : Screen
                             _settingsService.DateFormat
                         );
 
-                        await exporter.ExportChannelAsync(request, operation, cancellationToken);
+                        await exporter.ExportChannelAsync(request, progress, cancellationToken);
 
                         Interlocked.Increment(ref successfulExportCount);
                     }
@@ -244,7 +256,7 @@ public class RootViewModel : Screen
                     }
                     finally
                     {
-                        operation.Dispose();
+                        progress.ReportCompletion();
                     }
                 }
             );
@@ -261,6 +273,10 @@ public class RootViewModel : Screen
             );
 
             await _dialogManager.ShowDialogAsync(dialog);
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 }

@@ -14,6 +14,7 @@ using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Core.Exporting.Filtering;
 using DiscordChatExporter.Core.Exporting.Partitioning;
+using Gress;
 
 namespace DiscordChatExporter.Cli.Commands.Base;
 
@@ -78,8 +79,7 @@ public abstract class ExportCommandBase : TokenCommandBase
                 {
                     try
                     {
-                        await progressContext.StartTaskAsync(
-                            $"{channel.Category.Name} / {channel.Name}",
+                        await progressContext.StartTaskAsync($"{channel.Category.Name} / {channel.Name}",
                             async progress =>
                             {
                                 var guild = await Discord.GetGuildAsync(channel.GuildId, innerCancellationToken);
@@ -98,7 +98,11 @@ public abstract class ExportCommandBase : TokenCommandBase
                                     DateFormat
                                 );
 
-                                await Exporter.ExportChannelAsync(request, progress, innerCancellationToken);
+                                await Exporter.ExportChannelAsync(
+                                    request,
+                                    progress.ToPercentageBased(),
+                                    innerCancellationToken
+                                );
                             }
                         );
                     }

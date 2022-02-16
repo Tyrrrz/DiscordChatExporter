@@ -1,7 +1,16 @@
 ﻿<Window
+    Background="{DynamicResource MaterialDesignPaper}"
+    FocusManager.FocusedElement="{Binding ElementName=TokenValueTextBox}"
+    Height="550"
+    Icon="/DiscordChatExporter;component/favicon.ico"
+    MinWidth="325"
+    Style="{DynamicResource MaterialDesignRoot}"
+    Width="600"
+    WindowStartupLocation="CenterScreen"
+    d:DataContext="{d:DesignInstance Type=viewModels:RootViewModel}"
+    mc:Ignorable="d"
     x:Class="DiscordChatExporter.Gui.Views.RootView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:behaviors="clr-namespace:DiscordChatExporter.Gui.Behaviors"
     xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
     xmlns:converters="clr-namespace:DiscordChatExporter.Gui.Converters"
@@ -11,21 +20,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:s="https://github.com/canton7/Stylet"
     xmlns:viewModels="clr-namespace:DiscordChatExporter.Gui.ViewModels"
-    Width="600"
-    Height="550"
-    MinWidth="325"
-    d:DataContext="{d:DesignInstance Type=viewModels:RootViewModel}"
-    Background="{DynamicResource MaterialDesignPaper}"
-    FocusManager.FocusedElement="{Binding ElementName=TokenValueTextBox}"
-    Icon="/DiscordChatExporter;component/favicon.ico"
-    Style="{DynamicResource MaterialDesignRoot}"
-    WindowStartupLocation="CenterScreen"
-    mc:Ignorable="d">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Window.TaskbarItemInfo>
-        <TaskbarItemInfo ProgressState="Normal" ProgressValue="{Binding ProgressManager.Progress}" />
+        <TaskbarItemInfo ProgressState="Normal" ProgressValue="{Binding Progress.Current.Fraction}" />
     </Window.TaskbarItemInfo>
     <Window.Resources>
-        <CollectionViewSource x:Key="AvailableChannelsViewSource" Source="{Binding AvailableChannels, Mode=OneWay}">
+        <CollectionViewSource Source="{Binding AvailableChannels, Mode=OneWay}" x:Key="AvailableChannelsViewSource">
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="Category.Name" />
             </CollectionViewSource.GroupDescriptions>
@@ -46,7 +46,7 @@
             </Grid.RowDefinitions>
 
             <!--  Toolbar  -->
-            <Grid Grid.Row="0" Background="{DynamicResource MaterialDesignDarkBackground}">
+            <Grid Background="{DynamicResource MaterialDesignDarkBackground}" Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -54,8 +54,8 @@
 
                 <!--  Token and pull data button  -->
                 <materialDesign:Card
-                    Grid.Row="0"
                     Grid.Column="0"
+                    Grid.Row="0"
                     Margin="12,12,0,12">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -66,74 +66,74 @@
 
                         <!--  Token icon  -->
                         <materialDesign:PackIcon
+                            Foreground="{DynamicResource PrimaryHueMidBrush}"
                             Grid.Column="0"
-                            Width="24"
                             Height="24"
+                            Kind="Password"
                             Margin="8"
                             VerticalAlignment="Center"
-                            Foreground="{DynamicResource PrimaryHueMidBrush}"
-                            Kind="Password" />
+                            Width="24" />
 
                         <!--  Token value  -->
                         <TextBox
-                            x:Name="TokenValueTextBox"
+                            BorderThickness="0"
+                            FontSize="16"
                             Grid.Column="1"
                             Margin="0,6,6,8"
+                            Text="{Binding Token, UpdateSourceTrigger=PropertyChanged}"
                             VerticalAlignment="Bottom"
                             materialDesign:HintAssist.Hint="Token"
                             materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
                             materialDesign:TextFieldAssist.TextBoxViewMargin="0,0,2,0"
-                            BorderThickness="0"
-                            FontSize="16"
-                            Text="{Binding Token, UpdateSourceTrigger=PropertyChanged}" />
+                            x:Name="TokenValueTextBox" />
 
                         <!--  Pull data button  -->
                         <Button
+                            Command="{s:Action PopulateGuildsAndChannels}"
                             Grid.Column="2"
+                            IsDefault="True"
                             Margin="0,6,6,6"
                             Padding="4"
-                            Command="{s:Action PopulateGuildsAndChannels}"
-                            IsDefault="True"
                             Style="{DynamicResource MaterialDesignFlatButton}"
                             ToolTip="Pull available guilds and channels (Enter)">
                             <materialDesign:PackIcon
-                                Width="24"
                                 Height="24"
-                                Kind="ArrowRight" />
+                                Kind="ArrowRight"
+                                Width="24" />
                         </Button>
                     </Grid>
                 </materialDesign:Card>
 
                 <!--  Settings button  -->
                 <Button
+                    Command="{s:Action ShowSettings}"
+                    Foreground="{DynamicResource MaterialDesignDarkForeground}"
                     Grid.Column="1"
                     Margin="6"
                     Padding="4"
-                    Command="{s:Action ShowSettings}"
-                    Foreground="{DynamicResource MaterialDesignDarkForeground}"
                     Style="{DynamicResource MaterialDesignFlatButton}"
                     ToolTip="Settings">
                     <Button.Resources>
-                        <SolidColorBrush x:Key="MaterialDesignFlatButtonClick" Color="#4C4C4C" />
+                        <SolidColorBrush Color="#4C4C4C" x:Key="MaterialDesignFlatButtonClick" />
                     </Button.Resources>
                     <materialDesign:PackIcon
-                        Width="24"
                         Height="24"
-                        Kind="Settings" />
+                        Kind="Settings"
+                        Width="24" />
                 </Button>
             </Grid>
 
             <!--  Progress bar  -->
             <ProgressBar
-                Grid.Row="1"
                 Background="{DynamicResource MaterialDesignDarkBackground}"
+                Grid.Row="1"
                 IsIndeterminate="{Binding IsProgressIndeterminate}"
-                Value="{Binding ProgressManager.Progress, Mode=OneWay}" />
+                Value="{Binding Progress.Current.Fraction, Mode=OneWay}" />
 
             <!--  Content  -->
             <Grid
-                Grid.Row="2"
                 Background="{DynamicResource MaterialDesignCardBackground}"
+                Grid.Row="2"
                 IsEnabled="{Binding IsBusy, Converter={x:Static converters:InverseBoolConverter.Instance}}">
                 <Grid.Resources>
                     <Style TargetType="TextBlock">
@@ -143,7 +143,7 @@
                 <!--  Placeholder / usage instructions  -->
                 <Grid Visibility="{Binding AvailableGuilds, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}">
                     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                        <TextBlock Margin="32,16" FontSize="14">
+                        <TextBlock FontSize="14" Margin="32,16">
                             <Run FontSize="18" Text="Please provide authentication token to continue" />
                             <LineBreak />
                             <LineBreak />
@@ -151,9 +151,9 @@
                             <!--  User token  -->
                             <InlineUIContainer>
                                 <materialDesign:PackIcon
-                                    Margin="1,0,0,-2"
                                     Foreground="{DynamicResource PrimaryHueMidBrush}"
-                                    Kind="Account" />
+                                    Kind="Account"
+                                    Margin="1,0,0,-2" />
                             </InlineUIContainer>
                             <Run FontSize="16" Text="Authenticate using your personal account" />
                             <LineBreak />
@@ -199,9 +199,9 @@
                             <!--  Bot token  -->
                             <InlineUIContainer>
                                 <materialDesign:PackIcon
-                                    Margin="1,0,0,-2"
                                     Foreground="{DynamicResource PrimaryHueMidBrush}"
-                                    Kind="Robot" />
+                                    Kind="Robot"
+                                    Margin="1,0,0,-2" />
                             </InlineUIContainer>
                             <Run FontSize="16" Text="Authenticate as a bot" />
                             <LineBreak />
@@ -235,9 +235,9 @@
 
                     <!--  Guilds  -->
                     <Border
-                        Grid.Column="0"
                         BorderBrush="{DynamicResource MaterialDesignDivider}"
-                        BorderThickness="0,0,1,0">
+                        BorderThickness="0,0,1,0"
+                        Grid.Column="0">
                         <ListBox
                             ItemsSource="{Binding AvailableGuilds}"
                             ScrollViewer.VerticalScrollBarVisibility="Hidden"
@@ -246,24 +246,24 @@
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Grid
-                                        Margin="-8"
                                         Background="Transparent"
                                         Cursor="Hand"
+                                        Margin="-8"
                                         ToolTip="{Binding Name}">
                                         <!--  Guild icon placeholder  -->
                                         <Ellipse
-                                            Width="48"
+                                            Fill="{DynamicResource MaterialDesignDivider}"
                                             Height="48"
                                             Margin="12,4,12,4"
-                                            Fill="{DynamicResource MaterialDesignDivider}" />
+                                            Width="48" />
 
                                         <!--  Guild icon  -->
                                         <Ellipse
-                                            Width="48"
                                             Height="48"
                                             Margin="12,4,12,4"
                                             Stroke="{DynamicResource MaterialDesignDivider}"
-                                            StrokeThickness="1">
+                                            StrokeThickness="1"
+                                            Width="48">
                                             <Ellipse.Fill>
                                                 <ImageBrush ImageSource="{Binding IconUrl}" />
                                             </Ellipse.Fill>
@@ -293,13 +293,13 @@
                                                 <Setter.Value>
                                                     <ControlTemplate d:DataContext="{x:Type CollectionViewGroup}">
                                                         <Expander
-                                                            Margin="0"
-                                                            Padding="0"
                                                             Background="Transparent"
                                                             BorderBrush="{DynamicResource MaterialDesignDivider}"
                                                             BorderThickness="0,0,0,1"
                                                             Header="{Binding Name}"
-                                                            IsExpanded="False">
+                                                            IsExpanded="False"
+                                                            Margin="0"
+                                                            Padding="0">
                                                             <ItemsPresenter />
                                                         </Expander>
                                                     </ControlTemplate>
@@ -311,7 +311,7 @@
                             </ListBox.GroupStyle>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid Margin="-8" Background="Transparent">
+                                    <Grid Background="Transparent" Margin="-8">
                                         <Grid.InputBindings>
                                             <MouseBinding Command="{s:Action ExportChannels}" MouseAction="LeftDoubleClick" />
                                         </Grid.InputBindings>
@@ -324,27 +324,27 @@
                                         <!--  Channel icon  -->
                                         <materialDesign:PackIcon
                                             Grid.Column="0"
+                                            Kind="Pound"
                                             Margin="16,7,0,6"
-                                            VerticalAlignment="Center"
-                                            Kind="Pound" />
+                                            VerticalAlignment="Center" />
 
                                         <!--  Channel name  -->
                                         <TextBlock
+                                            FontSize="14"
                                             Grid.Column="1"
                                             Margin="3,8,8,8"
-                                            VerticalAlignment="Center"
-                                            FontSize="14"
-                                            Text="{Binding Name, Mode=OneWay}" />
+                                            Text="{Binding Name, Mode=OneWay}"
+                                            VerticalAlignment="Center" />
 
                                         <!--  Is selected checkmark  -->
                                         <materialDesign:PackIcon
                                             Grid.Column="2"
-                                            Width="24"
                                             Height="24"
+                                            Kind="Check"
                                             Margin="8,0"
                                             VerticalAlignment="Center"
-                                            Kind="Check"
-                                            Visibility="{Binding IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}, Converter={x:Static s:BoolToVisibilityConverter.Instance}, Mode=OneWay}" />
+                                            Visibility="{Binding IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}, Converter={x:Static s:BoolToVisibilityConverter.Instance}, Mode=OneWay}"
+                                            Width="24" />
                                     </Grid>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
@@ -354,16 +354,16 @@
 
                 <!--  Export button  -->
                 <Button
-                    Margin="32,24"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Bottom"
                     Command="{s:Action ExportChannels}"
+                    HorizontalAlignment="Right"
+                    Margin="32,24"
                     Style="{DynamicResource MaterialDesignFloatingActionAccentButton}"
+                    VerticalAlignment="Bottom"
                     Visibility="{Binding CanExportChannels, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
                     <materialDesign:PackIcon
-                        Width="32"
                         Height="32"
-                        Kind="Download" />
+                        Kind="Download"
+                        Width="32" />
                 </Button>
 
                 <!--  Notifications snackbar  -->

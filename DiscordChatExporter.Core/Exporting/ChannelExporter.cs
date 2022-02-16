@@ -8,6 +8,7 @@ using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Utils.Extensions;
+using Gress;
 
 namespace DiscordChatExporter.Core.Exporting;
 
@@ -19,7 +20,7 @@ public class ChannelExporter
 
     public async ValueTask ExportChannelAsync(
         ExportRequest request,
-        IProgress<double>? progress = null,
+        IProgress<Percentage>? progress = null,
         CancellationToken cancellationToken = default)
     {
         // Build context

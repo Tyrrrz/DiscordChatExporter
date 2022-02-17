@@ -103,6 +103,13 @@ internal partial class MediaDownloader
         // Otherwise, use the original file name but inject the hash in the middle
         var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
         var fileExtension = Path.GetExtension(fileName);
+        
+        // Probably not a file extension, just a dot in a long file name
+        if (fileExtension.Length > 41)
+        {
+            fileNameWithoutExtension = fileName;
+            fileExtension = "";
+        }
 
         return PathEx.EscapeFileName(fileNameWithoutExtension.Truncate(42) + '-' + urlHash + fileExtension);
     }

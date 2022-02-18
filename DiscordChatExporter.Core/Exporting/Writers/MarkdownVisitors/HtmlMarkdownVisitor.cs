@@ -39,7 +39,8 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
             FormattingKind.Strikethrough => ("<s>", "</s>"),
             FormattingKind.Spoiler => (
                 "<span class=\"spoiler-text spoiler-text--hidden\" onclick=\"showSpoiler(event, this)\">", "</span>"),
-            FormattingKind.Quote => ("<div class=\"quote\">", "</div>"),
+            FormattingKind.Quote => (
+                "<div class=\"quote\"><div class=\"quote-border\"></div><div class=\"quote-content\">", "</div></div>"),
             _ => throw new ArgumentOutOfRangeException(nameof(formatting.Kind))
         };
 

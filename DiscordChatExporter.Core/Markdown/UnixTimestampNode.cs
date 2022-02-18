@@ -2,5 +2,5 @@
 
 namespace DiscordChatExporter.Core.Markdown;
 
-// Null means invalid date
+// Null date means invalid timestamp
 internal record UnixTimestampNode(DateTimeOffset? Date) : MarkdownNode;

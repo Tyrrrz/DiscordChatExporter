@@ -2,7 +2,8 @@
 
 internal enum MentionKind
 {
-    Meta,
+    Everyone,
+    Here,
     User,
     Channel,
     Role

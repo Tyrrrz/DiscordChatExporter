@@ -2,4 +2,5 @@
 
 namespace DiscordChatExporter.Core.Markdown;
 
-internal record MentionNode(Snowflake Id, MentionKind Kind) : MarkdownNode;
+// Null ID means it's a meta mention or an invalid mention
+internal record MentionNode(Snowflake? TargetId, MentionKind Kind) : MarkdownNode;

@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using DiscordChatExporter.Core.Markdown;
 using DiscordChatExporter.Core.Markdown.Parsing;
+using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors;
 
@@ -34,20 +35,24 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
 
     protected override MarkdownNode VisitMention(MentionNode mention)
     {
-        if (mention.Kind == MentionKind.Meta)
+        if (mention.Kind == MentionKind.Everyone)
         {
-            _buffer.Append($"@{mention.Id}");
+            _buffer.Append("@everyone");
+        }
+        else if (mention.Kind == MentionKind.Here)
+        {
+            _buffer.Append("@here");
         }
         else if (mention.Kind == MentionKind.User)
         {
-            var member = _context.TryGetMember(mention.Id);
+            var member = mention.TargetId?.Pipe(_context.TryGetMember);
             var name = member?.User.Name ?? "Unknown";
 
             _buffer.Append($"@{name}");
         }
         else if (mention.Kind == MentionKind.Channel)
         {
-            var channel = _context.TryGetChannel(mention.Id);
+            var channel =mention.TargetId?.Pipe(_context.TryGetChannel);
             var name = channel?.Name ?? "deleted-channel";
 
             _buffer.Append($"#{name}");
@@ -58,7 +63,7 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
         }
         else if (mention.Kind == MentionKind.Role)
         {
-            var role = _context.TryGetRole(mention.Id);
+            var role = mention.TargetId?.Pipe(_context.TryGetRole);
             var name = role?.Name ?? "deleted-role";
 
             _buffer.Append($"@{name}");

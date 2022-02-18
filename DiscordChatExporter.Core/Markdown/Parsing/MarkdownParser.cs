@@ -124,31 +124,31 @@ internal static partial class MarkdownParser
     // Capture @everyone
     private static readonly IMatcher<MarkdownNode> EveryoneMentionNodeMatcher = new StringMatcher<MarkdownNode>(
         "@everyone",
-        _ => new MentionNode(Snowflake.Zero, MentionKind.Meta)
+        _ => new MentionNode(null, MentionKind.Everyone)
     );
 
     // Capture @here
     private static readonly IMatcher<MarkdownNode> HereMentionNodeMatcher = new StringMatcher<MarkdownNode>(
         "@here",
-        _ => new MentionNode(Snowflake.Zero, MentionKind.Meta)
+        _ => new MentionNode(null, MentionKind.Here)
     );
 
     // Capture <@123456> or <@!123456>
     private static readonly IMatcher<MarkdownNode> UserMentionNodeMatcher = new RegexMatcher<MarkdownNode>(
         new Regex("<@!?(\\d+)>", DefaultRegexOptions),
-        (_, m) => new MentionNode(Snowflake.Parse(m.Groups[1].Value), MentionKind.User)
+        (_, m) => new MentionNode(Snowflake.TryParse(m.Groups[1].Value), MentionKind.User)
     );
 
     // Capture <#123456>
     private static readonly IMatcher<MarkdownNode> ChannelMentionNodeMatcher = new RegexMatcher<MarkdownNode>(
         new Regex("<#!?(\\d+)>", DefaultRegexOptions),
-        (_, m) => new MentionNode(Snowflake.Parse(m.Groups[1].Value), MentionKind.Channel)
+        (_, m) => new MentionNode(Snowflake.TryParse(m.Groups[1].Value), MentionKind.Channel)
     );
 
     // Capture <@&123456>
     private static readonly IMatcher<MarkdownNode> RoleMentionNodeMatcher = new RegexMatcher<MarkdownNode>(
         new Regex("<@&(\\d+)>", DefaultRegexOptions),
-        (_, m) => new MentionNode(Snowflake.Parse(m.Groups[1].Value), MentionKind.Role)
+        (_, m) => new MentionNode(Snowflake.TryParse(m.Groups[1].Value), MentionKind.Role)
     );
 
     /* Emoji */
@@ -179,7 +179,7 @@ internal static partial class MarkdownParser
     private static readonly IMatcher<MarkdownNode> CustomEmojiNodeMatcher = new RegexMatcher<MarkdownNode>(
         new Regex("<(a)?:(.+?):(\\d+?)>", DefaultRegexOptions),
         (_, m) => new EmojiNode(
-            Snowflake.Parse(m.Groups[3].Value),
+            Snowflake.TryParse(m.Groups[3].Value),
             m.Groups[2].Value,
             !string.IsNullOrWhiteSpace(m.Groups[1].Value)
         )

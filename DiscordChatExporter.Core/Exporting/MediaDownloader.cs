@@ -105,6 +105,7 @@ internal partial class MediaDownloader
         var fileExtension = Path.GetExtension(fileName);
         
         // Probably not a file extension, just a dot in a long file name
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/708
         if (fileExtension.Length > 41)
         {
             fileNameWithoutExtension = fileName;

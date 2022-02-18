@@ -30,13 +30,13 @@ public class RootViewModel : Screen
 
     private DiscordClient? _discord;
 
-    public SnackbarMessageQueue Notifications { get; } = new(TimeSpan.FromSeconds(5));
+    public bool IsBusy { get; private set; }
 
     public ProgressContainer<Percentage> Progress { get; } = new();
 
-    public bool IsBusy { get; private set; }
+    public bool IsProgressIndeterminate => IsBusy && Progress.Current.Fraction is <= 0 or >= 1;
 
-    public bool IsProgressIndeterminate { get; private set; }
+    public SnackbarMessageQueue Notifications { get; } = new(TimeSpan.FromSeconds(5));
 
     public string? Token { get; set; }
 
@@ -63,17 +63,12 @@ public class RootViewModel : Screen
         _settingsService = settingsService;
         _updateService = updateService;
 
-        DisplayName = $"{App.Name} v{App.VersionString}";
-
         _progressMuxer = Progress.CreateMuxer().WithAutoReset();
 
-        this.Bind(o => o.IsBusy, (_, _) =>
-            IsProgressIndeterminate = IsBusy && Progress.Current.Fraction is <= 0 or >= 1
-        );
+        DisplayName = $"{App.Name} v{App.VersionString}";
 
-        Progress.Bind(o => o.Current, (_, _) =>
-            IsProgressIndeterminate = IsBusy && Progress.Current.Fraction is <= 0 or >= 1
-        );
+        this.Bind(o => o.IsBusy, (_, _) => NotifyOfPropertyChange(() => IsProgressIndeterminate));
+        Progress.Bind(o => o.Current, (_, _) => NotifyOfPropertyChange(() => IsProgressIndeterminate));
     }
 
     private async ValueTask CheckForUpdatesAsync()

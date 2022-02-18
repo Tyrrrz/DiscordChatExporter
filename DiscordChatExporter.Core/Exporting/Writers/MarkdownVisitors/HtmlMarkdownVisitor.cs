@@ -84,8 +84,8 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
 
         _buffer.Append(
             !string.IsNullOrWhiteSpace(linkedMessageId)
-                ? $"<a href=\"{Uri.EscapeUriString(link.Url)}\" onclick=\"scrollToMessage(event, '{linkedMessageId}')\">"
-                : $"<a href=\"{Uri.EscapeUriString(link.Url)}\">"
+                ? $"<a href=\"{HtmlEncode(link.Url)}\" onclick=\"scrollToMessage(event, '{linkedMessageId}')\">"
+                : $"<a href=\"{HtmlEncode(link.Url)}\">"
         );
 
         var result = base.VisitLink(link);

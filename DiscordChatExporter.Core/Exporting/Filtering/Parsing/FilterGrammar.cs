@@ -44,6 +44,12 @@ internal static class FilterGrammar
         .Select(v => (MessageFilter) new MentionsMessageFilter(v))
         .Named("mentions:<value>");
 
+    private static readonly TextParser<MessageFilter> ReactionFilter = Span
+        .EqualToIgnoreCase("reaction:")
+        .IgnoreThen(String)
+        .Select(v => (MessageFilter) new ReactionMessageFilter(v))
+        .Named("reaction:<value>");
+
     private static readonly TextParser<MessageFilter> HasFilter = Span
         .EqualToIgnoreCase("has:")
         .IgnoreThen(Parse.OneOf(
@@ -72,6 +78,7 @@ internal static class FilterGrammar
         GroupedFilter,
         FromFilter,
         MentionsFilter,
+        ReactionFilter,
         HasFilter,
         ContainsFilter
     );

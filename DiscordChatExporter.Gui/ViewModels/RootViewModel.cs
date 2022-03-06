@@ -120,8 +120,8 @@ public class RootViewModel : Screen
 
         // War in Ukraine message
         Notifications.Enqueue(
-            "⚠ UKRAINE IS AT WAR!",
-            "LEARN MORE & HELP", _ =>
+            "⚠ Ukraine is at war! Support my country in its fight for freedom",
+            "LEARN MORE", _ =>
             {
                 ProcessEx.StartShellExecute("https://tyrrrz.me");
             },

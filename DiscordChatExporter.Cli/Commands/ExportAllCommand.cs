@@ -15,6 +15,8 @@ public class ExportAllCommand : ExportCommandBase
 
     public override async ValueTask ExecuteAsync(IConsole console)
     {
+        await base.ExecuteAsync(console);
+
         var cancellationToken = console.RegisterCancellationHandler();
         var channels = new List<Channel>();
 

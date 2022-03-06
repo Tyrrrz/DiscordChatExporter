@@ -118,6 +118,19 @@ public class RootViewModel : Screen
             App.SetLightTheme();
         }
 
+        // War in Ukraine message
+        Notifications.Enqueue(
+            "⚠ UKRAINE IS AT WAR!",
+            "LEARN MORE & HELP", _ =>
+            {
+                ProcessEx.StartShellExecute("https://tyrrrz.me");
+            },
+            null,
+            true,
+            true,
+            TimeSpan.FromMinutes(1)
+        );
+
         await CheckForUpdatesAsync();
     }
 

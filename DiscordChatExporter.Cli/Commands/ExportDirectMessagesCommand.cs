@@ -13,6 +13,8 @@ public class ExportDirectMessagesCommand : ExportCommandBase
 {
     public override async ValueTask ExecuteAsync(IConsole console)
     {
+        await base.ExecuteAsync(console);
+
         var cancellationToken = console.RegisterCancellationHandler();
 
         await console.Output.WriteLineAsync("Fetching channels...");

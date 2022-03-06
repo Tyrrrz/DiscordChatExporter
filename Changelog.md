@@ -1,3 +1,13 @@
+### v2.33 (06-Mar-2022)
+
+- Added messages informing about war in Ukraine and available ways to help.
+- Added support for rendering stickers in HTML and JSON. Lottie-based stickers currently cannot be displayed in HTML exports (see [#803](https://github.com/Tyrrrz/DiscordChatExporter/issues/803)).
+- Added a new `reaction:` message filter which can be used to check if someone reacted to a message with a specific emoji. You can either pass the emoji name (e.g. `reaction:LUL`) or its ID (e.g. `reaction:41771983429993937`).
+- [GUI] Added auto-detection for dark mode. If your system is configured to prefer dark mode in applications, DiscordChatExporter will use it by default instead of light mode.
+- Fixed an issue which caused the export process to crash when downloading media files with extremely long file extensions. (Thanks [@Tomlacko](https://github.com/Tomlacko))
+- Fixed an issue which caused the export process to crash on invalid mentions.
+- [GUI] Fixed an issue where the time pickers used to specify export ranges always displayed time in 12-hour format, instead of respecting the system locale.
+
 ### v2.32 (27-Jan-2022)
 
 - Token kind (user or bot) is now detected automatically. Removed the button to switch token kind in GUI. Option `-b|--bot` in CLI is now deprecated and does nothing.

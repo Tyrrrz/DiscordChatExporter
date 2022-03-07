@@ -29,11 +29,4 @@
     <ProjectReference Include="..\DiscordChatExporter.Core\DiscordChatExporter.Core.csproj" />
   </ItemGroup>
 
-  <!-- Workaround for https://github.com/dotnet/core/issues/7176 -->
-  <ItemGroup>
-    <FrameworkReference
-      Update="Microsoft.WindowsDesktop.App;Microsoft.WindowsDesktop.App.WPF;Microsoft.WindowsDesktop.App.WindowsForms"
-      TargetingPackVersion="6.0.0" />
-  </ItemGroup>
-
 </Project>

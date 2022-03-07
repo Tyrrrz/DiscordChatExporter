@@ -170,10 +170,10 @@ public abstract class ExportCommandBase : TokenCommandBase
     public override ValueTask ExecuteAsync(IConsole console)
     {
         // War in Ukraine message
-        console.Output.WriteLine("==================================================");
-        console.Output.WriteLine("⚠ UKRAINE IS AT WAR!");
-        console.Output.WriteLine("LEARN MORE & HELP: https://tyrrrz.me");
-        console.Output.WriteLine("==================================================");
+        console.Output.WriteLine("========================================================================");
+        console.Output.WriteLine("||   Ukraine is at war! Support my country in its fight for freedom   ||");
+        console.Output.WriteLine("||   Learn more: https://tyrrrz.me                                    ||");
+        console.Output.WriteLine("========================================================================");
         console.Output.WriteLine("");
 
         return default;

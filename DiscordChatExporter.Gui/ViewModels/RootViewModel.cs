@@ -71,6 +71,23 @@ public class RootViewModel : Screen
         Progress.Bind(o => o.Current, (_, _) => NotifyOfPropertyChange(() => IsProgressIndeterminate));
     }
 
+    private async Task ShowWarInUkraineMessageAsync()
+    {
+        var dialog = _viewModelFactory.CreateMessageBoxViewModel(
+            "Ukraine is at war!", @"
+My country, Ukraine, has been invaded by Russian military forces in an act of aggression that can only be described as genocide.
+Be on the right side of history! Consider supporting Ukraine in its fight for freedom.
+
+Press LEARN MORE to find ways that you can help.".Trim(),
+            "LEARN MORE", "CLOSE"
+        );
+
+        if (await _dialogManager.ShowDialogAsync(dialog) == true)
+        {
+            ProcessEx.StartShellExecute("https://tyrrrz.me");
+        }
+    }
+    
     private async ValueTask CheckForUpdatesAsync()
     {
         try
@@ -97,6 +114,12 @@ public class RootViewModel : Screen
             Notifications.Enqueue("Failed to perform application update");
         }
     }
+    
+    // This is a custom event that fires when the dialog host is loaded
+    public async void OnViewFullyLoaded()
+    {
+        await ShowWarInUkraineMessageAsync();
+    }
 
     protected override async void OnViewLoaded()
     {
@@ -117,19 +140,6 @@ public class RootViewModel : Screen
         {
             App.SetLightTheme();
         }
-
-        // War in Ukraine message
-        Notifications.Enqueue(
-            "⚠ Ukraine is at war! Support my country in its fight for freedom",
-            "LEARN MORE", _ =>
-            {
-                ProcessEx.StartShellExecute("https://tyrrrz.me");
-            },
-            null,
-            true,
-            true,
-            TimeSpan.FromMinutes(1)
-        );
 
         await CheckForUpdatesAsync();
     }

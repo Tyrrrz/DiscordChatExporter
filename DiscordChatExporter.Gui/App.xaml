@@ -47,6 +47,21 @@
                 <Setter Property="Minimum" Value="0" />
             </Style>
 
+            <Style BasedOn="{StaticResource MaterialDesignBody1Hyperlink}" TargetType="{x:Type Hyperlink}">
+                <Setter Property="TextDecorations" Value="Underline" />
+
+                <Style.Triggers>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsEnabled" Value="True" />
+                            <Condition Property="IsMouseOver" Value="True" />
+                        </MultiTrigger.Conditions>
+
+                        <Setter Property="Foreground" Value="{DynamicResource SecondaryHueMidBrush}" />
+                    </MultiTrigger>
+                </Style.Triggers>
+            </Style>
+
             <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="{x:Type TextBox}" />
 
             <Style BasedOn="{StaticResource MaterialDesignComboBox}" TargetType="{x:Type ComboBox}" />
@@ -88,6 +103,10 @@
                         <Setter Property="BorderBrush" Value="{DynamicResource MaterialDesignFlatButtonClick}" />
                     </Trigger>
                 </Style.Triggers>
+            </Style>
+
+            <Style BasedOn="{StaticResource MaterialDesignContextMenu}" TargetType="{x:Type ContextMenu}">
+                <Setter Property="Background" Value="{DynamicResource MaterialDesignPaper}" />
             </Style>
 
             <!--  Default MD Expander is incredibly slow (https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit/issues/1307)  -->

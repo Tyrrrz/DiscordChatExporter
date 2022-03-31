@@ -9,19 +9,13 @@ public class TimeSpanToDateTimeConverter : IValueConverter
 {
     public static TimeSpanToDateTimeConverter Instance { get; } = new();
 
-    public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        if (value is TimeSpan timeSpanValue)
-            return DateTime.Today.Add(timeSpanValue);
+    public object? Convert(object value, Type targetType, object parameter, CultureInfo culture) => 
+        value is TimeSpan timeSpanValue
+            ? DateTime.Today.Add(timeSpanValue)
+            : default(DateTime?);
 
-        return default(DateTime?);
-    }
-
-    public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        if (value is DateTime dateTimeValue)
-            return dateTimeValue.TimeOfDay;
-
-        return default(TimeSpan?);
-    }
+    public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => 
+        value is DateTime dateTimeValue
+            ? dateTimeValue.TimeOfDay 
+            : default(TimeSpan?);
 }

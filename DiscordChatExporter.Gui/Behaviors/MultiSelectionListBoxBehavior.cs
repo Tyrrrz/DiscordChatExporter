@@ -9,11 +9,16 @@ namespace DiscordChatExporter.Gui.Behaviors;
 
 public class MultiSelectionListBoxBehavior<T> : Behavior<ListBox>
 {
-    public static readonly DependencyProperty SelectedItemsProperty =
-        DependencyProperty.Register(nameof(SelectedItems), typeof(IList),
-            typeof(MultiSelectionListBoxBehavior<T>),
-            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
-                OnSelectedItemsChanged));
+    public static readonly DependencyProperty SelectedItemsProperty = DependencyProperty.Register(
+        nameof(SelectedItems),
+        typeof(IList),
+        typeof(MultiSelectionListBoxBehavior<T>),
+        new FrameworkPropertyMetadata(
+            null,
+            FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+            OnSelectedItemsChanged
+        )
+    );
 
     private static void OnSelectedItemsChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
     {

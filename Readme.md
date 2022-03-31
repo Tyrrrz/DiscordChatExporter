@@ -99,31 +99,3 @@ The following table lists all available download options:
 
 ![channel list](.screenshots/list.png)
 ![rendered output](.screenshots/output.png)
-
-## Building the project locally
-
-Prerequisites:
-
-- [.NET 6.0 SDK](https://dotnet.microsoft.com/download/dotnet/6.0)
-- _(Recommended)_ C#/.NET IDE, such as [JetBrains Rider](https://www.jetbrains.com/rider), [VS Code](https://code.visualstudio.com/docs/languages/csharp), or [Visual Studio](https://visualstudio.microsoft.com).
-
-To build the entire solution run the following command in the root of the repository:
-
-```sh
-> dotnet build
-```
-
-This will generate runtime artifacts for each project:
-
-```plaintext
-./DiscordChatExporter.Gui/bin/[Debug|Release]/[runtime]/*
-./DiscordChatExporter.Cli/bin/[Debug|Release]/[runtime]/*
-```
-
-You can also build and run a specific project directly.
-To do that, navigate to its directory and use `dotnet run`:
-
-```sh
-> cd DiscordChatExporter.Gui
-> dotnet run
-```

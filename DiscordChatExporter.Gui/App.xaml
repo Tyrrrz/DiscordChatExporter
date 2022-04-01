@@ -47,10 +47,18 @@
                 <Setter Property="Minimum" Value="0" />
             </Style>
 
-            <Style BasedOn="{StaticResource MaterialDesignBody1Hyperlink}" TargetType="{x:Type Hyperlink}">
+            <Style TargetType="{x:Type Hyperlink}">
                 <Setter Property="TextDecorations" Value="Underline" />
+                <Setter Property="FontWeight" Value="Regular" />
+                <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />
 
                 <Style.Triggers>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Foreground" Value="{DynamicResource MaterialDesignCheckBoxDisabled}" />
+                    </Trigger>
+                    <Trigger Property="IsEnabled" Value="True">
+                        <Setter Property="Cursor" Value="Hand" />
+                    </Trigger>
                     <MultiTrigger>
                         <MultiTrigger.Conditions>
                             <Condition Property="IsEnabled" Value="True" />

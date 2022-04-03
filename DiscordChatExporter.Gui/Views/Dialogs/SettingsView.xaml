@@ -6,7 +6,7 @@
     xmlns:dialogs="clr-namespace:DiscordChatExporter.Gui.ViewModels.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:s="https://github.com/canton7/Stylet"
-    Width="310"
+    Width="380"
     d:DataContext="{d:DesignInstance Type=dialogs:SettingsViewModel}"
     Style="{DynamicResource MaterialDesignRoot}"
     mc:Ignorable="d">

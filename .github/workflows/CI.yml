@@ -19,7 +19,7 @@ jobs:
       - name: Build & test
         # Tests need access to secrets, so we can't run them against PRs because of limited trust
         if: ${{ github.event_name != 'pull_request' }}
-        run: dotnet test --configuration Release --logger GitHubActions
+        run: dotnet test --configuration Release --logger GitHubActions --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
         env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
           DISCORD_TOKEN_BOT: true

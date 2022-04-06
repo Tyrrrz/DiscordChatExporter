@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using DiscordChatExporter.Core.Discord;
@@ -60,8 +59,8 @@ public partial record ExportRequest
                 "%C" => channel.Name,
                 "%p" => channel.Position?.ToString() ?? "0",
                 "%P" => channel.Category.Position?.ToString() ?? "0",
-                "%a" => (after ?? Snowflake.Zero).ToDate().ToString("yyyy-MM-dd"),
-                "%b" => (before?.ToDate() ?? DateTime.Now).ToString("yyyy-MM-dd"),
+                "%a" => after?.ToDate().ToString("yyyy-MM-dd") ?? "",
+                "%b" => before?.ToDate().ToString("yyyy-MM-dd") ?? "",
                 "%%" => "%",
                 _ => m.Value
             })
@@ -93,7 +92,7 @@ public partial record ExportRequest
         // Date range
         if (after is not null || before is not null)
         {
-            buffer.Append(" (");
+            buffer.Append(' ').Append('(');
 
             // Both 'after' and 'before' are set
             if (after is not null && before is not null)
@@ -111,11 +110,11 @@ public partial record ExportRequest
                 buffer.Append($"before {before.Value.ToDate():yyyy-MM-dd}");
             }
 
-            buffer.Append(")");
+            buffer.Append(')');
         }
 
         // File extension
-        buffer.Append($".{format.GetFileExtension()}");
+        buffer.Append('.').Append(format.GetFileExtension());
 
         return PathEx.EscapeFileName(buffer.ToString());
     }

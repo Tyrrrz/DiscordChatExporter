@@ -13,6 +13,7 @@
     xmlns:s="https://github.com/canton7/Stylet"
     d:DataContext="{d:DesignInstance Type=components:DashboardViewModel}"
     FocusManager.FocusedElement="{Binding ElementName=TokenValueTextBox}"
+    Loaded="{s:Action OnViewLoaded}"
     mc:Ignorable="d">
     <UserControl.Resources>
         <CollectionViewSource x:Key="AvailableChannelsViewSource" Source="{Binding AvailableChannels, Mode=OneWay}">
@@ -26,7 +27,7 @@
         </CollectionViewSource>
     </UserControl.Resources>
 
-    <Grid Loaded="{s:Action OnViewFullyLoaded}">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />

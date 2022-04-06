@@ -67,7 +67,7 @@ public class DashboardViewModel : PropertyChangedBase
         Progress.Bind(o => o.Current, (_, _) => NotifyOfPropertyChange(() => IsProgressIndeterminate));
     }
 
-    public void OnViewFullyLoaded()
+    public void OnViewLoaded()
     {
         if (_settingsService.LastToken is not null)
         {

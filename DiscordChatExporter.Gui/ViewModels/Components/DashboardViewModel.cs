@@ -25,7 +25,7 @@ public class DashboardViewModel : PropertyChangedBase
     private readonly IEventAggregator _eventAggregator;
     private readonly DialogManager _dialogManager;
     private readonly SettingsService _settingsService;
-    
+
     private readonly AutoResetProgressMuxer _progressMuxer;
 
     private DiscordClient? _discord;
@@ -49,7 +49,7 @@ public class DashboardViewModel : PropertyChangedBase
         : null;
 
     public IReadOnlyList<Channel>? SelectedChannels { get; set; }
-    
+
     public DashboardViewModel(
         IViewModelFactory viewModelFactory,
         IEventAggregator eventAggregator,
@@ -60,9 +60,9 @@ public class DashboardViewModel : PropertyChangedBase
         _eventAggregator = eventAggregator;
         _dialogManager = dialogManager;
         _settingsService = settingsService;
-        
+
         _progressMuxer = Progress.CreateMuxer().WithAutoReset();
-        
+
         this.Bind(o => o.IsBusy, (_, _) => NotifyOfPropertyChange(() => IsProgressIndeterminate));
         Progress.Bind(o => o.Current, (_, _) => NotifyOfPropertyChange(() => IsProgressIndeterminate));
     }
@@ -74,7 +74,7 @@ public class DashboardViewModel : PropertyChangedBase
             Token = _settingsService.LastToken;
         }
     }
-    
+
     public async void ShowSettings()
     {
         var dialog = _viewModelFactory.CreateSettingsViewModel();
@@ -90,7 +90,7 @@ public class DashboardViewModel : PropertyChangedBase
     {
         IsBusy = true;
         var progress = _progressMuxer.CreateInput();
-        
+
         try
         {
             var token = Token?.Trim('"', ' ');
@@ -136,8 +136,7 @@ public class DashboardViewModel : PropertyChangedBase
         !IsBusy &&
         _discord is not null &&
         SelectedGuild is not null &&
-        SelectedChannels is not null &&
-        SelectedChannels.Any();
+        SelectedChannels?.Any() is true;
 
     public async void ExportChannels()
     {

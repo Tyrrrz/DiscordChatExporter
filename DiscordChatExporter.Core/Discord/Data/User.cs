@@ -30,7 +30,7 @@ public partial record User
             ? "gif"
             : "png";
 
-        return $"https://cdn.discordapp.com/avatars/{id}/{avatarHash}.{extension}?size=128";
+        return $"https://cdn.discordapp.com/avatars/{id}/{avatarHash}.{extension}?size=512";
     }
 
     public static User Parse(JsonElement json)

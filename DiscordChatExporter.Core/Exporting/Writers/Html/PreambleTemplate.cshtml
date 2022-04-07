@@ -11,9 +11,12 @@
             ? darkVariant
             : lightVariant;
 
-    string FormatDate(DateTimeOffset date) => Model.ExportContext.FormatDate(date);
+    string GetFontUrl(int weight) =>
+        $"https://cdn.jsdelivr.net/gh/Tyrrrz/DiscordFonts@master/whitney-{weight}.woff";
 
     ValueTask<string> ResolveUrlAsync(string url) => Model.ExportContext.ResolveMediaUrlAsync(url, CancellationToken);
+
+    string FormatDate(DateTimeOffset date) => Model.ExportContext.FormatDate(date);
 
     string FormatMarkdown(string markdown) => Model.FormatMarkdown(markdown);
 }
@@ -30,38 +33,38 @@
     <style>
         @@font-face {
             font-family: Whitney;
-            src: url(https://cdn.jsdelivr.net/gh/Tyrrrz/DiscordFonts@master/whitney-300.woff);
+            src: url(@await ResolveUrlAsync(GetFontUrl(300)));
             font-weight: 300;
         }
 
         @@font-face {
             font-family: Whitney;
-            src: url(https://cdn.jsdelivr.net/gh/Tyrrrz/DiscordFonts@master/whitney-400.woff);
+            src: url(@await ResolveUrlAsync(GetFontUrl(400)));
             font-weight: 400;
         }
 
         @@font-face {
             font-family: Whitney;
-            src: url(https://cdn.jsdelivr.net/gh/Tyrrrz/DiscordFonts@master/whitney-500.woff);
+            src: url(@await ResolveUrlAsync(GetFontUrl(500)));
             font-weight: 500;
         }
 
         @@font-face {
             font-family: Whitney;
-            src: url(https://cdn.jsdelivr.net/gh/Tyrrrz/DiscordFonts@master/whitney-600.woff);
+            src: url(@await ResolveUrlAsync(GetFontUrl(600)));
             font-weight: 600;
         }
 
         @@font-face {
             font-family: Whitney;
-            src: url(https://cdn.jsdelivr.net/gh/Tyrrrz/DiscordFonts@master/whitney-700.woff);
+            src: url(@await ResolveUrlAsync(GetFontUrl(700)));
             font-weight: 700;
         }
 
         body {
             background-color: @Themed("#36393e", "#ffffff");
             color: @Themed("#dcddde", "#23262a");
-            font-family: "Whitney", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-family: Whitney, "Helvetica Neue", Helvetica, Arial, sans-serif;
             font-size: 17px;
             font-weight: @Themed("400", "500");
         }

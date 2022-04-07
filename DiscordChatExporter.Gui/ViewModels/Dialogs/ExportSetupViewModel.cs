@@ -74,7 +74,7 @@ public class ExportSetupViewModel : DialogScreen
         MessageFilterValue = _settingsService.LastMessageFilterValue;
         ShouldDownloadMedia = _settingsService.LastShouldDownloadMedia;
 
-        // Show the "advanced options" by default if any
+        // Show the "advanced options" section by default if any
         // of the advanced options are set to non-default values.
         IsAdvancedSectionDisplayed =
             After != default ||

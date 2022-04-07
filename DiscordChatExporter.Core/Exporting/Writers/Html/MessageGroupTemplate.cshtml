@@ -8,13 +8,13 @@
 @inherits MiniRazor.TemplateBase<MessageGroupTemplateContext>
 
 @{
+    ValueTask<string> ResolveUrlAsync(string url) => Model.ExportContext.ResolveMediaUrlAsync(url);
+
     string FormatDate(DateTimeOffset date) => Model.ExportContext.FormatDate(date);
 
     string FormatMarkdown(string markdown) => Model.FormatMarkdown(markdown);
 
     string FormatEmbedMarkdown(string markdown) => Model.FormatMarkdown(markdown, false);
-
-    ValueTask<string> ResolveUrlAsync(string url) => Model.ExportContext.ResolveMediaUrlAsync(url);
 
     var userMember = Model.ExportContext.TryGetMember(Model.MessageGroup.Author.Id);
 
@@ -140,19 +140,19 @@
                         @if (attachment.IsImage)
                         {
                             <a href="@await ResolveUrlAsync(attachment.Url)">
-                                <img class="chatlog__attachment-media" src="@await ResolveUrlAsync(attachment.Url)" alt="Image attachment" title="@($"Image: {attachment.FileName} ({attachment.FileSize})")" loading="lazy">
+                                <img class="chatlog__attachment-media" src="@await ResolveUrlAsync(attachment.Url)" alt="Image attachment" title="Image: @attachment.FileName (@attachment.FileSize)" loading="lazy">
                             </a>
                         }
                         else if (attachment.IsVideo)
                         {
                             <video class="chatlog__attachment-media" controls>
-                                <source src="@await ResolveUrlAsync(attachment.Url)" alt="Video attachment" title="@($"Video: {attachment.FileName} ({attachment.FileSize})")">
+                                <source src="@await ResolveUrlAsync(attachment.Url)" alt="Video attachment" title="Video: @attachment.FileName (@attachment.FileSize)">
                             </video>
                         }
                         else if (attachment.IsAudio)
                         {
                             <audio class="chatlog__attachment-media" controls>
-                                <source src="@await ResolveUrlAsync(attachment.Url)" alt="Audio attachment" title="@($"Audio: {attachment.FileName} ({attachment.FileSize})")">
+                                <source src="@await ResolveUrlAsync(attachment.Url)" alt="Audio attachment" title="Audio: @attachment.FileName (@attachment.FileSize)">
                             </audio>
                         }
                         else
@@ -418,11 +418,11 @@
                     <div class="chatlog__sticker" title="@sticker.Name">
                         @if (sticker.Format is StickerFormat.Png or StickerFormat.PngAnimated)
                         {
-                            <img class="chatlog__sticker--media" src="@(await ResolveUrlAsync(sticker.SourceUrl))" alt="Sticker">
+                            <img class="chatlog__sticker--media" src="@await ResolveUrlAsync(sticker.SourceUrl)" alt="Sticker">
                         }
                         else if (sticker.Format == StickerFormat.Lottie)
                         {
-                            <div class="chatlog__sticker--media" data-source="@(await ResolveUrlAsync(sticker.SourceUrl))"></div>
+                            <div class="chatlog__sticker--media" data-source="@await ResolveUrlAsync(sticker.SourceUrl)"></div>
                         }
                     </div>
                 }

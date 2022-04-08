@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="0.16.1" />
-    <PackageReference Include="FluentAssertions" Version="6.5.1" />
+    <PackageReference Include="FluentAssertions" Version="6.6.0" />
     <PackageReference Include="GitHubActionsTestLogger" Version="1.3.0" PrivateAssets="all" />
     <PackageReference Include="JsonExtensions" Version="1.2.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />

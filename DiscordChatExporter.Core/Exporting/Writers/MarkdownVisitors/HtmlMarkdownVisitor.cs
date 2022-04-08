@@ -33,15 +33,37 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
     {
         var (tagOpen, tagClose) = formatting.Kind switch
         {
-            FormattingKind.Bold => ("<strong>", "</strong>"),
-            FormattingKind.Italic => ("<em>", "</em>"),
-            FormattingKind.Underline => ("<u>", "</u>"),
-            FormattingKind.Strikethrough => ("<s>", "</s>"),
+            FormattingKind.Bold => (
+                "<strong>",
+                "</strong>"
+            ),
+
+            FormattingKind.Italic => (
+                "<em>",
+                "</em>"
+            ),
+
+            FormattingKind.Underline => (
+                "<u>",
+                "</u>"
+            ),
+
+            FormattingKind.Strikethrough => (
+                "<s>",
+                "</s>"
+            ),
+
             FormattingKind.Spoiler => (
-                "<span class=\"spoiler-text spoiler-text--hidden\" onclick=\"showSpoiler(event, this)\">", "</span>"),
+                "<span class=\"chatlog__markdown-spoiler chatlog__markdown-spoiler--hidden\" onclick=\"showSpoiler(event, this)\">",
+                "</span>"
+            ),
+
             FormattingKind.Quote => (
-                "<div class=\"quote\"><div class=\"quote-border\"></div><div class=\"quote-content\">", "</div></div>"),
-            _ => throw new ArgumentOutOfRangeException(nameof(formatting.Kind))
+                "<div class=\"chatlog__markdown-quote\"><div class=\"chatlog__markdown-quote-border\"></div><div class=\"chatlog__markdown-quote-content\">",
+                "</div></div>"
+            ),
+
+            _ => throw new InvalidOperationException($"Unknown formatting kind '{formatting.Kind}'.")
         };
 
         _buffer.Append(tagOpen);
@@ -54,7 +76,7 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
     protected override MarkdownNode VisitInlineCodeBlock(InlineCodeBlockNode inlineCodeBlock)
     {
         _buffer
-            .Append("<span class=\"pre pre--inline\">")
+            .Append("<span class=\"chatlog__markdown-pre chatlog__markdown-pre--inline\">")
             .Append(HtmlEncode(inlineCodeBlock.Code))
             .Append("</span>");
 
@@ -68,7 +90,7 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
             : "nohighlight";
 
         _buffer
-            .Append($"<div class=\"pre pre--multiline {highlightCssClass}\">")
+            .Append($"<div class=\"chatlog__markdown-pre chatlog__markdown-pre--multiline {highlightCssClass}\">")
             .Append(HtmlEncode(multiLineCodeBlock.Code))
             .Append("</div>");
 
@@ -98,10 +120,10 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
     protected override MarkdownNode VisitEmoji(EmojiNode emoji)
     {
         var emojiImageUrl = Emoji.GetImageUrl(emoji.Id, emoji.Name, emoji.IsAnimated);
-        var jumboClass = _isJumbo ? "emoji--large" : "";
+        var jumboClass = _isJumbo ? "chatlog__emoji--large" : "";
 
         _buffer
-            .Append($"<img loading=\"lazy\" class=\"emoji {jumboClass}\" alt=\"{emoji.Name}\" title=\"{emoji.Code}\" src=\"{emojiImageUrl}\">");
+            .Append($"<img loading=\"lazy\" class=\"chatlog__emoji {jumboClass}\" alt=\"{emoji.Name}\" title=\"{emoji.Code}\" src=\"{emojiImageUrl}\">");
 
         return base.VisitEmoji(emoji);
     }
@@ -111,14 +133,14 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
         if (mention.Kind == MentionKind.Everyone)
         {
             _buffer
-                .Append("<span class=\"mention\">")
+                .Append("<span class=\"chatlog__markdown-mention\">")
                 .Append("@everyone")
                 .Append("</span>");
         }
         else if (mention.Kind == MentionKind.Here)
         {
             _buffer
-                .Append("<span class=\"mention\">")
+                .Append("<span class=\"chatlog__markdown-mention\">")
                 .Append("@here")
                 .Append("</span>");
         }
@@ -129,7 +151,7 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
             var nick = member?.Nick ?? "Unknown";
 
             _buffer
-                .Append($"<span class=\"mention\" title=\"{HtmlEncode(fullName)}\">")
+                .Append($"<span class=\"chatlog__markdown-mention\" title=\"{HtmlEncode(fullName)}\">")
                 .Append('@').Append(HtmlEncode(nick))
                 .Append("</span>");
         }
@@ -140,7 +162,7 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
             var name = channel?.Name ?? "deleted-channel";
 
             _buffer
-                .Append("<span class=\"mention\">")
+                .Append("<span class=\"chatlog__markdown-mention\">")
                 .Append(symbol).Append(HtmlEncode(name))
                 .Append("</span>");
         }
@@ -151,11 +173,12 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
             var color = role?.Color;
 
             var style = color is not null
-                ? $"color: rgb({color?.R}, {color?.G}, {color?.B}); background-color: rgba({color?.R}, {color?.G}, {color?.B}, 0.1);"
+                ? $"color: rgb({color.Value.R}, {color.Value.G}, {color.Value.B}); " +
+                  $"background-color: rgba({color.Value.R}, {color.Value.G}, {color.Value.B}, 0.1);"
                 : "";
 
             _buffer
-                .Append($"<span class=\"mention\" style=\"{style}\">")
+                .Append($"<span class=\"chatlog__markdown-mention\" style=\"{style}\">")
                 .Append('@').Append(HtmlEncode(name))
                 .Append("</span>");
         }
@@ -175,7 +198,7 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
             : "Invalid date";
 
         _buffer
-            .Append($"<span class=\"timestamp\" title=\"{HtmlEncode(longDateString)}\">")
+            .Append($"<span class=\"chatlog__markdown-timestamp\" title=\"{HtmlEncode(longDateString)}\">")
             .Append(HtmlEncode(dateString))
             .Append("</span>");
 

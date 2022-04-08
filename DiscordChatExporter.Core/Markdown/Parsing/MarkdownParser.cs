@@ -77,8 +77,9 @@ internal static partial class MarkdownParser
 
     // Capture any character until the end of the line
     // Opening 'greater than' character must be followed by whitespace
+    // Text content is optional
     private static readonly IMatcher<MarkdownNode> SingleLineQuoteNodeMatcher = new RegexMatcher<MarkdownNode>(
-        new Regex("^>\\s(.+\n?)", DefaultRegexOptions),
+        new Regex("^>\\s(.*\n?)", DefaultRegexOptions),
         (s, m) => new FormattingNode(FormattingKind.Quote, Parse(s.Relocate(m.Groups[1])))
     );
 
@@ -86,7 +87,7 @@ internal static partial class MarkdownParser
     // This one is tricky as it ends up producing multiple separate captures which need to be joined
     private static readonly IMatcher<MarkdownNode> RepeatedSingleLineQuoteNodeMatcher =
         new RegexMatcher<MarkdownNode>(
-            new Regex("(?:^>\\s(.+\n?)){2,}", DefaultRegexOptions),
+            new Regex("(?:^>\\s(.*\n?)){2,}", DefaultRegexOptions),
             (_, m) =>
             {
                 var content = string.Concat(m.Groups[1].Captures.Select(c => c.Value));

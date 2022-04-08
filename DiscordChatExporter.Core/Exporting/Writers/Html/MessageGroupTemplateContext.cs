@@ -1,4 +1,6 @@
-﻿using DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors;
+﻿using System.Collections.Generic;
+using DiscordChatExporter.Core.Discord.Data;
+using DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors;
 
 namespace DiscordChatExporter.Core.Exporting.Writers.Html;
 
@@ -6,12 +8,12 @@ internal class MessageGroupTemplateContext
 {
     public ExportContext ExportContext { get; }
 
-    public MessageGroup MessageGroup { get; }
+    public IReadOnlyList<Message> Messages { get; }
 
-    public MessageGroupTemplateContext(ExportContext exportContext, MessageGroup messageGroup)
+    public MessageGroupTemplateContext(ExportContext exportContext, IReadOnlyList<Message> messages)
     {
         ExportContext = exportContext;
-        MessageGroup = messageGroup;
+        Messages = messages;
     }
 
     public string FormatMarkdown(string? markdown, bool isJumboAllowed = true) =>

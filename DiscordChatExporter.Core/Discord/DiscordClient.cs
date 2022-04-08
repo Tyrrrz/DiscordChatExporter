@@ -34,9 +34,12 @@ public class DiscordClient
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, url));
 
-        request.Headers.Authorization = isBot
-            ? new AuthenticationHeaderValue("Bot", _token)
-            : new AuthenticationHeaderValue(_token);
+        // Don't validate because token can have invalid characters
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/828
+        request.Headers.TryAddWithoutValidation(
+            "Authorization",
+            isBot ? $"Bot {_token}" : _token
+        );
 
         return await Http.Client.SendAsync(
             request,

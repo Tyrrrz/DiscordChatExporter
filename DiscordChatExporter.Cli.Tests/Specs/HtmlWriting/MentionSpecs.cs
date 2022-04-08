@@ -20,7 +20,7 @@ public record MentionSpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<E
         );
 
         // Assert
-        message.Text().Trim().Should().Be("User mention: @Tyrrrz");
+        message.Text().Trim().Should().Contain("User mention: @Tyrrrz");
         message.InnerHtml.Should().Contain("Tyrrrz#5447");
     }
 
@@ -34,7 +34,7 @@ public record MentionSpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<E
         );
 
         // Assert
-        message.Text().Trim().Should().Be("Text channel mention: #mention-tests");
+        message.Text().Trim().Should().Contain("Text channel mention: #mention-tests");
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public record MentionSpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<E
         );
 
         // Assert
-        message.Text().Trim().Should().Be("Voice channel mention: 🔊chaos-vc");
+        message.Text().Trim().Should().Contain("Voice channel mention: 🔊chaos-vc");
     }
 
     [Fact]
@@ -60,6 +60,6 @@ public record MentionSpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<E
         );
 
         // Assert
-        message.Text().Trim().Should().Be("Role mention: @Role 1");
+        message.Text().Trim().Should().Contain("Role mention: @Role 1");
     }
 }

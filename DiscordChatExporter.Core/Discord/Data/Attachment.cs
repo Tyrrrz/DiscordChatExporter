@@ -13,6 +13,7 @@ public partial record Attachment(
     Snowflake Id,
     string Url,
     string FileName,
+    string? Description,
     int? Width,
     int? Height,
     FileSize FileSize) : IHasId
@@ -37,8 +38,9 @@ public partial record Attachment
         var width = json.GetPropertyOrNull("width")?.GetInt32OrNull();
         var height = json.GetPropertyOrNull("height")?.GetInt32OrNull();
         var fileName = json.GetProperty("filename").GetNonNullString();
+        var description = json.GetPropertyOrNull("description")?.GetNonWhiteSpaceStringOrNull();
         var fileSize = json.GetProperty("size").GetInt64().Pipe(FileSize.FromBytes);
 
-        return new Attachment(id, url, fileName, width, height, fileSize);
+        return new Attachment(id, url, fileName, description, width, height, fileSize);
     }
 }

@@ -158,19 +158,19 @@
                         @if (attachment.IsImage)
                         {
                             <a href="@await ResolveUrlAsync(attachment.Url)">
-                                <img class="chatlog__attachment-media" src="@await ResolveUrlAsync(attachment.Url)" alt="Image attachment" title="Image: @attachment.FileName (@attachment.FileSize)" loading="lazy">
+                                <img class="chatlog__attachment-media" src="@await ResolveUrlAsync(attachment.Url)" alt="@(attachment.Description ?? "Image attachment")" title="Image: @attachment.FileName (@attachment.FileSize)" loading="lazy">
                             </a>
                         }
                         else if (attachment.IsVideo)
                         {
                             <video class="chatlog__attachment-media" controls>
-                                <source src="@await ResolveUrlAsync(attachment.Url)" alt="Video attachment" title="Video: @attachment.FileName (@attachment.FileSize)">
+                                <source src="@await ResolveUrlAsync(attachment.Url)" alt="@(attachment.Description ?? "Video attachment")" title="Video: @attachment.FileName (@attachment.FileSize)">
                             </video>
                         }
                         else if (attachment.IsAudio)
                         {
                             <audio class="chatlog__attachment-media" controls>
-                                <source src="@await ResolveUrlAsync(attachment.Url)" alt="Audio attachment" title="Audio: @attachment.FileName (@attachment.FileSize)">
+                                <source src="@await ResolveUrlAsync(attachment.Url)" alt="@(attachment.Description ?? "Audio attachment")" title="Audio: @attachment.FileName (@attachment.FileSize)">
                             </audio>
                         }
                         else

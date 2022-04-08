@@ -114,7 +114,9 @@ public class DashboardViewModel : PropertyChangedBase
         }
         catch (DiscordChatExporterException ex) when (!ex.IsFatal)
         {
-            _eventAggregator.Publish(new NotificationMessage(ex.Message.TrimEnd('.')));
+            _eventAggregator.Publish(
+                new NotificationMessage(ex.Message.TrimEnd('.'))
+            );
         }
         catch (Exception ex)
         {
@@ -192,7 +194,9 @@ public class DashboardViewModel : PropertyChangedBase
                     }
                     catch (DiscordChatExporterException ex) when (!ex.IsFatal)
                     {
-                        _eventAggregator.Publish(new NotificationMessage(ex.Message.TrimEnd('.')));
+                        _eventAggregator.Publish(
+                            new NotificationMessage(ex.Message.TrimEnd('.') + $" ({channel.Name})")
+                        );
                     }
                     finally
                     {

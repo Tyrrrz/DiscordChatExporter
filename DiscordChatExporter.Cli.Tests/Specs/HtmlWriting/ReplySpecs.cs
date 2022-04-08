@@ -40,7 +40,7 @@ public record ReplySpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<Exp
     }
 
     [Fact]
-    public async Task Reply_to_a_empty_message_with_attachment_is_rendered_correctly()
+    public async Task Reply_to_an_empty_message_with_attachment_is_rendered_correctly()
     {
         // Act
         var message = await ExportWrapper.GetMessageAsHtmlAsync(
@@ -51,6 +51,6 @@ public record ReplySpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<Exp
         // Assert
         message.Text().Trim().Should().Contain("reply to attachment");
         message.QuerySelector(".chatlog__reference-link")?.Text().Trim().Should()
-            .Contain("Click to see attachment 🖼️");
+            .Contain("Click to see attachment");
     }
 }

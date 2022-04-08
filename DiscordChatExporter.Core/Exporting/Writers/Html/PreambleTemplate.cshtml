@@ -691,8 +691,8 @@
     </style>
 
     @{/* Syntax highlighting */}
-    <link rel="stylesheet" href="@ResolveUrlAsync($"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/solarized-{Model.ThemeName.ToLowerInvariant()}.min.css")">
-    <script src="@ResolveUrlAsync("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js")"></script>
+    <link rel="stylesheet" href="@await ResolveUrlAsync($"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/solarized-{Model.ThemeName.ToLowerInvariant()}.min.css")">
+    <script src="@await ResolveUrlAsync("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js")"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.chatlog__markdown-pre--multiline').forEach(e => hljs.highlightBlock(e));
@@ -700,7 +700,7 @@
     </script>
 
     @{/* Lottie animation support */}
-    <script src="@ResolveUrlAsync("https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.8.1/lottie.min.js")"></script>
+    <script src="@await ResolveUrlAsync("https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.8.1/lottie.min.js")"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.chatlog__sticker--media[data-source]').forEach(e => {

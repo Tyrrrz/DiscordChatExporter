@@ -59,6 +59,6 @@ public record PartitioningSpecs(TempOutputFixture TempOutput) : IClassFixture<Te
         // Assert
         Directory.EnumerateFiles(dirPath, fileNameWithoutExt + "*")
             .Should()
-            .HaveCount(3);
+            .HaveCount(8);
     }
 }

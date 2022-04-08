@@ -42,7 +42,7 @@ public record AttachmentSpecs(ExportWrapperFixture ExportWrapper) : IClassFixtur
             Snowflake.Parse("885654862656843786")
         );
 
-        var imageUrl = message.QuerySelector("img")?.GetAttribute("src");
+        var imageUrl = message.QuerySelector("img[alt*=\"attachment\" i]")?.GetAttribute("src");
 
         // Assert
         message.Text().Should().Contain("Image attachment");

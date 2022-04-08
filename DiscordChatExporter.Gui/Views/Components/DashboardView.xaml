@@ -133,7 +133,10 @@
             <!--  Placeholder / usage instructions  -->
             <Grid Visibility="{Binding AvailableGuilds, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}">
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                    <TextBlock Margin="32,16" FontSize="14">
+                    <TextBlock
+                        Margin="32,16"
+                        FontSize="14"
+                        LineHeight="20">
                         <Run FontSize="18" Text="Please provide authentication token to continue" />
                         <LineBreak />
                         <LineBreak />
@@ -148,7 +151,9 @@
                         <Run FontSize="16" Text="Authenticate using your personal account" />
                         <LineBreak />
                         <Run Text="1. Open Discord in your" />
-                        <Run FontWeight="SemiBold" Text="web browser" />
+                        <Hyperlink Command="{s:Action OpenDiscord}">
+                            <Run Text="web browser" />
+                        </Hyperlink>
                         <Run Text="and login" />
                         <LineBreak />
                         <Run Text="2. Press" />
@@ -195,7 +200,10 @@
                         </InlineUIContainer>
                         <Run FontSize="16" Text="Authenticate using a bot account" />
                         <LineBreak />
-                        <Run Text="1. Open Discord developer portal" />
+                        <Run Text="1. Open Discord" />
+                        <Hyperlink Command="{s:Action OpenDiscordDeveloperPortal}">
+                            <Run Text="developer portal" />
+                        </Hyperlink>
                         <LineBreak />
                         <Run Text="2. Open your application's settings" />
                         <LineBreak />

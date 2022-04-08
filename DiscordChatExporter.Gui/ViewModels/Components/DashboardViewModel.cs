@@ -227,4 +227,10 @@ public class DashboardViewModel : PropertyChangedBase
             IsBusy = false;
         }
     }
+
+    public void OpenDiscord() =>
+        ProcessEx.StartShellExecute("https://discord.com/app");
+
+    public void OpenDiscordDeveloperPortal() =>
+        ProcessEx.StartShellExecute("https://discord.com/developers/applications");
 }

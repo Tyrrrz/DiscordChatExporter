@@ -91,7 +91,7 @@ The following table lists all available download options:
 - Multiple output formats: HTML (dark/light), TXT, CSV, JSON
 - Support for markdown, attachments, embeds, emoji, and other rich media features
 - File partitioning, date ranges, message filtering, and other export options
-- Self-contained exports that work without internet
+- Self-contained exports that don't require internet
 
 ## Screenshots
 

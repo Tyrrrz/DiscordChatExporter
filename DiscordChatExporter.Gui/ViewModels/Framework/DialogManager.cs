@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
@@ -8,9 +9,10 @@ using Stylet;
 
 namespace DiscordChatExporter.Gui.ViewModels.Framework;
 
-public class DialogManager
+public class DialogManager : IDisposable
 {
     private readonly IViewManager _viewManager;
+    private readonly SemaphoreSlim _dialogLock = new(1, 1);
 
     public DialogManager(IViewManager viewManager)
     {
@@ -21,20 +23,26 @@ public class DialogManager
     {
         var view = _viewManager.CreateAndBindViewForModelIfNecessary(dialogScreen);
 
-        void OnDialogOpened(object? sender, DialogOpenedEventArgs openArgs)
+        void OnDialogOpened(object? openSender, DialogOpenedEventArgs openArgs)
         {
-            void OnScreenClosed(object? o, EventArgs closeArgs)
+            void OnScreenClosed(object? closeSender, EventArgs args)
             {
                 openArgs.Session.Close();
                 dialogScreen.Closed -= OnScreenClosed;
             }
-
             dialogScreen.Closed += OnScreenClosed;
         }
 
-        await DialogHost.Show(view, OnDialogOpened);
-
-        return dialogScreen.DialogResult;
+        await _dialogLock.WaitAsync();
+        try
+        {
+            await DialogHost.Show(view, OnDialogOpened);
+            return dialogScreen.DialogResult;
+        }
+        finally
+        {
+            _dialogLock.Release();
+        }
     }
 
     public string? PromptSaveFilePath(string filter = "All files|*.*", string defaultFilePath = "")
@@ -58,5 +66,10 @@ public class DialogManager
         };
 
         return dialog.ShowDialog() == true ? dialog.SelectedPath : null;
+    }
+
+    public void Dispose()
+    {
+        _dialogLock.Dispose();
     }
 }

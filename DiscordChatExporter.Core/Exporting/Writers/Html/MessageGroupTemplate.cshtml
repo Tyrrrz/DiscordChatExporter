@@ -233,7 +233,7 @@
                                         @{/* Embed author */}
                                         @if (embed.Author is not null)
                                         {
-                                            <div class="chatlog__embed-author">
+                                            <div class="chatlog__embed-author-container">
                                                 @if (!string.IsNullOrWhiteSpace(embed.Author.IconUrl))
                                                 {
                                                     <img class="chatlog__embed-author-icon" src="@await ResolveUrlAsync(embed.Author.IconProxyUrl ?? embed.Author.IconUrl)" alt="Author icon" loading="lazy" onerror="this.style.visibility='hidden'">
@@ -241,16 +241,16 @@
 
                                                 @if (!string.IsNullOrWhiteSpace(embed.Author.Name))
                                                 {
-                                                    <span class="chatlog__embed-author">
-                                                        @if (!string.IsNullOrWhiteSpace(embed.Author.Url))
-                                                        {
-                                                            <a class="chatlog__embed-author-link" href="@embed.Author.Url">@embed.Author.Name</a>
-                                                        }
-                                                        else
-                                                        {
-                                                            @embed.Author.Name
-                                                        }
-                                                    </span>
+                                                    if (!string.IsNullOrWhiteSpace(embed.Author.Url))
+                                                    {
+                                                        <a class="chatlog__embed-author-link" href="@embed.Author.Url">
+                                                            <div class="chatlog__embed-author">@embed.Author.Name</div>
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="chatlog__embed-author">@embed.Author.Name</div>
+                                                    }
                                                 }
                                             </div>
                                         }
@@ -301,7 +301,7 @@
                                         @{/* Embed author */}
                                         @if (embed.Author is not null)
                                         {
-                                            <div class="chatlog__embed-author">
+                                            <div class="chatlog__embed-author-container">
                                                 @if (!string.IsNullOrWhiteSpace(embed.Author.IconUrl))
                                                 {
                                                     <img class="chatlog__embed-author-icon" src="@await ResolveUrlAsync(embed.Author.IconProxyUrl ?? embed.Author.IconUrl)" alt="Author icon" loading="lazy" onerror="this.style.visibility='hidden'">
@@ -309,16 +309,16 @@
 
                                                 @if (!string.IsNullOrWhiteSpace(embed.Author.Name))
                                                 {
-                                                    <span class="chatlog__embed-author">
-                                                        @if (!string.IsNullOrWhiteSpace(embed.Author.Url))
-                                                        {
-                                                            <a class="chatlog__embed-author-link" href="@embed.Author.Url">@embed.Author.Name</a>
-                                                        }
-                                                        else
-                                                        {
-                                                            @embed.Author.Name
-                                                        }
-                                                    </span>
+                                                    if (!string.IsNullOrWhiteSpace(embed.Author.Url))
+                                                    {
+                                                        <a class="chatlog__embed-author-link" href="@embed.Author.Url">
+                                                            <div class="chatlog__embed-author">@embed.Author.Name</div>
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="chatlog__embed-author">@embed.Author.Name</div>
+                                                    }
                                                 }
                                             </div>
                                         }

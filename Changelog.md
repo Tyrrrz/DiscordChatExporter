@@ -1,3 +1,14 @@
+### v2.34 (10-Apr-2022)
+
+- [HTML] Reworked layout to be more consistent with Discord.
+- [HTML] Changed user profile picture dimensions from `128x128` to `512x512`. (Thanks [@Chris Helder](https://github.com/TheDude53))
+- [HTML] Improved image scaling for Chromium-based browsers. This should result in higher quality images across the entire export.
+- [HTML] Hovering over messages will now show short timestamps on the left, indicating the time that the individual messages of the group were sent.
+- [HTML] Using "download media" option will now also download scripts, styles, fonts, and other similar resources used by the export.
+- [HTML] Image attachments will now use the provided description as alt text.
+- [HTML] Fixed a few layout inconsistencies related to embeds.
+- [GUI] Added a few clickable links to the usage guide to make the process of locating tokens easier.
+
 ### v2.33.2 (07-Mar-2022)
 
 - Actually fixed it this time.

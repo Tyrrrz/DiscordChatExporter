@@ -35,45 +35,42 @@ internal partial class MediaDownloader
         var filePath = Path.Combine(_workingDirPath, fileName);
 
         // Reuse existing files if we're allowed to
-        if (_reuseMedia && File.Exists(filePath))
-            return _pathCache[url] = filePath;
-
-        Directory.CreateDirectory(_workingDirPath);
-
-        // This retries on IOExceptions which is dangerous as we're also working with files
-        await Http.ExceptionPolicy.ExecuteAsync(async () =>
+        if (!_reuseMedia || !File.Exists(filePath))
         {
-            // Download the file
-            using var response = await Http.Client.GetAsync(url, cancellationToken);
-            await using (var output = File.Create(filePath))
-            {
-                await response.Content.CopyToAsync(output, cancellationToken);
-            }
+            Directory.CreateDirectory(_workingDirPath);
 
-            // Try to set the file date according to the last-modified header
-            try
+            await Http.ResiliencePolicy.ExecuteAsync(async () =>
             {
-                var lastModified = response.Content.Headers.TryGetValue("Last-Modified")?.Pipe(s =>
-                    DateTimeOffset.TryParse(s, CultureInfo.InvariantCulture, DateTimeStyles.None, out var date)
-                        ? date
-                        : (DateTimeOffset?) null
-                );
+                // Download the file
+                using var response = await Http.Client.GetAsync(url, cancellationToken);
+                await using (var output = File.Create(filePath))
+                    await response.Content.CopyToAsync(output, cancellationToken);
 
-                if (lastModified is not null)
+                // Try to set the file date according to the last-modified header
+                try
                 {
-                    File.SetCreationTimeUtc(filePath, lastModified.Value.UtcDateTime);
-                    File.SetLastWriteTimeUtc(filePath, lastModified.Value.UtcDateTime);
-                    File.SetLastAccessTimeUtc(filePath, lastModified.Value.UtcDateTime);
+                    var lastModified = response.Content.Headers.TryGetValue("Last-Modified")?.Pipe(s =>
+                        DateTimeOffset.TryParse(s, CultureInfo.InvariantCulture, DateTimeStyles.None, out var date)
+                            ? date
+                            : (DateTimeOffset?) null
+                    );
+
+                    if (lastModified is not null)
+                    {
+                        File.SetCreationTimeUtc(filePath, lastModified.Value.UtcDateTime);
+                        File.SetLastWriteTimeUtc(filePath, lastModified.Value.UtcDateTime);
+                        File.SetLastAccessTimeUtc(filePath, lastModified.Value.UtcDateTime);
+                    }
                 }
-            }
-            catch
-            {
-                // This can apparently fail for some reason.
-                // https://github.com/Tyrrrz/DiscordChatExporter/issues/585
-                // Updating file dates is not a critical task, so we'll just
-                // ignore exceptions thrown here.
-            }
-        });
+                catch
+                {
+                    // This can apparently fail for some reason.
+                    // https://github.com/Tyrrrz/DiscordChatExporter/issues/585
+                    // Updating file dates is not a critical task, so we'll just
+                    // ignore exceptions thrown here.
+                }
+            });
+        }
 
         return _pathCache[url] = filePath;
     }

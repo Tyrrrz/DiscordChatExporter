@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading;
@@ -52,7 +51,7 @@ public class DiscordClient
         string url,
         CancellationToken cancellationToken = default)
     {
-        return await Http.ResponsePolicy.ExecuteAsync(async innerCancellationToken =>
+        return await Http.ResponseResiliencePolicy.ExecuteAsync(async innerCancellationToken =>
         {
             if (_tokenKind == TokenKind.User)
                 return await GetResponseAsync(url, false, innerCancellationToken);

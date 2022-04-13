@@ -46,7 +46,7 @@ The following table lists all available download options:
       <td>
         <ul>
           <li>🟢 <b><a href="https://github.com/Tyrrrz/DiscordChatExporter/releases/latest">Stable release</a></b> (<code>DiscordChatExporter.zip</code>)</li>
-          <li>🟠 <a href="https://nightly.link/Tyrrrz/DiscordChatExporter/workflows/CI/master/DiscordChatExporter.zip">CI build</a> (<code>DiscordChatExporter.zip</code>)</li>
+          <li>🟠 <a href="https://github.com/Tyrrrz/DiscordChatExporter/actions/workflows/CI.yml">CI build</a> (<code>DiscordChatExporter.zip</code>)</li>
         </ul>
       </td>
       <td>
@@ -60,7 +60,7 @@ The following table lists all available download options:
       <td>
         <ul>
           <li>🟢 <b><a href="https://github.com/Tyrrrz/DiscordChatExporter/releases/latest">Stable release</a></b> (<code>DiscordChatExporter.CLI.zip</code>) ⚙️</li>
-          <li>🟠 <a href="https://nightly.link/Tyrrrz/DiscordChatExporter/workflows/CI/master/DiscordChatExporter.CLI.zip">CI build</a> (<code>DiscordChatExporter.CLI.zip</code>) ⚙️</li>
+          <li>🟠 <a href="https://github.com/Tyrrrz/DiscordChatExporter/actions/workflows/CI.yml">CI build</a> (<code>DiscordChatExporter.CLI.zip</code>) ⚙️</li>
           <li>🐋 <a href="https://hub.docker.com/r/tyrrrz/discordchatexporter">Docker</a> (<code>tyrrrz/discordchatexporter</code>)</li>
           <li>📦 <a href="https://aur.archlinux.org/packages/discord-chat-exporter-cli">AUR</a> (<code>discord-chat-exporter-cli</code>) 🦄</li>
         </ul>

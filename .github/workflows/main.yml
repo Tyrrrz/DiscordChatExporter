@@ -135,9 +135,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
       - name: Get release version
         id: get_version
         uses: dawidd6/action-get-tag@v1

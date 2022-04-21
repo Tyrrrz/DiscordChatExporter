@@ -59,13 +59,13 @@ jobs:
       - name: Publish (GUI)
         run: dotnet publish DiscordChatExporter.Gui/ -o DiscordChatExporter.Gui/bin/Publish/ --configuration Release
 
-      - name: Upload artifact (CLI)
+      - name: Upload artifacts (CLI)
         uses: actions/upload-artifact@v3
         with:
           name: DiscordChatExporter.CLI
           path: DiscordChatExporter.Cli/bin/Publish/
 
-      - name: Upload artifact (GUI)
+      - name: Upload artifacts (GUI)
         uses: actions/upload-artifact@v3
         with:
           name: DiscordChatExporter
@@ -77,13 +77,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download artifact (CLI)
+      - name: Download artifacts (CLI)
         uses: actions/download-artifact@v3
         with:
           name: DiscordChatExporter.CLI
           path: DiscordChatExporter.CLI
 
-      - name: Download artifact (GUI)
+      - name: Download artifacts (GUI)
         uses: actions/download-artifact@v3
         with:
           name: DiscordChatExporter

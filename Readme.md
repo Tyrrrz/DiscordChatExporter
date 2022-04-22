@@ -97,5 +97,5 @@ The following table lists all available download options:
 
 ## Screenshots
 
-![channel list](.screenshots/list.png)
-![rendered output](.screenshots/output.png)
+![channel list](.assets/list.png)
+![rendered output](.assets/output.png)

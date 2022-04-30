@@ -62,7 +62,7 @@ jobs:
       - name: Upload artifacts (CLI)
         uses: actions/upload-artifact@v3
         with:
-          name: DiscordChatExporter.CLI
+          name: DiscordChatExporter.Cli
           path: DiscordChatExporter.Cli/bin/Publish/
 
       - name: Upload artifacts (GUI)
@@ -80,21 +80,21 @@ jobs:
       - name: Download artifacts (CLI)
         uses: actions/download-artifact@v3
         with:
-          name: DiscordChatExporter.CLI
-          path: DiscordChatExporter.CLI
+          name: DiscordChatExporter.Cli
+          path: DiscordChatExporter.Cli
 
       - name: Download artifacts (GUI)
         uses: actions/download-artifact@v3
         with:
           name: DiscordChatExporter
-          path: DiscordChatExporter.GUI
+          path: DiscordChatExporter.Gui
 
       - name: Create package (CLI)
-        run: Compress-Archive -Path DiscordChatExporter.CLI/* -DestinationPath DiscordChatExporter.CLI.zip -Force
+        run: Compress-Archive -Path DiscordChatExporter.Cli/* -DestinationPath DiscordChatExporter.Cli.zip -Force
         shell: pwsh
 
       - name: Create package (GUI)
-        run: Compress-Archive -Path DiscordChatExporter.GUI/* -DestinationPath DiscordChatExporter.GUI.zip -Force
+        run: Compress-Archive -Path DiscordChatExporter.Gui/* -DestinationPath DiscordChatExporter.Gui.zip -Force
         shell: pwsh
 
       - name: Create release
@@ -116,8 +116,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_name: DiscordChatExporter.CLI.zip
-          asset_path: DiscordChatExporter.CLI.zip
+          asset_name: DiscordChatExporter.Cli.zip
+          asset_path: DiscordChatExporter.Cli.zip
           asset_content_type: application/zip
 
       - name: Upload release asset (GUI)
@@ -127,7 +127,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_name: DiscordChatExporter.zip
-          asset_path: DiscordChatExporter.GUI.zip
+          asset_path: DiscordChatExporter.Gui.zip
           asset_content_type: application/zip
 
   notify:

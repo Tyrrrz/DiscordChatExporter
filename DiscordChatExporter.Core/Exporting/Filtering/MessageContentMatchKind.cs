@@ -7,5 +7,6 @@ internal enum MessageContentMatchKind
     File,
     Video,
     Image,
-    Sound
+    Sound,
+    Pin
 }

@@ -101,6 +101,34 @@ public record FilterSpecs(TempOutputFixture TempOutput) : IClassFixture<TempOutp
     }
 
     [Fact]
+    public async Task Messages_filtered_by_pin_only_include_messages_that_have_been_pinned()
+    {
+        // Arrange
+        var filePath = TempOutput.GetTempFilePath();
+
+        // Act
+        await new ExportChannelsCommand
+        {
+            Token = Secrets.DiscordToken,
+            ChannelIds = new[] { ChannelIds.FilterTestCases },
+            ExportFormat = ExportFormat.Json,
+            OutputPath = filePath,
+            MessageFilter = MessageFilter.Parse("has:pin")
+        }.ExecuteAsync(new FakeConsole());
+
+        var data = await File.ReadAllTextAsync(filePath);
+        var document = Json.Parse(data);
+
+        // Assert
+        document
+            .GetProperty("messages")
+            .EnumerateArray()
+            .Select(j => j.GetProperty("content").GetString())
+            .Should()
+            .ContainSingle("This is pinned");
+    }
+
+    [Fact]
     public async Task Messages_filtered_by_mention_only_include_messages_that_have_that_mention()
     {
         // Arrange

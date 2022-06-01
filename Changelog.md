@@ -1,3 +1,9 @@
+### v2.34.1 (01-Jun-2022)
+
+- Improved retry policy to handle more transient errors. This should result in fewer errors exporting a channel due to timeout.
+- Added `has:pin` message filter. You can use it to limit exported messages to those that have been pinned. (Thanks [@Andrew Kolos](https://github.com/andrewkolos))
+- Fixed an issue which caused the export to fail when processing stickers that have no name.
+
 ### v2.34 (10-Apr-2022)
 
 - [HTML] Reworked layout to be more consistent with Discord.

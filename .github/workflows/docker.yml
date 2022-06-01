@@ -46,7 +46,7 @@ jobs:
         run: docker login -u tyrrrz -p ${{ secrets.DOCKER_TOKEN }}
 
       - name: Build container
-        run: docker build -t tyrrrz/discordchatexporter:stable .
+        run: docker build -t tyrrrz/discordchatexporter:stable -t tyrrrz/discordchatexporter:${{ steps.get_version.outputs.tag }} .
 
       - name: Push container (stable)
         run: docker push tyrrrz/discordchatexporter:stable

@@ -125,7 +125,7 @@
                         }
 
                         @{/* Timestamp */}
-                        <span class="chatlog__timestamp">@FormatDate(message.Timestamp)</span>
+                        <span class="chatlog__timestamp"><a href="#chatlog__message-container-@message.Id">@FormatDate(message.Timestamp)</a></span>
                     </div>
                 }
 

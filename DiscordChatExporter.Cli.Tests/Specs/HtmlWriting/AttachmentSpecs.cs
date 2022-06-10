@@ -19,7 +19,7 @@ public record AttachmentSpecs(ExportWrapperFixture ExportWrapper) : IClassFixtur
             Snowflake.Parse("885587844989612074")
         );
 
-        var fileUrl = message.QuerySelector("chatlog__attachment a")?.GetAttribute("href");
+        var fileUrl = message.QuerySelector(".chatlog__attachment a")?.GetAttribute("href");
 
         // Assert
         message.Text().Should().ContainAll(

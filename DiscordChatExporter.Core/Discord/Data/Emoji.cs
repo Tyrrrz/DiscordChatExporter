@@ -30,7 +30,8 @@ public partial record Emoji
 
         return string.Join(
             "-",
-            // Variant selector rune is skipped in Twemoji names, except when the emoji also contains a zero-width joiner
+            // Variant selector rune is skipped in Twemoji names, except when the emoji also contains a zero-width joiner.
+            // VS = 0xfe0f. ZWJ = 0x200d.
             runes.Any(r => r.Value == 0x200d)
                 ? runes.Select(r => r.Value.ToString("x"))
                 : runes.Where(r => r.Value != 0xfe0f).Select(r => r.Value.ToString("x"))

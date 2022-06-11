@@ -29,13 +29,12 @@ public partial record Emoji
         var runes = name.GetRunes();
 
         return string.Join(
-        	"-",
-	        // Variant selector rune is skipped in Twemoji names, except when the emoji also contains a zero-width joiner
-        	runes.Any(r => r.Value == 0x200d)
-        		? runes.Select(r => r.Value.ToString("x"))
-        		: runes.Where(r => r.Value != 0xfe0f).Select(r => r.Value.ToString("x"))
-    	);
-```    	```
+            "-",
+            // Variant selector rune is skipped in Twemoji names, except when the emoji also contains a zero-width joiner
+            runes.Any(r => r.Value == 0x200d)
+                ? runes.Select(r => r.Value.ToString("x"))
+                : runes.Where(r => r.Value != 0xfe0f).Select(r => r.Value.ToString("x"))
+        );
     }
 
     private static string GetImageUrl(Snowflake id, bool isAnimated) => isAnimated

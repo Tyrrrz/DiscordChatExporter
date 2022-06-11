@@ -24,13 +24,19 @@ public partial record Emoji(
 
 public partial record Emoji
 {
-    private static string GetTwemojiName(string name) => string.Join("-",
-        name
-            .GetRunes()
-            // Variant selector rune is skipped in Twemoji names
-            .Where(r => r.Value != 0xfe0f)
-            .Select(r => r.Value.ToString("x"))
-    );
+    private static string GetTwemojiName(string name)
+    {
+        var runes = name.GetRunes();
+
+        return string.Join(
+            "-",
+            // Variant selector rune is skipped in Twemoji names, except when the emoji also contains a zero-width joiner.
+            // VS = 0xfe0f. ZWJ = 0x200d.
+            runes.Any(r => r.Value == 0x200d)
+                ? runes.Select(r => r.Value.ToString("x"))
+                : runes.Where(r => r.Value != 0xfe0f).Select(r => r.Value.ToString("x"))
+        );
+    }
 
     private static string GetImageUrl(Snowflake id, bool isAnimated) => isAnimated
         ? $"https://cdn.discordapp.com/emojis/{id}.gif"

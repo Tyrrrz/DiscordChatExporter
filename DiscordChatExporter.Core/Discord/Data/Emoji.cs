@@ -26,13 +26,16 @@ public partial record Emoji
 {
     private static string GetTwemojiName(string name)
     {
-        var emojiRunes = name.GetRunes();
-        // Twemoji CDN expects variation selector-16 to persist if the emoji contains a ZWJ
-        if (emojiRunes.Any(r => r.Value == 0x200d)) {
-            return string.Join("-",emojiRunes.Select(r => r.Value.ToString("x")));
-        } else {
-            return string.Join("-",emojiRunes.Where(r => r.Value != 0xfe0f).Select(r => r.Value.ToString("x")));
-        }
+        var runes = name.GetRunes();
+
+        return string.Join(
+        	"-",
+	        // Variant selector rune is skipped in Twemoji names, except when the emoji also contains a zero-width joiner
+        	runes.Any(r => r.Value == 0x200d)
+        		? runes.Select(r => r.Value.ToString("x"))
+        		: runes.Where(r => r.Value != 0xfe0f).Select(r => r.Value.ToString("x"))
+    	);
+```    	```
     }
 
     private static string GetImageUrl(Snowflake id, bool isAnimated) => isAnimated

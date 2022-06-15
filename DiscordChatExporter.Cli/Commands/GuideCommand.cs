@@ -42,7 +42,7 @@ public class GuideCommand : ICommand
 
         console.Output.WriteLine(" 1. Open Discord");
         console.Output.WriteLine(" 2. Open Settings");
-        console.Output.WriteLine(" 3. Go to Appearance section");
+        console.Output.WriteLine(" 3. Go to Advanced section");
         console.Output.WriteLine(" 4. Enable Developer Mode");
         console.Output.WriteLine(" 5. Right click on the desired guild or channel and click Copy ID");
         console.Output.WriteLine();

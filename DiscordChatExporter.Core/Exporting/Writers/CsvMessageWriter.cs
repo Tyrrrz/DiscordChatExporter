@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
+using DiscordChatExporter.Core.Discord.Data.Embeds;
 using DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors;
 using DiscordChatExporter.Core.Utils.Extensions;
 
@@ -23,7 +24,7 @@ internal partial class CsvMessageWriter : MessageWriter
         PlainTextMarkdownVisitor.Format(Context, markdown ?? "");
 
     public override async ValueTask WritePreambleAsync(CancellationToken cancellationToken = default) =>
-        await _writer.WriteLineAsync("AuthorID,Author,Date,Content,Attachments,Reactions");
+        await _writer.WriteLineAsync("AuthorID,Author,Date,Content,Attachments,Reactions,Embeds");
 
     private async ValueTask WriteAttachmentsAsync(
         IReadOnlyList<Attachment> attachments,
@@ -65,6 +66,77 @@ internal partial class CsvMessageWriter : MessageWriter
         await _writer.WriteAsync(CsvEncode(buffer.ToString()));
     }
 
+    private async ValueTask WriteEmbedsAsync(
+        IReadOnlyList<Embed> embeds,
+        CancellationToken cancellationToken = default)
+    {
+        var buffer = new StringBuilder();
+
+        foreach (var embed in embeds)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            buffer.AppendIfNotEmpty('|');
+
+            if (!string.IsNullOrWhiteSpace(embed.Author?.Name))
+                buffer
+                    .Append("Name: ")
+                    .Append(embed.Author.Name)
+                    .Append(';');
+
+            if (!string.IsNullOrWhiteSpace(embed.Url))
+                buffer
+                    .Append("Url: ")
+                    .Append(embed.Url)
+                    .Append(';');
+
+            if (!string.IsNullOrWhiteSpace(embed.Title))
+                buffer
+                    .Append("Title: ")
+                    .Append(embed.Title)
+                    .Append(';');
+
+            if (!string.IsNullOrWhiteSpace(embed.Description))
+                buffer
+                    .Append("Description: ")
+                    .Append(embed.Description)
+                    .Append(';');
+
+            foreach (var field in embed.Fields)
+            {
+                if (!string.IsNullOrWhiteSpace(field.Name))
+                    buffer
+                        .Append("Field: ")
+                        .Append(field.Name);
+
+                if (!string.IsNullOrWhiteSpace(field.Value))
+                    buffer
+                        .Append("=")
+                        .Append(field.Value)
+                        .Append(';');
+            }
+
+            if (!string.IsNullOrWhiteSpace(embed.Thumbnail?.Url))
+                buffer
+                    .Append("Thumbnail: ")
+                    .Append(await Context.ResolveMediaUrlAsync(embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url, cancellationToken))
+                    .Append(';');
+
+            if (!string.IsNullOrWhiteSpace(embed.Image?.Url))
+                buffer
+                    .Append("Image: ")
+                    .Append(await Context.ResolveMediaUrlAsync(embed.Image.ProxyUrl ?? embed.Image.Url, cancellationToken))
+                    .Append(';');
+
+            if (!string.IsNullOrWhiteSpace(embed.Footer?.Text))
+                buffer
+                    .Append("Footer: ")
+                    .Append(embed.Footer.Text)
+                    .Append(';');
+        }
+
+        await _writer.WriteAsync(CsvEncode(buffer.ToString()));
+    }
+
     public override async ValueTask WriteMessageAsync(
         Message message,
         CancellationToken cancellationToken = default)
@@ -93,6 +165,10 @@ internal partial class CsvMessageWriter : MessageWriter
 
         // Reactions
         await WriteReactionsAsync(message.Reactions, cancellationToken);
+        await _writer.WriteAsync(',');
+
+        // Embeds
+        await WriteEmbedsAsync(message.Embeds, cancellationToken);
 
         // Finish row
         await _writer.WriteLineAsync();

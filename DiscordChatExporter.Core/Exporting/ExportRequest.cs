@@ -61,6 +61,7 @@ public partial record ExportRequest
                 "%P" => channel.Category.Position?.ToString() ?? "0",
                 "%a" => after?.ToDate().ToString("yyyy-MM-dd") ?? "",
                 "%b" => before?.ToDate().ToString("yyyy-MM-dd") ?? "",
+                "%d" => DateTime.Now().ToString("yyyy-MM-dd"),
                 "%%" => "%",
                 _ => m.Value
             })

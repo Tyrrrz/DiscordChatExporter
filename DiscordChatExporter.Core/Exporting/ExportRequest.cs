@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using DiscordChatExporter.Core.Discord;
@@ -61,6 +62,7 @@ public partial record ExportRequest
                 "%P" => channel.Category.Position?.ToString() ?? "0",
                 "%a" => after?.ToDate().ToString("yyyy-MM-dd") ?? "",
                 "%b" => before?.ToDate().ToString("yyyy-MM-dd") ?? "",
+                "%d" => DateTimeOffset.Now.ToString("yyyy-MM-dd"),
                 "%%" => "%",
                 _ => m.Value
             })

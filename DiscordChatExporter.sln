@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		License.txt = License.txt
 		Readme.md = Readme.md
 		Directory.Build.props = Directory.Build.props
-		Dockerfile = Dockerfile
+		DiscordChatExporter.Cli.dockerfile = DiscordChatExporter.Cli.dockerfile
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordChatExporter.Gui", "DiscordChatExporter.Gui\DiscordChatExporter.Gui.csproj", "{732A67AF-93DE-49DF-B10F-FD74710B7863}"

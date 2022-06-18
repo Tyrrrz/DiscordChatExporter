@@ -11,7 +11,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Build container
-        run: docker build .
+        run: docker build -f DiscordChatExporter.Cli.dockerfile .
 
   deploy-latest:
     if: ${{ github.event_name == 'push' && github.ref_type == 'branch' && github.ref_name == 'master' }}
@@ -25,7 +25,7 @@ jobs:
         run: docker login -u tyrrrz -p ${{ secrets.DOCKER_TOKEN }}
 
       - name: Build container
-        run: docker build -t tyrrrz/discordchatexporter:latest .
+        run: docker build -f DiscordChatExporter.Cli.dockerfile -t tyrrrz/discordchatexporter:latest .
 
       - name: Push container
         run: docker push tyrrrz/discordchatexporter:latest
@@ -46,7 +46,7 @@ jobs:
         run: docker login -u tyrrrz -p ${{ secrets.DOCKER_TOKEN }}
 
       - name: Build container
-        run: docker build -t tyrrrz/discordchatexporter:stable -t tyrrrz/discordchatexporter:${{ steps.get_version.outputs.tag }} .
+        run: docker build -f DiscordChatExporter.Cli.dockerfile -t tyrrrz/discordchatexporter:stable -t tyrrrz/discordchatexporter:${{ steps.get_version.outputs.tag }} .
 
       - name: Push container (stable)
         run: docker push tyrrrz/discordchatexporter:stable

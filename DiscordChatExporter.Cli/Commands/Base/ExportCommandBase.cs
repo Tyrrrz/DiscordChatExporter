@@ -20,34 +20,67 @@ namespace DiscordChatExporter.Cli.Commands.Base;
 
 public abstract class ExportCommandBase : TokenCommandBase
 {
-    [CommandOption("output", 'o', Description = "Output file or directory path.")]
+    [CommandOption(
+        "output",
+        'o',
+        Description = "Output file or directory path."
+    )]
     public string OutputPath { get; init; } = Directory.GetCurrentDirectory();
 
-    [CommandOption("format", 'f', Description = "Export format.")]
+    [CommandOption(
+        "format",
+        'f',
+        Description = "Export format."
+    )]
     public ExportFormat ExportFormat { get; init; } = ExportFormat.HtmlDark;
 
-    [CommandOption("after", Description = "Only include messages sent after this date or message ID.")]
+    [CommandOption(
+        "after",
+        Description = "Only include messages sent after this date or message ID."
+    )]
     public Snowflake? After { get; init; }
 
-    [CommandOption("before", Description = "Only include messages sent before this date or message ID.")]
+    [CommandOption(
+        "before",
+        Description = "Only include messages sent before this date or message ID."
+    )]
     public Snowflake? Before { get; init; }
 
-    [CommandOption("partition", 'p', Description = "Split output into partitions, each limited to this number of messages (e.g. '100') or file size (e.g. '10mb').")]
+    [CommandOption(
+        "partition",
+        'p',
+        Description = "Split output into partitions, each limited to this number of messages (e.g. '100') or file size (e.g. '10mb')."
+    )]
     public PartitionLimit PartitionLimit { get; init; } = PartitionLimit.Null;
 
-    [CommandOption("filter", Description = "Only include messages that satisfy this filter (e.g. 'from:foo#1234' or 'has:image').")]
+    [CommandOption(
+        "filter",
+        Description = "Only include messages that satisfy this filter (e.g. 'from:foo#1234' or 'has:image')."
+    )]
     public MessageFilter MessageFilter { get; init; } = MessageFilter.Null;
 
-    [CommandOption("parallel", Description = "Limits how many channels can be exported in parallel.")]
+    [CommandOption(
+        "parallel",
+        Description = "Limits how many channels can be exported in parallel."
+    )]
     public int ParallelLimit { get; init; } = 1;
 
-    [CommandOption("media", Description = "Download referenced media content.")]
+    [CommandOption(
+        "media",
+        Description = "Download referenced media content."
+    )]
     public bool ShouldDownloadMedia { get; init; }
 
-    [CommandOption("reuse-media", Description = "Reuse already existing media content to skip redundant downloads.")]
+    [CommandOption(
+        "reuse-media",
+        Description = "Reuse already existing media content to skip redundant downloads."
+    )]
     public bool ShouldReuseMedia { get; init; }
 
-    [CommandOption("dateformat", Description = "Format used when writing dates.")]
+    [CommandOption(
+        "dateformat",
+        Description = "Format used when writing dates."
+    )]
     public string DateFormat { get; init; } = "dd-MMM-yy hh:mm tt";
 
     private ChannelExporter? _channelExporter;

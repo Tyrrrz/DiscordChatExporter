@@ -12,7 +12,12 @@ namespace DiscordChatExporter.Cli.Commands;
 public class ExportChannelsCommand : ExportCommandBase
 {
     // TODO: change this to plural (breaking change)
-    [CommandOption("channel", 'c', IsRequired = true, Description = "Channel ID(s).")]
+    [CommandOption(
+        "channel",
+        'c',
+        IsRequired = true,
+        Description = "Channel ID(s)."
+    )]
     public IReadOnlyList<Snowflake> ChannelIds { get; init; } = Array.Empty<Snowflake>();
 
     public override async ValueTask ExecuteAsync(IConsole console)

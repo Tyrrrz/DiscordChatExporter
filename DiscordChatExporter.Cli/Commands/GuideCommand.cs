@@ -18,12 +18,12 @@ public class GuideCommand : ICommand
         console.Output.WriteLine(" *  Automating user accounts is technically against TOS — USE AT YOUR OWN RISK!");
         console.Output.WriteLine(" 1. Open Discord in your web browser and login");
         console.Output.WriteLine(" 2. Press Ctrl+Shift+I to show developer tools");
-        console.Output.WriteLine(" 3. Press Ctrl+Shift+M to toggle device toolbar");
-        console.Output.WriteLine(" 4. Navigate to the Application tab");
-        console.Output.WriteLine(" 5. On the left, expand Local Storage and select https://discord.com");
-        console.Output.WriteLine(" 6. Type \"token\" into the Filter box");
-        console.Output.WriteLine(" 7. If the token key does not appear, press Ctrl+R to reload");
-        console.Output.WriteLine(" 8. Copy the value of the token key");
+        console.Output.WriteLine(" 3. Navigate to the Network tab");
+        console.Output.WriteLine(" 4. Press Ctrl+R to reload");
+        console.Output.WriteLine(" 5. Search for a request containing \"messages?limit=50\" or similar");
+        console.Output.WriteLine(" 6. Select the Headers tab on the right");
+        console.Output.WriteLine(" 7. Scroll down to the Request Headers section");
+        console.Output.WriteLine(" 8. Copy the value of the \"authorization\" header");
         console.Output.WriteLine();
 
         // Bot token

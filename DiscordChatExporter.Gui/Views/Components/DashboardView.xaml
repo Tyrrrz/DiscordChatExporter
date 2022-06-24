@@ -148,7 +148,7 @@
                                 Foreground="{DynamicResource PrimaryHueMidBrush}"
                                 Kind="Account" />
                         </InlineUIContainer>
-                        <Run FontSize="16" Text="Authenticate using your personal account" />
+                        <Run FontSize="16" Text="To get token for your personal account:" />
                         <LineBreak />
                         <Run Text="*  Automating user accounts is technically against TOS —" />
                         <Run FontWeight="SemiBold" Text="use at your own risk" /><Run Text="!" />
@@ -163,32 +163,29 @@
                         <Run FontWeight="SemiBold" Text="Ctrl+Shift+I" />
                         <Run Text="to show developer tools" />
                         <LineBreak />
-                        <Run Text="3. Press" />
-                        <Run FontWeight="SemiBold" Text="Ctrl+Shift+M" />
-                        <Run Text="to toggle device toolbar" />
-                        <LineBreak />
-                        <Run Text="4. Navigate to the" />
-                        <Run FontWeight="SemiBold" Text="Application" />
+                        <Run Text="3. Navigate to the" />
+                        <Run FontWeight="SemiBold" Text="Network" />
                         <Run Text="tab" />
                         <LineBreak />
-                        <Run Text="5. On the left, expand" />
-                        <Run FontWeight="SemiBold" Text="Local Storage" />
-                        <Run Text="and select" />
-                        <Run FontWeight="SemiBold" Text="https://discord.com" />
-                        <LineBreak />
-                        <Run Text="6. Type" />
-                        <Run FontWeight="SemiBold" Text="token" />
-                        <Run Text="into the" />
-                        <Run FontWeight="SemiBold" Text="Filter" />
-                        <Run Text="box" />
-                        <LineBreak />
-                        <Run Text="7. If the token key does not appear, press" />
+                        <Run Text="4. Press" />
                         <Run FontWeight="SemiBold" Text="Ctrl+R" />
                         <Run Text="to reload" />
                         <LineBreak />
+                        <Run Text="5. Search for a request containing" />
+                        <Run FontWeight="SemiBold" Text="messages?limit=50" />
+                        <Run Text="or similar" />
+                        <LineBreak />
+                        <Run Text="6. Select the" />
+                        <Run FontWeight="SemiBold" Text="Headers" />
+                        <Run Text=" tab on the right" />
+                        <LineBreak />
+                        <Run Text="7. Scroll down to the" />
+                        <Run FontWeight="SemiBold" Text="Request Headers" />
+                        <Run Text="section" />
+                        <LineBreak />
                         <Run Text="8. Copy the value of the" />
-                        <Run FontWeight="SemiBold" Text="token" />
-                        <Run Text="key" />
+                        <Run FontWeight="SemiBold" Text="authorization" />
+                        <Run Text="header" />
                         <LineBreak />
                         <LineBreak />
 
@@ -199,7 +196,7 @@
                                 Foreground="{DynamicResource PrimaryHueMidBrush}"
                                 Kind="Robot" />
                         </InlineUIContainer>
-                        <Run FontSize="16" Text="Authenticate using a bot account" />
+                        <Run FontSize="16" Text="To get token for a bot account:" />
                         <LineBreak />
                         <Run Text="1. Open Discord" />
                         <Hyperlink Command="{s:Action OpenDiscordDeveloperPortal}">

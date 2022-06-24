@@ -144,11 +144,14 @@
                         <!--  User token  -->
                         <InlineUIContainer>
                             <materialDesign:PackIcon
-                                Margin="1,0,0,-2"
+                                Margin="0,0,2,-2"
                                 Foreground="{DynamicResource PrimaryHueMidBrush}"
                                 Kind="Account" />
                         </InlineUIContainer>
                         <Run FontSize="16" Text="Authenticate using your personal account" />
+                        <LineBreak />
+                        <Run Text="*  Automating user accounts is technically against TOS —" />
+                        <Run FontWeight="SemiBold" Text="use at your own risk" /><Run Text="!" />
                         <LineBreak />
                         <Run Text="1. Open Discord in your" />
                         <Hyperlink Command="{s:Action OpenDiscord}">
@@ -187,14 +190,12 @@
                         <Run FontWeight="SemiBold" Text="token" />
                         <Run Text="key" />
                         <LineBreak />
-                        <Run Text="*  Automating user accounts is technically against TOS, use at your own risk!" />
-                        <LineBreak />
                         <LineBreak />
 
                         <!--  Bot token  -->
                         <InlineUIContainer>
                             <materialDesign:PackIcon
-                                Margin="1,0,0,-2"
+                                Margin="0,0,2,-2"
                                 Foreground="{DynamicResource PrimaryHueMidBrush}"
                                 Kind="Robot" />
                         </InlineUIContainer>

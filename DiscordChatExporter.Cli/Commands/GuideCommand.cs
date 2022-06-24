@@ -15,6 +15,7 @@ public class GuideCommand : ICommand
         using (console.WithForegroundColor(ConsoleColor.White))
             console.Output.WriteLine("To get user token:");
 
+        console.Output.WriteLine(" *  Automating user accounts is technically against TOS — USE AT YOUR OWN RISK!");
         console.Output.WriteLine(" 1. Open Discord in your web browser and login");
         console.Output.WriteLine(" 2. Press Ctrl+Shift+I to show developer tools");
         console.Output.WriteLine(" 3. Press Ctrl+Shift+M to toggle device toolbar");
@@ -23,7 +24,6 @@ public class GuideCommand : ICommand
         console.Output.WriteLine(" 6. Type \"token\" into the Filter box");
         console.Output.WriteLine(" 7. If the token key does not appear, press Ctrl+R to reload");
         console.Output.WriteLine(" 8. Copy the value of the token key");
-        console.Output.WriteLine(" *  Automating user accounts is technically against TOS, use at your own risk.");
         console.Output.WriteLine();
 
         // Bot token

@@ -14,17 +14,8 @@ public partial record Channel(
     ChannelCategory Category,
     string Name,
     int? Position,
-    string? Topic) : IHasId
-{
-    public bool IsTextChannel => Kind is
-        ChannelKind.GuildTextChat or
-        ChannelKind.DirectTextChat or
-        ChannelKind.DirectGroupTextChat or
-        ChannelKind.GuildNews or
-        ChannelKind.GuildStore;
-
-    public bool IsVoiceChannel => !IsTextChannel;
-}
+    string? Topic
+) : IHasId;
 
 public partial record Channel
 {

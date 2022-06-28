@@ -105,7 +105,7 @@ public class DashboardViewModel : PropertyChangedBase
             await foreach (var guild in discord.GetUserGuildsAsync())
             {
                 var channels = await discord.GetGuildChannelsAsync(guild.Id);
-                guildChannelMap[guild] = channels.Where(c => c.IsTextChannel).ToArray();
+                guildChannelMap[guild] = channels.Where(c => c.Kind.IsText()).ToArray();
             }
 
             _discord = discord;

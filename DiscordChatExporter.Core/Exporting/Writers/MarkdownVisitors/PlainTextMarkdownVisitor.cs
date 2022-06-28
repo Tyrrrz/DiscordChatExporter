@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Markdown;
 using DiscordChatExporter.Core.Markdown.Parsing;
 using DiscordChatExporter.Core.Utils.Extensions;
@@ -58,7 +59,7 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
             _buffer.Append($"#{name}");
 
             // Voice channel marker
-            if (channel?.IsVoiceChannel == true)
+            if (channel?.Kind.IsVoice() == true)
                 _buffer.Append(" [voice]");
         }
         else if (mention.Kind == MentionKind.Role)

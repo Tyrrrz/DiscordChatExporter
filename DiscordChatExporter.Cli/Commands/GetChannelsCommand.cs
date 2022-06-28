@@ -5,6 +5,7 @@ using CliFx.Attributes;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands.Base;
 using DiscordChatExporter.Core.Discord;
+using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Cli.Commands;
@@ -27,7 +28,7 @@ public class GetChannelsCommand : TokenCommandBase
         var channels = await Discord.GetGuildChannelsAsync(GuildId, cancellationToken);
 
         var textChannels = channels
-            .Where(c => c.IsTextChannel)
+            .Where(c => c.Kind.IsText())
             .OrderBy(c => c.Category.Position)
             .ThenBy(c => c.Name)
             .ToArray();

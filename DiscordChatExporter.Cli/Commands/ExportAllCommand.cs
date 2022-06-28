@@ -33,7 +33,7 @@ public class ExportAllCommand : ExportCommandBase
             await foreach (var channel in Discord.GetGuildChannelsAsync(guild.Id, cancellationToken))
             {
                 // Skip non-text channels
-                if (!channel.IsTextChannel)
+                if (!channel.Kind.IsText())
                     continue;
 
                 channels.Add(channel);

@@ -12,3 +12,16 @@ public enum ChannelKind
     GuildNews,
     GuildStore
 }
+
+public static class ChannelKindExtensions
+{
+    public static bool IsText(this ChannelKind kind) => kind is
+        ChannelKind.GuildTextChat or
+        ChannelKind.DirectTextChat or
+        ChannelKind.DirectGroupTextChat or
+        ChannelKind.GuildNews or
+        ChannelKind.GuildStore;
+
+    public static bool IsVoice(this ChannelKind kind) => kind is
+        ChannelKind.GuildVoiceChat;
+}

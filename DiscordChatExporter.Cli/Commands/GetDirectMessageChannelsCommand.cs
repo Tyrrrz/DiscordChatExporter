@@ -19,7 +19,7 @@ public class GetDirectMessageChannelsCommand : TokenCommandBase
         var channels = await Discord.GetGuildChannelsAsync(Guild.DirectMessages.Id, cancellationToken);
 
         var textChannels = channels
-            .Where(c => c.IsTextChannel)
+            .Where(c => c.Kind.IsText())
             .OrderBy(c => c.Category.Position)
             .ThenBy(c => c.Name)
             .ToArray();

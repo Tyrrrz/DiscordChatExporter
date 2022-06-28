@@ -85,7 +85,7 @@
                                     <span class="chatlog__reference-link" onclick="scrollToMessage(event, '@message.ReferencedMessage.Id')">
                                         @if (!string.IsNullOrWhiteSpace(message.ReferencedMessage.Content))
                                         {
-                                            @Raw(FormatEmbedMarkdown(message.ReferencedMessage.Content))
+                                            <!--wmm:ignore-->@Raw(FormatEmbedMarkdown(message.ReferencedMessage.Content))<!--/wmm:ignore-->
                                         }
                                         else if (message.ReferencedMessage.Attachments.Any() || message.ReferencedMessage.Embeds.Any())
                                         {
@@ -134,7 +134,7 @@
                 {
                     <div class="chatlog__content chatlog__markdown">
                         @{/* Text */}
-                        <span class="chatlog__markdown-preserve">@Raw(FormatMarkdown(message.Content))</span>
+                        <span class="chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(FormatMarkdown(message.Content))<!--/wmm:ignore--></span>
 
                         @{/* Edited timestamp */}
                         @if (message.EditedTimestamp is not null)
@@ -262,12 +262,12 @@
                                                 @if (!string.IsNullOrWhiteSpace(embed.Url))
                                                 {
                                                     <a class="chatlog__embed-title-link" href="@embed.Url">
-                                                        <div class="chatlog__markdown chatlog__markdown-preserve">@Raw(FormatEmbedMarkdown(embed.Title))</div>
+                                                        <div class="chatlog__markdown chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(FormatEmbedMarkdown(embed.Title))<!--/wmm:ignore--></div>
                                                     </a>
                                                 }
                                                 else
                                                 {
-                                                    <div class="chatlog__markdown chatlog__markdown-preserve">@Raw(FormatEmbedMarkdown(embed.Title))</div>
+                                                    <div class="chatlog__markdown chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(FormatEmbedMarkdown(embed.Title))<!--/wmm:ignore--></div>
                                                 }
                                             </div>
                                         }
@@ -330,12 +330,12 @@
                                                 @if (!string.IsNullOrWhiteSpace(embed.Url))
                                                 {
                                                     <a class="chatlog__embed-title-link" href="@embed.Url">
-                                                        <div class="chatlog__markdown chatlog__markdown-preserve">@Raw(FormatEmbedMarkdown(embed.Title))</div>
+                                                        <div class="chatlog__markdown chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(FormatEmbedMarkdown(embed.Title))<!--/wmm:ignore--></div>
                                                     </a>
                                                 }
                                                 else
                                                 {
-                                                    <div class="chatlog__markdown chatlog__markdown-preserve">@Raw(FormatEmbedMarkdown(embed.Title))</div>
+                                                    <div class="chatlog__markdown chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(FormatEmbedMarkdown(embed.Title))<!--/wmm:ignore--></div>
                                                 }
                                             </div>
                                         }
@@ -344,7 +344,7 @@
                                         @if (!string.IsNullOrWhiteSpace(embed.Description))
                                         {
                                             <div class="chatlog__embed-description">
-                                                <div class="chatlog__markdown chatlog__markdown-preserve">@Raw(FormatEmbedMarkdown(embed.Description))</div>
+                                                <div class="chatlog__markdown chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(FormatEmbedMarkdown(embed.Description))<!--/wmm:ignore--></div>
                                             </div>
                                         }
 
@@ -358,14 +358,14 @@
                                                         @if (!string.IsNullOrWhiteSpace(field.Name))
                                                         {
                                                             <div class="chatlog__embed-field-name">
-                                                                <div class="chatlog__markdown chatlog__markdown-preserve">@Raw(FormatEmbedMarkdown(field.Name))</div>
+                                                                <div class="chatlog__markdown chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(FormatEmbedMarkdown(field.Name))<!--/wmm:ignore--></div>
                                                             </div>
                                                         }
 
                                                         @if (!string.IsNullOrWhiteSpace(field.Value))
                                                         {
                                                             <div class="chatlog__embed-field-value">
-                                                                <div class="chatlog__markdown chatlog__markdown-preserve">@Raw(FormatEmbedMarkdown(field.Value))</div>
+                                                                <div class="chatlog__markdown chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(FormatEmbedMarkdown(field.Value))<!--/wmm:ignore--></div>
                                                             </div>
                                                         }
                                                     </div>

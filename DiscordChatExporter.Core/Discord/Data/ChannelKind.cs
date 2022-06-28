@@ -5,23 +5,15 @@
 public enum ChannelKind
 {
     GuildTextChat = 0,
-    DirectTextChat,
-    GuildVoiceChat,
-    DirectGroupTextChat,
-    GuildCategory,
-    GuildNews,
-    GuildStore
-}
-
-public static class ChannelKindExtensions
-{
-    public static bool IsText(this ChannelKind kind) => kind is
-        ChannelKind.GuildTextChat or
-        ChannelKind.DirectTextChat or
-        ChannelKind.DirectGroupTextChat or
-        ChannelKind.GuildNews or
-        ChannelKind.GuildStore;
-
-    public static bool IsVoice(this ChannelKind kind) => kind is
-        ChannelKind.GuildVoiceChat;
+    DirectTextChat = 1,
+    GuildVoiceChat = 2,
+    DirectGroupTextChat = 3,
+    GuildCategory = 4,
+    GuildNews = 5,
+    GuildNewsThread = 10,
+    GuildPublicThread = 11,
+    GuildPrivateThread = 12,
+    GuildStageVoice = 13,
+    GuildDirectory = 14,
+    GuildForum = 15
 }

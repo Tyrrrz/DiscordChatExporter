@@ -348,8 +348,20 @@
                                     <materialDesign:PackIcon
                                         Grid.Column="0"
                                         Margin="16,7,0,6"
-                                        VerticalAlignment="Center"
-                                        Kind="Pound" />
+                                        VerticalAlignment="Center">
+                                        <materialDesign:PackIcon.Style>
+                                            <Style TargetType="{x:Type materialDesign:PackIcon}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SupportsVoice}" Value="True">
+                                                        <Setter Property="Kind" Value="VolumeHigh" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding SupportsVoice}" Value="False">
+                                                        <Setter Property="Kind" Value="Pound" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </materialDesign:PackIcon.Style>
+                                    </materialDesign:PackIcon>
 
                                     <!--  Channel name  -->
                                     <TextBlock

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using CliFx.Attributes;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands.Base;
@@ -19,8 +18,7 @@ public class ExportDirectMessagesCommand : ExportCommandBase
 
         await console.Output.WriteLineAsync("Fetching channels...");
         var channels = await Discord.GetGuildChannelsAsync(Guild.DirectMessages.Id, cancellationToken);
-        var textChannels = channels.Where(c => c.Kind.IsText()).ToArray();
 
-        await base.ExecuteAsync(console, textChannels);
+        await base.ExecuteAsync(console, channels);
     }
 }

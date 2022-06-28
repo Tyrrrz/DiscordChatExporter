@@ -158,7 +158,7 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
         else if (mention.Kind == MentionKind.Channel)
         {
             var channel = mention.TargetId?.Pipe(_context.TryGetChannel);
-            var symbol = channel?.Kind.IsVoice() == true ? "🔊" : "#";
+            var symbol = channel?.SupportsVoice == true ? "🔊" : "#";
             var name = channel?.Name ?? "deleted-channel";
 
             _buffer

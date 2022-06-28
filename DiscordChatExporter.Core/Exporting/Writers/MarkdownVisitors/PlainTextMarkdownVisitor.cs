@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Markdown;
 using DiscordChatExporter.Core.Markdown.Parsing;
 using DiscordChatExporter.Core.Utils.Extensions;
@@ -53,13 +52,13 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
         }
         else if (mention.Kind == MentionKind.Channel)
         {
-            var channel =mention.TargetId?.Pipe(_context.TryGetChannel);
+            var channel = mention.TargetId?.Pipe(_context.TryGetChannel);
             var name = channel?.Name ?? "deleted-channel";
 
             _buffer.Append($"#{name}");
 
             // Voice channel marker
-            if (channel?.Kind.IsVoice() == true)
+            if (channel?.SupportsVoice == true)
                 _buffer.Append(" [voice]");
         }
         else if (mention.Kind == MentionKind.Role)

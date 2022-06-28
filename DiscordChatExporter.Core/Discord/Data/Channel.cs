@@ -15,8 +15,10 @@ public partial record Channel(
     string Name,
     int? Position,
     string? Topic,
-    Snowflake? LastMessageId
-) : IHasId;
+    Snowflake? LastMessageId) : IHasId
+{
+    public bool SupportsVoice => Kind is ChannelKind.GuildVoiceChat or ChannelKind.GuildStageVoice;
+}
 
 public partial record Channel
 {
@@ -28,7 +30,6 @@ public partial record Channel
             ChannelKind.DirectTextChat => "Private",
             ChannelKind.DirectGroupTextChat => "Group",
             ChannelKind.GuildNews => "News",
-            ChannelKind.GuildStore => "Store",
             _ => "Default"
         },
         null

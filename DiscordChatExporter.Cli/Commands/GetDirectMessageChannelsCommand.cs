@@ -20,7 +20,7 @@ public class GetDirectMessageChannelsCommand : TokenCommandBase
 
         var textChannels = channels
             .Where(c => c.Kind.IsText())
-            .OrderBy(c => c.Category.Position)
+            .OrderByDescending(c => c.LastMessageId)
             .ThenBy(c => c.Name)
             .ToArray();
 

@@ -12,11 +12,14 @@ public record ChannelCategory(Snowflake Id, string Name, int? Position) : IHasId
     public static ChannelCategory Parse(JsonElement json, int? positionHint = null)
     {
         var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
-        var position = positionHint ?? json.GetPropertyOrNull("position")?.GetInt32OrNull();
 
         var name =
             json.GetPropertyOrNull("name")?.GetNonWhiteSpaceStringOrNull() ??
             id.ToString();
+
+        var position =
+            positionHint ??
+            json.GetPropertyOrNull("position")?.GetInt32OrNull();
 
         return new ChannelCategory(id, name, position);
     }

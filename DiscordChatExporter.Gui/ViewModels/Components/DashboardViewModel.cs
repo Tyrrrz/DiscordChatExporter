@@ -44,6 +44,8 @@ public class DashboardViewModel : PropertyChangedBase
 
     public Guild? SelectedGuild { get; set; }
 
+    public bool IsDirectMessageGuildSelected => SelectedGuild?.Id == Guild.DirectMessages.Id;
+
     public IReadOnlyList<Channel>? AvailableChannels => SelectedGuild is not null
         ? GuildChannelMap?[SelectedGuild]
         : null;

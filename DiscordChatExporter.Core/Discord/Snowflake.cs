@@ -49,7 +49,15 @@ public partial record struct Snowflake
     public static Snowflake Parse(string str) => Parse(str, null);
 }
 
-public partial record struct Snowflake : IComparable<Snowflake>
+public partial record struct Snowflake : IComparable<Snowflake>, IComparable
 {
     public int CompareTo(Snowflake other) => Value.CompareTo(other.Value);
+
+    public int CompareTo(object? obj)
+    {
+        if (obj is not Snowflake other)
+            throw new ArgumentException($"Object must be of type {nameof(Snowflake)}.");
+
+        return Value.CompareTo(other.Value);
+    }
 }

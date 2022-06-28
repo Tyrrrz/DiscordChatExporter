@@ -30,15 +30,17 @@ public record Message(
     public static Message Parse(JsonElement json)
     {
         var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
+        var kind = (MessageKind)json.GetProperty("type").GetInt32();
         var author = json.GetProperty("author").Pipe(User.Parse);
+
         var timestamp = json.GetProperty("timestamp").GetDateTimeOffset();
         var editedTimestamp = json.GetPropertyOrNull("edited_timestamp")?.GetDateTimeOffset();
-        var callEndedTimestamp = json.GetPropertyOrNull("call")?.GetPropertyOrNull("ended_timestamp")
-            ?.GetDateTimeOffset();
-        var kind = (MessageKind)json.GetProperty("type").GetInt32();
+        var callEndedTimestamp = json
+            .GetPropertyOrNull("call")?
+            .GetPropertyOrNull("ended_timestamp")?
+            .GetDateTimeOffset();
+
         var isPinned = json.GetPropertyOrNull("pinned")?.GetBooleanOrNull() ?? false;
-        var messageReference = json.GetPropertyOrNull("message_reference")?.Pipe(MessageReference.Parse);
-        var referencedMessage = json.GetPropertyOrNull("referenced_message")?.Pipe(Parse);
 
         var content = kind switch
         {
@@ -72,6 +74,9 @@ public record Message(
         var mentionedUsers =
             json.GetPropertyOrNull("mentions")?.EnumerateArrayOrNull()?.Select(User.Parse).ToArray() ??
             Array.Empty<User>();
+
+        var messageReference = json.GetPropertyOrNull("message_reference")?.Pipe(MessageReference.Parse);
+        var referencedMessage = json.GetPropertyOrNull("referenced_message")?.Pipe(Parse);
 
         return new Message(
             id,

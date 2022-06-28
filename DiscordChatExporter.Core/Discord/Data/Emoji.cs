@@ -64,7 +64,6 @@ public partial record Emoji
         var id = json.GetPropertyOrNull("id")?.GetNonWhiteSpaceStringOrNull()?.Pipe(Snowflake.Parse);
         var name = json.GetPropertyOrNull("name")?.GetNonWhiteSpaceStringOrNull();
         var isAnimated = json.GetPropertyOrNull("animated")?.GetBooleanOrNull() ?? false;
-
         var imageUrl = GetImageUrl(id, name, isAnimated);
 
         return new Emoji(

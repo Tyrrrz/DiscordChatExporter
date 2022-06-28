@@ -39,16 +39,16 @@ public partial record Embed
         var url = json.GetPropertyOrNull("url")?.GetNonWhiteSpaceStringOrNull();
         var timestamp = json.GetPropertyOrNull("timestamp")?.GetDateTimeOffset();
         var color = json.GetPropertyOrNull("color")?.GetInt32OrNull()?.Pipe(System.Drawing.Color.FromArgb).ResetAlpha();
-        var description = json.GetPropertyOrNull("description")?.GetStringOrNull();
-
         var author = json.GetPropertyOrNull("author")?.Pipe(EmbedAuthor.Parse);
-        var thumbnail = json.GetPropertyOrNull("thumbnail")?.Pipe(EmbedImage.Parse);
-        var image = json.GetPropertyOrNull("image")?.Pipe(EmbedImage.Parse);
-        var footer = json.GetPropertyOrNull("footer")?.Pipe(EmbedFooter.Parse);
+        var description = json.GetPropertyOrNull("description")?.GetStringOrNull();
 
         var fields =
             json.GetPropertyOrNull("fields")?.EnumerateArrayOrNull()?.Select(EmbedField.Parse).ToArray() ??
             Array.Empty<EmbedField>();
+
+        var thumbnail = json.GetPropertyOrNull("thumbnail")?.Pipe(EmbedImage.Parse);
+        var image = json.GetPropertyOrNull("image")?.Pipe(EmbedImage.Parse);
+        var footer = json.GetPropertyOrNull("footer")?.Pipe(EmbedFooter.Parse);
 
         return new Embed(
             title,

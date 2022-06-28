@@ -14,7 +14,8 @@ public partial record Channel(
     ChannelCategory Category,
     string Name,
     int? Position,
-    string? Topic
+    string? Topic,
+    Snowflake? LastMessageId
 ) : IHasId;
 
 public partial record Channel
@@ -36,9 +37,8 @@ public partial record Channel
     public static Channel Parse(JsonElement json, ChannelCategory? category = null, int? positionHint = null)
     {
         var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
-        var guildId = json.GetPropertyOrNull("guild_id")?.GetNonWhiteSpaceStringOrNull()?.Pipe(Snowflake.Parse);
-        var topic = json.GetPropertyOrNull("topic")?.GetStringOrNull();
         var kind = (ChannelKind)json.GetProperty("type").GetInt32();
+        var guildId = json.GetPropertyOrNull("guild_id")?.GetNonWhiteSpaceStringOrNull()?.Pipe(Snowflake.Parse);
 
         var name =
             // Guild channel
@@ -54,7 +54,16 @@ public partial record Channel
             // Fallback
             id.ToString();
 
-        var position = positionHint ?? json.GetPropertyOrNull("position")?.GetInt32OrNull();
+        var position =
+            positionHint ??
+            json.GetPropertyOrNull("position")?.GetInt32OrNull();
+
+        var topic = json.GetPropertyOrNull("topic")?.GetStringOrNull();
+
+        var lastMessageId = json
+            .GetPropertyOrNull("last_message_id")?
+            .GetNonWhiteSpaceStringOrNull()?
+            .Pipe(Snowflake.Parse);
 
         return new Channel(
             id,
@@ -63,7 +72,8 @@ public partial record Channel
             category ?? GetFallbackCategory(kind),
             name,
             position,
-            topic
+            topic,
+            lastMessageId
         );
     }
 }

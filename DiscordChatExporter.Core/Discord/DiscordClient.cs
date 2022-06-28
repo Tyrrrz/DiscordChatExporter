@@ -181,6 +181,8 @@ public class DiscordClient
                 .Select((j, index) => ChannelCategory.Parse(j, index + 1))
                 .ToDictionary(j => j.Id.ToString(), StringComparer.Ordinal);
 
+            // Discord positions are not deterministic, so we need to normalize them
+            // because the user may refer to the channel position via file name template.
             var position = 0;
 
             foreach (var channelJson in responseOrdered)

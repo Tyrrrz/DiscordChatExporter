@@ -18,7 +18,6 @@ public record Sticker(Snowflake Id, string Name, StickerFormat Format, string So
         var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
         var name = json.GetProperty("name").GetNonNullString();
         var format = (StickerFormat)json.GetProperty("format_type").GetInt32();
-
         var sourceUrl = GetSourceUrl(id, format);
 
         return new Sticker(id, name, format, sourceUrl);

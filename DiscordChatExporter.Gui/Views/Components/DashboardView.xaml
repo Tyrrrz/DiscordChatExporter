@@ -8,6 +8,8 @@
     xmlns:components="clr-namespace:DiscordChatExporter.Gui.ViewModels.Components"
     xmlns:converters="clr-namespace:DiscordChatExporter.Gui.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:data="clr-namespace:DiscordChatExporter.Core.Discord.Data;assembly=DiscordChatExporter.Core"
+    xmlns:globalization="clr-namespace:System.Globalization;assembly=System.Runtime"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:s="https://github.com/canton7/Stylet"
@@ -16,6 +18,14 @@
     Loaded="{s:Action OnViewLoaded}"
     mc:Ignorable="d">
     <UserControl.Resources>
+        <!--  Sort DMs by last message  -->
+        <CollectionViewSource x:Key="AvailableDirectMessageChannelsViewSource" Source="{Binding AvailableChannels, Mode=OneWay}">
+            <CollectionViewSource.SortDescriptions>
+                <componentModel:SortDescription Direction="Descending" PropertyName="LastMessageId" />
+                <componentModel:SortDescription Direction="Ascending" PropertyName="Name" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+        <!--  Sort guild channels by position  -->
         <CollectionViewSource x:Key="AvailableChannelsViewSource" Source="{Binding AvailableChannels, Mode=OneWay}">
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="Category.Name" />
@@ -274,13 +284,24 @@
                 <Border Grid.Column="1">
                     <ListBox
                         HorizontalContentAlignment="Stretch"
-                        ItemsSource="{Binding Source={StaticResource AvailableChannelsViewSource}}"
                         SelectionMode="Extended"
                         TextSearch.TextPath="Model.Name"
                         VirtualizingPanel.IsVirtualizingWhenGrouping="True">
                         <b:Interaction.Behaviors>
                             <behaviors:ChannelMultiSelectionListBoxBehavior SelectedItems="{Binding SelectedChannels}" />
                         </b:Interaction.Behaviors>
+                        <ListBox.Style>
+                            <Style BasedOn="{StaticResource {x:Type ListBox}}" TargetType="{x:Type ListBox}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsDirectMessageGuildSelected}" Value="True">
+                                        <Setter Property="ItemsSource" Value="{Binding Source={StaticResource AvailableDirectMessageChannelsViewSource}}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsDirectMessageGuildSelected}" Value="False">
+                                        <Setter Property="ItemsSource" Value="{Binding Source={StaticResource AvailableChannelsViewSource}}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListBox.Style>
                         <ListBox.GroupStyle>
                             <GroupStyle>
                                 <GroupStyle.ContainerStyle>
@@ -306,7 +327,7 @@
                             </GroupStyle>
                         </ListBox.GroupStyle>
                         <ListBox.ItemTemplate>
-                            <DataTemplate>
+                            <DataTemplate DataType="{x:Type data:Channel}">
                                 <Grid Margin="-8" Background="Transparent">
                                     <Grid.InputBindings>
                                         <MouseBinding Command="{s:Action ExportChannels}" MouseAction="LeftDoubleClick" />
@@ -316,6 +337,12 @@
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
+                                    <Grid.ToolTip>
+                                        <TextBlock>
+                                            <Run Text="Last message sent on:" />
+                                            <Run FontWeight="SemiBold" Text="{Binding LastMessageId, Converter={x:Static converters:SnowflakeToDateTimeOffsetConverter.Instance}, ConverterCulture={x:Static globalization:CultureInfo.CurrentCulture}, TargetNullValue=never}" />
+                                        </TextBlock>
+                                    </Grid.ToolTip>
 
                                     <!--  Channel icon  -->
                                     <materialDesign:PackIcon

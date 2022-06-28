@@ -632,9 +632,11 @@
         .chatlog__markdown-pre {
             background-color: @Themed("#2f3136", "#f9f9f9");
             font-family: "Consolas", "Courier New", Courier, monospace;
+            font-size: 0.85rem;
         }
 
         .chatlog__markdown-pre--multiline {
+            display: block;
             margin-top: 0.25rem;
             padding: 0.5rem;
             border: 2px solid @Themed("#282b30", "#f3f3f3");
@@ -643,14 +645,14 @@
         }
 
         .chatlog__markdown-pre--multiline.hljs {
-            background-color: inherit;
-            color: inherit;
+            background-color: @Themed("#2f3136", "#f9f9f9");
+            color: @Themed("#b9bbbe", "#657b83");
         }
 
         .chatlog__markdown-pre--inline {
+            display: inline-block;
             padding: 2px;
             border-radius: 3px;
-            font-size: 0.85rem;
         }
 
         .chatlog__markdown-mention {

@@ -76,9 +76,9 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
     protected override MarkdownNode VisitInlineCodeBlock(InlineCodeBlockNode inlineCodeBlock)
     {
         _buffer
-            .Append("<span class=\"chatlog__markdown-pre chatlog__markdown-pre--inline\">")
+            .Append("<code class=\"chatlog__markdown-pre chatlog__markdown-pre--inline\">")
             .Append(HtmlEncode(inlineCodeBlock.Code))
-            .Append("</span>");
+            .Append("</code>");
 
         return base.VisitInlineCodeBlock(inlineCodeBlock);
     }
@@ -90,9 +90,9 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
             : "nohighlight";
 
         _buffer
-            .Append($"<div class=\"chatlog__markdown-pre chatlog__markdown-pre--multiline {highlightCssClass}\">")
+            .Append($"<code class=\"chatlog__markdown-pre chatlog__markdown-pre--multiline {highlightCssClass}\">")
             .Append(HtmlEncode(multiLineCodeBlock.Code))
-            .Append("</div>");
+            .Append("</code>");
 
         return base.VisitMultiLineCodeBlock(multiLineCodeBlock);
     }

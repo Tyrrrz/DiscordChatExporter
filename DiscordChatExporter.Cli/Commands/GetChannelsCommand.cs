@@ -25,18 +25,18 @@ public class GetChannelsCommand : TokenCommandBase
     {
         var cancellationToken = console.RegisterCancellationHandler();
 
-        var channels = await Discord.GetGuildChannelsAsync(GuildId, cancellationToken);
-
-        var textChannels = channels
+        var channels = (await Discord.GetGuildChannelsAsync(GuildId, cancellationToken))
             .Where(c => c.Kind.IsText())
             .OrderBy(c => c.Category.Position)
             .ThenBy(c => c.Name)
             .ToArray();
 
-        foreach (var channel in textChannels)
+        foreach (var channel in channels)
         {
             // Channel ID
-            await console.Output.WriteAsync(channel.Id.ToString());
+            await console.Output.WriteAsync(
+                channel.Id.ToString().PadRight(18, ' ')
+            );
 
             // Separator
             using (console.WithForegroundColor(ConsoleColor.DarkGray))

@@ -32,6 +32,21 @@ public record EmbedSpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<Exp
     }
 
     [Fact]
+    public async Task Message_with_a_link_to_an_image_is_rendered_with_that_image()
+    {
+        // Act
+        var message = await ExportWrapper.GetMessageAsHtmlAsync(
+            ChannelIds.EmbedTestCases,
+            Snowflake.Parse("991758772349440053")
+        );
+
+        var imageSrc = message.QuerySelector("img")?.GetAttribute("src");
+
+        // Assert
+        imageSrc.Should().StartWithEquivalentOf("https://i.redd.it/f8w05ja8s4e61.png");
+    }
+
+    [Fact]
     public async Task Message_with_a_Spotify_track_is_rendered_using_an_iframe()
     {
         // Act

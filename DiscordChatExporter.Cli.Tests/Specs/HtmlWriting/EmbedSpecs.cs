@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using AngleSharp.Dom;
 using DiscordChatExporter.Cli.Tests.Fixtures;
 using DiscordChatExporter.Cli.Tests.TestData;
@@ -39,18 +40,20 @@ public class EmbedSpecs : IClassFixture<ExportWrapperFixture>
     }
 
     [Fact]
-    public async Task Message_with_a_link_to_an_image_is_rendered_with_that_image()
+    public async Task Message_with_a_link_to_an_image_contains_an_embed_of_that_image()
     {
         // Act
         var message = await _exportWrapper.GetMessageAsHtmlAsync(
             ChannelIds.EmbedTestCases,
-            Snowflake.Parse("991758772349440053")
+            Snowflake.Parse("991768701126852638")
         );
 
-        var imageSrc = message.QuerySelector("img")?.GetAttribute("src");
-
         // Assert
-        imageSrc.Should().StartWithEquivalentOf("https://i.redd.it/f8w05ja8s4e61.png");
+        message
+            .QuerySelectorAll("img")
+            .Select(e => e.GetAttribute("src"))
+            .Should()
+            .Contain("https://i.redd.it/f8w05ja8s4e61.png");
     }
 
     [Fact]
@@ -62,10 +65,9 @@ public class EmbedSpecs : IClassFixture<ExportWrapperFixture>
             Snowflake.Parse("867886632203976775")
         );
 
-        var iframeSrc = message.QuerySelector("iframe")?.GetAttribute("src");
-
         // Assert
-        iframeSrc.Should().StartWithEquivalentOf("https://open.spotify.com/embed/track/1LHZMWefF9502NPfArRfvP");
+        var iframeUrl = message.QuerySelector("iframe")?.GetAttribute("src");
+        iframeUrl.Should().StartWith("https://open.spotify.com/embed/track/1LHZMWefF9502NPfArRfvP");
     }
 
     [Fact]
@@ -77,9 +79,8 @@ public class EmbedSpecs : IClassFixture<ExportWrapperFixture>
             Snowflake.Parse("866472508588294165")
         );
 
-        var iframeSrc = message.QuerySelector("iframe")?.GetAttribute("src");
-
         // Assert
-        iframeSrc.Should().StartWithEquivalentOf("https://www.youtube.com/embed/qOWW4OlgbvE");
+        var iframeUrl = message.QuerySelector("iframe")?.GetAttribute("src");
+        iframeUrl.Should().StartWith("https://www.youtube.com/embed/qOWW4OlgbvE");
     }
 }

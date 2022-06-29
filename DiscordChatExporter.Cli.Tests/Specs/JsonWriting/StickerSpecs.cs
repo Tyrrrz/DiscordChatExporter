@@ -26,12 +26,12 @@ public class StickerSpecs : IClassFixture<ExportWrapperFixture>
             Snowflake.Parse("939670623158943754")
         );
 
+        // Assert
         var sticker = message
             .GetProperty("stickers")
             .EnumerateArray()
             .Single();
 
-        // Assert
         sticker.GetProperty("id").GetString().Should().Be("904215665597120572");
         sticker.GetProperty("name").GetString().Should().Be("rock");
         sticker.GetProperty("format").GetString().Should().Be("PngAnimated");
@@ -47,12 +47,12 @@ public class StickerSpecs : IClassFixture<ExportWrapperFixture>
             Snowflake.Parse("939670526517997590")
         );
 
+        // Assert
         var sticker = message
             .GetProperty("stickers")
             .EnumerateArray()
             .Single();
 
-        // Assert
         sticker.GetProperty("id").GetString().Should().Be("816087132447178774");
         sticker.GetProperty("name").GetString().Should().Be("Yikes");
         sticker.GetProperty("format").GetString().Should().Be("Lottie");

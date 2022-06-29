@@ -26,13 +26,12 @@ public class AttachmentSpecs : IClassFixture<ExportWrapperFixture>
             Snowflake.Parse("885587844989612074")
         );
 
-        var attachments = message.GetProperty("attachments").EnumerateArray().ToArray();
-
         // Assert
         message.GetProperty("content").GetString().Should().Be("Generic file attachment");
 
+        var attachments = message.GetProperty("attachments").EnumerateArray().ToArray();
         attachments.Should().HaveCount(1);
-        attachments.Single().GetProperty("url").GetString().Should().StartWithEquivalentOf(
+        attachments.Single().GetProperty("url").GetString().Should().StartWith(
             "https://cdn.discordapp.com/attachments/885587741654536192/885587844964417596/Test.txt"
         );
         attachments.Single().GetProperty("fileName").GetString().Should().Be("Test.txt");
@@ -48,13 +47,12 @@ public class AttachmentSpecs : IClassFixture<ExportWrapperFixture>
             Snowflake.Parse("885654862656843786")
         );
 
-        var attachments = message.GetProperty("attachments").EnumerateArray().ToArray();
-
         // Assert
         message.GetProperty("content").GetString().Should().Be("Image attachment");
 
+        var attachments = message.GetProperty("attachments").EnumerateArray().ToArray();
         attachments.Should().HaveCount(1);
-        attachments.Single().GetProperty("url").GetString().Should().StartWithEquivalentOf(
+        attachments.Single().GetProperty("url").GetString().Should().StartWith(
             "https://cdn.discordapp.com/attachments/885587741654536192/885654862430359613/bird-thumbnail.png"
         );
         attachments.Single().GetProperty("fileName").GetString().Should().Be("bird-thumbnail.png");
@@ -70,13 +68,12 @@ public class AttachmentSpecs : IClassFixture<ExportWrapperFixture>
             Snowflake.Parse("885655761919836171")
         );
 
-        var attachments = message.GetProperty("attachments").EnumerateArray().ToArray();
-
         // Assert
         message.GetProperty("content").GetString().Should().Be("Video attachment");
 
+        var attachments = message.GetProperty("attachments").EnumerateArray().ToArray();
         attachments.Should().HaveCount(1);
-        attachments.Single().GetProperty("url").GetString().Should().StartWithEquivalentOf(
+        attachments.Single().GetProperty("url").GetString().Should().StartWith(
             "https://cdn.discordapp.com/attachments/885587741654536192/885655761512968233/file_example_MP4_640_3MG.mp4"
         );
         attachments.Single().GetProperty("fileName").GetString().Should().Be("file_example_MP4_640_3MG.mp4");
@@ -92,13 +89,12 @@ public class AttachmentSpecs : IClassFixture<ExportWrapperFixture>
             Snowflake.Parse("885656175620808734")
         );
 
-        var attachments = message.GetProperty("attachments").EnumerateArray().ToArray();
-
         // Assert
         message.GetProperty("content").GetString().Should().Be("Audio attachment");
 
+        var attachments = message.GetProperty("attachments").EnumerateArray().ToArray();
         attachments.Should().HaveCount(1);
-        attachments.Single().GetProperty("url").GetString().Should().StartWithEquivalentOf(
+        attachments.Single().GetProperty("url").GetString().Should().StartWith(
             "https://cdn.discordapp.com/attachments/885587741654536192/885656175348187146/file_example_MP3_1MG.mp3"
         );
         attachments.Single().GetProperty("fileName").GetString().Should().Be("file_example_MP3_1MG.mp3");

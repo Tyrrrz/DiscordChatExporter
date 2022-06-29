@@ -39,11 +39,9 @@ public class SelfContainedSpecs : IClassFixture<TempOutputFixture>
             ShouldDownloadMedia = true
         }.ExecuteAsync(new FakeConsole());
 
-        var data = await File.ReadAllTextAsync(filePath);
-        var document = Html.Parse(data);
-
         // Assert
-        document
+        Html
+            .Parse(await File.ReadAllTextAsync(filePath))
             .QuerySelectorAll("body [src]")
             .Select(e => e.GetAttribute("src")!)
             .Select(f => Path.GetFullPath(f, dirPath))

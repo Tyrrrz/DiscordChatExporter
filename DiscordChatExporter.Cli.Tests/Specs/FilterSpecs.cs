@@ -39,11 +39,9 @@ public class FilterSpecs : IClassFixture<TempOutputFixture>
             MessageFilter = MessageFilter.Parse("some text")
         }.ExecuteAsync(new FakeConsole());
 
-        var data = await File.ReadAllTextAsync(filePath);
-        var document = Json.Parse(data);
-
         // Assert
-        document
+        Json
+            .Parse(await File.ReadAllTextAsync(filePath))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("content").GetString())
@@ -67,11 +65,9 @@ public class FilterSpecs : IClassFixture<TempOutputFixture>
             MessageFilter = MessageFilter.Parse("from:Tyrrrz")
         }.ExecuteAsync(new FakeConsole());
 
-        var data = await File.ReadAllTextAsync(filePath);
-        var document = Json.Parse(data);
-
         // Assert
-        document
+        Json
+            .Parse(await File.ReadAllTextAsync(filePath))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("author").GetProperty("name").GetString())
@@ -95,11 +91,9 @@ public class FilterSpecs : IClassFixture<TempOutputFixture>
             MessageFilter = MessageFilter.Parse("has:image")
         }.ExecuteAsync(new FakeConsole());
 
-        var data = await File.ReadAllTextAsync(filePath);
-        var document = Json.Parse(data);
-
         // Assert
-        document
+        Json
+            .Parse(await File.ReadAllTextAsync(filePath))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("content").GetString())
@@ -123,11 +117,9 @@ public class FilterSpecs : IClassFixture<TempOutputFixture>
             MessageFilter = MessageFilter.Parse("has:pin")
         }.ExecuteAsync(new FakeConsole());
 
-        var data = await File.ReadAllTextAsync(filePath);
-        var document = Json.Parse(data);
-
         // Assert
-        document
+        Json
+            .Parse(await File.ReadAllTextAsync(filePath))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("content").GetString())
@@ -151,11 +143,9 @@ public class FilterSpecs : IClassFixture<TempOutputFixture>
             MessageFilter = MessageFilter.Parse("mentions:Tyrrrz")
         }.ExecuteAsync(new FakeConsole());
 
-        var data = await File.ReadAllTextAsync(filePath);
-        var document = Json.Parse(data);
-
         // Assert
-        document
+        Json
+            .Parse(await File.ReadAllTextAsync(filePath))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("content").GetString())

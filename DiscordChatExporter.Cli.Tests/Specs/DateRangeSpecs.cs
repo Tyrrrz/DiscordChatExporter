@@ -41,16 +41,14 @@ public class DateRangeSpecs : IClassFixture<TempOutputFixture>
             After = Snowflake.FromDate(after)
         }.ExecuteAsync(new FakeConsole());
 
-        var data = await File.ReadAllTextAsync(filePath);
-        var document = Json.Parse(data);
-
-        var timestamps = document
+        // Assert
+        var timestamps = Json
+            .Parse(await File.ReadAllTextAsync(filePath))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("timestamp").GetDateTimeOffset())
             .ToArray();
 
-        // Assert
         timestamps.All(t => t > after).Should().BeTrue();
 
         timestamps.Should().BeEquivalentTo(new[]
@@ -87,16 +85,14 @@ public class DateRangeSpecs : IClassFixture<TempOutputFixture>
             Before = Snowflake.FromDate(before)
         }.ExecuteAsync(new FakeConsole());
 
-        var data = await File.ReadAllTextAsync(filePath);
-        var document = Json.Parse(data);
-
-        var timestamps = document
+        // Assert
+        var timestamps = Json
+            .Parse(await File.ReadAllTextAsync(filePath))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("timestamp").GetDateTimeOffset())
             .ToArray();
 
-        // Assert
         timestamps.All(t => t < before).Should().BeTrue();
 
         timestamps.Should().BeEquivalentTo(new[]
@@ -133,16 +129,14 @@ public class DateRangeSpecs : IClassFixture<TempOutputFixture>
             After = Snowflake.FromDate(after)
         }.ExecuteAsync(new FakeConsole());
 
-        var data = await File.ReadAllTextAsync(filePath);
-        var document = Json.Parse(data);
-
-        var timestamps = document
+        // Assert
+        var timestamps = Json
+            .Parse(await File.ReadAllTextAsync(filePath))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("timestamp").GetDateTimeOffset())
             .ToArray();
 
-        // Assert
         timestamps.All(t => t < before && t > after).Should().BeTrue();
 
         timestamps.Should().BeEquivalentTo(new[]

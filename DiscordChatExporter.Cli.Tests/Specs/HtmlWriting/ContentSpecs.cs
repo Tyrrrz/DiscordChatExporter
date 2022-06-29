@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using DiscordChatExporter.Cli.Tests.Fixtures;
 using DiscordChatExporter.Cli.Tests.TestData;
+using DiscordChatExporter.Core.Discord;
 using FluentAssertions;
 using Xunit;
 
@@ -35,7 +36,7 @@ public class ContentSpecs : IClassFixture<ExportWrapperFixture>
             "885169254029213696"
         );
 
-        messages.Select(e => e.QuerySelector(".chatlog__content")?.Text().Trim()).Should().Equal(
+        messages.SelectMany(e => e.Text()).Should().ContainInOrder(
             "Hello world",
             "Goodbye world",
             "Foo bar",
@@ -45,5 +46,19 @@ public class ContentSpecs : IClassFixture<ExportWrapperFixture>
             "Three",
             "Yeet"
         );
+    }
+
+    [Fact]
+    public async Task Message_content_is_hidden_if_it_only_contains_a_link_to_an_image()
+    {
+        // Act
+        var message = await _exportWrapper.GetMessageAsHtmlAsync(
+            ChannelIds.EmbedTestCases,
+            Snowflake.Parse("991768701126852638")
+        );
+
+        // Assert
+        var content = message.QuerySelector(".chatlog__content")?.Text();
+        content.Should().BeNullOrEmpty();
     }
 }

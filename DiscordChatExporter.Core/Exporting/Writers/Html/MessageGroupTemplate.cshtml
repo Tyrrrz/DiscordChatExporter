@@ -2,6 +2,7 @@
 @using System.Linq
 @using System.Threading.Tasks
 @using DiscordChatExporter.Core.Discord.Data
+@using DiscordChatExporter.Core.Discord.Data.Embeds
 @using DiscordChatExporter.Core.Exporting.Writers.Html;
 @using DiscordChatExporter.Core.Utils.Extensions
 
@@ -48,6 +49,16 @@
     var isFirst = i == 0;
     var message = Model.Messages[i];
 
+    // Hide message content if it only contains a link to an image which is embedded, and nothing else
+    var isContentHidden =
+        message.Embeds.Count == 1 &&
+        message.Content.Trim() == PlainImageEmbedProjection.TryResolve(message.Embeds.Single())?.Url;
+
+    var isReferencedContentHidden =
+        message.ReferencedMessage is not null &&
+        message.ReferencedMessage.Embeds.Count == 1 &&
+        message.ReferencedMessage.Content.Trim() == PlainImageEmbedProjection.TryResolve(message.ReferencedMessage.Embeds.Single())?.Url;
+
     <div id="chatlog__message-container-@message.Id" class="chatlog__message-container @(message.IsPinned ? "chatlog__message-container--pinned" : null)" data-message-id="@message.Id">
         <div class="chatlog__message">
             @{/* Left side */}
@@ -83,7 +94,7 @@
                                 <div class="chatlog__reference-author" style="@(referencedUserColor is not null ? $"color: rgb({referencedUserColor.Value.R}, {referencedUserColor.Value.G}, {referencedUserColor.Value.B})" : null)" title="@message.ReferencedMessage.Author.FullName">@referencedUserNick</div>
                                 <div class="chatlog__reference-content">
                                     <span class="chatlog__reference-link" onclick="scrollToMessage(event, '@message.ReferencedMessage.Id')">
-                                        @if (!string.IsNullOrWhiteSpace(message.ReferencedMessage.Content))
+                                        @if (!string.IsNullOrWhiteSpace(message.ReferencedMessage.Content) && !isReferencedContentHidden)
                                         {
                                             <!--wmm:ignore-->@Raw(FormatEmbedMarkdown(message.ReferencedMessage.Content))<!--/wmm:ignore-->
                                         }
@@ -134,7 +145,10 @@
                 {
                     <div class="chatlog__content chatlog__markdown">
                         @{/* Text */}
-                        <span class="chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(FormatMarkdown(message.Content))<!--/wmm:ignore--></span>
+                        @if (!isContentHidden)
+                        {
+                            <span class="chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(FormatMarkdown(message.Content))<!--/wmm:ignore--></span>
+                        }
 
                         @{/* Edited timestamp */}
                         @if (message.EditedTimestamp is not null)

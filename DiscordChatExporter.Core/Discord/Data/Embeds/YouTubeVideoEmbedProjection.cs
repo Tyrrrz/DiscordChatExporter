@@ -10,7 +10,7 @@ public partial record YouTubeVideoEmbedProjection(string VideoId)
 public partial record YouTubeVideoEmbedProjection
 {
     // Adapted from YoutubeExplode
-    // https://github.com/Tyrrrz/YoutubeExplode/blob/5be164be20019783913f76fcc98f18c65aebe9f0/YoutubeExplode/Videos/VideoId.cs#L34-L64
+    // https://github.com/Tyrrrz/YoutubeExplode/blob/bc700b631bd105d0be208a88116347034bdca88b/YoutubeExplode/Videos/VideoId.cs#L40-L62
     private static string? TryParseVideoId(string embedUrl)
     {
         // Regular URL
@@ -30,6 +30,12 @@ public partial record YouTubeVideoEmbedProjection
         var embedMatch = Regex.Match(embedUrl, @"youtube\..+?/embed/(.*?)(?:\?|&|/|$)").Groups[1].Value;
         if (!string.IsNullOrWhiteSpace(embedMatch))
             return embedMatch;
+
+        // Shorts URL
+        // https://www.youtube.com/shorts/sKL1vjP0tIo
+        var shortsMatch = Regex.Match(embedUrl, @"youtube\..+?/shorts/(.*?)(?:\?|&|/|$)").Groups[1].Value;
+        if (!string.IsNullOrWhiteSpace(shortsMatch))
+            return shortsMatch;
 
         return null;
     }

@@ -8,13 +8,20 @@ using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs.JsonWriting;
 
-public record MentionSpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<ExportWrapperFixture>
+public class MentionSpecs : IClassFixture<ExportWrapperFixture>
 {
+    private readonly ExportWrapperFixture _exportWrapper;
+
+    public MentionSpecs(ExportWrapperFixture exportWrapper)
+    {
+        _exportWrapper = exportWrapper;
+    }
+
     [Fact]
     public async Task User_mention_is_rendered_correctly()
     {
         // Act
-        var message = await ExportWrapper.GetMessageAsJsonAsync(
+        var message = await _exportWrapper.GetMessageAsJsonAsync(
             ChannelIds.MentionTestCases,
             Snowflake.Parse("866458840245076028")
         );
@@ -33,7 +40,7 @@ public record MentionSpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<E
     public async Task Text_channel_mention_is_rendered_correctly()
     {
         // Act
-        var message = await ExportWrapper.GetMessageAsJsonAsync(
+        var message = await _exportWrapper.GetMessageAsJsonAsync(
             ChannelIds.MentionTestCases,
             Snowflake.Parse("866459040480624680")
         );
@@ -46,7 +53,7 @@ public record MentionSpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<E
     public async Task Voice_channel_mention_is_rendered_correctly()
     {
         // Act
-        var message = await ExportWrapper.GetMessageAsJsonAsync(
+        var message = await _exportWrapper.GetMessageAsJsonAsync(
             ChannelIds.MentionTestCases,
             Snowflake.Parse("866459175462633503")
         );
@@ -59,7 +66,7 @@ public record MentionSpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<E
     public async Task Role_mention_is_rendered_correctly()
     {
         // Act
-        var message = await ExportWrapper.GetMessageAsJsonAsync(
+        var message = await _exportWrapper.GetMessageAsJsonAsync(
             ChannelIds.MentionTestCases,
             Snowflake.Parse("866459254693429258")
         );

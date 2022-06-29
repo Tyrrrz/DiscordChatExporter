@@ -8,13 +8,20 @@ using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs.JsonWriting;
 
-public record EmbedSpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<ExportWrapperFixture>
+public class EmbedSpecs : IClassFixture<ExportWrapperFixture>
 {
+    private readonly ExportWrapperFixture _exportWrapper;
+
+    public EmbedSpecs(ExportWrapperFixture exportWrapper)
+    {
+        _exportWrapper = exportWrapper;
+    }
+
     [Fact]
     public async Task Message_with_an_embed_is_rendered_correctly()
     {
         // Act
-        var message = await ExportWrapper.GetMessageAsJsonAsync(
+        var message = await _exportWrapper.GetMessageAsJsonAsync(
             ChannelIds.EmbedTestCases,
             Snowflake.Parse("866769910729146400")
         );

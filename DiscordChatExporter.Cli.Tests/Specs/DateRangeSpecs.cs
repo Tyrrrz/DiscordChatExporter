@@ -15,14 +15,21 @@ using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
 
-public record DateRangeSpecs(TempOutputFixture TempOutput) : IClassFixture<TempOutputFixture>
+public class DateRangeSpecs : IClassFixture<TempOutputFixture>
 {
+    private readonly TempOutputFixture _tempOutput;
+
+    public DateRangeSpecs(TempOutputFixture tempOutput)
+    {
+        _tempOutput = tempOutput;
+    }
+
     [Fact]
     public async Task Messages_filtered_after_specific_date_only_include_messages_sent_after_that_date()
     {
         // Arrange
         var after = new DateTimeOffset(2021, 07, 24, 0, 0, 0, TimeSpan.Zero);
-        var filePath = TempOutput.GetTempFilePath();
+        var filePath = _tempOutput.GetTempFilePath();
 
         // Act
         await new ExportChannelsCommand
@@ -68,7 +75,7 @@ public record DateRangeSpecs(TempOutputFixture TempOutput) : IClassFixture<TempO
     {
         // Arrange
         var before = new DateTimeOffset(2021, 07, 24, 0, 0, 0, TimeSpan.Zero);
-        var filePath = TempOutput.GetTempFilePath();
+        var filePath = _tempOutput.GetTempFilePath();
 
         // Act
         await new ExportChannelsCommand
@@ -113,7 +120,7 @@ public record DateRangeSpecs(TempOutputFixture TempOutput) : IClassFixture<TempO
         // Arrange
         var after = new DateTimeOffset(2021, 07, 24, 0, 0, 0, TimeSpan.Zero);
         var before = new DateTimeOffset(2021, 08, 01, 0, 0, 0, TimeSpan.Zero);
-        var filePath = TempOutput.GetTempFilePath();
+        var filePath = _tempOutput.GetTempFilePath();
 
         // Act
         await new ExportChannelsCommand

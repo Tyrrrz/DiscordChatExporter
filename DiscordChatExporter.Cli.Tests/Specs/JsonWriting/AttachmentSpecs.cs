@@ -8,13 +8,20 @@ using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs.JsonWriting;
 
-public record AttachmentSpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<ExportWrapperFixture>
+public class AttachmentSpecs : IClassFixture<ExportWrapperFixture>
 {
+    private readonly ExportWrapperFixture _exportWrapper;
+
+    public AttachmentSpecs(ExportWrapperFixture exportWrapper)
+    {
+        _exportWrapper = exportWrapper;
+    }
+
     [Fact]
     public async Task Message_with_a_generic_attachment_is_rendered_correctly()
     {
         // Act
-        var message = await ExportWrapper.GetMessageAsJsonAsync(
+        var message = await _exportWrapper.GetMessageAsJsonAsync(
             ChannelIds.AttachmentTestCases,
             Snowflake.Parse("885587844989612074")
         );
@@ -36,7 +43,7 @@ public record AttachmentSpecs(ExportWrapperFixture ExportWrapper) : IClassFixtur
     public async Task Message_with_an_image_attachment_is_rendered_correctly()
     {
         // Act
-        var message = await ExportWrapper.GetMessageAsJsonAsync(
+        var message = await _exportWrapper.GetMessageAsJsonAsync(
             ChannelIds.AttachmentTestCases,
             Snowflake.Parse("885654862656843786")
         );
@@ -58,7 +65,7 @@ public record AttachmentSpecs(ExportWrapperFixture ExportWrapper) : IClassFixtur
     public async Task Message_with_a_video_attachment_is_rendered_correctly()
     {
         // Act
-        var message = await ExportWrapper.GetMessageAsJsonAsync(
+        var message = await _exportWrapper.GetMessageAsJsonAsync(
             ChannelIds.AttachmentTestCases,
             Snowflake.Parse("885655761919836171")
         );
@@ -80,7 +87,7 @@ public record AttachmentSpecs(ExportWrapperFixture ExportWrapper) : IClassFixtur
     public async Task Message_with_an_audio_attachment_is_rendered_correctly()
     {
         // Act
-        var message = await ExportWrapper.GetMessageAsJsonAsync(
+        var message = await _exportWrapper.GetMessageAsJsonAsync(
             ChannelIds.AttachmentTestCases,
             Snowflake.Parse("885656175620808734")
         );

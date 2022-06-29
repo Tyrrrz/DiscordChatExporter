@@ -14,13 +14,20 @@ using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
 
-public record FilterSpecs(TempOutputFixture TempOutput) : IClassFixture<TempOutputFixture>
+public class FilterSpecs : IClassFixture<TempOutputFixture>
 {
+    private readonly TempOutputFixture _tempOutput;
+
+    public FilterSpecs(TempOutputFixture tempOutput)
+    {
+        _tempOutput = tempOutput;
+    }
+
     [Fact]
     public async Task Messages_filtered_by_text_only_include_messages_that_contain_that_text()
     {
         // Arrange
-        var filePath = TempOutput.GetTempFilePath();
+        var filePath = _tempOutput.GetTempFilePath();
 
         // Act
         await new ExportChannelsCommand
@@ -48,7 +55,7 @@ public record FilterSpecs(TempOutputFixture TempOutput) : IClassFixture<TempOutp
     public async Task Messages_filtered_by_author_only_include_messages_sent_by_that_author()
     {
         // Arrange
-        var filePath = TempOutput.GetTempFilePath();
+        var filePath = _tempOutput.GetTempFilePath();
 
         // Act
         await new ExportChannelsCommand
@@ -76,7 +83,7 @@ public record FilterSpecs(TempOutputFixture TempOutput) : IClassFixture<TempOutp
     public async Task Messages_filtered_by_content_only_include_messages_that_have_that_content()
     {
         // Arrange
-        var filePath = TempOutput.GetTempFilePath();
+        var filePath = _tempOutput.GetTempFilePath();
 
         // Act
         await new ExportChannelsCommand
@@ -104,7 +111,7 @@ public record FilterSpecs(TempOutputFixture TempOutput) : IClassFixture<TempOutp
     public async Task Messages_filtered_by_pin_only_include_messages_that_have_been_pinned()
     {
         // Arrange
-        var filePath = TempOutput.GetTempFilePath();
+        var filePath = _tempOutput.GetTempFilePath();
 
         // Act
         await new ExportChannelsCommand
@@ -132,7 +139,7 @@ public record FilterSpecs(TempOutputFixture TempOutput) : IClassFixture<TempOutp
     public async Task Messages_filtered_by_mention_only_include_messages_that_have_that_mention()
     {
         // Arrange
-        var filePath = TempOutput.GetTempFilePath();
+        var filePath = _tempOutput.GetTempFilePath();
 
         // Act
         await new ExportChannelsCommand

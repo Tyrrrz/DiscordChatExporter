@@ -13,13 +13,20 @@ using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
 
-public record SelfContainedSpecs(TempOutputFixture TempOutput) : IClassFixture<TempOutputFixture>
+public class SelfContainedSpecs : IClassFixture<TempOutputFixture>
 {
+    private readonly TempOutputFixture _tempOutput;
+
+    public SelfContainedSpecs(TempOutputFixture tempOutput)
+    {
+        _tempOutput = tempOutput;
+    }
+
     [Fact]
     public async Task Messages_in_self_contained_export_only_reference_local_file_resources()
     {
         // Arrange
-        var filePath = TempOutput.GetTempFilePath();
+        var filePath = _tempOutput.GetTempFilePath();
         var dirPath = Path.GetDirectoryName(filePath) ?? Directory.GetCurrentDirectory();
 
         // Act

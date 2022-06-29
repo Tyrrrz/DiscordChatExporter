@@ -12,13 +12,20 @@ using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
 
-public record PartitioningSpecs(TempOutputFixture TempOutput) : IClassFixture<TempOutputFixture>
+public class PartitioningSpecs : IClassFixture<TempOutputFixture>
 {
+    private readonly TempOutputFixture _tempOutput;
+
+    public PartitioningSpecs(TempOutputFixture tempOutput)
+    {
+        _tempOutput = tempOutput;
+    }
+
     [Fact]
     public async Task Messages_partitioned_by_count_are_split_into_multiple_files_correctly()
     {
         // Arrange
-        var filePath = TempOutput.GetTempFilePath();
+        var filePath = _tempOutput.GetTempFilePath();
         var fileNameWithoutExt = Path.GetFileNameWithoutExtension(filePath);
         var dirPath = Path.GetDirectoryName(filePath) ?? Directory.GetCurrentDirectory();
 
@@ -42,7 +49,7 @@ public record PartitioningSpecs(TempOutputFixture TempOutput) : IClassFixture<Te
     public async Task Messages_partitioned_by_file_size_are_split_into_multiple_files_correctly()
     {
         // Arrange
-        var filePath = TempOutput.GetTempFilePath();
+        var filePath = _tempOutput.GetTempFilePath();
         var fileNameWithoutExt = Path.GetFileNameWithoutExtension(filePath);
         var dirPath = Path.GetDirectoryName(filePath) ?? Directory.GetCurrentDirectory();
 

@@ -8,13 +8,20 @@ using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs.HtmlWriting;
 
-public record EmbedSpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<ExportWrapperFixture>
+public class EmbedSpecs : IClassFixture<ExportWrapperFixture>
 {
+    private readonly ExportWrapperFixture _exportWrapper;
+
+    public EmbedSpecs(ExportWrapperFixture exportWrapper)
+    {
+        _exportWrapper = exportWrapper;
+    }
+
     [Fact]
     public async Task Message_with_an_embed_is_rendered_correctly()
     {
         // Act
-        var message = await ExportWrapper.GetMessageAsHtmlAsync(
+        var message = await _exportWrapper.GetMessageAsHtmlAsync(
             ChannelIds.EmbedTestCases,
             Snowflake.Parse("866769910729146400")
         );
@@ -35,7 +42,7 @@ public record EmbedSpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<Exp
     public async Task Message_with_a_link_to_an_image_is_rendered_with_that_image()
     {
         // Act
-        var message = await ExportWrapper.GetMessageAsHtmlAsync(
+        var message = await _exportWrapper.GetMessageAsHtmlAsync(
             ChannelIds.EmbedTestCases,
             Snowflake.Parse("991758772349440053")
         );
@@ -50,7 +57,7 @@ public record EmbedSpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<Exp
     public async Task Message_with_a_Spotify_track_is_rendered_using_an_iframe()
     {
         // Act
-        var message = await ExportWrapper.GetMessageAsHtmlAsync(
+        var message = await _exportWrapper.GetMessageAsHtmlAsync(
             ChannelIds.EmbedTestCases,
             Snowflake.Parse("867886632203976775")
         );
@@ -65,7 +72,7 @@ public record EmbedSpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<Exp
     public async Task Message_with_a_YouTube_video_is_rendered_using_an_iframe()
     {
         // Act
-        var message = await ExportWrapper.GetMessageAsHtmlAsync(
+        var message = await _exportWrapper.GetMessageAsHtmlAsync(
             ChannelIds.EmbedTestCases,
             Snowflake.Parse("866472508588294165")
         );

@@ -7,13 +7,20 @@ using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs.JsonWriting;
 
-public record ContentSpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<ExportWrapperFixture>
+public class ContentSpecs : IClassFixture<ExportWrapperFixture>
 {
+    private readonly ExportWrapperFixture _exportWrapper;
+
+    public ContentSpecs(ExportWrapperFixture exportWrapper)
+    {
+        _exportWrapper = exportWrapper;
+    }
+
     [Fact]
     public async Task Messages_are_exported_correctly()
     {
         // Act
-        var messages = await ExportWrapper.GetMessagesAsJsonAsync(ChannelIds.DateRangeTestCases);
+        var messages = await _exportWrapper.GetMessagesAsJsonAsync(ChannelIds.DateRangeTestCases);
 
         // Assert
         messages.Select(j => j.GetProperty("id").GetString()).Should().Equal(

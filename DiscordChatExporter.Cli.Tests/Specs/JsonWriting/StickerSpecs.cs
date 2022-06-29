@@ -8,13 +8,20 @@ using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs.JsonWriting;
 
-public record StickerSpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<ExportWrapperFixture>
+public class StickerSpecs : IClassFixture<ExportWrapperFixture>
 {
+    private readonly ExportWrapperFixture _exportWrapper;
+
+    public StickerSpecs(ExportWrapperFixture exportWrapper)
+    {
+        _exportWrapper = exportWrapper;
+    }
+
     [Fact]
     public async Task Message_with_a_PNG_based_sticker_is_rendered_correctly()
     {
         // Act
-        var message = await ExportWrapper.GetMessageAsJsonAsync(
+        var message = await _exportWrapper.GetMessageAsJsonAsync(
             ChannelIds.StickerTestCases,
             Snowflake.Parse("939670623158943754")
         );
@@ -35,7 +42,7 @@ public record StickerSpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<E
     public async Task Message_with_a_Lottie_based_sticker_is_rendered_correctly()
     {
         // Act
-        var message = await ExportWrapper.GetMessageAsJsonAsync(
+        var message = await _exportWrapper.GetMessageAsJsonAsync(
             ChannelIds.StickerTestCases,
             Snowflake.Parse("939670526517997590")
         );

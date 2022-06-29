@@ -8,13 +8,20 @@ using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs.HtmlWriting;
 
-public record ContentSpecs(ExportWrapperFixture ExportWrapper) : IClassFixture<ExportWrapperFixture>
+public class ContentSpecs : IClassFixture<ExportWrapperFixture>
 {
+    private readonly ExportWrapperFixture _exportWrapper;
+
+    public ContentSpecs(ExportWrapperFixture exportWrapper)
+    {
+        _exportWrapper = exportWrapper;
+    }
+
     [Fact]
     public async Task Messages_are_exported_correctly()
     {
         // Act
-        var messages = await ExportWrapper.GetMessagesAsHtmlAsync(ChannelIds.DateRangeTestCases);
+        var messages = await _exportWrapper.GetMessagesAsHtmlAsync(ChannelIds.DateRangeTestCases);
 
         // Assert
         messages.Select(e => e.GetAttribute("data-message-id")).Should().Equal(

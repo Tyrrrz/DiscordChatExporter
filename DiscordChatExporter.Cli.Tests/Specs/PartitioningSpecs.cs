@@ -53,7 +53,7 @@ public record PartitioningSpecs(TempOutputFixture TempOutput) : IClassFixture<Te
             ChannelIds = new[] { ChannelIds.DateRangeTestCases },
             ExportFormat = ExportFormat.HtmlDark,
             OutputPath = filePath,
-            PartitionLimit = PartitionLimit.Parse("20kb")
+            PartitionLimit = PartitionLimit.Parse("1kb")
         }.ExecuteAsync(new FakeConsole());
 
         // Assert

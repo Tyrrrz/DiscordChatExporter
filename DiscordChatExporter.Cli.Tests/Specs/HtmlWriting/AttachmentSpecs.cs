@@ -67,6 +67,8 @@ public class AttachmentSpecs : IClassFixture<ExportWrapperFixture>
     [Fact]
     public async Task Message_with_a_video_attachment_is_rendered_correctly()
     {
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/333
+
         // Act
         var message = await _exportWrapper.GetMessageAsHtmlAsync(
             ChannelIds.AttachmentTestCases,
@@ -77,7 +79,7 @@ public class AttachmentSpecs : IClassFixture<ExportWrapperFixture>
         message.Text().Should().Contain("Video attachment");
 
         var videoUrl = message.QuerySelector("video source")?.GetAttribute("src");
-        videoUrl.Should().StartWith(
+        videoUrl.Should().Be(
             "https://cdn.discordapp.com/attachments/885587741654536192/885655761512968233/file_example_MP4_640_3MG.mp4"
         );
     }
@@ -85,6 +87,8 @@ public class AttachmentSpecs : IClassFixture<ExportWrapperFixture>
     [Fact]
     public async Task Message_with_an_audio_attachment_is_rendered_correctly()
     {
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/333
+
         // Act
         var message = await _exportWrapper.GetMessageAsHtmlAsync(
             ChannelIds.AttachmentTestCases,
@@ -95,7 +99,7 @@ public class AttachmentSpecs : IClassFixture<ExportWrapperFixture>
         message.Text().Should().Contain("Audio attachment");
 
         var audioUrl = message.QuerySelector("audio source")?.GetAttribute("src");
-        audioUrl.Should().StartWith(
+        audioUrl.Should().Be(
             "https://cdn.discordapp.com/attachments/885587741654536192/885656175348187146/file_example_MP3_1MG.mp3"
         );
     }

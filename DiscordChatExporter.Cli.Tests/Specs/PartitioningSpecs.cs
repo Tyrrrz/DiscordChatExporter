@@ -22,7 +22,7 @@ public class PartitioningSpecs : IClassFixture<TempOutputFixture>
     }
 
     [Fact]
-    public async Task Messages_partitioned_by_count_are_split_into_multiple_files_correctly()
+    public async Task Messages_partitioned_by_count_are_split_into_a_corresponding_number_of_files()
     {
         // Arrange
         var filePath = _tempOutput.GetTempFilePath();
@@ -46,7 +46,7 @@ public class PartitioningSpecs : IClassFixture<TempOutputFixture>
     }
 
     [Fact]
-    public async Task Messages_partitioned_by_file_size_are_split_into_multiple_files_correctly()
+    public async Task Messages_partitioned_by_file_size_are_split_into_a_corresponding_number_of_files()
     {
         // Arrange
         var filePath = _tempOutput.GetTempFilePath();

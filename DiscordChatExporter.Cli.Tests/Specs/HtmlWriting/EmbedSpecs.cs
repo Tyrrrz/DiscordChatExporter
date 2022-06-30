@@ -42,6 +42,8 @@ public class EmbedSpecs : IClassFixture<ExportWrapperFixture>
     [Fact]
     public async Task Message_containing_an_image_link_is_rendered_with_an_image_embed()
     {
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/537
+
         // Act
         var message = await _exportWrapper.GetMessageAsHtmlAsync(
             ChannelIds.EmbedTestCases,
@@ -59,6 +61,8 @@ public class EmbedSpecs : IClassFixture<ExportWrapperFixture>
     [Fact]
     public async Task Message_containing_an_image_link_and_nothing_else_is_rendered_without_text_content()
     {
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/682
+
         // Act
         var message = await _exportWrapper.GetMessageAsHtmlAsync(
             ChannelIds.EmbedTestCases,
@@ -73,6 +77,8 @@ public class EmbedSpecs : IClassFixture<ExportWrapperFixture>
     [Fact]
     public async Task Message_containing_a_Spotify_track_link_is_rendered_with_a_track_embed()
     {
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/657
+
         // Act
         var message = await _exportWrapper.GetMessageAsHtmlAsync(
             ChannelIds.EmbedTestCases,
@@ -81,12 +87,14 @@ public class EmbedSpecs : IClassFixture<ExportWrapperFixture>
 
         // Assert
         var iframeUrl = message.QuerySelector("iframe")?.GetAttribute("src");
-        iframeUrl.Should().StartWith("https://open.spotify.com/embed/track/1LHZMWefF9502NPfArRfvP");
+        iframeUrl.Should().Be("https://open.spotify.com/embed/track/1LHZMWefF9502NPfArRfvP");
     }
 
     [Fact]
     public async Task Message_containing_a_YouTube_video_link_is_rendered_with_a_video_embed()
     {
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/570
+
         // Act
         var message = await _exportWrapper.GetMessageAsHtmlAsync(
             ChannelIds.EmbedTestCases,
@@ -95,6 +103,32 @@ public class EmbedSpecs : IClassFixture<ExportWrapperFixture>
 
         // Assert
         var iframeUrl = message.QuerySelector("iframe")?.GetAttribute("src");
-        iframeUrl.Should().StartWith("https://www.youtube.com/embed/qOWW4OlgbvE");
+        iframeUrl.Should().Be("https://www.youtube.com/embed/qOWW4OlgbvE");
+    }
+
+    [Fact(Skip = "Unimplemented")]
+    public async Task Message_containing_a_Twitter_post_link_with_multiple_images_is_rendered_as_a_single_embed()
+    {
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/695
+
+        // Act
+        var message = await _exportWrapper.GetMessageAsHtmlAsync(
+            ChannelIds.EmbedTestCases,
+            Snowflake.Parse("991757444017557665")
+        );
+
+        // Assert
+        message
+            .QuerySelectorAll("img")
+            .Select(e => e.GetAttribute("src"))
+            .Should()
+            .ContainInOrder(
+                "https://images-ext-1.discordapp.net/external/-n--xW3EHH_3jlrheVkMXHCM7T86b5Ty4-MzXCT4m1Q/https/pbs.twimg.com/media/FVYIzYPWAAAMBqZ.png",
+                "https://images-ext-2.discordapp.net/external/z5nEmGeEldV-kswydGLhqUsFHbb5AWHtdvc9XT6N5rE/https/pbs.twimg.com/media/FVYJBWJWAAMNAx2.png",
+                "https://images-ext-2.discordapp.net/external/gnip03SawMB6uZLagN5sRDpA_1Ap1CcEhMbJfK1z6WQ/https/pbs.twimg.com/media/FVYJHiRX0AANZcz.png",
+                "https://images-ext-2.discordapp.net/external/jl1v6cCbLaGmiwmKU-ZkXnF4cFsJ39f9A3-oEdqPdZs/https/pbs.twimg.com/media/FVYJNZNXwAAPnVG.png"
+            );
+
+        message.QuerySelectorAll(".chatlog__embed").Should().ContainSingle();
     }
 }

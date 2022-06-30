@@ -33,7 +33,8 @@ public class MentionSpecs : IClassFixture<ExportWrapperFixture>
             .GetProperty("mentions")
             .EnumerateArray()
             .Select(j => j.GetProperty("id").GetString())
-            .Should().Contain("128178626683338752");
+            .Should()
+            .Contain("128178626683338752");
     }
 
     [Fact]

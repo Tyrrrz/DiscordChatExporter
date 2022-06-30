@@ -46,58 +46,46 @@ public class ExportWrapperFixture : IDisposable
         return await File.ReadAllTextAsync(filePath);
     }
 
-    public async ValueTask<IHtmlDocument> ExportAsHtmlAsync(Snowflake channelId)
-    {
-        var data = await ExportAsync(channelId, ExportFormat.HtmlDark);
-        return Html.Parse(data);
-    }
+    public async ValueTask<IHtmlDocument> ExportAsHtmlAsync(Snowflake channelId) => Html.Parse(
+        await ExportAsync(channelId, ExportFormat.HtmlDark)
+    );
 
-    public async ValueTask<JsonElement> ExportAsJsonAsync(Snowflake channelId)
-    {
-        var data = await ExportAsync(channelId, ExportFormat.Json);
-        return Json.Parse(data);
-    }
+    public async ValueTask<JsonElement> ExportAsJsonAsync(Snowflake channelId) => Json.Parse(
+        await ExportAsync(channelId, ExportFormat.Json)
+    );
 
-    public async ValueTask<string> ExportAsPlainTextAsync(Snowflake channelId)
-    {
-        var data = await ExportAsync(channelId, ExportFormat.PlainText);
-        return data;
-    }
+    public async ValueTask<string> ExportAsPlainTextAsync(Snowflake channelId) =>
+        await ExportAsync(channelId, ExportFormat.PlainText);
 
-    public async ValueTask<string> ExportAsCsvAsync(Snowflake channelId)
-    {
-        var data = await ExportAsync(channelId, ExportFormat.Csv);
-        return data;
-    }
+    public async ValueTask<string> ExportAsCsvAsync(Snowflake channelId) =>
+        await ExportAsync(channelId, ExportFormat.Csv);
 
-    public async ValueTask<IReadOnlyList<IElement>> GetMessagesAsHtmlAsync(Snowflake channelId)
-    {
-        var document = await ExportAsHtmlAsync(channelId);
-        return document.QuerySelectorAll("[data-message-id]").ToArray();
-    }
+    public async ValueTask<IReadOnlyList<IElement>> GetMessagesAsHtmlAsync(Snowflake channelId) =>
+        (await ExportAsHtmlAsync(channelId))
+        .QuerySelectorAll("[data-message-id]")
+        .ToArray();
 
-    public async ValueTask<IReadOnlyList<JsonElement>> GetMessagesAsJsonAsync(Snowflake channelId)
-    {
-        var document = await ExportAsJsonAsync(channelId);
-        return document.GetProperty("messages").EnumerateArray().ToArray();
-    }
+    public async ValueTask<IReadOnlyList<JsonElement>> GetMessagesAsJsonAsync(Snowflake channelId) =>
+        (await ExportAsJsonAsync(channelId))
+        .GetProperty("messages")
+        .EnumerateArray()
+        .ToArray();
 
     public async ValueTask<IElement> GetMessageAsHtmlAsync(Snowflake channelId, Snowflake messageId)
     {
-        var messages = await GetMessagesAsHtmlAsync(channelId);
-
-        var message = messages.SingleOrDefault(e =>
-            string.Equals(
-                e.GetAttribute("data-message-id"),
-                messageId.ToString(),
-                StringComparison.OrdinalIgnoreCase
-            )
-        );
+        var message = (await GetMessagesAsHtmlAsync(channelId))
+            .SingleOrDefault(e =>
+                string.Equals(
+                    e.GetAttribute("data-message-id"),
+                    messageId.ToString(),
+                    StringComparison.OrdinalIgnoreCase
+                )
+            );
 
         if (message is null)
         {
             throw new InvalidOperationException(
-                $"Message '{messageId}' does not exist in export of channel '{channelId}'."
+                $"Message '{messageId}' does not exist in the export of channel '{channelId}'."
             );
         }
 
@@ -106,20 +94,19 @@ public class ExportWrapperFixture : IDisposable
 
     public async ValueTask<JsonElement> GetMessageAsJsonAsync(Snowflake channelId, Snowflake messageId)
     {
-        var messages = await GetMessagesAsJsonAsync(channelId);
-
-        var message = messages.FirstOrDefault(j =>
-            string.Equals(
-                j.GetProperty("id").GetString(),
-                messageId.ToString(),
-                StringComparison.OrdinalIgnoreCase
-            )
-        );
+        var message = (await GetMessagesAsJsonAsync(channelId))
+            .SingleOrDefault(j =>
+                string.Equals(
+                    j.GetProperty("id").GetString(),
+                    messageId.ToString(),
+                    StringComparison.OrdinalIgnoreCase
+                )
+            );
 
         if (message.ValueKind == JsonValueKind.Undefined)
         {
             throw new InvalidOperationException(
-                $"Message '{messageId}' does not exist in export of channel '{channelId}'."
+                $"Message '{messageId}' does not exist in the export of channel '{channelId}'."
             );
         }
 

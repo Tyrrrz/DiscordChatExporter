@@ -34,6 +34,8 @@ public class ReplySpecs : IClassFixture<ExportWrapperFixture>
     [Fact]
     public async Task Reply_to_a_deleted_message_is_rendered_correctly()
     {
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/645
+
         // Act
         var message = await _exportWrapper.GetMessageAsHtmlAsync(
             ChannelIds.ReplyTestCases,
@@ -50,6 +52,8 @@ public class ReplySpecs : IClassFixture<ExportWrapperFixture>
     [Fact]
     public async Task Reply_to_an_empty_message_with_attachment_is_rendered_correctly()
     {
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/634
+
         // Act
         var message = await _exportWrapper.GetMessageAsHtmlAsync(
             ChannelIds.ReplyTestCases,

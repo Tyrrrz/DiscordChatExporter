@@ -40,7 +40,7 @@ public class EmbedSpecs : IClassFixture<ExportWrapperFixture>
     }
 
     [Fact]
-    public async Task Message_with_a_link_to_an_image_contains_an_embed_of_that_image()
+    public async Task Message_containing_an_image_link_is_rendered_with_an_image_embed()
     {
         // Act
         var message = await _exportWrapper.GetMessageAsHtmlAsync(
@@ -57,7 +57,21 @@ public class EmbedSpecs : IClassFixture<ExportWrapperFixture>
     }
 
     [Fact]
-    public async Task Message_with_a_Spotify_track_is_rendered_using_an_iframe()
+    public async Task Message_containing_an_image_link_and_nothing_else_is_rendered_without_text_content()
+    {
+        // Act
+        var message = await _exportWrapper.GetMessageAsHtmlAsync(
+            ChannelIds.EmbedTestCases,
+            Snowflake.Parse("991768701126852638")
+        );
+
+        // Assert
+        var content = message.QuerySelector(".chatlog__content")?.Text();
+        content.Should().BeNullOrEmpty();
+    }
+
+    [Fact]
+    public async Task Message_containing_a_Spotify_track_link_is_rendered_with_a_track_embed()
     {
         // Act
         var message = await _exportWrapper.GetMessageAsHtmlAsync(
@@ -71,7 +85,7 @@ public class EmbedSpecs : IClassFixture<ExportWrapperFixture>
     }
 
     [Fact]
-    public async Task Message_with_a_YouTube_video_is_rendered_using_an_iframe()
+    public async Task Message_containing_a_YouTube_video_link_is_rendered_with_a_video_embed()
     {
         // Act
         var message = await _exportWrapper.GetMessageAsHtmlAsync(

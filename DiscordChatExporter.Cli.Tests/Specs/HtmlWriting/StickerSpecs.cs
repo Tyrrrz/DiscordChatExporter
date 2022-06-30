@@ -40,7 +40,7 @@ public class StickerSpecs : IClassFixture<ExportWrapperFixture>
         );
 
         // Assert
-        var stickerUrl = message.QuerySelector("[title='Yikes'] div[data-source]")?.GetAttribute("data-source");
+        var stickerUrl = message.QuerySelector("[title='Yikes'] [data-source]")?.GetAttribute("data-source");
         stickerUrl.Should().Be("https://discord.com/stickers/816087132447178774.json");
     }
 }

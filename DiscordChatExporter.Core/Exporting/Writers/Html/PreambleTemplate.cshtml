@@ -500,13 +500,27 @@
             border-radius: 3px;
         }
 
+        .chatlog__embed-images {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0 0.35rem;
+        }
+
+        .chatlog__embed-images--single {
+            display: block;
+        }
+
         .chatlog__embed-image-container {
             margin-top: 0.6rem;
         }
 
         .chatlog__embed-image {
+            object-fit: cover;
+            object-position: center;
             max-width: 500px;
             max-height: 400px;
+            width: 100%;
+            height: 100%;
             border-radius: 3px;
         }
 

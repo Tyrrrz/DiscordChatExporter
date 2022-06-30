@@ -18,7 +18,7 @@ public partial record Embed(
     string? Description,
     IReadOnlyList<EmbedField> Fields,
     EmbedImage? Thumbnail,
-    EmbedImage? Image,
+    IReadOnlyList<EmbedImage> Images,
     EmbedFooter? Footer)
 {
     public PlainImageEmbedProjection? TryGetPlainImage() =>
@@ -47,7 +47,18 @@ public partial record Embed
             Array.Empty<EmbedField>();
 
         var thumbnail = json.GetPropertyOrNull("thumbnail")?.Pipe(EmbedImage.Parse);
-        var image = json.GetPropertyOrNull("image")?.Pipe(EmbedImage.Parse);
+
+        // Under the Discord API model, embeds can only have at most one image.
+        // Because of that, embeds that are rendered with multiple images on the client
+        // (e.g. tweet embeds), are exposed from the API as multiple separate embeds.
+        // Our embed model is consistent with the user-facing side of Discord, so images
+        // are stored as an array. The API will only ever return one image, but we deal
+        // with this by merging related embeds at the end of the message parsing process.
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/695
+        var images =
+            json.GetPropertyOrNull("image")?.Pipe(EmbedImage.Parse).Enumerate().ToArray() ??
+            Array.Empty<EmbedImage>();
+
         var footer = json.GetPropertyOrNull("footer")?.Pipe(EmbedFooter.Parse);
 
         return new Embed(
@@ -59,7 +70,7 @@ public partial record Embed
             description,
             fields,
             thumbnail,
-            image,
+            images,
             footer
         );
     }

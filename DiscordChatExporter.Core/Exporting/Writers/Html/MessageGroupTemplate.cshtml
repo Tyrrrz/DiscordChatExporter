@@ -44,10 +44,9 @@
 }
 
 <div class="chatlog__message-group">
-@for (var i = 0; i < Model.Messages.Count; i++)
+@foreach (var (message, i) in Model.Messages.WithIndex())
 {
     var isFirst = i == 0;
-    var message = Model.Messages[i];
 
     // Hide message content if it only contains a link to an image which is embedded, and nothing else
     var isContentHidden =
@@ -161,7 +160,7 @@
                 @{/* Attachments */}
                 @foreach (var attachment in message.Attachments)
                 {
-                    <div class="chatlog__attachment @(attachment.IsSpoiler ? "chatlog__attachment--hidden" : "")" onclick="@(attachment.IsSpoiler ? "showSpoiler(event, this)" : "")">
+                    <div class="chatlog__attachment @(attachment.IsSpoiler ? "chatlog__attachment--hidden" : null)" onclick="@(attachment.IsSpoiler ? "showSpoiler(event, this)" : null)">
                         @{/* Spoiler caption */}
                         @if (attachment.IsSpoiler)
                         {
@@ -399,13 +398,21 @@
                                     }
                                 </div>
 
-                                @{/* Embed image */}
-                                @if (embed.Image is not null && !string.IsNullOrWhiteSpace(embed.Image.Url))
+                                @{/* Embed images */}
+                                @if (embed.Images.Any())
                                 {
-                                    <div class="chatlog__embed-image-container">
-                                        <a class="chatlog__embed-image-link" href="@await ResolveUrlAsync(embed.Image.ProxyUrl ?? embed.Image.Url)">
-                                            <img class="chatlog__embed-image" src="@await ResolveUrlAsync(embed.Image.ProxyUrl ?? embed.Image.Url)" alt="Image" loading="lazy">
-                                        </a>
+                                    <div class="chatlog__embed-images @(embed.Images.Count == 1 ? "chatlog__embed-images--single" : null)">
+                                        @foreach (var image in embed.Images)
+                                        {
+                                            if (!string.IsNullOrWhiteSpace(image.Url))
+                                            {
+                                                <div class="chatlog__embed-image-container">
+                                                    <a class="chatlog__embed-image-link" href="@await ResolveUrlAsync(image.ProxyUrl ?? image.Url)">
+                                                        <img class="chatlog__embed-image" src="@await ResolveUrlAsync(image.ProxyUrl ?? image.Url)" alt="Image" loading="lazy">
+                                                    </a>
+                                                </div>
+                                            }
+                                        }
                                     </div>
                                 }
 

@@ -106,7 +106,7 @@ public class EmbedSpecs : IClassFixture<ExportWrapperFixture>
         iframeUrl.Should().Be("https://www.youtube.com/embed/qOWW4OlgbvE");
     }
 
-    [Fact(Skip = "Unimplemented")]
+    [Fact]
     public async Task Message_containing_a_Twitter_post_link_with_multiple_images_is_rendered_as_a_single_embed()
     {
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/695

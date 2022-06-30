@@ -88,8 +88,11 @@ internal class PlainTextMessageWriter : MessageWriter
             if (!string.IsNullOrWhiteSpace(embed.Thumbnail?.Url))
                 await _writer.WriteLineAsync(await Context.ResolveMediaUrlAsync(embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url, cancellationToken));
 
-            if (!string.IsNullOrWhiteSpace(embed.Image?.Url))
-                await _writer.WriteLineAsync(await Context.ResolveMediaUrlAsync(embed.Image.ProxyUrl ?? embed.Image.Url, cancellationToken));
+            foreach (var image in embed.Images)
+            {
+                if (!string.IsNullOrWhiteSpace(image.Url))
+                    await _writer.WriteLineAsync(await Context.ResolveMediaUrlAsync(image.ProxyUrl ?? image.Url, cancellationToken));
+            }
 
             if (!string.IsNullOrWhiteSpace(embed.Footer?.Text))
                 await _writer.WriteLineAsync(embed.Footer.Text);

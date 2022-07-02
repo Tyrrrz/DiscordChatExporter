@@ -1,3 +1,23 @@
+### v2.35 (02-Jul-2022)
+
+- Added support for exporting text chat in voice channels. These channels are now also displayed when browsing in the GUI and in the CLI when executing the `channels` command.
+- [GUI] Direct message channels are now sorted by the timestamp of their last message, similarly to how they appear in the Discord client.
+- [GUI] Removed artificial grouping of direct message channels into "Private" and "Group".
+- [CLI] Added runtime bootstrapper capabilities to the CLI flavor of DiscordChatExporter on Windows. Now, if you attempt to run the application without the required prerequisites installed, you will be provided with an option to install them automatically.
+- [CLI] Fixed outdated information in the usage guide. (Thanks [@Clint Herron](https://github.com/HanClinto))
+- [CLI] Added whitespace padding to the output of `guilds`, `channels`, and `dm` to make the tables look more uniform.
+- [HTML] Added hyperlinks to message timestamps, which allows you to quickly copy a link to a specific message in the export. (Thanks [@Philipp C. Heckel](https://github.com/binwiederhier))
+- [HTML] Added minification. Chat exports in HTML format are now 30-35% smaller than before.
+- [HTML] Added support for rendering embeds of Twitter posts that contain multiple images. Previously, this resulted in multiple separate embeds instead of one.
+- [HTML] Added support for rendering embeds of YouTube Shorts videos.
+- [HTML] Text content is now hidden if the message only contains a link to an image and nothing else. The link itself is resolved as an image embed.
+- [HTML] Fixed an issue where some emoji that included a zero-width-joiner rune were not rendered correctly due to a wrong Twemoji URL being generated. (Thanks [@Ethan](https://github.com/ethanndickson))
+- [HTML] Fixed an issue where replies to a message that contained a quote (i.e. `>`) were not rendered correctly.
+- [HTML] Fixed an issue where code blocks with language highlighting did not have the correct background color.
+- Added file name template token that resolves to the current date (`%d`). (Thanks [@Lucas LaBuff](https://github.com/96-LB))
+- Updated the usage guide to replace the instructions for retrieving the user token with those that appear to work for more people.
+- Updated the usage guide to feature the TOS warning more prominently.
+
 ### v2.34.1 (01-Jun-2022)
 
 - Improved retry policy to handle more transient errors. This should result in fewer errors exporting a channel due to timeout.

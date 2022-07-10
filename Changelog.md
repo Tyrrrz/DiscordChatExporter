@@ -17,6 +17,7 @@
 - Added file name template token that resolves to the current date (`%d`). (Thanks [@Lucas LaBuff](https://github.com/96-LB))
 - Updated the usage guide to replace the instructions for retrieving the user token with those that appear to work for more people.
 - Updated the usage guide to feature the TOS warning more prominently.
+- [Docker] Changed internal working directory from `/app/out` to `/out`. This was an unintended breaking change. Please update your volume binding configuration from `-v /path/on/machine:/app/out` to `-v /path/on/machine:/out`.
 
 ### v2.34.1 (01-Jun-2022)
 

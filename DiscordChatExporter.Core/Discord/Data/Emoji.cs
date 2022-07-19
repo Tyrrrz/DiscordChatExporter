@@ -11,12 +11,12 @@ namespace DiscordChatExporter.Core.Discord.Data;
 public partial record Emoji(
     // Only present on custom emoji
     Snowflake? Id,
-    // Name of custom emoji (e.g. LUL) or actual representation of standard emoji (e.g. 🙂)
+    // Name of a custom emoji (e.g. LUL) or actual representation of a standard emoji (e.g. 🙂)
     string Name,
     bool IsAnimated,
     string ImageUrl)
 {
-    // Name of custom emoji (e.g. LUL) or name of standard emoji (e.g. slight_smile)
+    // Name of a custom emoji (e.g. LUL) or name of a standard emoji (e.g. slight_smile)
     public string Code => Id is not null
         ? Name
         : EmojiIndex.TryGetCode(Name) ?? Name;
@@ -24,17 +24,19 @@ public partial record Emoji(
 
 public partial record Emoji
 {
-    private static string GetTwemojiName(string name)
+    private static string GetTwemojiId(string name)
     {
-        var runes = name.GetRunes();
+        var runes = name.GetRunes().ToArray();
+
+        // Variant selector rune is skipped in Twemoji names, except when the emoji also contains a zero-width joiner.
+        // VS = 0xfe0f; ZWJ = 0x200d.
+        var filteredRunes = runes.Any(r => r.Value == 0x200d)
+            ? runes
+            : runes.Where(r => r.Value != 0xfe0f);
 
         return string.Join(
             "-",
-            // Variant selector rune is skipped in Twemoji names, except when the emoji also contains a zero-width joiner.
-            // VS = 0xfe0f. ZWJ = 0x200d.
-            runes.Any(r => r.Value == 0x200d)
-                ? runes.Select(r => r.Value.ToString("x"))
-                : runes.Where(r => r.Value != 0xfe0f).Select(r => r.Value.ToString("x"))
+            filteredRunes.Select(r => r.Value.ToString("x"))
         );
     }
 
@@ -43,7 +45,7 @@ public partial record Emoji
         : $"https://cdn.discordapp.com/emojis/{id}.png";
 
     private static string GetImageUrl(string name) =>
-        $"https://twemoji.maxcdn.com/2/svg/{GetTwemojiName(name)}.svg";
+        $"https://twemoji.maxcdn.com/v/latest/svg/{GetTwemojiId(name)}.svg";
 
     public static string GetImageUrl(Snowflake? id, string? name, bool isAnimated)
     {

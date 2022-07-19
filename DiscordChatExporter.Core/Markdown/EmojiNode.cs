@@ -6,13 +6,13 @@ namespace DiscordChatExporter.Core.Markdown;
 internal record EmojiNode(
     // Only present on custom emoji
     Snowflake? Id,
-    // Name of custom emoji (e.g. LUL) or actual representation of standard emoji (e.g. 🙂)
+    // Name of a custom emoji (e.g. LUL) or actual representation of a standard emoji (e.g. 🙂)
     string Name,
     bool IsAnimated) : MarkdownNode
 {
     public bool IsCustomEmoji => Id is not null;
 
-    // Name of custom emoji (e.g. LUL) or name of standard emoji (e.g. slight_smile)
+    // Name of a custom emoji (e.g. LUL) or name of a standard emoji (e.g. slight_smile)
     public string Code => IsCustomEmoji
         ? Name
         : EmojiIndex.TryGetCode(Name) ?? Name;

@@ -725,18 +725,17 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.chatlog__sticker--media[data-source]').forEach(e => {
-                const imageDataUrl = e.getAttribute('data-source');
-
                 const anim = lottie.loadAnimation({
-                  container: e,
-                  renderer: 'svg',
-                  loop: true,
-                  autoplay: true,
-                  path: imageDataUrl
+                    container: e,
+                    renderer: 'svg',
+                    loop: true,
+                    autoplay: true,
+                    path: e.getAttribute('data-source')
                 });
 
-                anim.addEventListener('data_failed', () =>
-                    e.innerHTML = '<strong>[Sticker cannot be rendered]</strong>'
+                anim.addEventListener(
+                    'data_failed',
+                    () => e.innerHTML = '<strong>[Sticker cannot be rendered]</strong>'
                 );
             });
         });
@@ -745,7 +744,7 @@
     @{/* Scripts */}
     <script>
         function scrollToMessage(event, id) {
-            var element = document.getElementById('chatlog__message-container-' + id);
+            const element = document.getElementById('chatlog__message-container-' + id);
             if (!element)
                 return;
 
@@ -757,9 +756,10 @@
                 behavior: 'smooth'
             });
 
-            window.setTimeout(function() {
-                element.classList.remove('chatlog__message-container--highlighted');
-            }, 2000);
+            window.setTimeout(
+                () => element.classList.remove('chatlog__message-container--highlighted'),
+                2000
+            );
         }
 
         function showSpoiler(event, element) {

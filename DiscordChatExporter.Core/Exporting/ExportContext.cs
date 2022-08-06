@@ -62,7 +62,13 @@ internal class ExportContext
             .Select(r => r.Color)
             .FirstOrDefault();
     }
+    public List<Role> TryGetMemberRoleList(Snowflake id)
+    {
+        var member = TryGetMember(id);
+        var roles = member?.RoleIds.Join(Roles, i => i, r => r.Id, (_, role) => role);
 
+        return roles?.ToList()??(new List<Role>());
+    }
     public async ValueTask<string> ResolveMediaUrlAsync(string url, CancellationToken cancellationToken = default)
     {
         if (!Request.ShouldDownloadMedia)

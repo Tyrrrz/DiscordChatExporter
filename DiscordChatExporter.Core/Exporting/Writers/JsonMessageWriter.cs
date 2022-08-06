@@ -218,6 +218,26 @@ internal class JsonMessageWriter : MessageWriter
         await _writer.FlushAsync(cancellationToken);
     }
 
+    private async ValueTask WriteRoleListAsync(
+        List<Role> listOfRoles,
+        CancellationToken cancellationToken = default)
+    {
+        _writer.WriteStartArray("roles");
+
+        foreach (var curRole in listOfRoles)
+        {
+            _writer.WriteStartObject();
+            _writer.WriteString("name", curRole.Name);
+            _writer.WriteString("id", curRole.Id.ToString());
+            _writer.WriteNumber("position", curRole.Position);
+            _writer.WriteString("color", curRole.Color?.ToHex()??"");
+            _writer.WriteEndObject();
+        }
+        
+        _writer.WriteEndArray();
+        await _writer.FlushAsync(cancellationToken);
+    }
+
     public override async ValueTask WritePreambleAsync(CancellationToken cancellationToken = default)
     {
         // Root object (start)
@@ -277,6 +297,10 @@ internal class JsonMessageWriter : MessageWriter
         _writer.WriteString("discriminator", message.Author.DiscriminatorFormatted);
         _writer.WriteString("nickname", Context.TryGetMember(message.Author.Id)?.Nick ?? message.Author.Name);
         _writer.WriteString("color", Context.TryGetUserColor(message.Author.Id)?.ToHex());
+        
+        // Member Roles
+        await WriteRoleListAsync(Context.TryGetMemberRoleList(message.Author.Id), cancellationToken);
+        
         _writer.WriteBoolean("isBot", message.Author.IsBot);
         _writer.WriteString("avatarUrl", await Context.ResolveMediaUrlAsync(message.Author.AvatarUrl, cancellationToken));
         _writer.WriteEndObject();

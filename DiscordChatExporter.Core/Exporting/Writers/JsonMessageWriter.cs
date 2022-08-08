@@ -214,6 +214,10 @@ internal class JsonMessageWriter : MessageWriter
         _writer.WriteString("name", mentionedUser.Name);
         _writer.WriteString("discriminator", mentionedUser.DiscriminatorFormatted);
         _writer.WriteString("nickname", Context.TryGetMember(mentionedUser.Id)?.Nick ?? mentionedUser.Name);
+        
+        // Member Roles
+        await WriteRoleListAsync(Context.TryGetMemberRoleList(mentionedUser.Id), cancellationToken);
+
         _writer.WriteBoolean("isBot", mentionedUser.IsBot);
 
         _writer.WriteEndObject();

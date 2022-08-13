@@ -34,7 +34,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-  publish:
+  package:
     needs: test
     runs-on: windows-latest
 
@@ -73,7 +73,7 @@ jobs:
 
   deploy:
     if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
-    needs: publish
+    needs: package
     runs-on: ubuntu-latest
 
     steps:

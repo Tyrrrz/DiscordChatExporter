@@ -20,12 +20,20 @@ namespace DiscordChatExporter.Cli.Commands.Base;
 
 public abstract class ExportCommandBase : TokenCommandBase
 {
+    private string _outputPath = Directory.GetCurrentDirectory();
+
     [CommandOption(
         "output",
         'o',
         Description = "Output file or directory path."
     )]
-    public string OutputPath { get; init; } = Directory.GetCurrentDirectory();
+    public string OutputPath
+    {
+        get => _outputPath;
+        // Handle ~/ in paths on *nix systems
+        // https://github.com/Tyrrrz/DiscordChatExporter/pull/903
+        init => _outputPath = Path.GetFullPath(value);
+    }
 
     [CommandOption(
         "format",

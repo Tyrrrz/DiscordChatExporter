@@ -30,10 +30,9 @@ public abstract class ExportCommandBase : TokenCommandBase
     public string OutputPath
     {
         get => _outputPath;
-        init
-        {
-            _outputPath = Path.GetFullPath(value);
-        }
+        // Handle ~/ in paths on *nix systems
+        // https://github.com/Tyrrrz/DiscordChatExporter/pull/903
+        init => _outputPath = Path.GetFullPath(value);
     }
 
     [CommandOption(

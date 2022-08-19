@@ -105,7 +105,11 @@ public class DashboardViewModel : PropertyChangedBase
 
             var guildChannelMap = new Dictionary<Guild, IReadOnlyList<Channel>>();
             await foreach (var guild in discord.GetUserGuildsAsync())
-                guildChannelMap[guild] = await discord.GetGuildChannelsAsync(guild.Id);
+            {
+                guildChannelMap[guild] = (await discord.GetGuildChannelsAsync(guild.Id))
+                    .Where(c => c.Kind != ChannelKind.GuildCategory)
+                    .ToArray();
+            }
 
             _discord = discord;
             GuildChannelMap = guildChannelMap;

@@ -32,6 +32,7 @@ internal static class FilterGrammar
     private static readonly TextParser<MessageFilter> FromFilter =
         Span
             .EqualToIgnoreCase("from:")
+            .Try()
             .IgnoreThen(String)
             .Select(v => (MessageFilter)new FromMessageFilter(v))
             .Named("from:<value>");
@@ -39,6 +40,7 @@ internal static class FilterGrammar
     private static readonly TextParser<MessageFilter> MentionsFilter =
         Span
             .EqualToIgnoreCase("mentions:")
+            .Try()
             .IgnoreThen(String)
             .Select(v => (MessageFilter)new MentionsMessageFilter(v))
             .Named("mentions:<value>");
@@ -46,6 +48,7 @@ internal static class FilterGrammar
     private static readonly TextParser<MessageFilter> ReactionFilter =
         Span
             .EqualToIgnoreCase("reaction:")
+            .Try()
             .IgnoreThen(String)
             .Select(v => (MessageFilter)new ReactionMessageFilter(v))
             .Named("reaction:<value>");
@@ -53,6 +56,7 @@ internal static class FilterGrammar
     private static readonly TextParser<MessageFilter> HasFilter =
         Span
             .EqualToIgnoreCase("has:")
+            .Try()
             .IgnoreThen(Parse.OneOf(
                 Span.EqualToIgnoreCase("link").IgnoreThen(Parse.Return(MessageContentMatchKind.Link)),
                 Span.EqualToIgnoreCase("embed").IgnoreThen(Parse.Return(MessageContentMatchKind.Embed)),
@@ -65,6 +69,8 @@ internal static class FilterGrammar
             .Select(k => (MessageFilter)new HasMessageFilter(k))
             .Named("has:<value>");
 
+    // Make sure that property-based filters like 'has:link' don't prevent text like 'hello' from being parsed.
+    // https://github.com/Tyrrrz/DiscordChatExporter/issues/909
     private static readonly TextParser<MessageFilter> PrimitiveFilter =
         Parse.OneOf(
             FromFilter,

@@ -10,11 +10,19 @@ internal class ContainsMessageFilter : MessageFilter
 
     public ContainsMessageFilter(string text) => _text = text;
 
+    // Match content within word boundaries, between spaces, or as the whole input.
+    // For example, "max" shouldn't match on content "our maximum effort",
+    // but should match on content "our max effort".
+    // Also, "(max)" should match on content "our (max) effort", even though
+    // parentheses are not considered word characters.
+    // https://github.com/Tyrrrz/DiscordChatExporter/issues/909
     private bool IsMatch(string? content) =>
         !string.IsNullOrWhiteSpace(content) &&
         Regex.IsMatch(
             content,
-            "\\b" + Regex.Escape(_text) + "\\b",
+            @"(?=\b|\s|^)" +
+            Regex.Escape(_text) +
+            @"(?=\b|\s|$)",
             RegexOptions.IgnoreCase | RegexOptions.CultureInvariant
         );
 

@@ -70,7 +70,7 @@ internal static class FilterGrammar
             .Named("has:<value>");
 
     // Make sure that property-based filters like 'has:link' don't prevent text like 'hello' from being parsed.
-    // https://github.com/Tyrrrz/DiscordChatExporter/issues/909
+    // https://github.com/Tyrrrz/DiscordChatExporter/issues/909#issuecomment-1227575455
     private static readonly TextParser<MessageFilter> PrimitiveFilter =
         Parse.OneOf(
             FromFilter,

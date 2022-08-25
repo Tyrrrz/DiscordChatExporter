@@ -13,10 +13,11 @@ public static class Http
 {
     public static HttpClient Client { get; } = new();
 
-    private static bool IsRetryableStatusCode(HttpStatusCode statusCode) => statusCode is
-        HttpStatusCode.TooManyRequests or
-        HttpStatusCode.RequestTimeout or
-        HttpStatusCode.InternalServerError;
+    private static bool IsRetryableStatusCode(HttpStatusCode statusCode) =>
+        statusCode is HttpStatusCode.TooManyRequests or HttpStatusCode.RequestTimeout ||
+        // Treat all server-side errors as retryable.
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/908
+        (int)statusCode >= 500;
 
     private static bool IsRetryableException(Exception exception) =>
         exception.GetSelfAndChildren().Any(ex =>

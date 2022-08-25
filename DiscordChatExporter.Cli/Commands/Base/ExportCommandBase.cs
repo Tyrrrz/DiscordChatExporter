@@ -14,13 +14,14 @@ using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Core.Exporting.Filtering;
 using DiscordChatExporter.Core.Exporting.Partitioning;
+using DiscordChatExporter.Core.Utils;
 using Gress;
 
 namespace DiscordChatExporter.Cli.Commands.Base;
 
 public abstract class ExportCommandBase : TokenCommandBase
 {
-    private string _outputPath = Directory.GetCurrentDirectory();
+    private readonly string _outputPath = Directory.GetCurrentDirectory();
 
     [CommandOption(
         "output",
@@ -98,9 +99,20 @@ public abstract class ExportCommandBase : TokenCommandBase
     {
         var cancellationToken = console.RegisterCancellationHandler();
 
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/425
         if (ShouldReuseMedia && !ShouldDownloadMedia)
         {
-            throw new CommandException("Option --reuse-media cannot be used without --media.");
+            throw new CommandException(
+                "Option --reuse-media cannot be used without --media."
+            );
+        }
+
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/799
+        if (channels.Count > 1 && !PathEx.IsDirectoryPath(OutputPath) && !OutputPath.Contains('%'))
+        {
+            throw new CommandException(
+                "Attempted to export multiple channels, but the output path is neither a directory nor a template."
+            );
         }
 
         var errors = new ConcurrentDictionary<Channel, string>();

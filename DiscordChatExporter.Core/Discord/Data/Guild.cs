@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Reading;
@@ -17,8 +18,14 @@ public record Guild(Snowflake Id, string Name, string IconUrl) : IHasId
     private static string GetDefaultIconUrl() =>
         "https://cdn.discordapp.com/embed/avatars/0.png";
 
-    private static string GetIconUrl(Snowflake id, string iconHash) =>
-        $"https://cdn.discordapp.com/icons/{id}/{iconHash}.png";
+    private static string GetIconUrl(Snowflake id, string iconHash)
+    {
+        var extension = iconHash.StartsWith("a_", StringComparison.Ordinal)
+            ? "gif"
+            : "png";
+
+        return $"https://cdn.discordapp.com/icons/{id}/{iconHash}.{extension}";
+    }
 
     public static Guild Parse(JsonElement json)
     {

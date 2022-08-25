@@ -20,9 +20,9 @@ internal class ContainsMessageFilter : MessageFilter
         !string.IsNullOrWhiteSpace(content) &&
         Regex.IsMatch(
             content,
-            @"(?=\b|\s|^)" +
+            @"(?:\b|\s|^)" +
             Regex.Escape(_text) +
-            @"(?=\b|\s|$)",
+            @"(?:\b|\s|$)",
             RegexOptions.IgnoreCase | RegexOptions.CultureInvariant
         );
 

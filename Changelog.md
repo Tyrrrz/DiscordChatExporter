@@ -1,3 +1,13 @@
+### v2.35.1 (26-Aug-2022)
+
+- Added `~` character as an alias for `-` when negating a message filter. This should make it easier to use negated filters from CLI where the dash character already has other meanings.
+- Extended retry logic to encompass all server-side errors from Discord API, instead of only `500 Internal Server Error`.
+- [CLI] Attempt to export multiple channels will now fail if provided with an output path that is neither a directory, nor a file name template. Previously, this resulted in all channels being exported to the same file, overwriting each other.
+- Fixed an issue where a text message filter didn't work if it started with a character that's also the first character in one of the named filters (e.g. `from` or `mentions`).
+- Fixed an issue where a text message filter didn't work correctly if it was enclosed in parentheses.
+- Fixed an issue where categories were displayed alongside regular channels in the channel list, both in GUI and in CLI (when using the `guild` command).
+- [CLI] Fixed an issue where an output path starting with a tilde on Linux was not expanded properly into a full path. (Thanks [@TSRBerry](https://github.com/TSRBerry))
+
 ### v2.35 (02-Jul-2022)
 
 - Added support for exporting text chat in voice channels. These channels are now also displayed when browsing in the GUI and in the CLI when executing the `channels` command.

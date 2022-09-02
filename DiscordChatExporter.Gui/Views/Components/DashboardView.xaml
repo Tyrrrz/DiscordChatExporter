@@ -135,22 +135,14 @@
             Grid.Row="2"
             Background="{DynamicResource MaterialDesignCardBackground}"
             IsEnabled="{Binding IsBusy, Converter={x:Static converters:InverseBoolConverter.Instance}}">
-            <Grid.Resources>
-                <Style TargetType="TextBlock">
-                    <Setter Property="FontWeight" Value="Light" />
-                </Style>
-            </Grid.Resources>
             <!--  Placeholder / usage instructions  -->
             <Grid Visibility="{Binding AvailableGuilds, Converter={x:Static s:BoolToVisibilityConverter.InverseInstance}}">
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                     <TextBlock
                         Margin="32,16"
                         FontSize="14"
+                        FontWeight="Light"
                         LineHeight="20">
-                        <Run FontSize="18" Text="Please provide authentication token to continue" />
-                        <LineBreak />
-                        <LineBreak />
-
                         <!--  User token  -->
                         <InlineUIContainer>
                             <materialDesign:PackIcon
@@ -158,7 +150,7 @@
                                 Foreground="{DynamicResource PrimaryHueMidBrush}"
                                 Kind="Account" />
                         </InlineUIContainer>
-                        <Run FontSize="16" Text="To get token for your personal account:" />
+                        <Run FontSize="16" FontWeight="SemiBold" Text="To get token for your personal account:" />
                         <LineBreak />
                         <Run Text="*  Automating user accounts is technically against TOS —" />
                         <Run FontWeight="SemiBold" Text="use at your own risk" /><Run Text="!" />
@@ -169,31 +161,33 @@
                         </Hyperlink>
                         <Run Text="and login" />
                         <LineBreak />
-                        <Run Text="2. Press" />
+                        <Run Text="2. Open any server or direct message channel" />
+                        <LineBreak />
+                        <Run Text="3. Press" />
                         <Run FontWeight="SemiBold" Text="Ctrl+Shift+I" />
                         <Run Text="to show developer tools" />
                         <LineBreak />
-                        <Run Text="3. Navigate to the" />
+                        <Run Text="4. Navigate to the" />
                         <Run FontWeight="SemiBold" Text="Network" />
                         <Run Text="tab" />
                         <LineBreak />
-                        <Run Text="4. Press" />
+                        <Run Text="5. Press" />
                         <Run FontWeight="SemiBold" Text="Ctrl+R" />
                         <Run Text="to reload" />
                         <LineBreak />
-                        <Run Text="5. Search for a request containing" />
+                        <Run Text="6. Search for a request containing" />
                         <Run FontWeight="SemiBold" Text="messages?limit=50" />
                         <Run Text="or similar" />
                         <LineBreak />
-                        <Run Text="6. Select the" />
+                        <Run Text="7. Select the" />
                         <Run FontWeight="SemiBold" Text="Headers" />
                         <Run Text=" tab on the right" />
                         <LineBreak />
-                        <Run Text="7. Scroll down to the" />
+                        <Run Text="8. Scroll down to the" />
                         <Run FontWeight="SemiBold" Text="Request Headers" />
                         <Run Text="section" />
                         <LineBreak />
-                        <Run Text="8. Copy the value of the" />
+                        <Run Text="9. Copy the value of the" />
                         <Run FontWeight="SemiBold" Text="authorization" />
                         <Run Text="header" />
                         <LineBreak />
@@ -206,7 +200,7 @@
                                 Foreground="{DynamicResource PrimaryHueMidBrush}"
                                 Kind="Robot" />
                         </InlineUIContainer>
-                        <Run FontSize="16" Text="To get token for a bot account:" />
+                        <Run FontSize="16" FontWeight="SemiBold" Text="To get token for a bot account:" />
                         <LineBreak />
                         <Run Text="1. Open Discord" />
                         <Hyperlink Command="{s:Action OpenDiscordDeveloperPortal}">
@@ -224,10 +218,14 @@
                         <Run Text="click" />
                         <Run FontWeight="SemiBold" Text="Copy" />
                         <LineBreak />
+                        <Run Text="*  Your bot needs to have" />
+                        <Run FontWeight="SemiBold" Text="Message Content Intent" />
+                        <Run Text="enabled to read messages" />
+                        <LineBreak />
                         <LineBreak />
 
-                        <Run FontSize="16" Text="If you have questions or issues, please refer to the" />
-                        <Hyperlink Command="{s:Action ShowHelp}" FontSize="16">wiki</Hyperlink><Run FontSize="16" Text="." />
+                        <Run Text="If you have questions or issues, please refer to the" />
+                        <Hyperlink Command="{s:Action ShowHelp}">wiki</Hyperlink><Run Text="." />
                     </TextBlock>
                 </ScrollViewer>
             </Grid>

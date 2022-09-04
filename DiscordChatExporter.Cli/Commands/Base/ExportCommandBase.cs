@@ -26,7 +26,7 @@ public abstract class ExportCommandBase : TokenCommandBase
     [CommandOption(
         "output",
         'o',
-        Description = "Output file or directory path."
+        Description = "Output file or directory path. Directory path should end in a slash."
     )]
     public string OutputPath
     {
@@ -97,8 +97,7 @@ public abstract class ExportCommandBase : TokenCommandBase
 
     protected async ValueTask ExecuteAsync(IConsole console, IReadOnlyList<Channel> channels)
     {
-        var cancellationToken = console.RegisterCancellationHandler();
-
+        // Reuse media option should only be used when the media option is set.
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/425
         if (ShouldReuseMedia && !ShouldDownloadMedia)
         {
@@ -107,14 +106,26 @@ public abstract class ExportCommandBase : TokenCommandBase
             );
         }
 
+        // Make sure the user does not try to export all channels into a single file.
+        // Output path must either be a directory, or contain template tokens.
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/799
-        if (channels.Count > 1 && !PathEx.IsDirectoryPath(OutputPath) && !OutputPath.Contains('%'))
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/917
+        var isValidOutputPath =
+            // Anything is valid when exporting a single channel
+            channels.Count <= 1 ||
+            // When using template tokens, assume the user knows what they're doing
+            OutputPath.Contains('%') ||
+            // Otherwise, require an existing directory or an unambiguous directory path
+            Directory.Exists(OutputPath) || PathEx.IsDirectoryPath(OutputPath);
+
+        if (!isValidOutputPath)
         {
             throw new CommandException(
                 "Attempted to export multiple channels, but the output path is neither a directory nor a template."
             );
         }
 
+        var cancellationToken = console.RegisterCancellationHandler();
         var errors = new ConcurrentDictionary<Channel, string>();
 
         // Export

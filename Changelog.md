@@ -1,3 +1,8 @@
+### v2.35.2 (08-Sep-2022)
+
+- Updated usage guide to mention the need to enable "Message Content Intent" to use a bot as a medium for exporting messages.
+- [CLI] Fixed an issue where passing an existing directory as the output path failed when exporting multiple channels (for example, when running `exportdm`). An ambiguous output path will now always be treated as a directory path if that directory already exists. If it doesn't exist, it will be treated as a file path, matching the previous behavior.
+
 ### v2.35.1 (26-Aug-2022)
 
 - Added `~` character as an alias for `-` when negating a message filter. This should make it easier to use negated filters from CLI where the dash character already has other meanings.
@@ -97,7 +102,7 @@
 
 - [HTML] Added special casing for Spotify track embeds to render them directly using an embedded player.
 - [HTML] Added special casing for plain image embeds to render them like image attachments.
-- [HTML] Added tooltip text for unix timestamp markers which shows the full date represented by the timestamp, regardless of configured date format. 
+- [HTML] Added tooltip text for unix timestamp markers which shows the full date represented by the timestamp, regardless of configured date format.
 - [HTML] Updated the fallback text shown when the referenced message could not be loaded to make it more explicit.
 - [HTML] Updated styling of quoted text in markdown to more closely resemble how it looks in Discord.
 - [HTML] Fixed an issue where some file formats were not correctly recognized as image or video attachments, which affected how they were rendered.
@@ -124,7 +129,7 @@
 - [HTML] Added special casing for YouTube video embeds to render them directly using an embedded player. (Thanks [@quentinmay](https://github.com/quentinmay))
 - [HTML] Added support for rendering standard emoji by code. Such emoji may sometimes be found in messages sent by bots or through webhooks. (Thanks [@CanePlayz](https://github.com/CanePlayz) and [@Lucas LaBuff](https://github.com/96-LB))
 - [HTML] Changed tooltips on standard emoji to show emoji code instead of their raw string representations. (Thanks [@CanePlayz](https://github.com/CanePlayz) and [@Lucas LaBuff](https://github.com/96-LB))
-- [HTML] Added tooltips on individual messages to show when those messages were sent. 
+- [HTML] Added tooltips on individual messages to show when those messages were sent.
 - [HTML] Updated colors and minor styling elements to match Discord's new style direction after rebranding.
 - [HTML] Updated Twemoji URLs to use SVG image variants for better rendering quality.
 - [HTML] Changed user avatar URLs to include predetermined size query parameter for better rendering quality.
@@ -220,7 +225,7 @@
 - Added a new option that enables self-contained exports for all output formats. You can turn it on in the export setup dialog in GUI or using the `--media` option in CLI. When using this, the application will additionally download any media content directly referenced from the exported file instead of linking back to Discord CDN. The files which are downloaded include: guild icons, user avatars, attachments, embedded images, reaction emoji. Note that only files which are actually referenced by the export are downloaded, which means that, for example, user avatars will not be downloaded when using plain text export format. This option is not meant to enable complete offline viewing for HTML exports, but rather to make it easier to archive media content that may eventually get deleted from Discord servers. Also keep in mind that this option may make the export drastically slower and the total file size larger.
 - Changed "discordapp.com" to "discord.com" where applicable as Discord is migrating to a new domain. CDN will remain on "cdn.discordapp.com" for the foreseeable future.
 
-Note that all existing and current HTML exports will likely not render accurately because Discord enabled CORS for their font resources, which prevents them from loading locally. Please refer to [issue #322](https://github.com/Tyrrrz/DiscordChatExporter/issues/322) for discussion on this topic. 
+Note that all existing and current HTML exports will likely not render accurately because Discord enabled CORS for their font resources, which prevents them from loading locally. Please refer to [issue #322](https://github.com/Tyrrrz/DiscordChatExporter/issues/322) for discussion on this topic.
 
 ### v2.20 (27-Apr-2020)
 

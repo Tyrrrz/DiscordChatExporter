@@ -9,7 +9,6 @@ public partial record TenorEmbedProjection(string Url)
         if (string.IsNullOrWhiteSpace(embed.Url))
             return null;
 
-        // Needs a the mp4 video URL linked in them embed json
         if (embed.Video is null || string.IsNullOrWhiteSpace(embed.Video.Url))
             return null;
 

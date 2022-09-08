@@ -4,7 +4,6 @@ namespace DiscordChatExporter.Core.Discord.Data.Embeds;
 
 public partial record TenorEmbedProjection(string Url)
 {
-
     public static TenorEmbedProjection? TryResolve(Embed embed)
     {
         if (string.IsNullOrWhiteSpace(embed.Url))

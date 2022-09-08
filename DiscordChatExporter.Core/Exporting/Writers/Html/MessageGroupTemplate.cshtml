@@ -232,7 +232,7 @@
                         @if (embed.Video is not null && !string.IsNullOrWhiteSpace(embed.Video.Url) && embed.Thumbnail is not null)
                         {
                             <div class="chatlog__attachment">
-                                <video class="chatlog__attachment-media" poster="@await ResolveUrlAsync(embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url ?? "")" loop="" preload="auto" aria-label="GIF" width="@(embed.Video.Width)" height="@(embed.Video.Height)" autoplay="">
+                                <video class="chatlog__attachment-media" poster="@await ResolveUrlAsync(embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url)" loop="" preload="auto" aria-label="GIF" width="@(embed.Video.Width)" height="@(embed.Video.Height)" autoplay="">
                                     <source src="@await ResolveUrlAsync(embed.Video.ProxyUrl ?? embed.Video.Url)" alt="@(embed.Description ?? "Tenor GIF")" title="@embed.Title">
                                 </video>                            
                             </div>

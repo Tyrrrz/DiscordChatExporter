@@ -9,7 +9,6 @@ public record EmbedVideo(
     int? Width,
     int? Height,
     string? ProxyUrl)
-
 {
     public static EmbedVideo Parse(JsonElement json)
     {

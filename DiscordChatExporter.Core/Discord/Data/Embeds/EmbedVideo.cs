@@ -6,7 +6,7 @@ namespace DiscordChatExporter.Core.Discord.Data.Embeds;
 // https://discord.com/developers/docs/resources/channel#embed-object-embed-video-structure
 public record EmbedVideo(
     string? Url,
-    string? ProxyUrl
+    string? ProxyUrl,
     int? Width,
     int? Height)
 {

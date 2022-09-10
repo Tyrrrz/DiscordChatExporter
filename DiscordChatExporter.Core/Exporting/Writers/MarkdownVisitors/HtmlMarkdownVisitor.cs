@@ -123,7 +123,7 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
         var jumboClass = _isJumbo ? "chatlog__emoji--large" : "";
 
         _buffer
-            .Append($"<img loading=\"lazy\" class=\"chatlog__emoji {jumboClass}\" alt=\"{emoji.Name}\" title=\"{emoji.Code}\" src=\"{_context.ResolveMediaUrlAsync(emojiImageUrl)}\">");
+            .Append($"<img loading=\"lazy\" class=\"chatlog__emoji {jumboClass}\" alt=\"{emoji.Name}\" title=\"{emoji.Code}\" src=\"@await ResolveUrlAsync({emojiImageUrl})\">");
 
         return base.VisitEmoji(emoji);
     }

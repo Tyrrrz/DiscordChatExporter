@@ -2,9 +2,9 @@ using System.Text.RegularExpressions;
 
 namespace DiscordChatExporter.Core.Discord.Data.Embeds;
 
-public partial record TenorEmbedProjection(string Url)
+public partial record GifvEmbedProjection(string Url)
 {
-    public static TenorEmbedProjection? TryResolve(Embed embed)
+    public static GifvEmbedProjection? TryResolve(Embed embed)
     {
         if (string.IsNullOrWhiteSpace(embed.Url))
             return null;
@@ -12,10 +12,9 @@ public partial record TenorEmbedProjection(string Url)
         if (embed.Video is null || string.IsNullOrWhiteSpace(embed.Video.Url))
             return null;
 
-        // Has to be a vaild Tenor URL
-        if (!Regex.IsMatch(embed.Url, @"tenor\.com/view/[\w-]+$"))
+        if (embed.Type != "gifv")
             return null;
 
-        return new TenorEmbedProjection(embed.Url);
+        return new GifvEmbedProjection(embed.Url);
     }
 }

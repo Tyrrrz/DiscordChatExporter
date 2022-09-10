@@ -11,6 +11,7 @@ namespace DiscordChatExporter.Core.Discord.Data.Embeds;
 // https://discord.com/developers/docs/resources/channel#embed-object
 public partial record Embed(
     string? Title,
+    string? Type,
     string? Url,
     DateTimeOffset? Timestamp,
     Color? Color,
@@ -31,8 +32,8 @@ public partial record Embed(
     public YouTubeVideoEmbedProjection? TryGetYouTubeVideo() =>
         YouTubeVideoEmbedProjection.TryResolve(this);
 
-    public TenorEmbedProjection? TryGetTenorEmbed() =>
-        TenorEmbedProjection.TryResolve(this);
+    public GifvEmbedProjection? TryGetGifvEmbed() =>
+        GifvEmbedProjection.TryResolve(this);
 }
 
 public partial record Embed
@@ -40,6 +41,7 @@ public partial record Embed
     public static Embed Parse(JsonElement json)
     {
         var title = json.GetPropertyOrNull("title")?.GetStringOrNull();
+        var type = json.GetPropertyOrNull("type")?.GetStringOrNull();
         var url = json.GetPropertyOrNull("url")?.GetNonWhiteSpaceStringOrNull();
         var timestamp = json.GetPropertyOrNull("timestamp")?.GetDateTimeOffset();
         var color = json.GetPropertyOrNull("color")?.GetInt32OrNull()?.Pipe(System.Drawing.Color.FromArgb).ResetAlpha();
@@ -69,6 +71,7 @@ public partial record Embed
 
         return new Embed(
             title,
+            type,
             url,
             timestamp,
             color,

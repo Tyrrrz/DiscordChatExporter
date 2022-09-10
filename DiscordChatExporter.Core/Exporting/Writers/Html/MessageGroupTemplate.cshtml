@@ -208,8 +208,20 @@
                 @{/* Embeds */}
                 @foreach (var embed in message.Embeds)
                 {
+                    // Gifv embed
+                    if (embed.TryGetGifv() is { } gifvEmbed)
+                    {
+                        @if (embed.Video is not null && !string.IsNullOrWhiteSpace(embed.Video.Url) && embed.Thumbnail is not null)
+                        {
+                            <div class="chatlog__attachment">
+                                <video class="chatlog__attachment-media" poster="@await ResolveUrlAsync(embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url)" loop="" controls="" aria-label="GIF" width="@(embed.Video.Width)" height="@(embed.Video.Height)">
+                                    <source src="@await ResolveUrlAsync(embed.Video.ProxyUrl ?? embed.Video.Url)" alt="@(embed.Description ?? "Tenor GIF")" title="@embed.Title">
+                                </video>                            
+                            </div>
+                        }
+                    }
                     // Plain image embed
-                    if (embed.TryGetPlainImage() is { } plainImageEmbed)
+                    else if (embed.TryGetPlainImage() is { } plainImageEmbed)
                     {
                         <div class="chatlog__embed">
                             <a href="@await ResolveUrlAsync(plainImageEmbed.Url)">

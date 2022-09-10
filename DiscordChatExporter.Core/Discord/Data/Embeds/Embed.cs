@@ -11,6 +11,7 @@ namespace DiscordChatExporter.Core.Discord.Data.Embeds;
 // https://discord.com/developers/docs/resources/channel#embed-object
 public partial record Embed(
     string? Title,
+    string? Type,
     string? Url,
     DateTimeOffset? Timestamp,
     Color? Color,
@@ -19,6 +20,7 @@ public partial record Embed(
     IReadOnlyList<EmbedField> Fields,
     EmbedImage? Thumbnail,
     IReadOnlyList<EmbedImage> Images,
+    EmbedVideo? Video,
     EmbedFooter? Footer)
 {
     public PlainImageEmbedProjection? TryGetPlainImage() =>
@@ -29,6 +31,9 @@ public partial record Embed(
 
     public YouTubeVideoEmbedProjection? TryGetYouTubeVideo() =>
         YouTubeVideoEmbedProjection.TryResolve(this);
+
+    public GifvEmbedProjection? TryGetGifv() =>
+        GifvEmbedProjection.TryResolve(this);
 }
 
 public partial record Embed
@@ -36,6 +41,7 @@ public partial record Embed
     public static Embed Parse(JsonElement json)
     {
         var title = json.GetPropertyOrNull("title")?.GetStringOrNull();
+        var type = json.GetPropertyOrNull("type")?.GetStringOrNull();
         var url = json.GetPropertyOrNull("url")?.GetNonWhiteSpaceStringOrNull();
         var timestamp = json.GetPropertyOrNull("timestamp")?.GetDateTimeOffset();
         var color = json.GetPropertyOrNull("color")?.GetInt32OrNull()?.Pipe(System.Drawing.Color.FromArgb).ResetAlpha();
@@ -59,10 +65,13 @@ public partial record Embed
             json.GetPropertyOrNull("image")?.Pipe(EmbedImage.Parse).Enumerate().ToArray() ??
             Array.Empty<EmbedImage>();
 
+        var video = json.GetPropertyOrNull("video")?.Pipe(EmbedVideo.Parse);
+
         var footer = json.GetPropertyOrNull("footer")?.Pipe(EmbedFooter.Parse);
 
         return new Embed(
             title,
+            type,
             url,
             timestamp,
             color,
@@ -71,6 +80,7 @@ public partial record Embed
             fields,
             thumbnail,
             images,
+            video,
             footer
         );
     }

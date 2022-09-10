@@ -209,7 +209,7 @@
                 @foreach (var embed in message.Embeds)
                 {
                     // Gifv embed
-                    if (embed.TryGetGifvEmbed() is { } gifvEmbed)
+                    if (embed.TryGetGifv() is { } gifvEmbed)
                     {
                         @if (embed.Video is not null && !string.IsNullOrWhiteSpace(embed.Video.Url) && embed.Thumbnail is not null)
                         {

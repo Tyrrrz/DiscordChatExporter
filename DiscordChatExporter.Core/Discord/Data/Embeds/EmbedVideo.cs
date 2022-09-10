@@ -17,6 +17,6 @@ public record EmbedVideo(
         var width = json.GetPropertyOrNull("width")?.GetInt32OrNull();
         var height = json.GetPropertyOrNull("height")?.GetInt32OrNull();
 
-        return new EmbedVideo(url, width, height, proxyUrl);
+        return new EmbedVideo(url, proxyUrl, width, height);
     }
 }

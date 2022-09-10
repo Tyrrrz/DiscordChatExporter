@@ -32,7 +32,7 @@ public partial record Embed(
     public YouTubeVideoEmbedProjection? TryGetYouTubeVideo() =>
         YouTubeVideoEmbedProjection.TryResolve(this);
 
-    public GifvEmbedProjection? TryGetGifvEmbed() =>
+    public GifvEmbedProjection? TryGetGifv() =>
         GifvEmbedProjection.TryResolve(this);
 }
 

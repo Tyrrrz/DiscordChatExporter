@@ -1,5 +1,6 @@
 @using System
 @using System.Linq
+@using System.Text.RegularExpressions;
 @using System.Threading.Tasks
 @using DiscordChatExporter.Core.Discord.Data
 @using DiscordChatExporter.Core.Discord.Data.Embeds
@@ -146,8 +147,24 @@
                         @{/* Text */}
                         @if (!isContentHidden)
                         {
-                            <span class="chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(FormatMarkdown(message.Content))<!--/wmm:ignore--></span>
-                        }
+                            Regex regex = new Regex("(<img loading=\"lazy\" class=\"chatlog__emoji.+?src=\")([^\"]+)");
+                            var messageFormatted = FormatMarkdown(message.Content);
+                            var emojiURLs = regex.Matches(messageFormatted);
+
+                            foreach (Match matchedEmojiURL in emojiURLs)
+                            {
+                                var emojiURL = matchedEmojiURL.Groups[2].Value;
+                                if (string.IsNullOrEmpty(emojiURL))
+                                {
+                                    continue;   
+                                }
+
+                                Regex replacementRegex = new Regex($"(<img loading=\"lazy\" class=\"chatlog__emoji.+?src=\")({emojiURL})");
+
+                                messageFormatted = replacementRegex.Replace(messageFormatted, $"$1{await ResolveUrlAsync(emojiURL)}");
+                            }
+                            
+                            <span class="chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(messageFormatted)<!--/wmm:ignore--></span>}
 
                         @{/* Edited timestamp */}
                         @if (message.EditedTimestamp is not null)

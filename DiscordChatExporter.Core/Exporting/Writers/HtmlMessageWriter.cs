@@ -25,9 +25,16 @@ internal class HtmlMessageWriter : MessageWriter
         _themeName = themeName;
     }
 
-    private bool CanJoinGroup(Message message) =>
+    private bool CanJoinGroup(Message message) =>    
         // First message in the group can always join
         _messageGroup.LastOrDefault() is not { } lastMessage ||
+        // Group system messages only with eachother
+        ( 
+            message.Kind.IsSystemMessage() &&
+            lastMessage.Kind.IsSystemMessage()
+        ) ||
+        // Join non system messages
+        !message.Kind.IsSystemMessage() &&
         // Must be from the same author
         lastMessage.Author.Id == message.Author.Id &&
         // Author's name must not have changed between messages

@@ -46,6 +46,8 @@
 <div class="chatlog__message-group">
 @foreach (var (message, i) in Model.Messages.WithIndex())
 {
+    var isSystemMessage = message.Kind.IsSystemMessage();
+    
     var isFirst = i == 0;
 
     // Hide message content if it only contains a link to an image which is embedded, and nothing else
@@ -62,7 +64,24 @@
         <div class="chatlog__message">
             @{/* Left side */}
             <div class="chatlog__message-aside">
-                @if (isFirst)
+                @if (isSystemMessage)
+                {
+                    var iconUrl = message.Kind switch
+                    {
+                        MessageKind.RecipientAdd => "",
+                        MessageKind.RecipientRemove => "",
+                        MessageKind.Call =>"https://discord.com/assets/7f75ab26bc5deb393cd8db44d9fe14e7.svg",
+                        MessageKind.ChannelNameChange => "",
+                        MessageKind.ChannelIconChange => "",
+                        MessageKind.ChannelPinnedMessage => "https://discord.com/assets/1f57f1c100434d1ff6569a495ada213e.svg",
+                        MessageKind.GuildMemberJoin => "",
+                        _ => ""
+                    };
+
+
+                    <img class="chatlog__system-message-icon" src="@await ResolveUrlAsync(iconUrl)" alt="System message icon" loading="lazy">
+                }
+                else if(isFirst)
                 {
                     // Reference symbol
                     if (message.Reference is not null)
@@ -81,7 +100,38 @@
 
             @{/* Right side */}
             <div class="chatlog__message-primary">
-                @if (isFirst)
+                @if (isSystemMessage)
+                {
+
+                    // system messages are grouped even if the message author is different
+                    // that's why we have to update the user values with the author of the current message
+                    userMember = Model.ExportContext.TryGetMember(message.Author.Id);
+
+                    userColor = Model.ExportContext.TryGetUserColor(message.Author.Id);
+
+                    userNick = message.Author.IsBot
+                        ? message.Author.Name
+                        : userMember?.Nick ?? message.Author.Name;                    
+                 
+                    <div class="chatlog__header">
+                        @{/* Author name */}
+                        <span class="chatlog__author" style="@(userColor is not null ? $"color: rgb({userColor.Value.R}, {userColor.Value.G}, {userColor.Value.B})" : null)" title="@message.Author.FullName" data-user-id="@message.Author.Id">@userNick</span>                        
+                    
+                        @{/* System message content */}
+                        @if(message.Kind == MessageKind.ChannelPinnedMessage)
+                        {
+                            <span class="chatlog__system-message"> pinned</span><span class="chatlog__system-message-reference-link chatlog__reference-link" onclick="scrollToMessage(event, @message.Reference.MessageId)"> a message</span><span class="chatlog__system-message"> to this channel.</span>
+                        }
+                        else
+                        {
+                            <span class="chatlog__system-message"> <!--wmm:ignore-->@Raw(FormatMarkdown(message.Content))<!--/wmm:ignore--></span>
+                        }
+
+                        @{/* Timestamp */}
+                        <span class="chatlog__timestamp"><a href="#chatlog__message-container-@message.Id">@FormatDate(message.Timestamp)</a></span>
+                    </div>
+                }
+                else if (isFirst)
                 {
                     // Reference
                     if (message.Reference is not null)
@@ -140,21 +190,24 @@
                 }
 
                 @{/* Content */}
-                @if (!string.IsNullOrWhiteSpace(message.Content) || message.EditedTimestamp is not null)
+                @if (!isSystemMessage)
                 {
-                    <div class="chatlog__content chatlog__markdown">
-                        @{/* Text */}
-                        @if (!isContentHidden)
-                        {
-                            <span class="chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(FormatMarkdown(message.Content))<!--/wmm:ignore--></span>
-                        }
+                    @if (!string.IsNullOrWhiteSpace(message.Content) || message.EditedTimestamp is not null)
+                    {
+                        <div class="chatlog__content chatlog__markdown">
+                            @{/* Text */}
+                            @if (!isContentHidden)
+                            {
+                                <span class="chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(FormatMarkdown(message.Content))<!--/wmm:ignore--></span>
+                            }
 
-                        @{/* Edited timestamp */}
-                        @if (message.EditedTimestamp is not null)
-                        {
-                            <span class="chatlog__edited-timestamp" title="@FormatDate(message.EditedTimestamp.Value)">(edited)</span>
-                        }
-                    </div>
+                            @{/* Edited timestamp */}
+                            @if (message.EditedTimestamp is not null)
+                            {
+                                <span class="chatlog__edited-timestamp" title="@FormatDate(message.EditedTimestamp.Value)">(edited)</span>
+                            }
+                        </div>
+                    }
                 }
 
                 @{/* Attachments */}

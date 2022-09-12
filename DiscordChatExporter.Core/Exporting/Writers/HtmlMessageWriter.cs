@@ -25,7 +25,7 @@ internal class HtmlMessageWriter : MessageWriter
         _themeName = themeName;
     }
 
-    private bool CanJoinGroup(Message message) =>    
+    private bool CanJoinGroup(Message message) =>
         // First message in the group can always join
         _messageGroup.LastOrDefault() is not { } lastMessage ||
         // Group system messages only with eachother

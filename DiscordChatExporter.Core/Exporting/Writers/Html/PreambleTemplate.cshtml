@@ -776,6 +776,39 @@
                 element.classList.remove('chatlog__markdown-spoiler--hidden');
             }
         }
+
+        function playPauseVideo() {
+            let GIFs = document.querySelectorAll("[loop]");
+            GIFs.forEach((GIF) => {
+                // We can only control playback without insteraction if GIF is mute
+                GIF.muted = true;
+                // Play is a promise so we need to check we have it
+                let playPromise = GIF.play();
+                if (playPromise !== undefined) {
+                    playPromise.then((_) => {
+                        let observer = new IntersectionObserver(
+                            (entries) => {
+                                entries.forEach((entry) => {
+                                    if (
+                                        entry.intersectionRatio !== 1 &&
+                                        !GIF.paused
+                                    ) {
+                                        GIF.pause();
+                                    } else if (GIF.paused) {
+                                        GIF.play();
+                                    }
+                                });
+                            },
+                            { threshold: 0.2 }
+                        );
+                        observer.observe(GIF);
+                    });
+                }
+            });
+        }
+        window.addEventListener('DOMContentLoaded', (event) => {
+            playPauseVideo();
+        });   
     </script>
 
     @{/* Icons */}

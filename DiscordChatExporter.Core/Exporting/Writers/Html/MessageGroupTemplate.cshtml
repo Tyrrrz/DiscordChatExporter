@@ -66,20 +66,7 @@
             <div class="chatlog__message-aside">
                 @if (isSystemMessage)
                 {
-                    var iconUrl = message.Kind switch
-                    {
-                        MessageKind.RecipientAdd => "",
-                        MessageKind.RecipientRemove => "",
-                        MessageKind.Call =>"https://discord.com/assets/7f75ab26bc5deb393cd8db44d9fe14e7.svg",
-                        MessageKind.ChannelNameChange => "",
-                        MessageKind.ChannelIconChange => "",
-                        MessageKind.ChannelPinnedMessage => "https://discord.com/assets/1f57f1c100434d1ff6569a495ada213e.svg",
-                        MessageKind.GuildMemberJoin => "",
-                        _ => ""
-                    };
-
-
-                    <img class="chatlog__system-message-icon" src="@await ResolveUrlAsync(iconUrl)" alt="System message icon" loading="lazy">
+                    <svg class=chatlog__system-message-icon><use href="#icon-@Enum.GetName(typeof(MessageKind), message.Kind).ToLower()"></use></svg>
                 }
                 else if(isFirst)
                 {

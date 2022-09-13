@@ -54,8 +54,9 @@ public class EmbedSpecs : IClassFixture<ExportWrapperFixture>
         message
             .QuerySelectorAll("img")
             .Select(e => e.GetAttribute("src"))
+            .Where(s => s?.EndsWith("i.redd.it/f8w05ja8s4e61.png") ?? false)
             .Should()
-            .EndWith("i.redd.it/f8w05ja8s4e61.png");
+            .ContainSingle();
     }
 
     [Fact]
@@ -87,8 +88,9 @@ public class EmbedSpecs : IClassFixture<ExportWrapperFixture>
         message
             .QuerySelectorAll("source")
             .Select(e => e.GetAttribute("src"))
+            .Where(s => s?.EndsWith("media.tenor.com/DDAJeW6BQKkAAAPo/tooncasm-test-copy.mp4") ?? false)
             .Should()
-            .EndWith("media.tenor.com/DDAJeW6BQKkAAAPo/tooncasm-test-copy.mp4");
+            .ContainSingle();
     }
 
     [Fact]

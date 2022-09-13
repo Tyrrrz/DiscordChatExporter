@@ -28,12 +28,7 @@ internal class HtmlMessageWriter : MessageWriter
     private bool CanJoinGroup(Message message) =>
         // First message in the group can always join
         _messageGroup.LastOrDefault() is not { } lastMessage ||
-        // Group system messages only with eachother
-        ( 
-            message.Kind.IsSystemMessage() &&
-            lastMessage.Kind.IsSystemMessage()
-        ) ||
-        // Join non system messages
+        // Must be a non system message
         !message.Kind.IsSystemMessage() &&
         // Must be from the same author
         lastMessage.Author.Id == message.Author.Id &&
@@ -43,6 +38,13 @@ internal class HtmlMessageWriter : MessageWriter
         (message.Timestamp - lastMessage.Timestamp).Duration().TotalMinutes <= 7 &&
         // Other message must not be a reply
         message.Reference is null;
+
+    private bool CanJoinGroupSystemMessage(Message message) =>
+        // First message in the group can always join
+        _messageGroup.LastOrDefault() is not { } lastMessage ||
+        // Group system messages only with eachother
+        message.Kind.IsSystemMessage() &&
+        lastMessage.Kind.IsSystemMessage();
 
     // Use <!--wmm:ignore--> to preserve blocks of code inside the templates
     private string Minify(string html) => _minifier
@@ -84,7 +86,7 @@ internal class HtmlMessageWriter : MessageWriter
         await base.WriteMessageAsync(message, cancellationToken);
 
         // If the message can be grouped, buffer it for now
-        if (CanJoinGroup( message))
+        if (CanJoinGroup(message) || CanJoinGroupSystemMessage(message))
         {
             _messageGroup.Add(message);
         }

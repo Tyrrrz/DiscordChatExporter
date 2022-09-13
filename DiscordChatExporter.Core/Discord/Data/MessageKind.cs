@@ -17,6 +17,5 @@ public enum MessageKind
 public static class MessageKindExtensions
 {
     public static bool IsSystemMessage(this MessageKind c) => 
-        c != MessageKind.Default &&
-        c != MessageKind.Reply;
+        c is not MessageKind.Default and not MessageKind.Reply;
 }

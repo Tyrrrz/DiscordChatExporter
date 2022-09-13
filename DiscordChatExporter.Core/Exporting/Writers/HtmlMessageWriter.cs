@@ -34,9 +34,9 @@ internal class HtmlMessageWriter : MessageWriter
         }
 
 	    // Group system messages with other system messages, regardless of author
-	    if (message.Kind.IsSystemMessage())
+	    if (message.Kind.IsSystemMessage() && lastMessage.Kind.IsSystemMessage())
         {
-            return lastMessage.Kind.IsSystemMessage();
+            return true;
         }
 
         return

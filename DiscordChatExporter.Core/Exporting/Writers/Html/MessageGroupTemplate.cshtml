@@ -48,15 +48,21 @@
 {
     var isFirst = i == 0;
 
-    // Hide message content if it only contains a link to an image which is embedded, and nothing else
+    // Hide message content if it only contains a link to an embedded media, and nothing else
     var isContentHidden =
         message.Embeds.Count == 1 &&
-        message.Content.Trim() == PlainImageEmbedProjection.TryResolve(message.Embeds.Single())?.Url;
+        (
+            message.Content.Trim() == PlainImageEmbedProjection.TryResolve(message.Embeds.Single())?.Url ||
+            message.Content.Trim() == GifvEmbedProjection.TryResolve(message.Embeds.Single())?.Url
+        );
 
     var isReferencedContentHidden =
         message.ReferencedMessage is not null &&
         message.ReferencedMessage.Embeds.Count == 1 &&
-        message.ReferencedMessage.Content.Trim() == PlainImageEmbedProjection.TryResolve(message.ReferencedMessage.Embeds.Single())?.Url;
+        (
+            message.ReferencedMessage.Content.Trim() == PlainImageEmbedProjection.TryResolve(message.ReferencedMessage.Embeds.Single())?.Url ||
+            message.ReferencedMessage.Content.Trim() == GifvEmbedProjection.TryResolve(message.ReferencedMessage.Embeds.Single())?.Url
+        );
 
     <div id="chatlog__message-container-@message.Id" class="chatlog__message-container @(message.IsPinned ? "chatlog__message-container--pinned" : null)" data-message-id="@message.Id">
         <div class="chatlog__message">

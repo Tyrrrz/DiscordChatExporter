@@ -42,6 +42,9 @@ public partial record YouTubeVideoEmbedProjection
 
     public static YouTubeVideoEmbedProjection? TryResolve(Embed embed)
     {
+        if (embed.Kind != EmbedKind.Video)
+            return null;
+
         if (string.IsNullOrWhiteSpace(embed.Url))
             return null;
 

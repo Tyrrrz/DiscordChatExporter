@@ -48,22 +48,6 @@
 {
     var isFirst = i == 0;
 
-    // Hide message content if it only contains a link to an embedded media, and nothing else
-    var isContentHidden =
-        message.Embeds.Count == 1 &&
-        (
-            message.Content.Trim() == PlainImageEmbedProjection.TryResolve(message.Embeds.Single())?.Url ||
-            message.Content.Trim() == GifvEmbedProjection.TryResolve(message.Embeds.Single())?.Url
-        );
-
-    var isReferencedContentHidden =
-        message.ReferencedMessage is not null &&
-        message.ReferencedMessage.Embeds.Count == 1 &&
-        (
-            message.ReferencedMessage.Content.Trim() == PlainImageEmbedProjection.TryResolve(message.ReferencedMessage.Embeds.Single())?.Url ||
-            message.ReferencedMessage.Content.Trim() == GifvEmbedProjection.TryResolve(message.ReferencedMessage.Embeds.Single())?.Url
-        );
-
     <div id="chatlog__message-container-@message.Id" class="chatlog__message-container @(message.IsPinned ? "chatlog__message-container--pinned" : null)" data-message-id="@message.Id">
         <div class="chatlog__message">
             @{/* Left side */}
@@ -99,7 +83,7 @@
                                 <div class="chatlog__reference-author" style="@(referencedUserColor is not null ? $"color: rgb({referencedUserColor.Value.R}, {referencedUserColor.Value.G}, {referencedUserColor.Value.B})" : null)" title="@message.ReferencedMessage.Author.FullName">@referencedUserNick</div>
                                 <div class="chatlog__reference-content">
                                     <span class="chatlog__reference-link" onclick="scrollToMessage(event, '@message.ReferencedMessage.Id')">
-                                        @if (!string.IsNullOrWhiteSpace(message.ReferencedMessage.Content) && !isReferencedContentHidden)
+                                        @if (!string.IsNullOrWhiteSpace(message.ReferencedMessage.Content) && !message.ReferencedMessage.IsContentHidden())
                                         {
                                             <!--wmm:ignore-->@Raw(FormatEmbedMarkdown(message.ReferencedMessage.Content))<!--/wmm:ignore-->
                                         }
@@ -150,7 +134,7 @@
                 {
                     <div class="chatlog__content chatlog__markdown">
                         @{/* Text */}
-                        @if (!isContentHidden)
+                        @if (!message.IsContentHidden())
                         {
                             <span class="chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(FormatMarkdown(message.Content))<!--/wmm:ignore--></span>
                         }
@@ -214,29 +198,8 @@
                 @{/* Embeds */}
                 @foreach (var embed in message.Embeds)
                 {
-                    // Gifv embed
-                    if (embed.TryGetGifv() is { } gifvEmbed)
-                    {
-                        @if (!string.IsNullOrWhiteSpace(embed.Video?.Url))
-                        {
-                            <div class="chatlog__attachment">
-                                <video class="chatlog__attachment-media" loop width="@embed.Video.Width" height="@embed.Video.Height" onmouseover="this.play()" onmouseout="this.pause()">
-                                    <source src="@await ResolveUrlAsync(embed.Video.ProxyUrl ?? embed.Video.Url)" alt="Embedded video">
-                                </video>
-                            </div>
-                        }
-                    }
-                    // Plain image embed
-                    else if (embed.TryGetPlainImage() is { } plainImageEmbed)
-                    {
-                        <div class="chatlog__embed">
-                            <a href="@await ResolveUrlAsync(plainImageEmbed.Url)">
-                                <img class="chatlog__embed-plainimage" src="@await ResolveUrlAsync(plainImageEmbed.Url)" alt="Embedded image" loading="lazy">
-                            </a>
-                        </div>
-                    }
                     // Spotify embed
-                    else if (embed.TryGetSpotifyTrack() is { } spotifyTrackEmbed)
+                    if (embed.TryGetSpotifyTrack() is { } spotifyTrackEmbed)
                     {
                         <div class="chatlog__embed">
                             <div class="chatlog__embed-spotify-container">
@@ -312,7 +275,25 @@
                             </div>
                         </div>
                     }
-                    // Generic embed
+                    // Generic image embed
+                    else if (embed.Kind == EmbedKind.Image && !string.IsNullOrWhiteSpace(embed.Url))
+                    {
+                        <div class="chatlog__embed">
+                            <a href="@await ResolveUrlAsync(embed.Url)">
+                                <img class="chatlog__embed-generic-image" src="@await ResolveUrlAsync(embed.Url)" alt="Embedded image" loading="lazy">
+                            </a>
+                        </div>
+                    }
+                    // Generic gifv embed
+                    else if (embed.Kind == EmbedKind.Gifv && !string.IsNullOrWhiteSpace(embed.Video?.Url))
+                    {
+                        <div class="chatlog__embed">
+                            <video class="chatlog__embed-generic-gifv" loop width="@embed.Video.Width" height="@embed.Video.Height" onmouseover="this.play()" onmouseout="this.pause()">
+                                <source src="@await ResolveUrlAsync(embed.Video.ProxyUrl ?? embed.Video.Url)" alt="Embedded video">
+                            </video>
+                        </div>
+                    }
+                    // Rich embed
                     else
                     {
                         <div class="chatlog__embed">

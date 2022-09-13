@@ -21,6 +21,9 @@ public partial record SpotifyTrackEmbedProjection
 
     public static SpotifyTrackEmbedProjection? TryResolve(Embed embed)
     {
+        if (embed.Kind != EmbedKind.Link)
+            return null;
+
         if (string.IsNullOrWhiteSpace(embed.Url))
             return null;
 

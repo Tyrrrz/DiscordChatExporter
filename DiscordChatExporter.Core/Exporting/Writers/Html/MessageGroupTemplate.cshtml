@@ -97,7 +97,7 @@
                         @{/* System message content */}
                         @if(message.Kind == MessageKind.ChannelPinnedMessage)
                         {
-                            <span class="chatlog__system-message"> pinned</span><span class="chatlog__system-message-reference-link chatlog__reference-link" onclick="scrollToMessage(event, @message.Reference.MessageId)"> a message</span><span class="chatlog__system-message"> to this channel.</span>
+                            <span class="chatlog__system-message"> pinned</span><span class="chatlog__system-message-reference-link chatlog__reference-link" onclick="scrollToMessage(event, '@message.Reference.MessageId')"> a message</span><span class="chatlog__system-message"> to this channel.</span>
                         }
                         else
                         {

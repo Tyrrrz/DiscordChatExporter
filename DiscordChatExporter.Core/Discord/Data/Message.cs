@@ -44,7 +44,7 @@ public record Message(
         {
             var embed = embeds[i];
 
-            if (embed.Url?.Contains("://twitter.com/") == true)
+            if (embed.Url?.Contains("://twitter.com/", StringComparison.OrdinalIgnoreCase) == true)
             {
                 // Find embeds with the same URL that only contain a single image and nothing else
                 var trailingEmbeds = embeds

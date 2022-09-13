@@ -11,7 +11,7 @@ namespace DiscordChatExporter.Core.Discord.Data.Embeds;
 // https://discord.com/developers/docs/resources/channel#embed-object
 public partial record Embed(
     string? Title,
-    string? Type,
+    EmbedKind Kind,
     string? Url,
     DateTimeOffset? Timestamp,
     Color? Color,
@@ -23,17 +23,11 @@ public partial record Embed(
     EmbedVideo? Video,
     EmbedFooter? Footer)
 {
-    public PlainImageEmbedProjection? TryGetPlainImage() =>
-        PlainImageEmbedProjection.TryResolve(this);
-
     public SpotifyTrackEmbedProjection? TryGetSpotifyTrack() =>
         SpotifyTrackEmbedProjection.TryResolve(this);
 
     public YouTubeVideoEmbedProjection? TryGetYouTubeVideo() =>
         YouTubeVideoEmbedProjection.TryResolve(this);
-
-    public GifvEmbedProjection? TryGetGifv() =>
-        GifvEmbedProjection.TryResolve(this);
 }
 
 public partial record Embed
@@ -41,10 +35,20 @@ public partial record Embed
     public static Embed Parse(JsonElement json)
     {
         var title = json.GetPropertyOrNull("title")?.GetStringOrNull();
-        var type = json.GetPropertyOrNull("type")?.GetStringOrNull();
+
+        var kind =
+            json.GetPropertyOrNull("type")?.GetStringOrNull()?.Pipe(s => Enum.Parse<EmbedKind>(s, true)) ??
+            EmbedKind.Rich;
+
         var url = json.GetPropertyOrNull("url")?.GetNonWhiteSpaceStringOrNull();
         var timestamp = json.GetPropertyOrNull("timestamp")?.GetDateTimeOffset();
-        var color = json.GetPropertyOrNull("color")?.GetInt32OrNull()?.Pipe(System.Drawing.Color.FromArgb).ResetAlpha();
+
+        var color = json
+            .GetPropertyOrNull("color")?
+            .GetInt32OrNull()?
+            .Pipe(System.Drawing.Color.FromArgb)
+            .ResetAlpha();
+
         var author = json.GetPropertyOrNull("author")?.Pipe(EmbedAuthor.Parse);
         var description = json.GetPropertyOrNull("description")?.GetStringOrNull();
 
@@ -71,7 +75,7 @@ public partial record Embed
 
         return new Embed(
             title,
-            type,
+            kind,
             url,
             timestamp,
             color,

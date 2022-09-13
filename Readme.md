@@ -65,6 +65,7 @@ The following table lists all available download options:
           <li>🟠 <a href="https://github.com/Tyrrrz/DiscordChatExporter/actions/workflows/main.yml">CI build</a> (<code>DiscordChatExporter.CLI.zip</code>)</li>
           <li>🐋 <a href="https://hub.docker.com/r/tyrrrz/discordchatexporter">Docker</a> (<code>tyrrrz/discordchatexporter</code>)</li>
           <li>📦 <a href="https://aur.archlinux.org/packages/discord-chat-exporter-cli">AUR</a> (<code>discord-chat-exporter-cli</code>)</li>
+          <li>📦 <a href="https://search.nixos.org/packages?query=discordchatexporter-cli">Nix</a> (<code>discordchatexporter-cli</code>)</li>
         </ul>
       </td>
       <td>
@@ -79,15 +80,19 @@ The following table lists all available download options:
 </table>
 
 > **Note**:
-> **DiscordChatExporter**'s AUR package is maintained by the community.
+> AUR and Nix packages linked above are maintained by the community.
+> If you have any issues with them, please contact the corresponding maintainers.
 
 > **Warning**:
-> To run **DiscordChatExporter** on macOS or Linux, you will need to additionally install **.NET Runtime v6**:
+> To run **DiscordChatExporter** on macOS and Linux, you need to make sure that **.NET Runtime v6** is installed.
+> You can download it here:
+>
 > - [.NET Runtime v6 for **macOS x64**](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-6.0.6-macos-x64-installer)
 > - [.NET Runtime v6 for **macOS Arm64**](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-6.0.6-macos-arm64-installer)
 > - [.NET Runtime v6 for **Linux**](https://docs.microsoft.com/en-us/dotnet/core/install/linux) (find the correct download for your distro)
 >
-> This is not required if you installed **DiscordChatExporter** using a package manager, or if you plan to run **DiscordChatExporter** via Docker.
+> This should not be necessary if you install **DiscordChatExporter** using a package manager, as it should take care of the dependencies for you.
+> This is also not necessary if you are running **DiscordChatExporter** via Docker, because the image already contains the runtime.
 
 ## Features
 

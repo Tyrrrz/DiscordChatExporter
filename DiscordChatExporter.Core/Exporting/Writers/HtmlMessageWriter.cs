@@ -34,14 +34,16 @@ internal class HtmlMessageWriter : MessageWriter
         }
 
 	    // Group system messages with other system messages, regardless of author
-	    if (message.Kind.IsSystemMessage() && lastMessage.Kind.IsSystemMessage())
+	    if (message.Kind.IsSystemMessage())
         {
-            return true;
+            return lastMessage.Kind.IsSystemMessage();
         }
 
         return
         // Must be a non system message
         !message.Kind.IsSystemMessage() &&
+        // Last message must be a non system message
+        !lastMessage.Kind.IsSystemMessage() &&
         // Must be from the same author
         lastMessage.Author.Id == message.Author.Id &&
         // Author's name must not have changed between messages

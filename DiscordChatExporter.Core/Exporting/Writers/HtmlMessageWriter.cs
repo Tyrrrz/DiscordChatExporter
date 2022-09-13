@@ -25,9 +25,23 @@ internal class HtmlMessageWriter : MessageWriter
         _themeName = themeName;
     }
 
-    private bool CanJoinGroup(Message message) =>
+    private bool CanJoinGroup(Message message)
+    {
         // First message in the group can always join
-        _messageGroup.LastOrDefault() is not { } lastMessage ||
+        if(_messageGroup.LastOrDefault() is not { } lastMessage)
+        {
+            return true;
+        }
+
+	    // Group system messages with other system messages, regardless of author
+	    if (message.Kind.IsSystemMessage())
+        {
+            return lastMessage.Kind.IsSystemMessage();
+        }
+
+        return
+        // Must be a non system message
+        !message.Kind.IsSystemMessage() &&
         // Must be from the same author
         lastMessage.Author.Id == message.Author.Id &&
         // Author's name must not have changed between messages
@@ -36,6 +50,7 @@ internal class HtmlMessageWriter : MessageWriter
         (message.Timestamp - lastMessage.Timestamp).Duration().TotalMinutes <= 7 &&
         // Other message must not be a reply
         message.Reference is null;
+    }
 
     // Use <!--wmm:ignore--> to preserve blocks of code inside the templates
     private string Minify(string html) => _minifier
@@ -77,7 +92,7 @@ internal class HtmlMessageWriter : MessageWriter
         await base.WriteMessageAsync(message, cancellationToken);
 
         // If the message can be grouped, buffer it for now
-        if (CanJoinGroup( message))
+        if (CanJoinGroup(message))
         {
             _messageGroup.Add(message);
         }

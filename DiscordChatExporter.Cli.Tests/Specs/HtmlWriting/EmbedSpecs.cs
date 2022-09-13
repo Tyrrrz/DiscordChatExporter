@@ -55,7 +55,7 @@ public class EmbedSpecs : IClassFixture<ExportWrapperFixture>
             .QuerySelectorAll("img")
             .Select(e => e.GetAttribute("src"))
             .Should()
-            .Contain("https://i.redd.it/f8w05ja8s4e61.png");
+            .EndWith("i.redd.it/f8w05ja8s4e61.png");
     }
 
     [Fact]
@@ -67,6 +67,37 @@ public class EmbedSpecs : IClassFixture<ExportWrapperFixture>
         var message = await _exportWrapper.GetMessageAsHtmlAsync(
             ChannelIds.EmbedTestCases,
             Snowflake.Parse("991768701126852638")
+        );
+
+        // Assert
+        var content = message.QuerySelector(".chatlog__content")?.Text();
+        content.Should().BeNullOrEmpty();
+    }
+
+    [Fact]
+    public async Task Message_containing_a_gifv_link_is_rendered_with_a_video_embed()
+    {
+        // Act
+        var message = await _exportWrapper.GetMessageAsHtmlAsync(
+            ChannelIds.EmbedTestCases,
+            Snowflake.Parse("1019234520349814794")
+        );
+
+        // Assert
+        message
+            .QuerySelectorAll("source")
+            .Select(e => e.GetAttribute("src"))
+            .Should()
+            .EndWith("media.tenor.com/DDAJeW6BQKkAAAPo/tooncasm-test-copy.mp4");
+    }
+
+    [Fact]
+    public async Task Message_containing_a_gifv_link_and_nothing_else_is_rendered_without_text_content()
+    {
+        // Act
+        var message = await _exportWrapper.GetMessageAsHtmlAsync(
+            ChannelIds.EmbedTestCases,
+            Snowflake.Parse("1019234520349814794")
         );
 
         // Assert

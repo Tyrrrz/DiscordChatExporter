@@ -1,4 +1,6 @@
-﻿namespace DiscordChatExporter.Core.Discord.Data;
+﻿using System.Text.RegularExpressions;
+
+namespace DiscordChatExporter.Core.Discord.Data;
 
 // https://discord.com/developers/docs/resources/channel#message-object-message-types
 public enum MessageKind
@@ -18,4 +20,8 @@ public static class MessageKindExtensions
 {
     public static bool IsSystemMessage(this MessageKind c) => 
         c is not MessageKind.Default and not MessageKind.Reply;
+
+    public static string ToCssIdFormat(this MessageKind c) =>
+        string.Join("-", Regex.Split(c.ToString(), @"(?<!^)(?=[A-Z])")).ToLowerInvariant();
+
 }

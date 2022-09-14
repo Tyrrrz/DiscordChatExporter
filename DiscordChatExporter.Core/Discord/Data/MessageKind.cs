@@ -11,6 +11,7 @@ public enum MessageKind
     ChannelIconChange = 5,
     ChannelPinnedMessage = 6,
     GuildMemberJoin = 7,
+    ThreadCreated = 18,
     Reply = 19
 }
 

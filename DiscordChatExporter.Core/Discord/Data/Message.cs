@@ -107,6 +107,7 @@ public record Message(
             MessageKind.ChannelNameChange => "Changed the channel name.",
             MessageKind.ChannelIconChange => "Changed the channel icon.",
             MessageKind.ChannelPinnedMessage => "Pinned a message.",
+            MessageKind.ThreadCreated => "Started a thread.",
             MessageKind.GuildMemberJoin => "Joined the server.",
             _ => json.GetPropertyOrNull("content")?.GetStringOrNull() ?? ""
         };

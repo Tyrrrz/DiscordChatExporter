@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
+using System.Security.Authentication;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Utils.Extensions;
 using Polly;
@@ -21,7 +22,7 @@ public static class Http
 
     private static bool IsRetryableException(Exception exception) =>
         exception.GetSelfAndChildren().Any(ex =>
-            ex is TimeoutException or SocketException ||
+            ex is TimeoutException or SocketException or AuthenticationException ||
             ex is HttpRequestException hrex && IsRetryableStatusCode(hrex.TryGetStatusCode() ?? HttpStatusCode.OK)
         );
 

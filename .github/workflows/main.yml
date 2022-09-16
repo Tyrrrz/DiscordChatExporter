@@ -18,8 +18,7 @@ jobs:
       - name: Install .NET
         uses: actions/setup-dotnet@v2
         with:
-          # Fixed version, workaround for https://github.com/dotnet/core/issues/7176
-          dotnet-version: 6.0.100
+          dotnet-version: 6.0.x
 
       - name: Run tests
         # Tests need access to secrets, so we can't run them against PRs because of limited trust
@@ -50,8 +49,7 @@ jobs:
       - name: Install .NET
         uses: actions/setup-dotnet@v2
         with:
-          # Fixed version, workaround for https://github.com/dotnet/core/issues/7176
-          dotnet-version: 6.0.100
+          dotnet-version: 6.0.x
 
       - name: Publish (CLI)
         run: dotnet publish DiscordChatExporter.Cli/ -o DiscordChatExporter.Cli/bin/Publish/ --configuration Release

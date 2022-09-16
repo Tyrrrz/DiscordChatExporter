@@ -10,7 +10,7 @@ using JsonExtensions.Reading;
 namespace DiscordChatExporter.Core.Discord.Data;
 
 // https://discord.com/developers/docs/resources/channel#message-object
-public record Message(
+public partial record Message(
     Snowflake Id,
     MessageKind Kind,
     User Author,
@@ -26,6 +26,16 @@ public record Message(
     IReadOnlyList<User> MentionedUsers,
     MessageReference? Reference,
     Message? ReferencedMessage) : IHasId
+{
+    public bool IsEmpty =>
+        Kind == MessageKind.Default &&
+        string.IsNullOrEmpty(Content) &&
+        !Attachments.Any() &&
+        !Embeds.Any() &&
+        !Stickers.Any();
+}
+
+public partial record Message
 {
     private static IReadOnlyList<Embed> NormalizeEmbeds(IReadOnlyList<Embed> embeds)
     {

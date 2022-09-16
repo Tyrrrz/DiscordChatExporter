@@ -2,7 +2,6 @@
 
 public enum TokenKind
 {
-    Unknown,
     User,
     Bot
 }

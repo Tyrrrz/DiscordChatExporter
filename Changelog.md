@@ -1,3 +1,9 @@
+### v2.36 (16-Sep-2022)
+
+- [HTML] Added support for rendering GIFV embeds. They will now render as videos that automatically play when you hover your mouse over them. (Thanks [@gan-of-culture](https://github.com/gan-of-culture))
+- [HTML] Added support for rendering system notification messages, such as when a user joins a server or when a messages gets pinned. Previously, such messages were rendered as regular text messages, but now they look similar to how they're presented in the Discord client. (Thanks [@gan-of-culture](https://github.com/gan-of-culture))
+- [CLI] Improved the wording of the error message that's shown when exporting multiple channels and the provided output path is ambiguous. It now mentions that you can resolve the ambiguity by adding a slash at the end of the path.
+
 ### v2.35.2 (08-Sep-2022)
 
 - Updated usage guide to mention the need to enable "Message Content Intent" to use a bot as a medium for exporting messages.

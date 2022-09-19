@@ -37,7 +37,7 @@ public partial record Embed
         var title = json.GetPropertyOrNull("title")?.GetStringOrNull();
 
         var kind =
-            json.GetPropertyOrNull("type")?.GetStringOrNull()?.Pipe(s => Enum.Parse<EmbedKind>(s, true)) ??
+            json.GetPropertyOrNull("type")?.GetStringOrNull()?.ParseEnumOrNull<EmbedKind>() ??
             EmbedKind.Rich;
 
         var url = json.GetPropertyOrNull("url")?.GetNonWhiteSpaceStringOrNull();

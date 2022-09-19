@@ -71,13 +71,13 @@
                         <span class="chatlog__author" style="@(userColor is not null ? $"color: rgb({userColor.Value.R}, {userColor.Value.G}, {userColor.Value.B})" : null)" title="@message.Author.FullName" data-user-id="@message.Author.Id">@userNick</span>
 
                         @{/* System notification content */}
-                        @if(message.Kind == MessageKind.ChannelPinnedMessage)
+                        @if (message.Kind == MessageKind.ChannelPinnedMessage)
                         {
                             <span class="chatlog__system-notification"> pinned</span>
                             <span class="chatlog__system-notification-reference-link chatlog__reference-link" onclick="scrollToMessage(event, '@message.Reference?.MessageId')"> a message</span>
                             <span class="chatlog__system-notification"> to this channel.</span>
                         }
-                        else
+                        else if (!string.IsNullOrWhiteSpace(message.Content))
                         {
                             <span class="chatlog__system-notification">@(char.ToLowerInvariant(message.Content[0]) + message.Content[1..])</span>
                         }

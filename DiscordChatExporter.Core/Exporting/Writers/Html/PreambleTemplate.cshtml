@@ -69,6 +69,7 @@
             font-family: Whitney, "Helvetica Neue", Helvetica, Arial, sans-serif;
             font-size: 17px;
             font-weight: @Themed("400", "500");
+            scroll-behavior: smooth;
         }
 
         a {
@@ -254,18 +255,36 @@
             unicode-bidi: bidi-override;
         }
 
-        .chatlog__system-notification {
+        .chatlog__system-notification-icon {
+            width: 18px;
+            height: 18px;
+        }
+
+        .chatlog__system-notification-author {
+            font-weight: @Themed("500", "600");
+            color: @Themed("#ffffff", "#2f3136");
+        }
+
+        .chatlog__system-notification-content {
             color: @Themed("#96989d", "#5e6772")
         }
 
-        .chatlog__system-notification-reference-link {
+        .chatlog__system-notification-link {
             font-weight: 500;
             color: @Themed("#ffffff", "#2f3136");
         }
 
-        .chatlog__system-notification-icon {
-            width: 18px;
-            height: 18px;
+        .chatlog__system-notification-timestamp {
+            margin-left: 0.3rem;
+            color: @Themed("#a3a6aa", "#5e6772");
+            font-size: 0.75rem;
+            font-weight: 500;
+            direction: ltr;
+            unicode-bidi: bidi-override;
+        }
+
+        .chatlog__system-notification-timestamp a {
+            color: inherit;
         }
 
         .chatlog__header {
@@ -300,7 +319,7 @@
         }
 
         .chatlog__timestamp a {
-            color: @Themed("#a3a6aa", "#5e6772");
+            color: inherit;
         }
 
         .chatlog__content {

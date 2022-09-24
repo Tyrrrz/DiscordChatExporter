@@ -10,8 +10,6 @@
 @inherits MiniRazor.TemplateBase<MessageGroupTemplateContext>
 
 @{
-    var firstMessage = Model.Messages.First();
-
     ValueTask<string> ResolveUrlAsync(string url) => Model.ExportContext.ResolveMediaUrlAsync(url);
 
     string FormatDate(DateTimeOffset date) => Model.ExportContext.FormatDate(date);
@@ -19,6 +17,8 @@
     string FormatMarkdown(string markdown) => Model.FormatMarkdown(markdown);
 
     string FormatEmbedMarkdown(string markdown) => Model.FormatMarkdown(markdown, false);
+
+    var firstMessage = Model.Messages.First();
 
     var userMember = Model.ExportContext.TryGetMember(firstMessage.Author.Id);
 
@@ -62,29 +62,31 @@
                     : userMember?.Nick ?? message.Author.Name;
 
                 <div class="chatlog__message-aside">
-                    <svg class=chatlog__system-notification-icon><use href="#@message.Kind.ToString().ToDashCase().ToLowerInvariant()-icon"></use></svg>
+                    <svg class="chatlog__system-notification-icon"><use href="#@message.Kind.ToString().ToDashCase().ToLowerInvariant()-icon"></use></svg>
                 </div>
 
                 <div class="chatlog__message-primary">
-                    <div class="chatlog__header">
-                        @{/* Author name */}
-                        <span class="chatlog__author" style="@(userColor is not null ? $"color: rgb({userColor.Value.R}, {userColor.Value.G}, {userColor.Value.B})" : null)" title="@message.Author.FullName" data-user-id="@message.Author.Id">@userNick</span>
+                    @{/* Author name */}
+                    <span class="chatlog__system-notification-author" style="@(userColor is not null ? $"color: rgb({userColor.Value.R}, {userColor.Value.G}, {userColor.Value.B})" : null)" title="@message.Author.FullName" data-user-id="@message.Author.Id">@userNick</span>
 
-                        @{/* System notification content */}
-                        @if (message.Kind == MessageKind.ChannelPinnedMessage)
+                    @{/* System notification content */}
+                    <span class="chatlog__system-notification-content">
+                        @if (message.Kind == MessageKind.ChannelPinnedMessage && message.Reference is not null)
                         {
-                            <span class="chatlog__system-notification"> pinned</span>
-                            <span class="chatlog__system-notification-reference-link chatlog__reference-link" onclick="scrollToMessage(event, '@message.Reference?.MessageId')"> a message</span>
-                            <span class="chatlog__system-notification"> to this channel.</span>
+                            <span> pinned</span>
+                            <a class="chatlog__system-notification-link" href="#chatlog__message-container-@message.Reference.MessageId"> a message</a>
+                            <span> to this channel.</span>
                         }
-                        else if (!string.IsNullOrWhiteSpace(message.Content))
+                        else
                         {
-                            <span class="chatlog__system-notification">@(char.ToLowerInvariant(message.Content[0]) + message.Content[1..])</span>
+                            <span>@message.Content.ToLowerInvariant()</span>
                         }
+                    </span>
 
-                        @{/* Timestamp */}
-                        <span class="chatlog__timestamp"><a href="#chatlog__message-container-@message.Id">@FormatDate(message.Timestamp)</a></span>
-                    </div>
+                    @{/* Timestamp */}
+                    <span class="chatlog__system-notification-timestamp">
+                        <a href="#chatlog__message-container-@message.Id">@FormatDate(message.Timestamp)</a>
+                    </span>
                 </div>
             }
             // Regular message
@@ -168,11 +170,11 @@
                     }
 
                     @{/* Content */}
-                    @if (!string.IsNullOrWhiteSpace(message.Content) || message.EditedTimestamp is not null)
+                    @if ((!string.IsNullOrWhiteSpace(message.Content) && !message.IsContentHidden()) || message.EditedTimestamp is not null)
                     {
                         <div class="chatlog__content chatlog__markdown">
                             @{/* Text */}
-                            @if (!message.IsContentHidden())
+                            @if (!string.IsNullOrWhiteSpace(message.Content) && !message.IsContentHidden())
                             {
                                 <span class="chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(FormatMarkdown(message.Content))<!--/wmm:ignore--></span>
                             }

@@ -42,7 +42,7 @@ internal class ExportContext
     {
         "unix" => date.ToUnixTimeSeconds().ToString(),
         "unixms" => date.ToUnixTimeMilliseconds().ToString(),
-        var dateFormat => date.ToLocalString(dateFormat)
+        var format => date.ToLocalString(format)
     };
 
     public Member? TryGetMember(Snowflake id) => Members.FirstOrDefault(m => m.Id == id);

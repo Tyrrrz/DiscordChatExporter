@@ -1,3 +1,10 @@
+### v2.36.1 (24-Sep-2022)
+
+- Added a check which will trigger an error if the provided bot account does not have the message content intent enabled. Note, however, that this check is based on heuristics which may result in false negatives.
+- Fixed an issue where certain transient HTTP errors were not retried.
+- Fixed an issue which caused the export process to fail with the `IndexOutOfRangeException` exception on certain automated messages.
+- Fixed an issue which caused the export process to fail on unrecognized embed types.
+
 ### v2.36 (16-Sep-2022)
 
 - [HTML] Added support for rendering GIFV embeds. They will now render as videos that automatically play when you hover your mouse over them. (Thanks [@gan-of-culture](https://github.com/gan-of-culture))

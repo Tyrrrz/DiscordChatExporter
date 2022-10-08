@@ -52,10 +52,10 @@ jobs:
           dotnet-version: 6.0.x
 
       - name: Publish (CLI)
-        run: dotnet publish DiscordChatExporter.Cli/ -o DiscordChatExporter.Cli/bin/Publish/ --configuration Release
+        run: dotnet publish DiscordChatExporter.Cli/ -o DiscordChatExporter.Cli/bin/Publish/ --configuration Release /p:PublishTrimmed=true
 
       - name: Publish (GUI)
-        run: dotnet publish DiscordChatExporter.Gui/ -o DiscordChatExporter.Gui/bin/Publish/ --configuration Release
+        run: dotnet publish DiscordChatExporter.Gui/ -o DiscordChatExporter.Gui/bin/Publish/ --configuration Release /p:PublishTrimmed=true
 
       - name: Upload artifacts (CLI)
         uses: actions/upload-artifact@v3

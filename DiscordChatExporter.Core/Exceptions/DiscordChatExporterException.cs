@@ -41,7 +41,4 @@ Failed to perform an HTTP request.
 
     internal static DiscordChatExporterException ChannelIsEmpty() =>
         new("No messages found for the specified period.");
-
-    internal static DiscordChatExporterException MessageContentIntentMissing() =>
-        new("Failed to retrieve message content because the bot doesn't have the Message Content Intent enabled.");
 }

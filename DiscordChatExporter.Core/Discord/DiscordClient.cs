@@ -323,11 +323,6 @@ public class DiscordClient
                 if (message.Timestamp > lastMessage.Timestamp)
                     yield break;
 
-                // Make sure the messages are not empty when exporting via a bot
-                // https://github.com/Tyrrrz/DiscordChatExporter/issues/918
-                if (_resolvedTokenKind == TokenKind.Bot && message.IsEmpty && !message.Author.IsBot)
-                    throw DiscordChatExporterException.MessageContentIntentMissing();
-
                 // Report progress based on the duration of exported messages divided by total
                 if (progress is not null)
                 {

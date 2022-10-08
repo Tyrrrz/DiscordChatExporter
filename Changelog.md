@@ -1,3 +1,8 @@
+### v2.36.2 (08-Oct-2022)
+
+- Removed the message content intent check because the heuristics turned out to be not reliable enough.
+- Fixed an issue where the runtime manifest included the wrong target runtime version. This resulted in the application failing to launch for some users when upgrading from earlier versions.
+
 ### v2.36.1 (24-Sep-2022)
 
 - Added a check which will trigger an error if the provided bot account does not have the message content intent enabled. Note, however, that this check is based on heuristics which may result in false negatives.

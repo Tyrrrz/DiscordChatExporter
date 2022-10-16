@@ -12,7 +12,9 @@ RUN dotnet publish DiscordChatExporter.Cli -c Release -o ./publish
 # Run
 FROM mcr.microsoft.com/dotnet/runtime:6.0 AS run
 
-COPY --from=build ./publish ./
+COPY --from=build ./publish /opt/dce
 
-WORKDIR ./out
-ENTRYPOINT ["dotnet", "/DiscordChatExporter.Cli.dll"]
+RUN useradd dce
+USER dce
+WORKDIR /out
+ENTRYPOINT ["dotnet", "/opt/dce/DiscordChatExporter.Cli.dll"]

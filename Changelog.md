@@ -1,3 +1,8 @@
+### v2.36.3 (21-Oct-2022)
+
+- [GUI] Fixed an issue where opening a dialog did not prevent user interactions with background UI elements using keyboard. This sometimes caused the application to crash in weird ways.
+- [Docker] Fixed an issue where DiscordChatExporter was running as root inside the container, making the exported files inaccessible to the host. (Thanks [@Benjamin Just](https://github.com/BamButz))
+
 ### v2.36.2 (08-Oct-2022)
 
 - Removed the message content intent check because the heuristics turned out to be not reliable enough.

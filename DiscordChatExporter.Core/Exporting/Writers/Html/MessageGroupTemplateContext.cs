@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors;
 
@@ -16,6 +17,6 @@ internal class MessageGroupTemplateContext
         Messages = messages;
     }
 
-    public string FormatMarkdown(string? markdown, bool isJumboAllowed = true) =>
+    public ValueTask<string> FormatMarkdown(string? markdown, bool isJumboAllowed = true) => 
         HtmlMarkdownVisitor.Format(ExportContext, markdown ?? "", isJumboAllowed);
 }

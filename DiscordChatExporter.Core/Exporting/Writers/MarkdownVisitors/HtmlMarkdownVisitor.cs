@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Markdown;
 using DiscordChatExporter.Core.Markdown.Parsing;
@@ -29,7 +30,7 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
         return base.VisitText(text);
     }
 
-    protected override MarkdownNode VisitFormatting(FormattingNode formatting)
+    protected override ValueTask<MarkdownNode> VisitFormatting(FormattingNode formatting)
     {
         var (tagOpen, tagClose) = formatting.Kind switch
         {
@@ -97,7 +98,7 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
         return base.VisitMultiLineCodeBlock(multiLineCodeBlock);
     }
 
-    protected override MarkdownNode VisitLink(LinkNode link)
+    protected override ValueTask<MarkdownNode> VisitLink(LinkNode link)
     {
         // Try to extract message ID if the link refers to a Discord message
         var linkedMessageId = Regex.Match(
@@ -117,15 +118,15 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
         return result;
     }
 
-    protected override MarkdownNode VisitEmoji(EmojiNode emoji)
+    protected override async ValueTask<MarkdownNode> VisitEmoji(EmojiNode emoji)
     {
         var emojiImageUrl = Emoji.GetImageUrl(emoji.Id, emoji.Name, emoji.IsAnimated);
         var jumboClass = _isJumbo ? "chatlog__emoji--large" : "";
 
         _buffer
-            .Append($"<img loading=\"lazy\" class=\"chatlog__emoji {jumboClass}\" alt=\"{emoji.Name}\" title=\"{emoji.Code}\" src=\"{emojiImageUrl}\">");
+            .Append($"<img loading=\"lazy\" class=\"chatlog__emoji {jumboClass}\" alt=\"{emoji.Name}\" title=\"{emoji.Code}\" src=\"{await _context.ResolveMediaUrlAsync(emojiImageUrl)}\">");
 
-        return base.VisitEmoji(emoji);
+        return await base.VisitEmoji(emoji);
     }
 
     protected override MarkdownNode VisitMention(MentionNode mention)
@@ -210,7 +211,7 @@ internal partial class HtmlMarkdownVisitor
 {
     private static string HtmlEncode(string text) => WebUtility.HtmlEncode(text);
 
-    public static string Format(ExportContext context, string markdown, bool isJumboAllowed = true)
+    public static async ValueTask<string> Format(ExportContext context, string markdown, bool isJumboAllowed = true)
     {
         var nodes = MarkdownParser.Parse(markdown);
 
@@ -220,7 +221,7 @@ internal partial class HtmlMarkdownVisitor
 
         var buffer = new StringBuilder();
 
-        new HtmlMarkdownVisitor(context, buffer, isJumbo).Visit(nodes);
+        await new HtmlMarkdownVisitor(context, buffer, isJumbo).Visit(nodes);
 
         return buffer.ToString();
     }

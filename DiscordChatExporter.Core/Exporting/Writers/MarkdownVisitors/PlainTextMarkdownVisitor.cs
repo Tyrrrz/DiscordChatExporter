@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Threading.Tasks;
 using DiscordChatExporter.Core.Markdown;
 using DiscordChatExporter.Core.Markdown.Parsing;
 using DiscordChatExporter.Core.Utils.Extensions;
@@ -22,7 +23,7 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
         return base.VisitText(text);
     }
 
-    protected override MarkdownNode VisitEmoji(EmojiNode emoji)
+    protected override ValueTask<MarkdownNode> VisitEmoji(EmojiNode emoji)
     {
         _buffer.Append(
             emoji.IsCustomEmoji
@@ -86,12 +87,12 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
 
 internal partial class PlainTextMarkdownVisitor
 {
-    public static string Format(ExportContext context, string markdown)
+    public static async ValueTask<string> Format(ExportContext context, string markdown)
     {
         var nodes = MarkdownParser.ParseMinimal(markdown);
         var buffer = new StringBuilder();
 
-        new PlainTextMarkdownVisitor(context, buffer).Visit(nodes);
+        await new PlainTextMarkdownVisitor(context, buffer).Visit(nodes);
 
         return buffer.ToString();
     }

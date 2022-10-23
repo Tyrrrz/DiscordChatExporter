@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DiscordChatExporter.Core.Markdown.Parsing;
 
@@ -8,9 +9,9 @@ internal abstract class MarkdownVisitor
     protected virtual MarkdownNode VisitText(TextNode text) =>
         text;
 
-    protected virtual MarkdownNode VisitFormatting(FormattingNode formatting)
+    protected virtual async ValueTask<MarkdownNode> VisitFormatting(FormattingNode formatting)
     {
-        Visit(formatting.Children);
+        await Visit(formatting.Children);
         return formatting;
     }
 
@@ -20,14 +21,13 @@ internal abstract class MarkdownVisitor
     protected virtual MarkdownNode VisitMultiLineCodeBlock(MultiLineCodeBlockNode multiLineCodeBlock) =>
         multiLineCodeBlock;
 
-    protected virtual MarkdownNode VisitLink(LinkNode link)
+    protected virtual async ValueTask<MarkdownNode> VisitLink(LinkNode link)
     {
-        Visit(link.Children);
+        await Visit(link.Children);
         return link;
     }
 
-    protected virtual MarkdownNode VisitEmoji(EmojiNode emoji) =>
-        emoji;
+    protected virtual ValueTask<MarkdownNode> VisitEmoji(EmojiNode emoji) => new(emoji);
 
     protected virtual MarkdownNode VisitMention(MentionNode mention) =>
         mention;
@@ -35,22 +35,22 @@ internal abstract class MarkdownVisitor
     protected virtual MarkdownNode VisitUnixTimestamp(UnixTimestampNode timestamp) =>
         timestamp;
 
-    public MarkdownNode Visit(MarkdownNode node) => node switch
+    public async ValueTask<MarkdownNode> Visit(MarkdownNode node) => node switch
     {
         TextNode text => VisitText(text),
-        FormattingNode formatting => VisitFormatting(formatting),
+        FormattingNode formatting => await VisitFormatting(formatting),
         InlineCodeBlockNode inlineCodeBlock => VisitInlineCodeBlock(inlineCodeBlock),
         MultiLineCodeBlockNode multiLineCodeBlock => VisitMultiLineCodeBlock(multiLineCodeBlock),
-        LinkNode link => VisitLink(link),
-        EmojiNode emoji => VisitEmoji(emoji),
+        LinkNode link => await VisitLink(link),
+        EmojiNode emoji => await VisitEmoji(emoji),
         MentionNode mention => VisitMention(mention),
         UnixTimestampNode timestamp => VisitUnixTimestamp(timestamp),
         _ => throw new ArgumentOutOfRangeException(nameof(node))
     };
 
-    public void Visit(IEnumerable<MarkdownNode> nodes)
+    public async ValueTask Visit(IEnumerable<MarkdownNode> nodes)
     {
         foreach (var node in nodes)
-            Visit(node);
+            await Visit(node);
     }
 }

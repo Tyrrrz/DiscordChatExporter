@@ -30,7 +30,7 @@ internal class JsonMessageWriter : MessageWriter
     }
 
     private ValueTask<string> FormatMarkdown(string? markdown) =>
-        PlainTextMarkdownVisitor.Format(Context, markdown ?? "");
+        PlainTextMarkdownVisitor.FormatAsync(Context, markdown ?? "");
 
     private async ValueTask WriteAttachmentAsync(
         Attachment attachment,

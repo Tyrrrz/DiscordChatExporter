@@ -17,6 +17,6 @@ internal class MessageGroupTemplateContext
         Messages = messages;
     }
 
-    public ValueTask<string> FormatMarkdown(string? markdown, bool isJumboAllowed = true) => 
-        HtmlMarkdownVisitor.Format(ExportContext, markdown ?? "", isJumboAllowed);
+    public ValueTask<string> FormatMarkdownAsync(string? markdown, bool isJumboAllowed = true) => 
+        HtmlMarkdownVisitor.FormatAsync(ExportContext, markdown ?? "", isJumboAllowed);
 }

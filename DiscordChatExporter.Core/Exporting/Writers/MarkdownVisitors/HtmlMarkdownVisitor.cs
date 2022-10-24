@@ -24,13 +24,13 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
         _isJumbo = isJumbo;
     }
 
-    protected override MarkdownNode VisitText(TextNode text)
+    protected override ValueTask<MarkdownNode> VisitTextAsync(TextNode text)
     {
         _buffer.Append(HtmlEncode(text.Text));
-        return base.VisitText(text);
+        return base.VisitTextAsync(text);
     }
 
-    protected override ValueTask<MarkdownNode> VisitFormatting(FormattingNode formatting)
+    protected override ValueTask<MarkdownNode> VisitFormattingAsync(FormattingNode formatting)
     {
         var (tagOpen, tagClose) = formatting.Kind switch
         {
@@ -68,23 +68,23 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
         };
 
         _buffer.Append(tagOpen);
-        var result = base.VisitFormatting(formatting);
+        var result = base.VisitFormattingAsync(formatting);
         _buffer.Append(tagClose);
 
         return result;
     }
 
-    protected override MarkdownNode VisitInlineCodeBlock(InlineCodeBlockNode inlineCodeBlock)
+    protected override ValueTask<MarkdownNode> VisitInlineCodeBlockAsync(InlineCodeBlockNode inlineCodeBlock)
     {
         _buffer
             .Append("<code class=\"chatlog__markdown-pre chatlog__markdown-pre--inline\">")
             .Append(HtmlEncode(inlineCodeBlock.Code))
             .Append("</code>");
 
-        return base.VisitInlineCodeBlock(inlineCodeBlock);
+        return base.VisitInlineCodeBlockAsync(inlineCodeBlock);
     }
 
-    protected override MarkdownNode VisitMultiLineCodeBlock(MultiLineCodeBlockNode multiLineCodeBlock)
+    protected override ValueTask<MarkdownNode> VisitMultiLineCodeBlockAsync(MultiLineCodeBlockNode multiLineCodeBlock)
     {
         var highlightCssClass = !string.IsNullOrWhiteSpace(multiLineCodeBlock.Language)
             ? $"language-{multiLineCodeBlock.Language}"
@@ -95,10 +95,10 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
             .Append(HtmlEncode(multiLineCodeBlock.Code))
             .Append("</code>");
 
-        return base.VisitMultiLineCodeBlock(multiLineCodeBlock);
+        return base.VisitMultiLineCodeBlockAsync(multiLineCodeBlock);
     }
 
-    protected override ValueTask<MarkdownNode> VisitLink(LinkNode link)
+    protected override ValueTask<MarkdownNode> VisitLinkAsync(LinkNode link)
     {
         // Try to extract message ID if the link refers to a Discord message
         var linkedMessageId = Regex.Match(
@@ -112,13 +112,13 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
                 : $"<a href=\"{HtmlEncode(link.Url)}\">"
         );
 
-        var result = base.VisitLink(link);
+        var result = base.VisitLinkAsync(link);
         _buffer.Append("</a>");
 
         return result;
     }
 
-    protected override async ValueTask<MarkdownNode> VisitEmoji(EmojiNode emoji)
+    protected override async ValueTask<MarkdownNode> VisitEmojiAsync(EmojiNode emoji)
     {
         var emojiImageUrl = Emoji.GetImageUrl(emoji.Id, emoji.Name, emoji.IsAnimated);
         var jumboClass = _isJumbo ? "chatlog__emoji--large" : "";
@@ -126,10 +126,10 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
         _buffer
             .Append($"<img loading=\"lazy\" class=\"chatlog__emoji {jumboClass}\" alt=\"{emoji.Name}\" title=\"{emoji.Code}\" src=\"{await _context.ResolveMediaUrlAsync(emojiImageUrl)}\">");
 
-        return await base.VisitEmoji(emoji);
+        return await base.VisitEmojiAsync(emoji);
     }
 
-    protected override MarkdownNode VisitMention(MentionNode mention)
+    protected override ValueTask<MarkdownNode> VisitMentionAsync(MentionNode mention)
     {
         if (mention.Kind == MentionKind.Everyone)
         {
@@ -184,10 +184,10 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
                 .Append("</span>");
         }
 
-        return base.VisitMention(mention);
+        return base.VisitMentionAsync(mention);
     }
 
-    protected override MarkdownNode VisitUnixTimestamp(UnixTimestampNode timestamp)
+    protected override ValueTask<MarkdownNode> VisitUnixTimestampAsync(UnixTimestampNode timestamp)
     {
         var dateString = timestamp.Date is not null
             ? _context.FormatDate(timestamp.Date.Value)
@@ -203,7 +203,7 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
             .Append(HtmlEncode(dateString))
             .Append("</span>");
 
-        return base.VisitUnixTimestamp(timestamp);
+        return base.VisitUnixTimestampAsync(timestamp);
     }
 }
 
@@ -211,7 +211,7 @@ internal partial class HtmlMarkdownVisitor
 {
     private static string HtmlEncode(string text) => WebUtility.HtmlEncode(text);
 
-    public static async ValueTask<string> Format(ExportContext context, string markdown, bool isJumboAllowed = true)
+    public static async ValueTask<string> FormatAsync(ExportContext context, string markdown, bool isJumboAllowed = true)
     {
         var nodes = MarkdownParser.Parse(markdown);
 
@@ -221,7 +221,7 @@ internal partial class HtmlMarkdownVisitor
 
         var buffer = new StringBuilder();
 
-        await new HtmlMarkdownVisitor(context, buffer, isJumbo).Visit(nodes);
+        await new HtmlMarkdownVisitor(context, buffer, isJumbo).VisitAsync(nodes);
 
         return buffer.ToString();
     }

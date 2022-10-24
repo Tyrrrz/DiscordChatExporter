@@ -20,7 +20,7 @@ internal class PlainTextMessageWriter : MessageWriter
     }
 
     private ValueTask<string> FormatMarkdown(string? markdown) =>
-        PlainTextMarkdownVisitor.Format(Context, markdown ?? "");
+        PlainTextMarkdownVisitor.FormatAsync(Context, markdown ?? "");
 
     private async ValueTask WriteMessageHeaderAsync(Message message)
     {

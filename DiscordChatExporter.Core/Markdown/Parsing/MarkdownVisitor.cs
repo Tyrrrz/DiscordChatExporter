@@ -27,11 +27,14 @@ internal abstract class MarkdownVisitor
         return link;
     }
 
-    protected virtual ValueTask<MarkdownNode> VisitEmojiAsync(EmojiNode emoji) => new(emoji);
+    protected virtual ValueTask<MarkdownNode> VisitEmojiAsync(EmojiNode emoji) => 
+        new(emoji);
 
-    protected virtual ValueTask<MarkdownNode> VisitMentionAsync(MentionNode mention) => new(mention);
+    protected virtual ValueTask<MarkdownNode> VisitMentionAsync(MentionNode mention) => 
+        new(mention);
 
-    protected virtual ValueTask<MarkdownNode> VisitUnixTimestampAsync(UnixTimestampNode timestamp) => new(timestamp);
+    protected virtual ValueTask<MarkdownNode> VisitUnixTimestampAsync(UnixTimestampNode timestamp) => 
+        new(timestamp);
 
     public async ValueTask<MarkdownNode> VisitAsync(MarkdownNode node) => node switch
     {

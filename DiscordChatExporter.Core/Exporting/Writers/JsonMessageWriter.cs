@@ -29,8 +29,8 @@ internal class JsonMessageWriter : MessageWriter
         });
     }
 
-    private string FormatMarkdown(string? markdown) =>
-        PlainTextMarkdownVisitor.Format(Context, markdown ?? "");
+    private ValueTask<string> FormatMarkdownAsync(string? markdown) =>
+        PlainTextMarkdownVisitor.FormatAsync(Context, markdown ?? "");
 
     private async ValueTask WriteAttachmentAsync(
         Attachment attachment,
@@ -100,8 +100,8 @@ internal class JsonMessageWriter : MessageWriter
     {
         _writer.WriteStartObject();
 
-        _writer.WriteString("name", FormatMarkdown(embedField.Name));
-        _writer.WriteString("value", FormatMarkdown(embedField.Value));
+        _writer.WriteString("name", await FormatMarkdownAsync(embedField.Name));
+        _writer.WriteString("value", await FormatMarkdownAsync(embedField.Value));
         _writer.WriteBoolean("isInline", embedField.IsInline);
 
         _writer.WriteEndObject();
@@ -114,10 +114,10 @@ internal class JsonMessageWriter : MessageWriter
     {
         _writer.WriteStartObject();
 
-        _writer.WriteString("title", FormatMarkdown(embed.Title));
+        _writer.WriteString("title", await FormatMarkdownAsync(embed.Title));
         _writer.WriteString("url", embed.Url);
         _writer.WriteString("timestamp", embed.Timestamp);
-        _writer.WriteString("description", FormatMarkdown(embed.Description));
+        _writer.WriteString("description", await FormatMarkdownAsync(embed.Description));
 
         if (embed.Color is not null)
             _writer.WriteString("color", embed.Color.Value.ToHex());
@@ -268,7 +268,7 @@ internal class JsonMessageWriter : MessageWriter
         _writer.WriteBoolean("isPinned", message.IsPinned);
 
         // Content
-        _writer.WriteString("content", FormatMarkdown(message.Content));
+        _writer.WriteString("content", await FormatMarkdownAsync(message.Content));
 
         // Author
         _writer.WriteStartObject("author");

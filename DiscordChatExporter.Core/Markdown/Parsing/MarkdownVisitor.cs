@@ -1,56 +1,57 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DiscordChatExporter.Core.Markdown.Parsing;
 
 internal abstract class MarkdownVisitor
 {
-    protected virtual MarkdownNode VisitText(TextNode text) =>
-        text;
+    protected virtual ValueTask<MarkdownNode> VisitTextAsync(TextNode text) => 
+        new(text);
 
-    protected virtual MarkdownNode VisitFormatting(FormattingNode formatting)
+    protected virtual async ValueTask<MarkdownNode> VisitFormattingAsync(FormattingNode formatting)
     {
-        Visit(formatting.Children);
+        await VisitAsync(formatting.Children);
         return formatting;
     }
 
-    protected virtual MarkdownNode VisitInlineCodeBlock(InlineCodeBlockNode inlineCodeBlock) =>
-        inlineCodeBlock;
+    protected virtual ValueTask<MarkdownNode> VisitInlineCodeBlockAsync(InlineCodeBlockNode inlineCodeBlock) => 
+        new(inlineCodeBlock);
 
-    protected virtual MarkdownNode VisitMultiLineCodeBlock(MultiLineCodeBlockNode multiLineCodeBlock) =>
-        multiLineCodeBlock;
+    protected virtual ValueTask<MarkdownNode> VisitMultiLineCodeBlockAsync(MultiLineCodeBlockNode multiLineCodeBlock) => 
+        new(multiLineCodeBlock);
 
-    protected virtual MarkdownNode VisitLink(LinkNode link)
+    protected virtual async ValueTask<MarkdownNode> VisitLinkAsync(LinkNode link)
     {
-        Visit(link.Children);
+        await VisitAsync(link.Children);
         return link;
     }
 
-    protected virtual MarkdownNode VisitEmoji(EmojiNode emoji) =>
-        emoji;
+    protected virtual ValueTask<MarkdownNode> VisitEmojiAsync(EmojiNode emoji) => 
+        new(emoji);
 
-    protected virtual MarkdownNode VisitMention(MentionNode mention) =>
-        mention;
+    protected virtual ValueTask<MarkdownNode> VisitMentionAsync(MentionNode mention) => 
+        new(mention);
 
-    protected virtual MarkdownNode VisitUnixTimestamp(UnixTimestampNode timestamp) =>
-        timestamp;
+    protected virtual ValueTask<MarkdownNode> VisitUnixTimestampAsync(UnixTimestampNode timestamp) => 
+        new(timestamp);
 
-    public MarkdownNode Visit(MarkdownNode node) => node switch
+    public async ValueTask<MarkdownNode> VisitAsync(MarkdownNode node) => node switch
     {
-        TextNode text => VisitText(text),
-        FormattingNode formatting => VisitFormatting(formatting),
-        InlineCodeBlockNode inlineCodeBlock => VisitInlineCodeBlock(inlineCodeBlock),
-        MultiLineCodeBlockNode multiLineCodeBlock => VisitMultiLineCodeBlock(multiLineCodeBlock),
-        LinkNode link => VisitLink(link),
-        EmojiNode emoji => VisitEmoji(emoji),
-        MentionNode mention => VisitMention(mention),
-        UnixTimestampNode timestamp => VisitUnixTimestamp(timestamp),
+        TextNode text => await VisitTextAsync(text),
+        FormattingNode formatting => await VisitFormattingAsync(formatting),
+        InlineCodeBlockNode inlineCodeBlock => await VisitInlineCodeBlockAsync(inlineCodeBlock),
+        MultiLineCodeBlockNode multiLineCodeBlock => await VisitMultiLineCodeBlockAsync(multiLineCodeBlock),
+        LinkNode link => await VisitLinkAsync(link),
+        EmojiNode emoji => await VisitEmojiAsync(emoji),
+        MentionNode mention => await VisitMentionAsync(mention),
+        UnixTimestampNode timestamp => await VisitUnixTimestampAsync(timestamp),
         _ => throw new ArgumentOutOfRangeException(nameof(node))
     };
 
-    public void Visit(IEnumerable<MarkdownNode> nodes)
+    public async ValueTask VisitAsync(IEnumerable<MarkdownNode> nodes)
     {
         foreach (var node in nodes)
-            Visit(node);
+            await VisitAsync(node);
     }
 }

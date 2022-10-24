@@ -1,4 +1,5 @@
-﻿using DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors;
+﻿using System.Threading.Tasks;
+using DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors;
 
 namespace DiscordChatExporter.Core.Exporting.Writers.Html;
 
@@ -14,6 +15,6 @@ internal class PreambleTemplateContext
         ThemeName = themeName;
     }
 
-    public string FormatMarkdown(string? markdown, bool isJumboAllowed = true) =>
-        HtmlMarkdownVisitor.Format(ExportContext, markdown ?? "", isJumboAllowed);
+    public ValueTask<string> FormatMarkdownAsync(string? markdown, bool isJumboAllowed = true) =>
+        HtmlMarkdownVisitor.FormatAsync(ExportContext, markdown ?? "", isJumboAllowed);
 }

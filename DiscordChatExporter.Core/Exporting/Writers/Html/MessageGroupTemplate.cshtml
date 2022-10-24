@@ -14,9 +14,9 @@
 
     string FormatDate(DateTimeOffset date) => Model.ExportContext.FormatDate(date);
 
-    string FormatMarkdown(string markdown) => Model.FormatMarkdown(markdown);
+    ValueTask<string> FormatMarkdownAsync(string markdown) => Model.FormatMarkdownAsync(markdown);
 
-    string FormatEmbedMarkdown(string markdown) => Model.FormatMarkdown(markdown, false);
+    ValueTask<string> FormatEmbedMarkdownAsync(string markdown) => Model.FormatMarkdownAsync(markdown, false);
 
     var firstMessage = Model.Messages.First();
 
@@ -125,7 +125,7 @@
                                         <span class="chatlog__reference-link" onclick="scrollToMessage(event, '@message.ReferencedMessage.Id')">
                                             @if (!string.IsNullOrWhiteSpace(message.ReferencedMessage.Content) && !message.ReferencedMessage.IsContentHidden())
                                             {
-                                                <!--wmm:ignore-->@Raw(FormatEmbedMarkdown(message.ReferencedMessage.Content))<!--/wmm:ignore-->
+                                                <!--wmm:ignore-->@Raw(await FormatEmbedMarkdownAsync(message.ReferencedMessage.Content))<!--/wmm:ignore-->
                                             }
                                             else if (message.ReferencedMessage.Attachments.Any() || message.ReferencedMessage.Embeds.Any())
                                             {
@@ -176,7 +176,7 @@
                             @{/* Text */}
                             @if (!string.IsNullOrWhiteSpace(message.Content) && !message.IsContentHidden())
                             {
-                                <span class="chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(FormatMarkdown(message.Content))<!--/wmm:ignore--></span>
+                                <span class="chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(await FormatMarkdownAsync(message.Content))<!--/wmm:ignore--></span>
                             }
 
                             @{/* Edited timestamp */}
@@ -296,12 +296,12 @@
                                                     @if (!string.IsNullOrWhiteSpace(embed.Url))
                                                     {
                                                         <a class="chatlog__embed-title-link" href="@embed.Url">
-                                                            <div class="chatlog__markdown chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(FormatEmbedMarkdown(embed.Title))<!--/wmm:ignore--></div>
+                                                            <div class="chatlog__markdown chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(await FormatEmbedMarkdownAsync(embed.Title))<!--/wmm:ignore--></div>
                                                         </a>
                                                     }
                                                     else
                                                     {
-                                                        <div class="chatlog__markdown chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(FormatEmbedMarkdown(embed.Title))<!--/wmm:ignore--></div>
+                                                        <div class="chatlog__markdown chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(await FormatEmbedMarkdownAsync(embed.Title))<!--/wmm:ignore--></div>
                                                     }
                                                 </div>
                                             }
@@ -382,12 +382,12 @@
                                                     @if (!string.IsNullOrWhiteSpace(embed.Url))
                                                     {
                                                         <a class="chatlog__embed-title-link" href="@embed.Url">
-                                                            <div class="chatlog__markdown chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(FormatEmbedMarkdown(embed.Title))<!--/wmm:ignore--></div>
+                                                            <div class="chatlog__markdown chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(await FormatEmbedMarkdownAsync(embed.Title))<!--/wmm:ignore--></div>
                                                         </a>
                                                     }
                                                     else
                                                     {
-                                                        <div class="chatlog__markdown chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(FormatEmbedMarkdown(embed.Title))<!--/wmm:ignore--></div>
+                                                        <div class="chatlog__markdown chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(await FormatEmbedMarkdownAsync(embed.Title))<!--/wmm:ignore--></div>
                                                     }
                                                 </div>
                                             }
@@ -396,7 +396,7 @@
                                             @if (!string.IsNullOrWhiteSpace(embed.Description))
                                             {
                                                 <div class="chatlog__embed-description">
-                                                    <div class="chatlog__markdown chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(FormatEmbedMarkdown(embed.Description))<!--/wmm:ignore--></div>
+                                                    <div class="chatlog__markdown chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(await FormatEmbedMarkdownAsync(embed.Description))<!--/wmm:ignore--></div>
                                                 </div>
                                             }
 
@@ -410,14 +410,14 @@
                                                             @if (!string.IsNullOrWhiteSpace(field.Name))
                                                             {
                                                                 <div class="chatlog__embed-field-name">
-                                                                    <div class="chatlog__markdown chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(FormatEmbedMarkdown(field.Name))<!--/wmm:ignore--></div>
+                                                                    <div class="chatlog__markdown chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(await FormatEmbedMarkdownAsync(field.Name))<!--/wmm:ignore--></div>
                                                                 </div>
                                                             }
 
                                                             @if (!string.IsNullOrWhiteSpace(field.Value))
                                                             {
                                                                 <div class="chatlog__embed-field-value">
-                                                                    <div class="chatlog__markdown chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(FormatEmbedMarkdown(field.Value))<!--/wmm:ignore--></div>
+                                                                    <div class="chatlog__markdown chatlog__markdown-preserve"><!--wmm:ignore-->@Raw(await FormatEmbedMarkdownAsync(field.Value))<!--/wmm:ignore--></div>
                                                                 </div>
                                                             }
                                                         </div>

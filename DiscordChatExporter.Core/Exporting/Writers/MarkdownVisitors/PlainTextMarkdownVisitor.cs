@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Threading.Tasks;
 using DiscordChatExporter.Core.Markdown;
 using DiscordChatExporter.Core.Markdown.Parsing;
 using DiscordChatExporter.Core.Utils.Extensions;
@@ -16,13 +17,13 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
         _buffer = buffer;
     }
 
-    protected override MarkdownNode VisitText(TextNode text)
+    protected override ValueTask<MarkdownNode> VisitTextAsync(TextNode text)
     {
         _buffer.Append(text.Text);
-        return base.VisitText(text);
+        return base.VisitTextAsync(text);
     }
 
-    protected override MarkdownNode VisitEmoji(EmojiNode emoji)
+    protected override ValueTask<MarkdownNode> VisitEmojiAsync(EmojiNode emoji)
     {
         _buffer.Append(
             emoji.IsCustomEmoji
@@ -30,10 +31,10 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
                 : emoji.Name
         );
 
-        return base.VisitEmoji(emoji);
+        return base.VisitEmojiAsync(emoji);
     }
 
-    protected override MarkdownNode VisitMention(MentionNode mention)
+    protected override ValueTask<MarkdownNode> VisitMentionAsync(MentionNode mention)
     {
         if (mention.Kind == MentionKind.Everyone)
         {
@@ -69,10 +70,10 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
             _buffer.Append($"@{name}");
         }
 
-        return base.VisitMention(mention);
+        return base.VisitMentionAsync(mention);
     }
 
-    protected override MarkdownNode VisitUnixTimestamp(UnixTimestampNode timestamp)
+    protected override ValueTask<MarkdownNode> VisitUnixTimestampAsync(UnixTimestampNode timestamp)
     {
         _buffer.Append(
             timestamp.Date is not null
@@ -80,18 +81,18 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
                 : "Invalid date"
         );
 
-        return base.VisitUnixTimestamp(timestamp);
+        return base.VisitUnixTimestampAsync(timestamp);
     }
 }
 
 internal partial class PlainTextMarkdownVisitor
 {
-    public static string Format(ExportContext context, string markdown)
+    public static async ValueTask<string> FormatAsync(ExportContext context, string markdown)
     {
         var nodes = MarkdownParser.ParseMinimal(markdown);
         var buffer = new StringBuilder();
 
-        new PlainTextMarkdownVisitor(context, buffer).Visit(nodes);
+        await new PlainTextMarkdownVisitor(context, buffer).VisitAsync(nodes);
 
         return buffer.ToString();
     }

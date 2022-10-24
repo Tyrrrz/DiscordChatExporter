@@ -19,7 +19,7 @@ internal class PlainTextMessageWriter : MessageWriter
         _writer = new StreamWriter(stream);
     }
 
-    private ValueTask<string> FormatMarkdown(string? markdown) =>
+    private ValueTask<string> FormatMarkdownAsync(string? markdown) =>
         PlainTextMarkdownVisitor.FormatAsync(Context, markdown ?? "");
 
     private async ValueTask WriteMessageHeaderAsync(Message message)
@@ -71,18 +71,18 @@ internal class PlainTextMessageWriter : MessageWriter
                 await _writer.WriteLineAsync(embed.Url);
 
             if (!string.IsNullOrWhiteSpace(embed.Title))
-                await _writer.WriteLineAsync(await FormatMarkdown(embed.Title));
+                await _writer.WriteLineAsync(await FormatMarkdownAsync(embed.Title));
 
             if (!string.IsNullOrWhiteSpace(embed.Description))
-                await _writer.WriteLineAsync(await FormatMarkdown(embed.Description));
+                await _writer.WriteLineAsync(await FormatMarkdownAsync(embed.Description));
 
             foreach (var field in embed.Fields)
             {
                 if (!string.IsNullOrWhiteSpace(field.Name))
-                    await _writer.WriteLineAsync(await FormatMarkdown(field.Name));
+                    await _writer.WriteLineAsync(await FormatMarkdownAsync(field.Name));
 
                 if (!string.IsNullOrWhiteSpace(field.Value))
-                    await _writer.WriteLineAsync(await FormatMarkdown(field.Value));
+                    await _writer.WriteLineAsync(await FormatMarkdownAsync(field.Value));
             }
 
             if (!string.IsNullOrWhiteSpace(embed.Thumbnail?.Url))
@@ -174,7 +174,7 @@ internal class PlainTextMessageWriter : MessageWriter
 
         // Content
         if (!string.IsNullOrWhiteSpace(message.Content))
-            await _writer.WriteLineAsync(await FormatMarkdown(message.Content));
+            await _writer.WriteLineAsync(await FormatMarkdownAsync(message.Content));
 
         await _writer.WriteLineAsync();
 

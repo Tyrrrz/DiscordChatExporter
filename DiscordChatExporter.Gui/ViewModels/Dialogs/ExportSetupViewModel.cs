@@ -59,7 +59,7 @@ public class ExportSetupViewModel : DialogScreen
         ? MessageFilter.Parse(MessageFilterValue)
         : MessageFilter.Null;
 
-    public bool ShouldDownloadMedia { get; set; }
+    public bool ShouldDownloadAssets { get; set; }
 
     public bool IsAdvancedSectionDisplayed { get; set; }
 
@@ -72,7 +72,7 @@ public class ExportSetupViewModel : DialogScreen
         SelectedFormat = _settingsService.LastExportFormat;
         PartitionLimitValue = _settingsService.LastPartitionLimitValue;
         MessageFilterValue = _settingsService.LastMessageFilterValue;
-        ShouldDownloadMedia = _settingsService.LastShouldDownloadMedia;
+        ShouldDownloadAssets = _settingsService.LastShouldDownloadAssets;
 
         // Show the "advanced options" section by default if any
         // of the advanced options are set to non-default values.
@@ -81,7 +81,7 @@ public class ExportSetupViewModel : DialogScreen
             Before != default ||
             !string.IsNullOrWhiteSpace(PartitionLimitValue) ||
             !string.IsNullOrWhiteSpace(MessageFilterValue) ||
-            ShouldDownloadMedia != default;
+            ShouldDownloadAssets != default;
     }
 
     public void ToggleAdvancedSection() => IsAdvancedSectionDisplayed = !IsAdvancedSectionDisplayed;
@@ -92,7 +92,7 @@ public class ExportSetupViewModel : DialogScreen
         _settingsService.LastExportFormat = SelectedFormat;
         _settingsService.LastPartitionLimitValue = PartitionLimitValue;
         _settingsService.LastMessageFilterValue = MessageFilterValue;
-        _settingsService.LastShouldDownloadMedia = ShouldDownloadMedia;
+        _settingsService.LastShouldDownloadAssets = ShouldDownloadAssets;
 
         // If single channel - prompt file path
         if (IsSingleChannel)

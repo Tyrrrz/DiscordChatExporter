@@ -19,8 +19,8 @@ public partial record ExportRequest(
     Snowflake? Before,
     PartitionLimit PartitionLimit,
     MessageFilter MessageFilter,
-    bool ShouldDownloadMedia,
-    bool ShouldReuseMedia,
+    bool ShouldDownloadAssets,
+    bool ShouldReuseAssets,
     string DateFormat)
 {
     private string? _outputBaseFilePath;
@@ -35,7 +35,7 @@ public partial record ExportRequest(
 
     public string OutputBaseDirPath => Path.GetDirectoryName(OutputBaseFilePath) ?? OutputPath;
 
-    public string OutputMediaDirPath => $"{OutputBaseFilePath}_Files{Path.DirectorySeparatorChar}";
+    public string OutputAssetsDirPath => $"{OutputBaseFilePath}_Files{Path.DirectorySeparatorChar}";
 }
 
 public partial record ExportRequest

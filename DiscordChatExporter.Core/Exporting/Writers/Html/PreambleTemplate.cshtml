@@ -14,11 +14,14 @@
     string GetFontUrl(int weight) =>
         $"https://cdn.jsdelivr.net/gh/Tyrrrz/DiscordFonts@master/whitney-{weight}.woff";
 
-    ValueTask<string> ResolveUrlAsync(string url) => Model.ExportContext.ResolveMediaUrlAsync(url, CancellationToken);
+    ValueTask<string> ResolveAssetUrlAsync(string url) =>
+        Model.ExportContext.ResolveAssetUrlAsync(url, CancellationToken);
 
-    string FormatDate(DateTimeOffset date) => Model.ExportContext.FormatDate(date);
+    string FormatDate(DateTimeOffset date) =>
+        Model.ExportContext.FormatDate(date);
 
-    ValueTask<string> FormatMarkdownAsync(string markdown) => Model.FormatMarkdownAsync(markdown);
+    ValueTask<string> FormatMarkdownAsync(string markdown) =>
+        Model.FormatMarkdownAsync(markdown);
 }
 
 <!DOCTYPE html>
@@ -32,31 +35,31 @@
     @{/* Styling */}
     <style>
         @@font-face {
-            src: url(@await ResolveUrlAsync(GetFontUrl(300)));
+            src: url(@await ResolveAssetUrlAsync(GetFontUrl(300)));
             font-family: Whitney;
             font-weight: 300;
         }
 
         @@font-face {
-            src: url(@await ResolveUrlAsync(GetFontUrl(400)));
+            src: url(@await ResolveAssetUrlAsync(GetFontUrl(400)));
             font-family: Whitney;
             font-weight: 400;
         }
 
         @@font-face {
-            src: url(@await ResolveUrlAsync(GetFontUrl(500)));
+            src: url(@await ResolveAssetUrlAsync(GetFontUrl(500)));
             font-family: Whitney;
             font-weight: 500;
         }
 
         @@font-face {
-            src: url(@await ResolveUrlAsync(GetFontUrl(600)));
+            src: url(@await ResolveAssetUrlAsync(GetFontUrl(600)));
             font-family: Whitney;
             font-weight: 600;
         }
 
         @@font-face {
-            src: url(@await ResolveUrlAsync(GetFontUrl(700)));
+            src: url(@await ResolveAssetUrlAsync(GetFontUrl(700)));
             font-family: Whitney;
             font-weight: 700;
         }
@@ -752,8 +755,8 @@
     </style>
 
     @{/* Syntax highlighting */}
-    <link rel="stylesheet" href="@await ResolveUrlAsync($"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/solarized-{Model.ThemeName.ToLowerInvariant()}.min.css")">
-    <script src="@await ResolveUrlAsync("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js")"></script>
+    <link rel="stylesheet" href="@await ResolveAssetUrlAsync($"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/solarized-{Model.ThemeName.ToLowerInvariant()}.min.css")">
+    <script src="@await ResolveAssetUrlAsync("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js")"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.chatlog__markdown-pre--multiline').forEach(e => hljs.highlightBlock(e));
@@ -761,7 +764,7 @@
     </script>
 
     @{/* Lottie animation support */}
-    <script src="@await ResolveUrlAsync("https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.8.1/lottie.min.js")"></script>
+    <script src="@await ResolveAssetUrlAsync("https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.8.1/lottie.min.js")"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.chatlog__sticker--media[data-source]').forEach(e => {
@@ -843,7 +846,7 @@
 
 <div class="preamble">
     <div class="preamble__guild-icon-container">
-        <img class="preamble__guild-icon" src="@await ResolveUrlAsync(Model.ExportContext.Request.Guild.IconUrl)" alt="Guild icon" loading="lazy">
+        <img class="preamble__guild-icon" src="@await ResolveAssetUrlAsync(Model.ExportContext.Request.Guild.IconUrl)" alt="Guild icon" loading="lazy">
     </div>
     <div class="preamble__entries-container">
         <div class="preamble__entry">@Model.ExportContext.Request.Guild.Name</div>

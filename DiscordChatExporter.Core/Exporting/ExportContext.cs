@@ -14,7 +14,7 @@ namespace DiscordChatExporter.Core.Exporting;
 
 internal class ExportContext
 {
-    private readonly MediaDownloader _mediaDownloader;
+    private readonly ExportAssetDownloader _assetDownloader;
 
     public ExportRequest Request { get; }
 
@@ -35,7 +35,7 @@ internal class ExportContext
         Channels = channels;
         Roles = roles;
 
-        _mediaDownloader = new MediaDownloader(request.OutputMediaDirPath, request.ShouldReuseMedia);
+        _assetDownloader = new ExportAssetDownloader(request.OutputAssetsDirPath, request.ShouldReuseAssets);
     }
 
     public string FormatDate(DateTimeOffset date) => Request.DateFormat switch
@@ -63,14 +63,14 @@ internal class ExportContext
             .FirstOrDefault();
     }
 
-    public async ValueTask<string> ResolveMediaUrlAsync(string url, CancellationToken cancellationToken = default)
+    public async ValueTask<string> ResolveAssetUrlAsync(string url, CancellationToken cancellationToken = default)
     {
-        if (!Request.ShouldDownloadMedia)
+        if (!Request.ShouldDownloadAssets)
             return url;
 
         try
         {
-            var filePath = await _mediaDownloader.DownloadAsync(url, cancellationToken);
+            var filePath = await _assetDownloader.DownloadAsync(url, cancellationToken);
 
             // We want relative path so that the output files can be copied around without breaking.
             // Base directory path may be null if the file is stored at the root or relative to working directory.

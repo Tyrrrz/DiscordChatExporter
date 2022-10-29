@@ -82,20 +82,20 @@
                             IsChecked="{Binding IsTokenPersisted}" />
                     </DockPanel>
 
-                    <!--  Reuse media  -->
+                    <!--  Reuse assets  -->
                     <DockPanel
                         Margin="16,8"
                         Background="Transparent"
                         LastChildFill="False"
-                        ToolTip="Reuse already existing media content to skip redundant downloads">
+                        ToolTip="Reuse previously downloaded assets to avoid redundant requests">
                         <TextBlock
                             VerticalAlignment="Center"
                             DockPanel.Dock="Left"
-                            Text="Reuse downloaded media" />
+                            Text="Reuse downloaded assets" />
                         <ToggleButton
                             VerticalAlignment="Center"
                             DockPanel.Dock="Right"
-                            IsChecked="{Binding ShouldReuseMedia}" />
+                            IsChecked="{Binding ShouldReuseAssets}" />
                     </DockPanel>
 
                     <!--  Date format  -->

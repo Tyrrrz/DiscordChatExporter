@@ -167,8 +167,8 @@
                             Text="{Binding MessageFilterValue}"
                             ToolTip="Only include messages that satisfy this filter (e.g. 'from:foo#1234' or 'has:image')." />
 
-                        <!--  Download media  -->
-                        <Grid Margin="16,16" ToolTip="Download referenced media content (user avatars, attached files, embedded images, etc)">
+                        <!--  Download assets  -->
+                        <Grid Margin="16,16" ToolTip="Download assets referenced by the export (user avatars, attached files, embedded images, etc.)">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
@@ -177,12 +177,12 @@
                             <TextBlock
                                 Grid.Column="0"
                                 VerticalAlignment="Center"
-                                Text="Download media" />
+                                Text="Download assets" />
                             <ToggleButton
                                 Grid.Column="1"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
-                                IsChecked="{Binding ShouldDownloadMedia}" />
+                                IsChecked="{Binding ShouldDownloadAssets}" />
                         </Grid>
                     </StackPanel>
                 </StackPanel>

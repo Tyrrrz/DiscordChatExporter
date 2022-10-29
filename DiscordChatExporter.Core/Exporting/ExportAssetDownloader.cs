@@ -12,18 +12,18 @@ using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting;
 
-internal partial class MediaDownloader
+internal partial class ExportAssetDownloader
 {
     private readonly string _workingDirPath;
-    private readonly bool _reuseMedia;
+    private readonly bool _reuse;
 
-    // File paths of already downloaded media
+    // File paths of the previously downloaded assets
     private readonly Dictionary<string, string> _pathCache = new(StringComparer.Ordinal);
 
-    public MediaDownloader(string workingDirPath, bool reuseMedia)
+    public ExportAssetDownloader(string workingDirPath, bool reuse)
     {
         _workingDirPath = workingDirPath;
-        _reuseMedia = reuseMedia;
+        _reuse = reuse;
     }
 
     public async ValueTask<string> DownloadAsync(string url, CancellationToken cancellationToken = default)
@@ -35,7 +35,7 @@ internal partial class MediaDownloader
         var filePath = Path.Combine(_workingDirPath, fileName);
 
         // Reuse existing files if we're allowed to
-        if (!_reuseMedia || !File.Exists(filePath))
+        if (!_reuse || !File.Exists(filePath))
         {
             Directory.CreateDirectory(_workingDirPath);
 
@@ -76,7 +76,7 @@ internal partial class MediaDownloader
     }
 }
 
-internal partial class MediaDownloader
+internal partial class ExportAssetDownloader
 {
     private static string GetUrlHash(string url)
     {

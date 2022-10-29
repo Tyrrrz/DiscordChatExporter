@@ -36,7 +36,7 @@ public class SelfContainedSpecs : IClassFixture<TempOutputFixture>
             ChannelIds = new[] { ChannelIds.SelfContainedTestCases },
             ExportFormat = ExportFormat.HtmlDark,
             OutputPath = filePath,
-            ShouldDownloadMedia = true
+            ShouldDownloadAssets = true
         }.ExecuteAsync(new FakeConsole());
 
         // Assert

@@ -17,13 +17,13 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
         _buffer = buffer;
     }
 
-    protected override ValueTask<MarkdownNode> VisitTextAsync(TextNode text)
+    protected override async ValueTask<MarkdownNode> VisitTextAsync(TextNode text)
     {
         _buffer.Append(text.Text);
-        return base.VisitTextAsync(text);
+        return await base.VisitTextAsync(text);
     }
 
-    protected override ValueTask<MarkdownNode> VisitEmojiAsync(EmojiNode emoji)
+    protected override async ValueTask<MarkdownNode> VisitEmojiAsync(EmojiNode emoji)
     {
         _buffer.Append(
             emoji.IsCustomEmoji
@@ -31,10 +31,10 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
                 : emoji.Name
         );
 
-        return base.VisitEmojiAsync(emoji);
+        return await base.VisitEmojiAsync(emoji);
     }
 
-    protected override ValueTask<MarkdownNode> VisitMentionAsync(MentionNode mention)
+    protected override async ValueTask<MarkdownNode> VisitMentionAsync(MentionNode mention)
     {
         if (mention.Kind == MentionKind.Everyone)
         {
@@ -70,10 +70,10 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
             _buffer.Append($"@{name}");
         }
 
-        return base.VisitMentionAsync(mention);
+        return await base.VisitMentionAsync(mention);
     }
 
-    protected override ValueTask<MarkdownNode> VisitUnixTimestampAsync(UnixTimestampNode timestamp)
+    protected override async ValueTask<MarkdownNode> VisitUnixTimestampAsync(UnixTimestampNode timestamp)
     {
         _buffer.Append(
             timestamp.Date is not null
@@ -81,7 +81,7 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
                 : "Invalid date"
         );
 
-        return base.VisitUnixTimestampAsync(timestamp);
+        return await base.VisitUnixTimestampAsync(timestamp);
     }
 }
 

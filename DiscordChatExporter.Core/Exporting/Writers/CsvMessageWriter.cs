@@ -37,7 +37,7 @@ internal partial class CsvMessageWriter : MessageWriter
 
             buffer
                 .AppendIfNotEmpty(',')
-                .Append(await Context.ResolveMediaUrlAsync(attachment.Url, cancellationToken));
+                .Append(await Context.ResolveAssetUrlAsync(attachment.Url, cancellationToken));
         }
 
         await _writer.WriteAsync(CsvEncode(buffer.ToString()));

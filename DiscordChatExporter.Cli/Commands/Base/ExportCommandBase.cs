@@ -76,15 +76,15 @@ public abstract class ExportCommandBase : TokenCommandBase
 
     [CommandOption(
         "media",
-        Description = "Download referenced media content."
+        Description = "Download assets referenced by the export (user avatars, attached files, embedded images, etc.)."
     )]
-    public bool ShouldDownloadMedia { get; init; }
+    public bool ShouldDownloadAssets { get; init; }
 
     [CommandOption(
         "reuse-media",
-        Description = "Reuse already existing media content to skip redundant downloads."
+        Description = "Reuse previously downloaded assets to avoid redundant requests."
     )]
-    public bool ShouldReuseMedia { get; init; }
+    public bool ShouldReuseAssets { get; init; }
 
     [CommandOption(
         "dateformat",
@@ -97,9 +97,9 @@ public abstract class ExportCommandBase : TokenCommandBase
 
     protected async ValueTask ExecuteAsync(IConsole console, IReadOnlyList<Channel> channels)
     {
-        // Reuse media option should only be used when the media option is set.
+        // Reuse assets option should only be used when the download assets option is set.
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/425
-        if (ShouldReuseMedia && !ShouldDownloadMedia)
+        if (ShouldReuseAssets && !ShouldDownloadAssets)
         {
             throw new CommandException(
                 "Option --reuse-media cannot be used without --media."
@@ -158,8 +158,8 @@ public abstract class ExportCommandBase : TokenCommandBase
                                     Before,
                                     PartitionLimit,
                                     MessageFilter,
-                                    ShouldDownloadMedia,
-                                    ShouldReuseMedia,
+                                    ShouldDownloadAssets,
+                                    ShouldReuseAssets,
                                     DateFormat
                                 );
 

@@ -38,10 +38,10 @@ public class SettingsViewModel : DialogScreen
         set => _settingsService.ParallelLimit = Math.Clamp(value, 1, 10);
     }
 
-    public bool ShouldReuseMedia
+    public bool ShouldReuseAssets
     {
-        get => _settingsService.ShouldReuseMedia;
-        set => _settingsService.ShouldReuseMedia = value;
+        get => _settingsService.ShouldReuseAssets;
+        set => _settingsService.ShouldReuseAssets = value;
     }
 
     public SettingsViewModel(SettingsService settingsService) =>

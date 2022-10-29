@@ -48,7 +48,7 @@ internal class PlainTextMessageWriter : MessageWriter
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            await _writer.WriteLineAsync(await Context.ResolveMediaUrlAsync(attachment.Url, cancellationToken));
+            await _writer.WriteLineAsync(await Context.ResolveAssetUrlAsync(attachment.Url, cancellationToken));
         }
 
         await _writer.WriteLineAsync();
@@ -86,12 +86,26 @@ internal class PlainTextMessageWriter : MessageWriter
             }
 
             if (!string.IsNullOrWhiteSpace(embed.Thumbnail?.Url))
-                await _writer.WriteLineAsync(await Context.ResolveMediaUrlAsync(embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url, cancellationToken));
+            {
+                await _writer.WriteLineAsync(
+                    await Context.ResolveAssetUrlAsync(
+                        embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url,
+                        cancellationToken
+                    )
+                );
+            }
 
             foreach (var image in embed.Images)
             {
                 if (!string.IsNullOrWhiteSpace(image.Url))
-                    await _writer.WriteLineAsync(await Context.ResolveMediaUrlAsync(image.ProxyUrl ?? image.Url, cancellationToken));
+                {
+                    await _writer.WriteLineAsync(
+                        await Context.ResolveAssetUrlAsync(
+                            image.ProxyUrl ?? image.Url,
+                            cancellationToken
+                        )
+                    );
+                }
             }
 
             if (!string.IsNullOrWhiteSpace(embed.Footer?.Text))
@@ -114,7 +128,9 @@ internal class PlainTextMessageWriter : MessageWriter
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            await _writer.WriteLineAsync(await Context.ResolveMediaUrlAsync(sticker.SourceUrl, cancellationToken));
+            await _writer.WriteLineAsync(
+                await Context.ResolveAssetUrlAsync(sticker.SourceUrl, cancellationToken)
+            );
         }
 
         await _writer.WriteLineAsync();

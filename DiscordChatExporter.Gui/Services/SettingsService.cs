@@ -16,7 +16,7 @@ public partial class SettingsService : SettingsManager
 
     public int ParallelLimit { get; set; } = 1;
 
-    public bool ShouldReuseMedia { get; set; }
+    public bool ShouldReuseAssets { get; set; }
 
     public string? LastToken { get; set; }
 
@@ -26,7 +26,7 @@ public partial class SettingsService : SettingsManager
 
     public string? LastMessageFilterValue { get; set; }
 
-    public bool LastShouldDownloadMedia { get; set; }
+    public bool LastShouldDownloadAssets { get; set; }
 
     public SettingsService()
     {

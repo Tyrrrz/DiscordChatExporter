@@ -1,3 +1,8 @@
+### v2.36.4 (29-Oct-2022)
+
+- Changed all mentions of "media" in the context of "download media" or "reuse media" to "assets". CLI options will retain their existing names for backwards compatibility.
+- [HTML] Fixed an issue which prevented emoji used inside message content from being downloaded when "download assets" option is enabled. (Thanks [@Roberto Blázquez](https://github.com/xBaank))
+
 ### v2.36.3 (21-Oct-2022)
 
 - [GUI] Fixed an issue where opening a dialog did not prevent user interactions with background UI elements using keyboard. This sometimes caused the application to crash in weird ways.

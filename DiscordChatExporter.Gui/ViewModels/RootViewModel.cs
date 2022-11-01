@@ -17,9 +17,9 @@ public class RootViewModel : Screen, IHandle<NotificationMessage>, IDisposable
     private readonly DialogManager _dialogManager;
     private readonly SettingsService _settingsService;
     private readonly UpdateService _updateService;
-    
+
     public SnackbarMessageQueue Notifications { get; } = new(TimeSpan.FromSeconds(5));
-    
+
     public DashboardViewModel Dashboard { get; }
 
     public RootViewModel(
@@ -33,9 +33,9 @@ public class RootViewModel : Screen, IHandle<NotificationMessage>, IDisposable
         _dialogManager = dialogManager;
         _settingsService = settingsService;
         _updateService = updateService;
-        
+
         eventAggregator.Subscribe(this);
-        
+
         Dashboard = _viewModelFactory.CreateDashboardViewModel();
 
         DisplayName = $"{App.Name} v{App.VersionString}";
@@ -54,10 +54,10 @@ Press LEARN MORE to find ways that you can help.".Trim(),
 
         if (await _dialogManager.ShowDialogAsync(dialog) == true)
         {
-            ProcessEx.StartShellExecute("https://tyrrrz.me");
+            ProcessEx.StartShellExecute("https://tyrrrz.me/ukraine?source=discordchatexporter");
         }
     }
-    
+
     private async ValueTask CheckForUpdatesAsync()
     {
         try
@@ -84,7 +84,7 @@ Press LEARN MORE to find ways that you can help.".Trim(),
             Notifications.Enqueue("Failed to perform application update");
         }
     }
-    
+
     public async void OnViewFullyLoaded()
     {
         await ShowWarInUkraineMessageAsync();
@@ -115,7 +115,7 @@ Press LEARN MORE to find ways that you can help.".Trim(),
         _updateService.FinalizeUpdate(false);
     }
 
-    public void Handle(NotificationMessage message) => 
+    public void Handle(NotificationMessage message) =>
         Notifications.Enqueue(message.Text);
 
     public void Dispose() => Notifications.Dispose();

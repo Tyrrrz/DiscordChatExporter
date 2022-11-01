@@ -236,8 +236,8 @@ public abstract class ExportCommandBase : TokenCommandBase
     {
         // War in Ukraine message
         console.Output.WriteLine("========================================================================");
-        console.Output.WriteLine("||   Ukraine is at war! Support my country in its fight for freedom~  ||");
-        console.Output.WriteLine("||   Learn more on my website: https://tyrrrz.me                      ||");
+        console.Output.WriteLine("||   Ukraine is at war! Support my country in its fight for freedom   ||");
+        console.Output.WriteLine("||   Learn more: https://tyrrrz.me/ukraine                            ||");
         console.Output.WriteLine("========================================================================");
         console.Output.WriteLine("");
 

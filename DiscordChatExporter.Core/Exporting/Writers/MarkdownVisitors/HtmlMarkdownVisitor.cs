@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Markdown;
@@ -24,13 +25,17 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
         _isJumbo = isJumbo;
     }
 
-    protected override async ValueTask<MarkdownNode> VisitTextAsync(TextNode text)
+    protected override async ValueTask<MarkdownNode> VisitTextAsync(
+        TextNode text,
+        CancellationToken cancellationToken = default)
     {
         _buffer.Append(HtmlEncode(text.Text));
-        return await base.VisitTextAsync(text);
+        return await base.VisitTextAsync(text, cancellationToken);
     }
 
-    protected override async ValueTask<MarkdownNode> VisitFormattingAsync(FormattingNode formatting)
+    protected override async ValueTask<MarkdownNode> VisitFormattingAsync(
+        FormattingNode formatting,
+        CancellationToken cancellationToken = default)
     {
         var (openingTag, closingTag) = formatting.Kind switch
         {
@@ -68,23 +73,27 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
         };
 
         _buffer.Append(openingTag);
-        var result = await base.VisitFormattingAsync(formatting);
+        var result = await base.VisitFormattingAsync(formatting, cancellationToken);
         _buffer.Append(closingTag);
 
         return result;
     }
 
-    protected override async ValueTask<MarkdownNode> VisitInlineCodeBlockAsync(InlineCodeBlockNode inlineCodeBlock)
+    protected override async ValueTask<MarkdownNode> VisitInlineCodeBlockAsync(
+        InlineCodeBlockNode inlineCodeBlock,
+        CancellationToken cancellationToken = default)
     {
         _buffer
             .Append("<code class=\"chatlog__markdown-pre chatlog__markdown-pre--inline\">")
             .Append(HtmlEncode(inlineCodeBlock.Code))
             .Append("</code>");
 
-        return await base.VisitInlineCodeBlockAsync(inlineCodeBlock);
+        return await base.VisitInlineCodeBlockAsync(inlineCodeBlock, cancellationToken);
     }
 
-    protected override async ValueTask<MarkdownNode> VisitMultiLineCodeBlockAsync(MultiLineCodeBlockNode multiLineCodeBlock)
+    protected override async ValueTask<MarkdownNode> VisitMultiLineCodeBlockAsync(
+        MultiLineCodeBlockNode multiLineCodeBlock,
+        CancellationToken cancellationToken = default)
     {
         var highlightCssClass = !string.IsNullOrWhiteSpace(multiLineCodeBlock.Language)
             ? $"language-{multiLineCodeBlock.Language}"
@@ -95,10 +104,12 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
             .Append(HtmlEncode(multiLineCodeBlock.Code))
             .Append("</code>");
 
-        return await base.VisitMultiLineCodeBlockAsync(multiLineCodeBlock);
+        return await base.VisitMultiLineCodeBlockAsync(multiLineCodeBlock, cancellationToken);
     }
 
-    protected override async ValueTask<MarkdownNode> VisitLinkAsync(LinkNode link)
+    protected override async ValueTask<MarkdownNode> VisitLinkAsync(
+        LinkNode link,
+        CancellationToken cancellationToken = default)
     {
         // Try to extract message ID if the link refers to a Discord message
         var linkedMessageId = Regex.Match(
@@ -112,13 +123,15 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
                 : $"<a href=\"{HtmlEncode(link.Url)}\">"
         );
 
-        var result = await base.VisitLinkAsync(link);
+        var result = await base.VisitLinkAsync(link, cancellationToken);
         _buffer.Append("</a>");
 
         return result;
     }
 
-    protected override async ValueTask<MarkdownNode> VisitEmojiAsync(EmojiNode emoji)
+    protected override async ValueTask<MarkdownNode> VisitEmojiAsync(
+        EmojiNode emoji,
+        CancellationToken cancellationToken = default)
     {
         var emojiImageUrl = Emoji.GetImageUrl(emoji.Id, emoji.Name, emoji.IsAnimated);
         var jumboClass = _isJumbo ? "chatlog__emoji--large" : "";
@@ -129,14 +142,16 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
             $"class=\"chatlog__emoji {jumboClass}\" " +
             $"alt=\"{emoji.Name}\" " +
             $"title=\"{emoji.Code}\" " +
-            $"src=\"{await _context.ResolveAssetUrlAsync(emojiImageUrl)}\"" +
+            $"src=\"{await _context.ResolveAssetUrlAsync(emojiImageUrl, cancellationToken)}\"" +
             $">"
         );
 
-        return await base.VisitEmojiAsync(emoji);
+        return await base.VisitEmojiAsync(emoji, cancellationToken);
     }
 
-    protected override async ValueTask<MarkdownNode> VisitMentionAsync(MentionNode mention)
+    protected override async ValueTask<MarkdownNode> VisitMentionAsync(
+        MentionNode mention,
+        CancellationToken cancellationToken = default)
     {
         if (mention.Kind == MentionKind.Everyone)
         {
@@ -191,10 +206,12 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
                 .Append("</span>");
         }
 
-        return await base.VisitMentionAsync(mention);
+        return await base.VisitMentionAsync(mention, cancellationToken);
     }
 
-    protected override async ValueTask<MarkdownNode> VisitUnixTimestampAsync(UnixTimestampNode timestamp)
+    protected override async ValueTask<MarkdownNode> VisitUnixTimestampAsync(
+        UnixTimestampNode timestamp,
+        CancellationToken cancellationToken = default)
     {
         var dateString = timestamp.Date is not null
             ? _context.FormatDate(timestamp.Date.Value)
@@ -210,7 +227,7 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
             .Append(HtmlEncode(dateString))
             .Append("</span>");
 
-        return await base.VisitUnixTimestampAsync(timestamp);
+        return await base.VisitUnixTimestampAsync(timestamp, cancellationToken);
     }
 }
 
@@ -221,7 +238,8 @@ internal partial class HtmlMarkdownVisitor
     public static async ValueTask<string> FormatAsync(
         ExportContext context,
         string markdown,
-        bool isJumboAllowed = true)
+        bool isJumboAllowed = true,
+        CancellationToken cancellationToken = default)
     {
         var nodes = MarkdownParser.Parse(markdown);
 
@@ -231,7 +249,8 @@ internal partial class HtmlMarkdownVisitor
 
         var buffer = new StringBuilder();
 
-        await new HtmlMarkdownVisitor(context, buffer, isJumbo).VisitAsync(nodes);
+        await new HtmlMarkdownVisitor(context, buffer, isJumbo)
+            .VisitAsync(nodes, cancellationToken);
 
         return buffer.ToString();
     }

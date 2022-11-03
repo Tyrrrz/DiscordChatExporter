@@ -19,8 +19,10 @@ internal partial class CsvMessageWriter : MessageWriter
         _writer = new StreamWriter(stream);
     }
 
-    private ValueTask<string> FormatMarkdownAsync(string? markdown) =>
-        PlainTextMarkdownVisitor.FormatAsync(Context, markdown ?? "");
+    private ValueTask<string> FormatMarkdownAsync(
+        string markdown,
+        CancellationToken cancellationToken = default) =>
+        PlainTextMarkdownVisitor.FormatAsync(Context, markdown, cancellationToken);
 
     public override async ValueTask WritePreambleAsync(CancellationToken cancellationToken = default) =>
         await _writer.WriteLineAsync("AuthorID,Author,Date,Content,Attachments,Reactions");
@@ -84,7 +86,7 @@ internal partial class CsvMessageWriter : MessageWriter
         await _writer.WriteAsync(',');
 
         // Message content
-        await _writer.WriteAsync(CsvEncode(await FormatMarkdownAsync(message.Content)));
+        await _writer.WriteAsync(CsvEncode(await FormatMarkdownAsync(message.Content, cancellationToken)));
         await _writer.WriteAsync(',');
 
         // Attachments

@@ -32,7 +32,7 @@
         ExportContext.FormatDate(date);
 
     ValueTask<string> FormatMarkdownAsync(string markdown) =>
-        HtmlMarkdownVisitor.FormatAsync(ExportContext, markdown);
+        HtmlMarkdownVisitor.FormatAsync(ExportContext, markdown, true, CancellationToken);
 }
 
 <!DOCTYPE html>

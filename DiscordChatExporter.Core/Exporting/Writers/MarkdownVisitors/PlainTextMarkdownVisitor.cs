@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Markdown;
 using DiscordChatExporter.Core.Markdown.Parsing;
@@ -17,13 +18,17 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
         _buffer = buffer;
     }
 
-    protected override async ValueTask<MarkdownNode> VisitTextAsync(TextNode text)
+    protected override async ValueTask<MarkdownNode> VisitTextAsync(
+        TextNode text,
+        CancellationToken cancellationToken = default)
     {
         _buffer.Append(text.Text);
-        return await base.VisitTextAsync(text);
+        return await base.VisitTextAsync(text, cancellationToken);
     }
 
-    protected override async ValueTask<MarkdownNode> VisitEmojiAsync(EmojiNode emoji)
+    protected override async ValueTask<MarkdownNode> VisitEmojiAsync(
+        EmojiNode emoji,
+        CancellationToken cancellationToken = default)
     {
         _buffer.Append(
             emoji.IsCustomEmoji
@@ -31,10 +36,12 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
                 : emoji.Name
         );
 
-        return await base.VisitEmojiAsync(emoji);
+        return await base.VisitEmojiAsync(emoji, cancellationToken);
     }
 
-    protected override async ValueTask<MarkdownNode> VisitMentionAsync(MentionNode mention)
+    protected override async ValueTask<MarkdownNode> VisitMentionAsync(
+        MentionNode mention,
+        CancellationToken cancellationToken = default)
     {
         if (mention.Kind == MentionKind.Everyone)
         {
@@ -70,10 +77,12 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
             _buffer.Append($"@{name}");
         }
 
-        return await base.VisitMentionAsync(mention);
+        return await base.VisitMentionAsync(mention, cancellationToken);
     }
 
-    protected override async ValueTask<MarkdownNode> VisitUnixTimestampAsync(UnixTimestampNode timestamp)
+    protected override async ValueTask<MarkdownNode> VisitUnixTimestampAsync(
+        UnixTimestampNode timestamp,
+        CancellationToken cancellationToken = default)
     {
         _buffer.Append(
             timestamp.Date is not null
@@ -81,18 +90,22 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
                 : "Invalid date"
         );
 
-        return await base.VisitUnixTimestampAsync(timestamp);
+        return await base.VisitUnixTimestampAsync(timestamp, cancellationToken);
     }
 }
 
 internal partial class PlainTextMarkdownVisitor
 {
-    public static async ValueTask<string> FormatAsync(ExportContext context, string markdown)
+    public static async ValueTask<string> FormatAsync(
+        ExportContext context,
+        string markdown,
+        CancellationToken cancellationToken = default)
     {
         var nodes = MarkdownParser.ParseMinimal(markdown);
         var buffer = new StringBuilder();
 
-        await new PlainTextMarkdownVisitor(context, buffer).VisitAsync(nodes);
+        await new PlainTextMarkdownVisitor(context, buffer)
+            .VisitAsync(nodes, cancellationToken);
 
         return buffer.ToString();
     }

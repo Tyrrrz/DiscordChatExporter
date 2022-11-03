@@ -71,15 +71,17 @@ internal class HtmlMessageWriter : MessageWriter
         .Minify(html, false)
         .MinifiedContent;
 
-    public override async ValueTask WritePreambleAsync(CancellationToken cancellationToken = default)
+    public override async ValueTask WritePreambleAsync(
+        CancellationToken cancellationToken = default)
     {
-        var templateContext = new PreambleTemplateContext(Context, _themeName);
-
-        // We are not writing directly to output because Razor
-        // does not actually do asynchronous writes to stream.
         await _writer.WriteLineAsync(
             Minify(
-                await PreambleTemplate.RenderAsync(templateContext, cancellationToken)
+                await new PreambleTemplate
+                {
+                    CancellationToken = cancellationToken,
+                    ExportContext = Context,
+                    ThemeName = _themeName
+                }.RenderAsync()
             )
         );
     }
@@ -88,13 +90,14 @@ internal class HtmlMessageWriter : MessageWriter
         IReadOnlyList<Message> messages,
         CancellationToken cancellationToken = default)
     {
-        var templateContext = new MessageGroupTemplateContext(Context, messages);
-
-        // We are not writing directly to output because Razor
-        // does not actually do asynchronous writes to stream.
         await _writer.WriteLineAsync(
             Minify(
-                await MessageGroupTemplate.RenderAsync(templateContext, cancellationToken)
+                await new MessageGroupTemplate
+                {
+                    CancellationToken = cancellationToken,
+                    ExportContext = Context,
+                    Messages = messages
+                }.RenderAsync()
             )
         );
     }
@@ -126,13 +129,14 @@ internal class HtmlMessageWriter : MessageWriter
         if (_messageGroup.Any())
             await WriteMessageGroupAsync(_messageGroup, cancellationToken);
 
-        var templateContext = new PostambleTemplateContext(Context, MessagesWritten);
-
-        // We are not writing directly to output because Razor
-        // does not actually do asynchronous writes to stream.
         await _writer.WriteLineAsync(
             Minify(
-                await PostambleTemplate.RenderAsync(templateContext, cancellationToken)
+                await new PostambleTemplate
+                {
+                    CancellationToken = cancellationToken,
+                    ExportContext = Context,
+                    MessagesWritten = MessagesWritten
+                }.RenderAsync()
             )
         );
     }

@@ -1,13 +1,24 @@
 ﻿@using System
+@using System.Threading
 @using System.Threading.Tasks
-@using DiscordChatExporter.Core.Exporting.Writers.Html;
+@using DiscordChatExporter.Core.Exporting
+@using DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors
 
-@namespace DiscordChatExporter.Core.Exporting.Writers.Html
-@inherits MiniRazor.TemplateBase<PreambleTemplateContext>
+@inherits RazorBlade.HtmlTemplate
+
+@functions {
+    // RazorBlade does not provide built-in support for cancellation
+    // https://github.com/ltrzesniewski/RazorBlade/issues/2
+    public CancellationToken CancellationToken { get; init; }
+
+    public ExportContext ExportContext { get; init; } = default!;
+
+    public string ThemeName { get; init; } = "Dark";
+}
 
 @{
     string Themed(string darkVariant, string lightVariant) =>
-        string.Equals(Model.ThemeName, "Dark", StringComparison.OrdinalIgnoreCase)
+        string.Equals(ThemeName, "Dark", StringComparison.OrdinalIgnoreCase)
             ? darkVariant
             : lightVariant;
 
@@ -15,20 +26,20 @@
         $"https://cdn.jsdelivr.net/gh/Tyrrrz/DiscordFonts@master/whitney-{weight}.woff";
 
     ValueTask<string> ResolveAssetUrlAsync(string url) =>
-        Model.ExportContext.ResolveAssetUrlAsync(url, CancellationToken);
+        ExportContext.ResolveAssetUrlAsync(url, CancellationToken);
 
     string FormatDate(DateTimeOffset date) =>
-        Model.ExportContext.FormatDate(date);
+        ExportContext.FormatDate(date);
 
     ValueTask<string> FormatMarkdownAsync(string markdown) =>
-        Model.FormatMarkdownAsync(markdown);
+        HtmlMarkdownVisitor.FormatAsync(ExportContext, markdown);
 }
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>@Model.ExportContext.Request.Guild.Name - @Model.ExportContext.Request.Channel.Name</title>
+    <title>@ExportContext.Request.Guild.Name - @ExportContext.Request.Channel.Name</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
 
@@ -755,7 +766,7 @@
     </style>
 
     @{/* Syntax highlighting */}
-    <link rel="stylesheet" href="@await ResolveAssetUrlAsync($"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/solarized-{Model.ThemeName.ToLowerInvariant()}.min.css")">
+    <link rel="stylesheet" href="@await ResolveAssetUrlAsync($"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/solarized-{ThemeName.ToLowerInvariant()}.min.css")">
     <script src="@await ResolveAssetUrlAsync("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js")"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -846,31 +857,31 @@
 
 <div class="preamble">
     <div class="preamble__guild-icon-container">
-        <img class="preamble__guild-icon" src="@await ResolveAssetUrlAsync(Model.ExportContext.Request.Guild.IconUrl)" alt="Guild icon" loading="lazy">
+        <img class="preamble__guild-icon" src="@await ResolveAssetUrlAsync(ExportContext.Request.Guild.IconUrl)" alt="Guild icon" loading="lazy">
     </div>
     <div class="preamble__entries-container">
-        <div class="preamble__entry">@Model.ExportContext.Request.Guild.Name</div>
-        <div class="preamble__entry">@Model.ExportContext.Request.Channel.Category.Name / @Model.ExportContext.Request.Channel.Name</div>
+        <div class="preamble__entry">@ExportContext.Request.Guild.Name</div>
+        <div class="preamble__entry">@ExportContext.Request.Channel.Category.Name / @ExportContext.Request.Channel.Name</div>
 
-        @if (!string.IsNullOrWhiteSpace(Model.ExportContext.Request.Channel.Topic))
+        @if (!string.IsNullOrWhiteSpace(ExportContext.Request.Channel.Topic))
         {
-            <div class="preamble__entry preamble__entry--small">@Raw(await FormatMarkdownAsync(Model.ExportContext.Request.Channel.Topic))</div>
+            <div class="preamble__entry preamble__entry--small">@Html.Raw(await FormatMarkdownAsync(ExportContext.Request.Channel.Topic))</div>
         }
 
-        @if (Model.ExportContext.Request.After is not null || Model.ExportContext.Request.Before is not null)
+        @if (ExportContext.Request.After is not null || ExportContext.Request.Before is not null)
         {
             <div class="preamble__entry preamble__entry--small">
-                @if (Model.ExportContext.Request.After is not null && Model.ExportContext.Request.Before is not null)
+                @if (ExportContext.Request.After is not null && ExportContext.Request.Before is not null)
                 {
-                    @($"Between {FormatDate(Model.ExportContext.Request.After.Value.ToDate())} and {FormatDate(Model.ExportContext.Request.Before.Value.ToDate())}")
+                    @($"Between {FormatDate(ExportContext.Request.After.Value.ToDate())} and {FormatDate(ExportContext.Request.Before.Value.ToDate())}")
                 }
-                else if (Model.ExportContext.Request.After is not null)
+                else if (ExportContext.Request.After is not null)
                 {
-                    @($"After {FormatDate(Model.ExportContext.Request.After.Value.ToDate())}")
+                    @($"After {FormatDate(ExportContext.Request.After.Value.ToDate())}")
                 }
-                else if (Model.ExportContext.Request.Before is not null)
+                else if (ExportContext.Request.Before is not null)
                 {
-                    @($"Before {FormatDate(Model.ExportContext.Request.Before.Value.ToDate())}")
+                    @($"Before {FormatDate(ExportContext.Request.Before.Value.ToDate())}")
                 }
             </div>
         }

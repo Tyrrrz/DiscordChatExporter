@@ -1,15 +1,27 @@
-﻿@using DiscordChatExporter.Core.Exporting.Writers.Html;
+﻿@using System.Threading
+@using DiscordChatExporter.Core.Exporting
 
-@namespace DiscordChatExporter.Core.Exporting.Writers.Html
-@inherits MiniRazor.TemplateBase<PostambleTemplateContext>
+@inherits RazorBlade.HtmlTemplate
 
-@{/* Close elements opened by preamble */}
+@functions {
+    // RazorBlade does not provide built-in support for cancellation
+    // https://github.com/ltrzesniewski/RazorBlade/issues/2
+    public CancellationToken CancellationToken { get; init; }
+
+    public ExportContext ExportContext { get; init; } = default!;
+
+    public long MessagesWritten { get; init; }
+}
+
+@{
+    /* Close elements opened by preamble */
+}
 <!--wmm:ignore-->
 </div>
 <!--/wmm:ignore-->
 
 <div class="postamble">
-    <div class="postamble__entry">Exported @Model.MessagesWritten.ToString("N0") message(s)</div>
+    <div class="postamble__entry">Exported @MessagesWritten.ToString("N0") message(s)</div>
 </div>
 
 </body>

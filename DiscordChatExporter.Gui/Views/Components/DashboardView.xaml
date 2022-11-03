@@ -181,7 +181,7 @@
                         <LineBreak />
                         <Run Text="7. Select the" />
                         <Run FontWeight="SemiBold" Text="Headers" />
-                        <Run Text=" tab on the right" />
+                        <Run Text="tab on the right" />
                         <LineBreak />
                         <Run Text="8. Scroll down to the" />
                         <Run FontWeight="SemiBold" Text="Request Headers" />

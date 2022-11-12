@@ -20,11 +20,12 @@ namespace DiscordChatExporter.Core.Discord;
 public class DiscordClient
 {
     private readonly string _token;
+    private readonly int _throttle;
     private readonly Uri _baseUri = new("https://discord.com/api/v9/", UriKind.Absolute);
 
     private TokenKind? _resolvedTokenKind;
 
-    public DiscordClient(string token) => _token = token;
+    public DiscordClient(string token, int throttle) => (_token, _throttle) = (token, throttle);
 
     private async ValueTask<HttpResponseMessage> GetResponseAsync(
         string url,
@@ -44,11 +45,18 @@ public class DiscordClient
                     : _token
             );
 
-            return await Http.Client.SendAsync(
+            var response = await Http.Client.SendAsync(
                 request,
                 HttpCompletionOption.ResponseHeadersRead,
                 innerCancellationToken
             );
+
+            if (_throttle != 0)
+            {
+                await Task.Delay(new Random().Next(_throttle, _throttle * 2), innerCancellationToken);
+            }
+
+            return response;
         }, cancellationToken);
     }
 

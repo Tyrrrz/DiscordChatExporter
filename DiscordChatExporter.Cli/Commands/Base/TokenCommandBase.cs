@@ -27,8 +27,14 @@ public abstract class TokenCommandBase : ICommand
     )]
     public bool IsBotToken { get; init; }
 
+    [CommandOption(
+        "throttle",
+        Description = "Delay each api request (in miliseconds)."
+    )]
+    public int Throttle { get; init; } = 0;
+
     private DiscordClient? _discordClient;
-    protected DiscordClient Discord => _discordClient ??= new DiscordClient(Token);
+    protected DiscordClient Discord => _discordClient ??= new DiscordClient(Token, Throttle);
 
     public abstract ValueTask ExecuteAsync(IConsole console);
 }

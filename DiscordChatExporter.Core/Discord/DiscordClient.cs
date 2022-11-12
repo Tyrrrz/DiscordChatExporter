@@ -25,7 +25,7 @@ public class DiscordClient
 
     private TokenKind? _resolvedTokenKind;
 
-    public DiscordClient(string token, int throttle) => (_token, _throttle) = (token, throttle);
+    public DiscordClient(string token, int throttle = 0) => (_token, _throttle) = (token, throttle);
 
     private async ValueTask<HttpResponseMessage> GetResponseAsync(
         string url,

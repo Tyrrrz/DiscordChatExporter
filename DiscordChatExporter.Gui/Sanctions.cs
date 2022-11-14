@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 
@@ -20,19 +19,9 @@ public static class Sanctions
         if (isSkipped)
             return;
 
-        var isSanctioned = new[]
-        {
-            CultureInfo.CurrentCulture,
-            CultureInfo.CurrentUICulture,
-            CultureInfo.InstalledUICulture,
-            CultureInfo.DefaultThreadCurrentCulture,
-            CultureInfo.DefaultThreadCurrentUICulture
-        }.Any(c =>
-            c is not null && (
-                c.Name.Contains("-ru", StringComparison.OrdinalIgnoreCase) ||
-                c.Name.Contains("-by", StringComparison.OrdinalIgnoreCase)
-            )
-        );
+        var isSanctioned =
+            CultureInfo.CurrentCulture.Name.EndsWith("-ru", StringComparison.OrdinalIgnoreCase) ||
+            CultureInfo.CurrentCulture.Name.EndsWith("-by", StringComparison.OrdinalIgnoreCase);
 
         if (!isSanctioned)
             return;

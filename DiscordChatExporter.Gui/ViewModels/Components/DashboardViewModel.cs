@@ -101,7 +101,7 @@ public class DashboardViewModel : PropertyChangedBase
 
             _settingsService.LastToken = token;
 
-            var discord = new DiscordClient(token);
+            var discord = new DiscordClient(token, _settingsService.Throttle);
 
             var guildChannelMap = new Dictionary<Guild, IReadOnlyList<Channel>>();
             await foreach (var guild in discord.GetUserGuildsAsync())
@@ -156,6 +156,7 @@ public class DashboardViewModel : PropertyChangedBase
             if (await _dialogManager.ShowDialogAsync(dialog) != true)
                 return;
 
+            _discord.Throttle = _settingsService.Throttle;
             var exporter = new ChannelExporter(_discord);
 
             var progresses = Enumerable

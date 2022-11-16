@@ -20,12 +20,13 @@ namespace DiscordChatExporter.Core.Discord;
 public class DiscordClient
 {
     private readonly string _token;
-    private readonly int _throttle;
+    public int Throttle;
+    private DateTime _lastRequestTime = DateTime.MinValue;
     private readonly Uri _baseUri = new("https://discord.com/api/v9/", UriKind.Absolute);
 
     private TokenKind? _resolvedTokenKind;
 
-    public DiscordClient(string token, int throttle = 0) => (_token, _throttle) = (token, throttle);
+    public DiscordClient(string token, int throttle = 0) => (_token, Throttle) = (token, throttle);
 
     private async ValueTask<HttpResponseMessage> GetResponseAsync(
         string url,
@@ -34,6 +35,12 @@ public class DiscordClient
     {
         return await Http.ResponseResiliencePolicy.ExecuteAsync(async innerCancellationToken =>
         {
+            var begin = DateTime.Now;
+            var elapsed = begin - _lastRequestTime;
+            if (elapsed < TimeSpan.FromMilliseconds(Throttle))
+                await Task.Delay(TimeSpan.FromMilliseconds(Throttle) - elapsed, innerCancellationToken);
+
+            _lastRequestTime = DateTime.Now;
             using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, url));
 
             // Don't validate because token can have invalid characters
@@ -50,11 +57,6 @@ public class DiscordClient
                 HttpCompletionOption.ResponseHeadersRead,
                 innerCancellationToken
             );
-
-            if (_throttle != 0)
-            {
-                await Task.Delay(new Random().Next(_throttle, _throttle * 2), innerCancellationToken);
-            }
 
             return response;
         }, cancellationToken);

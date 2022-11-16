@@ -144,6 +144,23 @@
                                 Value="{Binding ParallelLimit}" />
                         </StackPanel>
                     </DockPanel>
+
+                    <!--  Throttle  -->
+                    <DockPanel
+                        Margin="16,8"
+                        Background="Transparent"
+                        LastChildFill="False"
+                        ToolTip="Delay each api request (in miliseconds)">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Left"
+                            Text="Delay requests (in ms)" />
+                        <TextBox
+                            Width="150"
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Right"
+                            Text="{Binding Throttle}" />
+                    </DockPanel>
                 </StackPanel>
             </ScrollViewer>
         </Border>

@@ -16,6 +16,8 @@ public partial class SettingsService : SettingsManager
 
     public int ParallelLimit { get; set; } = 1;
 
+    public int Throttle { get; set; } = 0;
+
     public bool ShouldReuseAssets { get; set; }
 
     public string? LastToken { get; set; }

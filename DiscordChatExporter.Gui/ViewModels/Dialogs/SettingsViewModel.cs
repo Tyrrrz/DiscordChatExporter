@@ -38,6 +38,12 @@ public class SettingsViewModel : DialogScreen
         set => _settingsService.ParallelLimit = Math.Clamp(value, 1, 10);
     }
 
+    public int Throttle
+    {
+        get => _settingsService.Throttle;
+        set => _settingsService.Throttle = Math.Max(0, value);
+    }
+
     public bool ShouldReuseAssets
     {
         get => _settingsService.ShouldReuseAssets;

@@ -8,9 +8,9 @@
     <PackageReference Include="Gress" Version="2.0.1" />
     <PackageReference Include="JsonExtensions" Version="1.2.0" />
     <PackageReference Include="Polly" Version="7.2.3" />
-    <PackageReference Include="RazorBlade" Version="0.2.0" />
+    <PackageReference Include="RazorBlade" Version="0.4.1" />
     <PackageReference Include="Superpower" Version="3.0.0" />
-    <PackageReference Include="WebMarkupMin.Core" Version="2.12.0" />
+    <PackageReference Include="WebMarkupMin.Core" Version="2.13.0" />
   </ItemGroup>
 
   <ItemGroup>

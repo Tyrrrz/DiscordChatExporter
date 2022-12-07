@@ -1,5 +1,5 @@
 # Build
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 
 COPY favicon.ico ./
 COPY NuGet.config ./
@@ -10,7 +10,7 @@ COPY DiscordChatExporter.Cli ./DiscordChatExporter.Cli
 RUN dotnet publish DiscordChatExporter.Cli --configuration Release --output ./publish
 
 # Run
-FROM mcr.microsoft.com/dotnet/runtime:6.0 AS run
+FROM mcr.microsoft.com/dotnet/runtime:7.0 AS run
 
 RUN useradd dce
 USER dce

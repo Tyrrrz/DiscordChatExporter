@@ -12,7 +12,6 @@ public abstract class TokenCommandBase : ICommand
     [CommandOption(
         "token",
         't',
-        IsRequired = true,
         EnvironmentVariable = "DISCORD_TOKEN",
         Description = "Authentication token."
     )]

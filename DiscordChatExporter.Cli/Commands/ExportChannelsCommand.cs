@@ -15,7 +15,6 @@ public class ExportChannelsCommand : ExportCommandBase
     [CommandOption(
         "channel",
         'c',
-        IsRequired = true,
         Description = "Channel ID(s)."
     )]
     public required IReadOnlyList<Snowflake> ChannelIds { get; init; }

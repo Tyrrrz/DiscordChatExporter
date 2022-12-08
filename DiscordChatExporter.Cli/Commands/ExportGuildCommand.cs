@@ -15,7 +15,6 @@ public class ExportGuildCommand : ExportCommandBase
     [CommandOption(
         "guild",
         'g',
-        IsRequired = true,
         Description = "Guild ID."
     )]
     public required Snowflake GuildId { get; init; }

@@ -16,7 +16,7 @@ public abstract class TokenCommandBase : ICommand
         EnvironmentVariable = "DISCORD_TOKEN",
         Description = "Authentication token."
     )]
-    public string Token { get; init; } = "";
+    public required string Token { get; init; }
 
     [Obsolete("This option doesn't do anything. Kept for backwards compatibility.")]
     [CommandOption(

@@ -78,10 +78,9 @@ internal class HtmlMessageWriter : MessageWriter
             Minify(
                 await new PreambleTemplate
                 {
-                    CancellationToken = cancellationToken,
                     ExportContext = Context,
                     ThemeName = _themeName
-                }.RenderAsync()
+                }.RenderAsync(cancellationToken)
             )
         );
     }
@@ -94,10 +93,9 @@ internal class HtmlMessageWriter : MessageWriter
             Minify(
                 await new MessageGroupTemplate
                 {
-                    CancellationToken = cancellationToken,
                     ExportContext = Context,
                     Messages = messages
-                }.RenderAsync()
+                }.RenderAsync(cancellationToken)
             )
         );
     }
@@ -133,10 +131,9 @@ internal class HtmlMessageWriter : MessageWriter
             Minify(
                 await new PostambleTemplate
                 {
-                    CancellationToken = cancellationToken,
                     ExportContext = Context,
                     MessagesWritten = MessagesWritten
-                }.RenderAsync()
+                }.RenderAsync(cancellationToken)
             )
         );
     }

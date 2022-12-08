@@ -18,7 +18,7 @@ public class ExportChannelsCommand : ExportCommandBase
         IsRequired = true,
         Description = "Channel ID(s)."
     )]
-    public IReadOnlyList<Snowflake> ChannelIds { get; init; } = Array.Empty<Snowflake>();
+    public required IReadOnlyList<Snowflake> ChannelIds { get; init; }
 
     public override async ValueTask ExecuteAsync(IConsole console)
     {

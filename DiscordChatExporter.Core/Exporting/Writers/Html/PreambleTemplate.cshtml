@@ -7,13 +7,9 @@
 @inherits RazorBlade.HtmlTemplate
 
 @functions {
-    // RazorBlade does not provide built-in support for cancellation
-    // https://github.com/ltrzesniewski/RazorBlade/issues/2
-    public CancellationToken CancellationToken { get; init; }
+    public required ExportContext ExportContext { get; init; }
 
-    public ExportContext ExportContext { get; init; } = default!;
-
-    public string ThemeName { get; init; } = "Dark";
+    public required string ThemeName { get; init; }
 }
 
 @{

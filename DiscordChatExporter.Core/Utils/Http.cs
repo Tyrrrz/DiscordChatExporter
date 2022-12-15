@@ -39,19 +39,9 @@ public static class Http
                 8,
                 (i, result, _) =>
                 {
-                    // If rate-limited, use retry-after as a guide
-                    if (result.Result?.StatusCode == HttpStatusCode.TooManyRequests)
-                    {
-                        // Only start respecting retry-after after a few attempts, because
-                        // Discord often sends unreasonable (20+ minutes) retry-after
-                        // on the very first request.
-                        if (i > 3)
-                        {
-                            var retryAfterDelay = result.Result.Headers.RetryAfter?.Delta;
-                            if (retryAfterDelay is not null)
-                                return retryAfterDelay.Value + TimeSpan.FromSeconds(1); // margin just in case
-                        }
-                    }
+                    // If rate-limited, use retry-after header as the guide
+                    if (result.Result.Headers.RetryAfter?.Delta is { } retryAfter)
+                        return retryAfter + TimeSpan.FromSeconds(1);
 
                     return TimeSpan.FromSeconds(Math.Pow(2, i) + 1);
                 },

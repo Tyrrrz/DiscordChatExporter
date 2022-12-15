@@ -36,7 +36,7 @@ public class DiscordClient
         {
             using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, url));
 
-            // Don't validate because token can have special characters
+            // Don't validate because the token can have special characters
             // https://github.com/Tyrrrz/DiscordChatExporter/issues/828
             request.Headers.TryAddWithoutValidation(
                 "Authorization",
@@ -68,7 +68,7 @@ public class DiscordClient
                 .Pipe(s => TimeSpan.FromSeconds(double.Parse(s, CultureInfo.InvariantCulture)));
 
             if (remainingRequestCount <= 0 && resetAfterDelay is not null)
-                await Task.Delay(resetAfterDelay.Value + TimeSpan.FromSeconds(1), innerCancellationToken);
+                await Task.Delay(resetAfterDelay.Value, innerCancellationToken);
 
             return response;
         }, cancellationToken);

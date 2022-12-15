@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Net;
-using System.Net.Http;
-using System.Text.RegularExpressions;
 
 namespace DiscordChatExporter.Core.Utils.Extensions;
 
@@ -32,13 +28,4 @@ public static class ExceptionExtensions
         PopulateChildren(exception, children);
         return children;
     }
-
-    public static HttpStatusCode? TryGetStatusCode(this HttpRequestException ex) =>
-        // This is extremely frail, but there's no other way
-        Regex
-            .Match(ex.Message, @": (\d+) \(")
-            .Groups[1]
-            .Value
-            .NullIfWhiteSpace()?
-            .Pipe(s => (HttpStatusCode) int.Parse(s, CultureInfo.InvariantCulture));
 }

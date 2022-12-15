@@ -56,7 +56,7 @@ public class DiscordClient
             // This may add an unnecessary delay in case the user doesn't intend to
             // make any more requests, but implementing a smarter solution would
             // require properly keeping track of Discord's global/per-route/per-resource
-            // rate limits and that's not worth the effort.
+            // rate limits and that's just way too much effort.
             var remainingRequestCount = response
                 .Headers
                 .TryGetValue("X-RateLimit-Remaining")?

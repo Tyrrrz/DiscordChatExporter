@@ -69,7 +69,17 @@ public class DiscordClient
                 .Pipe(s => TimeSpan.FromSeconds(double.Parse(s, CultureInfo.InvariantCulture)));
 
             if (remainingRequestCount <= 0 && resetAfterDelay is not null)
-                await Task.Delay(resetAfterDelay.Value, innerCancellationToken);
+            {
+                var delay =
+                    // Adding a small buffer to the reset time reduces the chance of getting
+                    // rate limited again, because it allows for more requests to be released.
+                    (resetAfterDelay.Value + TimeSpan.FromSeconds(1))
+                    // Sometimes Discord returns an absurdly high value for the reset time, which
+                    // is not actually enforced by the server. So we cap it at a reasonable value.
+                    .Clamp(TimeSpan.Zero, TimeSpan.FromSeconds(60));
+
+                await Task.Delay(delay, innerCancellationToken);
+            }
 
             return response;
         }, cancellationToken);

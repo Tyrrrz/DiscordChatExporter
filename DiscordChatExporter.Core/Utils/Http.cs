@@ -41,7 +41,10 @@ public static class Http
                 {
                     // If rate-limited, use retry-after header as the guide
                     if (result.Result.Headers.RetryAfter?.Delta is { } retryAfter)
-                        return retryAfter;
+                    {
+                        // Add some buffer just in case
+                        return retryAfter + TimeSpan.FromSeconds(1);
+                    }
 
                     return TimeSpan.FromSeconds(Math.Pow(2, i) + 1);
                 },

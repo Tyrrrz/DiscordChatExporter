@@ -18,7 +18,8 @@ RUN dotnet publish DiscordChatExporter.Cli \
 # Run
 FROM mcr.microsoft.com/dotnet/runtime-deps:7.0-alpine
 
-RUN mkdir -p /opt/discord_chat_exporter && \
+RUN apk add --no-cache tzdata && \
+    mkdir -p /opt/discord_chat_exporter && \
     adduser \
     --disabled-password \
     --no-create-home \

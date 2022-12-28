@@ -18,15 +18,15 @@ RUN dotnet publish DiscordChatExporter.Cli \
 # Run
 FROM mcr.microsoft.com/dotnet/runtime-deps:7.0-alpine
 
-RUN adduser \
+RUN mkdir -p /opt/discord_chat_exporter && \
+    adduser \
     --disabled-password \
     --no-create-home \
     dce
 USER dce
+COPY --from=build /build/publish /opt/discord_chat_exporter
 
-WORKDIR /opt/discord_chat_exporter
-
-COPY --from=build /build/publish ./
+WORKDIR /out
 
 ENV PATH="$PATH:/opt/discord_chat_exporter"
 ENTRYPOINT ["DiscordChatExporter.Cli"]

@@ -18,8 +18,8 @@ RUN dotnet publish DiscordChatExporter.Cli \
 # Run
 FROM mcr.microsoft.com/dotnet/runtime-deps:7.0-alpine
 
+# tzdata is needed for DateTimeOffset.ToLocalTime (for TimeZoneInfo.Local, to be precise)
 RUN apk add --no-cache tzdata && \
-    mkdir -p /opt/discord_chat_exporter && \
     adduser \
     --disabled-password \
     --no-create-home \

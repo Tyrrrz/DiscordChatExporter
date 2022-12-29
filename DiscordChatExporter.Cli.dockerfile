@@ -27,6 +27,9 @@ RUN apk add --no-cache tzdata && \
 USER dce
 COPY --from=build /build/publish /opt/discord_chat_exporter
 
+# Need to keep this as /out for backwards compatibility with documentation.
+# A lot of people have this directory mounted in their scripts files, so
+# changing it would break existing workflows.
 WORKDIR /out
 
 ENV PATH="$PATH:/opt/discord_chat_exporter"

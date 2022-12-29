@@ -19,8 +19,8 @@ RUN dotnet publish DiscordChatExporter.Cli \
 FROM mcr.microsoft.com/dotnet/runtime-deps:7.0-alpine
 
 # tzdata is needed for DateTimeOffset.ToLocalTime (for TimeZoneInfo.Local, to be precise)
-RUN apk add --no-cache tzdata && \
-    adduser \
+RUN apk add --no-cache tzdata
+RUN adduser \
     --disabled-password \
     --no-create-home \
     dce
@@ -32,5 +32,7 @@ COPY --from=build /build/publish /opt/discord_chat_exporter
 # changing it would break existing workflows.
 WORKDIR /out
 
+# Having it in PATH is convenient for interactive shell sessions,
+# which may be useful for debugging.
 ENV PATH="$PATH:/opt/discord_chat_exporter"
 ENTRYPOINT ["DiscordChatExporter.Cli"]

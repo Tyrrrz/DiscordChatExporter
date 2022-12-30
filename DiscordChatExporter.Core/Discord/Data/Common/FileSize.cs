@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 namespace DiscordChatExporter.Core.Discord.Data.Common;
 
@@ -39,7 +40,8 @@ public readonly partial record struct FileSize(long TotalBytes)
     }
 
     [ExcludeFromCodeCoverage]
-    public override string ToString() => $"{GetLargestWholeNumberValue():0.##} {GetLargestWholeNumberSymbol()}";
+    public override string ToString() =>
+        string.Create(CultureInfo.InvariantCulture, $"{GetLargestWholeNumberValue():0.##} {GetLargestWholeNumberSymbol()}");
 }
 
 public partial record struct FileSize

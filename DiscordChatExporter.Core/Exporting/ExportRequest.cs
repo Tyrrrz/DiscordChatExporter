@@ -14,6 +14,7 @@ public partial record ExportRequest(
     Guild Guild,
     Channel Channel,
     string OutputPath,
+    string? AssetsPath,
     ExportFormat Format,
     Snowflake? After,
     Snowflake? Before,
@@ -35,7 +36,15 @@ public partial record ExportRequest(
 
     public string OutputBaseDirPath => Path.GetDirectoryName(OutputBaseFilePath) ?? OutputPath;
 
-    public string OutputAssetsDirPath => $"{OutputBaseFilePath}_Files{Path.DirectorySeparatorChar}";
+    private string? _outputAssetsDirPath;
+    public string OutputAssetsDirPath => _outputAssetsDirPath ??= GetOutputAssetsDirPath(
+            Guild,
+            Channel,
+            AssetsPath,
+            Format,
+            After,
+            Before
+        ) ?? $"{OutputBaseFilePath}_Files{Path.DirectorySeparatorChar}";
 }
 
 public partial record ExportRequest
@@ -119,5 +128,39 @@ public partial record ExportRequest
         buffer.Append('.').Append(format.GetFileExtension());
 
         return PathEx.EscapeFileName(buffer.ToString());
+    }
+
+    private static string? GetOutputAssetsDirPath(
+        Guild guild,
+        Channel channel,
+        string? assetsPath,
+        ExportFormat format,
+        Snowflake? after = null,
+        Snowflake? before = null)
+    {
+        if (assetsPath is null)
+            return null;
+
+        // Formats path
+        assetsPath = Regex.Replace(assetsPath, "%.", m =>
+            PathEx.EscapeFileName(m.Value switch
+            {
+                "%g" => guild.Id.ToString(),
+                "%G" => guild.Name,
+                "%t" => channel.Category.Id.ToString(),
+                "%T" => channel.Category.Name,
+                "%c" => channel.Id.ToString(),
+                "%C" => channel.Name,
+                "%p" => channel.Position?.ToString() ?? "0",
+                "%P" => channel.Category.Position?.ToString() ?? "0",
+                "%a" => after?.ToDate().ToString("yyyy-MM-dd") ?? "",
+                "%b" => before?.ToDate().ToString("yyyy-MM-dd") ?? "",
+                "%d" => DateTimeOffset.Now.ToString("yyyy-MM-dd"),
+                "%%" => "%",
+                _ => m.Value
+            })
+        );
+
+        return assetsPath;
     }
 }

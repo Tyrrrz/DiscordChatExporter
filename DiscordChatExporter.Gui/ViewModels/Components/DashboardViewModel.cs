@@ -181,6 +181,7 @@ public class DashboardViewModel : PropertyChangedBase
                             dialog.Guild!,
                             channel,
                             dialog.OutputPath!,
+                            null,
                             dialog.SelectedFormat,
                             dialog.After?.Pipe(Snowflake.FromDate),
                             dialog.Before?.Pipe(Snowflake.FromDate),

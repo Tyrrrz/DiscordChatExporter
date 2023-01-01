@@ -36,6 +36,20 @@ public abstract class ExportCommandBase : TokenCommandBase
         init => _outputPath = Path.GetFullPath(value);
     }
 
+    private readonly string? _assetsPath;
+
+    [CommandOption(
+        "media-dir",
+        Description = "Download assets to this directory."
+    )]
+    public string? AssetsPath
+    {
+        get => _assetsPath;
+        // Handle ~/ in paths on Unix systems
+        // https://github.com/Tyrrrz/DiscordChatExporter/pull/903
+        init => _assetsPath = value is not null ? Path.GetFullPath(value) : null;
+    }
+
     [CommandOption(
         "format",
         'f',
@@ -153,6 +167,7 @@ public abstract class ExportCommandBase : TokenCommandBase
                                     guild,
                                     channel,
                                     OutputPath,
+                                    AssetsPath,
                                     ExportFormat,
                                     After,
                                     Before,

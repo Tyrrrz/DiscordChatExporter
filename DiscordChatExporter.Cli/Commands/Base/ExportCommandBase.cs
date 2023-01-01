@@ -124,7 +124,7 @@ public abstract class ExportCommandBase : TokenCommandBase
         if (AssetsPath is not null && !ShouldDownloadAssets)
         {
             throw new CommandException(
-                "Option --assets-dir cannot be used without --media."
+                "Option --media-dir cannot be used without --media."
             );
         }
 

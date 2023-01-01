@@ -49,16 +49,14 @@ public partial record ExportRequest(
 
 public partial record ExportRequest
 {
-    private static string GetOutputBaseFilePath(
+    private static string FormatPath(
+        string path,
         Guild guild,
         Channel channel,
-        string outputPath,
-        ExportFormat format,
-        Snowflake? after = null,
-        Snowflake? before = null)
+        Snowflake? after,
+        Snowflake? before)
     {
-        // Formats path
-        outputPath = Regex.Replace(outputPath, "%.", m =>
+        return Regex.Replace(path, "%.", m =>
             PathEx.EscapeFileName(m.Value switch
             {
                 "%g" => guild.Id.ToString(),
@@ -74,8 +72,18 @@ public partial record ExportRequest
                 "%d" => DateTimeOffset.Now.ToString("yyyy-MM-dd"),
                 "%%" => "%",
                 _ => m.Value
-            })
-        );
+            }));
+    }
+
+    private static string GetOutputBaseFilePath(
+        Guild guild,
+        Channel channel,
+        string outputPath,
+        ExportFormat format,
+        Snowflake? after = null,
+        Snowflake? before = null)
+    {
+        outputPath = FormatPath(outputPath, guild, channel, after, before);
 
         // Output is a directory
         if (Directory.Exists(outputPath) || string.IsNullOrWhiteSpace(Path.GetExtension(outputPath)))
@@ -141,25 +149,7 @@ public partial record ExportRequest
         if (assetsPath is null)
             return null;
 
-        // Formats path
-        assetsPath = Regex.Replace(assetsPath, "%.", m =>
-            PathEx.EscapeFileName(m.Value switch
-            {
-                "%g" => guild.Id.ToString(),
-                "%G" => guild.Name,
-                "%t" => channel.Category.Id.ToString(),
-                "%T" => channel.Category.Name,
-                "%c" => channel.Id.ToString(),
-                "%C" => channel.Name,
-                "%p" => channel.Position?.ToString() ?? "0",
-                "%P" => channel.Category.Position?.ToString() ?? "0",
-                "%a" => after?.ToDate().ToString("yyyy-MM-dd") ?? "",
-                "%b" => before?.ToDate().ToString("yyyy-MM-dd") ?? "",
-                "%d" => DateTimeOffset.Now.ToString("yyyy-MM-dd"),
-                "%%" => "%",
-                _ => m.Value
-            })
-        );
+        assetsPath = FormatPath(assetsPath, guild, channel, after, before);
 
         return assetsPath;
     }

@@ -91,27 +91,25 @@ public partial record ExportRequest
         Snowflake? before = null)
     {
         // Format path
-        var actualOutputPath = PathEx.EscapeFileName(
-            Regex.Replace(
-                outputPath,
-                "%.",
-                m => m.Value switch
-                {
-                    "%g" => guild.Id.ToString(),
-                    "%G" => guild.Name,
-                    "%t" => channel.Category.Id.ToString(),
-                    "%T" => channel.Category.Name,
-                    "%c" => channel.Id.ToString(),
-                    "%C" => channel.Name,
-                    "%p" => channel.Position?.ToString() ?? "0",
-                    "%P" => channel.Category.Position?.ToString() ?? "0",
-                    "%a" => after?.ToDate().ToString("yyyy-MM-dd") ?? "",
-                    "%b" => before?.ToDate().ToString("yyyy-MM-dd") ?? "",
-                    "%d" => DateTimeOffset.Now.ToString("yyyy-MM-dd"),
-                    "%%" => "%",
-                    _ => m.Value
-                }
-            )
+        var actualOutputPath = Regex.Replace(
+            outputPath,
+            "%.",
+            m => PathEx.EscapeFileName(m.Value switch
+            {
+                "%g" => guild.Id.ToString(),
+                "%G" => guild.Name,
+                "%t" => channel.Category.Id.ToString(),
+                "%T" => channel.Category.Name,
+                "%c" => channel.Id.ToString(),
+                "%C" => channel.Name,
+                "%p" => channel.Position?.ToString() ?? "0",
+                "%P" => channel.Category.Position?.ToString() ?? "0",
+                "%a" => after?.ToDate().ToString("yyyy-MM-dd") ?? "",
+                "%b" => before?.ToDate().ToString("yyyy-MM-dd") ?? "",
+                "%d" => DateTimeOffset.Now.ToString("yyyy-MM-dd"),
+                "%%" => "%",
+                _ => m.Value
+            })
         );
 
         // Output is a directory

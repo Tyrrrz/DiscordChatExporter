@@ -40,45 +40,6 @@ public partial record ExportRequest(
 
 public partial record ExportRequest
 {
-    private static string GetOutputBaseFilePath(
-        Guild guild,
-        Channel channel,
-        string outputPath,
-        ExportFormat format,
-        Snowflake? after = null,
-        Snowflake? before = null)
-    {
-        // Formats path
-        outputPath = Regex.Replace(outputPath, "%.", m =>
-            PathEx.EscapeFileName(m.Value switch
-            {
-                "%g" => guild.Id.ToString(),
-                "%G" => guild.Name,
-                "%t" => channel.Category.Id.ToString(),
-                "%T" => channel.Category.Name,
-                "%c" => channel.Id.ToString(),
-                "%C" => channel.Name,
-                "%p" => channel.Position?.ToString() ?? "0",
-                "%P" => channel.Category.Position?.ToString() ?? "0",
-                "%a" => after?.ToDate().ToString("yyyy-MM-dd") ?? "",
-                "%b" => before?.ToDate().ToString("yyyy-MM-dd") ?? "",
-                "%d" => DateTimeOffset.Now.ToString("yyyy-MM-dd"),
-                "%%" => "%",
-                _ => m.Value
-            })
-        );
-
-        // Output is a directory
-        if (Directory.Exists(outputPath) || string.IsNullOrWhiteSpace(Path.GetExtension(outputPath)))
-        {
-            var fileName = GetDefaultOutputFileName(guild, channel, format, after, before);
-            return Path.Combine(outputPath, fileName);
-        }
-
-        // Output is a file
-        return outputPath;
-    }
-
     public static string GetDefaultOutputFileName(
         Guild guild,
         Channel channel,
@@ -119,5 +80,48 @@ public partial record ExportRequest
         buffer.Append('.').Append(format.GetFileExtension());
 
         return PathEx.EscapeFileName(buffer.ToString());
+    }
+
+    private static string GetOutputBaseFilePath(
+        Guild guild,
+        Channel channel,
+        string outputPath,
+        ExportFormat format,
+        Snowflake? after = null,
+        Snowflake? before = null)
+    {
+        // Format path
+        var actualOutputPath = PathEx.EscapeFileName(
+            Regex.Replace(
+                outputPath,
+                "%.",
+                m => m.Value switch
+                {
+                    "%g" => guild.Id.ToString(),
+                    "%G" => guild.Name,
+                    "%t" => channel.Category.Id.ToString(),
+                    "%T" => channel.Category.Name,
+                    "%c" => channel.Id.ToString(),
+                    "%C" => channel.Name,
+                    "%p" => channel.Position?.ToString() ?? "0",
+                    "%P" => channel.Category.Position?.ToString() ?? "0",
+                    "%a" => after?.ToDate().ToString("yyyy-MM-dd") ?? "",
+                    "%b" => before?.ToDate().ToString("yyyy-MM-dd") ?? "",
+                    "%d" => DateTimeOffset.Now.ToString("yyyy-MM-dd"),
+                    "%%" => "%",
+                    _ => m.Value
+                }
+            )
+        );
+
+        // Output is a directory
+        if (Directory.Exists(actualOutputPath) || string.IsNullOrWhiteSpace(Path.GetExtension(actualOutputPath)))
+        {
+            var fileName = GetDefaultOutputFileName(guild, channel, format, after, before);
+            return Path.Combine(actualOutputPath, fileName);
+        }
+
+        // Output is a file
+        return actualOutputPath;
     }
 }

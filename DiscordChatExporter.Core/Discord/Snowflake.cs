@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Text.RegularExpressions;
 
 namespace DiscordChatExporter.Core.Discord;
 
@@ -29,7 +28,7 @@ public partial record struct Snowflake
             return null;
 
         // As number
-        if (Regex.IsMatch(str, @"^\d+$") && ulong.TryParse(str, NumberStyles.Number, formatProvider, out var value))
+        if (ulong.TryParse(str, NumberStyles.None, formatProvider, out var value))
         {
             return new Snowflake(value);
         }

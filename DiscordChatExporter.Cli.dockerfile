@@ -1,4 +1,4 @@
-# Build
+# -- Build
 FROM mcr.microsoft.com/dotnet/sdk:7.0-alpine AS build
 
 WORKDIR /build
@@ -15,24 +15,30 @@ RUN dotnet publish DiscordChatExporter.Cli \
     --configuration Release \
     --output ./publish
 
-# Run
+# -- Run
 FROM mcr.microsoft.com/dotnet/runtime-deps:7.0-alpine
 
-# tzdata is needed for DateTimeOffset.ToLocalTime (for TimeZoneInfo.Local, to be precise)
+# Alpine dotnet image doesn't include timezone data, which is needed
+# for certain date/time operations.
 RUN apk add --no-cache tzdata
+
+# Create a non-root user to run the app, so that the output files
+# can be accessed by the host.
+# https://github.com/Tyrrrz/DiscordChatExporter/issues/851
 RUN adduser \
     --disabled-password \
     --no-create-home \
     dce
+
 USER dce
-COPY --from=build /build/publish /opt/discord_chat_exporter
+
+COPY --from=build /build/publish /opt/dce
 
 # Need to keep this as /out for backwards compatibility with documentation.
 # A lot of people have this directory mounted in their scripts files, so
 # changing it would break existing workflows.
 WORKDIR /out
 
-# Having it in PATH is convenient for interactive shell sessions,
-# which may be useful for debugging.
-ENV PATH="$PATH:/opt/discord_chat_exporter"
+# Add the app directory to PATH so that it's easier to debug using a shell
+ENV PATH="$PATH:/opt/dce"
 ENTRYPOINT ["DiscordChatExporter.Cli"]

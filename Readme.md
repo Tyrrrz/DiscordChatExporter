@@ -84,12 +84,12 @@ The following table lists all available download options:
 > If you have any issues with them, please contact the corresponding maintainers.
 
 > **Warning**:
-> To run **DiscordChatExporter** on macOS and Linux, you need to make sure that **.NET Runtime v6** is installed.
+> To run **DiscordChatExporter** on macOS and Linux, you need to make sure that **.NET 7.0 Runtime** is installed.
 > You can download it here:
 >
-> - [.NET Runtime v6 for **macOS x64**](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-6.0.11-macos-x64-installer)
-> - [.NET Runtime v6 for **macOS Arm64**](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-6.0.11-macos-arm64-installer)
-> - [.NET Runtime v6 for **Linux**](https://docs.microsoft.com/en-us/dotnet/core/install/linux) (find the correct download for your distro)
+> - [.NET 7.0 Runtime for **macOS x64**](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/sdk-7.0.101-macos-x64-installer)
+> - [.NET 7.0 Runtime for **macOS Arm64**](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/sdk-7.0.101-macos-arm64-installer)
+> - [.NET 7.0 Runtime for **Linux**](https://docs.microsoft.com/en-us/dotnet/core/install/linux) (find the correct download for your distro)
 >
 > This should not be necessary if you install **DiscordChatExporter** using a package manager, as it should take care of the dependencies for you.
 > This is also not necessary if you are running **DiscordChatExporter** via Docker, because the image already contains the runtime.

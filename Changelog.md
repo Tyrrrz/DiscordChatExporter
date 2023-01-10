@@ -1,3 +1,8 @@
+### v2.37.1 (10-Jan-2023)
+
+- [HTML] Fixed an issue where the export failed because it failed to resolve standard emoji image assets. Switched to a different CDN provider to mitigate this. (Thanks [@Lucas LaBuff](https://github.com/96-LB))
+- [GUI] Fixed an application crash that happened when the user attempted to close the same dialog multiple times in a very short time.
+
 ### v2.37 (08-Jan-2023)
 
 - Switched from .NET 6.0 to .NET 7.0. If running on Windows, the application should update all required prerequisites automatically. Alternatively, you can download the latest version of the runtime for your system [here](https://dotnet.microsoft.com/download/dotnet/7.0).

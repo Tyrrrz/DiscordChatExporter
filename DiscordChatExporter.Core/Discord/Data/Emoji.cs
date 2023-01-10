@@ -45,7 +45,7 @@ public partial record Emoji
         : $"https://cdn.discordapp.com/emojis/{id}.png";
 
     private static string GetImageUrl(string name) =>
-        $"https://twemoji.maxcdn.com/v/latest/svg/{GetTwemojiId(name)}.svg";
+        $"https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/{GetTwemojiId(name)}.svg";
 
     public static string GetImageUrl(Snowflake? id, string? name, bool isAnimated)
     {

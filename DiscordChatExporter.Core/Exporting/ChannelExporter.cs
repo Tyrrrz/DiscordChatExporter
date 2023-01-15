@@ -77,7 +77,8 @@ public class ChannelExporter
             // Export message
             await messageExporter.ExportMessageAsync(message, cancellationToken);
             exportedAnything = true;
-            count++;
+            if(message.Kind == MessageKind.Default || message.Kind == MessageKind.Reply)
+                count++;
         }
 
         // Throw if no messages were exported

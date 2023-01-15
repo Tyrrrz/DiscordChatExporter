@@ -39,6 +39,7 @@ public class ChannelExporter
         await using var messageExporter = new MessageExporter(context);
 
         var exportedAnything = false;
+        var count = 0;
         var encounteredUsers = new HashSet<User>(IdBasedEqualityComparer.Instance);
 
         await foreach (var message in _discord.GetMessagesAsync(
@@ -49,6 +50,10 @@ public class ChannelExporter
                            cancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
+
+            // Stops if message count reached the limit set
+            if (request.MessagesLimit.IsReached(count))
+                break;
 
             // Skips any messages that fail to pass the supplied filter
             if (!request.MessageFilter.IsMatch(message))
@@ -72,6 +77,7 @@ public class ChannelExporter
             // Export message
             await messageExporter.ExportMessageAsync(message, cancellationToken);
             exportedAnything = true;
+            count++;
         }
 
         // Throw if no messages were exported

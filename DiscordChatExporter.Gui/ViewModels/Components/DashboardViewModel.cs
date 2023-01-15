@@ -16,6 +16,7 @@ using DiscordChatExporter.Gui.ViewModels.Framework;
 using Gress;
 using Gress.Completable;
 using Stylet;
+using DiscordChatExporter.Core.Exporting.MessagesLimitation;
 
 namespace DiscordChatExporter.Gui.ViewModels.Components;
 
@@ -185,6 +186,7 @@ public class DashboardViewModel : PropertyChangedBase
                             dialog.After?.Pipe(Snowflake.FromDate),
                             dialog.Before?.Pipe(Snowflake.FromDate),
                             dialog.PartitionLimit,
+                            MessagesLimit.Null,
                             dialog.MessageFilter,
                             dialog.ShouldDownloadAssets,
                             _settingsService.ShouldReuseAssets,

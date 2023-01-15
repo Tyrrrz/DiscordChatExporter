@@ -13,6 +13,7 @@ using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Core.Exporting.Filtering;
+using DiscordChatExporter.Core.Exporting.MessagesLimitation;
 using DiscordChatExporter.Core.Exporting.Partitioning;
 using DiscordChatExporter.Core.Utils;
 using Gress;
@@ -93,6 +94,12 @@ public abstract class ExportCommandBase : TokenCommandBase
     public string DateFormat { get; init; } = "dd-MMM-yy hh:mm tt";
 
     [CommandOption(
+        "limit",
+        Description = "Set a limit for messages gathered."
+    )]
+    public MessagesLimit MessagesLimit { get; init; } = MessagesLimit.Null;
+
+    [CommandOption(
         "fuck-russia",
         Description = "Don't print the Support Ukraine message to the console."
     )]
@@ -163,6 +170,7 @@ public abstract class ExportCommandBase : TokenCommandBase
                                     After,
                                     Before,
                                     PartitionLimit,
+                                    MessagesLimit,
                                     MessageFilter,
                                     ShouldDownloadAssets,
                                     ShouldReuseAssets,

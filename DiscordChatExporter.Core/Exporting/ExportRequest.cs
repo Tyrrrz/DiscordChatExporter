@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exporting.Filtering;
+using DiscordChatExporter.Core.Exporting.MessagesLimitation;
 using DiscordChatExporter.Core.Exporting.Partitioning;
 using DiscordChatExporter.Core.Utils;
 
@@ -18,6 +19,7 @@ public partial record ExportRequest(
     Snowflake? After,
     Snowflake? Before,
     PartitionLimit PartitionLimit,
+    MessagesLimit MessagesLimit,
     MessageFilter MessageFilter,
     bool ShouldDownloadAssets,
     bool ShouldReuseAssets,

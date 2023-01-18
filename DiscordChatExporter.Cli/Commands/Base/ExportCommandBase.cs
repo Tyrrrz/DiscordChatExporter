@@ -150,7 +150,8 @@ public abstract class ExportCommandBase : TokenCommandBase
                 {
                     try
                     {
-                        await progressContext.StartTaskAsync($"{channel.Category.Name} / {channel.Name}",
+                        await progressContext.StartTaskAsync(
+                            $"{channel.Category.Name} / {channel.Name}",
                             async progress =>
                             {
                                 var guild = await Discord.GetGuildAsync(channel.GuildId, innerCancellationToken);

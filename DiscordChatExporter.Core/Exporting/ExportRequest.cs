@@ -38,13 +38,13 @@ public partial record ExportRequest(
 
     private string? _outputAssetsDirPath;
     public string OutputAssetsDirPath => _outputAssetsDirPath ??= GetOutputAssetsDirPath(
-            Guild,
-            Channel,
-            AssetsPath,
-            Format,
-            After,
-            Before
-        ) ?? $"{OutputBaseFilePath}_Files{Path.DirectorySeparatorChar}";
+        OutputBaseFilePath,
+        Guild,
+        Channel,
+        AssetsPath,
+        After,
+        Before
+    );
 }
 
 public partial record ExportRequest
@@ -138,16 +138,16 @@ public partial record ExportRequest
         return PathEx.EscapeFileName(buffer.ToString());
     }
 
-    private static string? GetOutputAssetsDirPath(
+    private static string GetOutputAssetsDirPath(
+        string basePath,
         Guild guild,
         Channel channel,
         string? assetsPath,
-        ExportFormat format,
         Snowflake? after = null,
         Snowflake? before = null)
     {
         if (assetsPath is null)
-            return null;
+            return $"{basePath}_Files{Path.DirectorySeparatorChar}";
 
         assetsPath = FormatPath(assetsPath, guild, channel, after, before);
 

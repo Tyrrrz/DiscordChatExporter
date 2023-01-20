@@ -44,6 +44,7 @@ internal static class ConsoleExtensions
         }
         finally
         {
+            progressTask.Value = progressTask.MaxValue;
             progressTask.StopTask();
         }
     }

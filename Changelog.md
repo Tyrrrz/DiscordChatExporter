@@ -1,3 +1,16 @@
+### v2.37.1 (10-Jan-2023)
+
+- [HTML] Fixed an issue where the export failed because it failed to resolve standard emoji image assets. Switched to a different CDN provider to mitigate this. (Thanks [@Lucas LaBuff](https://github.com/96-LB))
+- [GUI] Fixed an application crash that happened when the user attempted to close the same dialog multiple times in a very short time.
+
+### v2.37 (08-Jan-2023)
+
+- Switched from .NET 6.0 to .NET 7.0. If running on Windows, the application should update all required prerequisites automatically. Alternatively, you can download the latest version of the runtime for your system [here](https://dotnet.microsoft.com/download/dotnet/7.0).
+- Updated rate limit handling to adjust automatically based on the response headers. This may result in exports taking longer than before on bot accounts, but it makes it less likely for Discord to throttle you. Exports with user accounts shouldn't be affected too much by this change.
+- Optimized snowflake parsing by removing unnecessary checks. (Thanks [@Kuba_Z2](https://github.com/KubaZ2))
+- [Docker] Optimized the Docker image size by using the Alpine base image and publishing a self-contained distribution. (Thanks [@Velithris](https://github.com/Zireael-N))
+- Fixed an issue where exporting a channel whose name ends with a dot would fail on Windows with default output path. The dots are now trimmed in file and directory names to match the behavior of Windows Explorer.
+
 ### v2.36.4 (29-Oct-2022)
 
 - Changed all mentions of "media" in the context of "download media" or "reuse media" to "assets". CLI options will retain their existing names for backwards compatibility.

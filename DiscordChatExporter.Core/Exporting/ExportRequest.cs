@@ -49,53 +49,6 @@ public partial record ExportRequest(
 
 public partial record ExportRequest
 {
-    private static string FormatPath(
-        string path,
-        Guild guild,
-        Channel channel,
-        Snowflake? after,
-        Snowflake? before)
-    {
-        return Regex.Replace(path, "%.", m =>
-            PathEx.EscapeFileName(m.Value switch
-            {
-                "%g" => guild.Id.ToString(),
-                "%G" => guild.Name,
-                "%t" => channel.Category.Id.ToString(),
-                "%T" => channel.Category.Name,
-                "%c" => channel.Id.ToString(),
-                "%C" => channel.Name,
-                "%p" => channel.Position?.ToString() ?? "0",
-                "%P" => channel.Category.Position?.ToString() ?? "0",
-                "%a" => after?.ToDate().ToString("yyyy-MM-dd") ?? "",
-                "%b" => before?.ToDate().ToString("yyyy-MM-dd") ?? "",
-                "%d" => DateTimeOffset.Now.ToString("yyyy-MM-dd"),
-                "%%" => "%",
-                _ => m.Value
-            }));
-    }
-
-    private static string GetOutputBaseFilePath(
-        Guild guild,
-        Channel channel,
-        string outputPath,
-        ExportFormat format,
-        Snowflake? after = null,
-        Snowflake? before = null)
-    {
-        outputPath = FormatPath(outputPath, guild, channel, after, before);
-
-        // Output is a directory
-        if (Directory.Exists(outputPath) || string.IsNullOrWhiteSpace(Path.GetExtension(outputPath)))
-        {
-            var fileName = GetDefaultOutputFileName(guild, channel, format, after, before);
-            return Path.Combine(outputPath, fileName);
-        }
-
-        // Output is a file
-        return outputPath;
-    }
-
     public static string GetDefaultOutputFileName(
         Guild guild,
         Channel channel,
@@ -138,6 +91,55 @@ public partial record ExportRequest
         return PathEx.EscapeFileName(buffer.ToString());
     }
 
+    private static string FormatPath(
+        string path,
+        Guild guild,
+        Channel channel,
+        Snowflake? after,
+        Snowflake? before)
+    {
+        return Regex.Replace(
+            path,
+            "%.",
+            m => PathEx.EscapeFileName(m.Value switch
+            {
+                "%g" => guild.Id.ToString(),
+                "%G" => guild.Name,
+                "%t" => channel.Category.Id.ToString(),
+                "%T" => channel.Category.Name,
+                "%c" => channel.Id.ToString(),
+                "%C" => channel.Name,
+                "%p" => channel.Position?.ToString() ?? "0",
+                "%P" => channel.Category.Position?.ToString() ?? "0",
+                "%a" => after?.ToDate().ToString("yyyy-MM-dd") ?? "",
+                "%b" => before?.ToDate().ToString("yyyy-MM-dd") ?? "",
+                "%d" => DateTimeOffset.Now.ToString("yyyy-MM-dd"),
+                "%%" => "%",
+                _ => m.Value
+            }));
+    }
+
+    private static string GetOutputBaseFilePath(
+        Guild guild,
+        Channel channel,
+        string outputPath,
+        ExportFormat format,
+        Snowflake? after = null,
+        Snowflake? before = null)
+    {
+        var actualOutputPath = FormatPath(outputPath, guild, channel, after, before);
+
+        // Output is a directory
+        if (Directory.Exists(actualOutputPath) || string.IsNullOrWhiteSpace(Path.GetExtension(actualOutputPath)))
+        {
+            var fileName = GetDefaultOutputFileName(guild, channel, format, after, before);
+            return Path.Combine(actualOutputPath, fileName);
+        }
+
+        // Output is a file
+        return actualOutputPath;
+    }
+
     private static string GetOutputAssetsDirPath(
         string basePath,
         Guild guild,
@@ -149,8 +151,8 @@ public partial record ExportRequest
         if (assetsPath is null)
             return $"{basePath}_Files{Path.DirectorySeparatorChar}";
 
-        assetsPath = FormatPath(assetsPath, guild, channel, after, before);
+        var actualAssetsPath = FormatPath(assetsPath, guild, channel, after, before);
 
-        return assetsPath;
+        return actualAssetsPath;
     }
 }

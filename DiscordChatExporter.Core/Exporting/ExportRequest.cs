@@ -37,14 +37,17 @@ public partial record ExportRequest(
     public string OutputBaseDirPath => Path.GetDirectoryName(OutputBaseFilePath) ?? OutputPath;
 
     private string? _outputAssetsDirPath;
-    public string OutputAssetsDirPath => _outputAssetsDirPath ??= GetOutputAssetsDirPath(
-        OutputBaseFilePath,
-        Guild,
-        Channel,
-        AssetsPath,
-        After,
-        Before
-    );
+    public string OutputAssetsDirPath => _outputAssetsDirPath ??= (
+        AssetsPath is not null
+            ? EvaluateTemplateTokens(
+                    AssetsPath,
+                    Guild,
+                    Channel,
+                    After,
+                    Before
+                  )
+            : $"{OutputBaseFilePath}_Files{Path.DirectorySeparatorChar}"
+        );
 }
 
 public partial record ExportRequest
@@ -91,7 +94,7 @@ public partial record ExportRequest
         return PathEx.EscapeFileName(buffer.ToString());
     }
 
-    private static string FormatPath(
+    private static string EvaluateTemplateTokens(
         string path,
         Guild guild,
         Channel channel,
@@ -127,7 +130,7 @@ public partial record ExportRequest
         Snowflake? after = null,
         Snowflake? before = null)
     {
-        var actualOutputPath = FormatPath(outputPath, guild, channel, after, before);
+        var actualOutputPath = EvaluateTemplateTokens(outputPath, guild, channel, after, before);
 
         // Output is a directory
         if (Directory.Exists(actualOutputPath) || string.IsNullOrWhiteSpace(Path.GetExtension(actualOutputPath)))
@@ -138,21 +141,5 @@ public partial record ExportRequest
 
         // Output is a file
         return actualOutputPath;
-    }
-
-    private static string GetOutputAssetsDirPath(
-        string basePath,
-        Guild guild,
-        Channel channel,
-        string? assetsPath,
-        Snowflake? after = null,
-        Snowflake? before = null)
-    {
-        if (assetsPath is null)
-            return $"{basePath}_Files{Path.DirectorySeparatorChar}";
-
-        var actualAssetsPath = FormatPath(assetsPath, guild, channel, after, before);
-
-        return actualAssetsPath;
     }
 }

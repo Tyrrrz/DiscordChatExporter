@@ -126,7 +126,7 @@ public abstract class ExportCommandBase : TokenCommandBase
             );
         }
 
-        // Assets directory should only be specified when the download assets option is set.
+        // Assets directory should only be specified when the download assets option is set
         if (AssetsPath is not null && !ShouldDownloadAssets)
         {
             throw new CommandException(

@@ -12,7 +12,7 @@
 > 🟡 **Project status**: maintenance mode<sup>[[?]](https://github.com/Tyrrrz/.github/blob/master/docs/project-status.md)</sup>
 
 **DiscordChatExporter** is an application that can be used to export message history from any [Discord](https://discord.com) channel to a file.
-It works with direct messages, group messages, and server channels, and supports Discord's dialect of markdown as well as all other rich media features.
+It works with direct messages, group messages, and server channels, and supports Discord's dialect of markdown as well as most other rich media features.
 
 > ❔ If you have questions or issues, **please refer to the [wiki](https://github.com/Tyrrrz/DiscordChatExporter/wiki)**.
 

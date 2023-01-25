@@ -1,3 +1,5 @@
+# Linux usage instructions
+
 ### Step 1: Install .NET Core Runtime
 Please follow the [instructions provided here](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Install-.NET-Core-runtime).
 

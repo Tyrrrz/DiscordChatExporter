@@ -1,3 +1,5 @@
+# Docker usage instructions
+
 Docker distribution of DiscordChatExporter provides a way to run the app in a virtualized and isolated environment. Due to the nature of Docker, you also don't need to install any prerequisites otherwise required by DCE.
 
 Note that only the CLI flavor of DiscordChatExporter is available for use with Docker.

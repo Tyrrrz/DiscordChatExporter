@@ -1,3 +1,5 @@
+# macOS usage instructions
+
 ![Might look different depending on your macOS version](https://i.imgur.com/gA8jFjJ.png)
 
 ### Step 1: Install .NET Core Runtime

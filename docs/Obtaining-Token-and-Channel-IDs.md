@@ -1,3 +1,5 @@
+# Obtaining Token and Channel IDs
+
 # → DO NOT SHARE YOUR TOKEN ←
 **Only scan QR codes taken directly from your browser.**
 

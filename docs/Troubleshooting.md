@@ -1,3 +1,5 @@
+# Troubleshooting
+
 Welcome to the Frequently Asked Questions (FAQ) and Troubleshooting page!  
 Here you'll find the answers to most of the questions related to **DiscordChatExporter** (DCE for short) and its core features.  
 

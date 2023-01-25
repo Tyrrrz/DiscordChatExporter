@@ -1,3 +1,4 @@
+# GUI, CLI and Formats explained
 
 # Getting started
 

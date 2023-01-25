@@ -1,3 +1,5 @@
+# Install .NET Core runtime
+
 **.NET v7.0 Runtime** is required by **DiscordChatExporter v2.37 and newer**.  
 If you are using GUI flavor of DiscordChatExporter, the runtime will be installed automatically (since v2.27.1).  
 If you are using the CLI from Docker, installing the runtime on the host machine is not needed.

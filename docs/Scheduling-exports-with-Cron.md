@@ -1,3 +1,5 @@
+# Scheduling exports with Cron
+
 Make sure you already have **DiscordChatExporter.CLI** and **.NET Core** properly installed ([instructions here](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Linux-usage-instructions)).
 
 You can use Cron on macOS, but [this method](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Scheduling-exports-on-macOS) is preferred.

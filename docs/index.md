@@ -1,4 +1,4 @@
-  **[Home](https://github.com/Tyrrrz/DiscordChatExporter/wiki)**
+**[Home](https://github.com/Tyrrrz/DiscordChatExporter/wiki)**
 
   **Installation & Usage**
 

@@ -39,8 +39,9 @@ public static class Http
                 8,
                 (i, result, _) =>
                 {
-                    // If rate-limited, use retry-after header as the guide
-                    if (result.Result.Headers.RetryAfter?.Delta is { } retryAfter)
+                    // If rate-limited, use retry-after header as the guide.
+                    // The response can be null here if an exception was thrown.
+                    if (result.Result?.Headers.RetryAfter?.Delta is { } retryAfter)
                     {
                         // Add some buffer just in case
                         return retryAfter + TimeSpan.FromSeconds(1);

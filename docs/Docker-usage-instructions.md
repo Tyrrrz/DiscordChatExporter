@@ -106,5 +106,3 @@ $ docker run --rm tyrrrz/discordchatexporter:latest
 ___
 
 Special thanks to [@simnalamburt](https://github.com/simnalamburt) (dockerize) and [@Nimja](https://github.com/nimja) (better instructions)
-
-[Home](https://github.com/Tyrrrz/DiscordChatExporter/wiki) | DiscordChatExporter

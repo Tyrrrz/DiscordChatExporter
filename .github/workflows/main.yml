@@ -26,7 +26,6 @@ jobs:
         run: dotnet test --configuration Release --logger GitHubActions --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
         env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-          DISCORD_TOKEN_BOT: true
 
       - name: Upload coverage
         uses: codecov/codecov-action@v3

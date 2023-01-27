@@ -40,7 +40,7 @@ Check out the instructions for your distro:
 For other distros, please check the _'Install on Linux'_ menu on the left of [this page](https://docs.microsoft.com/dotnet/core/install/linux).
 
 ## Docker
-Installing .NET Runtime is not needed. Please refer to the [Docker usage instructions](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Docker-usage-instructions) page for more information.
+Installing .NET Runtime is not needed. Please refer to the [Docker usage instructions](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Linux-usage-instructions.md) page for more information.
 
   
 

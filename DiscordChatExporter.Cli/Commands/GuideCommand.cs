@@ -61,9 +61,9 @@ public class GuideCommand : ICommand
         console.Output.WriteLine(" 6. Copy the first long sequence of numbers inside the URL");
         console.Output.WriteLine();
 
-        // Wiki link
+        // Docs link
         using (console.WithForegroundColor(ConsoleColor.White))
-            console.Output.WriteLine("If you have questions or issues, please refer to the wiki:");
+            console.Output.WriteLine("If you have questions or issues, please refer to the docs:");
         using (console.WithForegroundColor(ConsoleColor.DarkCyan))
             console.Output.WriteLine("https://github.com/Tyrrrz/DiscordChatExporter/tree/master/.docs");
 

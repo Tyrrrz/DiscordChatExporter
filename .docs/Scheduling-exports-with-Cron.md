@@ -1,8 +1,8 @@
 # Scheduling exports with Cron
 
-Make sure you already have **DiscordChatExporter.CLI** and **.NET Core** properly installed ([instructions here](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Linux-usage-instructions)).
+Make sure you already have **DiscordChatExporter.CLI** and **.NET Core** properly installed ([instructions here](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Linux-usage-instructions.md)).
 
-You can use Cron on macOS, but [this method](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Scheduling-exports-on-macOS) is preferred.
+You can use Cron on macOS, but [this method](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Scheduling-exports-on-macOS.md) is preferred.
 
 #
 
@@ -13,7 +13,7 @@ You can use Cron on macOS, but [this method](https://github.com/Tyrrrz/DiscordCh
 
 ```bash
 #!/bin/bash
-# Info: https://github.com/Tyrrrz/DiscordChatExporter/wiki
+# Info: https://github.com/Tyrrrz/DiscordChatExporter/tree/master/.docs/
 
 TOKEN=tokenhere
 CHANNELID=channelhere
@@ -64,9 +64,9 @@ exit 0
 
 **3.** Replace:
 
- `tokenhere` with your [Token](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs).
+ `tokenhere` with your [Token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md).
 
- `channelhere` with a [Channel ID](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs).
+ `channelhere` with a [Channel ID](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md).
 
  `dceFOLDERpathhere` with DCE's **directory path** (e.g. `/path/to/folder`, NOT `/path/to/folder/DiscordChatExporter.dll`).
 

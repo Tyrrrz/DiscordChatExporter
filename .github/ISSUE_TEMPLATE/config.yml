@@ -6,8 +6,8 @@ contact_links:
   - name: 💬 Discord server
     url: https://discord.gg/2SUWKFnHSm
     about: Chat with the project community.
-  - name: 📖 Wiki
-    url: https://github.com/Tyrrrz/DiscordChatExporter/wiki
+  - name: 📖 Docs
+    url: https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/README.md
     about: Find usage guides and frequently asked questions.
   - name: 🗨 Discussions
     url: https://github.com/Tyrrrz/DiscordChatExporter/discussions/new

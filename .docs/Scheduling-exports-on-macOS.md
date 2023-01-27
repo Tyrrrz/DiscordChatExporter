@@ -4,12 +4,12 @@ Scheduling on macOS is a bit tricky, but it should work if you follow the instru
 
 Make sure you already have **DiscordChatExporter.CLI** and **.NET Core** properly installed ([instructions here](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/macOS-usage-instructions.md)).
 
-* [**1.** Creating the script](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Scheduling-exports-on-macOS#1-creating-the-script)
-* [**2.** Creating the .plist file](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Scheduling-exports-on-macOS#2-creating-the-plist-file)
-   * [Export on System Boot/User Login](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Scheduling-exports-on-macOS#export-on-system-bootuser-login)
-   * [Export every _n_ seconds](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Scheduling-exports-on-macOS#export-every-n-seconds)
-   * [Export at a specific time and date](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Scheduling-exports-on-macOS#export-at-a-specific-time-and-date)
-* [**3.** Loading the .plist into launchctl](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Scheduling-exports-on-macOS#3-loading-the-plist-into-launchctl)
+* [**1.** Creating the script](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Scheduling-exports-on-macOS.md#1-creating-the-script)
+* [**2.** Creating the .plist file](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Scheduling-exports-on-macOS.md#2-creating-the-plist-file)
+   * [Export on System Boot/User Login](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Scheduling-exports-on-macOS.md#export-on-system-bootuser-login)
+   * [Export every _n_ seconds](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Scheduling-exports-on-macOS.md#export-every-n-seconds)
+   * [Export at a specific time and date](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Scheduling-exports-on-macOS.md#export-at-a-specific-time-and-date)
+* [**3.** Loading the .plist into launchctl](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Scheduling-exports-on-macOS.md#3-loading-the-plist-into-launchctl)
 
 
 ## 1. Creating the script
@@ -23,7 +23,7 @@ Make sure you already have **DiscordChatExporter.CLI** and **.NET Core** properl
 **3.** Paste the following into the text editor:
 ```bash
 #!/bin/bash
-# Info: https://github.com/Tyrrrz/DiscordChatExporter/wiki
+# Info: https://github.com/Tyrrrz/DiscordChatExporter/tree/master/.docs/
 
 TOKEN=tokenhere
 CHANNELID=channelhere
@@ -76,9 +76,9 @@ exit 0
 ```
 
 **4.** Replace:  
- `tokenhere` with your [Token](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs)
+ `tokenhere` with your [Token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md)
 
- `channelhere` with a [Channel ID](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs)
+ `channelhere` with a [Channel ID](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md)
 
  `dceFOLDERpathhere` with DCE's **directory's path** (e.g. `/Users/user/Desktop/DiscordChatExporterFolder`, NOT `/Users/user/Desktop/DiscordChatExporterFolder/DiscordChatExporter.DLL`)
 
@@ -182,7 +182,7 @@ Omitted keys are interpreted as wildcards, for example, if you delete the Minute
 
 Be aware that if you set the day to '31', the script will only run on months that have the 31st day.
 
-**Check the examples below ([or skip to step 3 (loading the file)](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Scheduling-exports-on-macOS#3-loading-the-plist-into-launchctl)):**
+**Check the examples below ([or skip to step 3 (loading the file)](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Scheduling-exports-on-macOS.md#3-loading-the-plist-into-launchctl)):**
 
 Export everyday at 5:15 PM:
 

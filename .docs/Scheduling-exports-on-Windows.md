@@ -30,9 +30,9 @@ exit
 
 **2.** Replace:
 
- `tokenhere` with your [Token](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs)
+ `tokenhere` with your [Token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md)
 
- `channelhere` with a [Channel ID](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs)
+ `channelhere` with a [Channel ID](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md)
 
  `exefolderhere` with the .exe **directory's path** (e.g. C:\Users\User\Desktop\DiscordChatExporter) 
 

@@ -4,9 +4,9 @@
 
 Welcome to the getting started page!  
 Here you'll learn how to use every **DiscordChatExporter** (DCE for short) feature.  
-For other things you can do with DCE, check out the [Guides](https://github.com/Tyrrrz/DiscordChatExporter/wiki#guides) section.
+For other things you can do with DCE, check out the [Guides](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Readme.md#Guides) section.
 
-If you still have unanswered questions after reading this page or if you have encountered a problem, please visit our [FAQ & Troubleshooting](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Troubleshooting) section.  
+If you still have unanswered questions after reading this page or if you have encountered a problem, please visit our [FAQ & Troubleshooting](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Troubleshooting.md) section.  
 
 The information presented on this page is valid for **all** platforms.
 
@@ -31,7 +31,7 @@ You can get it by [downloading](https://github.com/Tyrrrz/DiscordChatExporter/re
 You can get it by [downloading](https://github.com/Tyrrrz/DiscordChatExporter/releases/latest) the `DiscordChatExporter.CLI.zip` file.
 
 If you're not comfortable with **Windows'** Command Line (cmd), please choose the GUI.  
-[**macOS**](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/macOS-usage-instructions.md), [**Linux**](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Linux-usage-instructions) and [**Docker**](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Docker-usage-instructions) users can only use the CLI version.  
+[**macOS**](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/macOS-usage-instructions.md), [**Linux**](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Linux-usage-instructions.md) and [**Docker**](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Linux-usage-instructions.md) users can only use the CLI version.  
 
 **(Skip to [Using the CLI](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#using-the-cli) or [File Formats](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#file-formats))**
 # Using the GUI
@@ -63,7 +63,7 @@ Click the menu button (☰) to see more options:
 
 * **Date range (after/before)** (Optional) - If set, only messages sent in the provided date range will be exported. Only one value (either after or before) is required if you want to use this option.
   > Please note that the time defaults to **12:00 AM** (midnight/00:00). This means that if you choose to export between Sep 17th and Sep 18th, messages from Sep 18th won't be exported.
-* **Filter** (Optional) - Special notation for filtering the messages that get included in the export. See [Message filters](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Message-filters) for more info.
+* **Filter** (Optional) - Special notation for filtering the messages that get included in the export. See [Message filters](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Message-filters.md) for more info.
 * **Messages per partition** (Optional) - Split output into partitions, each limited to this number of messages (e.g. 100) or file size (e.g. 10mb). For example, a channel with 36 messages set to be partitioned every 10 messages will output 4 files.
 * **Download assets** (Optional) - If this option is set, the export will include additional files such as user avatars, attached files, images, etc.  
 Only files that are referenced by the export are downloaded, which means that, for example, user avatars will not be downloaded when using the plain text (TXT) export format.  
@@ -115,8 +115,8 @@ Default: 1
 **(Skip to [File Formats](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#file-formats))**
 
 # Using the CLI
-> Make sure you have [.NET Core installed](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Install-.NET-Core-runtime) before attempting to run the commands below.  
-> **Docker** users, please refer to the [Docker usage instructions](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Docker-usage-instructions).
+> Make sure you have [.NET Core installed](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Install-.NET-Core-runtime.md) before attempting to run the commands below.  
+> **Docker** users, please refer to the [Docker usage instructions](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Linux-usage-instructions.md).
 
 **1.** After extracting the `.zip`, open Command Prompt, aka `cmd` (`Terminal` on **macOS** and **Linux**).
 
@@ -138,7 +138,7 @@ Type the following in Command Prompt (Terminal), then press ENTER to run it:
 dotnet DiscordChatExporter.Cli.dll
 ```
 
-> **Docker** users, please refer to the [Docker usage instructions](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Docker-usage-instructions).
+> **Docker** users, please refer to the [Docker usage instructions](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Linux-usage-instructions.md).
 
 ## DCE.CLI commands
 
@@ -153,7 +153,7 @@ dotnet DiscordChatExporter.Cli.dll
 [guilds](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#guilds) | Outputs the list of accessible servers
 [guide](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#guide) | Explains how to obtain token, guild, and channel ID
 
-To use the commands, you'll need a token. For the instructions on how to get a token, please refer to [this page](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs), or run `dotnet DiscordChatExporter.Cli.dll guide`.  
+To use the commands, you'll need a token. For the instructions on how to get a token, please refer to [this page](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md), or run `dotnet DiscordChatExporter.Cli.dll guide`.  
 To get help with a specific command, please run:
 ```powershell
 dotnet DiscordChatExporter.Cli.dll command -h
@@ -163,14 +163,14 @@ dotnet DiscordChatExporter.Cli.dll command -h
 
 ||Option | Description
 |--|------- | -------------
-|**\***|[-c](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#basic-usage) | [Channel ID(s)](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs#how-to-get-guild-id-or-guild-channel-id)
-|**\***|[-t](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#basic-usage) | [Authorization token](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs#how-to-get-user-token). Environment variable: `DISCORD_TOKEN`
+|**\***|[-c](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#basic-usage) | [Channel ID(s)](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md#how-to-get-guild-id-or-guild-channel-id)
+|**\***|[-t](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#basic-usage) | [Authorization token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md#how-to-get-user-token). Environment variable: `DISCORD_TOKEN`
 ||[-o](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#changing-the-output-filename) | Output file or directory path
 ||[-f](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#changing-the-format) | [Output file format](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#file-formats). Default: HtmlDark
 ||[--after](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#date-ranges)| Only include messages sent after this date
 ||[--before](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#date-ranges) | Only include messages sent before this date
 ||[-p](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#partitioning) | Split output into partitions, each limited to this number of messages (e.g. 100) or file size (e.g. 10mb)
-||[--filter](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Message-filters) | Special notation for filtering the messages that get included in the export
+||[--filter](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Message-filters.md) | Special notation for filtering the messages that get included in the export
 ||[--media](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#Downloading-assets) | Download assets referenced by the export (user avatars, attached files, embedded images, etc.). Default: false
 ||[--reuse-media](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#Reuse-assets) | Reuse previously downloaded assets to avoid redundant requests. Default: false.
 ||[--dateformat](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#date-formats) | Format used when writing dates.
@@ -310,14 +310,14 @@ More info about .NET date formats [here](https://docs.microsoft.com/en-us/dotnet
 ## exportdm
 ||Option | Description
 |-|------- | -------------
-|**\***|[-t](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#basic-usage) | [Authorization token](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs#how-to-get-user-token). Environment variable: `DISCORD_TOKEN`
+|**\***|[-t](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#basic-usage) | [Authorization token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md#how-to-get-user-token). Environment variable: `DISCORD_TOKEN`
 ||--parallel| Limits how many channels can be exported in parallel. Try to keep this number low so that your account doesn't get flagged. Default: 1
 ||[-o](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#changing-the-output-filename) | Output file or directory path
 ||[-f](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#changing-the-format) | [Output file format](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#file-formats). Default: HtmlDark
 ||[--after](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#date-ranges)| Only include messages sent after this date
 ||[--before](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#date-ranges) | Only include messages sent before this date
 ||[-p](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#partitioning) | Split output into partitions, each limited to this number of messages (e.g. 100) or file size (e.g. 10mb)
-||[--filter](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Message-filters) | Special notation for filtering the messages that get included in the export
+||[--filter](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Message-filters.md) | Special notation for filtering the messages that get included in the export
 ||[--media](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#Downloading-assets) | Download assets referenced by the export (user avatars, attached files, embedded images, etc.). Default: false
 ||[--reuse-media](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#Reuse-assets) | Reuse previously downloaded assets to avoid redundant requests. Default: false.
 ||[--dateformat](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#date-formats) | Date format used in output
@@ -331,15 +331,15 @@ This command exports all your Direct Messages.
 ## exportguild
 ||Option | Description
 |-|------- | -------------
-|**\***|-g | [Server ID](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs#how-to-get-guild-id-or-guild-channel-id)
-|**\***|[-t](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#basic-usage) | [Authorization token](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs#how-to-get-user-token). Environment variable: `DISCORD_TOKEN`
+|**\***|-g | [Server ID](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md#how-to-get-guild-id-or-guild-channel-id)
+|**\***|[-t](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#basic-usage) | [Authorization token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md#how-to-get-user-token). Environment variable: `DISCORD_TOKEN`
 ||--parallel| Limits how many channels can be exported in parallel. Try to keep this number low so that your account doesn't get flagged. Default: 1
 ||[-o](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#changing-the-output-filename) | Output file or directory path
 ||[-f](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#changing-the-format) | [Output file format](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#file-formats). Default: HtmlDark
 ||[--after](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#date-ranges)| Only include messages sent after this date
 ||[--before](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#date-ranges) | Only include messages sent before this date
 ||[-p](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#partitioning) | Split output into partitions, each limited to this number of messages (e.g. 100) or file size (e.g. 10mb)
-||[--filter](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Message-filters) | Special notation for filtering the messages that get included in the export
+||[--filter](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Message-filters.md) | Special notation for filtering the messages that get included in the export
 ||[--media](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#Downloading-assets) | Download assets referenced by the export (user avatars, attached files, embedded images, etc.). Default: false
 ||[--reuse-media](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#Reuse-assets) | Reuse previously downloaded assets to avoid redundant requests. Default: false.
 ||[--dateformat](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#date-formats) | Date format used in output
@@ -353,7 +353,7 @@ This command exports all channels of a Server.
 
 ||Option | Description
 |-|------- | -------------
-|**\***|[-t](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#basic-usage) | [Authorization token](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs#how-to-get-user-token). Environment variable: `DISCORD_TOKEN`
+|**\***|[-t](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#basic-usage) | [Authorization token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md#how-to-get-user-token). Environment variable: `DISCORD_TOKEN`
 ||--include-dm | Include direct message channels. Default: true
 ||--parallel| Limits how many channels can be exported in parallel. Try to keep this number low so that your account doesn't get flagged. Default: 1
 ||[-o](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#changing-the-output-filename) | Output file or directory path
@@ -361,7 +361,7 @@ This command exports all channels of a Server.
 ||[--after](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#date-ranges)| Only include messages sent after this date
 ||[--before](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#date-ranges) | Only include messages sent before this date
 ||[-p](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#partitioning) | Split output into partitions, each limited to this number of messages (e.g. 100) or file size (e.g. 10mb)
-||[--filter](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Message-filters) | Special notation for filtering the messages that get included in the export
+||[--filter](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Message-filters.md) | Special notation for filtering the messages that get included in the export
 ||[--media](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#Downloading-assets) | Download assets referenced by the export (user avatars, attached files, embedded images, etc.). Default: false
 ||[--reuse-media](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#Reuse-assets) | Reuse previously downloaded assets to avoid redundant requests. Default: false.
 ||[--dateformat](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#date-formats) | Date format used in output
@@ -380,8 +380,8 @@ dotnet DiscordChatExporter.Cli.dll exportall -t "mfa.Ifrn" --include-dm false
 ## channels
 ||Option | Description
 |-|------- | -------------
-|**\***|-g| [Server ID](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs#how-to-get-guild-id-or-guild-channel-id)
-|**\***|[-t](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#basic-usage) | [Authorization token](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs#how-to-get-user-token). Environment variable: `DISCORD_TOKEN`
+|**\***|-g| [Server ID](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md#how-to-get-guild-id-or-guild-channel-id)
+|**\***|[-t](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#basic-usage) | [Authorization token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md#how-to-get-user-token). Environment variable: `DISCORD_TOKEN`
 ||-h | Shows help text
 
 > Options with an asterisk (**\***) are required. The order of the options doesn't matter.  
@@ -396,7 +396,7 @@ dotnet DiscordChatExporter.Cli.dll channels -t "mfa.Ifrn" -g 21814 > C:\path\to\
 ## dm
 ||Option | Description
 |-|------- | -------------
-|**\***|[-t](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#basic-usage) | [Authorization token](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs#how-to-get-user-token). Environment variable: `DISCORD_TOKEN`
+|**\***|[-t](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#basic-usage) | [Authorization token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md#how-to-get-user-token). Environment variable: `DISCORD_TOKEN`
 ||-h | Shows help text
 
 > Options with an asterisk (**\***) are required. The order of the options doesn't matter.  
@@ -411,7 +411,7 @@ dotnet DiscordChatExporter.Cli.dll dm -t "mfa.Ifrn" > C:\path\to\output.txt
 ## guilds
 ||Option | Description
 |-|------- | -------------
-|**\***|[-t](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#basic-usage) | [Authorization token](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs#how-to-get-user-token). Environment variable: `DISCORD_TOKEN`
+|**\***|[-t](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#basic-usage) | [Authorization token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md#how-to-get-user-token). Environment variable: `DISCORD_TOKEN`
 ||-h | Shows help text
 
 > Options with an asterisk (**\***) are required. The order of the options doesn't matter.  
@@ -423,7 +423,7 @@ dotnet DiscordChatExporter.Cli.dll guilds -t "mfa.Ifrn" > C:\path\to\output.txt
 ```
 
 ## guide
-This command explains [how to get your token, guild, and channel IDs](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs).
+This command explains [how to get your token, guild, and channel IDs](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md).
 
 # File formats
 

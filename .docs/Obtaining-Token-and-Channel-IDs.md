@@ -215,7 +215,7 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 
 4. Launch Discord.
 
-5. To find your user token, continue [here](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs#in-chrome).
+5. To find your user token, continue [here](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md#in-chrome).
 
 ##### Via settings menu (BetterDiscord only)
 
@@ -236,7 +236,7 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 
 4. Press <kbd>Esc</kbd>. The settings page will close.
 
-5. To find your user token, continue [here](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs#in-chrome).
+5. To find your user token, continue [here](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md#in-chrome).
 
 ### How to get a Bot Token
 **1.** Go to [Discord developer portal](https://discord.com/developers/applications)  

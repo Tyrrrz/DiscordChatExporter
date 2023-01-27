@@ -1,3 +1,9 @@
+### v2.37.2 (27-Jan-2023)
+
+- Updated the links inside the application to point to the new documentation site. (Thanks [@CanePlayz](https://github.com/CanePlayz))
+- [CLI] Fixed an issue that there was no visual indication that an export task has failed before the whole process has completed.
+- Fixed an issue where the application sometimes crashed when it couldn't establish an HTTP connection to the target server.
+
 ### v2.37.1 (10-Jan-2023)
 
 - [HTML] Fixed an issue where the export failed because it failed to resolve standard emoji image assets. Switched to a different CDN provider to mitigate this. (Thanks [@Lucas LaBuff](https://github.com/96-LB))

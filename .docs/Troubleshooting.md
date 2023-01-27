@@ -3,9 +3,8 @@
 Welcome to the Frequently Asked Questions (FAQ) and Troubleshooting page!
 Here you'll find the answers to most of the questions related to **DiscordChatExporter** (DCE for short) and its core features.
 
-❓ If you still have unanswered questions _after_ reading this page, feel free to [create a new discussion](https://github.com/Tyrrrz/DiscordChatExporter/discussions/new).
-🐞 If you have encountered a problem that's not described here, has not [been discussed before](https://github.com/Tyrrrz/DiscordChatExporter/discussions), and is not a [known issue](https://github.com/Tyrrrz/DiscordChatExporter/issues?q=is%3Aissue), please [create a new discussion](https://github.com/Tyrrrz/DiscordChatExporter/discussions/new) or [open a bug report](https://github.com/Tyrrrz/DiscordChatExporter/issues/new).
-Don't forget to include your platform (Windows, Mac, Linux, etc.) and a detailed description of your question/problem.
+- ❓ If you still have unanswered questions _after_ reading this page, feel free to [create a new discussion](https://github.com/Tyrrrz/DiscordChatExporter/discussions/new).
+- 🐞 If you have encountered a problem that's not described here, has not [been discussed before](https://github.com/Tyrrrz/DiscordChatExporter/discussions), and is not a [known issue](https://github.com/Tyrrrz/DiscordChatExporter/issues?q=is%3Aissue), please [create a new discussion](https://github.com/Tyrrrz/DiscordChatExporter/discussions/new) or [open a bug report](https://github.com/Tyrrrz/DiscordChatExporter/issues/new). Don't forget to include your platform (Windows, Mac, Linux, etc.) and a detailed description of your question/problem.
 
 ## General
 
@@ -167,8 +166,6 @@ If it still doesn't work, try mozroots: `mozroots --import --ask-remove`
 
 ---
 
-> **Note**:
 > ❓ If you still have unanswered questions, feel free to [create a new discussion](https://github.com/Tyrrrz/DiscordChatExporter/discussions/new).
 
-> **Note**:
 > 🐞 If you have encountered a problem that's not described here, has not [been discussed before](https://github.com/Tyrrrz/DiscordChatExporter/discussions), and is not a [known issue](https://github.com/Tyrrrz/DiscordChatExporter/issues?q=is%3Aissue), please [create a new discussion](https://github.com/Tyrrrz/DiscordChatExporter/discussions/new) or [open a bug report](https://github.com/Tyrrrz/DiscordChatExporter/issues/new).

@@ -78,7 +78,7 @@ from:Tyrrrz | from:"96-LB"
 -(from:Tyrrrz has:image)
 ```
 
-- Escape special characters (`-` is escaped below so it's not parsed as negation operator):
+- Escape special characters (`-` is escaped below, so it's not parsed as negation operator):
 
 ```
 from:96\-LB
@@ -86,30 +86,8 @@ from:96\-LB
 
 ## CLI Caveat
 
-When using the CLI and the specified filter starts with a negation (for example `-from:Tyrrrz`), you need to quote the value and prepend it with a space (i.e. `" -from:Tyrrrz"`). This prevents the beginning of the input from being incorrectly treated as a value passed to the `-f|--format` option.
-
-In other words, this breaks:
+Negated filters (those that start with `-`) may cause parsing issues when using the CLI version of DiscordChatExporter. To avoid this, use the tilde (`~`) character instead of the dash (`-`):
 
 ```
-DiscordChatExporter.Cli export [...] --filter "-from:Tyrrrz"
-```
-
-This works (note the space):
-
-```
-DiscordChatExporter.Cli export [...] --filter " -from:Tyrrrz"
-```
-
-Additionally, when using the CLI, it's recommended to use single quotes for contingent string of characters rather than double quotes (so it doesn't collide with the double quotes used as escaping mechanism in terminals). E.g.:
-
-This breaks:
-
-```
-DiscordChatExporter.Cli export [...] --filter "from:"Some name with spaces""
-```
-
-This works:
-
-```
-DiscordChatExporter.Cli export [...] --filter "from:'Some name with spaces'"
+DiscordChatExporter.Cli export [...] --filter ~from:Tyrrrz
 ```

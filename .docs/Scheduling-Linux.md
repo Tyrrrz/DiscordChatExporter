@@ -114,7 +114,6 @@ The week starts on Sunday. 0 = SUN, 1 = MON ... 7 = SUN.
 
 Be aware that if you set the day to '31', the script will only run on months that have the 31st day.
 
-> **Note**:
 > [Learn more about running a cron job on the last day of the month here](https://stackoverflow.com/questions/6139189/cron-job-to-run-on-the-last-day-of-the-month) (expert).
 
 The default filename for the exported channel is `YYYY-MM-DD-hh-mm-ss-yourfilename`. You can change it if you'd like.

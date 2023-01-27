@@ -2,7 +2,7 @@
 
 Scheduling on macOS is a bit tricky, but it should work if you follow the instructions accordingly.
 
-Make sure you already have **DiscordChatExporter.CLI** and **.NET Core** properly installed ([instructions here](https://github.com/Tyrrrz/DiscordChatExporter/wiki/macOS-usage-instructions)).
+Make sure you already have **DiscordChatExporter.CLI** and **.NET Core** properly installed ([instructions here](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/macOS-usage-instructions.md)).
 
 * [**1.** Creating the script](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Scheduling-exports-on-macOS#1-creating-the-script)
 * [**2.** Creating the .plist file](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Scheduling-exports-on-macOS#2-creating-the-plist-file)

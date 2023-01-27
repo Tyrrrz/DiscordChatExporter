@@ -8,17 +8,17 @@ Here you'll find the answers to most of the questions related to **DiscordChatEx
 Don't forget to include your platform (Windows, Mac, Linux, etc.) and a detailed description of your question/problem.
 
 **Index**
-* [**General questions**](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Troubleshooting#general)
-* [**First steps**](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Troubleshooting#first-steps)
-  * [Token](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Troubleshooting#i-cant-find-my-token)
-  * [Channel ID](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Troubleshooting#where-can-i-find-the-channel-ids)
-  * [Running the program in Mac/Linux](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Troubleshooting#how-do-i-run-DCE-on-mac-or-linux)
-  * [Scheduling exports (advanced)](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Troubleshooting#how-can-i-set-DCE-to-export-automatically-at-certain-times)
-  * [Exported chat crashes browser](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Troubleshooting#the-file-is-too-big-i-cant-open-it)
-  * [DCE is crashing/failing](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Troubleshooting#DCE-is-crashingfailing)
-  * [.NET Core Runtime is required](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Troubleshooting#net-core-runtime-is-required)
-* [**CLI help**](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Troubleshooting#cli)
-  * [Errors](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Troubleshooting#errors)
+* [**General questions**](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Troubleshooting.md#general)
+* [**First steps**](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Troubleshooting.md#first-steps)
+  * [Token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Troubleshooting.md#i-cant-find-my-token)
+  * [Channel ID](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Troubleshooting.md#where-can-i-find-the-channel-ids)
+  * [Running the program in Mac/Linux](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Troubleshooting.md#how-do-i-run-DCE-on-mac-or-linux)
+  * [Scheduling exports (advanced)](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Troubleshooting.md#how-can-i-set-DCE-to-export-automatically-at-certain-times)
+  * [Exported chat crashes browser](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Troubleshooting.md#the-file-is-too-big-i-cant-open-it)
+  * [DCE is crashing/failing](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Troubleshooting.md#DCE-is-crashingfailing)
+  * [.NET Core Runtime is required](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Troubleshooting.md#net-core-runtime-is-required)
+* [**CLI help**](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Troubleshooting.md#cli)
+  * [Errors](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Troubleshooting.md#errors)
 
 # General
 
@@ -31,7 +31,7 @@ If you're using the GUI, be aware that your token will be saved to a plain text 
 A token can be used to log into your account, so treat it like a password and never share it.
 
 ### How can I reset my token?
-Follow the [instructions here](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs).
+Follow the [instructions here](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md).
 
 ### Will I get banned if I use this?
 Automating user accounts is technically against [TOS](https://discord.com/terms), use at your discretion. [Bot accounts](https://discord.com/developers/docs/topics/oauth2#bots) don't have this restriction.
@@ -60,55 +60,55 @@ No, DCE is an exporter.
 # First steps
 
 ### How can I find my token?
-Check the following page: [Obtaining token](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs)
+Check the following page: [Obtaining token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md)
 
 ### When I open DCE a black window pops up quickly or nothing shows up.
-If you have [.NET Core Runtime correctly installed](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Install-.NET-Core-runtime), you might have downloaded DCE.CLI, try [downloading the GUI](https://github.com/Tyrrrz/DiscordChatExporter/wiki/GUI%2C-CLI-and-Formats-explained#gui-or-cli) instead.
+If you have [.NET Core Runtime correctly installed](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Install-.NET-Core-runtime.md), you might have downloaded DCE.CLI, try [downloading the GUI](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#gui-or-cli) instead.
 
 ### I can't open DCE. It sends me to a Visual Studio webpage.
 Check the following page:
-[Installation and usage](https://github.com/Tyrrrz/DiscordChatExporter/wiki#installation--usage)
+[Installation and usage](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Readme.md#installation--usage)
 
 ### How do I run DCE on macOS or Linux?
 Check the following pages:
- * [macOS usage instructions](https://github.com/Tyrrrz/DiscordChatExporter/wiki/macOS-usage-instructions)
- * [Linux usage instructions](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Linux-usage-instructions)
+ * [macOS usage instructions](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/macOS-usage-instructions.md)
+ * [Linux usage instructions](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Linux-usage-instructions.md)
 
 ### How can I set DCE to export automatically at certain times?
 Check the following pages to learn how to schedule **DiscordChatExporter.CLI** runs (advanced): 
-* [Windows scheduling](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Scheduling-exports-on-Windows)
-* [macOS scheduling](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Scheduling-exports-on-macOS) 
-* [Linux scheduling](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Scheduling-exports-with-Cron)
+* [Windows scheduling](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Scheduling-exports-on-Windows.md)
+* [macOS scheduling](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Scheduling-exports-on-macOS.md) 
+* [Linux scheduling](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Scheduling-exports-with-Cron.md)
 
 ### The exported file is too large, I can't open it!
 Try opening it with a different program, try partitioning or use a different file format, like `PlainText`.
 
 ### DCE is crashing/failing.
-Check the following page: [Installing .NET Core Runtime](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Install-.NET-Core-runtime)
+Check the following page: [Installing .NET Core Runtime](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Install-.NET-Core-runtime.md)
 
 If you already have .NET Core installed, please check if your problem is a [known issue](https://github.com/Tyrrrz/DiscordChatExporter/issues?q=is%3Aissue) before [opening a bug report](https://github.com/Tyrrrz/DiscordChatExporter/issues/new).
 
 ### .NET Core Runtime is required.
-Check the following page: [Installing .NET Core Runtime](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Install-.NET-Core-runtime)
+Check the following page: [Installing .NET Core Runtime](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Install-.NET-Core-runtime.md)
 
 # CLI
 
 ### How do I use the CLI?
 Check the following page: 
-* [Using the CLI](https://github.com/Tyrrrz/DiscordChatExporter/wiki/GUI%2C-CLI-and-Formats-explained#using-the-cli)
+* [Using the CLI](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#using-the-cli)
 
-If you're using **Docker**, please refer to the [Docker Usage Instructions](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Docker-usage-instructions) instead.
+If you're using **Docker**, please refer to the [Docker Usage Instructions](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Linux-usage-instructions.md) instead.
 
 ### Where can I find the 'Channel IDs'?
 Check the following page:
- * [Obtaining Channel IDs](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs)
+ * [Obtaining Channel IDs](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md)
 
 ### I can't find Docker exported chats
 Check the following page: 
-* [Docker usage instructions](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Docker-usage-instructions#file-output)
+* [Docker usage instructions](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Linux-usage-instructions.md#file-output)
 
 ### I can't export Direct Messages
-Make sure you're [copying the DM Channel ID](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs#how-to-get-a-direct-message-channel-id), not the person's user ID.
+Make sure you're [copying the DM Channel ID](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md#how-to-get-a-direct-message-channel-id), not the person's user ID.
 
 ### Errors
 
@@ -122,7 +122,7 @@ DiscordChatExporter.Domain.Exceptions.DiscordChatExporterException: Authenticati
 ```
 DiscordChatExporter.Domain.Exceptions.DiscordChatExporterException: Requested resource does not exist.
 ```
-↳ Check your channel ID, it might be invalid. [Read this if you need help](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs).
+↳ Check your channel ID, it might be invalid. [Read this if you need help](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md).
   
 
 ```

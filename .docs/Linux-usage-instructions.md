@@ -13,4 +13,4 @@ dotnet DiscordChatExporter.Cli.dll export -t TOKEN -c CHANNEL
 ```
 > 💡 Tip: [How to get Token and Channel IDs](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs). 
 
-There's much more you can do with DCE.CLI! Read the [CLI explained](https://github.com/Tyrrrz/DiscordChatExporter/wiki/GUI%2C-CLI-and-Formats-explained#dcecli-commands-) page to get started.
+There's much more you can do with DCE.CLI! Read the [CLI explained](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#dcecli-commands-) page to get started.

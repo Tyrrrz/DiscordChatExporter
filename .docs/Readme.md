@@ -10,12 +10,12 @@
 
 **Step 1:** [Get .NET Core Runtime](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Install-.NET-Core-runtime) (Required for CLI; Installed automatically for GUI; Not required in Docker)
 
-**Step 2:** [Windows](https://github.com/Tyrrrz/DiscordChatExporter/wiki/GUI%2C-CLI-and-Formats-explained#gui-or-cli) | [macOS](https://github.com/Tyrrrz/DiscordChatExporter/wiki/macOS-usage-instructions) | [Linux](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Linux-usage-instructions) | [Docker](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Docker-usage-instructions)
+**Step 2:** [Windows](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#gui-or-cli) | [macOS](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/macOS-usage-instructions.md) | [Linux](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Linux-usage-instructions) | [Docker](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Docker-usage-instructions)
 
 **Step 3:** Getting Started:
-  * [Using the GUI](https://github.com/Tyrrrz/DiscordChatExporter/wiki/GUI%2C-CLI-and-Formats-explained#using-the-gui)
-  * [Using the CLI](https://github.com/Tyrrrz/DiscordChatExporter/wiki/GUI%2C-CLI-and-Formats-explained#using-the-cli)
-  * [File formats](https://github.com/Tyrrrz/DiscordChatExporter/wiki/GUI%2C-CLI-and-Formats-explained#file-formats)
+  * [Using the GUI](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#using-the-gui)
+  * [Using the CLI](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#using-the-cli)
+  * [File formats](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/GUI%2C-CLI-and-Formats-explained.md#file-formats)
 
 ## Guides
 * [How to get Token and Channel IDs](https://github.com/Tyrrrz/DiscordChatExporter/wiki/Obtaining-Token-and-Channel-IDs)

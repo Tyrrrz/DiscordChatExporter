@@ -7,7 +7,7 @@ contact_links:
     url: https://discord.gg/2SUWKFnHSm
     about: Chat with the project community.
   - name: 📖 Docs
-    url: https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/README.md
+    url: https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs
     about: Find usage guides and frequently asked questions.
   - name: 🗨 Discussions
     url: https://github.com/Tyrrrz/DiscordChatExporter/discussions/new

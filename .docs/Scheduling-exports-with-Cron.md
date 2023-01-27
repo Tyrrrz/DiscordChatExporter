@@ -13,7 +13,7 @@ You can use Cron on macOS, but [this method](https://github.com/Tyrrrz/DiscordCh
 
 ```bash
 #!/bin/bash
-# Info: https://github.com/Tyrrrz/DiscordChatExporter/tree/master/.docs/
+# Info: https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs
 
 TOKEN=tokenhere
 CHANNELID=channelhere

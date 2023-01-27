@@ -23,7 +23,7 @@ Make sure you already have **DiscordChatExporter.CLI** and **.NET Core** properl
 **3.** Paste the following into the text editor:
 ```bash
 #!/bin/bash
-# Info: https://github.com/Tyrrrz/DiscordChatExporter/tree/master/.docs/
+# Info: https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs
 
 TOKEN=tokenhere
 CHANNELID=channelhere

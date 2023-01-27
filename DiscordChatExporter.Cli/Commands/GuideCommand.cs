@@ -63,7 +63,7 @@ public class GuideCommand : ICommand
 
         // Docs link
         using (console.WithForegroundColor(ConsoleColor.White))
-            console.Output.WriteLine("If you have questions or issues, please refer to the docs:");
+            console.Output.WriteLine("If you have questions or issues, please refer to the documentation:");
         using (console.WithForegroundColor(ConsoleColor.DarkCyan))
             console.Output.WriteLine("https://github.com/Tyrrrz/DiscordChatExporter/tree/master/.docs");
 

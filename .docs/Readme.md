@@ -1,28 +1,19 @@
 # Home
 
-<p align="center">
-  <img src="https://i.imgur.com/IkrFoA0.png" height="120" />
-<br>
-<b>DiscordChatExporter</b> can be used to export message history from a Discord channel to a file.
-</p>
-
 ## Installation & Usage
 
-**Step 1:** [Get .NET Core Runtime](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Dotnet.md) (Required for CLI; Installed automatically for GUI; Not required in Docker)
-
-**Step 2:** [Windows](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#gui-or-cli) | [macOS](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/MacOS.md) | [Linux](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Linux.md) | [Docker](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Docker.md)
-
-**Step 3:** Getting Started:
-
-- [Using the GUI](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#using-the-gui)
-- [Using the CLI](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#using-the-cli)
-- [File formats](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#file-formats)
+- [Get .NET Core Runtime](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Dotnet.md) (Required for CLI; Installed automatically for GUI; Not required in Docker)
+- [Windows](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#gui-or-cli) | [macOS](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/MacOS.md) | [Linux](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Linux.md) | [Docker](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Docker.md)
+- Getting started:
+  - [Using the GUI](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#using-the-gui)
+  - [Using the CLI](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#using-the-cli)
+  - [File formats](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#file-formats)
 
 ## Guides
 
 - [How to get Token and Channel IDs](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md)
 - [How to use message filters](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Message-filters.md)
-- **Export Scheduling with CLI**
+- Export scheduling with CLI:
   - [Windows](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/scheduling-windows.md)
   - [macOS](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/scheduling-MacOS.md)
   - [Linux](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/scheduling-Linux.md)

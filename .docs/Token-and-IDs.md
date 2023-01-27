@@ -1,20 +1,20 @@
 # Obtaining Token and Channel IDs
 
 > **Warning**:
-> **DO NOT SHARE YOUR TOKEN!**.
+> **Do not share your token!**
 > A token gives full access to an account. To reset a user token, change your account password. To reset a bot token, click on "[Regenerate](#how-to-get-a-bot-token)"
 
-### How to get a User Token
+## How to get a User Token
 
 **Caution:** [Automating user accounts violates Discord's terms of service](https://support.discord.com/hc/en-us/articles/115002192352-Automated-user-accounts-self-bots-) and may result in account termination. Use at your own risk.
 
-#### Through your web browser
+### Through your web browser
 
 Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 
-##### In Chrome
+#### In Chrome
 
-###### Using the network monitor
+##### Using the network monitor
 
 1. <img width="500" align="right" src="https://i.imgur.com/zdDwIT5.jpg" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> (<kbd>⌥</kbd>+<kbd>⌘</kbd>+<kbd>I</kbd> on macOS). Chrome's [DevTools](https://developer.chrome.com/docs/devtools/overview) tools will display.
 
@@ -51,7 +51,7 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 <br clear="right" />
 <br />
 
-###### Using the storage inspector
+##### Using the storage inspector
 
 1. <img width="500" align="right" src="https://i.imgur.com/zdDwIT5.jpg" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> (<kbd>⌥</kbd>+<kbd>⌘</kbd>+<kbd>I</kbd> on macOS). Chrome's [DevTools](https://developer.chrome.com/docs/devtools/overview/) will display.
 
@@ -88,9 +88,9 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 <br clear="right" />
 <br />
 
-##### In Firefox
+#### In Firefox
 
-###### Using the network monitor
+##### Using the network monitor
 
 1. <img width="500" align="right" src="https://i.imgur.com/O34nwdG.png" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>E</kbd> (<kbd>⌥</kbd>+<kbd>⌘</kbd>+<kbd>E</kbd> on macOS). Firefox’s [web developer tools](https://firefox-source-docs.mozilla.org/devtools-user/) will display at the bottom of the window, and the [network monitor](https://firefox-source-docs.mozilla.org/devtools-user/network_monitor/) will display.
 
@@ -127,7 +127,7 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 <br clear="right" />
 <br />
 
-###### Using the storage inspector
+##### Using the storage inspector
 
 1. <img width="500" align="right" src="https://i.imgur.com/A8jqpkm.png" />Press <kbd>Shift</kbd>+<kbd>F9</kbd>. Firefox’s [web developer tools](https://firefox-source-docs.mozilla.org/devtools-user/) will display at the bottom of the window, and the [storage](https://firefox-source-docs.mozilla.org/devtools-user/storage_inspector/index.html) panel will be selected.
 
@@ -164,9 +164,9 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 <br clear="right" />
 <br />
 
-#### Through the desktop app / Enabling web developer tools
+### Through the desktop app / Enabling web developer tools
 
-##### By editing the settings file
+#### By editing the settings file
 
 1. If Discord is running, exit the application by right-clicking the icon in your taskbar tray and clicking `Quit Discord`.
 
@@ -200,7 +200,7 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 
 5. To find your user token, continue [here](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md#in-chrome).
 
-##### Via settings menu (BetterDiscord only)
+#### Via settings menu (BetterDiscord only)
 
 1. <img width="500" align="right" src="https://i.imgur.com/mu1g4OF.png" />Click the User Settings button (the gear icon to the right of your username). Discord’s settings page will open.
 
@@ -218,44 +218,45 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 <br />
 
 4. Press <kbd>Esc</kbd>. The settings page will close.
-
 5. To find your user token, continue [here](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md#in-chrome).
 
-### How to get a Bot Token
+## How to get a Bot Token
 
-**1.** Go to [Discord developer portal](https://discord.com/developers/applications)
-**2.** Open your Application's settings
-**3.** Navigate to the **Bot** section on the left
-**4.** Under **Token** click **Copy**
+1. Go to [Discord developer portal](https://discord.com/developers/applications)
+2. Open your Application's settings
+3. Navigate to the **Bot** section on the left
+4. Under **Token** click **Copy**
 
-**Important**: your bot needs to have **Message Content Intent** enabled for it to be able to read messages!
+> **Warning**:
+> Your bot needs to have **Message Content Intent** enabled for it to be able to read messages!
 
 ![https://discord.com/developers/applications/](https://i.imgur.com/BdrrxlY.png)
 
 ---
 
-### How to get a Server ID or a Server Channel ID
+## How to get a Server ID or a Server Channel ID
 
-**1.** Open Discord Settings
-**2.** Go to the **Advanced** section
-**3.** Enable **Developer Mode**
-**4.** Right click on the desired server or channel and click Copy ID
+1. Open Discord Settings
+2. Go to the **Advanced** section
+3. Enable **Developer Mode**
+4. Right-click on the desired server or channel and click Copy ID
 
-### How to get a Direct Message Channel ID
+## How to get a Direct Message Channel ID
 
-**1.** Click the three dots next to any message in the channel you want to export.
-**2.** Paste the link into a text editor.
-**3.** Copy the text in the highlighted part of the link.
+1. Click the three dots next to any message in the channel you want to export.
+2. Paste the link into a text editor.
+3. Copy the text in the highlighted part of the link.
 
 > E.g. in https꞉//discord.com/channels/@me/**189716987098470**/0985709387059874, you should copy **189716987098470**
 
 Make sure you're not copying the user's ID.
 
 **Alternatively, you can also:**
-**1.** Open the desired direct message channel
-**2.** Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> (<kbd>⌥</kbd>+<kbd>⌘</kbd>+<kbd>I</kbd> on macOS) on Discord to show developer tools
-**3.** Navigate to the `Console` tab
-**4.** Type `window.location.href` and press Enter
-**5.** Copy the first long sequence of numbers inside the URL
+
+1. Open the desired direct message channel
+2. Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> (<kbd>⌥</kbd>+<kbd>⌘</kbd>+<kbd>I</kbd> on macOS) on Discord to show developer tools
+3. Navigate to the `Console` tab
+4. Type `window.location.href` and press Enter
+5. Copy the first long sequence of numbers inside the URL
 
 > E.g. in https꞉//discord.com/channels/@me/**84289740160**, you should copy **84289740160**

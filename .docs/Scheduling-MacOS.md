@@ -4,22 +4,15 @@ Scheduling on macOS is a bit tricky, but it should work if you follow the instru
 
 Make sure you already have **DiscordChatExporter.CLI** and **.NET Core** properly installed ([instructions here](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/macOS-usage-instructions.md)).
 
-- [**1.** Creating the script](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/scheduling-MacOS.md#1-creating-the-script)
-- [**2.** Creating the .plist file](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/scheduling-MacOS.md#2-creating-the-plist-file)
-  - [Export on System Boot/User Login](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/scheduling-MacOS.md#export-on-system-bootuser-login)
-  - [Export every _n_ seconds](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/scheduling-MacOS.md#export-every-n-seconds)
-  - [Export at a specific time and date](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/scheduling-MacOS.md#export-at-a-specific-time-and-date)
-- [**3.** Loading the .plist into launchctl](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/scheduling-MacOS.md#3-loading-the-plist-into-launchctl)
+## Creating the script
 
-## 1. Creating the script
+1. Open TextEdit.app and create a new file
 
-**1.** Open TextEdit.app and create a new file
-
-**2.** Convert the file to a plain text one in 'Format > Make Plain Text' (⇧⌘T)
+2. Convert the file to a plain text one in 'Format > Make Plain Text' (⇧⌘T)
 
 ![](https://i.imgur.com/WXrTtXM.png)
 
-**3.** Paste the following into the text editor:
+3. Paste the following into the text editor:
 
 ```bash
 #!/bin/bash
@@ -75,18 +68,14 @@ fi
 exit 0
 ```
 
-**4.** Replace:
-`tokenhere` with your [Token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md)
+4. Replace:
 
-`channelhere` with a [Channel ID](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md)
-
-`dceFOLDERpathhere` with DCE's **directory's path** (e.g. `/Users/user/Desktop/DiscordChatExporterFolder`, NOT `/Users/user/Desktop/DiscordChatExporterFolder/DiscordChatExporter.DLL`)
-
-`filenamehere` with the exported channel's filename, without spaces
-
-`dirhere` with the directory you want the files to be saved at (e.g. `/Users/user/Documents/Discord\ Exports`)
-
-`formathere` with one of the available export formats
+- `tokenhere` with your [Token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md)
+- `channelhere` with a [Channel ID](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md)
+- `dceFOLDERpathhere` with DCE's **directory's path** (e.g. `/Users/user/Desktop/DiscordChatExporterFolder`, NOT `/Users/user/Desktop/DiscordChatExporterFolder/DiscordChatExporter.DLL`)
+- `filenamehere` with the exported channel's filename, without spaces
+- `dirhere` with the directory you want the files to be saved at (e.g. `/Users/user/Documents/Discord\ Exports`)
+- `formathere` with one of the available export formats
 
 To quickly get file or folder paths, select the file/folder, then hit Command+I (⌘I) and copy what's after `Where:`.
 After copying and pasting, make sure the file/folder name is not missing. If a folder has spaces in its name, add `\` before the spaces, like in the example below:
@@ -101,11 +90,10 @@ After copying and pasting, make sure the file/folder name is not missing. If a f
 
 ![](https://i.imgur.com/29u6Nyx.png)
 
-**5.** Save the file as `filename.sh`, not `.txt`
+5. Save the file as `filename.sh`, not `.txt`
+6. Open Terminal.app, type `chmod +x`, press the SPACE key, then drag & drop the `filename.sh` into the Terminal window and hit RETURN. You may be prompted for your password, and you won't be able to see it as you type.
 
-**6.** Open Terminal.app, type `chmod +x`, press the SPACE key, then drag & drop the `filename.sh` into the Terminal window and hit RETURN. You may be prompted for your password, and you won't be able to see it as you type.
-
-## 2. Creating the .plist file
+## Creating the .plist file
 
 Open TextEdit, make a Plain Text (⇧⌘T) and then paste the following into it:
 
@@ -124,9 +112,7 @@ Open TextEdit, make a Plain Text (⇧⌘T) and then paste the following into it:
 ```
 
 - The `Label` string is the name of the export job, it must be something unique. Replace the `local.discordchatexporter` between the `<string>` with another name if you'd like to run more than one script.
-
 - The `Program` string is the path to the script. Replace `/path/to/filename.sh` between the `<string>` with the path of the previously created script.
-
 - Replace the `REPLACEME` with the content presented in the following sections according to <u>when</u> you want to export.
 
 When you're done, save the file with the same name as the `Label` and with the `.plist` extension (not `.txt`), like `local.discordchatexporter.plist`.
@@ -230,9 +216,9 @@ Every Sunday at midnight and every Wednesday full hour (xx:00). Notice the inclu
 </array>
 ```
 
-## 3. Loading the .plist into launchctl
+## Loading the .plist into launchctl
 
-**1.** Copy your `filename.plist` file to one of these folders according to how you want it to run:
+1. Copy your `filename.plist` file to one of these folders according to how you want it to run:
 
 - `~/Library/LaunchAgents` runs as the current logged-in user.
 
@@ -247,7 +233,7 @@ Every Sunday at midnight and every Wednesday full hour (xx:00). Notice the inclu
 
 To quickly go to these directories, open Finder and press Command+Shift+G (⌘⇧G), then paste the path into the text box.
 
-**2.** To load the job into launchctl, in Terminal, type `launchctl load`, press SPACE, drag and drop the `.plist` into the Terminal window, then hit RETURN. It won't output anything if it was successfully loaded.
+2. To load the job into launchctl, in Terminal, type `launchctl load`, press SPACE, drag and drop the `.plist` into the Terminal window, then hit RETURN. It won't output anything if it was successfully loaded.
 
 ### Extra launchctl commands
 
@@ -270,7 +256,7 @@ You can also see error codes (2nd number) by running this command.
 launchctl list | grep local.discordchatexporter
 ```
 
-#
+---
 
 Further reading: [Script management with launchd in Terminal on Mac](https://support.apple.com/guide/terminal/script-management-with-launchd-apdc6c1077b-5d5d-4d35-9c19-60f2397b2369/mac) and [launchd.info](https://launchd.info/).
 Special thanks to [@Yudi](https://github.com/Yudi)

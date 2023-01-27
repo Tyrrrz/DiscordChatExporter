@@ -4,7 +4,7 @@ Docker distribution of DiscordChatExporter provides a way to run the app in a vi
 
 Note that only the CLI flavor of DiscordChatExporter is available for use with Docker.
 
-### Pulling
+## Pulling
 
 This will download the [Docker image from the registry](https://hub.docker.com/r/tyrrrz/discordchatexporter) to your computer. You can run this command again to update when a new version is released.
 
@@ -20,7 +20,7 @@ Note the `:stable` tag. DiscordChatExporter images are tagged according to the f
 
 You can see all available tags [here](https://hub.docker.com/r/tyrrrz/discordchatexporter/tags?page=1&ordering=name).
 
-### Usage
+## Usage
 
 To run the CLI in Docker and render help text:
 
@@ -55,10 +55,11 @@ You can also use the current working directory as the output directory by specif
 - `-v $PWD:/out` in Mac/Linux
 - `-v $pwd.Path:/out` in PowerShell
 
-For more information, please refer to the [Dockerfile](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/Dockerfile) and [Docker documentation](https://docs.docker.com/engine/reference/run/).<br>
+For more information, please refer to the [Dockerfile](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/Dockerfile) and [Docker documentation](https://docs.docker.com/engine/reference/run/).
+
 To get your Token and Channel IDs, please refer to [this page](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md).
 
-### Environment variables
+## Environment variables
 
 DiscordChatExpoter CLI accepts environment variables as fallbacks for the `--token` and `--bot` options.
 
@@ -70,11 +71,11 @@ Please refer to the Docker documentation for more information:
 
 - [Docker run - Set environment variables](https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file)
 
-### Permission issues with Linux hosts
+## Permission issues with Linux hosts
 
 When bounding volumes between the container and the host, files mirrored from the Docker container will be owned by the Docker user (in most setups this is `root`). Please refer to this [issue comment](https://github.com/Tyrrrz/DiscordChatExporter/issues/800#issuecomment-1030471970) for instructions on how to override this behavior.
 
-### Build Docker images for arm on Raspberry Pi
+## Build Docker images for arm on Raspberry Pi
 
 If you use the Docker image on arm (for example Raspberry Pi), you'd build the image as below.
 

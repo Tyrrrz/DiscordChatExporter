@@ -1,5 +1,3 @@
-# GUI, CLI and Formats explained
-
 # Getting started
 
 Welcome to the getting started page!
@@ -10,7 +8,7 @@ If you still have unanswered questions after reading this page or if you have en
 
 The information presented on this page is valid for **all** platforms.
 
-# GUI or CLI?
+## GUI or CLI?
 
 ![](https://i.imgur.com/j9OTxRB.png)
 **DCE** has two different versions:
@@ -25,7 +23,7 @@ If you're not comfortable with **Windows'** Command Line (cmd), please choose th
 
 **(Skip to [Using the CLI](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#using-the-cli) or [File Formats](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#file-formats))**
 
-# Using the GUI
+## Using the GUI
 
 ### Video tutorial
 
@@ -35,27 +33,31 @@ If you're not comfortable with **Windows'** Command Line (cmd), please choose th
 
 ### Guide
 
-**1.** After extracting the `.zip`, open `DiscordChatExporter.exe`
+1. After extracting the `.zip`, open `DiscordChatExporter.exe`
+2. Please refer to the on-screen instructions to get your token, then paste your token in the upper text box and hit ENTER or click the arrow (→).
 
-**2.** Please refer to the on-screen instructions to get your token, then paste your token in the upper text box and hit ENTER or click the arrow (→).
-**NEVER SHARE YOUR TOKEN**. A token gives <u>full access</u> to an account, treat it like a password.
+> **Warning**:
+> **Never share your token!**
+> A token gives full access to an account, treat it like a password.
 
 <img src="https://i.imgur.com/SuLQ5tZ.png" height="400"/>
 
-**3.** DCE will display your Direct Messages and a sidebar with your server list. Select the channel you would like to export, then click the ![](https://i.imgur.com/dnTOlDa.png) button to continue.
+3. DCE will display your Direct Messages and a sidebar with your server list. Select the channel you would like to export, then click the ![](https://i.imgur.com/dnTOlDa.png) button to continue.
 
-> 💡 Tip: You can export multiple channels at once by holding `CTRL` or `SHIFT` while selecting.
+> **Note**:
+> You can export multiple channels at once by holding `CTRL` or `SHIFT` while selecting.
 > You can also double-click a channel to export it without clicking the ![](https://i.imgur.com/dnTOlDa.png) button.
 
 <img src="https://i.imgur.com/JHMFRh2.png" height="400"/>
 
-**4.** In this screen you can customize the following:
+4. In this screen you can customize the following:
 
 - **Export format** - HTML (Dark), HTML (Light), TXT, CSV and JSON
 
 Click the menu button (☰) to see more options:
 
 - **Date range (after/before)** (Optional) - If set, only messages sent in the provided date range will be exported. Only one value (either after or before) is required if you want to use this option.
+  > **Note**:
   > Please note that the time defaults to **12:00 AM** (midnight/00:00). This means that if you choose to export between Sep 17th and Sep 18th, messages from Sep 18th won't be exported.
 - **Filter** (Optional) - Special notation for filtering the messages that get included in the export. See [Message filters](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Message-filters.md) for more info.
 - **Messages per partition** (Optional) - Split output into partitions, each limited to this number of messages (e.g. 100) or file size (e.g. 10mb). For example, a channel with 36 messages set to be partitioned every 10 messages will output 4 files.
@@ -63,7 +65,7 @@ Click the menu button (☰) to see more options:
   Only files that are referenced by the export are downloaded, which means that, for example, user avatars will not be downloaded when using the plain text (TXT) export format.
   A folder containing the assets will be created along with the exported chat. They must be kept together.
 
-**5.** Click `EXPORT` to export.
+5. Click `EXPORT` to export.
 
 <img src="https://i.imgur.com/KPgMH2D.png" height="400"/><img src="https://i.imgur.com/mtUFojS.png" height="400"/>
 
@@ -73,7 +75,8 @@ Click the menu button (☰) to see more options:
 Perform automatic updates on every launch.
 Default: Enabled
 
-> 💡 Tip: Keep this option enabled to receive the latest features and bug fixes!
+> **Note**:
+> Keep this option enabled to receive the latest features and bug fixes!
 
 **Dark mode**
 Use darker colors in the UI (User Interface).
@@ -105,18 +108,20 @@ More info about .NET date formats [here](https://docs.microsoft.com/en-us/dotnet
 The number of channels can be exported at the same time.
 Default: 1
 
-> 💡 Tip: Try to keep this number low so that your account doesn't get flagged.
+> **Note**:
+> Try to keep this number low so that your account doesn't get flagged.
 
 **(Skip to [File Formats](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#file-formats))**
 
-# Using the CLI
+## Using the CLI
 
+> **Note**:
 > Make sure you have [.NET Core installed](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Dotnet.md) before attempting to run the commands below.
 > **Docker** users, please refer to the [Docker usage instructions](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Docker.md).
 
-**1.** After extracting the `.zip`, open Command Prompt, aka `cmd` (`Terminal` on **macOS** and **Linux**).
+1. After extracting the `.zip`, open Command Prompt, aka `cmd` (`Terminal` on **macOS** and **Linux**).
 
-**2.** Change the current directory to DCE's folder with `cd C:\path\to\directory`, then press ENTER to run the command.
+2. Change the current directory to DCE's folder with `cd C:\path\to\directory`, then press ENTER to run the command.
 
 **Windows** users can quickly get the directory's path by clicking the address bar while inside the folder.
 ![](https://i.imgur.com/XncnhC2.gif)
@@ -125,7 +130,7 @@ Default: 1
 You can also drag and drop the folder on **every platform**.
 ![](https://i.imgur.com/sOpZQAb.gif)
 
-**3.** Now we're ready to run the commands. The examples on this page follow the Windows file path format, change the file paths according to your system.
+3. Now we're ready to run the commands. The examples on this page follow the Windows file path format, change the file paths according to your system.
 
 Let's do the following to list DCE's options:
 
@@ -137,7 +142,7 @@ dotnet DiscordChatExporter.Cli.dll
 
 > **Docker** users, please refer to the [Docker usage instructions](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Docker.md).
 
-## DCE.CLI commands
+### DCE.CLI commands
 
 | Command                                                                                                       | Description                                         |
 | ------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
@@ -157,7 +162,7 @@ To get help with a specific command, please run:
 dotnet DiscordChatExporter.Cli.dll command -h
 ```
 
-## export
+#### `export`
 
 |        | Option                                                                                                                | Description                                                                                                                                                          |
 | ------ | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -174,11 +179,12 @@ dotnet DiscordChatExporter.Cli.dll command -h
 |        | [--dateformat](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#date-formats)       | Format used when writing dates.                                                                                                                                      |
 |        | -h                                                                                                                    | Shows help text                                                                                                                                                      |
 
+> **Note**:
 > Options with an asterisk (**\***) are required. The order of the options doesn't matter.
 
 With this command you can export Server Channels and Direct Messages.
 
-### Basic usage
+##### Basic usage
 
 You can quickly export with DCE's default settings by using just `-t token` and `-c channelid`.
 
@@ -186,7 +192,7 @@ You can quickly export with DCE's default settings by using just `-t token` and 
 dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555
 ```
 
-### Changing the format
+##### Changing the format
 
 You can change the export format to `HtmlDark`, `HtmlLight`, `PlainText` `Json` or `Csv` with `-f format`. The default format is `HtmlDark`.
 
@@ -194,7 +200,7 @@ You can change the export format to `HtmlDark`, `HtmlLight`, `PlainText` `Json` 
 dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -f Json
 ```
 
-### Changing the output filename
+##### Changing the output filename
 
 You can change the filename by using `-o name.ext`. e.g. for the `HTML` format:
 
@@ -202,7 +208,7 @@ You can change the filename by using `-o name.ext`. e.g. for the `HTML` format:
 dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -o myserver.html
 ```
 
-### Changing the output directory
+##### Changing the output directory
 
 You can change the export directory by using `-o` and providing a path that ends with a slash or does not have a file extension.
 If any of the folders in the path have a space in its name, escape them with quotes (").
@@ -211,7 +217,7 @@ If any of the folders in the path have a space in its name, escape them with quo
 dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -o "C:\Discord Exports"
 ```
 
-### Changing the filename and output directory
+##### Changing the filename and output directory
 
 You can change both the filename and export directory by using `-o directory\name.ext`.
 Note that the filename must have an extension, otherwise it will be considered a directory name.
@@ -221,7 +227,7 @@ If any of the folders in the path have a space in its name, escape them with quo
 dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -o "C:\Discord Exports\myserver.html"
 ```
 
-### Generating the filename and output directory dynamically
+##### Generating the filename and output directory dynamically
 
 You can use template tokens to generate the output file path based on the guild and channel metadata.
 
@@ -245,7 +251,7 @@ Here is the full list of supported template tokens:
 - `%b` - the "before" date
 - `%%` - escapes `%`
 
-### Partitioning
+##### Partitioning
 
 You can use partitioning to split files after a given number of messages or file size.
 For example, a channel with 36 messages set to be partitioned every 10 messages will output 4 files.
@@ -260,7 +266,7 @@ A 45mb channel set to be partitioned every 20mb will output 3 files.
 dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -p 20mb
 ```
 
-### Downloading assets
+##### Downloading assets
 
 If this option is set, the export will include additional files such as user avatars, attached files, images, etc.
 Only files that are referenced by the export are downloaded, which means that, for example, user avatars will not be downloaded when using the plain text (TXT) export format.
@@ -270,7 +276,7 @@ A folder containing the assets will be created along with the exported chat. The
 dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --media
 ```
 
-### Reuse assets
+##### Reuse assets
 
 Previously downloaded assets can be reused to skip redundant downloads as long as the chat is always exported to the same folder. Using this option can speed up future exports. This option requires the `--media` option.
 
@@ -278,7 +284,7 @@ Previously downloaded assets can be reused to skip redundant downloads as long a
 dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --media --reuse-media
 ```
 
-### Date formats
+##### Date formats
 
 This setting changes how dates are formatted in the exported files.
 
@@ -299,7 +305,7 @@ dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --dateformat "y
 
 > Special thanks to [@andrewkolos](https://github.com/andrewkolos) for adding the Unix options
 
-### Date ranges
+##### Date ranges
 
 **Messages sent before a date**
 Use `--before` to export messages sent before the provided date. E.g. messages sent before September 18th, 2019:
@@ -326,7 +332,7 @@ You can try different formats like `17-SEP-2019 11:34 PM` or even refine your ra
 Don't forget to quote (") the date if it has spaces!
 More info about .NET date formats [here](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings).
 
-## exportdm
+#### `exportdm`
 
 |        | Option                                                                                                                | Description                                                                                                                                                          |
 | ------ | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -343,11 +349,12 @@ More info about .NET date formats [here](https://docs.microsoft.com/en-us/dotnet
 |        | [--dateformat](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#date-formats)       | Date format used in output                                                                                                                                           |
 |        | -h                                                                                                                    | Shows help text                                                                                                                                                      |
 
+> **Note**:
 > Options with an asterisk (**\***) are required. The order of the options doesn't matter.
 
 This command exports all your Direct Messages.
 
-## exportguild
+#### `exportguild`
 
 |        | Option                                                                                                                | Description                                                                                                                                                          |
 | ------ | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -365,11 +372,12 @@ This command exports all your Direct Messages.
 |        | [--dateformat](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#date-formats)       | Date format used in output                                                                                                                                           |
 |        | -h                                                                                                                    | Shows help text                                                                                                                                                      |
 
+> **Note**:
 > Options with an asterisk (**\***) are required. The order of the options doesn't matter.
 
 This command exports all channels of a Server.
 
-## exportall
+#### `exportall`
 
 |        | Option                                                                                                                | Description                                                                                                                                                          |
 | ------ | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -387,6 +395,7 @@ This command exports all channels of a Server.
 |        | [--dateformat](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#date-formats)       | Date format used in output                                                                                                                                           |
 |        | -h                                                                                                                    | Shows help text                                                                                                                                                      |
 
+> **Note**:
 > Options with an asterisk (**\***) are required. The order of the options doesn't matter.
 
 This command exports all accessible channels, including server channels and DMs.
@@ -397,7 +406,7 @@ To exclude DMs, add the `--include-dm false` option:
 dotnet DiscordChatExporter.Cli.dll exportall -t "mfa.Ifrn" --include-dm false
 ```
 
-## channels
+#### `channels`
 
 |        | Option                                                                                               | Description                                                                                                                                                          |
 | ------ | ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -405,6 +414,7 @@ dotnet DiscordChatExporter.Cli.dll exportall -t "mfa.Ifrn" --include-dm false
 | **\*** | [-t](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#basic-usage) | [Authorization token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md#how-to-get-user-token). Environment variable: `DISCORD_TOKEN` |
 |        | -h                                                                                                   | Shows help text                                                                                                                                                      |
 
+> **Note**:
 > Options with an asterisk (**\***) are required. The order of the options doesn't matter.
 
 This command outputs the server channels in the following format:
@@ -415,13 +425,14 @@ To save the output to a file, run the command below. If the file already exists,
 dotnet DiscordChatExporter.Cli.dll channels -t "mfa.Ifrn" -g 21814 > C:\path\to\output.txt
 ```
 
-## dm
+#### `dm`
 
 |        | Option                                                                                               | Description                                                                                                                                                          |
 | ------ | ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **\*** | [-t](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#basic-usage) | [Authorization token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md#how-to-get-user-token). Environment variable: `DISCORD_TOKEN` |
 |        | -h                                                                                                   | Shows help text                                                                                                                                                      |
 
+> **Note**:
 > Options with an asterisk (**\***) are required. The order of the options doesn't matter.
 
 This command outputs the list of Direct Messages.
@@ -431,13 +442,14 @@ To save the output to a file, run the command with `> C:\path\…` like the exam
 dotnet DiscordChatExporter.Cli.dll dm -t "mfa.Ifrn" > C:\path\to\output.txt
 ```
 
-## guilds
+#### `guilds`
 
 |        | Option                                                                                               | Description                                                                                                                                                          |
 | ------ | ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **\*** | [-t](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#basic-usage) | [Authorization token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md#how-to-get-user-token). Environment variable: `DISCORD_TOKEN` |
 |        | -h                                                                                                   | Shows help text                                                                                                                                                      |
 
+> **Note**:
 > Options with an asterisk (**\***) are required. The order of the options doesn't matter.
 
 This command outputs a list of your Server List.
@@ -447,37 +459,38 @@ To save the output to a file, run the command with `> C:\path\…` like the exam
 dotnet DiscordChatExporter.Cli.dll guilds -t "mfa.Ifrn" > C:\path\to\output.txt
 ```
 
-## guide
+#### `guide`
 
 This command explains [how to get your token, guild, and channel IDs](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md).
 
-# File formats
+## File formats
 
-## HTML
+### HTML
 
 ![](https://i.imgur.com/S7lBTkV.png)
 The HTML format replicates Discord's interface, making it the most user-friendly option.
 It's the best format for attachment preview and sharing.
 You can open `.html` files with a web browser, such as Google Chrome.
 
-> Please note that if a picture is deleted, or if a user changes its avatar, the respective images will no longer be displayed.
+> **Warning**:
+> If a picture is deleted, or if a user changes its avatar, the respective images will no longer be displayed.
 > Export using the "Download referenced assets" (`--media`) option to avoid this.
 
-## Plain Text
+### Plain Text
 
 <img src="https://i.imgur.com/PbUyRXD.png" height="400"/>
 
 The Plain Text format is the best option for archiving due to its small size.
 You can open `.txt` files with a text editor, such as Notepad.
 
-## JSON
+### JSON
 
 <img src="https://i.imgur.com/FAeSA4O.png" height="400"/>
 
 The JSON format contains more technical information and is easily parsable.
 You can open `.json` files with a text editor, such as Notepad.
 
-## CSV
+### CSV
 
 ![](https://i.imgur.com/VEVUsKs.png)
 ![](https://i.imgur.com/1vPmQqQ.png)
@@ -487,7 +500,7 @@ You can open `.csv` files with a text editor, such as Notepad, or a spreadsheet 
 
 **([Back to top](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#getting-started))**
 
-#
+---
 
 Further reading: [.NET date formats](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings)
 Special thanks to [@Yudi](https://github.com/Yudi)

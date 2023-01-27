@@ -52,11 +52,11 @@ For more information, refer to the [Docker docs SELinux labels for bind mounts p
 
 You can also use the current working directory as the output directory by specifying:
 
-* `-v $PWD:/out` in Mac/Linux 
-* `-v $pwd.Path:/out` in PowerShell
+- `-v $PWD:/out` in Mac/Linux
+- `-v $pwd.Path:/out` in PowerShell
 
 For more information, please refer to the [Dockerfile](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/Dockerfile) and [Docker documentation](https://docs.docker.com/engine/reference/run/).<br>
-To get your Token and Channel IDs, please refer to [this page](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md).
+To get your Token and Channel IDs, please refer to [this page](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md).
 
 ### Environment variables
 
@@ -65,10 +65,10 @@ DiscordChatExpoter CLI accepts environment variables as fallbacks for the `--tok
 - `DISCORD_TOKEN` to set the token
 - `DISCORD_TOKEN_BOT` to set whether it's a bot token (`true` or `false`)
 
-You can use these variables either with the `--env` Docker option or with a combination of the `--env-file` Docker option and a `.env` file.  
+You can use these variables either with the `--env` Docker option or with a combination of the `--env-file` Docker option and a `.env` file.
 Please refer to the Docker documentation for more information:
 
-* [Docker run - Set environment variables](https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file)
+- [Docker run - Set environment variables](https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file)
 
 ### Permission issues with Linux hosts
 
@@ -103,6 +103,6 @@ Now you can execute DiscordChatExporter:
 $ docker run --rm tyrrrz/discordchatexporter:latest
 ```
 
-___
+---
 
 Special thanks to [@simnalamburt](https://github.com/simnalamburt) (dockerize) and [@Nimja](https://github.com/nimja) (better instructions)

@@ -1,12 +1,13 @@
 # Scheduling exports with Cron
 
-Make sure you already have **DiscordChatExporter.CLI** and **.NET Core** properly installed ([instructions here](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Linux-usage-instructions.md)).
+Make sure you already have **DiscordChatExporter.CLI** and **.NET Core** properly installed ([instructions here](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Linux.md)).
 
-You can use Cron on macOS, but [this method](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Scheduling-exports-on-macOS.md) is preferred.
+You can use Cron on macOS, but [this method](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/scheduling-MacOS.md) is preferred.
 
 #
 
 **1.** Open Terminal and create a new text file with `nano /path/to/DiscordChatExporter/cron.sh`<br/>
+
 > For beginners: You can't use your mouse in nano, use the arrow keys to control the cursor (caret).
 
 **2.** Paste the following into the text file:
@@ -64,22 +65,21 @@ exit 0
 
 **3.** Replace:
 
- `tokenhere` with your [Token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md).
+`tokenhere` with your [Token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md).
 
- `channelhere` with a [Channel ID](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md).
+`channelhere` with a [Channel ID](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md).
 
- `dceFOLDERpathhere` with DCE's **directory path** (e.g. `/path/to/folder`, NOT `/path/to/folder/DiscordChatExporter.dll`).
+`dceFOLDERpathhere` with DCE's **directory path** (e.g. `/path/to/folder`, NOT `/path/to/folder/DiscordChatExporter.dll`).
 
- `filenamehere` with the exported channel's filename, without spaces.
+`filenamehere` with the exported channel's filename, without spaces.
 
- `dirhere` with the export directory (e.g. /home/user/Documents/Discord\ Exports).
+`dirhere` with the export directory (e.g. /home/user/Documents/Discord\ Exports).
 
- `formathere` with one of the available export formats.
+`formathere` with one of the available export formats.
 
 **Remember to escape spaces** (add `\` before them) or to quote (") the paths (`"/home/my user"`)!<br/>
 
-> For beginners: To save, hold down CTRL and then press O, if asked for a filename, type it and press ENTER. Hit CTRL+X to exit the text editor.<br/>
-[Check out this page](https://wiki.gentoo.org/wiki/Nano/Basics_Guide) if you want to know more about nano.
+> For beginners: To save, hold down CTRL and then press O, if asked for a filename, type it and press ENTER. Hit CTRL+X to exit the text editor.<br/> > [Check out this page](https://wiki.gentoo.org/wiki/Nano/Basics_Guide) if you want to know more about nano.
 
 **4.** Make your script executable with `chmod +x /path/to/DiscordChatExporter/cron.sh`
 
@@ -87,10 +87,11 @@ exit 0
 If this is your first time running this command, you might be asked to select a text editor. Nano is easier for beginners.
 
 **6.** Add the following to the end of the file `* * * * * /path/to/DiscordChatExporter/cron.sh >/tmp/discordchatexporter.log 2>/tmp/discordchatexportererror.log`<br/>
-Don't forget to replace the `/path/to/DiscordChatExporter/cron.sh`! 
+Don't forget to replace the `/path/to/DiscordChatExporter/cron.sh`!
+
 > 💡 Tip: If you don't want logs to be created, replace both `/tmp/discordchatexporter.log` with `/dev/null`
 
-Then replace the *s according to:
+Then replace the \*s according to:
 
 ![](https://i.imgur.com/RY7USM6.png)
 
@@ -107,11 +108,13 @@ Every Wednesday at 9 AM `0 9 * * 3`
 Verify your cron time [here](https://crontab.guru).
 
 #
+
 **Extra information**
 
 The week starts on Sunday. 0 = SUN, 1 = MON ... 7 = SUN.
 
-Be aware that if you set the day to '31', the script will only run on months that have the 31st day. 
+Be aware that if you set the day to '31', the script will only run on months that have the 31st day.
+
 > 💡 Tip: [Learn more about running a cron job on the last day of the month here](https://stackoverflow.com/questions/6139189/cron-job-to-run-on-the-last-day-of-the-month) (expert).
 
 The default filename for the exported channel is `YYYY-MM-DD-hh-mm-ss-yourfilename`. You can change it if you'd like.
@@ -119,4 +122,5 @@ The default filename for the exported channel is `YYYY-MM-DD-hh-mm-ss-yourfilena
 Don't forget to update your token in the script after it has been reset!
 
 #
+
 Special thanks to [@Yudi](https://github.com/Yudi)

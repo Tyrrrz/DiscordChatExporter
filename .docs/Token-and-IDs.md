@@ -1,25 +1,8 @@
 # Obtaining Token and Channel IDs
 
-# → DO NOT SHARE YOUR TOKEN ←
-**Only scan QR codes taken directly from your browser.**
-
-A token gives <u>full access</u> to an account.  
-To reset a user token, change your account password.  
-To reset a bot token, click on "[Regenerate](#how-to-get-a-bot-token)".
-
-#
-**Index**
-* How to get a User Token
-  * [In Chrome](#in-chrome)
-  * [In Firefox](#in-firefox)
-  * Through the desktop app
-    * [By editing the settings file](#by-editing-the-settings-file)
-    * [Via settings menu (BetterDiscord only)](#via-settings-menu-betterdiscord-only)
-* [How to get a Bot Token](#how-to-get-a-bot-token)
-* [How to get Server IDs and Server Channel IDs](#how-to-get-a-server-id-or-a-server-channel-id)
-* [How to get a Direct Message Channel ID](#how-to-get-a-direct-message-channel-id)
-
-#
+> **Warning**:
+> **DO NOT SHARE YOUR TOKEN!**.
+> A token gives full access to an account. To reset a user token, change your account password. To reset a bot token, click on "[Regenerate](#how-to-get-a-bot-token)"
 
 ### How to get a User Token
 
@@ -189,19 +172,19 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 
 2. Open Discord's settings file in your preferred text editor. See the following table for help finding it:
 
-    | OS      | Stable                                                | Canary                                                      | Public Test Build (PTB)                                         |
-    |---------|-------------------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------|
-    | Windows | `%APPDATA%\discord\settings.json`                     | `%APPDATA%\discordcanary\settings.json`                     | `%APPDATA%\discordptb\settings.json`                     |
-    | macOS   | `~/Library/Application Support/discord/settings.json` | `~/Library/Application Support/discordcanary/settings.json` | `~/Library/Application Support/discordptb/settings.json` |
-    | Linux   | `~/.config/discord/settings.json`                     | `~/.config/discordcanary/settings.json`                     | `~/.config/discordptb/settings.json`                     |
+   | OS      | Stable                                                | Canary                                                      | Public Test Build (PTB)                                  |
+   | ------- | ----------------------------------------------------- | ----------------------------------------------------------- | -------------------------------------------------------- |
+   | Windows | `%APPDATA%\discord\settings.json`                     | `%APPDATA%\discordcanary\settings.json`                     | `%APPDATA%\discordptb\settings.json`                     |
+   | macOS   | `~/Library/Application Support/discord/settings.json` | `~/Library/Application Support/discordcanary/settings.json` | `~/Library/Application Support/discordptb/settings.json` |
+   | Linux   | `~/.config/discord/settings.json`                     | `~/.config/discordcanary/settings.json`                     | `~/.config/discordptb/settings.json`                     |
 
-    If you use BetterDiscord, use the following table instead:
+   If you use BetterDiscord, use the following table instead:
 
-    | OS      | Stable                                                                  | Canary                                                                  | Public Test Build (PTB)                                                     |
-    |---------|-------------------------------------------------------------------------|-------------------------------------------------------------------------|----------------------------------------------------------------------|
-    | Windows | `%APPDATA%\BetterDiscord\data\stable\settings.json`                     | `%APPDATA%\BetterDiscord\data\canary\settings.json`                     | `%APPDATA%\BetterDiscord\data\ptb\settings.json`                     |
-    | macOS   | `~/Library/Application Support/BetterDiscord/data/stable/settings.json` | `~/Library/Application Support/BetterDiscord/data/canary/settings.json` | `~/Library/Application Support/BetterDiscord/data/ptb/settings.json` |
-    | Linux   | `~/.config/BetterDiscord/data/stable/settings.json`                     | `~/.config/BetterDiscord/data/canary/settings.json`                     | `~/.config/BetterDiscord/data/ptb/settings.json`                     |
+   | OS      | Stable                                                                  | Canary                                                                  | Public Test Build (PTB)                                              |
+   | ------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------- | -------------------------------------------------------------------- |
+   | Windows | `%APPDATA%\BetterDiscord\data\stable\settings.json`                     | `%APPDATA%\BetterDiscord\data\canary\settings.json`                     | `%APPDATA%\BetterDiscord\data\ptb\settings.json`                     |
+   | macOS   | `~/Library/Application Support/BetterDiscord/data/stable/settings.json` | `~/Library/Application Support/BetterDiscord/data/canary/settings.json` | `~/Library/Application Support/BetterDiscord/data/ptb/settings.json` |
+   | Linux   | `~/.config/BetterDiscord/data/stable/settings.json`                     | `~/.config/BetterDiscord/data/canary/settings.json`                     | `~/.config/BetterDiscord/data/ptb/settings.json`                     |
 
 3. Insert a blank line after the first curly bracket (`{`), add the text `"DANGEROUS_ENABLE_DEVTOOLS_ONLY_ENABLE_IF_YOU_KNOW_WHAT_YOURE_DOING": true,` to it, and save the file. Your file should resemble the following:
 
@@ -215,7 +198,7 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 
 4. Launch Discord.
 
-5. To find your user token, continue [here](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md#in-chrome).
+5. To find your user token, continue [here](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md#in-chrome).
 
 ##### Via settings menu (BetterDiscord only)
 
@@ -236,40 +219,43 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 
 4. Press <kbd>Esc</kbd>. The settings page will close.
 
-5. To find your user token, continue [here](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md#in-chrome).
+5. To find your user token, continue [here](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md#in-chrome).
 
 ### How to get a Bot Token
-**1.** Go to [Discord developer portal](https://discord.com/developers/applications)  
-**2.** Open your Application's settings  
-**3.** Navigate to the **Bot** section on the left  
-**4.** Under **Token** click **Copy**  
+
+**1.** Go to [Discord developer portal](https://discord.com/developers/applications)
+**2.** Open your Application's settings
+**3.** Navigate to the **Bot** section on the left
+**4.** Under **Token** click **Copy**
 
 **Important**: your bot needs to have **Message Content Intent** enabled for it to be able to read messages!
 
 ![https://discord.com/developers/applications/](https://i.imgur.com/BdrrxlY.png)
-***
+
+---
 
 ### How to get a Server ID or a Server Channel ID
-**1.** Open Discord Settings  
-**2.** Go to the **Advanced** section  
-**3.** Enable **Developer Mode**  
-**4.** Right click on the desired server or channel and click Copy ID  
+
+**1.** Open Discord Settings
+**2.** Go to the **Advanced** section
+**3.** Enable **Developer Mode**
+**4.** Right click on the desired server or channel and click Copy ID
 
 ### How to get a Direct Message Channel ID
 
-**1.** Click the three dots next to any message in the channel you want to export.  
-**2.** Paste the link into a text editor.  
-**3.** Copy the text in the highlighted part of the link.  
+**1.** Click the three dots next to any message in the channel you want to export.
+**2.** Paste the link into a text editor.
+**3.** Copy the text in the highlighted part of the link.
 
 > E.g. in https꞉//discord.com/channels/@me/**189716987098470**/0985709387059874, you should copy **189716987098470**
 
 Make sure you're not copying the user's ID.
 
-**Alternatively, you can also:**  
-**1.** Open the desired direct message channel  
-**2.** Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> (<kbd>⌥</kbd>+<kbd>⌘</kbd>+<kbd>I</kbd> on macOS) on Discord to show developer tools  
-**3.** Navigate to the `Console` tab  
-**4.** Type `window.location.href` and press Enter  
-**5.** Copy the first long sequence of numbers inside the URL 
+**Alternatively, you can also:**
+**1.** Open the desired direct message channel
+**2.** Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> (<kbd>⌥</kbd>+<kbd>⌘</kbd>+<kbd>I</kbd> on macOS) on Discord to show developer tools
+**3.** Navigate to the `Console` tab
+**4.** Type `window.location.href` and press Enter
+**5.** Copy the first long sequence of numbers inside the URL
 
 > E.g. in https꞉//discord.com/channels/@me/**84289740160**, you should copy **84289740160**

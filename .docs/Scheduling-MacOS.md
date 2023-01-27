@@ -4,13 +4,12 @@ Scheduling on macOS is a bit tricky, but it should work if you follow the instru
 
 Make sure you already have **DiscordChatExporter.CLI** and **.NET Core** properly installed ([instructions here](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/macOS-usage-instructions.md)).
 
-* [**1.** Creating the script](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Scheduling-exports-on-macOS.md#1-creating-the-script)
-* [**2.** Creating the .plist file](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Scheduling-exports-on-macOS.md#2-creating-the-plist-file)
-   * [Export on System Boot/User Login](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Scheduling-exports-on-macOS.md#export-on-system-bootuser-login)
-   * [Export every _n_ seconds](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Scheduling-exports-on-macOS.md#export-every-n-seconds)
-   * [Export at a specific time and date](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Scheduling-exports-on-macOS.md#export-at-a-specific-time-and-date)
-* [**3.** Loading the .plist into launchctl](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Scheduling-exports-on-macOS.md#3-loading-the-plist-into-launchctl)
-
+- [**1.** Creating the script](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/scheduling-MacOS.md#1-creating-the-script)
+- [**2.** Creating the .plist file](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/scheduling-MacOS.md#2-creating-the-plist-file)
+  - [Export on System Boot/User Login](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/scheduling-MacOS.md#export-on-system-bootuser-login)
+  - [Export every _n_ seconds](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/scheduling-MacOS.md#export-every-n-seconds)
+  - [Export at a specific time and date](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/scheduling-MacOS.md#export-at-a-specific-time-and-date)
+- [**3.** Loading the .plist into launchctl](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/scheduling-MacOS.md#3-loading-the-plist-into-launchctl)
 
 ## 1. Creating the script
 
@@ -21,6 +20,7 @@ Make sure you already have **DiscordChatExporter.CLI** and **.NET Core** properl
 ![](https://i.imgur.com/WXrTtXM.png)
 
 **3.** Paste the following into the text editor:
+
 ```bash
 #!/bin/bash
 # Info: https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs
@@ -75,41 +75,40 @@ fi
 exit 0
 ```
 
-**4.** Replace:  
- `tokenhere` with your [Token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md)
+**4.** Replace:
+`tokenhere` with your [Token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md)
 
- `channelhere` with a [Channel ID](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md)
+`channelhere` with a [Channel ID](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md)
 
- `dceFOLDERpathhere` with DCE's **directory's path** (e.g. `/Users/user/Desktop/DiscordChatExporterFolder`, NOT `/Users/user/Desktop/DiscordChatExporterFolder/DiscordChatExporter.DLL`)
+`dceFOLDERpathhere` with DCE's **directory's path** (e.g. `/Users/user/Desktop/DiscordChatExporterFolder`, NOT `/Users/user/Desktop/DiscordChatExporterFolder/DiscordChatExporter.DLL`)
 
- `filenamehere` with the exported channel's filename, without spaces
+`filenamehere` with the exported channel's filename, without spaces
 
- `dirhere` with the directory you want the files to be saved at (e.g. `/Users/user/Documents/Discord\ Exports`)
+`dirhere` with the directory you want the files to be saved at (e.g. `/Users/user/Documents/Discord\ Exports`)
 
- `formathere` with one of the available export formats
+`formathere` with one of the available export formats
 
-  
-
-To quickly get file or folder paths, select the file/folder, then hit Command+I (⌘I) and copy what's after `Where:`.  
+To quickly get file or folder paths, select the file/folder, then hit Command+I (⌘I) and copy what's after `Where:`.
 After copying and pasting, make sure the file/folder name is not missing. If a folder has spaces in its name, add `\` before the spaces, like in the example below:
-* `Discord\ Exports` - Wrong ✗
-* `/Users/user/Documents` - Wrong ✗
-* `/Users/user/Documents/Discord Exports` - Wrong ✗
-* `/Users/user/Documents/Discord\ Exports/DCE.Cli.dll` - Wrong ✗
-* `/Users/user/Documents/Discord \Exports` - Wrong ✗
-* `/Users/user/Documents/Discord\ Exports` - Correct ✓
-* `/Users/user/Desktop/DiscordChatExporter` - Correct ✓
+
+- `Discord\ Exports` - Wrong ✗
+- `/Users/user/Documents` - Wrong ✗
+- `/Users/user/Documents/Discord Exports` - Wrong ✗
+- `/Users/user/Documents/Discord\ Exports/DCE.Cli.dll` - Wrong ✗
+- `/Users/user/Documents/Discord \Exports` - Wrong ✗
+- `/Users/user/Documents/Discord\ Exports` - Correct ✓
+- `/Users/user/Desktop/DiscordChatExporter` - Correct ✓
 
 ![](https://i.imgur.com/29u6Nyx.png)
-
-  
 
 **5.** Save the file as `filename.sh`, not `.txt`
 
 **6.** Open Terminal.app, type `chmod +x`, press the SPACE key, then drag & drop the `filename.sh` into the Terminal window and hit RETURN. You may be prompted for your password, and you won't be able to see it as you type.
 
 ## 2. Creating the .plist file
+
 Open TextEdit, make a Plain Text (⇧⌘T) and then paste the following into it:
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -123,13 +122,14 @@ Open TextEdit, make a Plain Text (⇧⌘T) and then paste the following into it:
     </dict>
 </plist>
 ```
-* The `Label` string is the name of the export job, it must be something unique. Replace the `local.discordchatexporter` between the `<string>` with another name if you'd like to run more than one script.
 
-* The `Program` string is the path to the script. Replace `/path/to/filename.sh` between the `<string>` with the path of the previously created script.
+- The `Label` string is the name of the export job, it must be something unique. Replace the `local.discordchatexporter` between the `<string>` with another name if you'd like to run more than one script.
 
-* Replace the `REPLACEME` with the content presented in the following sections according to <u>when</u> you want to export.  
+- The `Program` string is the path to the script. Replace `/path/to/filename.sh` between the `<string>` with the path of the previously created script.
 
-When you're done, save the file with the same name as the `Label` and with the `.plist` extension (not `.txt`), like `local.discordchatexporter.plist`.  
+- Replace the `REPLACEME` with the content presented in the following sections according to <u>when</u> you want to export.
+
+When you're done, save the file with the same name as the `Label` and with the `.plist` extension (not `.txt`), like `local.discordchatexporter.plist`.
 
 ### Exporting on System Boot/User Login
 
@@ -150,49 +150,49 @@ The following example is to export every 3600 seconds (1 hour), replace the inte
 ### Export at a specific time and date
 
 ```xml
-<key>StartCalendarInterval</key> 
-<dict> 
-    <key>Weekday</key> 
-    <integer>0</integer> 
-    <key>Month</key> 
-    <integer>0</integer> 
-    <key>Day</key> 
-    <integer>0</integer> 
-    <key>Hour</key> 
-    <integer>0</integer> 
-    <key>Minute</key> 
-    <integer>0</integer> 
+<key>StartCalendarInterval</key>
+<dict>
+    <key>Weekday</key>
+    <integer>0</integer>
+    <key>Month</key>
+    <integer>0</integer>
+    <key>Day</key>
+    <integer>0</integer>
+    <key>Hour</key>
+    <integer>0</integer>
+    <key>Minute</key>
+    <integer>0</integer>
 </dict>
 ```
 
-Key |  Integer
------------- | -------------
-**Month** | 1-12
-**Day** | 1-31
-**Weekday** | 0-6 (0 is Sunday)
-**Hour** | 0-23
-**Minute** | 0-59
+| Key         | Integer           |
+| ----------- | ----------------- |
+| **Month**   | 1-12              |
+| **Day**     | 1-31              |
+| **Weekday** | 0-6 (0 is Sunday) |
+| **Hour**    | 0-23              |
+| **Minute**  | 0-59              |
 
 **Sunday** - 0; **Monday** - 1; **Tuesday** - 2; **Wednesday** - 3; **Thursday** - 4; **Friday** - 5; **Saturday** - 6
 
 Replace the template's `0`s according to the desired times.
 
-You can delete the `<key>`s you don't need, don't forget to remove the `<integer>0</integer>` under it.  
+You can delete the `<key>`s you don't need, don't forget to remove the `<integer>0</integer>` under it.
 Omitted keys are interpreted as wildcards, for example, if you delete the Minute key, the script will run at every minute, delete the Weekday key and it'll run at every weekday, and so on.
 
 Be aware that if you set the day to '31', the script will only run on months that have the 31st day.
 
-**Check the examples below ([or skip to step 3 (loading the file)](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Scheduling-exports-on-macOS.md#3-loading-the-plist-into-launchctl)):**
+**Check the examples below ([or skip to step 3 (loading the file)](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/scheduling-MacOS.md#3-loading-the-plist-into-launchctl)):**
 
 Export everyday at 5:15 PM:
 
 ```xml
-<key>StartCalendarInterval</key> 
-<dict> 
-    <key>Hour</key> 
-    <integer>17</integer> 
-    <key>Minute</key> 
-    <integer>15</integer> 
+<key>StartCalendarInterval</key>
+<dict>
+    <key>Hour</key>
+    <integer>17</integer>
+    <key>Minute</key>
+    <integer>15</integer>
 </dict>
 
 ```
@@ -200,10 +200,10 @@ Export everyday at 5:15 PM:
 Every 15 minutes of an hour (xx:15):
 
 ```xml
-<key>StartCalendarInterval</key> 
-<dict>  
-    <key>Minute</key> 
-    <integer>15</integer> 
+<key>StartCalendarInterval</key>
+<dict>
+    <key>Minute</key>
+    <integer>15</integer>
 </dict>
 
 ```
@@ -211,15 +211,15 @@ Every 15 minutes of an hour (xx:15):
 Every Sunday at midnight and every Wednesday full hour (xx:00). Notice the inclusion of `<array>` and `</array>` to allow multiple values:
 
 ```xml
-<key>StartCalendarInterval</key> 
+<key>StartCalendarInterval</key>
 <array>
-        <dict>  
+        <dict>
 		<key>Weekday</key>
 		<integer>0</integer>
-                <key>Hour</key> 
-                <integer>00</integer> 
-                <key>Minute</key> 
-                <integer>00</integer> 
+                <key>Hour</key>
+                <integer>00</integer>
+                <key>Minute</key>
+                <integer>00</integer>
         </dict>
 	<dict>
 		<key>Weekday</key>
@@ -234,16 +234,16 @@ Every Sunday at midnight and every Wednesday full hour (xx:00). Notice the inclu
 
 **1.** Copy your `filename.plist` file to one of these folders according to how you want it to run:
 
-* `~/Library/LaunchAgents` runs as the current logged-in user. 
+- `~/Library/LaunchAgents` runs as the current logged-in user.
 
-* `/Library/LaunchDaemons` runs as the system "_administrator_" (root).
+- `/Library/LaunchDaemons` runs as the system "_administrator_" (root).
 
-* If macOS has a single user:
-  * If you want to export only when the user is logged in, choose the first one.  
-  * If you want the script to always run on System Startup, choose the second one.  
-* If macOS has multiple users:
-  * If you want the script to run only when a certain user is logged in, choose the first one.   
-  * If you want the script to always run on System Startup, choose the second one.   
+- If macOS has a single user:
+  - If you want to export only when the user is logged in, choose the first one.
+  - If you want the script to always run on System Startup, choose the second one.
+- If macOS has multiple users:
+  - If you want the script to run only when a certain user is logged in, choose the first one.
+  - If you want the script to always run on System Startup, choose the second one.
 
 To quickly go to these directories, open Finder and press Command+Shift+G (⌘⇧G), then paste the path into the text box.
 
@@ -252,20 +252,25 @@ To quickly go to these directories, open Finder and press Command+Shift+G (⌘�
 ### Extra launchctl commands
 
 **Unloading a job**
+
 ```
 launchctl unload /path/to/Library/LaunchAgents/local.discordchatexporter.plist
 ```
 
 **List every loaded job**
+
 ```
 launchctl list
 ```
 
-**Check if a specific job is enabled**  
+**Check if a specific job is enabled**
 You can also see error codes (2nd number) by running this command.
+
 ```
 launchctl list | grep local.discordchatexporter
 ```
+
 #
-Further reading: [Script management with launchd in Terminal on Mac](https://support.apple.com/guide/terminal/script-management-with-launchd-apdc6c1077b-5d5d-4d35-9c19-60f2397b2369/mac) and [launchd.info](https://launchd.info/).  
+
+Further reading: [Script management with launchd in Terminal on Mac](https://support.apple.com/guide/terminal/script-management-with-launchd-apdc6c1077b-5d5d-4d35-9c19-60f2397b2369/mac) and [launchd.info](https://launchd.info/).
 Special thanks to [@Yudi](https://github.com/Yudi)

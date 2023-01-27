@@ -3,6 +3,7 @@
 We'll be using [DiscordChatExporter CLI](https://github.com/Tyrrrz/DiscordChatExporter/releases/latest), PowerShell, and Task Scheduler.
 
 **1.** Open a text editor such as Notepad and paste:
+
 ```powershell
 # Info: https://github.com/Tyrrrz/DiscordChatExporter/wiki
 
@@ -30,19 +31,19 @@ exit
 
 **2.** Replace:
 
- `tokenhere` with your [Token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md)
+`tokenhere` with your [Token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md)
 
- `channelhere` with a [Channel ID](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Obtaining-Token-and-Channel-IDs.md)
+`channelhere` with a [Channel ID](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md)
 
- `exefolderhere` with the .exe **directory's path** (e.g. C:\Users\User\Desktop\DiscordChatExporter) 
+`exefolderhere` with the .exe **directory's path** (e.g. C:\Users\User\Desktop\DiscordChatExporter)
 
- `filenamehere` with a filename without spaces
+`filenamehere` with a filename without spaces
 
- `dirhere` with the export directory (e.g. C:\Users\User\Documents\Exports) 
+`dirhere` with the export directory (e.g. C:\Users\User\Documents\Exports)
 
- `formathere` with one of the available export formats
+`formathere` with one of the available export formats
 
- Make sure not to delete the quotes (")
+Make sure not to delete the quotes (")
 
 **3.** Save the file as `filename.ps1` not `.txt`
 
@@ -51,7 +52,6 @@ exit
 **1.** Press Windows + R, type `shell:startup` and press ENTER
 
 **2.** Paste `filename.ps1` or a shortcut into this folder
-
 
 ## Scheduling with Task Scheduler
 
@@ -78,4 +78,5 @@ Please notice your computer must be turned on so the exportation can occur.
 ![](https://i.imgur.com/LHgXp9Q.png)
 
 #
+
 Special thanks to [@Yudi](https://github.com/Yudi)

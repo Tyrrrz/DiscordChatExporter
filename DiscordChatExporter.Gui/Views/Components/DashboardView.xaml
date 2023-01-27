@@ -225,7 +225,7 @@
                         <LineBreak />
 
                         <Run Text="If you have questions or issues, please refer to the" />
-                        <Hyperlink Command="{s:Action ShowHelp}">wiki</Hyperlink><Run Text="." />
+                        <Hyperlink Command="{s:Action ShowHelp}">tree/master/docs</Hyperlink><Run Text="." />
                     </TextBlock>
                 </ScrollViewer>
             </Grid>

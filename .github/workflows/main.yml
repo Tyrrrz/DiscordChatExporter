@@ -33,7 +33,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   package:
-    # needs: test
+    needs: test
     runs-on: windows-latest
 
     env:

@@ -1,8 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+    <UserSecretsId>d1fe5ae2-2a19-404d-a36e-81ba9eada1c1</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +16,9 @@
     <PackageReference Include="FluentAssertions" Version="6.9.0" />
     <PackageReference Include="GitHubActionsTestLogger" Version="2.0.1" PrivateAssets="all" />
     <PackageReference Include="JsonExtensions" Version="1.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="7.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
     <PackageReference Include="xunit" Version="2.4.2" />

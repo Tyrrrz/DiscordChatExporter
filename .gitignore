@@ -21,6 +21,3 @@ bld/
 
 # Coverage
 *.opencover.xml
-
-# Secrets
-*.secret

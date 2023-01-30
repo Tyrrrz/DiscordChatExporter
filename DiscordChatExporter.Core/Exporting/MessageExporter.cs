@@ -23,9 +23,16 @@ internal partial class MessageExporter : IAsyncDisposable
     {
         if (_writer is not null)
         {
-            await _writer.WritePostambleAsync(cancellationToken);
-            await _writer.DisposeAsync();
-            _writer = null;
+            try
+            {
+                await _writer.WritePostambleAsync(cancellationToken);
+            }
+            // Writer must be disposed, even if writing postamble fails
+            finally
+            {
+                await _writer.DisposeAsync();
+                _writer = null;
+            }
         }
     }
 

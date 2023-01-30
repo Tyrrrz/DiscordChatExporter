@@ -34,13 +34,22 @@ public class ExportWrapperFixture : IDisposable
         // Perform export only if it hasn't been done before
         if (!File.Exists(filePath))
         {
-            await new ExportChannelsCommand
+            try
             {
-                Token = Secrets.DiscordToken,
-                ChannelIds = new[] { channelId },
-                ExportFormat = format,
-                OutputPath = filePath
-            }.ExecuteAsync(new FakeConsole());
+                await new ExportChannelsCommand
+                {
+                    Token = Secrets.DiscordToken,
+                    ChannelIds = new[] { channelId },
+                    ExportFormat = format,
+                    OutputPath = filePath
+                }.ExecuteAsync(new FakeConsole());
+            }
+            catch
+            {
+                // If the export fails, delete the file to prevent it from being used by tests
+                File.Delete(filePath);
+                throw;
+            }
         }
 
         return await File.ReadAllTextAsync(filePath);

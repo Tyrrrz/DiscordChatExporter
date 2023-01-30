@@ -67,9 +67,7 @@ internal class HtmlMessageWriter : MessageWriter
     }
 
     // Use <!--wmm:ignore--> to preserve blocks of code inside the templates
-    private string Minify(string html) => _minifier
-        .Minify(html, false)
-        .MinifiedContent;
+    private string Minify(string html) => _minifier.Minify(html, false).MinifiedContent;
 
     public override async ValueTask WritePreambleAsync(
         CancellationToken cancellationToken = default)

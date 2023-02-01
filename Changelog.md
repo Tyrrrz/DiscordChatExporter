@@ -467,7 +467,7 @@ Please note that CSV export is most likely not going to receive future updates a
 ### v2.4 (08-Apr-2018)
 
 - Added channel topic to output.
-- Added a command line interface alternative to the current graphical user interface.
+- Added a command-line interface alternative to the current graphical user interface.
 - Implemented application auto-update (can be disabled in settings).
 - Improved some GUI elements and replaced some dialogs with notifications.
 - Fixed a lot of issues with the markdown processor.

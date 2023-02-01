@@ -31,7 +31,7 @@ To learn more about the war and how you can help, [click here](https://tyrrrz.me
 
 ## Download
 
-This application comes in two flavors: graphical user interface (**GUI**) and command line interface (**CLI**).
+This application comes in two flavors: graphical user interface (**GUI**) and command-line interface (**CLI**).
 The following table lists all available download options:
 
 <table>
@@ -97,7 +97,7 @@ The following table lists all available download options:
 ## Features
 
 - Graphical user interface (Windows)
-- Command line interface (Windows, Linux, macOS)
+- Command-line interface (Windows, Linux, macOS)
 - Authentication via both user and bot tokens
 - Multiple output formats: HTML (dark/light), TXT, CSV, JSON
 - Support for markdown, attachments, embeds, emoji, and other rich media features

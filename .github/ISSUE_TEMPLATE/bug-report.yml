@@ -3,62 +3,62 @@ description: Report broken functionality.
 labels: [bug]
 
 body:
-- type: markdown
-  attributes:
-    value: |
-      🧐 **Guidelines:**
+  - type: markdown
+    attributes:
+      value: |
+        🧐 **Guidelines:**
 
-      - Search through [existing issues](https://github.com/Tyrrrz/DiscordChatExporter/issues?q=is%3Aissue) first to ensure that this bug has not been reported before.
-      - Write a descriptive title for your issue. Avoid generic or vague titles such as "Something's not working" or "A couple of problems".
-      - Keep your issue focused on one single problem. If you have multiple bug reports, please create separate issues for each of them.
-      - Provide as much context as possible in the details section. Include screenshots, screen recordings, links, references, or anything else you may consider relevant.
-      - If you want to ask a question instead of reporting a bug, please use [discussions](https://github.com/Tyrrrz/DiscordChatExporter/discussions/new) instead.
+        - Search through [existing issues](https://github.com/Tyrrrz/DiscordChatExporter/issues?q=is%3Aissue) first to ensure that this bug has not been reported before.
+        - Write a descriptive title for your issue. Avoid generic or vague titles such as "Something's not working" or "A couple of problems".
+        - Keep your issue focused on one single problem. If you have multiple bug reports, please create separate issues for each of them.
+        - Provide as much context as possible in the details section. Include screenshots, screen recordings, links, references, or anything else you may consider relevant.
+        - If you want to ask a question instead of reporting a bug, please use [discussions](https://github.com/Tyrrrz/DiscordChatExporter/discussions/new) instead.
 
-- type: input
-  attributes:
-    label: Version
-    description: Which version of DiscordChatExporter does this bug affect?
-    placeholder: ver X.Y.Z
-  validations:
-    required: true
+  - type: input
+    attributes:
+      label: Version
+      description: Which version of DiscordChatExporter does this bug affect?
+      placeholder: ver X.Y.Z
+    validations:
+      required: true
 
-- type: dropdown
-  attributes:
-    label: Flavor
-    description: Does this bug affect the GUI version, the CLI version, or both?
-    multiple: true
-    options:
-    - GUI (Graphical User Interface)
-    - CLI (Command Line Interface)
-  validations:
-    required: true
+  - type: dropdown
+    attributes:
+      label: Flavor
+      description: Does this bug affect the GUI version, the CLI version, or both?
+      multiple: true
+      options:
+        - GUI (Graphical User Interface)
+        - CLI (Command-Line Interface)
+    validations:
+      required: true
 
-- type: dropdown
-  attributes:
-    label: Export format
-    description: Does this bug affect specific export format(s)? If not applicable, leave this field blank.
-    multiple: true
-    options:
-    - HTML
-    - TXT
-    - JSON
-    - CSV
+  - type: dropdown
+    attributes:
+      label: Export format
+      description: Does this bug affect specific export format(s)? If not applicable, leave this field blank.
+      multiple: true
+      options:
+        - HTML
+        - TXT
+        - JSON
+        - CSV
 
-- type: textarea
-  attributes:
-    label: Details
-    description: Clear and thorough explanation of the bug.
-    placeholder: I was doing X expecting Y to happen, but Z happened instead.
-  validations:
-    required: true
+  - type: textarea
+    attributes:
+      label: Details
+      description: Clear and thorough explanation of the bug.
+      placeholder: I was doing X expecting Y to happen, but Z happened instead.
+    validations:
+      required: true
 
-- type: textarea
-  attributes:
-    label: Steps to reproduce
-    description: Minimum steps required to reproduce the bug.
-    placeholder: |
-      - Step 1
-      - Step 2
-      - Step 3
-  validations:
-    required: true
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: Minimum steps required to reproduce the bug.
+      placeholder: |
+        - Step 1
+        - Step 2
+        - Step 3
+    validations:
+      required: true

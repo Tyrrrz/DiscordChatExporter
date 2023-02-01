@@ -15,10 +15,10 @@ The information presented on this page is valid for **all** platforms.
 
 - **Graphical User Interface** (**GUI**) - it's the preferred version for newcomers as it is easy to use.
   You can get it by [downloading](https://github.com/Tyrrrz/DiscordChatExporter/releases/latest) the `DiscordChatExporter.zip` file.
-- **Command Line Interface** (**CLI**) - offers greater flexibility and more features for advanced users, such as export scheduling, ID lists, and more specific date ranges.
+- **Command-line Interface** (**CLI**) - offers greater flexibility and more features for advanced users, such as export scheduling, ID lists, and more specific date ranges.
   You can get it by [downloading](https://github.com/Tyrrrz/DiscordChatExporter/releases/latest) the `DiscordChatExporter.CLI.zip` file.
 
-If you're not comfortable with **Windows'** Command Line (cmd), please choose the GUI.
+If you're not comfortable with **Windows'** Command-line (cmd), please choose the GUI.
 [**macOS**](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/MacOS.md), [**Linux**](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Linux.md) and [**Docker**](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Docker.md) users can only use the CLI version.
 
 **(Skip to [Using the CLI](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#using-the-cli) or [File Formats](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#file-formats))**

@@ -40,10 +40,9 @@ public partial record User
         var discriminator = json.GetProperty("discriminator").GetNonWhiteSpaceString().Pipe(int.Parse);
         var name = json.GetProperty("username").GetNonNullString();
 
-        var avatarHash = json.GetPropertyOrNull("avatar")?.GetNonWhiteSpaceStringOrNull();
-        var avatarUrl = !string.IsNullOrWhiteSpace(avatarHash)
-            ? GetAvatarUrl(id, avatarHash)
-            : GetDefaultAvatarUrl(discriminator);
+        var avatarUrl =
+            json.GetPropertyOrNull("avatar")?.GetNonWhiteSpaceStringOrNull()?.Pipe(h => GetAvatarUrl(id, h)) ??
+            GetDefaultAvatarUrl(discriminator);
 
         return new User(id, isBot, discriminator, name, avatarUrl);
     }

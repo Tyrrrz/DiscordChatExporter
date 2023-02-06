@@ -21,10 +21,11 @@ public class GuideCommand : ICommand
         console.Output.WriteLine(" 3. Press Ctrl+Shift+I to show developer tools");
         console.Output.WriteLine(" 4. Navigate to the Network tab");
         console.Output.WriteLine(" 5. Press Ctrl+R to reload");
-        console.Output.WriteLine(" 6. Search for a request containing \"messages?limit=50\" or similar");
-        console.Output.WriteLine(" 7. Select the Headers tab on the right");
-        console.Output.WriteLine(" 8. Scroll down to the Request Headers section");
-        console.Output.WriteLine(" 9. Copy the value of the \"authorization\" header");
+        console.Output.WriteLine(" 6. Switch between random channels to trigger network requests");
+        console.Output.WriteLine(" 7. Search for a request containing \"messages?limit=50\" or similar");
+        console.Output.WriteLine(" 8. Select the Headers tab on the right");
+        console.Output.WriteLine(" 9. Scroll down to the Request Headers section");
+        console.Output.WriteLine(" 10. Copy the value of the \"authorization\" header");
         console.Output.WriteLine();
 
         // Bot token

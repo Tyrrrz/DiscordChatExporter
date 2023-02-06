@@ -4,13 +4,13 @@ using DiscordChatExporter.Cli.Tests.TestData;
 using FluentAssertions;
 using Xunit;
 
-namespace DiscordChatExporter.Cli.Tests.Specs.Csv;
+namespace DiscordChatExporter.Cli.Tests.Specs;
 
-public class ContentSpecs : IClassFixture<ExportWrapperFixture>
+public class CsvContentSpecs : IClassFixture<ExportWrapperFixture>
 {
     private readonly ExportWrapperFixture _exportWrapper;
 
-    public ContentSpecs(ExportWrapperFixture exportWrapper)
+    public CsvContentSpecs(ExportWrapperFixture exportWrapper)
     {
         _exportWrapper = exportWrapper;
     }

@@ -6,13 +6,13 @@ using DiscordChatExporter.Core.Discord;
 using FluentAssertions;
 using Xunit;
 
-namespace DiscordChatExporter.Cli.Tests.Specs.Html;
+namespace DiscordChatExporter.Cli.Tests.Specs;
 
-public class ReplySpecs : IClassFixture<ExportWrapperFixture>
+public class HtmlReplySpecs : IClassFixture<ExportWrapperFixture>
 {
     private readonly ExportWrapperFixture _exportWrapper;
 
-    public ReplySpecs(ExportWrapperFixture exportWrapper)
+    public HtmlReplySpecs(ExportWrapperFixture exportWrapper)
     {
         _exportWrapper = exportWrapper;
     }

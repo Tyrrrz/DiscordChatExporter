@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
 using WebMarkupMin.Core;
 
-namespace DiscordChatExporter.Core.Exporting.Html;
+namespace DiscordChatExporter.Core.Exporting;
 
 internal class HtmlMessageWriter : MessageWriter
 {

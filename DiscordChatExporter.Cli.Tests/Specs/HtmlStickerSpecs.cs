@@ -5,13 +5,13 @@ using DiscordChatExporter.Core.Discord;
 using FluentAssertions;
 using Xunit;
 
-namespace DiscordChatExporter.Cli.Tests.Specs.Html;
+namespace DiscordChatExporter.Cli.Tests.Specs;
 
-public class StickerSpecs : IClassFixture<ExportWrapperFixture>
+public class HtmlStickerSpecs : IClassFixture<ExportWrapperFixture>
 {
     private readonly ExportWrapperFixture _exportWrapper;
 
-    public StickerSpecs(ExportWrapperFixture exportWrapper)
+    public HtmlStickerSpecs(ExportWrapperFixture exportWrapper)
     {
         _exportWrapper = exportWrapper;
     }

@@ -4,13 +4,13 @@ using DiscordChatExporter.Cli.Tests.TestData;
 using FluentAssertions;
 using Xunit;
 
-namespace DiscordChatExporter.Cli.Tests.Specs.PlainText;
+namespace DiscordChatExporter.Cli.Tests.Specs;
 
-public class ContentSpecs : IClassFixture<ExportWrapperFixture>
+public class PlainTextContentSpecs : IClassFixture<ExportWrapperFixture>
 {
     private readonly ExportWrapperFixture _exportWrapper;
 
-    public ContentSpecs(ExportWrapperFixture exportWrapper)
+    public PlainTextContentSpecs(ExportWrapperFixture exportWrapper)
     {
         _exportWrapper = exportWrapper;
     }

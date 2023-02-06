@@ -7,13 +7,13 @@ using DiscordChatExporter.Core.Discord;
 using FluentAssertions;
 using Xunit;
 
-namespace DiscordChatExporter.Cli.Tests.Specs.Html;
+namespace DiscordChatExporter.Cli.Tests.Specs;
 
-public class EmbedSpecs : IClassFixture<ExportWrapperFixture>
+public class HtmlEmbedSpecs : IClassFixture<ExportWrapperFixture>
 {
     private readonly ExportWrapperFixture _exportWrapper;
 
-    public EmbedSpecs(ExportWrapperFixture exportWrapper)
+    public HtmlEmbedSpecs(ExportWrapperFixture exportWrapper)
     {
         _exportWrapper = exportWrapper;
     }

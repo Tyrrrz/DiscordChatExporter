@@ -7,13 +7,13 @@ using DiscordChatExporter.Core.Discord;
 using FluentAssertions;
 using Xunit;
 
-namespace DiscordChatExporter.Cli.Tests.Specs.Html;
+namespace DiscordChatExporter.Cli.Tests.Specs;
 
-public class AttachmentSpecs : IClassFixture<ExportWrapperFixture>
+public class HtmlAttachmentSpecs : IClassFixture<ExportWrapperFixture>
 {
     private readonly ExportWrapperFixture _exportWrapper;
 
-    public AttachmentSpecs(ExportWrapperFixture exportWrapper)
+    public HtmlAttachmentSpecs(ExportWrapperFixture exportWrapper)
     {
         _exportWrapper = exportWrapper;
     }

@@ -32,7 +32,7 @@ public record Message(
         if (embeds.Count <= 1)
             return embeds;
 
-        // Discord API doesn't support embeds with multiple images, even though the Discord client does.
+        // Discord API doesn't support embeds with multiple images, even though Discord client does.
         // To work around this, it seems that the API returns multiple consecutive embeds with different images,
         // which are then merged together on the client. We need to replicate the same behavior ourselves.
         // Currently, only known case where this workaround is required is Twitter embeds.

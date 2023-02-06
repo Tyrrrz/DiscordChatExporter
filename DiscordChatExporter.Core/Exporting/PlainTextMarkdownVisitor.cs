@@ -5,7 +5,7 @@ using DiscordChatExporter.Core.Markdown;
 using DiscordChatExporter.Core.Markdown.Parsing;
 using DiscordChatExporter.Core.Utils.Extensions;
 
-namespace DiscordChatExporter.Core.Exporting.PlainText;
+namespace DiscordChatExporter.Core.Exporting;
 
 internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
 {

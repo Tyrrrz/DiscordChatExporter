@@ -10,7 +10,7 @@ using DiscordChatExporter.Core.Markdown;
 using DiscordChatExporter.Core.Markdown.Parsing;
 using DiscordChatExporter.Core.Utils.Extensions;
 
-namespace DiscordChatExporter.Core.Exporting.Html;
+namespace DiscordChatExporter.Core.Exporting;
 
 internal partial class HtmlMarkdownVisitor : MarkdownVisitor
 {

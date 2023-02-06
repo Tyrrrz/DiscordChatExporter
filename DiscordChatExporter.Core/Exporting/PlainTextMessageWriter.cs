@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Discord.Data.Embeds;
 
-namespace DiscordChatExporter.Core.Exporting.PlainText;
+namespace DiscordChatExporter.Core.Exporting;
 
 internal class PlainTextMessageWriter : MessageWriter
 {

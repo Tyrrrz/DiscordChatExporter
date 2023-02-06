@@ -5,13 +5,13 @@ using DiscordChatExporter.Cli.Tests.TestData;
 using FluentAssertions;
 using Xunit;
 
-namespace DiscordChatExporter.Cli.Tests.Specs.Json;
+namespace DiscordChatExporter.Cli.Tests.Specs;
 
-public class ContentSpecs : IClassFixture<ExportWrapperFixture>
+public class JsonContentSpecs : IClassFixture<ExportWrapperFixture>
 {
     private readonly ExportWrapperFixture _exportWrapper;
 
-    public ContentSpecs(ExportWrapperFixture exportWrapper)
+    public JsonContentSpecs(ExportWrapperFixture exportWrapper)
     {
         _exportWrapper = exportWrapper;
     }

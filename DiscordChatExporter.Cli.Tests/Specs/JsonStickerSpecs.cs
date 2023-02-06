@@ -6,13 +6,13 @@ using DiscordChatExporter.Core.Discord;
 using FluentAssertions;
 using Xunit;
 
-namespace DiscordChatExporter.Cli.Tests.Specs.Json;
+namespace DiscordChatExporter.Cli.Tests.Specs;
 
-public class StickerSpecs : IClassFixture<ExportWrapperFixture>
+public class JsonStickerSpecs : IClassFixture<ExportWrapperFixture>
 {
     private readonly ExportWrapperFixture _exportWrapper;
 
-    public StickerSpecs(ExportWrapperFixture exportWrapper)
+    public JsonStickerSpecs(ExportWrapperFixture exportWrapper)
     {
         _exportWrapper = exportWrapper;
     }

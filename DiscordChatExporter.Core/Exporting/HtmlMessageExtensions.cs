@@ -2,9 +2,9 @@ using System;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Discord.Data.Embeds;
 
-namespace DiscordChatExporter.Core.Exporting.Html;
+namespace DiscordChatExporter.Core.Exporting;
 
-internal static class MessageExtensions
+internal static class HtmlMessageExtensions
 {
     // Message content is hidden if it's a link to an embedded media
     // https://github.com/Tyrrrz/DiscordChatExporter/issues/682

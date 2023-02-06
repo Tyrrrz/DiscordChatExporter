@@ -3,10 +3,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
-using DiscordChatExporter.Core.Exporting.Csv;
-using DiscordChatExporter.Core.Exporting.Html;
-using DiscordChatExporter.Core.Exporting.Json;
-using DiscordChatExporter.Core.Exporting.PlainText;
 
 namespace DiscordChatExporter.Core.Exporting;
 

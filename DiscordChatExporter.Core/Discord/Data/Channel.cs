@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Utils.Extensions;
@@ -14,6 +15,7 @@ public partial record Channel(
     ChannelCategory Category,
     string Name,
     int? Position,
+    string? IconUrl,
     string? Topic,
     Snowflake? LastMessageId) : IHasId
 {
@@ -34,6 +36,15 @@ public partial record Channel
         },
         null
     );
+
+    private static string GetIconUrl(Snowflake id, string iconHash)
+    {
+        var extension = iconHash.StartsWith("a_", StringComparison.Ordinal)
+            ? "gif"
+            : "png";
+
+        return $"https://cdn.discordapp.com/icons/{id}/{iconHash}.{extension}";
+    }
 
     public static Channel Parse(JsonElement json, ChannelCategory? category = null, int? positionHint = null)
     {
@@ -59,6 +70,9 @@ public partial record Channel
             positionHint ??
             json.GetPropertyOrNull("position")?.GetInt32OrNull();
 
+        // Only available on group DMs
+        var iconUrl = json.GetPropertyOrNull("icon")?.GetNonWhiteSpaceStringOrNull()?.Pipe(h => GetIconUrl(id, h));
+
         var topic = json.GetPropertyOrNull("topic")?.GetStringOrNull();
 
         var lastMessageId = json
@@ -73,6 +87,7 @@ public partial record Channel
             category ?? GetFallbackCategory(kind),
             name,
             position,
+            iconUrl,
             topic,
             lastMessageId
         );

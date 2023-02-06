@@ -851,7 +851,7 @@
 
 <div class="preamble">
     <div class="preamble__guild-icon-container">
-        <img class="preamble__guild-icon" src="@await ResolveAssetUrlAsync(ExportContext.Request.Guild.IconUrl)" alt="Guild icon" loading="lazy">
+        <img class="preamble__guild-icon" src="@await ResolveAssetUrlAsync(ExportContext.Request.Channel.IconUrl ?? ExportContext.Request.Guild.IconUrl)" alt="Guild icon" loading="lazy">
     </div>
     <div class="preamble__entries-container">
         <div class="preamble__entry">@ExportContext.Request.Guild.Name</div>

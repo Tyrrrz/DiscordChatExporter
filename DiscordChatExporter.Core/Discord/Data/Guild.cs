@@ -32,10 +32,9 @@ public record Guild(Snowflake Id, string Name, string IconUrl) : IHasId
         var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
         var name = json.GetProperty("name").GetNonNullString();
 
-        var iconHash = json.GetPropertyOrNull("icon")?.GetNonWhiteSpaceStringOrNull();
-        var iconUrl = !string.IsNullOrWhiteSpace(iconHash)
-            ? GetIconUrl(id, iconHash)
-            : GetDefaultIconUrl();
+        var iconUrl =
+            json.GetPropertyOrNull("icon")?.GetNonWhiteSpaceStringOrNull()?.Pipe(h => GetIconUrl(id, h)) ??
+            GetDefaultIconUrl();
 
         return new Guild(id, name, iconUrl);
     }

@@ -5,10 +5,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
-using DiscordChatExporter.Core.Exporting.Writers.Html;
 using WebMarkupMin.Core;
 
-namespace DiscordChatExporter.Core.Exporting.Writers;
+namespace DiscordChatExporter.Core.Exporting.Html;
 
 internal class HtmlMessageWriter : MessageWriter
 {

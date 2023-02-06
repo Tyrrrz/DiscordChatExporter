@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <RazorBlade Include="Exporting\Writers\Html\*.cshtml" />
+    <RazorBlade Include="Exporting\Html\*.cshtml" />
   </ItemGroup>
 
 </Project>

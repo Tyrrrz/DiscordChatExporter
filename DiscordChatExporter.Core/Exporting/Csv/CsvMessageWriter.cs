@@ -4,10 +4,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
-using DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors;
+using DiscordChatExporter.Core.Exporting.PlainText;
 using DiscordChatExporter.Core.Utils.Extensions;
 
-namespace DiscordChatExporter.Core.Exporting.Writers;
+namespace DiscordChatExporter.Core.Exporting.Csv;
 
 internal partial class CsvMessageWriter : MessageWriter
 {

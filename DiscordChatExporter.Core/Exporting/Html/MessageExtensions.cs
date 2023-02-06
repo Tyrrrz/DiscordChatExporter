@@ -2,7 +2,7 @@ using System;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Discord.Data.Embeds;
 
-namespace DiscordChatExporter.Core.Exporting.Writers.Html;
+namespace DiscordChatExporter.Core.Exporting.Html;
 
 internal static class MessageExtensions
 {

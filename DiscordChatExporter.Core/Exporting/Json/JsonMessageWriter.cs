@@ -5,11 +5,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Discord.Data.Embeds;
-using DiscordChatExporter.Core.Exporting.Writers.MarkdownVisitors;
+using DiscordChatExporter.Core.Exporting.PlainText;
 using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Writing;
 
-namespace DiscordChatExporter.Core.Exporting.Writers;
+namespace DiscordChatExporter.Core.Exporting.Json;
 
 internal class JsonMessageWriter : MessageWriter
 {

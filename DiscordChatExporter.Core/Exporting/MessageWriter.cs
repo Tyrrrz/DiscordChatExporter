@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
 
-namespace DiscordChatExporter.Core.Exporting.Writers;
+namespace DiscordChatExporter.Core.Exporting;
 
 internal abstract class MessageWriter : IAsyncDisposable
 {

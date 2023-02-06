@@ -6,7 +6,7 @@ using DiscordChatExporter.Cli.Tests.TestData;
 using FluentAssertions;
 using Xunit;
 
-namespace DiscordChatExporter.Cli.Tests.Specs.HtmlWriting;
+namespace DiscordChatExporter.Cli.Tests.Specs.Html;
 
 public class ContentSpecs : IClassFixture<ExportWrapperFixture>
 {

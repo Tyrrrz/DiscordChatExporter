@@ -6,7 +6,7 @@ using DiscordChatExporter.Core.Discord;
 using FluentAssertions;
 using Xunit;
 
-namespace DiscordChatExporter.Cli.Tests.Specs.HtmlWriting;
+namespace DiscordChatExporter.Cli.Tests.Specs.Html;
 
 public class ReplySpecs : IClassFixture<ExportWrapperFixture>
 {

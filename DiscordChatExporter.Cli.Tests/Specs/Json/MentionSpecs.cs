@@ -6,7 +6,7 @@ using DiscordChatExporter.Core.Discord;
 using FluentAssertions;
 using Xunit;
 
-namespace DiscordChatExporter.Cli.Tests.Specs.JsonWriting;
+namespace DiscordChatExporter.Cli.Tests.Specs.Json;
 
 public class MentionSpecs : IClassFixture<ExportWrapperFixture>
 {

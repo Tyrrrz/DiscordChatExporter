@@ -60,7 +60,7 @@ public class JsonMentionSpecs : IClassFixture<ExportWrapperFixture>
         );
 
         // Assert
-        message.GetProperty("content").GetString().Should().Be("Voice channel mention: #chaos-vc [voice]");
+        message.GetProperty("content").GetString().Should().Be("Voice channel mention: #general [voice]");
     }
 
     [Fact]

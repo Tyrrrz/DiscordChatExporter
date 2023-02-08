@@ -54,7 +54,7 @@ public class HtmlMentionSpecs : IClassFixture<ExportWrapperFixture>
         );
 
         // Assert
-        message.Text().Should().Contain("Voice channel mention: 🔊chaos-vc");
+        message.Text().Should().Contain("Voice channel mention: 🔊general");
     }
 
     [Fact]

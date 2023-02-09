@@ -83,7 +83,7 @@ public class DashboardViewModel : PropertyChangedBase
         await _dialogManager.ShowDialogAsync(dialog);
     }
 
-    public void ShowHelp() => ProcessEx.StartShellExecute(App.GitHubProjectDocsUrl);
+    public void ShowHelp() => ProcessEx.StartShellExecute(App.DocumentationUrl);
 
     public bool CanPopulateGuildsAndChannels =>
         !IsBusy && !string.IsNullOrWhiteSpace(Token);

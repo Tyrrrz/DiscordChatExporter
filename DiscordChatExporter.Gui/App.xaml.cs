@@ -15,9 +15,11 @@ public partial class App
 
     public static string VersionString { get; } = Version.ToString(3);
 
-    public static string GitHubProjectUrl { get; } = "https://github.com/Tyrrrz/DiscordChatExporter";
+    public static string ProjectUrl { get; } = "https://github.com/Tyrrrz/DiscordChatExporter";
 
-    public static string GitHubProjectDocsUrl { get; } = GitHubProjectUrl + "/blob/master/.docs";
+    public static string ChangelogUrl { get; } = ProjectUrl + "/blob/master/Changelog.md";
+
+    public static string DocumentationUrl { get; } = ProjectUrl + "/blob/master/.docs";
 }
 
 public partial class App

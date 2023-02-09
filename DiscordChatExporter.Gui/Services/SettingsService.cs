@@ -1,4 +1,5 @@
-﻿using DiscordChatExporter.Core.Exporting;
+﻿using System;
+using DiscordChatExporter.Core.Exporting;
 using Microsoft.Win32;
 using Tyrrrz.Settings;
 
@@ -19,6 +20,8 @@ public partial class SettingsService : SettingsManager
     public int ParallelLimit { get; set; } = 1;
 
     public bool ShouldReuseAssets { get; set; }
+
+    public Version? LastAppVersion { get; set; }
 
     public string? LastToken { get; set; }
 

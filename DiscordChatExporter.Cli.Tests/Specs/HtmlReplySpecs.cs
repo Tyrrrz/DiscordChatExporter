@@ -8,7 +8,8 @@ using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
 
-public class HtmlReplySpecs : IClassFixture<ExportWrapperFixture>
+[Collection(nameof(ExportWrapperCollection))]
+public class HtmlReplySpecs
 {
     private readonly ExportWrapperFixture _exportWrapper;
 
@@ -28,7 +29,7 @@ public class HtmlReplySpecs : IClassFixture<ExportWrapperFixture>
 
         // Assert
         message.Text().Should().Contain("reply to original");
-        message.QuerySelector(".chatlog__reference-link")?.Text().Should().Contain("original");
+        message.QuerySelector(".chatlog__reply-link")?.Text().Should().Contain("original");
     }
 
     [Fact]
@@ -44,7 +45,7 @@ public class HtmlReplySpecs : IClassFixture<ExportWrapperFixture>
 
         // Assert
         message.Text().Should().Contain("reply to deleted");
-        message.QuerySelector(".chatlog__reference-link")?.Text().Should().Contain(
+        message.QuerySelector(".chatlog__reply-link")?.Text().Should().Contain(
             "Original message was deleted or could not be loaded."
         );
     }
@@ -62,6 +63,6 @@ public class HtmlReplySpecs : IClassFixture<ExportWrapperFixture>
 
         // Assert
         message.Text().Should().Contain("reply to attachment");
-        message.QuerySelector(".chatlog__reference-link")?.Text().Should().Contain("Click to see attachment");
+        message.QuerySelector(".chatlog__reply-link")?.Text().Should().Contain("Click to see attachment");
     }
 }

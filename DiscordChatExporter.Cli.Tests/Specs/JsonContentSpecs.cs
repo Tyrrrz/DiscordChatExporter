@@ -7,7 +7,8 @@ using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
 
-public class JsonContentSpecs : IClassFixture<ExportWrapperFixture>
+[Collection(nameof(ExportWrapperCollection))]
+public class JsonContentSpecs
 {
     private readonly ExportWrapperFixture _exportWrapper;
 

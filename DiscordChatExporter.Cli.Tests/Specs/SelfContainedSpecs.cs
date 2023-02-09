@@ -13,6 +13,7 @@ using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
 
+[Collection(nameof(ExportWrapperCollection))]
 public class SelfContainedSpecs : IClassFixture<TempOutputFixture>
 {
     private readonly TempOutputFixture _tempOutput;

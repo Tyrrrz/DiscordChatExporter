@@ -3,12 +3,14 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using DiscordChatExporter.Cli.Tests.Fixtures;
 using DiscordChatExporter.Cli.Tests.TestData;
+using DiscordChatExporter.Core.Discord;
 using FluentAssertions;
 using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
 
-public class HtmlContentSpecs : IClassFixture<ExportWrapperFixture>
+[Collection(nameof(ExportWrapperCollection))]
+public class HtmlContentSpecs
 {
     private readonly ExportWrapperFixture _exportWrapper;
 
@@ -45,5 +47,22 @@ public class HtmlContentSpecs : IClassFixture<ExportWrapperFixture>
             "Three",
             "Yeet"
         );
+    }
+
+    [Fact]
+    public async Task Messages_cross_posted_from_other_guilds_are_rendered_with_the_server_tag()
+    {
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/633
+
+        // Act
+        var message = await _exportWrapper.GetMessageAsHtmlAsync(
+            ChannelIds.ReplyTestCases,
+            Snowflake.Parse("1072165330853576876")
+        );
+
+        // Assert
+        message.Text().Should().Contain("This is a test message from an announcement channel on another server");
+        message.Text().Should().Contain("SERVER");
+        message.QuerySelector(".chatlog__reply-link").Should().BeNull();
     }
 }

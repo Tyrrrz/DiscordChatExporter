@@ -12,6 +12,7 @@ using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
 
+[Collection(nameof(ExportWrapperCollection))]
 public class PartitioningSpecs : IClassFixture<TempOutputFixture>
 {
     private readonly TempOutputFixture _tempOutput;

@@ -9,7 +9,8 @@ using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
 
-public class HtmlAttachmentSpecs : IClassFixture<ExportWrapperFixture>
+[Collection(nameof(ExportWrapperCollection))]
+public class HtmlAttachmentSpecs
 {
     private readonly ExportWrapperFixture _exportWrapper;
 

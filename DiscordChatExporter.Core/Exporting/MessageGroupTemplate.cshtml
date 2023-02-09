@@ -104,10 +104,10 @@
                 <div class="chatlog__message-aside">
                     @if (isFirst)
                     {
-                        // Reference symbol
-                        if (message.Reference is not null)
+                        // Reply symbol
+                        if (message.Kind == MessageKind.Reply)
                         {
-                            <div class="chatlog__reference-symbol"></div>
+                            <div class="chatlog__reply-symbol"></div>
                         }
 
                         // Avatar
@@ -122,16 +122,16 @@
                 <div class="chatlog__message-primary">
                     @if (isFirst)
                     {
-                        // Reference
-                        if (message.Reference is not null)
+                        // Reply
+                        if (message.Kind == MessageKind.Reply && message.Reference is not null)
                         {
-                            <div class="chatlog__reference">
+                            <div class="chatlog__reply">
                                 @if (message.ReferencedMessage is not null)
                                 {
-                                    <img class="chatlog__reference-avatar" src="@await ResolveAssetUrlAsync(message.ReferencedMessage.Author.AvatarUrl)" alt="Avatar" loading="lazy">
-                                    <div class="chatlog__reference-author" style="@(referencedUserColor is not null ? $"color: rgb({referencedUserColor.Value.R}, {referencedUserColor.Value.G}, {referencedUserColor.Value.B})" : null)" title="@message.ReferencedMessage.Author.FullName">@referencedUserNick</div>
-                                    <div class="chatlog__reference-content">
-                                        <span class="chatlog__reference-link" onclick="scrollToMessage(event, '@message.ReferencedMessage.Id')">
+                                    <img class="chatlog__reply-avatar" src="@await ResolveAssetUrlAsync(message.ReferencedMessage.Author.AvatarUrl)" alt="Avatar" loading="lazy">
+                                    <div class="chatlog__reply-author" style="@(referencedUserColor is not null ? $"color: rgb({referencedUserColor.Value.R}, {referencedUserColor.Value.G}, {referencedUserColor.Value.B})" : null)" title="@message.ReferencedMessage.Author.FullName">@referencedUserNick</div>
+                                    <div class="chatlog__reply-content">
+                                        <span class="chatlog__reply-link" onclick="scrollToMessage(event, '@message.ReferencedMessage.Id')">
                                             @if (!string.IsNullOrWhiteSpace(message.ReferencedMessage.Content) && !message.ReferencedMessage.IsContentHidden())
                                             {
                                                 <!--wmm:ignore-->@Html.Raw(await FormatEmbedMarkdownAsync(message.ReferencedMessage.Content))<!--/wmm:ignore-->
@@ -149,13 +149,13 @@
 
                                         @if (message.ReferencedMessage.EditedTimestamp is not null)
                                         {
-                                            <span class="chatlog__reference-edited-timestamp" title="@FormatDate(message.ReferencedMessage.EditedTimestamp.Value)">(edited)</span>
+                                            <span class="chatlog__reply-edited-timestamp" title="@FormatDate(message.ReferencedMessage.EditedTimestamp.Value)">(edited)</span>
                                         }
                                     </div>
                                 }
                                 else
                                 {
-                                    <div class="chatlog__reference-unknown">
+                                    <div class="chatlog__reply-unknown">
                                         Original message was deleted or could not be loaded.
                                     </div>
                                 }
@@ -170,7 +170,15 @@
                             @{/* Bot label */}
                             @if (message.Author.IsBot)
                             {
-                                <span class="chatlog__bot-label">BOT</span>
+                                // For cross-posts, the BOT tag is replaced with the SERVER tag
+                                if (message.Kind != MessageKind.Reply && message.Reference is not null && message.Reference.GuildId != ExportContext.Request.Guild.Id)
+                                {
+                                    <span class="chatlog__author-tag">SERVER</span>
+                                }
+                                else
+                                {
+                                    <span class="chatlog__author-tag">BOT</span>
+                                }
                             }
 
                             @{/* Timestamp */}

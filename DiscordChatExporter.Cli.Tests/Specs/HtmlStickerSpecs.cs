@@ -7,7 +7,8 @@ using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
 
-public class HtmlStickerSpecs : IClassFixture<ExportWrapperFixture>
+[Collection(nameof(ExportWrapperCollection))]
+public class HtmlStickerSpecs
 {
     private readonly ExportWrapperFixture _exportWrapper;
 

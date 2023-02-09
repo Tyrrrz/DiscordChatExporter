@@ -222,7 +222,11 @@ internal class PlainTextMessageWriter : MessageWriter
         await WriteMessageHeaderAsync(message);
 
         // Content
-        if (!string.IsNullOrWhiteSpace(message.Content))
+        if (message.Kind.IsSystemNotification())
+        {
+            await _writer.WriteLineAsync(message.GetFallbackContent());
+        }
+        else
         {
             await _writer.WriteLineAsync(
                 await FormatMarkdownAsync(message.Content, cancellationToken)

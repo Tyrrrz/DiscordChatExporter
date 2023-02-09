@@ -71,7 +71,21 @@
                     : userMember?.Nick ?? message.Author.Name;
 
                 <div class="chatlog__message-aside">
-                    <svg class="chatlog__system-notification-icon"><use href="#@message.Kind.ToString().ToDashCase().ToLowerInvariant()-icon"></use></svg>
+                    <svg class="chatlog__system-notification-icon">
+                        @{
+                            var icon = message.Kind switch {
+                                MessageKind.RecipientAdd => "join-icon",
+                                MessageKind.RecipientRemove => "leave-icon",
+                                MessageKind.Call => "call-icon",
+                                MessageKind.ChannelNameChange => "pencil-icon",
+                                MessageKind.ChannelIconChange => "pencil-icon",
+                                MessageKind.ChannelPinnedMessage => "pin-icon",
+                                _ => "pencil-icon"
+                            };
+                        }
+
+                        <use href="#@icon"></use>
+                    </svg>
                 </div>
 
                 <div class="chatlog__message-primary">
@@ -80,14 +94,55 @@
 
                     @{/* System notification content */}
                     <span class="chatlog__system-notification-content">
-                        @if (message.Kind == MessageKind.ChannelPinnedMessage && message.Reference is not null)
+                        @if (message.Kind == MessageKind.RecipientAdd && message.MentionedUsers.Any())
+                        {
+                            <span> added </span>
+                            <a class="chatlog__system-notification-link" title="@message.MentionedUsers.First().FullName">@message.MentionedUsers.First().Name</a>
+                            <span> to the group.</span>
+                        }
+                        else if (message.Kind == MessageKind.RecipientRemove && message.MentionedUsers.Any())
+                        {
+                            if (message.Author.Id == message.MentionedUsers.First().Id)
+                            {
+                                <span> left the group.</span>
+                            }
+                            else
+                            {
+                                <span> removed </span>
+                                <a class="chatlog__system-notification-link" title="@message.MentionedUsers.First().FullName">@message.MentionedUsers.First().Name</a>
+                                <span> from the group.</span>
+                            }
+                        }
+                        else if (message.Kind == MessageKind.Call)
+                        {
+                            <span> started a call that lasted @(((message.CallEndedTimestamp ?? message.Timestamp) - message.Timestamp).TotalMinutes) minutes</span>
+                        }
+                        else if (message.Kind == MessageKind.ChannelNameChange)
+                        {
+                            <span> changed the channel name: </span>
+                            <span class="chatlog__system-notification-link">@message.Content</span>
+                        }
+                        else if (message.Kind == MessageKind.ChannelIconChange)
+                        {
+                            <span> changed the channel icon.</span>
+                        }
+                        else if (message.Kind == MessageKind.ChannelPinnedMessage && message.Reference is not null)
                         {
                             <span> pinned</span>
                             <a class="chatlog__system-notification-link" href="#chatlog__message-container-@message.Reference.MessageId"> a message</a>
                             <span> to this channel.</span>
                         }
+                        else if (message.Kind == MessageKind.ThreadCreated)
+                        {
+                            <span> started a thread.</span>
+                        }
+                        else if (message.Kind == MessageKind.GuildMemberJoin)
+                        {
+                            <span> joined the server.</span>
+                        }
                         else
                         {
+                            <span> </span>
                             <span>@message.Content.ToLowerInvariant()</span>
                         }
                     </span>

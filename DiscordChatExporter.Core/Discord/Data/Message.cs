@@ -99,20 +99,7 @@ public record Message(
             .GetDateTimeOffset();
 
         var isPinned = json.GetPropertyOrNull("pinned")?.GetBooleanOrNull() ?? false;
-
-        var content = kind switch
-        {
-            MessageKind.RecipientAdd => "Added a recipient.",
-            MessageKind.RecipientRemove => "Removed a recipient.",
-            MessageKind.Call =>
-                $"Started a call that lasted {callEndedTimestamp?.Pipe(t => t - timestamp).Pipe(t => (int)t.TotalMinutes) ?? 0} minutes.",
-            MessageKind.ChannelNameChange => "Changed the channel name.",
-            MessageKind.ChannelIconChange => "Changed the channel icon.",
-            MessageKind.ChannelPinnedMessage => "Pinned a message.",
-            MessageKind.ThreadCreated => "Started a thread.",
-            MessageKind.GuildMemberJoin => "Joined the server.",
-            _ => json.GetPropertyOrNull("content")?.GetStringOrNull() ?? ""
-        };
+        var content = json.GetPropertyOrNull("content")?.GetStringOrNull() ?? "";
 
         var attachments =
             json.GetPropertyOrNull("attachments")?.EnumerateArrayOrNull()?.Select(Attachment.Parse).ToArray() ??

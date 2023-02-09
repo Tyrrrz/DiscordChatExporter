@@ -299,7 +299,14 @@ internal class JsonMessageWriter : MessageWriter
         _writer.WriteBoolean("isPinned", message.IsPinned);
 
         // Content
-        _writer.WriteString("content", await FormatMarkdownAsync(message.Content, cancellationToken));
+        if (message.Kind.IsSystemNotification())
+        {
+            _writer.WriteString("content", message.GetFallbackContent());
+        }
+        else
+        {
+            _writer.WriteString("content", await FormatMarkdownAsync(message.Content, cancellationToken));
+        }
 
         // Author
         _writer.WriteStartObject("author");

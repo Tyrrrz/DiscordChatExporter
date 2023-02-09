@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace DiscordChatExporter.Core.Utils.Extensions;
 
@@ -26,9 +25,6 @@ public static class StringExtensions
             lastIndex += rune.Utf16SequenceLength;
         }
     }
-
-    public static string ToDashCase(this string str) =>
-        Regex.Replace(str, @"(\p{Ll})(\p{Lu})", "$1-$2");
 
     public static T? ParseEnumOrNull<T>(this string str, bool ignoreCase = true) where T : struct, Enum =>
         Enum.TryParse<T>(str, ignoreCase, out var result)

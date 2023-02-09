@@ -167,11 +167,11 @@
                             @{/* Author name */}
                             <span class="chatlog__author" style="@(userColor is not null ? $"color: rgb({userColor.Value.R}, {userColor.Value.G}, {userColor.Value.B})" : null)" title="@message.Author.FullName" data-user-id="@message.Author.Id">@userNick</span>
 
-                            @{/* Bot label */}
+                            @{/* Bot tag */}
                             @if (message.Author.IsBot)
                             {
                                 // For cross-posts, the BOT tag is replaced with the SERVER tag
-                                if (message.Kind != MessageKind.Reply && message.Reference is not null && message.Reference.GuildId != ExportContext.Request.Guild.Id)
+                                if (message.Flags.HasFlag(MessageFlags.CrossPost))
                                 {
                                     <span class="chatlog__author-tag">SERVER</span>
                                 }

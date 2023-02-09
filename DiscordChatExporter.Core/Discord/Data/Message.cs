@@ -13,6 +13,7 @@ namespace DiscordChatExporter.Core.Discord.Data;
 public record Message(
     Snowflake Id,
     MessageKind Kind,
+    MessageFlags Flags,
     User Author,
     DateTimeOffset Timestamp,
     DateTimeOffset? EditedTimestamp,
@@ -87,6 +88,7 @@ public record Message(
     {
         var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
         var kind = (MessageKind)json.GetProperty("type").GetInt32();
+        var flags = (MessageFlags?)json.GetPropertyOrNull("flags")?.GetInt32() ?? MessageFlags.None;
         var author = json.GetProperty("author").Pipe(User.Parse);
 
         var timestamp = json.GetProperty("timestamp").GetDateTimeOffset();
@@ -139,6 +141,7 @@ public record Message(
         return new Message(
             id,
             kind,
+            flags,
             author,
             timestamp,
             editedTimestamp,

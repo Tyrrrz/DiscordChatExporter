@@ -131,8 +131,8 @@
                         }
                         else if (message.Kind == MessageKind.ChannelPinnedMessage && message.Reference is not null)
                         {
-                            <span>pinned</span>
-                            <a class="chatlog__system-notification-link" href="#chatlog__message-container-@message.Reference.MessageId"> a message</a>
+                            <span>pinned </span>
+                            <a class="chatlog__system-notification-link" href="#chatlog__message-container-@message.Reference.MessageId">a message</a>
                             <span> to this channel.</span>
                         }
                         else if (message.Kind == MessageKind.ThreadCreated)

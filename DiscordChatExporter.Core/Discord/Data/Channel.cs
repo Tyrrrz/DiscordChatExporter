@@ -43,7 +43,7 @@ public partial record Channel
             ? "gif"
             : "png";
 
-        return $"https://cdn.discordapp.com/icons/{id}/{iconHash}.{extension}";
+        return $"https://cdn.discordapp.com/channel-icons/{id}/{iconHash}.{extension}";
     }
 
     public static Channel Parse(JsonElement json, ChannelCategory? category = null, int? positionHint = null)

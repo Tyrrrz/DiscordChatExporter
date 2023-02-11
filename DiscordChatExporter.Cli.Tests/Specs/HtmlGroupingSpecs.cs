@@ -4,32 +4,24 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands;
-using DiscordChatExporter.Cli.Tests.Fixtures;
 using DiscordChatExporter.Cli.Tests.Infra;
 using DiscordChatExporter.Cli.Tests.TestData;
+using DiscordChatExporter.Cli.Tests.Utils;
 using DiscordChatExporter.Core.Exporting;
 using FluentAssertions;
 using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
 
-[Collection(nameof(ExportWrapperCollection))]
-public class HtmlGroupingSpecs : IClassFixture<TempOutputFixture>
+public class HtmlGroupingSpecs
 {
-    private readonly TempOutputFixture _tempOutput;
-
-    public HtmlGroupingSpecs(TempOutputFixture tempOutput)
-    {
-        _tempOutput = tempOutput;
-    }
-
     [Fact]
     public async Task Messages_are_grouped_correctly()
     {
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/152
 
         // Arrange
-        var filePath = _tempOutput.GetTempFilePath();
+        using var file = TempFile.Create();
 
         // Act
         await new ExportChannelsCommand
@@ -37,12 +29,12 @@ public class HtmlGroupingSpecs : IClassFixture<TempOutputFixture>
             Token = Secrets.DiscordToken,
             ChannelIds = new[] { ChannelIds.GroupingTestCases },
             ExportFormat = ExportFormat.HtmlDark,
-            OutputPath = filePath
+            OutputPath = file.Path
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        var messageGroups = Utils.Html
-            .Parse(await File.ReadAllTextAsync(filePath))
+        var messageGroups = Html
+            .Parse(await File.ReadAllTextAsync(file.Path))
             .QuerySelectorAll(".chatlog__message-group");
 
         messageGroups.Should().HaveCount(2);

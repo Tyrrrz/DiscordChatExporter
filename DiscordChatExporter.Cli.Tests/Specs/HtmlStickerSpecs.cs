@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using DiscordChatExporter.Cli.Tests.Fixtures;
+using DiscordChatExporter.Cli.Tests.Infra;
 using DiscordChatExporter.Cli.Tests.TestData;
 using DiscordChatExporter.Core.Discord;
 using FluentAssertions;
@@ -7,21 +7,13 @@ using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
 
-[Collection(nameof(ExportWrapperCollection))]
 public class HtmlStickerSpecs
 {
-    private readonly ExportWrapperFixture _exportWrapper;
-
-    public HtmlStickerSpecs(ExportWrapperFixture exportWrapper)
-    {
-        _exportWrapper = exportWrapper;
-    }
-
     [Fact]
     public async Task Message_with_a_PNG_based_sticker_is_rendered_correctly()
     {
         // Act
-        var message = await _exportWrapper.GetMessageAsHtmlAsync(
+        var message = await ExportWrapper.GetMessageAsHtmlAsync(
             ChannelIds.StickerTestCases,
             Snowflake.Parse("939670623158943754")
         );
@@ -35,7 +27,7 @@ public class HtmlStickerSpecs
     public async Task Message_with_a_Lottie_based_sticker_is_rendered_correctly()
     {
         // Act
-        var message = await _exportWrapper.GetMessageAsHtmlAsync(
+        var message = await ExportWrapper.GetMessageAsHtmlAsync(
             ChannelIds.StickerTestCases,
             Snowflake.Parse("939670526517997590")
         );

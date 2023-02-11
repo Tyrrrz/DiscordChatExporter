@@ -50,7 +50,7 @@ public class ChannelExporter
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            // Skips any messages that fail to pass the supplied filter
+            // Skip messages that fail to pass the supplied filter
             if (!request.MessageFilter.IsMatch(message))
                 continue;
 

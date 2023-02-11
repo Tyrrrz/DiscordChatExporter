@@ -78,13 +78,11 @@ internal partial class ExportAssetDownloader
 
 internal partial class ExportAssetDownloader
 {
-    private static string GetUrlHash(string url)
-    {
-        using var hash = SHA256.Create();
-
-        var data = hash.ComputeHash(Encoding.UTF8.GetBytes(url));
-        return data.ToHex().Truncate(5); // 5 chars ought to be enough for anybody
-    }
+    private static string GetUrlHash(string url) => SHA256
+        .HashData(Encoding.UTF8.GetBytes(url))
+        .ToHex()
+        // 5 chars ought to be enough for anybody
+        .Truncate(5);
 
     private static string GetFileNameFromUrl(string url)
     {

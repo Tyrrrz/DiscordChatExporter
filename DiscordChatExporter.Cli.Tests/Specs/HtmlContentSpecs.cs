@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
-using DiscordChatExporter.Cli.Tests.Fixtures;
+using DiscordChatExporter.Cli.Tests.Infra;
 using DiscordChatExporter.Cli.Tests.TestData;
 using DiscordChatExporter.Core.Discord;
 using FluentAssertions;
@@ -9,21 +9,13 @@ using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
 
-[Collection(nameof(ExportWrapperCollection))]
 public class HtmlContentSpecs
 {
-    private readonly ExportWrapperFixture _exportWrapper;
-
-    public HtmlContentSpecs(ExportWrapperFixture exportWrapper)
-    {
-        _exportWrapper = exportWrapper;
-    }
-
     [Fact]
     public async Task Messages_are_exported_correctly()
     {
         // Act
-        var messages = await _exportWrapper.GetMessagesAsHtmlAsync(ChannelIds.DateRangeTestCases);
+        var messages = await ExportWrapper.GetMessagesAsHtmlAsync(ChannelIds.DateRangeTestCases);
 
         // Assert
         messages.Select(e => e.GetAttribute("data-message-id")).Should().Equal(
@@ -55,7 +47,7 @@ public class HtmlContentSpecs
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/633
 
         // Act
-        var message = await _exportWrapper.GetMessageAsHtmlAsync(
+        var message = await ExportWrapper.GetMessageAsHtmlAsync(
             ChannelIds.ReplyTestCases,
             Snowflake.Parse("1072165330853576876")
         );

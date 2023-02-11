@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands;
-using DiscordChatExporter.Cli.Tests.Fixtures;
 using DiscordChatExporter.Cli.Tests.Infra;
 using DiscordChatExporter.Cli.Tests.TestData;
+using DiscordChatExporter.Cli.Tests.Utils;
 using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Core.Exporting.Partitioning;
 using FluentAssertions;
@@ -12,23 +12,14 @@ using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
 
-[Collection(nameof(ExportWrapperCollection))]
-public class PartitioningSpecs : IClassFixture<TempOutputFixture>
+public class PartitioningSpecs
 {
-    private readonly TempOutputFixture _tempOutput;
-
-    public PartitioningSpecs(TempOutputFixture tempOutput)
-    {
-        _tempOutput = tempOutput;
-    }
-
     [Fact]
     public async Task Messages_partitioned_by_count_are_split_into_a_corresponding_number_of_files()
     {
         // Arrange
-        var filePath = _tempOutput.GetTempFilePath();
-        var fileNameWithoutExt = Path.GetFileNameWithoutExtension(filePath);
-        var dirPath = Path.GetDirectoryName(filePath) ?? Directory.GetCurrentDirectory();
+        using var dir = TempDir.Create();
+        var filePath = Path.Combine(dir.Path, "output.html");
 
         // Act
         await new ExportChannelsCommand
@@ -41,7 +32,7 @@ public class PartitioningSpecs : IClassFixture<TempOutputFixture>
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        Directory.EnumerateFiles(dirPath, fileNameWithoutExt + "*")
+        Directory.EnumerateFiles(dir.Path, "output*")
             .Should()
             .HaveCount(3);
     }
@@ -50,9 +41,8 @@ public class PartitioningSpecs : IClassFixture<TempOutputFixture>
     public async Task Messages_partitioned_by_file_size_are_split_into_a_corresponding_number_of_files()
     {
         // Arrange
-        var filePath = _tempOutput.GetTempFilePath();
-        var fileNameWithoutExt = Path.GetFileNameWithoutExtension(filePath);
-        var dirPath = Path.GetDirectoryName(filePath) ?? Directory.GetCurrentDirectory();
+        using var dir = TempDir.Create();
+        var filePath = Path.Combine(dir.Path, "output.html");
 
         // Act
         await new ExportChannelsCommand
@@ -65,7 +55,7 @@ public class PartitioningSpecs : IClassFixture<TempOutputFixture>
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        Directory.EnumerateFiles(dirPath, fileNameWithoutExt + "*")
+        Directory.EnumerateFiles(dir.Path, "output*")
             .Should()
             .HaveCount(8);
     }

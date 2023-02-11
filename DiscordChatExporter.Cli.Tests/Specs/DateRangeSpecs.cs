@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands;
-using DiscordChatExporter.Cli.Tests.Fixtures;
 using DiscordChatExporter.Cli.Tests.Infra;
 using DiscordChatExporter.Cli.Tests.TestData;
+using DiscordChatExporter.Cli.Tests.Utils;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Exporting;
 using FluentAssertions;
@@ -15,22 +15,14 @@ using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
 
-[Collection(nameof(ExportWrapperCollection))]
-public class DateRangeSpecs : IClassFixture<TempOutputFixture>
+public class DateRangeSpecs
 {
-    private readonly TempOutputFixture _tempOutput;
-
-    public DateRangeSpecs(TempOutputFixture tempOutput)
-    {
-        _tempOutput = tempOutput;
-    }
-
     [Fact]
     public async Task Messages_filtered_after_specific_date_only_include_messages_sent_after_that_date()
     {
         // Arrange
         var after = new DateTimeOffset(2021, 07, 24, 0, 0, 0, TimeSpan.Zero);
-        var filePath = _tempOutput.GetTempFilePath();
+        using var file = TempFile.Create();
 
         // Act
         await new ExportChannelsCommand
@@ -38,13 +30,13 @@ public class DateRangeSpecs : IClassFixture<TempOutputFixture>
             Token = Secrets.DiscordToken,
             ChannelIds = new[] { ChannelIds.DateRangeTestCases },
             ExportFormat = ExportFormat.Json,
-            OutputPath = filePath,
+            OutputPath = file.Path,
             After = Snowflake.FromDate(after)
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
         var timestamps = Json
-            .Parse(await File.ReadAllTextAsync(filePath))
+            .Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("timestamp").GetDateTimeOffset())
@@ -74,7 +66,7 @@ public class DateRangeSpecs : IClassFixture<TempOutputFixture>
     {
         // Arrange
         var before = new DateTimeOffset(2021, 07, 24, 0, 0, 0, TimeSpan.Zero);
-        var filePath = _tempOutput.GetTempFilePath();
+        using var file = TempFile.Create();
 
         // Act
         await new ExportChannelsCommand
@@ -82,13 +74,13 @@ public class DateRangeSpecs : IClassFixture<TempOutputFixture>
             Token = Secrets.DiscordToken,
             ChannelIds = new[] { ChannelIds.DateRangeTestCases },
             ExportFormat = ExportFormat.Json,
-            OutputPath = filePath,
+            OutputPath = file.Path,
             Before = Snowflake.FromDate(before)
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
         var timestamps = Json
-            .Parse(await File.ReadAllTextAsync(filePath))
+            .Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("timestamp").GetDateTimeOffset())
@@ -117,7 +109,7 @@ public class DateRangeSpecs : IClassFixture<TempOutputFixture>
         // Arrange
         var after = new DateTimeOffset(2021, 07, 24, 0, 0, 0, TimeSpan.Zero);
         var before = new DateTimeOffset(2021, 08, 01, 0, 0, 0, TimeSpan.Zero);
-        var filePath = _tempOutput.GetTempFilePath();
+        using var file = TempFile.Create();
 
         // Act
         await new ExportChannelsCommand
@@ -125,14 +117,14 @@ public class DateRangeSpecs : IClassFixture<TempOutputFixture>
             Token = Secrets.DiscordToken,
             ChannelIds = new[] { ChannelIds.DateRangeTestCases },
             ExportFormat = ExportFormat.Json,
-            OutputPath = filePath,
+            OutputPath = file.Path,
             Before = Snowflake.FromDate(before),
             After = Snowflake.FromDate(after)
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
         var timestamps = Json
-            .Parse(await File.ReadAllTextAsync(filePath))
+            .Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("timestamp").GetDateTimeOffset())

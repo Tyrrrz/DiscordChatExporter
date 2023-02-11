@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
-using DiscordChatExporter.Cli.Tests.Fixtures;
+using DiscordChatExporter.Cli.Tests.Infra;
 using DiscordChatExporter.Cli.Tests.TestData;
 using DiscordChatExporter.Core.Discord;
 using FluentAssertions;
@@ -9,21 +9,13 @@ using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
 
-[Collection(nameof(ExportWrapperCollection))]
 public class HtmlEmbedSpecs
 {
-    private readonly ExportWrapperFixture _exportWrapper;
-
-    public HtmlEmbedSpecs(ExportWrapperFixture exportWrapper)
-    {
-        _exportWrapper = exportWrapper;
-    }
-
     [Fact]
     public async Task Message_with_an_embed_is_rendered_correctly()
     {
         // Act
-        var message = await _exportWrapper.GetMessageAsHtmlAsync(
+        var message = await ExportWrapper.GetMessageAsHtmlAsync(
             ChannelIds.EmbedTestCases,
             Snowflake.Parse("866769910729146400")
         );
@@ -46,7 +38,7 @@ public class HtmlEmbedSpecs
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/537
 
         // Act
-        var message = await _exportWrapper.GetMessageAsHtmlAsync(
+        var message = await ExportWrapper.GetMessageAsHtmlAsync(
             ChannelIds.EmbedTestCases,
             Snowflake.Parse("991768701126852638")
         );
@@ -66,7 +58,7 @@ public class HtmlEmbedSpecs
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/682
 
         // Act
-        var message = await _exportWrapper.GetMessageAsHtmlAsync(
+        var message = await ExportWrapper.GetMessageAsHtmlAsync(
             ChannelIds.EmbedTestCases,
             Snowflake.Parse("991768701126852638")
         );
@@ -80,7 +72,7 @@ public class HtmlEmbedSpecs
     public async Task Message_containing_a_gifv_link_is_rendered_with_a_video_embed()
     {
         // Act
-        var message = await _exportWrapper.GetMessageAsHtmlAsync(
+        var message = await ExportWrapper.GetMessageAsHtmlAsync(
             ChannelIds.EmbedTestCases,
             Snowflake.Parse("1019234520349814794")
         );
@@ -98,7 +90,7 @@ public class HtmlEmbedSpecs
     public async Task Message_containing_a_gifv_link_and_nothing_else_is_rendered_without_text_content()
     {
         // Act
-        var message = await _exportWrapper.GetMessageAsHtmlAsync(
+        var message = await ExportWrapper.GetMessageAsHtmlAsync(
             ChannelIds.EmbedTestCases,
             Snowflake.Parse("1019234520349814794")
         );
@@ -114,7 +106,7 @@ public class HtmlEmbedSpecs
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/657
 
         // Act
-        var message = await _exportWrapper.GetMessageAsHtmlAsync(
+        var message = await ExportWrapper.GetMessageAsHtmlAsync(
             ChannelIds.EmbedTestCases,
             Snowflake.Parse("867886632203976775")
         );
@@ -130,7 +122,7 @@ public class HtmlEmbedSpecs
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/570
 
         // Act
-        var message = await _exportWrapper.GetMessageAsHtmlAsync(
+        var message = await ExportWrapper.GetMessageAsHtmlAsync(
             ChannelIds.EmbedTestCases,
             Snowflake.Parse("866472508588294165")
         );
@@ -146,7 +138,7 @@ public class HtmlEmbedSpecs
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/695
 
         // Act
-        var message = await _exportWrapper.GetMessageAsHtmlAsync(
+        var message = await ExportWrapper.GetMessageAsHtmlAsync(
             ChannelIds.EmbedTestCases,
             Snowflake.Parse("991757444017557665")
         );

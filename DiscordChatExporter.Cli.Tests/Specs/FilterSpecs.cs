@@ -3,9 +3,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands;
-using DiscordChatExporter.Cli.Tests.Fixtures;
 using DiscordChatExporter.Cli.Tests.Infra;
 using DiscordChatExporter.Cli.Tests.TestData;
+using DiscordChatExporter.Cli.Tests.Utils;
 using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Core.Exporting.Filtering;
 using FluentAssertions;
@@ -14,21 +14,13 @@ using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
 
-[Collection(nameof(ExportWrapperCollection))]
-public class FilterSpecs : IClassFixture<TempOutputFixture>
+public class FilterSpecs
 {
-    private readonly TempOutputFixture _tempOutput;
-
-    public FilterSpecs(TempOutputFixture tempOutput)
-    {
-        _tempOutput = tempOutput;
-    }
-
     [Fact]
     public async Task Messages_filtered_by_text_only_include_messages_that_contain_that_text()
     {
         // Arrange
-        var filePath = _tempOutput.GetTempFilePath();
+        using var file = TempFile.Create();
 
         // Act
         await new ExportChannelsCommand
@@ -36,13 +28,13 @@ public class FilterSpecs : IClassFixture<TempOutputFixture>
             Token = Secrets.DiscordToken,
             ChannelIds = new[] { ChannelIds.FilterTestCases },
             ExportFormat = ExportFormat.Json,
-            OutputPath = filePath,
+            OutputPath = file.Path,
             MessageFilter = MessageFilter.Parse("some text")
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
         Json
-            .Parse(await File.ReadAllTextAsync(filePath))
+            .Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("content").GetString())
@@ -54,7 +46,7 @@ public class FilterSpecs : IClassFixture<TempOutputFixture>
     public async Task Messages_filtered_by_author_only_include_messages_sent_by_that_author()
     {
         // Arrange
-        var filePath = _tempOutput.GetTempFilePath();
+        using var file = TempFile.Create();
 
         // Act
         await new ExportChannelsCommand
@@ -62,13 +54,13 @@ public class FilterSpecs : IClassFixture<TempOutputFixture>
             Token = Secrets.DiscordToken,
             ChannelIds = new[] { ChannelIds.FilterTestCases },
             ExportFormat = ExportFormat.Json,
-            OutputPath = filePath,
+            OutputPath = file.Path,
             MessageFilter = MessageFilter.Parse("from:Tyrrrz")
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
         Json
-            .Parse(await File.ReadAllTextAsync(filePath))
+            .Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("author").GetProperty("name").GetString())
@@ -80,7 +72,7 @@ public class FilterSpecs : IClassFixture<TempOutputFixture>
     public async Task Messages_filtered_by_content_only_include_messages_that_have_that_content()
     {
         // Arrange
-        var filePath = _tempOutput.GetTempFilePath();
+        using var file = TempFile.Create();
 
         // Act
         await new ExportChannelsCommand
@@ -88,13 +80,13 @@ public class FilterSpecs : IClassFixture<TempOutputFixture>
             Token = Secrets.DiscordToken,
             ChannelIds = new[] { ChannelIds.FilterTestCases },
             ExportFormat = ExportFormat.Json,
-            OutputPath = filePath,
+            OutputPath = file.Path,
             MessageFilter = MessageFilter.Parse("has:image")
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
         Json
-            .Parse(await File.ReadAllTextAsync(filePath))
+            .Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("content").GetString())
@@ -106,7 +98,7 @@ public class FilterSpecs : IClassFixture<TempOutputFixture>
     public async Task Messages_filtered_by_pin_only_include_messages_that_have_been_pinned()
     {
         // Arrange
-        var filePath = _tempOutput.GetTempFilePath();
+        using var file = TempFile.Create();
 
         // Act
         await new ExportChannelsCommand
@@ -114,13 +106,13 @@ public class FilterSpecs : IClassFixture<TempOutputFixture>
             Token = Secrets.DiscordToken,
             ChannelIds = new[] { ChannelIds.FilterTestCases },
             ExportFormat = ExportFormat.Json,
-            OutputPath = filePath,
+            OutputPath = file.Path,
             MessageFilter = MessageFilter.Parse("has:pin")
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
         Json
-            .Parse(await File.ReadAllTextAsync(filePath))
+            .Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("content").GetString())
@@ -132,7 +124,7 @@ public class FilterSpecs : IClassFixture<TempOutputFixture>
     public async Task Messages_filtered_by_mention_only_include_messages_that_have_that_mention()
     {
         // Arrange
-        var filePath = _tempOutput.GetTempFilePath();
+        using var file = TempFile.Create();
 
         // Act
         await new ExportChannelsCommand
@@ -140,13 +132,13 @@ public class FilterSpecs : IClassFixture<TempOutputFixture>
             Token = Secrets.DiscordToken,
             ChannelIds = new[] { ChannelIds.FilterTestCases },
             ExportFormat = ExportFormat.Json,
-            OutputPath = filePath,
+            OutputPath = file.Path,
             MessageFilter = MessageFilter.Parse("mentions:Tyrrrz")
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
         Json
-            .Parse(await File.ReadAllTextAsync(filePath))
+            .Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("content").GetString())

@@ -1,27 +1,19 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using DiscordChatExporter.Cli.Tests.Fixtures;
+using DiscordChatExporter.Cli.Tests.Infra;
 using DiscordChatExporter.Cli.Tests.TestData;
 using FluentAssertions;
 using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
 
-[Collection(nameof(ExportWrapperCollection))]
 public class JsonContentSpecs
 {
-    private readonly ExportWrapperFixture _exportWrapper;
-
-    public JsonContentSpecs(ExportWrapperFixture exportWrapper)
-    {
-        _exportWrapper = exportWrapper;
-    }
-
     [Fact]
     public async Task Messages_are_exported_correctly()
     {
         // Act
-        var messages = await _exportWrapper.GetMessagesAsJsonAsync(ChannelIds.DateRangeTestCases);
+        var messages = await ExportWrapper.GetMessagesAsJsonAsync(ChannelIds.DateRangeTestCases);
 
         // Assert
         messages.Select(j => j.GetProperty("id").GetString()).Should().Equal(

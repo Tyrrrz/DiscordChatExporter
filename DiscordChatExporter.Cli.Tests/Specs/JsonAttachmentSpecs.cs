@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using DiscordChatExporter.Cli.Tests.Fixtures;
+using DiscordChatExporter.Cli.Tests.Infra;
 using DiscordChatExporter.Cli.Tests.TestData;
 using DiscordChatExporter.Core.Discord;
 using FluentAssertions;
@@ -8,21 +8,13 @@ using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
 
-[Collection(nameof(ExportWrapperCollection))]
 public class JsonAttachmentSpecs
 {
-    private readonly ExportWrapperFixture _exportWrapper;
-
-    public JsonAttachmentSpecs(ExportWrapperFixture exportWrapper)
-    {
-        _exportWrapper = exportWrapper;
-    }
-
     [Fact]
     public async Task Message_with_a_generic_attachment_is_rendered_correctly()
     {
         // Act
-        var message = await _exportWrapper.GetMessageAsJsonAsync(
+        var message = await ExportWrapper.GetMessageAsJsonAsync(
             ChannelIds.AttachmentTestCases,
             Snowflake.Parse("885587844989612074")
         );
@@ -43,7 +35,7 @@ public class JsonAttachmentSpecs
     public async Task Message_with_an_image_attachment_is_rendered_correctly()
     {
         // Act
-        var message = await _exportWrapper.GetMessageAsJsonAsync(
+        var message = await ExportWrapper.GetMessageAsJsonAsync(
             ChannelIds.AttachmentTestCases,
             Snowflake.Parse("885654862656843786")
         );
@@ -64,7 +56,7 @@ public class JsonAttachmentSpecs
     public async Task Message_with_a_video_attachment_is_rendered_correctly()
     {
         // Act
-        var message = await _exportWrapper.GetMessageAsJsonAsync(
+        var message = await ExportWrapper.GetMessageAsJsonAsync(
             ChannelIds.AttachmentTestCases,
             Snowflake.Parse("885655761919836171")
         );
@@ -85,7 +77,7 @@ public class JsonAttachmentSpecs
     public async Task Message_with_an_audio_attachment_is_rendered_correctly()
     {
         // Act
-        var message = await _exportWrapper.GetMessageAsJsonAsync(
+        var message = await ExportWrapper.GetMessageAsJsonAsync(
             ChannelIds.AttachmentTestCases,
             Snowflake.Parse("885656175620808734")
         );

@@ -26,7 +26,7 @@ internal partial class MessageExporter : IAsyncDisposable
             {
                 await _writer.WritePostambleAsync(cancellationToken);
             }
-            // Writer must be disposed, even if writing postamble fails
+            // Writer must be disposed, even if it fails to write the postamble
             finally
             {
                 await _writer.DisposeAsync();
@@ -45,15 +45,12 @@ internal partial class MessageExporter : IAsyncDisposable
             _partitionIndex++;
         }
 
-        // Writer is still valid - return
+        // Writer is still valid, return
         if (_writer is not null)
             return _writer;
 
+        Directory.CreateDirectory(_context.Request.OutputBaseDirPath);
         var filePath = GetPartitionFilePath(_context.Request.OutputBaseFilePath, _partitionIndex);
-
-        var dirPath = Path.GetDirectoryName(_context.Request.OutputBaseFilePath);
-        if (!string.IsNullOrWhiteSpace(dirPath))
-            Directory.CreateDirectory(dirPath);
 
         var writer = CreateMessageWriter(filePath, _context.Request.Format, _context);
         await writer.WritePreambleAsync(cancellationToken);
@@ -74,7 +71,7 @@ internal partial class MessageExporter
 {
     private static string GetPartitionFilePath(string baseFilePath, int partitionIndex)
     {
-        // First partition - don't change file name
+        // First partition, don't change file name
         if (partitionIndex <= 0)
             return baseFilePath;
 
@@ -92,19 +89,14 @@ internal partial class MessageExporter
     private static MessageWriter CreateMessageWriter(
         string filePath,
         ExportFormat format,
-        ExportContext context)
-    {
-        // Stream will be disposed by the underlying writer
-        var stream = File.Create(filePath);
-
-        return format switch
+        ExportContext context) =>
+        format switch
         {
-            ExportFormat.PlainText => new PlainTextMessageWriter(stream, context),
-            ExportFormat.Csv => new CsvMessageWriter(stream, context),
-            ExportFormat.HtmlDark => new HtmlMessageWriter(stream, context, "Dark"),
-            ExportFormat.HtmlLight => new HtmlMessageWriter(stream, context, "Light"),
-            ExportFormat.Json => new JsonMessageWriter(stream, context),
+            ExportFormat.PlainText => new PlainTextMessageWriter(File.Create(filePath), context),
+            ExportFormat.Csv => new CsvMessageWriter(File.Create(filePath), context),
+            ExportFormat.HtmlDark => new HtmlMessageWriter(File.Create(filePath), context, "Dark"),
+            ExportFormat.HtmlLight => new HtmlMessageWriter(File.Create(filePath), context, "Light"),
+            ExportFormat.Json => new JsonMessageWriter(File.Create(filePath), context),
             _ => throw new ArgumentOutOfRangeException(nameof(format), $"Unknown export format '{format}'.")
         };
-    }
 }

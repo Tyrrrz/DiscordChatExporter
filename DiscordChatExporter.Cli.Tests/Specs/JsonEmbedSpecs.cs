@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using DiscordChatExporter.Cli.Tests.Fixtures;
+using DiscordChatExporter.Cli.Tests.Infra;
 using DiscordChatExporter.Cli.Tests.TestData;
 using DiscordChatExporter.Core.Discord;
 using FluentAssertions;
@@ -8,21 +8,13 @@ using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
 
-[Collection(nameof(ExportWrapperCollection))]
 public class JsonEmbedSpecs
 {
-    private readonly ExportWrapperFixture _exportWrapper;
-
-    public JsonEmbedSpecs(ExportWrapperFixture exportWrapper)
-    {
-        _exportWrapper = exportWrapper;
-    }
-
     [Fact]
     public async Task Message_with_an_embed_is_rendered_correctly()
     {
         // Act
-        var message = await _exportWrapper.GetMessageAsJsonAsync(
+        var message = await ExportWrapper.GetMessageAsJsonAsync(
             ChannelIds.EmbedTestCases,
             Snowflake.Parse("866769910729146400")
         );

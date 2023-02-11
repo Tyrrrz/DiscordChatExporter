@@ -6,12 +6,10 @@ public static class BinaryExtensions
 {
     public static string ToHex(this byte[] data)
     {
-        var buffer = new StringBuilder();
+        var buffer = new StringBuilder(2 * data.Length);
 
         foreach (var t in data)
-        {
             buffer.Append(t.ToString("X2"));
-        }
 
         return buffer.ToString();
     }

@@ -23,7 +23,7 @@ public static class Http
     private static bool IsRetryableException(Exception exception) =>
         exception.GetSelfAndChildren().Any(ex =>
             ex is TimeoutException or SocketException or AuthenticationException ||
-            ex is HttpRequestException hrex && IsRetryableStatusCode(hrex.TryGetStatusCode() ?? HttpStatusCode.OK)
+            ex is HttpRequestException hrex && IsRetryableStatusCode(hrex.StatusCode ?? HttpStatusCode.OK)
         );
 
     public static IAsyncPolicy ResiliencePolicy { get; } =

@@ -44,22 +44,13 @@ public static class ExportWrapper
         // Perform export only if it hasn't been done before
         if (!File.Exists(filePath))
         {
-            try
+            await new ExportChannelsCommand
             {
-                await new ExportChannelsCommand
-                {
-                    Token = Secrets.DiscordToken,
-                    ChannelIds = new[] { channelId },
-                    ExportFormat = format,
-                    OutputPath = filePath
-                }.ExecuteAsync(new FakeConsole());
-            }
-            catch
-            {
-                // If the export fails, delete the file to prevent it from being used by tests
-                File.Delete(filePath);
-                throw;
-            }
+                Token = Secrets.DiscordToken,
+                ChannelIds = new[] { channelId },
+                ExportFormat = format,
+                OutputPath = filePath
+            }.ExecuteAsync(new FakeConsole());
         }
 
         return await File.ReadAllTextAsync(filePath);

@@ -90,7 +90,7 @@ public abstract class ExportCommandBase : TokenCommandBase
         "dateformat",
         Description = "Format used when writing dates."
     )]
-    public string DateFormat { get; init; } = "dd-MMM-yy hh:mm tt";
+    public string DateFormat { get; init; } = "MM/dd/yyyy h:mm tt";
 
     [CommandOption(
         "fuck-russia",

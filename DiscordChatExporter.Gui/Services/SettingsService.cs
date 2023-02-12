@@ -15,7 +15,7 @@ public partial class SettingsService : SettingsManager
 
     public bool IsTokenPersisted { get; set; } = true;
 
-    public string DateFormat { get; set; } = "dd-MMM-yy hh:mm tt";
+    public string DateFormat { get; set; } = "MM/dd/yyyy h:mm tt";
 
     public int ParallelLimit { get; set; } = 1;
 

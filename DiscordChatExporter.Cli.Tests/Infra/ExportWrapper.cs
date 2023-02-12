@@ -25,7 +25,14 @@ public static class ExportWrapper
 
     static ExportWrapper()
     {
-        Directory.Delete(DirPath, true);
+        try
+        {
+            Directory.Delete(DirPath, true);
+        }
+        catch (DirectoryNotFoundException)
+        {
+        }
+
         Directory.CreateDirectory(DirPath);
     }
 

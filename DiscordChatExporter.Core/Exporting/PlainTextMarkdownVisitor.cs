@@ -66,7 +66,7 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
             _buffer.Append($"#{name}");
 
             // Voice channel marker
-            if (channel?.SupportsVoice == true)
+            if (channel?.IsVoice == true)
                 _buffer.Append(" [voice]");
         }
         else if (mention.Kind == MentionKind.Role)
@@ -80,17 +80,19 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
         return await base.VisitMentionAsync(mention, cancellationToken);
     }
 
-    protected override async ValueTask<MarkdownNode> VisitUnixTimestampAsync(
-        UnixTimestampNode timestamp,
+    protected override async ValueTask<MarkdownNode> VisitTimestampAsync(
+        TimestampNode timestamp,
         CancellationToken cancellationToken = default)
     {
         _buffer.Append(
-            timestamp.Date is not null
-                ? _context.FormatDate(timestamp.Date.Value)
+            timestamp.Instant is not null
+                ? !string.IsNullOrWhiteSpace(timestamp.Format)
+                    ? timestamp.Instant.Value.ToLocalString(timestamp.Format)
+                    : _context.FormatDate(timestamp.Instant.Value)
                 : "Invalid date"
         );
 
-        return await base.VisitUnixTimestampAsync(timestamp, cancellationToken);
+        return await base.VisitTimestampAsync(timestamp, cancellationToken);
     }
 }
 
@@ -102,10 +104,9 @@ internal partial class PlainTextMarkdownVisitor
         CancellationToken cancellationToken = default)
     {
         var nodes = MarkdownParser.ParseMinimal(markdown);
-        var buffer = new StringBuilder();
 
-        await new PlainTextMarkdownVisitor(context, buffer)
-            .VisitAsync(nodes, cancellationToken);
+        var buffer = new StringBuilder();
+        await new PlainTextMarkdownVisitor(context, buffer).VisitAsync(nodes, cancellationToken);
 
         return buffer.ToString();
     }

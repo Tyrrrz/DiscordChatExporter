@@ -5,7 +5,6 @@ using AngleSharp.Dom;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands;
 using DiscordChatExporter.Cli.Tests.Infra;
-using DiscordChatExporter.Cli.Tests.TestData;
 using DiscordChatExporter.Cli.Tests.Utils;
 using DiscordChatExporter.Core.Exporting;
 using FluentAssertions;

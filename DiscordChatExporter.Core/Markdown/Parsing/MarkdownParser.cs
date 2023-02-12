@@ -275,29 +275,37 @@ internal static partial class MarkdownParser
 
     /* Misc */
 
-    private static readonly IMatcher<MarkdownNode> UnixTimestampNodeMatcher = new RegexMatcher<MarkdownNode>(
+    private static readonly IMatcher<MarkdownNode> TimestampNodeMatcher = new RegexMatcher<MarkdownNode>(
         // Capture <t:12345678> or <t:12345678:R>
-        new Regex(@"<t:(-?\d+)(?::\w)?>", DefaultRegexOptions),
+        new Regex(@"<t:(-?\d+)(?::(\w))?>", DefaultRegexOptions),
         (_, m) =>
         {
-            // TODO: support formatting parameters
-            // See: https://github.com/Tyrrrz/DiscordChatExporter/issues/662
-
-            if (!long.TryParse(m.Groups[1].Value, NumberStyles.Integer, CultureInfo.InvariantCulture,
-                    out var offset))
-            {
-                return new UnixTimestampNode(null);
-            }
-
             try
             {
-                return new UnixTimestampNode(DateTimeOffset.UnixEpoch + TimeSpan.FromSeconds(offset));
+                var instant = DateTimeOffset.UnixEpoch + TimeSpan.FromSeconds(
+                    long.Parse(m.Groups[1].Value, NumberStyles.Integer, CultureInfo.InvariantCulture)
+                );
+
+                var format = m.Groups[2].Value switch
+                {
+                    "t" => "h:mm tt",
+                    "T" => "h:mm:ss tt",
+                    "d" => "MM/dd/yyyy",
+                    "D" => "MMMM dd, yyyy",
+                    "f" => "MMMM dd, yyyy h:mm tt",
+                    "F" => "dddd, MMMM dd, yyyy h:mm tt",
+                    // Relative format is ignored because it doesn't make much sense in a static export
+                    _ => null
+                };
+
+                return new TimestampNode(instant, format);
             }
             // https://github.com/Tyrrrz/DiscordChatExporter/issues/681
             // https://github.com/Tyrrrz/DiscordChatExporter/issues/766
-            catch (Exception ex) when (ex is ArgumentOutOfRangeException or OverflowException)
+            catch (Exception ex) when (ex is FormatException or ArgumentOutOfRangeException or OverflowException)
             {
-                return new UnixTimestampNode(null);
+                // For invalid timestamps, Discord renders "Invalid Date" instead of ignoring the markdown
+                return TimestampNode.Invalid;
             }
         }
     );
@@ -346,7 +354,7 @@ internal static partial class MarkdownParser
         CodedStandardEmojiNodeMatcher,
 
         // Misc
-        UnixTimestampNodeMatcher
+        TimestampNodeMatcher
     );
 
     // Minimal set of matchers for non-multimedia formats (e.g. plain text)
@@ -362,7 +370,7 @@ internal static partial class MarkdownParser
         CustomEmojiNodeMatcher,
 
         // Misc
-        UnixTimestampNodeMatcher
+        TimestampNodeMatcher
     );
 
     private static IReadOnlyList<MarkdownNode> Parse(StringSegment segment, IMatcher<MarkdownNode> matcher) =>

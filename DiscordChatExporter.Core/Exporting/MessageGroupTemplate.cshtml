@@ -18,8 +18,8 @@
     ValueTask<string> ResolveAssetUrlAsync(string url) =>
         ExportContext.ResolveAssetUrlAsync(url, CancellationToken);
 
-    string FormatDate(DateTimeOffset date) =>
-        ExportContext.FormatDate(date);
+    string FormatDate(DateTimeOffset instant) =>
+        ExportContext.FormatDate(instant);
 
     ValueTask<string> FormatMarkdownAsync(string markdown) =>
         HtmlMarkdownVisitor.FormatAsync(ExportContext, markdown, true, CancellationToken);

@@ -48,8 +48,8 @@ internal abstract class MarkdownVisitor
         CancellationToken cancellationToken = default) =>
         new(mention);
 
-    protected virtual ValueTask<MarkdownNode> VisitUnixTimestampAsync(
-        UnixTimestampNode timestamp,
+    protected virtual ValueTask<MarkdownNode> VisitTimestampAsync(
+        TimestampNode timestamp,
         CancellationToken cancellationToken = default) =>
         new(timestamp);
 
@@ -78,8 +78,8 @@ internal abstract class MarkdownVisitor
             MentionNode mention =>
                 await VisitMentionAsync(mention, cancellationToken),
 
-            UnixTimestampNode timestamp =>
-                await VisitUnixTimestampAsync(timestamp, cancellationToken),
+            TimestampNode timestamp =>
+                await VisitTimestampAsync(timestamp, cancellationToken),
 
             _ => throw new ArgumentOutOfRangeException(nameof(node))
         };

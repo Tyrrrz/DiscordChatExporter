@@ -38,11 +38,11 @@ internal class ExportContext
         _assetDownloader = new ExportAssetDownloader(request.OutputAssetsDirPath, request.ShouldReuseAssets);
     }
 
-    public string FormatDate(DateTimeOffset date) => Request.DateFormat switch
+    public string FormatDate(DateTimeOffset instant) => Request.DateFormat switch
     {
-        "unix" => date.ToUnixTimeSeconds().ToString(),
-        "unixms" => date.ToUnixTimeMilliseconds().ToString(),
-        var format => date.ToLocalString(format)
+        "unix" => instant.ToUnixTimeSeconds().ToString(),
+        "unixms" => instant.ToUnixTimeMilliseconds().ToString(),
+        var format => instant.ToLocalString(format)
     };
 
     public Member? TryGetMember(Snowflake id) => Members.FirstOrDefault(m => m.Id == id);

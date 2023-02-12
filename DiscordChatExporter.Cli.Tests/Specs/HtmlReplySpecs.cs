@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using AngleSharp.Dom;
 using DiscordChatExporter.Cli.Tests.Infra;
-using DiscordChatExporter.Cli.Tests.TestData;
 using DiscordChatExporter.Core.Discord;
 using FluentAssertions;
 using Xunit;
@@ -11,7 +10,7 @@ namespace DiscordChatExporter.Cli.Tests.Specs;
 public class HtmlReplySpecs
 {
     [Fact]
-    public async Task Reply_to_a_normal_message_is_rendered_correctly()
+    public async Task Message_with_a_reply_is_rendered_correctly()
     {
         // Act
         var message = await ExportWrapper.GetMessageAsHtmlAsync(
@@ -25,7 +24,7 @@ public class HtmlReplySpecs
     }
 
     [Fact]
-    public async Task Reply_to_a_deleted_message_is_rendered_correctly()
+    public async Task Message_with_a_reply_to_a_deleted_message_is_rendered_correctly()
     {
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/645
 
@@ -43,7 +42,7 @@ public class HtmlReplySpecs
     }
 
     [Fact]
-    public async Task Reply_to_an_empty_message_with_attachment_is_rendered_correctly()
+    public async Task Message_with_a_reply_to_an_empty_message_with_attachment_is_rendered_correctly()
     {
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/634
 

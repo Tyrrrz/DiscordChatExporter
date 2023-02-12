@@ -22,8 +22,8 @@
     ValueTask<string> ResolveAssetUrlAsync(string url) =>
         ExportContext.ResolveAssetUrlAsync(url, CancellationToken);
 
-    string FormatDate(DateTimeOffset date) =>
-        ExportContext.FormatDate(date);
+    string FormatDate(DateTimeOffset instant) =>
+        ExportContext.FormatDate(instant);
 
     ValueTask<string> FormatMarkdownAsync(string markdown) =>
         HtmlMarkdownVisitor.FormatAsync(ExportContext, markdown, true, CancellationToken);
@@ -660,6 +660,7 @@
 
         .chatlog__markdown-spoiler {
             background-color: @Themed("rgba(255, 255, 255, 0.1)", "rgba(0, 0, 0, 0.1)");
+            padding: 0 2px;
             border-radius: 3px;
         }
 
@@ -728,9 +729,9 @@
         }
 
         .chatlog__markdown-timestamp {
-            border-radius: 3px;
+            background-color: @Themed("rgba(255, 255, 255, 0.1)", "rgba(0, 0, 0, 0.1)");
             padding: 0 2px;
-            color: @Themed("#a3a6aa", "#5e6772");
+            border-radius: 3px;
         }
 
         .chatlog__emoji {

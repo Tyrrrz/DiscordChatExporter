@@ -19,7 +19,7 @@ public partial record Channel(
     string? Topic,
     Snowflake? LastMessageId) : IHasId
 {
-    public bool SupportsVoice => Kind is ChannelKind.GuildVoiceChat or ChannelKind.GuildStageVoice;
+    public bool IsVoice => Kind is ChannelKind.GuildVoiceChat or ChannelKind.GuildStageVoice;
 }
 
 public partial record Channel

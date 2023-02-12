@@ -50,8 +50,8 @@ internal partial class ExportAssetDownloader
                 try
                 {
                     var lastModified = response.Content.Headers.TryGetValue("Last-Modified")?.Pipe(s =>
-                        DateTimeOffset.TryParse(s, CultureInfo.InvariantCulture, DateTimeStyles.None, out var date)
-                            ? date
+                        DateTimeOffset.TryParse(s, CultureInfo.InvariantCulture, DateTimeStyles.None, out var instant)
+                            ? instant
                             : (DateTimeOffset?) null
                     );
 

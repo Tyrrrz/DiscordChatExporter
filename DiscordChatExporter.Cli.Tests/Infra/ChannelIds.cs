@@ -1,6 +1,6 @@
 ﻿using DiscordChatExporter.Core.Discord;
 
-namespace DiscordChatExporter.Cli.Tests.TestData;
+namespace DiscordChatExporter.Cli.Tests.Infra;
 
 public static class ChannelIds
 {
@@ -13,6 +13,8 @@ public static class ChannelIds
     public static Snowflake GroupingTestCases { get; } = Snowflake.Parse("992092091545034842");
 
     public static Snowflake FilterTestCases { get; } = Snowflake.Parse("866744075033641020");
+
+    public static Snowflake MarkdownTestCases { get; } = Snowflake.Parse("866459526819348521");
 
     public static Snowflake MentionTestCases { get; } = Snowflake.Parse("866458801389174794");
 

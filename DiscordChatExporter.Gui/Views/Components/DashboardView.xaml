@@ -358,10 +358,10 @@
                                         <materialDesign:PackIcon.Style>
                                             <Style TargetType="{x:Type materialDesign:PackIcon}">
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding SupportsVoice}" Value="True">
+                                                    <DataTrigger Binding="{Binding IsVoice}" Value="True">
                                                         <Setter Property="Kind" Value="VolumeHigh" />
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding SupportsVoice}" Value="False">
+                                                    <DataTrigger Binding="{Binding IsVoice}" Value="False">
                                                         <Setter Property="Kind" Value="Pound" />
                                                     </DataTrigger>
                                                 </Style.Triggers>

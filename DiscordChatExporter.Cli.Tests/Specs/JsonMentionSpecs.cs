@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using DiscordChatExporter.Cli.Tests.Infra;
-using DiscordChatExporter.Cli.Tests.TestData;
 using DiscordChatExporter.Core.Discord;
 using FluentAssertions;
 using Xunit;
@@ -11,7 +10,7 @@ namespace DiscordChatExporter.Cli.Tests.Specs;
 public class JsonMentionSpecs
 {
     [Fact]
-    public async Task User_mention_is_rendered_correctly()
+    public async Task Message_with_a_user_mention_is_rendered_correctly()
     {
         // Act
         var message = await ExportWrapper.GetMessageAsJsonAsync(
@@ -31,7 +30,7 @@ public class JsonMentionSpecs
     }
 
     [Fact]
-    public async Task Text_channel_mention_is_rendered_correctly()
+    public async Task Message_with_a_text_channel_mention_is_rendered_correctly()
     {
         // Act
         var message = await ExportWrapper.GetMessageAsJsonAsync(
@@ -44,7 +43,7 @@ public class JsonMentionSpecs
     }
 
     [Fact]
-    public async Task Voice_channel_mention_is_rendered_correctly()
+    public async Task Message_with_a_voice_channel_mention_is_rendered_correctly()
     {
         // Act
         var message = await ExportWrapper.GetMessageAsJsonAsync(
@@ -57,7 +56,7 @@ public class JsonMentionSpecs
     }
 
     [Fact]
-    public async Task Role_mention_is_rendered_correctly()
+    public async Task Message_with_a_role_mention_is_rendered_correctly()
     {
         // Act
         var message = await ExportWrapper.GetMessageAsJsonAsync(

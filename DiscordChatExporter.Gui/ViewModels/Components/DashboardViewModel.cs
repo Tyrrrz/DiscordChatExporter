@@ -158,22 +158,27 @@ public class DashboardViewModel : PropertyChangedBase
 
             var exporter = new ChannelExporter(_discord);
 
-            var progresses = Enumerable
-                .Range(0, dialog.Channels!.Count)
-                .Select(_ => _progressMuxer.CreateInput())
+            var channelProgressPairs = dialog
+                .Channels!
+                .Select(c => new
+                {
+                    Channel = c,
+                    Progress = _progressMuxer.CreateInput()
+                })
                 .ToArray();
 
             var successfulExportCount = 0;
 
             await Parallel.ForEachAsync(
-                dialog.Channels.Zip(progresses),
+                channelProgressPairs,
                 new ParallelOptions
                 {
                     MaxDegreeOfParallelism = Math.Max(1, _settingsService.ParallelLimit)
                 },
-                async (tuple, cancellationToken) =>
+                async (pair, cancellationToken) =>
                 {
-                    var (channel, progress) = tuple;
+                    var channel = pair.Channel;
+                    var progress = pair.Progress;
 
                     try
                     {

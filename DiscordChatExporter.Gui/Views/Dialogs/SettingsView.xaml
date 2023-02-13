@@ -40,7 +40,7 @@
                         <TextBlock
                             VerticalAlignment="Center"
                             DockPanel.Dock="Left"
-                            Text="Auto-updates" />
+                            Text="Auto-update" />
                         <ToggleButton
                             VerticalAlignment="Center"
                             DockPanel.Dock="Right"
@@ -75,7 +75,7 @@
                         <TextBlock
                             VerticalAlignment="Center"
                             DockPanel.Dock="Left"
-                            Text="Save token" />
+                            Text="Persist token" />
                         <ToggleButton
                             VerticalAlignment="Center"
                             DockPanel.Dock="Right"

@@ -86,15 +86,8 @@ public class ExportSetupViewModel : DialogScreen
 
     public void ToggleAdvancedSection() => IsAdvancedSectionDisplayed = !IsAdvancedSectionDisplayed;
 
-    public void Confirm()
+    public void ShowOutputPathPrompt()
     {
-        // Persist preferences
-        _settingsService.LastExportFormat = SelectedFormat;
-        _settingsService.LastPartitionLimitValue = PartitionLimitValue;
-        _settingsService.LastMessageFilterValue = MessageFilterValue;
-        _settingsService.LastShouldDownloadAssets = ShouldDownloadAssets;
-
-        // If single channel - prompt file path
         if (IsSingleChannel)
         {
             var defaultFileName = ExportRequest.GetDefaultOutputFileName(
@@ -105,20 +98,26 @@ public class ExportSetupViewModel : DialogScreen
                 Before?.Pipe(Snowflake.FromDate)
             );
 
-            // Filter
-            var ext = SelectedFormat.GetFileExtension();
-            var filter = $"{ext.ToUpperInvariant()} files|*.{ext}";
+            var extension = SelectedFormat.GetFileExtension();
+            var filter = $"{extension.ToUpperInvariant()} files|*.{extension}";
 
             OutputPath = _dialogManager.PromptSaveFilePath(filter, defaultFileName);
         }
-        // If multiple channels - prompt dir path
         else
         {
             OutputPath = _dialogManager.PromptDirectoryPath();
         }
+    }
 
-        if (string.IsNullOrWhiteSpace(OutputPath))
-            return;
+    public bool CanConfirm => !string.IsNullOrWhiteSpace(OutputPath);
+
+    public void Confirm()
+    {
+        // Persist preferences
+        _settingsService.LastExportFormat = SelectedFormat;
+        _settingsService.LastPartitionLimitValue = PartitionLimitValue;
+        _settingsService.LastMessageFilterValue = MessageFilterValue;
+        _settingsService.LastShouldDownloadAssets = ShouldDownloadAssets;
 
         Close(true);
     }

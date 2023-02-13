@@ -26,7 +26,11 @@ public abstract class ExportCommandBase : TokenCommandBase
     [CommandOption(
         "output",
         'o',
-        Description = "Output file or directory path. Directory path should end in a slash."
+        Description =
+            "Output file or directory path. " +
+            "If a directory is specified, file names will be generated automatically based on the channel names and other parameters. " +
+            "Directory path should end with a slash to avoid ambiguity. " +
+            "Supports template tokens, see the documentation for more info."
     )]
     public string OutputPath
     {
@@ -58,7 +62,8 @@ public abstract class ExportCommandBase : TokenCommandBase
     [CommandOption(
         "partition",
         'p',
-        Description = "Split output into partitions, each limited to this number of messages (e.g. '100') or file size (e.g. '10mb')."
+        Description =
+            "Split output into partitions, each limited to this number of messages (e.g. '100') or file size (e.g. '10mb')."
     )]
     public PartitionLimit PartitionLimit { get; init; } = PartitionLimit.Null;
 

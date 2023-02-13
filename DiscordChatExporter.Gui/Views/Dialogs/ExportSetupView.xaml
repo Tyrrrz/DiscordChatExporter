@@ -76,6 +76,86 @@
             BorderThickness="0,1">
             <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
+                    <!--  Output path  -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox
+                            Grid.Column="0"
+                            Margin="16,8,8,8"
+                            materialDesign:HintAssist.Hint="Output path"
+                            materialDesign:HintAssist.IsFloating="True"
+                            Style="{DynamicResource MaterialDesignOutlinedTextBox}"
+                            Text="{Binding OutputPath}">
+                            <TextBox.ToolTip>
+                                <TextBlock>
+                                    <Run Text="Output file or directory path." />
+                                    <Run Text="If a directory is specified, file names will be generated automatically based on the channel names and other parameters." />
+                                    <Run Text="Directory path should end with a slash to avoid ambiguity." />
+                                    <LineBreak />
+                                    <LineBreak />
+                                    <Run Text="Available template tokens:" />
+                                    <LineBreak />
+                                    <Run FontWeight="SemiBold" Text="%g" />
+                                    <Run Text="— guild ID" />
+                                    <LineBreak />
+                                    <Run FontWeight="SemiBold" Text="%G" />
+                                    <Run Text="— guild name" />
+                                    <LineBreak />
+                                    <Run FontWeight="SemiBold" Text="%t" />
+                                    <Run Text="— category ID" />
+                                    <LineBreak />
+                                    <Run FontWeight="SemiBold" Text="%T" />
+                                    <Run Text="— category name" />
+                                    <LineBreak />
+                                    <Run FontWeight="SemiBold" Text="%c" />
+                                    <Run Text="— channel ID" />
+                                    <LineBreak />
+                                    <Run FontWeight="SemiBold" Text="%C" />
+                                    <Run Text="— channel name" />
+                                    <LineBreak />
+                                    <Run FontWeight="SemiBold" Text="%p" />
+                                    <Run Text="— channel position" />
+                                    <LineBreak />
+                                    <Run FontWeight="SemiBold" Text="%P" />
+                                    <Run Text="— category position" />
+                                    <LineBreak />
+                                    <Run FontWeight="SemiBold" Text="%a" />
+                                    <Run Text="— after date" />
+                                    <LineBreak />
+                                    <Run FontWeight="SemiBold" Text="%b" />
+                                    <Run Text="— before date" />
+                                    <LineBreak />
+                                    <Run FontWeight="SemiBold" Text="%d" />
+                                    <Run Text="— current date" />
+                                </TextBlock>
+                            </TextBox.ToolTip>
+                        </TextBox>
+                        <Button
+                            Grid.Column="1"
+                            Height="48"
+                            Margin="0,8,16,8"
+                            Command="{s:Action ShowOutputPathPrompt}"
+                            Style="{DynamicResource MaterialDesignOutlinedButton}">
+                            <materialDesign:PackIcon Width="24" Height="24">
+                                <materialDesign:PackIcon.Style>
+                                    <Style TargetType="{x:Type materialDesign:PackIcon}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsSingleChannel}" Value="True">
+                                                <Setter Property="Kind" Value="FileFind" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsSingleChannel}" Value="False">
+                                                <Setter Property="Kind" Value="FolderSearch" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </materialDesign:PackIcon.Style>
+                            </materialDesign:PackIcon>
+                        </Button>
+                    </Grid>
+
                     <!--  Format  -->
                     <ComboBox
                         Margin="16,8"
@@ -84,7 +164,8 @@
                         IsReadOnly="True"
                         ItemsSource="{Binding AvailableFormats}"
                         SelectedItem="{Binding SelectedFormat}"
-                        Style="{DynamicResource MaterialDesignOutlinedComboBox}">
+                        Style="{DynamicResource MaterialDesignOutlinedComboBox}"
+                        ToolTip="Export format">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Converter={x:Static converters:ExportFormatToStringConverter.Instance}, ConverterCulture={x:Static globalization:CultureInfo.CurrentCulture}}" />

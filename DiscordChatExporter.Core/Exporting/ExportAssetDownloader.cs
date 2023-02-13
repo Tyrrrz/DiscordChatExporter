@@ -15,11 +15,12 @@ namespace DiscordChatExporter.Core.Exporting;
 
 internal partial class ExportAssetDownloader
 {
-    private static readonly AsyncKeyedLocker<string> _locker = new(o =>
+    private static readonly AsyncKeyedLocker<string> Locker = new(o =>
     {
         o.PoolSize = 20;
         o.PoolInitialFill = 1;
     });
+
     private readonly string _workingDirPath;
     private readonly bool _reuse;
 
@@ -37,48 +38,48 @@ internal partial class ExportAssetDownloader
         var fileName = GetFileNameFromUrl(url);
         var filePath = Path.Combine(_workingDirPath, fileName);
 
-        using (await _locker.LockAsync(filePath, cancellationToken).ConfigureAwait(false))
+        using (await Locker.LockAsync(filePath, cancellationToken))
         {
             if (_pathCache.TryGetValue(url, out var cachedFilePath))
                 return cachedFilePath;
 
             // Reuse existing files if we're allowed to
-            if (!_reuse || !File.Exists(filePath))
+            if (_reuse && File.Exists(filePath))
+                return _pathCache[url] = filePath;
+
+            Directory.CreateDirectory(_workingDirPath);
+
+            await Http.ResiliencePolicy.ExecuteAsync(async () =>
             {
-                Directory.CreateDirectory(_workingDirPath);
+                // Download the file
+                using var response = await Http.Client.GetAsync(url, cancellationToken);
+                await using (var output = File.Create(filePath))
+                    await response.Content.CopyToAsync(output, cancellationToken);
 
-                await Http.ResiliencePolicy.ExecuteAsync(async () =>
+                // Try to set the file date according to the last-modified header
+                try
                 {
-                    // Download the file
-                    using var response = await Http.Client.GetAsync(url, cancellationToken);
-                    await using (var output = File.Create(filePath))
-                        await response.Content.CopyToAsync(output, cancellationToken);
+                    var lastModified = response.Content.Headers.TryGetValue("Last-Modified")?.Pipe(s =>
+                        DateTimeOffset.TryParse(s, CultureInfo.InvariantCulture, DateTimeStyles.None, out var instant)
+                            ? instant
+                            : (DateTimeOffset?)null
+                    );
 
-                    // Try to set the file date according to the last-modified header
-                    try
+                    if (lastModified is not null)
                     {
-                        var lastModified = response.Content.Headers.TryGetValue("Last-Modified")?.Pipe(s =>
-                            DateTimeOffset.TryParse(s, CultureInfo.InvariantCulture, DateTimeStyles.None, out var instant)
-                                ? instant
-                                : (DateTimeOffset?)null
-                        );
-
-                        if (lastModified is not null)
-                        {
-                            File.SetCreationTimeUtc(filePath, lastModified.Value.UtcDateTime);
-                            File.SetLastWriteTimeUtc(filePath, lastModified.Value.UtcDateTime);
-                            File.SetLastAccessTimeUtc(filePath, lastModified.Value.UtcDateTime);
-                        }
+                        File.SetCreationTimeUtc(filePath, lastModified.Value.UtcDateTime);
+                        File.SetLastWriteTimeUtc(filePath, lastModified.Value.UtcDateTime);
+                        File.SetLastAccessTimeUtc(filePath, lastModified.Value.UtcDateTime);
                     }
-                    catch
-                    {
-                        // This can apparently fail for some reason.
-                        // https://github.com/Tyrrrz/DiscordChatExporter/issues/585
-                        // Updating file dates is not a critical task, so we'll just
-                        // ignore exceptions thrown here.
-                    }
-                });
-            }
+                }
+                catch
+                {
+                    // This can apparently fail for some reason.
+                    // https://github.com/Tyrrrz/DiscordChatExporter/issues/585
+                    // Updating file dates is not a critical task, so we'll just
+                    // ignore exceptions thrown here.
+                }
+            });
 
             return _pathCache[url] = filePath;
         }

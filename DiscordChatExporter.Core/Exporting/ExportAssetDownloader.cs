@@ -79,9 +79,9 @@ internal partial class ExportAssetDownloader
                     }
                 });
             }
-        }
 
-        return _pathCache[url] = filePath;
+            return _pathCache[url] = filePath;
+        }
     }
 }
 

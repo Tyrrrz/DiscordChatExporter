@@ -21,7 +21,7 @@ namespace DiscordChatExporter.Cli.Tests.Infra;
 
 public static class ExportWrapper
 {
-    private static readonly AsyncKeyedLocker<string> Locks = new(o =>
+    private static readonly AsyncKeyedLocker<string> Locker = new(o =>
     {
         o.PoolSize = 20;
         o.PoolInitialFill = 1;
@@ -47,12 +47,12 @@ public static class ExportWrapper
 
     private static async ValueTask<string> ExportAsync(Snowflake channelId, ExportFormat format)
     {
-        // Lock separately for each channel and format
-        using (await Locks.LockAsync($"{channelId}_{format}").ConfigureAwait(false))
-        {
-            var fileName = channelId.ToString() + '.' + format.GetFileExtension();
-            var filePath = Path.Combine(DirPath, fileName);
+        var fileName = channelId.ToString() + '.' + format.GetFileExtension();
+        var filePath = Path.Combine(DirPath, fileName);
 
+        // Lock separately for each channel and format
+        using (await Locker.LockAsync(filePath))
+        {
             // Perform export only if it hasn't been done before
             if (!File.Exists(filePath))
             {

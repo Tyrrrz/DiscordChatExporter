@@ -15,7 +15,7 @@ public class ExportChannelsCommand : ExportCommandBase
     [CommandOption(
         "channel",
         'c',
-        Description = "Channel ID(s)."
+        Description = "Channel ID(s). If provided with a category ID, all channels in that category will be exported."
     )]
     public required IReadOnlyList<Snowflake> ChannelIds { get; init; }
 

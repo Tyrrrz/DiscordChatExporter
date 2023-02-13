@@ -15,6 +15,7 @@ using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Core.Exporting.Filtering;
 using DiscordChatExporter.Core.Exporting.Partitioning;
 using DiscordChatExporter.Core.Utils;
+using DiscordChatExporter.Core.Utils.Extensions;
 using Gress;
 
 namespace DiscordChatExporter.Cli.Commands.Base;
@@ -233,12 +234,36 @@ public abstract class ExportCommandBase : TokenCommandBase
     protected async ValueTask ExecuteAsync(IConsole console, IReadOnlyList<Snowflake> channelIds)
     {
         var cancellationToken = console.RegisterCancellationHandler();
+
+        await console.Output.WriteLineAsync("Resolving channel(s)...");
+
         var channels = new List<Channel>();
+        var guildChannelMap = new Dictionary<Snowflake, IReadOnlyList<Channel>>();
 
         foreach (var channelId in channelIds)
         {
             var channel = await Discord.GetChannelAsync(channelId, cancellationToken);
-            channels.Add(channel);
+
+            // Unwrap categories
+            if (channel.Kind == ChannelKind.GuildCategory)
+            {
+                var guildChannels =
+                    guildChannelMap.GetValueOrDefault(channel.GuildId) ??
+                    await Discord.GetGuildChannelsAsync(channel.GuildId, cancellationToken);
+
+                foreach (var guildChannel in guildChannels)
+                {
+                    if (guildChannel.Category.Id == channel.Id)
+                        channels.Add(guildChannel);
+                }
+
+                // Cache the guild channels to avoid redundant work
+                guildChannelMap[channel.GuildId] = guildChannels;
+            }
+            else
+            {
+                channels.Add(channel);
+            }
         }
 
         await ExecuteAsync(console, channels);

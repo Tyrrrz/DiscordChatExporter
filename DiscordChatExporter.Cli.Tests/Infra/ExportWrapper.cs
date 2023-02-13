@@ -20,7 +20,7 @@ namespace DiscordChatExporter.Cli.Tests.Infra;
 
 public static class ExportWrapper
 {
-    private static readonly ConcurrentDictionary<string, SemaphoreSlim> Locks = new();
+    private static readonly ConcurrentDictionary<string, SemaphoreSlim> Locks = new(StringComparer.Ordinal);
 
     private static readonly string DirPath = Path.Combine(
         Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? Directory.GetCurrentDirectory(),
@@ -42,15 +42,15 @@ public static class ExportWrapper
 
     private static async ValueTask<string> ExportAsync(Snowflake channelId, ExportFormat format)
     {
+        var fileName = channelId.ToString() + '.' + format.GetFileExtension();
+        var filePath = Path.Combine(DirPath, fileName);
+
         // Lock separately for each channel and format
-        var channelLock = Locks.GetOrAdd($"{channelId}_{format}", _ => new SemaphoreSlim(1, 1));
+        var channelLock = Locks.GetOrAdd(filePath, _ => new SemaphoreSlim(1, 1));
         await channelLock.WaitAsync();
 
         try
         {
-            var fileName = channelId.ToString() + '.' + format.GetFileExtension();
-            var filePath = Path.Combine(DirPath, fileName);
-
             // Perform export only if it hasn't been done before
             if (!File.Exists(filePath))
             {

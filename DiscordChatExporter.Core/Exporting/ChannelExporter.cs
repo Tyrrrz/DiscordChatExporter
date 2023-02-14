@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
-using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Utils.Extensions;
 using Gress;
@@ -24,11 +23,16 @@ public class ChannelExporter
         CancellationToken cancellationToken = default)
     {
         // Build context
-        var contextMembers = new HashSet<Member>(IdBasedEqualityComparer.Instance);
-        var contextChannels = await _discord.GetGuildChannelsAsync(request.Guild.Id, cancellationToken);
-        var contextRoles = await _discord.GetGuildRolesAsync(request.Guild.Id, cancellationToken);
+        var contextMembers = new Dictionary<Snowflake, Member>();
+
+        var contextChannels = (await _discord.GetGuildChannelsAsync(request.Guild.Id, cancellationToken))
+            .ToDictionary(c => c.Id);
+
+        var contextRoles = (await _discord.GetGuildRolesAsync(request.Guild.Id, cancellationToken))
+            .ToDictionary(r => r.Id);
 
         var context = new ExportContext(
+            _discord,
             request,
             contextMembers,
             contextChannels,
@@ -38,9 +42,6 @@ public class ChannelExporter
         // Export messages
         await using var messageExporter = new MessageExporter(context);
 
-        var exportedAnything = false;
-        var encounteredUsers = new HashSet<User>(IdBasedEqualityComparer.Instance);
-
         await foreach (var message in _discord.GetMessagesAsync(
                            request.Channel.Id,
                            request.After,
@@ -48,16 +49,10 @@ public class ChannelExporter
                            progress,
                            cancellationToken))
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            // Skip messages that fail to pass the supplied filter
-            if (!request.MessageFilter.IsMatch(message))
-                continue;
-
             // Resolve members for referenced users
             foreach (var referencedUser in message.MentionedUsers.Prepend(message.Author))
             {
-                if (!encounteredUsers.Add(referencedUser))
+                if (contextMembers.ContainsKey(referencedUser.Id))
                     continue;
 
                 var member = await _discord.GetGuildMemberAsync(
@@ -66,16 +61,16 @@ public class ChannelExporter
                     cancellationToken
                 );
 
-                contextMembers.Add(member);
+                contextMembers[member.Id] = member;
             }
 
-            // Export message
-            await messageExporter.ExportMessageAsync(message, cancellationToken);
-            exportedAnything = true;
+            // Export the message
+            if (request.MessageFilter.IsMatch(message))
+                await messageExporter.ExportMessageAsync(message, cancellationToken);
         }
 
         // Throw if no messages were exported
-        if (!exportedAnything)
+        if (messageExporter.MessagesExported <= 0)
             throw DiscordChatExporterException.ChannelIsEmpty();
     }
 }

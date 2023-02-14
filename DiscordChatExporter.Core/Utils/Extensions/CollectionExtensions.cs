@@ -15,4 +15,13 @@ public static class CollectionExtensions
         foreach (var o in source)
             yield return (o, i++);
     }
+
+    public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source) where T : class
+    {
+        foreach (var o in source)
+        {
+            if (o is not null)
+                yield return o;
+        }
+    }
 }

@@ -13,6 +13,8 @@ internal partial class MessageExporter : IAsyncDisposable
     private int _partitionIndex;
     private MessageWriter? _writer;
 
+    public long MessagesExported { get; private set; }
+
     public MessageExporter(ExportContext context)
     {
         _context = context;
@@ -62,6 +64,7 @@ internal partial class MessageExporter : IAsyncDisposable
     {
         var writer = await GetWriterAsync(cancellationToken);
         await writer.WriteMessageAsync(message, cancellationToken);
+        MessagesExported++;
     }
 
     public async ValueTask DisposeAsync() => await ResetWriterAsync();

@@ -12,31 +12,17 @@ using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting;
 
-internal class ExportContext
+internal record ExportContext(
+    DiscordClient Discord,
+    ExportRequest Request,
+    IReadOnlyDictionary<Snowflake, Member> Members,
+    IReadOnlyDictionary<Snowflake, Channel> Channels,
+    IReadOnlyDictionary<Snowflake, Role> Roles)
 {
-    private readonly ExportAssetDownloader _assetDownloader;
-
-    public ExportRequest Request { get; }
-
-    public IReadOnlyCollection<Member> Members { get; }
-
-    public IReadOnlyCollection<Channel> Channels { get; }
-
-    public IReadOnlyCollection<Role> Roles { get; }
-
-    public ExportContext(
-        ExportRequest request,
-        IReadOnlyCollection<Member> members,
-        IReadOnlyCollection<Channel> channels,
-        IReadOnlyCollection<Role> roles)
-    {
-        Request = request;
-        Members = members;
-        Channels = channels;
-        Roles = roles;
-
-        _assetDownloader = new ExportAssetDownloader(request.OutputAssetsDirPath, request.ShouldReuseAssets);
-    }
+    private readonly ExportAssetDownloader _assetDownloader = new(
+        Request.OutputAssetsDirPath,
+        Request.ShouldReuseAssets
+    );
 
     public string FormatDate(DateTimeOffset instant) => Request.DateFormat switch
     {
@@ -45,18 +31,23 @@ internal class ExportContext
         var format => instant.ToLocalString(format)
     };
 
-    public Member? TryGetMember(Snowflake id) => Members.FirstOrDefault(m => m.Id == id);
+    public Member? TryGetMember(Snowflake id) => Members.GetValueOrDefault(id);
 
-    public Channel? TryGetChannel(Snowflake id) => Channels.FirstOrDefault(c => c.Id == id);
+    public Channel? TryGetChannel(Snowflake id) => Channels.GetValueOrDefault(id);
 
-    public Role? TryGetRole(Snowflake id) => Roles.FirstOrDefault(r => r.Id == id);
+    public Role? TryGetRole(Snowflake id) => Roles.GetValueOrDefault(id);
 
     public Color? TryGetUserColor(Snowflake id)
     {
         var member = TryGetMember(id);
-        var roles = member?.RoleIds.Join(Roles, i => i, r => r.Id, (_, role) => role);
 
-        return roles?
+        var memberRoles = member?
+            .RoleIds
+            .Select(TryGetRole)
+            .WhereNotNull()
+            .ToArray();
+
+        return memberRoles?
             .Where(r => r.Color is not null)
             .OrderByDescending(r => r.Position)
             .Select(r => r.Color)

@@ -113,10 +113,18 @@ public class ExportSetupViewModel : DialogScreen
         }
     }
 
-    public bool CanConfirm => !string.IsNullOrWhiteSpace(OutputPath);
-
     public void Confirm()
     {
+        // Prompt the output path if it's not set yet
+        if (string.IsNullOrWhiteSpace(OutputPath))
+        {
+            ShowOutputPathPrompt();
+
+            // If the output path is still not set, cancel the export
+            if (string.IsNullOrWhiteSpace(OutputPath))
+                return;
+        }
+
         // Persist preferences
         _settingsService.LastExportFormat = SelectedFormat;
         _settingsService.LastPartitionLimitValue = PartitionLimitValue;

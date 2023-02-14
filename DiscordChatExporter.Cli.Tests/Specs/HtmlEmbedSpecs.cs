@@ -156,4 +156,19 @@ public class HtmlEmbedSpecs
 
         message.QuerySelectorAll(".chatlog__embed").Should().ContainSingle();
     }
+
+    [Fact]
+    public async Task Message_with_a_guild_invite_link_is_rendered_with_a_widget()
+    {
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/649
+
+        // Act
+        var message = await ExportWrapper.GetMessageAsHtmlAsync(
+            ChannelIds.EmbedTestCases,
+            Snowflake.Parse("1075116548966064128")
+        );
+
+        // Assert
+        message.Text().Should().Contain("DiscordChatExporter TestServer");
+    }
 }

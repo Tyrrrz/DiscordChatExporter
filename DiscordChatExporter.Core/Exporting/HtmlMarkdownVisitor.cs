@@ -130,7 +130,7 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
         // Try to extract the message ID if the link points to a Discord message
         var linkedMessageId = Regex.Match(
             link.Url,
-            "^https?://(?:discord|discordapp).com/channels/.*?/(\\d+)/?$"
+            @"^https?://(?:discord|discordapp)\.com/channels/.*?/(\d+)/?$"
         ).Groups[1].Value;
 
         _buffer.Append(

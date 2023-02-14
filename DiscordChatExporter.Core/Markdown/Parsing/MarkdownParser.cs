@@ -385,12 +385,32 @@ internal static partial class MarkdownParser
     private static IReadOnlyList<MarkdownNode> Parse(StringSegment segment) =>
         Parse(segment, AggregateNodeMatcher);
 
+    public static IReadOnlyList<MarkdownNode> Parse(string markdown) =>
+        Parse(new StringSegment(markdown));
+
     private static IReadOnlyList<MarkdownNode> ParseMinimal(StringSegment segment) =>
         Parse(segment, MinimalAggregateNodeMatcher);
 
-    public static IReadOnlyList<MarkdownNode> Parse(string input) =>
-        Parse(new StringSegment(input));
+    public static IReadOnlyList<MarkdownNode> ParseMinimal(string markdown) =>
+        ParseMinimal(new StringSegment(markdown));
 
-    public static IReadOnlyList<MarkdownNode> ParseMinimal(string input) =>
-        ParseMinimal(new StringSegment(input));
+    private static void ExtractLinks(IEnumerable<MarkdownNode> nodes, ICollection<LinkNode> links)
+    {
+        foreach (var node in nodes)
+        {
+            if (node is LinkNode linkNode)
+                links.Add(linkNode);
+
+            if (node is IContainerNode containerNode)
+                ExtractLinks(containerNode.Children, links);
+        }
+    }
+
+    public static IReadOnlyList<LinkNode> ExtractLinks(string markdown)
+    {
+        var links = new List<LinkNode>();
+        ExtractLinks(Parse(markdown), links);
+
+        return links;
+    }
 }

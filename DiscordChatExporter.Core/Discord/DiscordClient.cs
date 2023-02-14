@@ -260,8 +260,15 @@ public class DiscordClient
             return null;
 
         var response = await TryGetJsonResponseAsync($"guilds/{guildId}/members/{memberId}", cancellationToken);
-
         return response?.Pipe(Member.Parse);
+    }
+
+    public async ValueTask<Invite?> TryGetGuildInviteAsync(
+        string code,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await TryGetJsonResponseAsync($"invites/{code}", cancellationToken);
+        return response?.Pipe(Invite.Parse);
     }
 
     public async ValueTask<ChannelCategory> GetChannelCategoryAsync(

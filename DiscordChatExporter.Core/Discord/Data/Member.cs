@@ -19,12 +19,6 @@ public partial record Member(
 
 public partial record Member
 {
-    public static Member CreateForUser(User user) => new(
-        user,
-        user.Name,
-        Array.Empty<Snowflake>()
-    );
-
     public static Member Parse(JsonElement json)
     {
         var user = json.GetProperty("user").Pipe(User.Parse);

@@ -150,11 +150,10 @@ internal class JsonMessageWriter : MessageWriter
             await WriteEmbedImageAsync(embed.Thumbnail, cancellationToken);
         }
 
-        // Legacy: backwards-compatibility for old embeds with a single image
-        if (embed.Images.Count > 0)
+        if (embed.Image is not null)
         {
             _writer.WritePropertyName("image");
-            await WriteEmbedImageAsync(embed.Images[0], cancellationToken);
+            await WriteEmbedImageAsync(embed.Image, cancellationToken);
         }
 
         if (embed.Footer is not null)

@@ -23,6 +23,10 @@ public partial record Embed(
     EmbedVideo? Video,
     EmbedFooter? Footer)
 {
+    // Embeds can only have one image according to the API model,
+    // but the client can render multiple images in some cases.
+    public EmbedImage? Image => Images.FirstOrDefault();
+
     public SpotifyTrackEmbedProjection? TryGetSpotifyTrack() =>
         SpotifyTrackEmbedProjection.TryResolve(this);
 

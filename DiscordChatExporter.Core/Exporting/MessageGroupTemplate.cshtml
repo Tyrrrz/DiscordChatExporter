@@ -392,11 +392,11 @@
                             </div>
                         }
                         // Generic image embed
-                        else if (embed.Kind == EmbedKind.Image && !string.IsNullOrWhiteSpace(embed.Url))
+                        else if (embed.Kind == EmbedKind.Image && !string.IsNullOrWhiteSpace(embed.Image?.Url))
                         {
                             <div class="chatlog__embed">
-                                <a href="@await ResolveAssetUrlAsync(embed.Url)">
-                                    <img class="chatlog__embed-generic-image" src="@await ResolveAssetUrlAsync(embed.Url)" alt="Embedded image" loading="lazy">
+                                <a href="@await ResolveAssetUrlAsync(embed.Image.ProxyUrl ?? embed.Image.Url)">
+                                    <img class="chatlog__embed-generic-image" src="@await ResolveAssetUrlAsync(embed.Image.ProxyUrl ?? embed.Image.Url)" alt="Embedded image" loading="lazy">
                                 </a>
                             </div>
                         }

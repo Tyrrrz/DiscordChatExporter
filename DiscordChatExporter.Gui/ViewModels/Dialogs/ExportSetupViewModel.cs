@@ -101,11 +101,15 @@ public class ExportSetupViewModel : DialogScreen
             var extension = SelectedFormat.GetFileExtension();
             var filter = $"{extension.ToUpperInvariant()} files|*.{extension}";
 
-            OutputPath = _dialogManager.PromptSaveFilePath(filter, defaultFileName);
+            var outputPath = _dialogManager.PromptSaveFilePath(filter, defaultFileName);
+            if (!string.IsNullOrWhiteSpace(outputPath))
+                OutputPath = outputPath;
         }
         else
         {
-            OutputPath = _dialogManager.PromptDirectoryPath();
+            var outputPath = _dialogManager.PromptDirectoryPath();
+            if (!string.IsNullOrWhiteSpace(outputPath))
+                OutputPath = outputPath;
         }
     }
 

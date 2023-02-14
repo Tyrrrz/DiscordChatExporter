@@ -12,17 +12,48 @@ using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting;
 
-internal record ExportContext(
-    DiscordClient Discord,
-    ExportRequest Request,
-    IReadOnlyDictionary<Snowflake, Member> Members,
-    IReadOnlyDictionary<Snowflake, Channel> Channels,
-    IReadOnlyDictionary<Snowflake, Role> Roles)
+internal class ExportContext
 {
-    private readonly ExportAssetDownloader _assetDownloader = new(
-        Request.OutputAssetsDirPath,
-        Request.ShouldReuseAssets
-    );
+    private readonly Dictionary<Snowflake, Member?> _members = new();
+    private readonly Dictionary<Snowflake, Channel> _channels = new();
+    private readonly Dictionary<Snowflake, Role> _roles = new();
+    private readonly ExportAssetDownloader _assetDownloader;
+
+    public DiscordClient Discord { get; }
+    public ExportRequest Request { get; }
+
+    public ExportContext(DiscordClient discord,
+        ExportRequest request)
+    {
+        Discord = discord;
+        Request = request;
+
+        _assetDownloader = new ExportAssetDownloader(
+            request.OutputAssetsDirPath,
+            request.ShouldReuseAssets
+        );
+    }
+
+    public async ValueTask PopulateChannelsAndRolesAsync(CancellationToken cancellationToken = default)
+    {
+        await foreach (var channel in Discord.GetGuildChannelsAsync(Request.Guild.Id, cancellationToken))
+            _channels[channel.Id] = channel;
+
+        await foreach (var role in Discord.GetGuildRolesAsync(Request.Guild.Id, cancellationToken))
+            _roles[role.Id] = role;
+    }
+
+    // Because members are not pulled in bulk, we need to populate them on demand
+    public async ValueTask PopulateMemberAsync(Snowflake id, CancellationToken cancellationToken = default)
+    {
+        if (_members.ContainsKey(id))
+            return;
+
+        var member = await Discord.TryGetGuildMemberAsync(Request.Guild.Id, id, cancellationToken);
+
+        // Store the result even if it's null, to avoid re-fetching non-existing members
+        _members[id] = member;
+    }
 
     public string FormatDate(DateTimeOffset instant) => Request.DateFormat switch
     {
@@ -31,11 +62,11 @@ internal record ExportContext(
         var format => instant.ToLocalString(format)
     };
 
-    public Member? TryGetMember(Snowflake id) => Members.GetValueOrDefault(id);
+    public Member? TryGetMember(Snowflake id) => _members.GetValueOrDefault(id);
 
-    public Channel? TryGetChannel(Snowflake id) => Channels.GetValueOrDefault(id);
+    public Channel? TryGetChannel(Snowflake id) => _channels.GetValueOrDefault(id);
 
-    public Role? TryGetRole(Snowflake id) => Roles.GetValueOrDefault(id);
+    public Role? TryGetRole(Snowflake id) => _roles.GetValueOrDefault(id);
 
     public Color? TryGetUserColor(Snowflake id)
     {

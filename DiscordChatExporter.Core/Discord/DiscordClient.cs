@@ -251,16 +251,17 @@ public class DiscordClient
             yield return Role.Parse(roleJson);
     }
 
-    public async ValueTask<Member> GetGuildMemberAsync(
+    public async ValueTask<Member?> TryGetGuildMemberAsync(
         Snowflake guildId,
-        User user,
+        Snowflake memberId,
         CancellationToken cancellationToken = default)
     {
         if (guildId == Guild.DirectMessages.Id)
-            return Member.CreateForUser(user);
+            return null;
 
-        var response = await TryGetJsonResponseAsync($"guilds/{guildId}/members/{user.Id}", cancellationToken);
-        return response?.Pipe(Member.Parse) ?? Member.CreateForUser(user);
+        var response = await TryGetJsonResponseAsync($"guilds/{guildId}/members/{memberId}", cancellationToken);
+
+        return response?.Pipe(Member.Parse);
     }
 
     public async ValueTask<ChannelCategory> GetChannelCategoryAsync(

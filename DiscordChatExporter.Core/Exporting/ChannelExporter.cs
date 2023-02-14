@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord;
-using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exceptions;
-using DiscordChatExporter.Core.Utils.Extensions;
 using Gress;
 
 namespace DiscordChatExporter.Core.Exporting;
@@ -23,21 +20,8 @@ public class ChannelExporter
         CancellationToken cancellationToken = default)
     {
         // Build context
-        var contextMembers = new Dictionary<Snowflake, Member>();
-
-        var contextChannels = (await _discord.GetGuildChannelsAsync(request.Guild.Id, cancellationToken))
-            .ToDictionary(c => c.Id);
-
-        var contextRoles = (await _discord.GetGuildRolesAsync(request.Guild.Id, cancellationToken))
-            .ToDictionary(r => r.Id);
-
-        var context = new ExportContext(
-            _discord,
-            request,
-            contextMembers,
-            contextChannels,
-            contextRoles
-        );
+        var context = new ExportContext(_discord, request);
+        await context.PopulateChannelsAndRolesAsync(cancellationToken);
 
         // Export messages
         await using var messageExporter = new MessageExporter(context);
@@ -49,20 +33,9 @@ public class ChannelExporter
                            progress,
                            cancellationToken))
         {
-            // Resolve members for referenced users
-            foreach (var referencedUser in message.MentionedUsers.Prepend(message.Author))
-            {
-                if (contextMembers.ContainsKey(referencedUser.Id))
-                    continue;
-
-                var member = await _discord.GetGuildMemberAsync(
-                    request.Guild.Id,
-                    referencedUser,
-                    cancellationToken
-                );
-
-                contextMembers[member.Id] = member;
-            }
+            // Resolve members for the author and mentioned users
+            foreach (var user in message.MentionedUsers.Prepend(message.Author))
+                await context.PopulateMemberAsync(user.Id, cancellationToken);
 
             // Export the message
             if (request.MessageFilter.IsMatch(message))

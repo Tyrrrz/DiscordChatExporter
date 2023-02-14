@@ -66,7 +66,8 @@ public class DiscordClient
             var resetAfterDelay = response
                 .Headers
                 .TryGetValue("X-RateLimit-Reset-After")?
-                .Pipe(s => TimeSpan.FromSeconds(double.Parse(s, CultureInfo.InvariantCulture)));
+                .Pipe(s => double.Parse(s, CultureInfo.InvariantCulture))
+                .Pipe(TimeSpan.FromSeconds);
 
             if (remainingRequestCount <= 0 && resetAfterDelay is not null)
             {

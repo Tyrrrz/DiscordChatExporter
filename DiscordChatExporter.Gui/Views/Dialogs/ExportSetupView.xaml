@@ -77,14 +77,9 @@
             <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
                     <!--  Output path  -->
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+                    <Grid Margin="16,8">
                         <TextBox
-                            Grid.Column="0"
-                            Margin="16,8,8,8"
+                            Padding="16,16,42,16"
                             materialDesign:HintAssist.Hint="Output path"
                             materialDesign:HintAssist.IsFloating="True"
                             Style="{DynamicResource MaterialDesignOutlinedTextBox}"
@@ -134,25 +129,14 @@
                             </TextBox.ToolTip>
                         </TextBox>
                         <Button
-                            Grid.Column="1"
-                            Height="48"
-                            Margin="0,8,16,8"
+                            Width="24"
+                            Height="24"
+                            Margin="0,0,12,0"
+                            Padding="0"
+                            HorizontalAlignment="Right"
                             Command="{s:Action ShowOutputPathPrompt}"
-                            Style="{DynamicResource MaterialDesignOutlinedButton}">
-                            <materialDesign:PackIcon Width="24" Height="24">
-                                <materialDesign:PackIcon.Style>
-                                    <Style TargetType="{x:Type materialDesign:PackIcon}">
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsSingleChannel}" Value="True">
-                                                <Setter Property="Kind" Value="FileFind" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding IsSingleChannel}" Value="False">
-                                                <Setter Property="Kind" Value="FolderSearch" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </materialDesign:PackIcon.Style>
-                            </materialDesign:PackIcon>
+                            Style="{DynamicResource MaterialDesignToolForegroundButton}">
+                            <materialDesign:PackIcon Kind="FolderOpen" />
                         </Button>
                     </Grid>
 

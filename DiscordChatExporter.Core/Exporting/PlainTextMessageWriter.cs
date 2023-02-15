@@ -18,10 +18,12 @@ internal class PlainTextMessageWriter : MessageWriter
         _writer = new StreamWriter(stream);
     }
 
-    private ValueTask<string> FormatMarkdownAsync(
+    private async ValueTask<string> FormatMarkdownAsync(
         string markdown,
         CancellationToken cancellationToken = default) =>
-        PlainTextMarkdownVisitor.FormatAsync(Context, markdown, cancellationToken);
+        Context.Request.ShouldFormatMarkdown
+            ? await PlainTextMarkdownVisitor.FormatAsync(Context, markdown, cancellationToken)
+            : markdown;
 
     private async ValueTask WriteMessageHeaderAsync(Message message)
     {

@@ -19,6 +19,7 @@ public partial record ExportRequest(
     Snowflake? Before,
     PartitionLimit PartitionLimit,
     MessageFilter MessageFilter,
+    bool ShouldFormatMarkdown,
     bool ShouldDownloadAssets,
     bool ShouldReuseAssets,
     string DateFormat)

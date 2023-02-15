@@ -31,6 +31,8 @@ public partial class SettingsService : SettingsManager
 
     public string? LastMessageFilterValue { get; set; }
 
+    public bool LastShouldFormatMarkdown { get; set; } = true;
+
     public bool LastShouldDownloadAssets { get; set; }
 
     public SettingsService()

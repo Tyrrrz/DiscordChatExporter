@@ -4,7 +4,7 @@
 @inherits RazorBlade.HtmlTemplate
 
 @functions {
-    public required ExportContext ExportContext { get; init; }
+    public required ExportContext Context { get; init; }
 
     public required string ThemeName { get; init; }
 }
@@ -19,20 +19,22 @@
         $"https://cdn.jsdelivr.net/gh/Tyrrrz/DiscordFonts@master/whitney-{weight}.woff";
 
     ValueTask<string> ResolveAssetUrlAsync(string url) =>
-        ExportContext.ResolveAssetUrlAsync(url, CancellationToken);
+        Context.ResolveAssetUrlAsync(url, CancellationToken);
 
     string FormatDate(DateTimeOffset instant) =>
-        ExportContext.FormatDate(instant);
+        Context.FormatDate(instant);
 
-    ValueTask<string> FormatMarkdownAsync(string markdown) =>
-        HtmlMarkdownVisitor.FormatAsync(ExportContext, markdown, true, CancellationToken);
+    async ValueTask<string> FormatMarkdownAsync(string markdown) =>
+        Context.Request.ShouldFormatMarkdown
+            ? await HtmlMarkdownVisitor.FormatAsync(Context, markdown, true, CancellationToken)
+            : markdown;
 }
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>@ExportContext.Request.Guild.Name - @ExportContext.Request.Channel.Name</title>
+    <title>@Context.Request.Guild.Name - @Context.Request.Channel.Name</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
 
@@ -914,31 +916,31 @@
 
 <div class="preamble">
     <div class="preamble__guild-icon-container">
-        <img class="preamble__guild-icon" src="@await ResolveAssetUrlAsync(ExportContext.Request.Channel.IconUrl ?? ExportContext.Request.Guild.IconUrl)" alt="Guild icon" loading="lazy">
+        <img class="preamble__guild-icon" src="@await ResolveAssetUrlAsync(Context.Request.Channel.IconUrl ?? Context.Request.Guild.IconUrl)" alt="Guild icon" loading="lazy">
     </div>
     <div class="preamble__entries-container">
-        <div class="preamble__entry">@ExportContext.Request.Guild.Name</div>
-        <div class="preamble__entry">@ExportContext.Request.Channel.Category.Name / @ExportContext.Request.Channel.Name</div>
+        <div class="preamble__entry">@Context.Request.Guild.Name</div>
+        <div class="preamble__entry">@Context.Request.Channel.Category.Name / @Context.Request.Channel.Name</div>
 
-        @if (!string.IsNullOrWhiteSpace(ExportContext.Request.Channel.Topic))
+        @if (!string.IsNullOrWhiteSpace(Context.Request.Channel.Topic))
         {
-            <div class="preamble__entry preamble__entry--small">@Html.Raw(await FormatMarkdownAsync(ExportContext.Request.Channel.Topic))</div>
+            <div class="preamble__entry preamble__entry--small">@Html.Raw(await FormatMarkdownAsync(Context.Request.Channel.Topic))</div>
         }
 
-        @if (ExportContext.Request.After is not null || ExportContext.Request.Before is not null)
+        @if (Context.Request.After is not null || Context.Request.Before is not null)
         {
             <div class="preamble__entry preamble__entry--small">
-                @if (ExportContext.Request.After is not null && ExportContext.Request.Before is not null)
+                @if (Context.Request.After is not null && Context.Request.Before is not null)
                 {
-                    @($"Between {FormatDate(ExportContext.Request.After.Value.ToDate())} and {FormatDate(ExportContext.Request.Before.Value.ToDate())}")
+                    @($"Between {FormatDate(Context.Request.After.Value.ToDate())} and {FormatDate(Context.Request.Before.Value.ToDate())}")
                 }
-                else if (ExportContext.Request.After is not null)
+                else if (Context.Request.After is not null)
                 {
-                    @($"After {FormatDate(ExportContext.Request.After.Value.ToDate())}")
+                    @($"After {FormatDate(Context.Request.After.Value.ToDate())}")
                 }
-                else if (ExportContext.Request.Before is not null)
+                else if (Context.Request.Before is not null)
                 {
-                    @($"Before {FormatDate(ExportContext.Request.Before.Value.ToDate())}")
+                    @($"Before {FormatDate(Context.Request.Before.Value.ToDate())}")
                 }
             </div>
         }

@@ -81,6 +81,12 @@ public abstract class ExportCommandBase : TokenCommandBase
     public int ParallelLimit { get; init; } = 1;
 
     [CommandOption(
+        "markdown",
+        Description = "Process markdown, mentions, and other special tokens."
+    )]
+    public bool ShouldFormatMarkdown { get; init; } = true;
+
+    [CommandOption(
         "media",
         Description = "Download assets referenced by the export (user avatars, attached files, embedded images, etc.)."
     )]
@@ -171,6 +177,7 @@ public abstract class ExportCommandBase : TokenCommandBase
                                     Before,
                                     PartitionLimit,
                                     MessageFilter,
+                                    ShouldFormatMarkdown,
                                     ShouldDownloadAssets,
                                     ShouldReuseAssets,
                                     DateFormat

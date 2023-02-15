@@ -75,7 +75,7 @@ internal class HtmlMessageWriter : MessageWriter
             Minify(
                 await new PreambleTemplate
                 {
-                    ExportContext = Context,
+                    Context = Context,
                     ThemeName = _themeName
                 }.RenderAsync(cancellationToken)
             )
@@ -90,7 +90,7 @@ internal class HtmlMessageWriter : MessageWriter
             Minify(
                 await new MessageGroupTemplate
                 {
-                    ExportContext = Context,
+                    Context = Context,
                     Messages = messages
                 }.RenderAsync(cancellationToken)
             )

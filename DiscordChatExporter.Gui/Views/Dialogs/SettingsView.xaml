@@ -82,22 +82,6 @@
                             IsChecked="{Binding IsTokenPersisted}" />
                     </DockPanel>
 
-                    <!--  Reuse assets  -->
-                    <DockPanel
-                        Margin="16,8"
-                        Background="Transparent"
-                        LastChildFill="False"
-                        ToolTip="Reuse previously downloaded assets to avoid redundant requests">
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            DockPanel.Dock="Left"
-                            Text="Reuse downloaded assets" />
-                        <ToggleButton
-                            VerticalAlignment="Center"
-                            DockPanel.Dock="Right"
-                            IsChecked="{Binding ShouldReuseAssets}" />
-                    </DockPanel>
-
                     <!--  Date format  -->
                     <DockPanel
                         Margin="16,8"

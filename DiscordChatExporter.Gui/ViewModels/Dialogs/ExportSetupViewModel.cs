@@ -63,6 +63,8 @@ public class ExportSetupViewModel : DialogScreen
 
     public bool ShouldDownloadAssets { get; set; }
 
+    public bool ShouldReuseAssets { get; set; }
+
     public bool IsAdvancedSectionDisplayed { get; set; }
 
     public ExportSetupViewModel(DialogManager dialogManager, SettingsService settingsService)
@@ -76,6 +78,7 @@ public class ExportSetupViewModel : DialogScreen
         MessageFilterValue = _settingsService.LastMessageFilterValue;
         ShouldFormatMarkdown = _settingsService.LastShouldFormatMarkdown;
         ShouldDownloadAssets = _settingsService.LastShouldDownloadAssets;
+        ShouldReuseAssets = _settingsService.LastShouldReuseAssets;
 
         // Show the "advanced options" section by default if any
         // of the advanced options are set to non-default values.
@@ -134,6 +137,7 @@ public class ExportSetupViewModel : DialogScreen
         _settingsService.LastMessageFilterValue = MessageFilterValue;
         _settingsService.LastShouldFormatMarkdown = ShouldFormatMarkdown;
         _settingsService.LastShouldDownloadAssets = ShouldDownloadAssets;
+        _settingsService.LastShouldReuseAssets = ShouldReuseAssets;
 
         Close(true);
     }

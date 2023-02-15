@@ -38,12 +38,6 @@ public class SettingsViewModel : DialogScreen
         set => _settingsService.ParallelLimit = Math.Clamp(value, 1, 10);
     }
 
-    public bool ShouldReuseAssets
-    {
-        get => _settingsService.ShouldReuseAssets;
-        set => _settingsService.ShouldReuseAssets = value;
-    }
-
     public SettingsViewModel(SettingsService settingsService) =>
         _settingsService = settingsService;
 }

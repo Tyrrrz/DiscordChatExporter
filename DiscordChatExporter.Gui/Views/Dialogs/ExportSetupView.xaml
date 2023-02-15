@@ -267,6 +267,24 @@
                                 VerticalAlignment="Center"
                                 IsChecked="{Binding ShouldDownloadAssets}" />
                         </Grid>
+
+                        <!--  Reuse assets  -->
+                        <Grid Margin="16,8" ToolTip="Reuse previously downloaded assets to avoid redundant requests">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                Grid.Column="0"
+                                VerticalAlignment="Center"
+                                Text="Reuse assets" />
+                            <ToggleButton
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                IsChecked="{Binding ShouldReuseAssets}" />
+                        </Grid>
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>

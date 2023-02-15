@@ -19,8 +19,6 @@ public partial class SettingsService : SettingsManager
 
     public int ParallelLimit { get; set; } = 1;
 
-    public bool ShouldReuseAssets { get; set; }
-
     public Version? LastAppVersion { get; set; }
 
     public string? LastToken { get; set; }
@@ -34,6 +32,8 @@ public partial class SettingsService : SettingsManager
     public bool LastShouldFormatMarkdown { get; set; } = true;
 
     public bool LastShouldDownloadAssets { get; set; }
+
+    public bool LastShouldReuseAssets { get; set; }
 
     public SettingsService()
     {

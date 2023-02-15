@@ -10,7 +10,7 @@ using JsonExtensions.Reading;
 namespace DiscordChatExporter.Core.Discord.Data;
 
 // https://discord.com/developers/docs/resources/channel#message-object
-public record Message(
+public partial record Message(
     Snowflake Id,
     MessageKind Kind,
     MessageFlags Flags,
@@ -26,7 +26,27 @@ public record Message(
     IReadOnlyList<Reaction> Reactions,
     IReadOnlyList<User> MentionedUsers,
     MessageReference? Reference,
-    Message? ReferencedMessage) : IHasId
+    Message? ReferencedMessage,
+    Interaction? Interaction) : IHasId
+{
+    public bool IsReplyLike => Kind == MessageKind.Reply || Interaction is not null;
+
+    public IEnumerable<User> GetReferencedUsers()
+    {
+        yield return Author;
+
+        foreach (var user in MentionedUsers)
+            yield return user;
+
+        if (ReferencedMessage is not null)
+            yield return ReferencedMessage.Author;
+
+        if (Interaction is not null)
+            yield return Interaction.User;
+    }
+}
+
+public partial record Message
 {
     private static IReadOnlyList<Embed> NormalizeEmbeds(IReadOnlyList<Embed> embeds)
     {
@@ -124,6 +144,7 @@ public record Message(
 
         var messageReference = json.GetPropertyOrNull("message_reference")?.Pipe(MessageReference.Parse);
         var referencedMessage = json.GetPropertyOrNull("referenced_message")?.Pipe(Parse);
+        var interaction = json.GetPropertyOrNull("interaction")?.Pipe(Interaction.Parse);
 
         return new Message(
             id,
@@ -141,7 +162,8 @@ public record Message(
             reactions,
             mentionedUsers,
             messageReference,
-            referencedMessage
+            referencedMessage,
+            interaction
         );
     }
 }

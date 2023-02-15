@@ -31,30 +31,6 @@
         Context.Request.ShouldFormatMarkdown
             ? await HtmlMarkdownVisitor.FormatAsync(Context, markdown, false, CancellationToken)
             : markdown;
-
-    var firstMessage = Messages.First();
-
-    var userMember = Context.TryGetMember(firstMessage.Author.Id);
-
-    var userColor = Context.TryGetUserColor(firstMessage.Author.Id);
-
-    var userNick = firstMessage.Author.IsBot
-        ? firstMessage.Author.Name
-        : userMember?.Nick ?? firstMessage.Author.Name;
-
-    var referencedUserMember = firstMessage.ReferencedMessage is not null
-        ? Context.TryGetMember(firstMessage.ReferencedMessage.Author.Id)
-        : null;
-
-    var referencedUserColor = firstMessage.ReferencedMessage is not null
-        ? Context.TryGetUserColor(firstMessage.ReferencedMessage.Author.Id)
-        : null;
-
-    var referencedUserNick = firstMessage.ReferencedMessage is not null
-        ? firstMessage.ReferencedMessage.Author.IsBot
-            ? firstMessage.ReferencedMessage.Author.Name
-            : referencedUserMember?.Nick ?? firstMessage.ReferencedMessage.Author.Name
-        : null;
 }
 
 <div class="chatlog__message-group">
@@ -62,19 +38,17 @@
 {
     var isFirst = i == 0;
 
+    var authorMember = Context.TryGetMember(message.Author.Id);
+    var authorColor = Context.TryGetUserColor(message.Author.Id);
+    var authorNick = message.Author.IsBot
+        ? message.Author.Name
+        : authorMember?.Nick ?? message.Author.Name;
+
     <div id="chatlog__message-container-@message.Id" class="chatlog__message-container @(message.IsPinned ? "chatlog__message-container--pinned" : null)" data-message-id="@message.Id">
         <div class="chatlog__message">
             @{/* System notification */}
             @if (message.Kind.IsSystemNotification())
             {
-                // System notifications are grouped even if the message author is different.
-                // That's why we have to update the user values with the author of the current message.
-                userMember = Context.TryGetMember(message.Author.Id);
-                userColor = Context.TryGetUserColor(message.Author.Id);
-                userNick = message.Author.IsBot
-                    ? message.Author.Name
-                    : userMember?.Nick ?? message.Author.Name;
-
                 <div class="chatlog__message-aside">
                     <svg class="chatlog__system-notification-icon">
                         @{
@@ -97,7 +71,7 @@
 
                 <div class="chatlog__message-primary">
                     @{/* Author name */}
-                    <span class="chatlog__system-notification-author" style="@(userColor is not null ? $"color: rgb({userColor.Value.R}, {userColor.Value.G}, {userColor.Value.B})" : null)" title="@message.Author.FullName" data-user-id="@message.Author.Id">@userNick</span>
+                    <span class="chatlog__system-notification-author" style="@(authorColor is not null ? $"color: rgb({authorColor.Value.R}, {authorColor.Value.G}, {authorColor.Value.B})" : null)" title="@message.Author.FullName" data-user-id="@message.Author.Id">@authorNick</span>
 
                     @{/* Space out the content */}
                     <span> </span>
@@ -169,7 +143,7 @@
                     @if (isFirst)
                     {
                         // Reply symbol
-                        if (message.Kind == MessageKind.Reply)
+                        if (message.IsReplyLike)
                         {
                             <div class="chatlog__reply-symbol"></div>
                         }
@@ -186,12 +160,18 @@
                 <div class="chatlog__message-primary">
                     @if (isFirst)
                     {
-                        // Reply
-                        if (message.Kind == MessageKind.Reply && message.Reference is not null)
+                        // Message referenced by the reply
+                        if (message.IsReplyLike)
                         {
                             <div class="chatlog__reply">
                                 @if (message.ReferencedMessage is not null)
                                 {
+                                    var referencedUserMember = Context.TryGetMember(message.ReferencedMessage.Author.Id);
+                                    var referencedUserColor = Context.TryGetUserColor(message.ReferencedMessage.Author.Id);
+                                    var referencedUserNick = message.ReferencedMessage.Author.IsBot
+                                        ? message.ReferencedMessage.Author.Name
+                                        : referencedUserMember?.Nick ?? message.ReferencedMessage.Author.Name;
+
                                     <img class="chatlog__reply-avatar" src="@await ResolveAssetUrlAsync(message.ReferencedMessage.Author.AvatarUrl)" alt="Avatar" loading="lazy">
                                     <div class="chatlog__reply-author" style="@(referencedUserColor is not null ? $"color: rgb({referencedUserColor.Value.R}, {referencedUserColor.Value.G}, {referencedUserColor.Value.B})" : null)" title="@message.ReferencedMessage.Author.FullName">@referencedUserNick</div>
                                     <div class="chatlog__reply-content">
@@ -217,6 +197,20 @@
                                         }
                                     </div>
                                 }
+                                else if (message.Interaction is not null)
+                                {
+                                    var interactionUserMember = Context.TryGetMember(message.Interaction.User.Id);
+                                    var interactionUserColor = Context.TryGetUserColor(message.Interaction.User.Id);
+                                    var interactionUserNick = message.Interaction.User.IsBot
+                                        ? message.Interaction.User.Name
+                                        : interactionUserMember?.Nick ?? message.Interaction.User.Name;
+
+                                    <img class="chatlog__reply-avatar" src="@await ResolveAssetUrlAsync(message.Interaction.User.AvatarUrl)" alt="Avatar" loading="lazy">
+                                    <div class="chatlog__reply-author" style="@(interactionUserColor is not null ? $"color: rgb({interactionUserColor.Value.R}, {interactionUserColor.Value.G}, {interactionUserColor.Value.B})" : null)" title="@message.Interaction.User.FullName">@interactionUserNick</div>
+                                    <div class="chatlog__reply-content">
+                                        used /@message.Interaction.Name
+                                    </div>
+                                }
                                 else
                                 {
                                     <div class="chatlog__reply-unknown">
@@ -229,7 +223,7 @@
                         // Header
                         <div class="chatlog__header">
                             @{/* Author name */}
-                            <span class="chatlog__author" style="@(userColor is not null ? $"color: rgb({userColor.Value.R}, {userColor.Value.G}, {userColor.Value.B})" : null)" title="@message.Author.FullName" data-user-id="@message.Author.Id">@userNick</span>
+                            <span class="chatlog__author" style="@(authorColor is not null ? $"color: rgb({authorColor.Value.R}, {authorColor.Value.G}, {authorColor.Value.B})" : null)" title="@message.Author.FullName" data-user-id="@message.Author.Id">@authorNick</span>
 
                             @{/* Bot tag */}
                             @if (message.Author.IsBot)

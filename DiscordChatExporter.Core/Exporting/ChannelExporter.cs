@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord;
@@ -33,8 +32,8 @@ public class ChannelExporter
                            progress,
                            cancellationToken))
         {
-            // Resolve members for the author and mentioned users
-            foreach (var user in message.MentionedUsers.Prepend(message.Author))
+            // Resolve members for referenced users
+            foreach (var user in message.GetReferencedUsers())
                 await context.PopulateMemberAsync(user.Id, cancellationToken);
 
             // Export the message

@@ -35,16 +35,23 @@ internal class JsonMessageWriter : MessageWriter
             ? await PlainTextMarkdownVisitor.FormatAsync(Context, markdown, cancellationToken)
             : markdown;
 
-    private async ValueTask WriteAttachmentAsync(
-        Attachment attachment,
+    private async ValueTask WriteUserAsync(
+        User user,
         CancellationToken cancellationToken = default)
     {
         _writer.WriteStartObject();
 
-        _writer.WriteString("id", attachment.Id.ToString());
-        _writer.WriteString("url", await Context.ResolveAssetUrlAsync(attachment.Url, cancellationToken));
-        _writer.WriteString("fileName", attachment.FileName);
-        _writer.WriteNumber("fileSizeBytes", attachment.FileSize.TotalBytes);
+        _writer.WriteString("id", user.Id.ToString());
+        _writer.WriteString("name", user.Name);
+        _writer.WriteString("discriminator", user.DiscriminatorFormatted);
+        _writer.WriteString("nickname", Context.TryGetMember(user.Id)?.Nick ?? user.Name);
+        _writer.WriteString("color", Context.TryGetUserColor(user.Id)?.ToHex());
+        _writer.WriteBoolean("isBot", user.IsBot);
+
+        _writer.WriteString(
+            "avatarUrl",
+            await Context.ResolveAssetUrlAsync(user.AvatarUrl, cancellationToken)
+        );
 
         _writer.WriteEndObject();
         await _writer.FlushAsync(cancellationToken);
@@ -184,58 +191,6 @@ internal class JsonMessageWriter : MessageWriter
         await _writer.FlushAsync(cancellationToken);
     }
 
-    private async ValueTask WriteStickerAsync(
-        Sticker sticker,
-        CancellationToken cancellationToken = default)
-    {
-        _writer.WriteStartObject();
-
-        _writer.WriteString("id", sticker.Id.ToString());
-        _writer.WriteString("name", sticker.Name);
-        _writer.WriteString("format", sticker.Format.ToString());
-        _writer.WriteString("sourceUrl", await Context.ResolveAssetUrlAsync(sticker.SourceUrl, cancellationToken));
-
-        _writer.WriteEndObject();
-        await _writer.FlushAsync(cancellationToken);
-    }
-
-    private async ValueTask WriteReactionAsync(
-        Reaction reaction,
-        CancellationToken cancellationToken = default)
-    {
-        _writer.WriteStartObject();
-
-        // Emoji
-        _writer.WriteStartObject("emoji");
-        _writer.WriteString("id", reaction.Emoji.Id.ToString());
-        _writer.WriteString("name", reaction.Emoji.Name);
-        _writer.WriteString("code", reaction.Emoji.Code);
-        _writer.WriteBoolean("isAnimated", reaction.Emoji.IsAnimated);
-        _writer.WriteString("imageUrl", await Context.ResolveAssetUrlAsync(reaction.Emoji.ImageUrl, cancellationToken));
-        _writer.WriteEndObject();
-
-        _writer.WriteNumber("count", reaction.Count);
-
-        _writer.WriteEndObject();
-        await _writer.FlushAsync(cancellationToken);
-    }
-
-    private async ValueTask WriteMentionAsync(
-        User mentionedUser,
-        CancellationToken cancellationToken = default)
-    {
-        _writer.WriteStartObject();
-
-        _writer.WriteString("id", mentionedUser.Id.ToString());
-        _writer.WriteString("name", mentionedUser.Name);
-        _writer.WriteString("discriminator", mentionedUser.DiscriminatorFormatted);
-        _writer.WriteString("nickname", Context.TryGetMember(mentionedUser.Id)?.Nick ?? mentionedUser.Name);
-        _writer.WriteBoolean("isBot", mentionedUser.IsBot);
-
-        _writer.WriteEndObject();
-        await _writer.FlushAsync(cancellationToken);
-    }
-
     public override async ValueTask WritePreambleAsync(CancellationToken cancellationToken = default)
     {
         // Root object (start)
@@ -310,26 +265,23 @@ internal class JsonMessageWriter : MessageWriter
         }
 
         // Author
-        _writer.WriteStartObject("author");
-        _writer.WriteString("id", message.Author.Id.ToString());
-        _writer.WriteString("name", message.Author.Name);
-        _writer.WriteString("discriminator", message.Author.DiscriminatorFormatted);
-        _writer.WriteString("nickname", Context.TryGetMember(message.Author.Id)?.Nick ?? message.Author.Name);
-        _writer.WriteString("color", Context.TryGetUserColor(message.Author.Id)?.ToHex());
-        _writer.WriteBoolean("isBot", message.Author.IsBot);
-
-        _writer.WriteString(
-            "avatarUrl",
-            await Context.ResolveAssetUrlAsync(message.Author.AvatarUrl, cancellationToken)
-        );
-
-        _writer.WriteEndObject();
+        _writer.WritePropertyName("author");
+        await WriteUserAsync(message.Author, cancellationToken);
 
         // Attachments
         _writer.WriteStartArray("attachments");
 
         foreach (var attachment in message.Attachments)
-            await WriteAttachmentAsync(attachment, cancellationToken);
+        {
+            _writer.WriteStartObject();
+
+            _writer.WriteString("id", attachment.Id.ToString());
+            _writer.WriteString("url", await Context.ResolveAssetUrlAsync(attachment.Url, cancellationToken));
+            _writer.WriteString("fileName", attachment.FileName);
+            _writer.WriteNumber("fileSizeBytes", attachment.FileSize.TotalBytes);
+
+            _writer.WriteEndObject();
+        }
 
         _writer.WriteEndArray();
 
@@ -345,7 +297,16 @@ internal class JsonMessageWriter : MessageWriter
         _writer.WriteStartArray("stickers");
 
         foreach (var sticker in message.Stickers)
-            await WriteStickerAsync(sticker, cancellationToken);
+        {
+            _writer.WriteStartObject();
+
+            _writer.WriteString("id", sticker.Id.ToString());
+            _writer.WriteString("name", sticker.Name);
+            _writer.WriteString("format", sticker.Format.ToString());
+            _writer.WriteString("sourceUrl", await Context.ResolveAssetUrlAsync(sticker.SourceUrl, cancellationToken));
+
+            _writer.WriteEndObject();
+        }
 
         _writer.WriteEndArray();
 
@@ -353,15 +314,30 @@ internal class JsonMessageWriter : MessageWriter
         _writer.WriteStartArray("reactions");
 
         foreach (var reaction in message.Reactions)
-            await WriteReactionAsync(reaction, cancellationToken);
+        {
+            _writer.WriteStartObject();
+
+            // Emoji
+            _writer.WriteStartObject("emoji");
+            _writer.WriteString("id", reaction.Emoji.Id.ToString());
+            _writer.WriteString("name", reaction.Emoji.Name);
+            _writer.WriteString("code", reaction.Emoji.Code);
+            _writer.WriteBoolean("isAnimated", reaction.Emoji.IsAnimated);
+            _writer.WriteString("imageUrl", await Context.ResolveAssetUrlAsync(reaction.Emoji.ImageUrl, cancellationToken));
+            _writer.WriteEndObject();
+
+            _writer.WriteNumber("count", reaction.Count);
+
+            _writer.WriteEndObject();
+        }
 
         _writer.WriteEndArray();
 
         // Mentions
         _writer.WriteStartArray("mentions");
 
-        foreach (var mention in message.MentionedUsers)
-            await WriteMentionAsync(mention, cancellationToken);
+        foreach (var user in message.MentionedUsers)
+            await WriteUserAsync(user, cancellationToken);
 
         _writer.WriteEndArray();
 
@@ -372,6 +348,20 @@ internal class JsonMessageWriter : MessageWriter
             _writer.WriteString("messageId", message.Reference.MessageId?.ToString());
             _writer.WriteString("channelId", message.Reference.ChannelId?.ToString());
             _writer.WriteString("guildId", message.Reference.GuildId?.ToString());
+            _writer.WriteEndObject();
+        }
+
+        // Interaction
+        if (message.Interaction is not null)
+        {
+            _writer.WriteStartObject("interaction");
+
+            _writer.WriteString("id", message.Interaction.Id.ToString());
+            _writer.WriteString("name", message.Interaction.Name);
+
+            _writer.WritePropertyName("user");
+            await WriteUserAsync(message.Interaction.User, cancellationToken);
+
             _writer.WriteEndObject();
         }
 

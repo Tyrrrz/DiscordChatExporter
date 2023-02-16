@@ -1,5 +1,34 @@
 # Changelog
 
+## v2.38 (16-Feb-2023)
+
+- General changes:
+  - Added support for different formatting options when rendering timestamps (i.e. the `f` in `<t:1234567890:f>`). As an exception, relative timestamps are formatted as regular timestamps since that makes more sense in a static export. Currently, all formatting options are rendered based on the `English (US)` locale, with the intent to make that more configurable in the future.
+  - Added an option to disable markdown processing when exporting. You can use this to produce JSON or plain text exports without unwrapping mentions, custom emoji, and certain other special tokens.
+  - Moved the "reuse assets" option from the settings dialog to the export dialog.
+  - Changed the default date format from `dd-MMM-yy hh:mm tt` to `MM/dd/yyyy h:mm tt` to match the date format used by Discord for message timestamps when the `English (US)` language is selected. This should make the default date format more consistent with other non-configurable date formats used by DiscordChatExporter. In the future, this setting will most likely be removed entirely in favor of a more flexible approach.
+  - Updated the usage guide with additional steps required to retrieve the user token.
+  - Fixed an issue where certain user mentions were incorrectly rendered as `@Unknown`.
+  - Fixed an issue where some embed images were rendered using their actual URLs instead of Discord proxy URLs.
+- GUI changes: 
+  - Added a text box for specifying the output path when exporting channels. It can be used to set an output path that uses template tokens, which previously required hacky workarounds. This text box can be left empty, in which case clicking on the "Export" button will open the file or folder picker dialog, matching the current behavior.
+  - Added a notification when the application is updated to a new version, containing the changelog link.
+  - Replaced the lock icon in the token text box with a key icon, to better reflect the purpose of the input.
+  - Minor cosmetic improvements.
+- CLI changes:
+  - Changed the behavior of the `export` command when providing IDs of category channels. Now, instead of displaying an error, the command will export all channels contained within the corresponding categories.
+- HTML format changes: 
+  - Added proper support for more system notification messages.
+  - Added support for rendering server invites. Now, if the message contains an invite link, the export will show the server icon and include additional information, such as the name of the server and the target channel.
+  - Changed the preamble part of the export to show the channel icon when available, instead of the default Discord logo. This is only available for group DM channels.
+  - Fixed an issue where some miscellaneous characters were incorrectly treated as emoji, which resulted in them being rendered as broken images. (Thanks [@CanePlayz](https://github.com/CanePlayz))
+  - Fixed an issue where messages triggered by app interactions were not rendered as replies.
+  - Fixed an issue where server cross-posts were not rendered correctly.
+- JSON format changes:
+  - Added an `iconUrl` field for the top-level `channel` object, which specifies the URL of the channel icon. This is only available for group DM channels.
+  - Added a `code` field for reactions, which specifies the code of the associated emoji. For standard Unicode emoji, this is equal to the emoji alias (e.g. `slightly_smiling_face`). For custom Discord emoji, this is equal to the emoji name (same as the already existing `name` field).
+  - Added an `interaction` field for messages, which contains information about the app interaction that triggered that response, if applicable.
+
 ## v2.37.2 (27-Jan-2023)
 
 - Updated the links inside the application to point to the new documentation site. (Thanks [@CanePlayz](https://github.com/CanePlayz))

@@ -72,7 +72,7 @@
                         Margin="8"
                         VerticalAlignment="Center"
                         Foreground="{DynamicResource PrimaryHueMidBrush}"
-                        Kind="Password" />
+                        Kind="Key" />
 
                     <!--  Token value  -->
                     <TextBox

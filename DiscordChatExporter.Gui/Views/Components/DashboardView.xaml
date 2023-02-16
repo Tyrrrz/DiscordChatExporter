@@ -345,7 +345,7 @@
                                     </Grid.ColumnDefinitions>
                                     <Grid.ToolTip>
                                         <TextBlock>
-                                            <Run Text="Last message sent on:" />
+                                            <Run Text="Last message:" />
                                             <Run FontWeight="SemiBold" Text="{Binding LastMessageId, Converter={x:Static converters:SnowflakeToDateTimeOffsetConverter.Instance}, ConverterCulture={x:Static globalization:CultureInfo.CurrentCulture}, TargetNullValue=never}" />
                                         </TextBlock>
                                     </Grid.ToolTip>

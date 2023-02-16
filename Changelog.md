@@ -4,7 +4,7 @@
 
 - General changes:
   - Added support for different formatting options when rendering timestamps (i.e. the `f` in `<t:1234567890:f>`). As an exception, relative timestamps are formatted as regular timestamps since that makes more sense in a static export. Currently, all formatting options are rendered based on the `English (US)` locale, with the intent to make that more configurable in the future.
-  - Added an option to disable markdown processing when exporting. You can use this to produce JSON or plain text exports without unwrapping mentions, custom emoji, and certain other special tokens.
+  - Added an option to disable markdown processing when exporting. You can use this to produce JSON or plain text exports without unwrapping mentions, custom emoji, and certain other special tokens. In GUI, this option can be found in the export dialog. In CLI, it's available as the `--markdown [true|false]` flag.
   - Moved the "reuse assets" option from the settings dialog to the export dialog.
   - Changed the default date format from `dd-MMM-yy hh:mm tt` to `MM/dd/yyyy h:mm tt` to match the date format used by Discord for message timestamps when the `English (US)` language is selected. This should make the default date format more consistent with other non-configurable date formats used by DiscordChatExporter. In the future, this setting will most likely be removed entirely in favor of a more flexible approach.
   - Updated the usage guide with additional steps required to retrieve the user token.

@@ -583,6 +583,8 @@
         }
 
         .chatlog__embed-generic-image {
+            object-fit: contain;
+            object-position: left;
             max-width: 45vw;
             max-height: 500px;
             vertical-align: top;
@@ -590,6 +592,8 @@
         }
 
         .chatlog__embed-generic-gifv {
+            object-fit: contain;
+            object-position: left;
             max-width: 45vw;
             max-height: 500px;
             vertical-align: top;
@@ -744,6 +748,7 @@
             background-color: @Themed("#2f3136", "#f9f9f9");
             font-family: "Consolas", "Courier New", Courier, monospace;
             font-size: 0.85rem;
+            text-decoration: inherit;
         }
 
         .chatlog__markdown-pre--multiline {

@@ -434,20 +434,29 @@
                             </div>
                         }
                         // Generic image embed
-                        else if (embed.Kind == EmbedKind.Image && !string.IsNullOrWhiteSpace(embed.Image?.Url))
+                        else if (embed.Kind == EmbedKind.Image && !string.IsNullOrWhiteSpace(embed.Url))
                         {
+                            var embedImageUrl =
+                                embed.Image?.ProxyUrl ?? embed.Image?.Url ??
+                                embed.Thumbnail?.ProxyUrl ?? embed.Thumbnail?.Url ??
+                                embed.Url;
+
                             <div class="chatlog__embed">
-                                <a href="@await ResolveAssetUrlAsync(embed.Image.ProxyUrl ?? embed.Image.Url)">
-                                    <img class="chatlog__embed-generic-image" src="@await ResolveAssetUrlAsync(embed.Image.ProxyUrl ?? embed.Image.Url)" alt="Embedded image" loading="lazy">
+                                <a href="@await ResolveAssetUrlAsync(embedImageUrl)">
+                                    <img class="chatlog__embed-generic-image" src="@await ResolveAssetUrlAsync(embedImageUrl)" alt="Embedded image" loading="lazy">
                                 </a>
                             </div>
                         }
                         // Generic gifv embed
-                        else if (embed.Kind == EmbedKind.Gifv && !string.IsNullOrWhiteSpace(embed.Video?.Url))
+                        else if (embed.Kind == EmbedKind.Gifv && !string.IsNullOrWhiteSpace(embed.Url))
                         {
+                            var embedVideoUrl =
+                                embed.Video?.ProxyUrl ?? embed.Video?.Url ??
+                                embed.Url;
+
                             <div class="chatlog__embed">
-                                <video class="chatlog__embed-generic-gifv" loop width="@embed.Video.Width" height="@embed.Video.Height" onmouseover="this.play()" onmouseout="this.pause()">
-                                    <source src="@await ResolveAssetUrlAsync(embed.Video.ProxyUrl ?? embed.Video.Url)" alt="Embedded video">
+                                <video class="chatlog__embed-generic-gifv" loop width="@embed.Video?.Width" height="@embed.Video?.Height" onmouseover="this.play()" onmouseout="this.pause()">
+                                    <source src="@await ResolveAssetUrlAsync(embedVideoUrl)" alt="Embedded video">
                                 </video>
                             </div>
                         }

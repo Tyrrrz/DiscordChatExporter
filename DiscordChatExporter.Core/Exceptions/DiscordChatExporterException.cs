@@ -40,5 +40,5 @@ Failed to perform an HTTP request.
         new($"Requested resource ({resourceId}) does not exist.");
 
     internal static DiscordChatExporterException ChannelIsEmpty() =>
-        new("No messages found for the specified period.");
+        new("Channel is empty or there are no messages in the specified period.");
 }

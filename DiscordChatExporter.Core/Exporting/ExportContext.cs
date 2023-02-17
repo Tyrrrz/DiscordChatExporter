@@ -70,13 +70,19 @@ internal class ExportContext
 
         try
         {
-            var filePath = await _assetDownloader.DownloadAsync(url, cancellationToken);
+            var absoluteFilePath = await _assetDownloader.DownloadAsync(url, cancellationToken);
 
             // We want relative path so that the output files can be copied around without breaking.
             // Base directory path may be null if the file is stored at the root or relative to working directory.
             var relativeFilePath = !string.IsNullOrWhiteSpace(Request.OutputBaseDirPath)
-                ? Path.GetRelativePath(Request.OutputBaseDirPath, filePath)
-                : filePath;
+                ? Path.GetRelativePath(Request.OutputBaseDirPath, absoluteFilePath)
+                : absoluteFilePath;
+
+            // If the assets path is outside of the export directory, fall back to absolute path
+            var filePath = relativeFilePath.StartsWith("..")
+                ? absoluteFilePath
+                : relativeFilePath;
+
 
             // HACK: for HTML, we need to format the URL properly
             if (Request.Format is ExportFormat.HtmlDark or ExportFormat.HtmlLight)
@@ -84,13 +90,14 @@ internal class ExportContext
                 // Need to escape each path segment while keeping the directory separators intact
                 return string.Join(
                     Path.AltDirectorySeparatorChar,
-                    relativeFilePath
+                    filePath
                         .Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
                         .Select(Uri.EscapeDataString)
+                        .Select(x => x.Replace("%3A", ":"))
                 );
             }
 
-            return relativeFilePath;
+            return filePath;
         }
         // Try to catch only exceptions related to failed HTTP requests
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/332

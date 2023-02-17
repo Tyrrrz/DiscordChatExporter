@@ -29,7 +29,7 @@ internal class ExportContext
         Request = request;
 
         _assetDownloader = new ExportAssetDownloader(
-            request.OutputAssetsDirPath,
+            request.AssetsDirPath,
             request.ShouldReuseAssets
         );
     }
@@ -92,34 +92,25 @@ internal class ExportContext
 
         try
         {
-            var absoluteFilePath = await _assetDownloader.DownloadAsync(url, cancellationToken);
+            var filePath = await _assetDownloader.DownloadAsync(url, cancellationToken);
+            var relativeFilePath = Path.GetRelativePath(Request.OutputDirPath, filePath);
 
-            // We want relative path so that the output files can be copied around without breaking.
-            // Base directory path may be null if the file is stored at the root or relative to working directory.
-            var relativeFilePath = !string.IsNullOrWhiteSpace(Request.OutputBaseDirPath)
-                ? Path.GetRelativePath(Request.OutputBaseDirPath, absoluteFilePath)
-                : absoluteFilePath;
+            // Prefer relative paths so that the output files can be copied around without breaking references.
+            // If the assets path is outside of the export directory, use the absolute path instead.
+            var optimalFilePath =
+                relativeFilePath.StartsWith(".." + Path.DirectorySeparatorChar, StringComparison.Ordinal) ||
+                relativeFilePath.StartsWith(".." + Path.AltDirectorySeparatorChar, StringComparison.Ordinal)
+                    ? filePath
+                    : relativeFilePath;
 
-            // If the assets path is outside of the export directory, fall back to absolute path
-            var filePath = relativeFilePath.StartsWith("..")
-                ? absoluteFilePath
-                : relativeFilePath;
-
-
-            // HACK: for HTML, we need to format the URL properly
+            // For HTML, the path needs to be properly formatted
             if (Request.Format is ExportFormat.HtmlDark or ExportFormat.HtmlLight)
             {
-                // Need to escape each path segment while keeping the directory separators intact
-                return string.Join(
-                    Path.AltDirectorySeparatorChar,
-                    filePath
-                        .Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
-                        .Select(Uri.EscapeDataString)
-                        .Select(x => x.Replace("%3A", ":"))
-                );
+                // Create a 'file:///' URI and then strip the 'file:///' prefix to allow for relative paths
+                return new Uri(new Uri("file:///"), optimalFilePath).ToString()[8..];
             }
 
-            return filePath;
+            return optimalFilePath;
         }
         // Try to catch only exceptions related to failed HTTP requests
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/332

@@ -51,8 +51,8 @@ internal partial class MessageExporter : IAsyncDisposable
         if (_writer is not null)
             return _writer;
 
-        Directory.CreateDirectory(_context.Request.OutputBaseDirPath);
-        var filePath = GetPartitionFilePath(_context.Request.OutputBaseFilePath, _partitionIndex);
+        Directory.CreateDirectory(_context.Request.OutputDirPath);
+        var filePath = GetPartitionFilePath(_context.Request.OutputFilePath, _partitionIndex);
 
         var writer = CreateMessageWriter(filePath, _context.Request.Format, _context);
         await writer.WritePreambleAsync(cancellationToken);

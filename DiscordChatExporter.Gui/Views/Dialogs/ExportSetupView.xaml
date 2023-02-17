@@ -285,6 +285,27 @@
                                 VerticalAlignment="Center"
                                 IsChecked="{Binding ShouldReuseAssets}" />
                         </Grid>
+
+                        <!--  Assets path  -->
+                        <Grid Margin="16,8">
+                            <TextBox
+                                Padding="16,16,42,16"
+                                materialDesign:HintAssist.Hint="Assets directory path"
+                                materialDesign:HintAssist.IsFloating="True"
+                                Style="{DynamicResource MaterialDesignOutlinedTextBox}"
+                                Text="{Binding AssetsDirPath}"
+                                ToolTip="Download assets to this directory. If not specified, the asset directory path will be derived from the output path." />
+                            <Button
+                                Width="24"
+                                Height="24"
+                                Margin="0,0,12,0"
+                                Padding="0"
+                                HorizontalAlignment="Right"
+                                Command="{s:Action ShowAssetsDirPathPrompt}"
+                                Style="{DynamicResource MaterialDesignToolForegroundButton}">
+                                <materialDesign:PackIcon Kind="FolderOpen" />
+                            </Button>
+                        </Grid>
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>

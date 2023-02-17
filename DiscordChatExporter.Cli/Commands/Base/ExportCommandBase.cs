@@ -127,7 +127,7 @@ public abstract class ExportCommandBase : TokenCommandBase
         }
 
         // Assets directory should only be specified when the download assets option is set
-        if (AssetsPath is not null && !ShouldDownloadAssets)
+        if (!string.IsNullOrWhiteSpace(AssetsPath) && !ShouldDownloadAssets)
         {
             throw new CommandException(
                 "Option --media-dir cannot be used without --media."

@@ -17,3 +17,12 @@ public enum ChannelKind
     GuildDirectory = 14,
     GuildForum = 15
 }
+
+public static class ChannelKindExtensions
+{
+    public static bool IsDirect(this ChannelKind kind) =>
+        kind is ChannelKind.DirectTextChat or ChannelKind.DirectGroupTextChat;
+
+    public static bool IsGuild(this ChannelKind kind) =>
+        !kind.IsDirect();
+}

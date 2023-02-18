@@ -7,7 +7,7 @@ using DiscordChatExporter.Core.Discord;
 
 namespace DiscordChatExporter.Cli.Commands.Base;
 
-public abstract class TokenCommandBase : ICommand
+public abstract class DiscordCommandBase : ICommand
 {
     [CommandOption(
         "token",

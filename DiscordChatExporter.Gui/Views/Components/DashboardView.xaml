@@ -19,7 +19,7 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <!--  Sort DMs by last message  -->
-        <CollectionViewSource x:Key="AvailableDirectMessageChannelsViewSource" Source="{Binding AvailableChannels, Mode=OneWay}">
+        <CollectionViewSource x:Key="AvailableDirectChannelsViewSource" Source="{Binding AvailableChannels, Mode=OneWay}">
             <CollectionViewSource.SortDescriptions>
                 <componentModel:SortDescription Direction="Descending" PropertyName="LastMessageId" />
                 <componentModel:SortDescription Direction="Ascending" PropertyName="Name" />
@@ -300,7 +300,7 @@
                             <Style BasedOn="{StaticResource {x:Type ListBox}}" TargetType="{x:Type ListBox}">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsDirectMessageGuildSelected}" Value="True">
-                                        <Setter Property="ItemsSource" Value="{Binding Source={StaticResource AvailableDirectMessageChannelsViewSource}}" />
+                                        <Setter Property="ItemsSource" Value="{Binding Source={StaticResource AvailableDirectChannelsViewSource}}" />
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding IsDirectMessageGuildSelected}" Value="False">
                                         <Setter Property="ItemsSource" Value="{Binding Source={StaticResource AvailableChannelsViewSource}}" />

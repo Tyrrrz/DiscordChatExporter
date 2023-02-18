@@ -11,7 +11,7 @@ using DiscordChatExporter.Core.Utils.Extensions;
 namespace DiscordChatExporter.Cli.Commands;
 
 [Command("channels", Description = "Get the list of channels in a guild.")]
-public class GetChannelsCommand : TokenCommandBase
+public class GetChannelsCommand : DiscordCommandBase
 {
     [CommandOption(
         "guild",

@@ -38,16 +38,16 @@ public class DashboardViewModel : PropertyChangedBase
 
     public string? Token { get; set; }
 
-    private IReadOnlyDictionary<Guild, IReadOnlyList<Channel>>? GuildChannelMap { get; set; }
+    private IReadOnlyDictionary<Guild, IReadOnlyList<Channel>>? ChannelsByGuild { get; set; }
 
-    public IReadOnlyList<Guild>? AvailableGuilds => GuildChannelMap?.Keys.ToArray();
+    public IReadOnlyList<Guild>? AvailableGuilds => ChannelsByGuild?.Keys.ToArray();
 
     public Guild? SelectedGuild { get; set; }
 
     public bool IsDirectMessageGuildSelected => SelectedGuild?.Id == Guild.DirectMessages.Id;
 
     public IReadOnlyList<Channel>? AvailableChannels => SelectedGuild is not null
-        ? GuildChannelMap?[SelectedGuild]
+        ? ChannelsByGuild?[SelectedGuild]
         : null;
 
     public IReadOnlyList<Channel>? SelectedChannels { get; set; }
@@ -103,17 +103,17 @@ public class DashboardViewModel : PropertyChangedBase
 
             var discord = new DiscordClient(token);
 
-            var guildChannelMap = new Dictionary<Guild, IReadOnlyList<Channel>>();
+            var channelsByGuild = new Dictionary<Guild, IReadOnlyList<Channel>>();
             await foreach (var guild in discord.GetUserGuildsAsync())
             {
-                guildChannelMap[guild] = (await discord.GetGuildChannelsAsync(guild.Id))
+                channelsByGuild[guild] = (await discord.GetGuildChannelsAsync(guild.Id))
                     .Where(c => c.Kind != ChannelKind.GuildCategory)
                     .ToArray();
             }
 
             _discord = discord;
-            GuildChannelMap = guildChannelMap;
-            SelectedGuild = guildChannelMap.Keys.FirstOrDefault();
+            ChannelsByGuild = channelsByGuild;
+            SelectedGuild = channelsByGuild.Keys.FirstOrDefault();
         }
         catch (DiscordChatExporterException ex) when (!ex.IsFatal)
         {

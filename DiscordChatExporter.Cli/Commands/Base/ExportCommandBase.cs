@@ -20,7 +20,7 @@ using Gress;
 
 namespace DiscordChatExporter.Cli.Commands.Base;
 
-public abstract class ExportCommandBase : TokenCommandBase
+public abstract class ExportCommandBase : DiscordCommandBase
 {
     private readonly string _outputPath = Directory.GetCurrentDirectory();
 
@@ -268,7 +268,7 @@ public abstract class ExportCommandBase : TokenCommandBase
         await console.Output.WriteLineAsync("Resolving channel(s)...");
 
         var channels = new List<Channel>();
-        var guildChannelMap = new Dictionary<Snowflake, IReadOnlyList<Channel>>();
+        var channelsByGuild = new Dictionary<Snowflake, IReadOnlyList<Channel>>();
 
         foreach (var channelId in channelIds)
         {
@@ -278,7 +278,7 @@ public abstract class ExportCommandBase : TokenCommandBase
             if (channel.Kind == ChannelKind.GuildCategory)
             {
                 var guildChannels =
-                    guildChannelMap.GetValueOrDefault(channel.GuildId) ??
+                    channelsByGuild.GetValueOrDefault(channel.GuildId) ??
                     await Discord.GetGuildChannelsAsync(channel.GuildId, cancellationToken);
 
                 foreach (var guildChannel in guildChannels)
@@ -288,7 +288,7 @@ public abstract class ExportCommandBase : TokenCommandBase
                 }
 
                 // Cache the guild channels to avoid redundant work
-                guildChannelMap[channel.GuildId] = guildChannels;
+                channelsByGuild[channel.GuildId] = guildChannels;
             }
             else
             {

@@ -15,8 +15,8 @@
             ? darkVariant
             : lightVariant;
 
-    string GetFontUrl(int weight) =>
-        $"https://cdn.jsdelivr.net/gh/Tyrrrz/DiscordFonts@master/whitney-{weight}.woff";
+    string GetFontUrl(string style, int weight) =>
+        $"https://cdn.jsdelivr.net/gh/Tyrrrz/DiscordFonts@master/ggsans-{style}-{weight}.woff2";
 
     ValueTask<string> ResolveAssetUrlAsync(string url) =>
         Context.ResolveAssetUrlAsync(url, CancellationToken);
@@ -41,33 +41,73 @@
     @{/* Styling */}
     <style>
         @@font-face {
-            src: url(@await ResolveAssetUrlAsync(GetFontUrl(300)));
-            font-family: Whitney;
-            font-weight: 300;
-        }
-
-        @@font-face {
-            src: url(@await ResolveAssetUrlAsync(GetFontUrl(400)));
-            font-family: Whitney;
+            src: url(@await ResolveAssetUrlAsync(GetFontUrl("normal", 400)));
+            font-family: gg sans;
             font-weight: 400;
+            font-style: normal;
         }
 
         @@font-face {
-            src: url(@await ResolveAssetUrlAsync(GetFontUrl(500)));
-            font-family: Whitney;
+            src: url(@await ResolveAssetUrlAsync(GetFontUrl("normal", 500)));
+            font-family: gg sans;
             font-weight: 500;
+            font-style: normal;
         }
 
         @@font-face {
-            src: url(@await ResolveAssetUrlAsync(GetFontUrl(600)));
-            font-family: Whitney;
+            src: url(@await ResolveAssetUrlAsync(GetFontUrl("normal", 600)));
+            font-family: gg sans;
             font-weight: 600;
+            font-style: normal;
         }
 
         @@font-face {
-            src: url(@await ResolveAssetUrlAsync(GetFontUrl(700)));
-            font-family: Whitney;
+            src: url(@await ResolveAssetUrlAsync(GetFontUrl("normal", 700)));
+            font-family: gg sans;
             font-weight: 700;
+            font-style: normal;
+        }
+
+        @@font-face {
+            src: url(@await ResolveAssetUrlAsync(GetFontUrl("normal", 800)));
+            font-family: gg sans;
+            font-weight: 800;
+            font-style: normal;
+        }
+
+        @@font-face {
+            src: url(@await ResolveAssetUrlAsync(GetFontUrl("italic", 400)));
+            font-family: gg sans;
+            font-weight: 400;
+            font-style: italic;
+        }
+
+        @@font-face {
+            src: url(@await ResolveAssetUrlAsync(GetFontUrl("italic", 500)));
+            font-family: gg sans;
+            font-weight: 500;
+            font-style: italic;
+        }
+
+        @@font-face {
+            src: url(@await ResolveAssetUrlAsync(GetFontUrl("italic", 600)));
+            font-family: gg sans;
+            font-weight: 600;
+            font-style: italic;
+        }
+
+        @@font-face {
+            src: url(@await ResolveAssetUrlAsync(GetFontUrl("italic", 700)));
+            font-family: gg sans;
+            font-weight: 700;
+            font-style: italic;
+        }
+
+        @@font-face {
+            src: url(@await ResolveAssetUrlAsync(GetFontUrl("italic", 800)));
+            font-family: gg sans;
+            font-weight: 800;
+            font-style: italic;
         }
 
         html, body {
@@ -75,7 +115,7 @@
             padding: 0;
             background-color: @Themed("#36393e", "#ffffff");
             color: @Themed("#dcddde", "#23262a");
-            font-family: Whitney, "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-family: "gg sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
             font-size: 17px;
             font-weight: @Themed("400", "500");
             scroll-behavior: smooth;

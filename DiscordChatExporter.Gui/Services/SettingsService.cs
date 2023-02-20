@@ -1,11 +1,12 @@
 ﻿using System;
+using System.IO;
+using Cogwheel;
 using DiscordChatExporter.Core.Exporting;
 using Microsoft.Win32;
-using Tyrrrz.Settings;
 
 namespace DiscordChatExporter.Gui.Services;
 
-public partial class SettingsService : SettingsManager
+public partial class SettingsService : SettingsBase
 {
     public bool IsUkraineSupportMessageEnabled { get; set; } = true;
 
@@ -38,13 +39,18 @@ public partial class SettingsService : SettingsManager
     public string? LastAssetsDirPath { get; set; }
 
     public SettingsService()
+        : base(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.dat"))
     {
-        Configuration.StorageSpace = StorageSpace.Instance;
-        Configuration.SubDirectoryPath = "";
-        Configuration.FileName = "Settings.dat";
     }
 
-    public bool ShouldSerializeLastToken() => IsTokenPersisted;
+    public override void Save()
+    {
+        // Clear token if it's not supposed to be persisted
+        if (!IsTokenPersisted)
+            LastToken = null;
+
+        base.Save();
+    }
 }
 
 public partial class SettingsService

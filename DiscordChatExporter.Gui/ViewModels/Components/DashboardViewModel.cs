@@ -71,10 +71,8 @@ public class DashboardViewModel : PropertyChangedBase
 
     public void OnViewLoaded()
     {
-        if (_settingsService.LastToken is not null)
-        {
+        if (!string.IsNullOrWhiteSpace(_settingsService.LastToken))
             Token = _settingsService.LastToken;
-        }
     }
 
     public async void ShowSettings()

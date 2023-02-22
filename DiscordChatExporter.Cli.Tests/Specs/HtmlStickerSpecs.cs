@@ -19,7 +19,7 @@ public class HtmlStickerSpecs
 
         // Assert
         var stickerUrl = message.QuerySelector("[title='rock'] img")?.GetAttribute("src");
-        stickerUrl.Should().Be("https://discord.com/stickers/904215665597120572.png");
+        stickerUrl.Should().Be("https://cdn.discordapp.com/stickers/904215665597120572.png");
     }
 
     [Fact]
@@ -33,6 +33,6 @@ public class HtmlStickerSpecs
 
         // Assert
         var stickerUrl = message.QuerySelector("[title='Yikes'] [data-source]")?.GetAttribute("data-source");
-        stickerUrl.Should().Be("https://discord.com/stickers/816087132447178774.json");
+        stickerUrl.Should().Be("https://cdn.discordapp.com/stickers/816087132447178774.json");
     }
 }

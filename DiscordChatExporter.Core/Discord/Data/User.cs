@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text.Json;
+﻿using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Reading;
@@ -21,18 +20,6 @@ public partial record User(
 
 public partial record User
 {
-    private static string GetDefaultAvatarUrl(int discriminator) =>
-        $"https://cdn.discordapp.com/embed/avatars/{discriminator % 5}.png";
-
-    private static string GetAvatarUrl(Snowflake id, string avatarHash)
-    {
-        var extension = avatarHash.StartsWith("a_", StringComparison.Ordinal)
-            ? "gif"
-            : "png";
-
-        return $"https://cdn.discordapp.com/avatars/{id}/{avatarHash}.{extension}?size=512";
-    }
-
     public static User Parse(JsonElement json)
     {
         var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
@@ -41,8 +28,11 @@ public partial record User
         var name = json.GetProperty("username").GetNonNullString();
 
         var avatarUrl =
-            json.GetPropertyOrNull("avatar")?.GetNonWhiteSpaceStringOrNull()?.Pipe(h => GetAvatarUrl(id, h)) ??
-            GetDefaultAvatarUrl(discriminator);
+            json
+                .GetPropertyOrNull("avatar")?
+                .GetNonWhiteSpaceStringOrNull()?
+                .Pipe(h => ImageCdn.GetUserAvatarUrl(id, h)) ??
+            ImageCdn.GetFallbackUserAvatarUrl(discriminator);
 
         return new User(id, isBot, discriminator, name, avatarUrl);
     }

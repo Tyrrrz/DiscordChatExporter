@@ -50,7 +50,10 @@ internal class JsonMessageWriter : MessageWriter
 
         _writer.WriteString(
             "avatarUrl",
-            await Context.ResolveAssetUrlAsync(user.AvatarUrl, cancellationToken)
+            await Context.ResolveAssetUrlAsync(
+                Context.TryGetMember(user.Id)?.AvatarUrl ?? user.AvatarUrl,
+                cancellationToken
+            )
         );
 
         _writer.WriteEndObject();

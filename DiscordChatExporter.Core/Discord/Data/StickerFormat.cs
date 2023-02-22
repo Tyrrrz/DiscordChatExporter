@@ -3,6 +3,6 @@
 public enum StickerFormat
 {
     Png = 1,
-    PngAnimated = 2,
+    Apng = 2,
     Lottie = 3
 }

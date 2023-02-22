@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Utils.Extensions;
@@ -37,20 +36,16 @@ public partial record Channel
         null
     );
 
-    private static string GetIconUrl(Snowflake id, string iconHash)
-    {
-        var extension = iconHash.StartsWith("a_", StringComparison.Ordinal)
-            ? "gif"
-            : "png";
-
-        return $"https://cdn.discordapp.com/channel-icons/{id}/{iconHash}.{extension}";
-    }
-
-    public static Channel Parse(JsonElement json, ChannelCategory? category = null, int? positionHint = null)
+    public static Channel Parse(JsonElement json, ChannelCategory? categoryHint = null, int? positionHint = null)
     {
         var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
         var kind = (ChannelKind)json.GetProperty("type").GetInt32();
-        var guildId = json.GetPropertyOrNull("guild_id")?.GetNonWhiteSpaceStringOrNull()?.Pipe(Snowflake.Parse);
+
+        var guildId =
+            json.GetPropertyOrNull("guild_id")?.GetNonWhiteSpaceStringOrNull()?.Pipe(Snowflake.Parse) ??
+            Guild.DirectMessages.Id;
+
+        var category = categoryHint ?? GetFallbackCategory(kind);
 
         var name =
             // Guild channel
@@ -70,8 +65,11 @@ public partial record Channel
             positionHint ??
             json.GetPropertyOrNull("position")?.GetInt32OrNull();
 
-        // Only available on group DMs
-        var iconUrl = json.GetPropertyOrNull("icon")?.GetNonWhiteSpaceStringOrNull()?.Pipe(h => GetIconUrl(id, h));
+        // Icons can only be set for group DM channels
+        var iconUrl = json
+            .GetPropertyOrNull("icon")?
+            .GetNonWhiteSpaceStringOrNull()?
+            .Pipe(h => ImageCdn.GetChannelIconUrl(id, h));
 
         var topic = json.GetPropertyOrNull("topic")?.GetStringOrNull();
 
@@ -83,8 +81,8 @@ public partial record Channel
         return new Channel(
             id,
             kind,
-            guildId ?? Guild.DirectMessages.Id,
-            category ?? GetFallbackCategory(kind),
+            guildId,
+            category,
             name,
             position,
             iconUrl,

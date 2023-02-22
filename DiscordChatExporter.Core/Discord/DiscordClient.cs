@@ -260,7 +260,7 @@ public class DiscordClient
             return null;
 
         var response = await TryGetJsonResponseAsync($"guilds/{guildId}/members/{memberId}", cancellationToken);
-        return response?.Pipe(Member.Parse);
+        return response?.Pipe(j => Member.Parse(j, guildId));
     }
 
     public async ValueTask<Invite?> TryGetGuildInviteAsync(
@@ -284,7 +284,7 @@ public class DiscordClient
         // Instead, we use an empty channel category as a fallback.
         catch (DiscordChatExporterException)
         {
-            return ChannelCategory.Unknown;
+            return new ChannelCategory(channelId, "Unknown Category", 0);
         }
     }
 

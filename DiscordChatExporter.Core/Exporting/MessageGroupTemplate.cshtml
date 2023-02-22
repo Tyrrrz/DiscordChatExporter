@@ -149,7 +149,7 @@
                         }
 
                         // Avatar
-                        <img class="chatlog__avatar" src="@await ResolveAssetUrlAsync(message.Author.AvatarUrl)" alt="Avatar" loading="lazy">
+                        <img class="chatlog__avatar" src="@await ResolveAssetUrlAsync(authorMember?.AvatarUrl ?? message.Author.AvatarUrl)" alt="Avatar" loading="lazy">
                     }
                     else
                     {
@@ -172,7 +172,7 @@
                                         ? message.ReferencedMessage.Author.Name
                                         : referencedUserMember?.Nick ?? message.ReferencedMessage.Author.Name;
 
-                                    <img class="chatlog__reply-avatar" src="@await ResolveAssetUrlAsync(message.ReferencedMessage.Author.AvatarUrl)" alt="Avatar" loading="lazy">
+                                    <img class="chatlog__reply-avatar" src="@await ResolveAssetUrlAsync(referencedUserMember?.AvatarUrl ?? message.ReferencedMessage.Author.AvatarUrl)" alt="Avatar" loading="lazy">
                                     <div class="chatlog__reply-author" style="@(referencedUserColor is not null ? $"color: rgb({referencedUserColor.Value.R}, {referencedUserColor.Value.G}, {referencedUserColor.Value.B})" : null)" title="@message.ReferencedMessage.Author.FullName">@referencedUserNick</div>
                                     <div class="chatlog__reply-content">
                                         <span class="chatlog__reply-link" onclick="scrollToMessage(event, '@message.ReferencedMessage.Id')">
@@ -205,7 +205,7 @@
                                         ? message.Interaction.User.Name
                                         : interactionUserMember?.Nick ?? message.Interaction.User.Name;
 
-                                    <img class="chatlog__reply-avatar" src="@await ResolveAssetUrlAsync(message.Interaction.User.AvatarUrl)" alt="Avatar" loading="lazy">
+                                    <img class="chatlog__reply-avatar" src="@await ResolveAssetUrlAsync(interactionUserMember?.AvatarUrl ?? message.Interaction.User.AvatarUrl)" alt="Avatar" loading="lazy">
                                     <div class="chatlog__reply-author" style="@(interactionUserColor is not null ? $"color: rgb({interactionUserColor.Value.R}, {interactionUserColor.Value.G}, {interactionUserColor.Value.B})" : null)" title="@message.Interaction.User.FullName">@interactionUserNick</div>
                                     <div class="chatlog__reply-content">
                                         used /@message.Interaction.Name
@@ -337,14 +337,14 @@
                                         <div class="chatlog__embed-invite-info">
                                             <div class="chatlog__embed-invite-guild-name">
                                                 <a href="https://discord.gg/@invite.Code">
-                                                    @(invite.Guild?.Name ?? "Unknown guild")
+                                                    @(invite.Guild?.Name ?? "Unknown Guild")
                                                 </a>
                                             </div>
                                             <div class="chatlog__embed-invite-channel-name">
                                                 <svg class="chatlog__embed-invite-channel-icon">
                                                     <use href="#channel-icon"></use>
                                                 </svg>
-                                                <span> @(invite.Channel?.Name ?? "Unknown channel")</span>
+                                                <span> @(invite.Channel?.Name ?? "Unknown Channel")</span>
                                             </div>
                                         </div>
                                     </div>
@@ -621,7 +621,7 @@
                     @foreach (var sticker in message.Stickers)
                     {
                         <div class="chatlog__sticker" title="@sticker.Name">
-                            @if (sticker.Format is StickerFormat.Png or StickerFormat.PngAnimated)
+                            @if (sticker.Format is StickerFormat.Png or StickerFormat.Apng)
                             {
                                 <img class="chatlog__sticker--media" src="@await ResolveAssetUrlAsync(sticker.SourceUrl)" alt="Sticker">
                             }

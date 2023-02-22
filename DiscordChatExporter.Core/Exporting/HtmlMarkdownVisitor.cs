@@ -203,7 +203,7 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
 
             var member = mention.TargetId?.Pipe(_context.TryGetMember);
             var fullName = member?.User.FullName ?? "Unknown";
-            var nick = member?.Nick ?? "Unknown";
+            var nick = member?.Nick ?? member?.User.Name ?? "Unknown";
 
             _buffer.Append(
                 // language=HTML

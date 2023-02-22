@@ -26,7 +26,7 @@ public class JsonStickerSpecs
 
         sticker.GetProperty("id").GetString().Should().Be("904215665597120572");
         sticker.GetProperty("name").GetString().Should().Be("rock");
-        sticker.GetProperty("format").GetString().Should().Be("PngAnimated");
+        sticker.GetProperty("format").GetString().Should().Be("Apng");
         sticker.GetProperty("sourceUrl").GetString().Should().Be("https://cdn.discordapp.com/stickers/904215665597120572.png");
     }
 

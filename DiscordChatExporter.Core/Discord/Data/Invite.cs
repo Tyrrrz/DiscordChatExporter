@@ -8,7 +8,7 @@ namespace DiscordChatExporter.Core.Discord.Data;
 // https://discord.com/developers/docs/resources/invite#invite-object
 public record Invite(
     string Code,
-    Guild? Guild,
+    Guild Guild,
     Channel? Channel)
 {
     public static string? TryGetCodeFromUrl(string url) =>
@@ -17,7 +17,7 @@ public record Invite(
     public static Invite Parse(JsonElement json)
     {
         var code = json.GetProperty("code").GetNonWhiteSpaceString();
-        var guild = json.GetPropertyOrNull("guild")?.Pipe(Guild.Parse);
+        var guild = json.GetPropertyOrNull("guild")?.Pipe(Guild.Parse) ?? Guild.DirectMessages;
         var channel = json.GetPropertyOrNull("channel")?.Pipe(c => Channel.Parse(c));
 
         return new Invite(code, guild, channel);

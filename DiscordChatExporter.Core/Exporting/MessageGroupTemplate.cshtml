@@ -329,15 +329,15 @@
 
                             <div class="chatlog__embed">
                                 <div class="chatlog__embed-invite-container">
-                                    <div class="chatlog__embed-invite-title">Invite to join a server</div>
+                                    <div class="chatlog__embed-invite-title">@(invite.Channel?.Kind.IsDirect() == true ? "Invite to join a group DM" : "Invite to join a server")</div>
                                     <div class="chatlog__embed-invite">
                                         <div class="chatlog__embed-invite-guild-icon-container">
-                                            <img class="chatlog__embed-invite-guild-icon" src="@await ResolveAssetUrlAsync(invite.Guild?.IconUrl ?? Guild.DirectMessages.IconUrl)" alt="Guild icon" loading="lazy">
+                                            <img class="chatlog__embed-invite-guild-icon" src="@await ResolveAssetUrlAsync(invite.Channel?.IconUrl ?? invite.Guild.IconUrl)" alt="Guild icon" loading="lazy">
                                         </div>
                                         <div class="chatlog__embed-invite-info">
                                             <div class="chatlog__embed-invite-guild-name">
                                                 <a href="https://discord.gg/@invite.Code">
-                                                    @(invite.Guild?.Name ?? "Unknown Guild")
+                                                    @(invite.Guild.Name)
                                                 </a>
                                             </div>
                                             <div class="chatlog__embed-invite-channel-name">

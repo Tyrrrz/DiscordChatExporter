@@ -7,6 +7,19 @@ namespace DiscordChatExporter.Core.Discord.Data;
 
 public record ChannelCategory(Snowflake Id, string Name, int? Position) : IHasId
 {
+    public static ChannelCategory CreateDefault(ChannelKind channelKind) => new(
+        Snowflake.Zero,
+        channelKind switch
+        {
+            ChannelKind.GuildTextChat => "Text",
+            ChannelKind.DirectTextChat => "Private",
+            ChannelKind.DirectGroupTextChat => "Group",
+            ChannelKind.GuildNews => "News",
+            _ => "Default"
+        },
+        null
+    );
+
     public static ChannelCategory Parse(JsonElement json, int? positionHint = null)
     {
         var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);

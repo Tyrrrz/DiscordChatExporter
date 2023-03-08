@@ -20,6 +20,7 @@ internal class ExportContext
     private readonly ExportAssetDownloader _assetDownloader;
 
     public DiscordClient Discord { get; }
+
     public ExportRequest Request { get; }
 
     public ExportContext(DiscordClient discord,
@@ -43,17 +44,34 @@ internal class ExportContext
             _roles[role.Id] = role;
     }
 
-    // Because members are not pulled in bulk, we need to populate them on demand
-    public async ValueTask PopulateMemberAsync(Snowflake id, CancellationToken cancellationToken = default)
+    // Because members cannot be pulled in bulk, we need to populate them on demand
+    private async ValueTask PopulateMemberAsync(
+        Snowflake id,
+        User? fallbackUser,
+        CancellationToken cancellationToken = default)
     {
         if (_members.ContainsKey(id))
             return;
 
         var member = await Discord.TryGetGuildMemberAsync(Request.Guild.Id, id, cancellationToken);
 
+        // User may have left the guild since they were mentioned
+        if (member is null)
+        {
+            var user = fallbackUser ?? await Discord.TryGetUserAsync(id, cancellationToken);
+            if (user is not null)
+                member = Member.CreateDefault(user);
+        }
+
         // Store the result even if it's null, to avoid re-fetching non-existing members
         _members[id] = member;
     }
+
+    public async ValueTask PopulateMemberAsync(Snowflake id, CancellationToken cancellationToken = default) =>
+        await PopulateMemberAsync(id, null, cancellationToken);
+
+    public async ValueTask PopulateMemberAsync(User user, CancellationToken cancellationToken = default) =>
+        await PopulateMemberAsync(user.Id, user, cancellationToken);
 
     public string FormatDate(DateTimeOffset instant) => Request.DateFormat switch
     {

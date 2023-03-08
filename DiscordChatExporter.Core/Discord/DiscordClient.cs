@@ -150,6 +150,14 @@ public class DiscordClient
             : null;
     }
 
+    public async ValueTask<User?> TryGetUserAsync(
+        Snowflake userId,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await TryGetJsonResponseAsync($"users/{userId}", cancellationToken);
+        return response?.Pipe(User.Parse);
+    }
+
     public async IAsyncEnumerable<Guild> GetUserGuildsAsync(
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {

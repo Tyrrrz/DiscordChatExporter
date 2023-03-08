@@ -34,7 +34,7 @@ public class ChannelExporter
         {
             // Resolve members for referenced users
             foreach (var user in message.GetReferencedUsers())
-                await context.PopulateMemberAsync(user.Id, cancellationToken);
+                await context.PopulateMemberAsync(user, cancellationToken);
 
             // Export the message
             if (request.MessageFilter.IsMatch(message))

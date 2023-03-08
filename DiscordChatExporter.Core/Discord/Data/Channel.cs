@@ -23,19 +23,6 @@ public partial record Channel(
 
 public partial record Channel
 {
-    private static ChannelCategory GetFallbackCategory(ChannelKind channelKind) => new(
-        Snowflake.Zero,
-        channelKind switch
-        {
-            ChannelKind.GuildTextChat => "Text",
-            ChannelKind.DirectTextChat => "Private",
-            ChannelKind.DirectGroupTextChat => "Group",
-            ChannelKind.GuildNews => "News",
-            _ => "Default"
-        },
-        null
-    );
-
     public static Channel Parse(JsonElement json, ChannelCategory? categoryHint = null, int? positionHint = null)
     {
         var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
@@ -45,7 +32,7 @@ public partial record Channel
             json.GetPropertyOrNull("guild_id")?.GetNonWhiteSpaceStringOrNull()?.Pipe(Snowflake.Parse) ??
             Guild.DirectMessages.Id;
 
-        var category = categoryHint ?? GetFallbackCategory(kind);
+        var category = categoryHint ?? ChannelCategory.CreateDefault(kind);
 
         var name =
             // Guild channel

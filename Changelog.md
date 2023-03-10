@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.39.1 (10-Mar-2023)
+
+- Fixed an issue where messages containing mentions of users that left the server (but haven't deleted their account) were incorrectly rendered as `@Unknown`.
+- Fixed an issue where messages containing video links were not rendered correctly in the HTML export. Now, they are rendered using a video player and the referenced assets are pulled if the "download assets" option is enabled.
+
 ## v2.39 (25-Feb-2023)
 
 - Added an option to specify the directory path for downloaded assets. This can be used, in combination with the "reuse assets" option, to have a shared asset directory for multiple exports. In GUI, this option can be found in the advanced setion of the export dialog. In CLI, it's available as `--media-dir <path>`. (Thanks [@96-LB](https://github.com/96-LB))

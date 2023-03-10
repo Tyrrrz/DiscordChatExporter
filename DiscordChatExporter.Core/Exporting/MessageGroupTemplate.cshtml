@@ -455,7 +455,7 @@
                                 embed.Url;
 
                             <div class="chatlog__embed">
-                                <video class="chatlog__embed-generic-gifv" width="@embed.Video?.Width" height="@embed.Video?.Height" controls>
+                                <video class="chatlog__embed-generic-video" width="@embed.Video?.Width" height="@embed.Video?.Height" controls>
                                     <source src="@await ResolveAssetUrlAsync(embedVideoUrl)" alt="Embedded video">
                                 </video>
                             </div>
@@ -469,7 +469,7 @@
 
                             <div class="chatlog__embed">
                                 <video class="chatlog__embed-generic-gifv" width="@embed.Video?.Width" height="@embed.Video?.Height" loop onmouseover="this.play()" onmouseout="this.pause()">
-                                    <source src="@await ResolveAssetUrlAsync(embedVideoUrl)" alt="Embedded video">
+                                    <source src="@await ResolveAssetUrlAsync(embedVideoUrl)" alt="Embedded gifv">
                                 </video>
                             </div>
                         }

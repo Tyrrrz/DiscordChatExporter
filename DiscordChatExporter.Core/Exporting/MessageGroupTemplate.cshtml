@@ -447,6 +447,19 @@
                                 </a>
                             </div>
                         }
+                        // Generic video embed
+                        else if (embed.Kind == EmbedKind.Video && !string.IsNullOrWhiteSpace(embed.Url))
+                        {
+                            var embedVideoUrl =
+                                embed.Video?.ProxyUrl ?? embed.Video?.Url ??
+                                embed.Url;
+
+                            <div class="chatlog__embed">
+                                <video class="chatlog__embed-generic-gifv" width="@embed.Video?.Width" height="@embed.Video?.Height" controls>
+                                    <source src="@await ResolveAssetUrlAsync(embedVideoUrl)" alt="Embedded video">
+                                </video>
+                            </div>
+                        }
                         // Generic gifv embed
                         else if (embed.Kind == EmbedKind.Gifv && !string.IsNullOrWhiteSpace(embed.Url))
                         {
@@ -455,7 +468,7 @@
                                 embed.Url;
 
                             <div class="chatlog__embed">
-                                <video class="chatlog__embed-generic-gifv" loop width="@embed.Video?.Width" height="@embed.Video?.Height" onmouseover="this.play()" onmouseout="this.pause()">
+                                <video class="chatlog__embed-generic-gifv" width="@embed.Video?.Width" height="@embed.Video?.Height" loop onmouseover="this.play()" onmouseout="this.pause()">
                                     <source src="@await ResolveAssetUrlAsync(embedVideoUrl)" alt="Embedded video">
                                 </video>
                             </div>

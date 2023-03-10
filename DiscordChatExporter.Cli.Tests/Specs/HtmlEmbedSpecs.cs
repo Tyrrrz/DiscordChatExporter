@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using DiscordChatExporter.Cli.Tests.Infra;
 using DiscordChatExporter.Core.Discord;
+using DiscordChatExporter.Core.Utils.Extensions;
 using FluentAssertions;
 using Xunit;
 
@@ -46,7 +47,8 @@ public class HtmlEmbedSpecs
         message
             .QuerySelectorAll("img")
             .Select(e => e.GetAttribute("src"))
-            .Where(s => s?.EndsWith("i.redd.it/f8w05ja8s4e61.png") ?? false)
+            .WhereNotNull()
+            .Where(s => s.EndsWith("f8w05ja8s4e61.png"))
             .Should()
             .ContainSingle();
     }
@@ -68,6 +70,25 @@ public class HtmlEmbedSpecs
     }
 
     [Fact]
+    public async Task Message_with_a_video_link_is_rendered_with_a_video_embed()
+    {
+        // Act
+        var message = await ExportWrapper.GetMessageAsHtmlAsync(
+            ChannelIds.EmbedTestCases,
+            Snowflake.Parse("1083751036596002856")
+        );
+
+        // Assert
+        message
+            .QuerySelectorAll("source")
+            .Select(e => e.GetAttribute("src"))
+            .WhereNotNull()
+            .Where(s => s.EndsWith("i_am_currently_feeling_slight_displeasure_of_what_you_have_just_sent_lqrem.mp4"))
+            .Should()
+            .ContainSingle();
+    }
+
+    [Fact]
     public async Task Message_with_a_GIFV_link_is_rendered_with_a_video_embed()
     {
         // Act
@@ -80,7 +101,8 @@ public class HtmlEmbedSpecs
         message
             .QuerySelectorAll("source")
             .Select(e => e.GetAttribute("src"))
-            .Where(s => s?.EndsWith("media.tenor.com/DDAJeW6BQKkAAAPo/tooncasm-test-copy.mp4") ?? false)
+            .WhereNotNull()
+            .Where(s => s.EndsWith("tooncasm-test-copy.mp4"))
             .Should()
             .ContainSingle();
     }

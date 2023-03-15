@@ -120,6 +120,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
     [CommandOption(
         "fuck-russia",
+        EnvironmentVariable = "FUCK_RUSSIA",
         Description = "Don't print the Support Ukraine message to the console."
     )]
     public bool IsUkraineSupportMessageDisabled { get; init; }

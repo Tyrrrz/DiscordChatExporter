@@ -14,9 +14,9 @@
 - [How to get Token and Channel IDs](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md)
 - [How to use message filters](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Message-filters.md)
 - Export scheduling with CLI:
-  - [Windows](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/scheduling-windows.md)
-  - [macOS](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/scheduling-MacOS.md)
-  - [Linux](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/scheduling-Linux.md)
+  - [Windows](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Scheduling-Windows.md)
+  - [macOS](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Scheduling-MacOS.md)
+  - [Linux](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Scheduling-Linux.md)
 
 ## Video tutorial
 

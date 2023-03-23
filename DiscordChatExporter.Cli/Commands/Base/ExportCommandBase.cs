@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CliFx.Attributes;
 using CliFx.Exceptions;
 using CliFx.Infrastructure;
+using DiscordChatExporter.Cli.Commands.Converters;
 using DiscordChatExporter.Cli.Utils.Extensions;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
@@ -120,7 +121,9 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
     [CommandOption(
         "fuck-russia",
-        Description = "Don't print the Support Ukraine message to the console."
+        EnvironmentVariable = "FUCK_RUSSIA",
+        Description = "Don't print the Support Ukraine message to the console.",
+        Converter = typeof(TruthyBooleanBindingConverter)
     )]
     public bool IsUkraineSupportMessageDisabled { get; init; }
 

@@ -121,7 +121,7 @@ jobs:
           method: POST
           headers: |
             ContentType: application/json; charset=UTF-8
-          payload: |
+          body: |
             {
               "content": "**DiscordChatExporter** new version released!\nVersion: `${{ steps.get-version.outputs.tag }}`\nChangelog: <https://github.com/Tyrrrz/DiscordChatExporter/blob/${{ steps.get-version.outputs.tag }}/Changelog.md>"
             }

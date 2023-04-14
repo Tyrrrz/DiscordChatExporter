@@ -70,7 +70,7 @@ public partial record Embed
         // with this by merging related embeds at the end of the message parsing process.
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/695
         var images =
-            json.GetPropertyOrNull("image")?.Pipe(EmbedImage.Parse).Enumerate().ToArray() ??
+            json.GetPropertyOrNull("image")?.Pipe(EmbedImage.Parse).ToSingletonEnumerable().ToArray() ??
             Array.Empty<EmbedImage>();
 
         var video = json.GetPropertyOrNull("video")?.Pipe(EmbedVideo.Parse);

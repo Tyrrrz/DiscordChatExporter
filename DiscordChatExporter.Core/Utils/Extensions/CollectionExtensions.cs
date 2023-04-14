@@ -4,7 +4,7 @@ namespace DiscordChatExporter.Core.Utils.Extensions;
 
 public static class CollectionExtensions
 {
-    public static IEnumerable<T> Enumerate<T>(this T obj)
+    public static IEnumerable<T> ToSingletonEnumerable<T>(this T obj)
     {
         yield return obj;
     }

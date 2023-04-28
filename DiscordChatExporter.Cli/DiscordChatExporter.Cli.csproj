@@ -6,11 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CliFx" Version="2.3.2" />
-    <PackageReference Include="FuckRussia" Version="1.0.1" PrivateAssets="all" />
+    <PackageReference Include="CliFx" Version="2.3.3" />
+    <PackageReference Include="Deorcify" Version="1.0.2" PrivateAssets="all" />
+    <PackageReference Include="DotnetRuntimeBootstrapper" Version="2.4.2" PrivateAssets="all" />
+    <PackageReference Include="Gress" Version="2.1.1" />
     <PackageReference Include="Spectre.Console" Version="0.46.0" />
-    <PackageReference Include="Gress" Version="2.1.0" />
-    <PackageReference Include="DotnetRuntimeBootstrapper" Version="2.4.1" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

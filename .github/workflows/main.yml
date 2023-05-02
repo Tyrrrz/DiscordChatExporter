@@ -120,7 +120,7 @@ jobs:
           url: ${{ secrets.DISCORD_WEBHOOK }}
           method: POST
           headers: |
-            ContentType: application/json; charset=UTF-8
+            Content-Type: application/json; charset=UTF-8
           body: |
             {
               "content": "**DiscordChatExporter** new version released!\nVersion: `${{ steps.get-version.outputs.tag }}`\nChangelog: <https://github.com/Tyrrrz/DiscordChatExporter/blob/${{ steps.get-version.outputs.tag }}/Changelog.md>"

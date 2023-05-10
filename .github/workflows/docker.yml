@@ -18,6 +18,7 @@ jobs:
           docker buildx build
           --file DiscordChatExporter.Cli.dockerfile
           --platform linux/amd64,linux/arm64
+          --load
           .
 
   deploy-latest:
@@ -36,6 +37,7 @@ jobs:
           docker buildx build
           --file DiscordChatExporter.Cli.dockerfile
           --platform linux/amd64,linux/arm64
+          --push
           --tag tyrrrz/discordchatexporter:latest
           .
 
@@ -43,7 +45,7 @@ jobs:
         run: docker login -u tyrrrz -p ${{ secrets.DOCKER_TOKEN }}
 
       - name: Push image
-        run: docker push tyrrrz/discordchatexporter:latest
+        run: ocker push tyrrrz/discordchatexporter --all-tags
 
   deploy-stable:
     if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
@@ -65,6 +67,7 @@ jobs:
           docker buildx build
           --file DiscordChatExporter.Cli.dockerfile
           --platform linux/amd64,linux/arm64
+          --push
           --tag tyrrrz/discordchatexporter:stable
           --tag tyrrrz/discordchatexporter:${{ steps.get-version.outputs.tag }}
           .
@@ -73,4 +76,4 @@ jobs:
         run: docker login -u tyrrrz -p ${{ secrets.DOCKER_TOKEN }}
 
       - name: Push image
-        run: docker push --all-tags tyrrrz/discordchatexporter
+        run: docker push tyrrrz/discordchatexporter --all-tags

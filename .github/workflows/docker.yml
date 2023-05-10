@@ -15,7 +15,9 @@ jobs:
         uses: docker/setup-buildx-action@v2
 
       - name: Login to DockerHub
-        run: docker login -u tyrrrz -p ${{ secrets.DOCKER_TOKEN }}
+        run: >
+          echo ${{ secrets.DOCKER_TOKEN }} |
+          docker login -u tyrrrz --password-stdin
 
       - name: Build & push image
         run: >
@@ -42,7 +44,9 @@ jobs:
         uses: docker/setup-buildx-action@v2
 
       - name: Login to DockerHub
-        run: docker login -u tyrrrz -p ${{ secrets.DOCKER_TOKEN }}
+        run: >
+          echo ${{ secrets.DOCKER_TOKEN }} |
+          docker login -u tyrrrz --password-stdin
 
       - name: Build & push image
         run: >

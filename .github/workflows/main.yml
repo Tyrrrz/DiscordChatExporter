@@ -23,7 +23,13 @@ jobs:
       - name: Run tests
         # Tests need access to secrets, so we can't run them against PRs because of limited trust
         if: ${{ github.event_name != 'pull_request' }}
-        run: dotnet test --configuration Release --logger GitHubActions --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+        run: >
+          dotnet test
+          --configuration Release
+          --logger "GitHubActions;summary.includePassedTests=true;summary.includeSkippedTests=true"
+          --collect:"XPlat Code Coverage"
+          --
+          DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
         env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
 
@@ -51,10 +57,16 @@ jobs:
           dotnet-version: 7.0.x
 
       - name: Publish (CLI)
-        run: dotnet publish DiscordChatExporter.Cli/ -o DiscordChatExporter.Cli/bin/Publish/ --configuration Release
+        run: >
+          dotnet publish DiscordChatExporter.Cli
+          --output DiscordChatExporter.Cli/bin/Publish/
+          --configuration Release
 
       - name: Publish (GUI)
-        run: dotnet publish DiscordChatExporter.Gui/ -o DiscordChatExporter.Gui/bin/Publish/ --configuration Release
+        run: >
+          dotnet publish DiscordChatExporter.Gui
+          --output DiscordChatExporter.Gui/bin/Publish/
+          --configuration Release
 
       - name: Upload artifacts (CLI)
         uses: actions/upload-artifact@v3
@@ -87,12 +99,20 @@ jobs:
           path: DiscordChatExporter.Gui
 
       - name: Create package (CLI)
-        run: Compress-Archive -Path DiscordChatExporter.Cli/* -DestinationPath DiscordChatExporter.Cli.zip -Force
         shell: pwsh
+        run: >
+          Compress-Archive
+          -Path DiscordChatExporter.Cli/*
+          -DestinationPath DiscordChatExporter.Cli.zip
+          -Force
 
       - name: Create package (GUI)
-        run: Compress-Archive -Path DiscordChatExporter.Gui/* -DestinationPath DiscordChatExporter.zip -Force
         shell: pwsh
+        run: >
+          Compress-Archive
+          -Path DiscordChatExporter.Gui/*
+          -DestinationPath DiscordChatExporter.zip
+          -Force
 
       - name: Create release
         uses: softprops/action-gh-release@v1

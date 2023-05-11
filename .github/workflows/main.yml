@@ -59,26 +59,26 @@ jobs:
       - name: Publish (CLI)
         run: >
           dotnet publish DiscordChatExporter.Cli
-          --output DiscordChatExporter.Cli/bin/Publish/
+          --output DiscordChatExporter.Cli/publish/
           --configuration Release
 
       - name: Publish (GUI)
         run: >
           dotnet publish DiscordChatExporter.Gui
-          --output DiscordChatExporter.Gui/bin/Publish/
+          --output DiscordChatExporter.Gui/publish/
           --configuration Release
 
       - name: Upload artifacts (CLI)
         uses: actions/upload-artifact@v3
         with:
           name: DiscordChatExporter.Cli
-          path: DiscordChatExporter.Cli/bin/Publish/
+          path: DiscordChatExporter.Cli/publish/
 
       - name: Upload artifacts (GUI)
         uses: actions/upload-artifact@v3
         with:
           name: DiscordChatExporter
-          path: DiscordChatExporter.Gui/bin/Publish/
+          path: DiscordChatExporter.Gui/publish/
 
   deploy:
     if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}

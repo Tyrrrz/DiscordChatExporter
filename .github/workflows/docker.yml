@@ -3,6 +3,30 @@ name: docker
 on: [push, pull_request]
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build image
+        run: >
+          docker buildx build
+          --file DiscordChatExporter.Cli.dockerfile
+          --platform linux/amd64,linux/arm64
+          --output docker/
+          .
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: DiscordChatExporter.Cli.Docker
+          path: docker/
+
   deploy-latest:
     if: ${{ github.event_name == 'push' && github.ref_type == 'branch' && github.ref_name == 'master' }}
     runs-on: ubuntu-latest

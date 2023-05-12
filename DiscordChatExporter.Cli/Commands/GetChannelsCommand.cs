@@ -44,6 +44,26 @@ public class GetChannelsCommand : DiscordCommandBase
             // Channel category / name
             using (console.WithForegroundColor(ConsoleColor.White))
                 await console.Output.WriteLineAsync($"{channel.Category.Name} / {channel.Name}");
+
+            var threads = (await Discord.GetGuildChannelThreadsAsync(channel.Id.ToString(), cancellationToken))
+                .OrderBy(c => c.Name)
+                .ToArray();
+
+            foreach (var thread in threads)
+            {
+                // Thread ID
+                await console.Output.WriteAsync(
+                    thread.Id.ToString().PadLeft(25, ' ').PadRight(18, ' ')
+                );
+
+                // Separator
+                using (console.WithForegroundColor(ConsoleColor.DarkGray))
+                    await console.Output.WriteAsync(" | ");
+
+                // Channel name / thread name
+                using (console.WithForegroundColor(ConsoleColor.White))
+                    await console.Output.WriteLineAsync($"{channel.Name} / {thread.Name}");
+            }
         }
     }
 }

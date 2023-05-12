@@ -200,6 +200,58 @@ public class DiscordClient
         return Guild.Parse(response);
     }
 
+    public async IAsyncEnumerable<Data.Thread> GetGuildChannelThreadsAsync(
+        string channelId,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        int currentOffset = 0;
+
+        var completeThreads = new List<JsonElement>();
+
+        while (true)
+        {
+            var url = new UrlBuilder()
+                .SetPath($"channels/{channelId}/threads/search")
+                .SetQueryParameter("offset", currentOffset.ToString())
+                .Build();
+            try
+            {
+                var response = await GetJsonResponseAsync(url, cancellationToken);
+
+                completeThreads.AddRange(response.GetProperty("threads").EnumerateArray());
+
+                // This should always return false on channels with no threads
+                if (!response.GetProperty("has_more").GetBoolean())
+                {
+                    break;
+                }
+
+                currentOffset += 25;
+            }
+            // If the channel is inaccessible, we cannot get the list of threads, which throws an error.
+            // I don't think there's any way to avoid this try/catch. Would love to be proven wrong.
+            catch (DiscordChatExporterException)
+            {
+                // There's probably a better way to mark response as empty?
+                var response = JsonDocument.Parse("{\"threads\": [], \"members\": [], \"total_results\": 0, \"has_more\": false}").RootElement;
+                completeThreads.AddRange(response.GetProperty("threads").EnumerateArray());
+                break;
+            }
+        }
+
+        var threadArray = completeThreads.ToArray();
+
+        var responseOrdered = threadArray
+            .OrderBy(j => j.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse))
+            .ToArray();
+
+        foreach (var threadJson in responseOrdered)
+        {
+            var thread = Data.Thread.Parse(threadJson);
+            yield return thread;
+        }
+    }
+
     public async IAsyncEnumerable<Channel> GetGuildChannelsAsync(
         Snowflake guildId,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)

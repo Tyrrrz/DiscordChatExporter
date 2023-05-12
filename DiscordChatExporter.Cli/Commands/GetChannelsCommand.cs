@@ -20,6 +20,12 @@ public class GetChannelsCommand : DiscordCommandBase
     )]
     public required Snowflake GuildId { get; init; }
 
+    [CommandOption(
+        "threads",
+        Description = "Display threads alongside channels."
+    )]
+    public bool ThreadShow { get; init; } = true;
+
     public override async ValueTask ExecuteAsync(IConsole console)
     {
         var cancellationToken = console.RegisterCancellationHandler();
@@ -45,24 +51,27 @@ public class GetChannelsCommand : DiscordCommandBase
             using (console.WithForegroundColor(ConsoleColor.White))
                 await console.Output.WriteLineAsync($"{channel.Category.Name} / {channel.Name}");
 
-            var threads = (await Discord.GetGuildChannelThreadsAsync(channel.Id.ToString(), cancellationToken))
+            if (ThreadShow)
+            {
+                var threads = (await Discord.GetGuildChannelThreadsAsync(channel.Id.ToString(), cancellationToken))
                 .OrderBy(c => c.Name)
                 .ToArray();
 
-            foreach (var thread in threads)
-            {
-                // Thread ID
-                await console.Output.WriteAsync(
-                    thread.Id.ToString().PadLeft(25, ' ').PadRight(18, ' ')
-                );
+                foreach (var thread in threads)
+                {
+                    // Thread ID
+                    await console.Output.WriteAsync(
+                        thread.Id.ToString().PadLeft(26, ' ').PadRight(18, ' ')
+                    );
 
-                // Separator
-                using (console.WithForegroundColor(ConsoleColor.DarkGray))
-                    await console.Output.WriteAsync(" | ");
+                    // Separator
+                    using (console.WithForegroundColor(ConsoleColor.DarkGray))
+                        await console.Output.WriteAsync(" | ");
 
-                // Channel name / thread name
-                using (console.WithForegroundColor(ConsoleColor.White))
-                    await console.Output.WriteLineAsync($"{channel.Name} / {thread.Name}");
+                    // Channel name / thread name
+                    using (console.WithForegroundColor(ConsoleColor.White))
+                        await console.Output.WriteLineAsync($"Thread / {thread.Name}");
+                }
             }
         }
     }

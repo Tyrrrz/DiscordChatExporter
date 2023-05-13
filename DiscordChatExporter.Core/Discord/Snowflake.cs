@@ -59,4 +59,8 @@ public partial record struct Snowflake : IComparable<Snowflake>, IComparable
 
         return Value.CompareTo(other.Value);
     }
+
+    public static bool operator >(Snowflake left, Snowflake right) => left.CompareTo(right) > 0;
+
+    public static bool operator <(Snowflake left, Snowflake right) => left.CompareTo(right) < 0;
 }

@@ -333,10 +333,9 @@ public class DiscordClient
         IProgress<Percentage>? progress = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        // Get the last message in the specified range.
-        // This snapshots the boundaries, which means that messages posted after the export started
+        // Get the last message in the specified range, so we can later calculate progress based on its date.
+        // This also snapshots the boundaries, which means that messages posted after the export started
         // will not appear in the output.
-        // Additionally, it provides the date of the last message, which is used to calculate progress.
         var lastMessage = await TryGetLastMessageAsync(channelId, before, cancellationToken);
         if (lastMessage is null || lastMessage.Timestamp < after?.ToDate())
             yield break;

@@ -18,13 +18,20 @@ public class ChannelExporter
         IProgress<Percentage>? progress = null,
         CancellationToken cancellationToken = default)
     {
+        // Check if the channel is empty
+        if (request.Channel.LastMessageId is null)
+            throw DiscordChatExporterException.ChannelIsEmpty();
+
+        // Check if the 'after' boundary is valid
+        if (request.After is not null && request.Channel.LastMessageId < request.After)
+            throw DiscordChatExporterException.ChannelIsEmpty();
+
         // Build context
         var context = new ExportContext(_discord, request);
         await context.PopulateChannelsAndRolesAsync(cancellationToken);
 
         // Export messages
         await using var messageExporter = new MessageExporter(context);
-
         await foreach (var message in _discord.GetMessagesAsync(
                            request.Channel.Id,
                            request.After,

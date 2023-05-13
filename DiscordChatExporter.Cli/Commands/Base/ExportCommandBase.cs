@@ -169,10 +169,10 @@ public abstract class ExportCommandBase : DiscordCommandBase
             );
         }
 
+        // Export
         var cancellationToken = console.RegisterCancellationHandler();
         var errors = new ConcurrentDictionary<Channel, string>();
 
-        // Export
         await console.Output.WriteLineAsync($"Exporting {channels.Count} channel(s)...");
         await console.CreateProgressTicker().StartAsync(async progressContext =>
         {

@@ -200,7 +200,7 @@ public class DiscordClient
         return Guild.Parse(response);
     }
 
-    public async IAsyncEnumerable<Data.Thread> GetGuildChannelThreadsAsync(
+    public async IAsyncEnumerable<ThreadChannel> GetGuildChannelThreadsAsync(
         string channelId,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
@@ -247,7 +247,7 @@ public class DiscordClient
 
         foreach (var threadJson in responseOrdered)
         {
-            var thread = Data.Thread.Parse(threadJson);
+            var thread = ThreadChannel.Parse(threadJson);
             yield return thread;
         }
     }

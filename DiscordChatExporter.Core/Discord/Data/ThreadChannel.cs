@@ -7,7 +7,7 @@ using JsonExtensions.Reading;
 namespace DiscordChatExporter.Core.Discord.Data;
 
 // https://discord.com/developers/docs/resources/channel#channel-object-example-thread-channel
-public partial record Thread(
+public partial record ThreadChannel(
     Snowflake Id,
     ChannelKind Kind,
     Snowflake GuildId,
@@ -17,9 +17,9 @@ public partial record Thread(
 
 }
 
-public partial record Thread
+public partial record ThreadChannel
 {
-    public static Thread Parse(JsonElement json)
+    public static ThreadChannel Parse(JsonElement json)
     {
         var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
         var kind = (ChannelKind)json.GetProperty("type").GetInt32();
@@ -39,7 +39,7 @@ public partial record Thread
             .GetNonWhiteSpaceStringOrNull()?
             .Pipe(Snowflake.Parse);
 
-        return new Thread(
+        return new ThreadChannel(
             id,
             kind,
             guildId,

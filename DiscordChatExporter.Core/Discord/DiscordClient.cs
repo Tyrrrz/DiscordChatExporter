@@ -206,8 +206,6 @@ public class DiscordClient
     {
         int currentOffset = 0;
 
-        var completeThreads = new List<JsonElement>();
-
         while (true)
         {
             var url = new UrlBuilder()
@@ -217,27 +215,14 @@ public class DiscordClient
 
             var response = await TryGetJsonResponseAsync(url, cancellationToken);
 
-            completeThreads.AddRange(response.GetProperty("threads").EnumerateArray());
+            foreach(var threadJson in response?.GetProperty("threads").EnumerateArray() ?? Enumerable.Empty<JsonElement>())
+                yield return ThreadChannel.Parse(threadJson);
 
-            // This should always return false on channels with no threads
-            if (!response.GetProperty("has_more").GetBoolean())
+            if (!(response?.GetProperty("has_more").GetBoolean() ?? false))
             {
                 break;
             }
-
                 currentOffset += 25;
-        }
-
-        var threadArray = completeThreads.ToArray();
-
-        var responseOrdered = threadArray
-            .OrderBy(j => j.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse))
-            .ToArray();
-
-        foreach (var threadJson in responseOrdered)
-        {
-            var thread = ThreadChannel.Parse(threadJson);
-            yield return thread;
         }
     }
 

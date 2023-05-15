@@ -222,7 +222,7 @@ public class DiscordClient
             {
                 break;
             }
-                currentOffset += 25;
+                currentOffset += response?.GetProperty("threads").GetArrayLength() ?? 0;
         }
     }
 

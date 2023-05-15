@@ -21,7 +21,7 @@ public class GetChannelsCommand : DiscordCommandBase
     public required Snowflake GuildId { get; init; }
 
     [CommandOption(
-        "threads",
+        "include-threads",
         Description = "Display threads alongside channels."
     )]
     public bool ThreadShow { get; init; } = true;
@@ -68,7 +68,7 @@ public class GetChannelsCommand : DiscordCommandBase
                     using (console.WithForegroundColor(ConsoleColor.DarkGray))
                         await console.Output.WriteAsync(" | ");
 
-                    // Channel name / thread name
+                    // Thread / thread name
                     using (console.WithForegroundColor(ConsoleColor.White))
                         await console.Output.WriteLineAsync($"Thread / {thread.Name}");
                 }

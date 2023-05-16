@@ -59,9 +59,12 @@ public class GetChannelsCommand : DiscordCommandBase
 
                 foreach (var thread in threads)
                 {
+                    // Indent
+                    await console.Output.WriteAsync('\t');
+
                     // Thread ID
                     await console.Output.WriteAsync(
-                        thread.Id.ToString().PadLeft(26, ' ').PadRight(18, ' ')
+                        thread.Id.ToString().PadRight(18, ' ')
                     );
 
                     // Separator

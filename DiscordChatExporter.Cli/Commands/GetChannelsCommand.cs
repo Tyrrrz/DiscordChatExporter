@@ -54,8 +54,8 @@ public class GetChannelsCommand : DiscordCommandBase
             if (ThreadShow)
             {
                 var threads = (await Discord.GetGuildChannelThreadsAsync(channel.Id.ToString(), cancellationToken))
-                .OrderBy(c => c.Name)
-                .ToArray();
+                    .OrderBy(c => c.Name)
+                    .ToArray();
 
                 foreach (var thread in threads)
                 {

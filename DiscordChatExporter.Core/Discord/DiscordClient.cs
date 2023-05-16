@@ -215,14 +215,17 @@ public class DiscordClient
 
             var response = await TryGetJsonResponseAsync(url, cancellationToken);
 
-            foreach(var threadJson in response?.GetProperty("threads").EnumerateArray() ?? Enumerable.Empty<JsonElement>())
+            if (response is null)
+                break;
+
+            foreach (var threadJson in response.Value.GetProperty("threads").EnumerateArray())
                 yield return ThreadChannel.Parse(threadJson);
 
-            if (!(response?.GetProperty("has_more").GetBoolean() ?? false))
+            if (!response.Value.GetProperty("has_more").GetBoolean())
             {
                 break;
             }
-                currentOffset += response?.GetProperty("threads").GetArrayLength() ?? 0;
+                currentOffset += response.Value.GetProperty("threads").GetArrayLength();
         }
     }
 

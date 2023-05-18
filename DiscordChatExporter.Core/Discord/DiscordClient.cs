@@ -144,7 +144,6 @@ public class DiscordClient
         CancellationToken cancellationToken = default)
     {
         using var response = await GetResponseAsync(url, cancellationToken);
-
         return response.IsSuccessStatusCode
             ? await response.Content.ReadAsJsonAsync(cancellationToken)
             : null;
@@ -164,7 +163,6 @@ public class DiscordClient
         yield return Guild.DirectMessages;
 
         var currentAfter = Snowflake.Zero;
-
         while (true)
         {
             var url = new UrlBuilder()
@@ -176,8 +174,9 @@ public class DiscordClient
             var response = await GetJsonResponseAsync(url, cancellationToken);
 
             var isEmpty = true;
-            foreach (var guild in response.EnumerateArray().Select(Guild.Parse))
+            foreach (var guildJson in response.EnumerateArray())
             {
+                var guild = Guild.Parse(guildJson);
                 yield return guild;
 
                 currentAfter = guild.Id;
@@ -200,35 +199,6 @@ public class DiscordClient
         return Guild.Parse(response);
     }
 
-    public async IAsyncEnumerable<ThreadChannel> GetGuildChannelThreadsAsync(
-        string channelId,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        int currentOffset = 0;
-
-        while (true)
-        {
-            var url = new UrlBuilder()
-                .SetPath($"channels/{channelId}/threads/search")
-                .SetQueryParameter("offset", currentOffset.ToString())
-                .Build();
-
-            var response = await TryGetJsonResponseAsync(url, cancellationToken);
-
-            if (response is null)
-                break;
-
-            foreach (var threadJson in response.Value.GetProperty("threads").EnumerateArray())
-                yield return ThreadChannel.Parse(threadJson);
-
-            if (!response.Value.GetProperty("has_more").GetBoolean())
-            {
-                break;
-            }
-                currentOffset += response.Value.GetProperty("threads").GetArrayLength();
-        }
-    }
-
     public async IAsyncEnumerable<Channel> GetGuildChannelsAsync(
         Snowflake guildId,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -243,24 +213,26 @@ public class DiscordClient
         {
             var response = await GetJsonResponseAsync($"guilds/{guildId}/channels", cancellationToken);
 
-            var responseOrdered = response
+            var channelsJson = response
                 .EnumerateArray()
                 .OrderBy(j => j.GetProperty("position").GetInt32())
                 .ThenBy(j => j.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse))
                 .ToArray();
 
-            var categories = responseOrdered
+            var categories = channelsJson
                 .Where(j => j.GetProperty("type").GetInt32() == (int) ChannelKind.GuildCategory)
                 .Select((j, index) => ChannelCategory.Parse(j, index + 1))
                 .ToDictionary(j => j.Id.ToString(), StringComparer.Ordinal);
 
-            // Discord positions are not deterministic, so we need to normalize them
-            // because the user may refer to the channel position via file name template.
+            // Discord channel positions are relative, so we need to normalize them
+            // so that the user may refer to them more easily in file name templates.
             var position = 0;
 
-            foreach (var channelJson in responseOrdered)
+            foreach (var channelJson in channelsJson)
             {
-                var parentId = channelJson.GetPropertyOrNull("parent_id")?.GetNonWhiteSpaceStringOrNull();
+                var parentId = channelJson
+                    .GetPropertyOrNull("parent_id")?
+                    .GetNonWhiteSpaceStringOrNull();
 
                 var category = !string.IsNullOrWhiteSpace(parentId)
                     ? categories.GetValueOrDefault(parentId)
@@ -283,7 +255,6 @@ public class DiscordClient
             yield break;
 
         var response = await GetJsonResponseAsync($"guilds/{guildId}/roles", cancellationToken);
-
         foreach (var roleJson in response.EnumerateArray())
             yield return Role.Parse(roleJson);
     }
@@ -317,8 +288,8 @@ public class DiscordClient
             var response = await GetJsonResponseAsync($"channels/{channelId}", cancellationToken);
             return ChannelCategory.Parse(response);
         }
-        // In some cases, the Discord API returns an empty body when requesting channel category.
-        // Instead, we use an empty channel category as a fallback.
+        // In some cases, the Discord API returns an empty body when requesting a channel.
+        // Return an empty channel category as fallback in these cases.
         catch (DiscordChatExporterException)
         {
             return new ChannelCategory(channelId, "Unknown Category", 0);
@@ -331,13 +302,43 @@ public class DiscordClient
     {
         var response = await GetJsonResponseAsync($"channels/{channelId}", cancellationToken);
 
-        var parentId = response.GetPropertyOrNull("parent_id")?.GetNonWhiteSpaceStringOrNull()?.Pipe(Snowflake.Parse);
+        var parentId = response
+            .GetPropertyOrNull("parent_id")?
+            .GetNonWhiteSpaceStringOrNull()?
+            .Pipe(Snowflake.Parse);
 
         var category = parentId is not null
             ? await GetChannelCategoryAsync(parentId.Value, cancellationToken)
             : null;
 
         return Channel.Parse(response, category);
+    }
+
+    public async IAsyncEnumerable<ChannelThread> GetChannelThreadsAsync(
+        Snowflake channelId,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        var currentOffset = 0;
+        while (true)
+        {
+            var url = new UrlBuilder()
+                .SetPath($"channels/{channelId}/threads/search")
+                .SetQueryParameter("offset", currentOffset.ToString())
+                .Build();
+
+            var response = await TryGetJsonResponseAsync(url, cancellationToken);
+            if (response is null)
+                break;
+
+            foreach (var threadJson in response.Value.GetProperty("threads").EnumerateArray())
+            {
+                yield return ChannelThread.Parse(threadJson);
+                currentOffset++;
+            }
+
+            if (!response.Value.GetProperty("has_more").GetBoolean())
+                break;
+        }
     }
 
     private async ValueTask<Message?> TryGetLastMessageAsync(
@@ -362,17 +363,17 @@ public class DiscordClient
         IProgress<Percentage>? progress = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        // Get the last message in the specified range, so we can later calculate progress based on its date.
-        // This also snapshots the boundaries, which means that messages posted after the export started
-        // will not appear in the output.
+        // Get the last message in the specified range, so we can later calculate the
+        // progress based on the difference between message timestamps.
+        // This also snapshots the boundaries, which means that messages posted after
+        // the export started will not appear in the output.
         var lastMessage = await TryGetLastMessageAsync(channelId, before, cancellationToken);
         if (lastMessage is null || lastMessage.Timestamp < after?.ToDate())
             yield break;
 
-        // Keep track of first message in range in order to calculate progress
+        // Keep track of the first message in range in order to calculate progress
         var firstMessage = default(Message);
         var currentAfter = after ?? Snowflake.Zero;
-
         while (true)
         {
             var url = new UrlBuilder()
@@ -386,7 +387,8 @@ public class DiscordClient
             var messages = response
                 .EnumerateArray()
                 .Select(Message.Parse)
-                .Reverse() // reverse because messages appear newest first
+                // Messages are returned from newest to oldest, so we need to reverse them
+                .Reverse()
                 .ToArray();
 
             // Break if there are no messages (can happen if messages are deleted during execution)
@@ -397,11 +399,11 @@ public class DiscordClient
             {
                 firstMessage ??= message;
 
-                // Ensure messages are in range (take into account that last message could have been deleted)
+                // Ensure that the messages are in range
                 if (message.Timestamp > lastMessage.Timestamp)
                     yield break;
 
-                // Report progress based on the duration of exported messages divided by total
+                // Report progress based on timestamps
                 if (progress is not null)
                 {
                     var exportedDuration = (message.Timestamp - firstMessage.Timestamp).Duration();
@@ -409,7 +411,7 @@ public class DiscordClient
 
                     progress.Report(Percentage.FromFraction(
                         // Avoid division by zero if all messages have the exact same timestamp
-                        // (which may be the case if there's only one message in the channel)
+                        // (which happens when there's only one message in the channel)
                         totalDuration > TimeSpan.Zero
                             ? exportedDuration / totalDuration
                             : 1

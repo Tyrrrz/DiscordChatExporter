@@ -24,7 +24,7 @@ public class GetChannelsCommand : DiscordCommandBase
         "include-threads",
         Description = "Display threads alongside channels."
     )]
-    public bool IncludeTHreads { get; init; }
+    public bool IncludeThreads { get; init; }
 
     public override async ValueTask ExecuteAsync(IConsole console)
     {
@@ -53,7 +53,7 @@ public class GetChannelsCommand : DiscordCommandBase
 
             if (IncludeThreads)
             {
-                var threads = (await Discord.GetGuildChannelThreadsAsync(channel.Id.ToString(), cancellationToken))
+                var threads = (await Discord.GetChannelThreadsAsync(channel.Id, cancellationToken))
                     .OrderBy(c => c.Name)
                     .ToArray();
 
@@ -71,7 +71,7 @@ public class GetChannelsCommand : DiscordCommandBase
                     using (console.WithForegroundColor(ConsoleColor.DarkGray))
                         await console.Output.WriteAsync(" | ");
 
-                    // Thread / thread name
+                    // Thread name
                     using (console.WithForegroundColor(ConsoleColor.White))
                         await console.Output.WriteLineAsync($"Thread / {thread.Name}");
                 }

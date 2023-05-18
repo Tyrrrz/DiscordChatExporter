@@ -200,6 +200,35 @@ public class DiscordClient
         return Guild.Parse(response);
     }
 
+    public async IAsyncEnumerable<ThreadChannel> GetGuildChannelThreadsAsync(
+        string channelId,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        int currentOffset = 0;
+
+        while (true)
+        {
+            var url = new UrlBuilder()
+                .SetPath($"channels/{channelId}/threads/search")
+                .SetQueryParameter("offset", currentOffset.ToString())
+                .Build();
+
+            var response = await TryGetJsonResponseAsync(url, cancellationToken);
+
+            if (response is null)
+                break;
+
+            foreach (var threadJson in response.Value.GetProperty("threads").EnumerateArray())
+                yield return ThreadChannel.Parse(threadJson);
+
+            if (!response.Value.GetProperty("has_more").GetBoolean())
+            {
+                break;
+            }
+                currentOffset += response.Value.GetProperty("threads").GetArrayLength();
+        }
+    }
+
     public async IAsyncEnumerable<Channel> GetGuildChannelsAsync(
         Snowflake guildId,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)

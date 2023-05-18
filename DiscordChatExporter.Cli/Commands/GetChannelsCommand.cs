@@ -20,6 +20,12 @@ public class GetChannelsCommand : DiscordCommandBase
     )]
     public required Snowflake GuildId { get; init; }
 
+    [CommandOption(
+        "include-threads",
+        Description = "Display threads alongside channels."
+    )]
+    public bool IncludeTHreads { get; init; }
+
     public override async ValueTask ExecuteAsync(IConsole console)
     {
         var cancellationToken = console.RegisterCancellationHandler();
@@ -44,6 +50,32 @@ public class GetChannelsCommand : DiscordCommandBase
             // Channel category / name
             using (console.WithForegroundColor(ConsoleColor.White))
                 await console.Output.WriteLineAsync($"{channel.Category.Name} / {channel.Name}");
+
+            if (IncludeThreads)
+            {
+                var threads = (await Discord.GetGuildChannelThreadsAsync(channel.Id.ToString(), cancellationToken))
+                    .OrderBy(c => c.Name)
+                    .ToArray();
+
+                foreach (var thread in threads)
+                {
+                    // Indent
+                    await console.Output.WriteAsync('\t');
+
+                    // Thread ID
+                    await console.Output.WriteAsync(
+                        thread.Id.ToString().PadRight(18, ' ')
+                    );
+
+                    // Separator
+                    using (console.WithForegroundColor(ConsoleColor.DarkGray))
+                        await console.Output.WriteAsync(" | ");
+
+                    // Thread / thread name
+                    using (console.WithForegroundColor(ConsoleColor.White))
+                        await console.Output.WriteLineAsync($"Thread / {thread.Name}");
+                }
+            }
         }
     }
 }

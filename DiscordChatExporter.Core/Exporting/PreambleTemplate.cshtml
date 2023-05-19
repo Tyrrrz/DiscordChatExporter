@@ -38,7 +38,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
 
-    @{/* Styling */}
+    @* Styling *@
     <style>
         @@font-face {
             src: url("@await ResolveAssetUrlAsync(GetFontUrl("normal", 400))");
@@ -865,7 +865,7 @@
         }
     </style>
 
-    @{/* Syntax highlighting */}
+    @* Syntax highlighting *@
     <link rel="stylesheet" href="@await ResolveAssetUrlAsync($"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/solarized-{ThemeName.ToLowerInvariant()}.min.css")">
     <script src="@await ResolveAssetUrlAsync("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js")"></script>
     <script>
@@ -874,7 +874,7 @@
         });
     </script>
 
-    @{/* Lottie animation support */}
+    @* Lottie animation support *@
     <script src="@await ResolveAssetUrlAsync("https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.8.1/lottie.min.js")"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -895,7 +895,7 @@
         });
     </script>
 
-    @{/* Scripts */}
+    @* Scripts *@
     <script>
         function scrollToMessage(event, id) {
             const element = document.getElementById('chatlog__message-container-' + id);
@@ -932,7 +932,7 @@
         }
     </script>
 
-    @{/* Icons */}
+    @* Icons *@
     <svg style="display: none" xmlns="http://www.w3.org/2000/svg">
         <defs>
             <symbol id="attachment-icon" viewBox="0 0 720 960">
@@ -1001,7 +1001,7 @@
     </div>
 </div>
 
-@{/* Preamble cuts off at this point */}
+@* Preamble cuts off at this point *@
 <!--wmm:ignore-->
 <div class="chatlog">
 <!--/wmm:ignore-->

@@ -42,7 +42,7 @@ public class MultiSelectionListBoxBehavior<T> : Behavior<ListBox>
         set => SetValue(SelectedItemsProperty, value);
     }
 
-    // Propagate selected items from model to view
+    // Propagate selected items from the model to the view
     private void SelectItems()
     {
         _viewHandled = true;
@@ -57,7 +57,7 @@ public class MultiSelectionListBoxBehavior<T> : Behavior<ListBox>
         _viewHandled = false;
     }
 
-    // Propagate selected items from view to model
+    // Propagate selected items from the view to the model
     private void OnListBoxSelectionChanged(object? sender, SelectionChangedEventArgs args)
     {
         if (_viewHandled) return;
@@ -66,7 +66,6 @@ public class MultiSelectionListBoxBehavior<T> : Behavior<ListBox>
         SelectedItems = AssociatedObject.SelectedItems.Cast<T>().ToArray();
     }
 
-    // Re-select items when the set of items changes
     private void OnListBoxItemsChanged(object? sender, NotifyCollectionChangedEventArgs args)
     {
         if (_viewHandled) return;
@@ -82,7 +81,6 @@ public class MultiSelectionListBoxBehavior<T> : Behavior<ListBox>
         ((INotifyCollectionChanged) AssociatedObject.Items).CollectionChanged += OnListBoxItemsChanged;
     }
 
-    /// <inheritdoc />
     protected override void OnDetaching()
     {
         base.OnDetaching();

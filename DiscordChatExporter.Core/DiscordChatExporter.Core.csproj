@@ -1,9 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="AsyncKeyedLock" Version="6.2.1" />
     <PackageReference Include="Gress" Version="2.1.1" />

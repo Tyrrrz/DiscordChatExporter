@@ -39,7 +39,7 @@ internal partial class MessageExporter : IAsyncDisposable
 
     private async ValueTask<MessageWriter> GetWriterAsync(CancellationToken cancellationToken = default)
     {
-        // Ensure partition limit has not been reached
+        // Ensure that the partition limit has not been reached
         if (_writer is not null &&
             _context.Request.PartitionLimit.IsReached(_writer.MessagesWritten, _writer.BytesWritten))
         {
@@ -74,11 +74,11 @@ internal partial class MessageExporter
 {
     private static string GetPartitionFilePath(string baseFilePath, int partitionIndex)
     {
-        // First partition, don't change file name
+        // First partition, don't change the file name
         if (partitionIndex <= 0)
             return baseFilePath;
 
-        // Inject partition index into file name
+        // Inject partition index into the file name
         var fileNameWithoutExt = Path.GetFileNameWithoutExtension(baseFilePath);
         var fileExt = Path.GetExtension(baseFilePath);
         var fileName = $"{fileNameWithoutExt} [part {partitionIndex + 1}]{fileExt}";

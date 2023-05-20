@@ -17,5 +17,5 @@ public enum MessageKind
 
 public static class MessageKindExtensions
 {
-    public static bool IsSystemNotification(this MessageKind c) => (int)c is >= 1 and <= 18;
+    public static bool IsSystemNotification(this MessageKind kind) => (int)kind is >= 1 and <= 18;
 }

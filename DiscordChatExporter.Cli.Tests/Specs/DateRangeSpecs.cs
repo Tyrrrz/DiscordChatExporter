@@ -17,7 +17,7 @@ namespace DiscordChatExporter.Cli.Tests.Specs;
 public class DateRangeSpecs
 {
     [Fact]
-    public async Task Messages_filtered_after_specific_date_only_include_messages_sent_after_that_date()
+    public async Task I_can_filter_the_export_to_only_include_messages_sent_after_the_specified_date()
     {
         // Arrange
         var after = new DateTimeOffset(2021, 07, 24, 0, 0, 0, TimeSpan.Zero);
@@ -61,7 +61,7 @@ public class DateRangeSpecs
     }
 
     [Fact]
-    public async Task Messages_filtered_before_specific_date_only_include_messages_sent_before_that_date()
+    public async Task I_can_filter_the_export_to_only_include_messages_sent_before_the_specified_date()
     {
         // Arrange
         var before = new DateTimeOffset(2021, 07, 24, 0, 0, 0, TimeSpan.Zero);
@@ -103,7 +103,7 @@ public class DateRangeSpecs
     }
 
     [Fact]
-    public async Task Messages_filtered_between_specific_dates_only_include_messages_sent_between_those_dates()
+    public async Task I_can_filter_the_export_to_only_include_messages_sent_between_the_specified_dates()
     {
         // Arrange
         var after = new DateTimeOffset(2021, 07, 24, 0, 0, 0, TimeSpan.Zero);

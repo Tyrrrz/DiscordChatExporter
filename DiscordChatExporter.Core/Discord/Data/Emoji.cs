@@ -34,8 +34,7 @@ public partial record Emoji
         if (!string.IsNullOrWhiteSpace(name))
             return ImageCdn.GetStandardEmojiUrl(name);
 
-        // Either ID or name should be set
-        throw new ApplicationException("Emoji has neither ID nor name set.");
+        throw new InvalidOperationException("Either the emoji ID or name should be provided.");
     }
 
     public static Emoji Parse(JsonElement json)

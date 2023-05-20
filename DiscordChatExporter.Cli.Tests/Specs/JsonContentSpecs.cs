@@ -9,7 +9,7 @@ namespace DiscordChatExporter.Cli.Tests.Specs;
 public class JsonContentSpecs
 {
     [Fact]
-    public async Task Messages_are_exported_correctly()
+    public async Task I_can_export_a_channel_in_the_JSON_format()
     {
         // Act
         var messages = await ExportWrapper.GetMessagesAsJsonAsync(ChannelIds.DateRangeTestCases);

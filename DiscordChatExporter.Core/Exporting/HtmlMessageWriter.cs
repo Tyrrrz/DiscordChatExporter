@@ -52,12 +52,12 @@ internal class HtmlMessageWriter : MessageWriter
             if ((message.Timestamp - lastMessage.Timestamp).Duration().TotalMinutes > 7)
                 return false;
 
-            // Messages must be from the same author
+            // Messages must be sent by the same author
             if (message.Author.Id != lastMessage.Author.Id)
                 return false;
 
-            // If the user changed their name after the last message, their new messages
-            // cannot join an existing group.
+            // If the author changed their name after the last message, their new messages
+            // cannot join the existing group.
             if (!string.Equals(message.Author.FullName, lastMessage.Author.FullName, StringComparison.Ordinal))
                 return false;
         }

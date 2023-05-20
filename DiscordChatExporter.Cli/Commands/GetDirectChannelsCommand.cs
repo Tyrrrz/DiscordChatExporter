@@ -9,7 +9,7 @@ using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Cli.Commands;
 
-[Command("dm", Description = "Get the list of direct message channels.")]
+[Command("dm", Description = "Gets the list of all direct message channels.")]
 public class GetDirectChannelsCommand : DiscordCommandBase
 {
     public override async ValueTask ExecuteAsync(IConsole console)

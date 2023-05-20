@@ -51,7 +51,7 @@ public static class ExportWrapper
         // Lock separately for each channel and format
         using (await Locker.LockAsync(filePath))
         {
-            // Perform export only if it hasn't been done before
+            // Perform the export only if it hasn't been done before
             if (!File.Exists(filePath))
             {
                 await new ExportChannelsCommand
@@ -94,14 +94,13 @@ public static class ExportWrapper
 
     public static async ValueTask<IElement> GetMessageAsHtmlAsync(Snowflake channelId, Snowflake messageId)
     {
-        var message = (await GetMessagesAsHtmlAsync(channelId))
-            .SingleOrDefault(e =>
-                string.Equals(
-                    e.GetAttribute("data-message-id"),
-                    messageId.ToString(),
-                    StringComparison.OrdinalIgnoreCase
-                )
-            );
+        var message = (await GetMessagesAsHtmlAsync(channelId)).SingleOrDefault(e =>
+            string.Equals(
+                e.GetAttribute("data-message-id"),
+                messageId.ToString(),
+                StringComparison.OrdinalIgnoreCase
+            )
+        );
 
         if (message is null)
         {
@@ -115,14 +114,13 @@ public static class ExportWrapper
 
     public static async ValueTask<JsonElement> GetMessageAsJsonAsync(Snowflake channelId, Snowflake messageId)
     {
-        var message = (await GetMessagesAsJsonAsync(channelId))
-            .SingleOrDefault(j =>
-                string.Equals(
-                    j.GetProperty("id").GetString(),
-                    messageId.ToString(),
-                    StringComparison.OrdinalIgnoreCase
-                )
-            );
+        var message = (await GetMessagesAsJsonAsync(channelId)).SingleOrDefault(j =>
+            string.Equals(
+                j.GetProperty("id").GetString(),
+                messageId.ToString(),
+                StringComparison.OrdinalIgnoreCase
+            )
+        );
 
         if (message.ValueKind == JsonValueKind.Undefined)
         {

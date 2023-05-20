@@ -9,7 +9,7 @@ using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Cli.Commands;
 
-[Command("exportguild", Description = "Export all channels within specified guild.")]
+[Command("exportguild", Description = "Exports all channels within the specified guild.")]
 public class ExportGuildCommand : ExportCommandBase
 {
     [CommandOption(

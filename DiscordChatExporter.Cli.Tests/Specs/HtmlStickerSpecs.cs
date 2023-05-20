@@ -9,7 +9,7 @@ namespace DiscordChatExporter.Cli.Tests.Specs;
 public class HtmlStickerSpecs
 {
     [Fact]
-    public async Task Message_with_a_PNG_based_sticker_is_rendered_correctly()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_PNG_sticker()
     {
         // Act
         var message = await ExportWrapper.GetMessageAsHtmlAsync(
@@ -23,7 +23,7 @@ public class HtmlStickerSpecs
     }
 
     [Fact]
-    public async Task Message_with_a_Lottie_based_sticker_is_rendered_correctly()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_Lottie_sticker()
     {
         // Act
         var message = await ExportWrapper.GetMessageAsHtmlAsync(

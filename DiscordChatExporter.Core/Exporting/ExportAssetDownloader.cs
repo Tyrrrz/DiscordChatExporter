@@ -75,9 +75,8 @@ internal partial class ExportAssetDownloader
                 catch
                 {
                     // This can apparently fail for some reason.
+                    // Updating the file date is not a critical task, so we'll just ignore exceptions thrown here.
                     // https://github.com/Tyrrrz/DiscordChatExporter/issues/585
-                    // Updating file dates is not a critical task, so we'll just
-                    // ignore exceptions thrown here.
                 }
             });
 
@@ -98,7 +97,7 @@ internal partial class ExportAssetDownloader
     {
         var urlHash = GetUrlHash(url);
 
-        // Try to extract file name from URL
+        // Try to extract the file name from URL
         var fileName = Regex.Match(url, @".+/([^?]*)").Groups[1].Value;
 
         // If it's not there, just use the URL hash as the file name
@@ -110,7 +109,7 @@ internal partial class ExportAssetDownloader
         var fileExtension = Path.GetExtension(fileName);
 
         // Probably not a file extension, just a dot in a long file name
-        // https://github.com/Tyrrrz/DiscordChatExporter/issues/708
+        // https://github.com/Tyrrrz/DiscordChatExporter/pull/812
         if (fileExtension.Length > 41)
         {
             fileNameWithoutExtension = fileName;

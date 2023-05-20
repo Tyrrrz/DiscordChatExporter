@@ -13,7 +13,7 @@ using JsonExtensions.Reading;
 
 namespace DiscordChatExporter.Cli.Commands;
 
-[Command("exportall", Description = "Export all accessible channels.")]
+[Command("exportall", Description = "Exports all accessible channels.")]
 public class ExportAllCommand : ExportCommandBase
 {
     [CommandOption(
@@ -30,7 +30,9 @@ public class ExportAllCommand : ExportCommandBase
 
     [CommandOption(
         "data-package",
-        Description = "Path to the personal data package (ZIP file) requested from Discord. If provided, only channels referenced in the dump will be exported."
+        Description =
+            "Path to the personal data package (ZIP file) requested from Discord. " +
+            "If provided, only channels referenced in the dump will be exported."
     )]
     public string? DataPackageFilePath { get; init; }
 
@@ -62,7 +64,7 @@ public class ExportAllCommand : ExportCommandBase
 
             var entry = archive.GetEntry("messages/index.json");
             if (entry is null)
-                throw new CommandException("Cannot find channel index inside the data package.");
+                throw new CommandException("Could not find channel index inside the data package.");
 
             await using var stream = entry.Open();
             using var document = await JsonDocument.ParseAsync(stream, default, cancellationToken);
@@ -85,7 +87,7 @@ public class ExportAllCommand : ExportCommandBase
                 }
                 catch (DiscordChatExporterException)
                 {
-                    await console.Output.WriteLineAsync($"Channel '{channelName}' ({channelId}) is inaccessible.");
+                    await console.Error.WriteLineAsync($"Channel '{channelName}' ({channelId}) is inaccessible.");
                 }
             }
         }

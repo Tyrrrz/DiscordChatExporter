@@ -6,7 +6,7 @@ using CliFx.Infrastructure;
 
 namespace DiscordChatExporter.Cli.Commands;
 
-[Command("guide", Description = "Explains how to obtain token, guild or channel ID.")]
+[Command("guide", Description = "Explains how to obtain the token, guild or channel ID.")]
 public class GuideCommand : ICommand
 {
     public ValueTask ExecuteAsync(IConsole console)

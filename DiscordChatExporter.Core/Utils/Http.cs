@@ -16,7 +16,7 @@ public static class Http
 
     private static bool IsRetryableStatusCode(HttpStatusCode statusCode) =>
         statusCode is HttpStatusCode.TooManyRequests or HttpStatusCode.RequestTimeout ||
-        // Treat all server-side errors as retryable.
+        // Treat all server-side errors as retryable
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/908
         (int)statusCode >= 500;
 

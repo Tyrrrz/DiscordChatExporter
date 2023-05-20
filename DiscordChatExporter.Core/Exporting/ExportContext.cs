@@ -55,10 +55,13 @@ internal class ExportContext
 
         var member = await Discord.TryGetGuildMemberAsync(Request.Guild.Id, id, cancellationToken);
 
-        // User may have left the guild since they were mentioned
+        // User may have left the guild since they were mentioned.
+        // Create a dummy member object based on the user info.
         if (member is null)
         {
             var user = fallbackUser ?? await Discord.TryGetUserAsync(id, cancellationToken);
+
+            // User may have been deleted since they were mentioned
             if (user is not null)
                 member = Member.CreateDefault(user);
         }
@@ -114,7 +117,7 @@ internal class ExportContext
             var relativeFilePath = Path.GetRelativePath(Request.OutputDirPath, filePath);
 
             // Prefer relative paths so that the output files can be copied around without breaking references.
-            // If the assets path is outside of the export directory, use the absolute path instead.
+            // If the assets path is outside of the export directory, use an absolute path instead.
             var optimalFilePath =
                 relativeFilePath.StartsWith(".." + Path.DirectorySeparatorChar, StringComparison.Ordinal) ||
                 relativeFilePath.StartsWith(".." + Path.AltDirectorySeparatorChar, StringComparison.Ordinal)
@@ -135,8 +138,8 @@ internal class ExportContext
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/372
         catch (Exception ex) when (ex is HttpRequestException or OperationCanceledException)
         {
-            // TODO: add logging so we can be more liberal with catching exceptions
-            // We don't want this to crash the exporting process in case of failure
+            // We don't want this to crash the exporting process in case of failure.
+            // TODO: add logging so we can be more liberal with catching exceptions.
             return url;
         }
     }

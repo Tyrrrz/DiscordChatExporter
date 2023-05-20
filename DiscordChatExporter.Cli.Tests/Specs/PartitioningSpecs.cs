@@ -14,7 +14,7 @@ namespace DiscordChatExporter.Cli.Tests.Specs;
 public class PartitioningSpecs
 {
     [Fact]
-    public async Task Messages_partitioned_by_count_are_split_into_a_corresponding_number_of_files()
+    public async Task I_can_export_a_channel_with_partitioning_based_on_message_count()
     {
         // Arrange
         using var dir = TempDir.Create();
@@ -37,7 +37,7 @@ public class PartitioningSpecs
     }
 
     [Fact]
-    public async Task Messages_partitioned_by_file_size_are_split_into_a_corresponding_number_of_files()
+    public async Task I_can_export_a_channel_with_partitioning_based_on_file_size()
     {
         // Arrange
         using var dir = TempDir.Create();

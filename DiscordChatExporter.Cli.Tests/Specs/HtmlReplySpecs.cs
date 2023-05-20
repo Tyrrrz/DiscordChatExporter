@@ -10,7 +10,7 @@ namespace DiscordChatExporter.Cli.Tests.Specs;
 public class HtmlReplySpecs
 {
     [Fact]
-    public async Task Message_with_a_reply_is_rendered_correctly()
+    public async Task I_can_export_a_channel_that_contains_a_message_that_replies_to_another_message()
     {
         // Act
         var message = await ExportWrapper.GetMessageAsHtmlAsync(
@@ -24,7 +24,7 @@ public class HtmlReplySpecs
     }
 
     [Fact]
-    public async Task Message_with_a_reply_to_a_deleted_message_is_rendered_correctly()
+    public async Task I_can_export_a_channel_that_contains_a_message_that_replies_to_a_deleted_message()
     {
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/645
 
@@ -42,7 +42,7 @@ public class HtmlReplySpecs
     }
 
     [Fact]
-    public async Task Message_with_a_reply_to_an_empty_message_with_attachment_is_rendered_correctly()
+    public async Task I_can_export_a_channel_that_contains_a_message_that_replies_to_an_empty_message_with_an_attachment()
     {
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/634
 
@@ -58,7 +58,7 @@ public class HtmlReplySpecs
     }
 
     [Fact]
-    public async Task Message_with_a_reply_to_an_interaction_is_rendered_correctly()
+    public async Task I_can_export_a_channel_that_contains_a_message_that_replies_to_an_interaction()
     {
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/569
 

@@ -7,7 +7,7 @@ using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Cli.Commands;
 
-[Command("exportdm", Description = "Export all direct message channels.")]
+[Command("exportdm", Description = "Exports all direct message channels.")]
 public class ExportDirectMessagesCommand : ExportCommandBase
 {
     public override async ValueTask ExecuteAsync(IConsole console)

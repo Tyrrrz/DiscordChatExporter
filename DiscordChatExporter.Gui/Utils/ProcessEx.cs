@@ -6,13 +6,15 @@ internal static class ProcessEx
 {
     public static void StartShellExecute(string path)
     {
-        var startInfo = new ProcessStartInfo(path)
+        using var process = new Process
         {
-            UseShellExecute = true
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = path,
+                UseShellExecute = true
+            }
         };
 
-        using (Process.Start(startInfo))
-        {
-        }
+        process.Start();
     }
 }

@@ -45,7 +45,7 @@ public partial class SettingsService : SettingsBase
 
     public override void Save()
     {
-        // Clear token if it's not supposed to be persisted
+        // Clear the token if it's not supposed to be persisted
         if (!IsTokenPersisted)
             LastToken = null;
 

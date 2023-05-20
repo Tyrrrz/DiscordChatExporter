@@ -89,11 +89,15 @@ internal partial class CsvMessageWriter : MessageWriter
         // Message content
         if (message.Kind.IsSystemNotification())
         {
-            await _writer.WriteAsync(CsvEncode(message.GetFallbackContent()));
+            await _writer.WriteAsync(CsvEncode(
+                message.GetFallbackContent()
+            ));
         }
         else
         {
-            await _writer.WriteAsync(CsvEncode(await FormatMarkdownAsync(message.Content, cancellationToken)));
+            await _writer.WriteAsync(CsvEncode(
+                await FormatMarkdownAsync(message.Content, cancellationToken)
+            ));
         }
 
         await _writer.WriteAsync(',');

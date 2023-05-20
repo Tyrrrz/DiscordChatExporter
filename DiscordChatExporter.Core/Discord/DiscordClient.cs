@@ -238,11 +238,8 @@ public class DiscordClient
                     ? categories.GetValueOrDefault(parentId)
                     : null;
 
-                var channel = Channel.Parse(channelJson, category, position);
-
+                yield return Channel.Parse(channelJson, category, position);
                 position++;
-
-                yield return channel;
             }
         }
     }
@@ -288,8 +285,8 @@ public class DiscordClient
             var response = await GetJsonResponseAsync($"channels/{channelId}", cancellationToken);
             return ChannelCategory.Parse(response);
         }
-        // In some cases, the Discord API returns an empty body when requesting a channel.
-        // Return an empty channel category as fallback in these cases.
+        // In some cases, Discord API returns an empty body when requesting a channel.
+        // Use an empty channel category as fallback for these cases.
         catch (DiscordChatExporterException)
         {
             return new ChannelCategory(channelId, "Unknown Category", 0);
@@ -371,8 +368,9 @@ public class DiscordClient
         if (lastMessage is null || lastMessage.Timestamp < after?.ToDate())
             yield break;
 
-        // Keep track of the first message in range in order to calculate progress
+        // Keep track of the first message in range in order to calculate the progress
         var firstMessage = default(Message);
+
         var currentAfter = after ?? Snowflake.Zero;
         while (true)
         {

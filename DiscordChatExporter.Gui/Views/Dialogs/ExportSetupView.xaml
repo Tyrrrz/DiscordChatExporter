@@ -221,7 +221,7 @@
                             materialDesign:HintAssist.IsFloating="True"
                             Style="{DynamicResource MaterialDesignOutlinedTextBox}"
                             Text="{Binding PartitionLimitValue}"
-                            ToolTip="Split output into partitions, each limited to this number of messages (e.g. '100') or file size (e.g. '10mb')" />
+                            ToolTip="Split the output into partitions, each limited to the specified number of messages (e.g. '100') or file size (e.g. '10mb')" />
 
                         <!--  Filtering  -->
                         <TextBox

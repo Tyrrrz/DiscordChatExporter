@@ -10,7 +10,7 @@ namespace DiscordChatExporter.Cli.Tests.Specs;
 public class HtmlMentionSpecs
 {
     [Fact]
-    public async Task Message_with_a_user_mention_is_rendered_correctly()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_user_mention()
     {
         // Act
         var message = await ExportWrapper.GetMessageAsHtmlAsync(
@@ -24,7 +24,7 @@ public class HtmlMentionSpecs
     }
 
     [Fact]
-    public async Task Message_with_a_text_channel_mention_is_rendered_correctly()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_text_channel_mention()
     {
         // Act
         var message = await ExportWrapper.GetMessageAsHtmlAsync(
@@ -37,7 +37,7 @@ public class HtmlMentionSpecs
     }
 
     [Fact]
-    public async Task Message_with_a_voice_channel_mention_is_rendered_correctly()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_voice_channel_mention()
     {
         // Act
         var message = await ExportWrapper.GetMessageAsHtmlAsync(
@@ -50,7 +50,7 @@ public class HtmlMentionSpecs
     }
 
     [Fact]
-    public async Task Message_with_a_role_mention_is_rendered_correctly()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_role_mention()
     {
         // Act
         var message = await ExportWrapper.GetMessageAsHtmlAsync(

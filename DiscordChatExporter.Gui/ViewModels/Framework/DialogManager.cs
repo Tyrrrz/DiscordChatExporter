@@ -25,7 +25,7 @@ public class DialogManager : IDisposable
 
         void OnDialogOpened(object? openSender, DialogOpenedEventArgs openArgs)
         {
-            void OnScreenClosed(object? closeSender, EventArgs args)
+            void OnScreenClosed(object? closeSender, EventArgs closeArgs)
             {
                 try
                 {

@@ -12,7 +12,7 @@ namespace DiscordChatExporter.Cli.Tests.Specs;
 public class HtmlEmbedSpecs
 {
     [Fact]
-    public async Task Message_with_an_embed_is_rendered_correctly()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_rich_embed()
     {
         // Act
         var message = await ExportWrapper.GetMessageAsHtmlAsync(
@@ -33,7 +33,7 @@ public class HtmlEmbedSpecs
     }
 
     [Fact]
-    public async Task Message_with_an_image_link_is_rendered_with_an_image_embed()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_an_image_embed()
     {
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/537
 
@@ -54,7 +54,7 @@ public class HtmlEmbedSpecs
     }
 
     [Fact]
-    public async Task Message_with_an_image_link_and_nothing_else_is_rendered_without_text_content()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_an_image_embed_and_the_text_is_hidden_if_it_only_contains_the_image_link()
     {
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/682
 
@@ -70,7 +70,7 @@ public class HtmlEmbedSpecs
     }
 
     [Fact]
-    public async Task Message_with_a_video_link_is_rendered_with_a_video_embed()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_video_embed()
     {
         // Act
         var message = await ExportWrapper.GetMessageAsHtmlAsync(
@@ -89,7 +89,7 @@ public class HtmlEmbedSpecs
     }
 
     [Fact]
-    public async Task Message_with_a_GIFV_link_is_rendered_with_a_video_embed()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_GIFV_embed()
     {
         // Act
         var message = await ExportWrapper.GetMessageAsHtmlAsync(
@@ -108,7 +108,7 @@ public class HtmlEmbedSpecs
     }
 
     [Fact]
-    public async Task Message_with_a_GIFV_link_and_nothing_else_is_rendered_without_text_content()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_GIFV_embed_and_the_text_is_hidden_if_it_only_contains_the_video_link()
     {
         // Act
         var message = await ExportWrapper.GetMessageAsHtmlAsync(
@@ -122,7 +122,7 @@ public class HtmlEmbedSpecs
     }
 
     [Fact]
-    public async Task Message_with_a_Spotify_track_link_is_rendered_with_a_track_embed()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_Spotify_track_embed()
     {
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/657
 
@@ -138,7 +138,7 @@ public class HtmlEmbedSpecs
     }
 
     [Fact]
-    public async Task Message_with_a_YouTube_video_link_is_rendered_with_a_video_embed()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_YouTube_video_embed()
     {
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/570
 
@@ -154,7 +154,7 @@ public class HtmlEmbedSpecs
     }
 
     [Fact]
-    public async Task Message_with_a_Twitter_post_link_with_multiple_images_is_rendered_as_a_single_embed()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_Twitter_post_embed_that_includes_multiple_images()
     {
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/695
 
@@ -180,7 +180,7 @@ public class HtmlEmbedSpecs
     }
 
     [Fact]
-    public async Task Message_with_a_guild_invite_link_is_rendered_with_a_widget()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_guild_invite()
     {
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/649
 

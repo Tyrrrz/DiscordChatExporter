@@ -17,8 +17,8 @@ public class Bootstrapper : Bootstrapper<RootViewModel>
     {
         base.OnStart();
 
-        // Set default theme
-        // (preferred theme will be set later, once the settings are loaded)
+        // Set the default theme.
+        // Preferred theme will be set later, once the settings are loaded.
         App.SetLightTheme();
     }
 
@@ -26,10 +26,7 @@ public class Bootstrapper : Bootstrapper<RootViewModel>
     {
         base.ConfigureIoC(builder);
 
-        // Bind settings as singleton
         builder.Bind<SettingsService>().ToSelf().InSingletonScope();
-
-        // Bind view model factory
         builder.Bind<IViewModelFactory>().ToAbstractFactory();
     }
 

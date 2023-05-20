@@ -29,15 +29,11 @@ public partial record struct Snowflake
 
         // As number
         if (ulong.TryParse(str, NumberStyles.None, formatProvider, out var value))
-        {
             return new Snowflake(value);
-        }
 
         // As date
         if (DateTimeOffset.TryParse(str, formatProvider, DateTimeStyles.None, out var instant))
-        {
             return FromDate(instant);
-        }
 
         return null;
     }

@@ -16,7 +16,7 @@ namespace DiscordChatExporter.Cli.Tests.Specs;
 public class FilterSpecs
 {
     [Fact]
-    public async Task Messages_filtered_by_text_only_include_messages_that_contain_that_text()
+    public async Task I_can_filter_the_export_to_only_include_messages_that_contain_the_specified_text()
     {
         // Arrange
         using var file = TempFile.Create();
@@ -42,7 +42,7 @@ public class FilterSpecs
     }
 
     [Fact]
-    public async Task Messages_filtered_by_author_only_include_messages_sent_by_that_author()
+    public async Task I_can_filter_the_export_to_only_include_messages_that_were_sent_by_the_specified_author()
     {
         // Arrange
         using var file = TempFile.Create();
@@ -68,7 +68,7 @@ public class FilterSpecs
     }
 
     [Fact]
-    public async Task Messages_filtered_by_content_only_include_messages_that_have_that_content()
+    public async Task I_can_filter_the_export_to_only_include_messages_that_contain_the_specified_content()
     {
         // Arrange
         using var file = TempFile.Create();
@@ -94,7 +94,7 @@ public class FilterSpecs
     }
 
     [Fact]
-    public async Task Messages_filtered_by_pin_only_include_messages_that_have_been_pinned()
+    public async Task I_can_filter_the_export_to_only_include_messages_that_have_been_pinned()
     {
         // Arrange
         using var file = TempFile.Create();
@@ -120,7 +120,7 @@ public class FilterSpecs
     }
 
     [Fact]
-    public async Task Messages_filtered_by_mention_only_include_messages_that_have_that_mention()
+    public async Task I_can_filter_the_export_to_only_include_messages_that_contain_the_specified_mention()
     {
         // Arrange
         using var file = TempFile.Create();

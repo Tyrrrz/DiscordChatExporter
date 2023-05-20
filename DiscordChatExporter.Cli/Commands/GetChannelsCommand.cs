@@ -22,7 +22,7 @@ public class GetChannelsCommand : DiscordCommandBase
 
     [CommandOption(
         "include-threads",
-        Description = "Display threads alongside channels."
+        Description = "Include threads in the output."
     )]
     public bool IncludeThreads { get; init; }
 

@@ -12,7 +12,7 @@ namespace DiscordChatExporter.Cli.Tests.Specs;
 public class HtmlMarkdownSpecs
 {
     [Fact]
-    public async Task Message_with_a_timestamp_is_rendered_correctly()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_timestamp_marker()
     {
         // Date formatting code relies on the local time zone, so we need to set it to a fixed value
         TimeZoneInfoEx.SetLocal(TimeSpan.FromHours(+2));
@@ -36,7 +36,7 @@ public class HtmlMarkdownSpecs
     }
 
     [Fact]
-    public async Task Message_with_a_short_time_timestamp_is_rendered_correctly()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_short_timestamp_marker()
     {
         // Date formatting code relies on the local time zone, so we need to set it to a fixed value
         TimeZoneInfoEx.SetLocal(TimeSpan.FromHours(+2));
@@ -60,7 +60,7 @@ public class HtmlMarkdownSpecs
     }
 
     [Fact]
-    public async Task Message_with_a_long_time_timestamp_is_rendered_correctly()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_long_timestamp_marker()
     {
         // Date formatting code relies on the local time zone, so we need to set it to a fixed value
         TimeZoneInfoEx.SetLocal(TimeSpan.FromHours(+2));
@@ -84,7 +84,7 @@ public class HtmlMarkdownSpecs
     }
 
     [Fact]
-    public async Task Message_with_a_short_date_timestamp_is_rendered_correctly()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_short_date_timestamp_marker()
     {
         // Date formatting code relies on the local time zone, so we need to set it to a fixed value
         TimeZoneInfoEx.SetLocal(TimeSpan.FromHours(+2));
@@ -108,7 +108,7 @@ public class HtmlMarkdownSpecs
     }
 
     [Fact]
-    public async Task Message_with_a_long_date_timestamp_is_rendered_correctly()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_long_date_timestamp_marker()
     {
         // Date formatting code relies on the local time zone, so we need to set it to a fixed value
         TimeZoneInfoEx.SetLocal(TimeSpan.FromHours(+2));
@@ -132,7 +132,7 @@ public class HtmlMarkdownSpecs
     }
 
     [Fact]
-    public async Task Message_with_a_full_timestamp_is_rendered_correctly()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_full_timestamp_marker()
     {
         // Date formatting code relies on the local time zone, so we need to set it to a fixed value
         TimeZoneInfoEx.SetLocal(TimeSpan.FromHours(+2));
@@ -156,7 +156,7 @@ public class HtmlMarkdownSpecs
     }
 
     [Fact]
-    public async Task Message_with_a_full_long_timestamp_is_rendered_correctly()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_full_long_timestamp_marker()
     {
         // Date formatting code relies on the local time zone, so we need to set it to a fixed value
         TimeZoneInfoEx.SetLocal(TimeSpan.FromHours(+2));
@@ -180,7 +180,7 @@ public class HtmlMarkdownSpecs
     }
 
     [Fact]
-    public async Task Message_with_a_relative_timestamp_is_rendered_as_the_default_timestamp()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_relative_timestamp_marker()
     {
         // Date formatting code relies on the local time zone, so we need to set it to a fixed value
         TimeZoneInfoEx.SetLocal(TimeSpan.FromHours(+2));
@@ -204,7 +204,7 @@ public class HtmlMarkdownSpecs
     }
 
     [Fact]
-    public async Task Message_with_an_invalid_timestamp_is_rendered_correctly()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_an_invalid_timestamp_marker()
     {
         // Date formatting code relies on the local time zone, so we need to set it to a fixed value
         TimeZoneInfoEx.SetLocal(TimeSpan.FromHours(+2));

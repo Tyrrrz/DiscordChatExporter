@@ -8,7 +8,7 @@ namespace DiscordChatExporter.Cli.Tests.Specs;
 public class CsvContentSpecs
 {
     [Fact]
-    public async Task Messages_are_exported_correctly()
+    public async Task I_can_export_a_channel_in_the_CSV_format()
     {
         // Act
         var document = await ExportWrapper.ExportAsCsvAsync(ChannelIds.DateRangeTestCases);

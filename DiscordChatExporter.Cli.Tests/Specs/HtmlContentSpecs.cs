@@ -11,7 +11,7 @@ namespace DiscordChatExporter.Cli.Tests.Specs;
 public class HtmlContentSpecs
 {
     [Fact]
-    public async Task Messages_are_exported_correctly()
+    public async Task I_can_export_a_channel_in_the_HTML_format()
     {
         // Act
         var messages = await ExportWrapper.GetMessagesAsHtmlAsync(ChannelIds.DateRangeTestCases);

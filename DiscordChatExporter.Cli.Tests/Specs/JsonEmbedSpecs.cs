@@ -10,7 +10,7 @@ namespace DiscordChatExporter.Cli.Tests.Specs;
 public class JsonEmbedSpecs
 {
     [Fact]
-    public async Task Message_with_an_embed_is_rendered_correctly()
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_rich_embed()
     {
         // Act
         var message = await ExportWrapper.GetMessageAsJsonAsync(

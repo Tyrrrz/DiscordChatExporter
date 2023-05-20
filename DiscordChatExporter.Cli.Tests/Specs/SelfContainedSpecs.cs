@@ -14,7 +14,7 @@ namespace DiscordChatExporter.Cli.Tests.Specs;
 public class SelfContainedSpecs
 {
     [Fact]
-    public async Task Messages_in_self_contained_export_only_reference_local_file_resources()
+    public async Task I_can_export_a_channel_and_download_all_referenced_assets()
     {
         // Arrange
         using var dir = TempDir.Create();

@@ -15,7 +15,7 @@ namespace DiscordChatExporter.Cli.Tests.Specs;
 public class HtmlGroupingSpecs
 {
     [Fact]
-    public async Task Messages_are_grouped_correctly()
+    public async Task I_can_export_a_channel_and_the_messages_are_grouped_according_to_their_author_and_timestamps()
     {
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/152
 

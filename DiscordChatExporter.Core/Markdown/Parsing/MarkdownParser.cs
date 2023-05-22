@@ -81,15 +81,15 @@ internal static partial class MarkdownParser
     private static readonly IMatcher<MarkdownNode> SingleLineQuoteNodeMatcher = new RegexMatcher<MarkdownNode>(
         // Capture any character until the end of the line.
         // Opening 'greater than' character must be followed by whitespace.
-        // Text content is optional.
-        new Regex(@"^>\s(.*\n?)", DefaultRegexOptions),
+        // Consume the newline character so that it's not included in the content.
+        new Regex(@"^>\s(.+\n?)", DefaultRegexOptions),
         (s, m) => new FormattingNode(FormattingKind.Quote, Parse(s.Relocate(m.Groups[1])))
     );
 
     private static readonly IMatcher<MarkdownNode> RepeatedSingleLineQuoteNodeMatcher = new RegexMatcher<MarkdownNode>(
         // Repeatedly capture any character until the end of the line.
-        // This one is tricky as it ends up producing multiple separate captures which need to be joined.
-        new Regex(@"(?:^>\s(.*\n?)){2,}", DefaultRegexOptions),
+        // Consume the newline character so that it's not included in the content.
+        new Regex(@"(?:^>\s(.+\n?)){2,}", DefaultRegexOptions),
         (_, m) => new FormattingNode(
             FormattingKind.Quote,
             Parse(
@@ -104,6 +104,16 @@ internal static partial class MarkdownParser
         // Opening 'greater than' characters must be followed by whitespace.
         new Regex(@"^>>>\s(.+)", DefaultRegexOptions | RegexOptions.Singleline),
         (s, m) => new FormattingNode(FormattingKind.Quote, Parse(s.Relocate(m.Groups[1])))
+    );
+
+    /* Headers */
+
+    private static readonly IMatcher<MarkdownNode> HeaderNodeMatcher = new RegexMatcher<MarkdownNode>(
+        // Capture any character until the end of the line.
+        // Opening 'hash' character(s) must be followed by whitespace.
+        // Consume the newline character so that it's not included in the content.
+        new Regex(@"^(\#{1,3})\s(.+\n?)", DefaultRegexOptions),
+        (s, m) => new HeaderNode(m.Groups[1].Length, Parse(s.Relocate(m.Groups[2])))
     );
 
     /* Code blocks */
@@ -329,6 +339,9 @@ internal static partial class MarkdownParser
         MultiLineQuoteNodeMatcher,
         RepeatedSingleLineQuoteNodeMatcher,
         SingleLineQuoteNodeMatcher,
+
+        // Headers
+        HeaderNodeMatcher,
 
         // Code blocks
         MultiLineCodeBlockNodeMatcher,

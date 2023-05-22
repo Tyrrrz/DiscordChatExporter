@@ -20,6 +20,14 @@ internal abstract class MarkdownVisitor
         return formatting;
     }
 
+    protected virtual async ValueTask<MarkdownNode> VisitHeaderAsync(
+        HeaderNode header,
+        CancellationToken cancellationToken = default)
+    {
+        await VisitAsync(header.Children, cancellationToken);
+        return header;
+    }
+
     protected virtual ValueTask<MarkdownNode> VisitInlineCodeBlockAsync(
         InlineCodeBlockNode inlineCodeBlock,
         CancellationToken cancellationToken = default) =>
@@ -62,6 +70,9 @@ internal abstract class MarkdownVisitor
 
             FormattingNode formatting =>
                 await VisitFormattingAsync(formatting, cancellationToken),
+
+            HeaderNode header =>
+                await VisitHeaderAsync(header, cancellationToken),
 
             InlineCodeBlockNode inlineCodeBlock =>
                 await VisitInlineCodeBlockAsync(inlineCodeBlock, cancellationToken),

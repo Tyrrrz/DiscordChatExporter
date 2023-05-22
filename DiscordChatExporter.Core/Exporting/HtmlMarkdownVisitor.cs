@@ -91,6 +91,25 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
         return result;
     }
 
+    protected override async ValueTask<MarkdownNode> VisitHeaderAsync(
+        HeaderNode header,
+        CancellationToken cancellationToken = default)
+    {
+        _buffer.Append(
+            // lang=html
+            $"<h{header.Level}>"
+        );
+
+        var result = await base.VisitHeaderAsync(header, cancellationToken);
+
+        _buffer.Append(
+            // lang=html
+            $"</h{header.Level}>"
+        );
+
+        return result;
+    }
+
     protected override async ValueTask<MarkdownNode> VisitInlineCodeBlockAsync(
         InlineCodeBlockNode inlineCodeBlock,
         CancellationToken cancellationToken = default)

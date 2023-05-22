@@ -24,13 +24,13 @@ internal static partial class MarkdownParser
     /* Formatting */
 
     private static readonly IMatcher<MarkdownNode> BoldFormattingNodeMatcher = new RegexMatcher<MarkdownNode>(
-        // Capture any character until the earliest double asterisk not followed by an asterisk.
+        // There must be exactly two closing asterisks.
         new Regex(@"\*\*(.+?)\*\*(?!\*)", DefaultRegexOptions | RegexOptions.Singleline),
         (s, m) => new FormattingNode(FormattingKind.Bold, Parse(s.Relocate(m.Groups[1])))
     );
 
     private static readonly IMatcher<MarkdownNode> ItalicFormattingNodeMatcher = new RegexMatcher<MarkdownNode>(
-        // Capture any character until the earliest single asterisk not preceded or followed by an asterisk.
+        // There must be exactly one closing asterisk.
         // Opening asterisk must not be followed by whitespace.
         // Closing asterisk must not be preceded by whitespace.
         new Regex(@"\*(?!\s)(.+?)(?<!\s|\*)\*(?!\*)", DefaultRegexOptions | RegexOptions.Singleline),
@@ -38,27 +38,26 @@ internal static partial class MarkdownParser
     );
 
     private static readonly IMatcher<MarkdownNode> ItalicBoldFormattingNodeMatcher = new RegexMatcher<MarkdownNode>(
-        // Capture any character until the earliest triple asterisk not followed by an asterisk.
+        // There must be exactly three closing asterisks.
         new Regex(@"\*(\*\*.+?\*\*)\*(?!\*)", DefaultRegexOptions | RegexOptions.Singleline),
         (s, m) => new FormattingNode(FormattingKind.Italic, Parse(s.Relocate(m.Groups[1]), BoldFormattingNodeMatcher))
     );
 
     private static readonly IMatcher<MarkdownNode> ItalicAltFormattingNodeMatcher = new RegexMatcher<MarkdownNode>(
-        // Capture any character except underscore until an underscore.
         // Closing underscore must not be followed by a word character.
-        new Regex(@"_([^_]+)_(?!\w)", DefaultRegexOptions | RegexOptions.Singleline),
+        new Regex(@"_(.+?)_(?!\w)", DefaultRegexOptions | RegexOptions.Singleline),
         (s, m) => new FormattingNode(FormattingKind.Italic, Parse(s.Relocate(m.Groups[1])))
     );
 
     private static readonly IMatcher<MarkdownNode> UnderlineFormattingNodeMatcher = new RegexMatcher<MarkdownNode>(
-        // Capture any character until the earliest double underscore not followed by an underscore.
+        // There must be exactly two closing underscores.
         new Regex(@"__(.+?)__(?!_)", DefaultRegexOptions | RegexOptions.Singleline),
         (s, m) => new FormattingNode(FormattingKind.Underline, Parse(s.Relocate(m.Groups[1])))
     );
 
     private static readonly IMatcher<MarkdownNode> ItalicUnderlineFormattingNodeMatcher =
         new RegexMatcher<MarkdownNode>(
-            // Capture any character until the earliest triple underscore not followed by an underscore.
+            // There must be exactly three closing underscores.
             new Regex(@"_(__.+?__)_(?!_)", DefaultRegexOptions | RegexOptions.Singleline),
             (s, m) => new FormattingNode(
                 FormattingKind.Italic,
@@ -67,68 +66,61 @@ internal static partial class MarkdownParser
         );
 
     private static readonly IMatcher<MarkdownNode> StrikethroughFormattingNodeMatcher = new RegexMatcher<MarkdownNode>(
-        // Capture any character until the earliest double tilde.
         new Regex(@"~~(.+?)~~", DefaultRegexOptions | RegexOptions.Singleline),
         (s, m) => new FormattingNode(FormattingKind.Strikethrough, Parse(s.Relocate(m.Groups[1])))
     );
 
     private static readonly IMatcher<MarkdownNode> SpoilerFormattingNodeMatcher = new RegexMatcher<MarkdownNode>(
-        // Capture any character until the earliest double pipe.
         new Regex(@"\|\|(.+?)\|\|", DefaultRegexOptions | RegexOptions.Singleline),
         (s, m) => new FormattingNode(FormattingKind.Spoiler, Parse(s.Relocate(m.Groups[1])))
     );
 
     private static readonly IMatcher<MarkdownNode> SingleLineQuoteNodeMatcher = new RegexMatcher<MarkdownNode>(
-        // Capture any character until the end of the line.
-        // Opening 'greater than' character must be followed by whitespace.
-        // Consume the newline character so that it's not included in the content.
+        // Include the linebreak in the content so that the lines are preserved in quotes.
         new Regex(@"^>\s(.+\n?)", DefaultRegexOptions),
         (s, m) => new FormattingNode(FormattingKind.Quote, Parse(s.Relocate(m.Groups[1])))
     );
 
     private static readonly IMatcher<MarkdownNode> RepeatedSingleLineQuoteNodeMatcher = new RegexMatcher<MarkdownNode>(
-        // Repeatedly capture any character until the end of the line.
-        // Consume the newline character so that it's not included in the content.
+        // Include the linebreaks in the content, so that the lines are preserved in quotes.
         new Regex(@"(?:^>\s(.+\n?)){2,}", DefaultRegexOptions),
-        (_, m) => new FormattingNode(
+        (s, m) => new FormattingNode(
             FormattingKind.Quote,
-            Parse(
-                // Combine all captures into a single string
-                string.Concat(m.Groups[1].Captures.Select(c => c.Value))
-            )
+            m.Groups[1].Captures.SelectMany(c => Parse(s.Relocate(c))).ToArray()
         )
     );
 
     private static readonly IMatcher<MarkdownNode> MultiLineQuoteNodeMatcher = new RegexMatcher<MarkdownNode>(
-        // Capture any character until the end of the input.
-        // Opening 'greater than' characters must be followed by whitespace.
         new Regex(@"^>>>\s(.+)", DefaultRegexOptions | RegexOptions.Singleline),
         (s, m) => new FormattingNode(FormattingKind.Quote, Parse(s.Relocate(m.Groups[1])))
     );
 
-    /* Headers */
-
     private static readonly IMatcher<MarkdownNode> HeaderNodeMatcher = new RegexMatcher<MarkdownNode>(
-        // Capture any character until the end of the line.
-        // Opening 'hash' character(s) must be followed by whitespace.
-        // Consume the newline character so that it's not included in the content.
-        new Regex(@"^(\#{1,3})\s(.+\n?)", DefaultRegexOptions),
+        // Consume the linebreak so that it's not attached to following nodes.
+        new Regex(@"^(\#{1,3})\s(.+)\n", DefaultRegexOptions),
         (s, m) => new HeaderNode(m.Groups[1].Length, Parse(s.Relocate(m.Groups[2])))
+    );
+
+    private static readonly IMatcher<MarkdownNode> ListNodeMatcher = new RegexMatcher<MarkdownNode>(
+        // Can be preceded by whitespace, which specifies the list's nesting level.
+        // Following lines that start with (level+1) whitespace are considered part of the list item.
+        // Consume the linebreak so that it's not attached to following nodes.
+        new Regex(@"^(\s*)(?:[\-\*]\s(.+(?:\n\s\1.*)*)?\n?)+", DefaultRegexOptions),
+        (s, m) => new ListNode(
+            m.Groups[2].Captures.Select(c => new ListItemNode(Parse(s.Relocate(c)))).ToArray()
+        )
     );
 
     /* Code blocks */
 
     private static readonly IMatcher<MarkdownNode> InlineCodeBlockNodeMatcher = new RegexMatcher<MarkdownNode>(
-        // Capture any character except backtick until a backtick.
-        // Blank lines at the beginning and at the end of content are trimmed.
-        // There can be either one or two backticks, but equal number on both sides.
+        // One or two backticks are allowed, but they must match on both sides.
         new Regex(@"(`{1,2})([^`]+)\1", DefaultRegexOptions | RegexOptions.Singleline),
-        (_, m) => new InlineCodeBlockNode(m.Groups[2].Value.Trim('\r', '\n'))
+        (_, m) => new InlineCodeBlockNode(m.Groups[2].Value)
     );
 
     private static readonly IMatcher<MarkdownNode> MultiLineCodeBlockNodeMatcher = new RegexMatcher<MarkdownNode>(
-        // Capture language identifier and then any character until the earliest triple backtick.
-        // Language identifier is one word immediately after opening backticks, followed immediately by newline.
+        // Language identifier is one word immediately after opening backticks, followed immediately by a linebreak.
         // Blank lines at the beginning and at the end of content are trimmed.
         new Regex(@"```(?:(\w*)\n)?(.+?)```", DefaultRegexOptions | RegexOptions.Singleline),
         (_, m) => new MultiLineCodeBlockNode(m.Groups[1].Value, m.Groups[2].Value.Trim('\r', '\n'))
@@ -215,7 +207,7 @@ internal static partial class MarkdownParser
     );
 
     private static readonly IMatcher<MarkdownNode> CodedStandardEmojiNodeMatcher = new RegexMatcher<MarkdownNode>(
-        // Capture :thinking: for known emoji codes
+        // Capture :thinking:
         new Regex(@":([\w_]+):", DefaultRegexOptions),
         (_, m) => EmojiIndex.TryGetName(m.Groups[1].Value)?.Pipe(n => new EmojiNode(n))
     );
@@ -233,8 +225,8 @@ internal static partial class MarkdownParser
     /* Links */
 
     private static readonly IMatcher<MarkdownNode> AutoLinkNodeMatcher = new RegexMatcher<MarkdownNode>(
-        // Capture any non-whitespace character after http:// or https://
-        // until the last punctuation character or whitespace
+        // Any non-whitespace character after http:// or https://
+        // until the last punctuation character or whitespace.
         new Regex(@"(https?://\S*[^\.,:;""'\s])", DefaultRegexOptions),
         (_, m) => new LinkNode(m.Groups[1].Value)
     );
@@ -318,8 +310,7 @@ internal static partial class MarkdownParser
         }
     );
 
-    // Combine all matchers into one.
-    // Matchers that have similar patterns are ordered from most specific to least specific.
+    // Matchers that have similar patterns are ordered from most specific to least specific
     private static readonly IMatcher<MarkdownNode> NodeMatcher = new AggregateMatcher<MarkdownNode>(
         // Escaped text
         ShrugTextNodeMatcher,
@@ -339,9 +330,8 @@ internal static partial class MarkdownParser
         MultiLineQuoteNodeMatcher,
         RepeatedSingleLineQuoteNodeMatcher,
         SingleLineQuoteNodeMatcher,
-
-        // Headers
         HeaderNodeMatcher,
+        ListNodeMatcher,
 
         // Code blocks
         MultiLineCodeBlockNodeMatcher,

@@ -7,93 +7,127 @@ namespace DiscordChatExporter.Core.Markdown.Parsing;
 
 internal abstract class MarkdownVisitor
 {
-    protected virtual ValueTask<MarkdownNode> VisitTextAsync(
+    protected virtual ValueTask VisitTextAsync(
         TextNode text,
-        CancellationToken cancellationToken = default) =>
-        new(text);
+        CancellationToken cancellationToken = default) => default;
 
-    protected virtual async ValueTask<MarkdownNode> VisitFormattingAsync(
+    protected virtual async ValueTask VisitFormattingAsync(
         FormattingNode formatting,
-        CancellationToken cancellationToken = default)
-    {
+        CancellationToken cancellationToken = default) =>
         await VisitAsync(formatting.Children, cancellationToken);
-        return formatting;
-    }
 
-    protected virtual async ValueTask<MarkdownNode> VisitHeaderAsync(
+    protected virtual async ValueTask VisitHeaderAsync(
         HeaderNode header,
-        CancellationToken cancellationToken = default)
-    {
+        CancellationToken cancellationToken = default) =>
         await VisitAsync(header.Children, cancellationToken);
-        return header;
-    }
 
-    protected virtual ValueTask<MarkdownNode> VisitInlineCodeBlockAsync(
+    protected virtual async ValueTask VisitListAsync(
+        ListNode list,
+        CancellationToken cancellationToken = default) =>
+        await VisitAsync(list.Items, cancellationToken);
+
+    protected virtual async ValueTask VisitListItemAsync(
+        ListItemNode listItem,
+        CancellationToken cancellationToken = default) =>
+        await VisitAsync(listItem.Children, cancellationToken);
+
+    protected virtual ValueTask VisitInlineCodeBlockAsync(
         InlineCodeBlockNode inlineCodeBlock,
-        CancellationToken cancellationToken = default) =>
-        new(inlineCodeBlock);
+        CancellationToken cancellationToken = default) => default;
 
-    protected virtual ValueTask<MarkdownNode> VisitMultiLineCodeBlockAsync(
+    protected virtual ValueTask VisitMultiLineCodeBlockAsync(
         MultiLineCodeBlockNode multiLineCodeBlock,
-        CancellationToken cancellationToken = default) =>
-        new(multiLineCodeBlock);
+        CancellationToken cancellationToken = default) => default;
 
-    protected virtual async ValueTask<MarkdownNode> VisitLinkAsync(
+    protected virtual async ValueTask VisitLinkAsync(
         LinkNode link,
+        CancellationToken cancellationToken = default) =>
+        await VisitAsync(link.Children, cancellationToken);
+
+    protected virtual ValueTask VisitEmojiAsync(
+        EmojiNode emoji,
+        CancellationToken cancellationToken = default) => default;
+
+    protected virtual ValueTask VisitMentionAsync(
+        MentionNode mention,
+        CancellationToken cancellationToken = default) => default;
+
+    protected virtual ValueTask VisitTimestampAsync(
+        TimestampNode timestamp,
+        CancellationToken cancellationToken = default) => default;
+
+    public async ValueTask VisitAsync(
+        MarkdownNode node,
         CancellationToken cancellationToken = default)
     {
-        await VisitAsync(link.Children, cancellationToken);
-        return link;
-    }
-
-    protected virtual ValueTask<MarkdownNode> VisitEmojiAsync(
-        EmojiNode emoji,
-        CancellationToken cancellationToken = default) =>
-        new(emoji);
-
-    protected virtual ValueTask<MarkdownNode> VisitMentionAsync(
-        MentionNode mention,
-        CancellationToken cancellationToken = default) =>
-        new(mention);
-
-    protected virtual ValueTask<MarkdownNode> VisitTimestampAsync(
-        TimestampNode timestamp,
-        CancellationToken cancellationToken = default) =>
-        new(timestamp);
-
-    public async ValueTask<MarkdownNode> VisitAsync(
-        MarkdownNode node,
-        CancellationToken cancellationToken = default) => node switch
+        if (node is TextNode text)
         {
-            TextNode text =>
-                await VisitTextAsync(text, cancellationToken),
+            await VisitTextAsync(text, cancellationToken);
+            return;
+        }
 
-            FormattingNode formatting =>
-                await VisitFormattingAsync(formatting, cancellationToken),
+        if (node is FormattingNode formatting)
+        {
+            await VisitFormattingAsync(formatting, cancellationToken);
+            return;
+        }
 
-            HeaderNode header =>
-                await VisitHeaderAsync(header, cancellationToken),
+        if (node is HeaderNode header)
+        {
+            await VisitHeaderAsync(header, cancellationToken);
+            return;
+        }
 
-            InlineCodeBlockNode inlineCodeBlock =>
-                await VisitInlineCodeBlockAsync(inlineCodeBlock, cancellationToken),
+        if (node is ListNode list)
+        {
+            await VisitListAsync(list, cancellationToken);
+            return;
+        }
 
-            MultiLineCodeBlockNode multiLineCodeBlock =>
-                await VisitMultiLineCodeBlockAsync(multiLineCodeBlock, cancellationToken),
+        if (node is ListItemNode listItem)
+        {
+            await VisitListItemAsync(listItem, cancellationToken);
+            return;
+        }
 
-            LinkNode link =>
-                await VisitLinkAsync(link, cancellationToken),
+        if (node is InlineCodeBlockNode inlineCodeBlock)
+        {
+            await VisitInlineCodeBlockAsync(inlineCodeBlock, cancellationToken);
+            return;
+        }
 
-            EmojiNode emoji =>
-                await VisitEmojiAsync(emoji, cancellationToken),
+        if (node is MultiLineCodeBlockNode multiLineCodeBlock)
+        {
+            await VisitMultiLineCodeBlockAsync(multiLineCodeBlock, cancellationToken);
+            return;
+        }
 
-            MentionNode mention =>
-                await VisitMentionAsync(mention, cancellationToken),
+        if (node is LinkNode link)
+        {
+            await VisitLinkAsync(link, cancellationToken);
+            return;
+        }
 
-            TimestampNode timestamp =>
-                await VisitTimestampAsync(timestamp, cancellationToken),
+        if (node is EmojiNode emoji)
+        {
+            await VisitEmojiAsync(emoji, cancellationToken);
+            return;
+        }
 
-            _ => throw new ArgumentOutOfRangeException(nameof(node))
-        };
+        if (node is MentionNode mention)
+        {
+            await VisitMentionAsync(mention, cancellationToken);
+            return;
+        }
+
+        if (node is TimestampNode timestamp)
+        {
+            await VisitTimestampAsync(timestamp, cancellationToken);
+            return;
+        }
+
+        throw new ArgumentOutOfRangeException(nameof(node));
+    }
 
     public async ValueTask VisitAsync(
         IEnumerable<MarkdownNode> nodes,

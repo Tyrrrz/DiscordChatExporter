@@ -18,15 +18,15 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
         _buffer = buffer;
     }
 
-    protected override async ValueTask<MarkdownNode> VisitTextAsync(
+    protected override ValueTask VisitTextAsync(
         TextNode text,
         CancellationToken cancellationToken = default)
     {
         _buffer.Append(text.Text);
-        return await base.VisitTextAsync(text, cancellationToken);
+        return default;
     }
 
-    protected override async ValueTask<MarkdownNode> VisitEmojiAsync(
+    protected override ValueTask VisitEmojiAsync(
         EmojiNode emoji,
         CancellationToken cancellationToken = default)
     {
@@ -36,11 +36,10 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
                 : emoji.Name
         );
 
-        return await base.VisitEmojiAsync(emoji, cancellationToken);
+        return default;
     }
 
-    protected override async ValueTask<MarkdownNode> VisitMentionAsync(
-        MentionNode mention,
+    protected override async ValueTask VisitMentionAsync(MentionNode mention,
         CancellationToken cancellationToken = default)
     {
         if (mention.Kind == MentionKind.Everyone)
@@ -82,11 +81,9 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
 
             _buffer.Append($"@{name}");
         }
-
-        return await base.VisitMentionAsync(mention, cancellationToken);
     }
 
-    protected override async ValueTask<MarkdownNode> VisitTimestampAsync(
+    protected override ValueTask VisitTimestampAsync(
         TimestampNode timestamp,
         CancellationToken cancellationToken = default)
     {
@@ -98,7 +95,7 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
                 : "Invalid date"
         );
 
-        return await base.VisitTimestampAsync(timestamp, cancellationToken);
+        return default;
     }
 }
 

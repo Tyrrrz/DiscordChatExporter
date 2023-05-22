@@ -25,59 +25,59 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
         _isJumbo = isJumbo;
     }
 
-    protected override async ValueTask<MarkdownNode> VisitTextAsync(
+    protected override ValueTask VisitTextAsync(
         TextNode text,
         CancellationToken cancellationToken = default)
     {
         _buffer.Append(HtmlEncode(text.Text));
-        return await base.VisitTextAsync(text, cancellationToken);
+        return default;
     }
 
-    protected override async ValueTask<MarkdownNode> VisitFormattingAsync(
+    protected override async ValueTask VisitFormattingAsync(
         FormattingNode formatting,
         CancellationToken cancellationToken = default)
     {
         var (openingTag, closingTag) = formatting.Kind switch
         {
             FormattingKind.Bold => (
-                // language=HTML
+                // lang=html
                 "<strong>",
-                // language=HTML
+                // lang=html
                 "</strong>"
             ),
 
             FormattingKind.Italic => (
-                // language=HTML
+                // lang=html
                 "<em>",
-                // language=HTML
+                // lang=html
                 "</em>"
             ),
 
             FormattingKind.Underline => (
-                // language=HTML
+                // lang=html
                 "<u>",
-                // language=HTML
+                // lang=html
                 "</u>"
             ),
 
             FormattingKind.Strikethrough => (
-                // language=HTML
+                // lang=html
                 "<s>",
-                // language=HTML
+                // lang=html
                 "</s>"
             ),
 
             FormattingKind.Spoiler => (
-                // language=HTML
+                // lang=html
                 """<span class="chatlog__markdown-spoiler chatlog__markdown-spoiler--hidden" onclick="showSpoiler(event, this)">""",
-                // language=HTML
+                // lang=html
                 """</span>"""
             ),
 
             FormattingKind.Quote => (
-                // language=HTML
+                // lang=html
                 """<div class="chatlog__markdown-quote"><div class="chatlog__markdown-quote-border"></div><div class="chatlog__markdown-quote-content">""",
-                // language=HTML
+                // lang=html
                 """</div></div>"""
             ),
 
@@ -85,13 +85,11 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
         };
 
         _buffer.Append(openingTag);
-        var result = await base.VisitFormattingAsync(formatting, cancellationToken);
+        await VisitAsync(formatting.Children, cancellationToken);
         _buffer.Append(closingTag);
-
-        return result;
     }
 
-    protected override async ValueTask<MarkdownNode> VisitHeaderAsync(
+    protected override async ValueTask VisitHeaderAsync(
         HeaderNode header,
         CancellationToken cancellationToken = default)
     {
@@ -100,31 +98,63 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
             $"<h{header.Level}>"
         );
 
-        var result = await base.VisitHeaderAsync(header, cancellationToken);
+        await VisitAsync(header.Children, cancellationToken);
 
         _buffer.Append(
             // lang=html
             $"</h{header.Level}>"
         );
-
-        return result;
     }
 
-    protected override async ValueTask<MarkdownNode> VisitInlineCodeBlockAsync(
+    protected override async ValueTask VisitListAsync(
+        ListNode list,
+        CancellationToken cancellationToken = default)
+    {
+        _buffer.Append(
+            // lang=html
+            "<ul>"
+        );
+
+        await VisitAsync(list.Items, cancellationToken);
+
+        _buffer.Append(
+            // lang=html
+            "</ul>"
+        );
+    }
+
+    protected override async ValueTask VisitListItemAsync(
+        ListItemNode listItem,
+        CancellationToken cancellationToken = default)
+    {
+        _buffer.Append(
+            // lang=html
+            "<li>"
+        );
+
+        await VisitAsync(listItem.Children, cancellationToken);
+
+        _buffer.Append(
+            // lang=html
+            "</li>"
+        );
+    }
+
+    protected override ValueTask VisitInlineCodeBlockAsync(
         InlineCodeBlockNode inlineCodeBlock,
         CancellationToken cancellationToken = default)
     {
         _buffer.Append(
-            // language=HTML
+            // lang=html
             $"""
             <code class="chatlog__markdown-pre chatlog__markdown-pre--inline">{HtmlEncode(inlineCodeBlock.Code)}</code>
             """
         );
 
-        return await base.VisitInlineCodeBlockAsync(inlineCodeBlock, cancellationToken);
+        return default;
     }
 
-    protected override async ValueTask<MarkdownNode> VisitMultiLineCodeBlockAsync(
+    protected override ValueTask VisitMultiLineCodeBlockAsync(
         MultiLineCodeBlockNode multiLineCodeBlock,
         CancellationToken cancellationToken = default)
     {
@@ -133,16 +163,16 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
             : "nohighlight";
 
         _buffer.Append(
-            // language=HTML
+            // lang=html
             $"""
             <code class="chatlog__markdown-pre chatlog__markdown-pre--multiline {highlightClass}">{HtmlEncode(multiLineCodeBlock.Code)}</code>
             """
         );
 
-        return await base.VisitMultiLineCodeBlockAsync(multiLineCodeBlock, cancellationToken);
+        return default;
     }
 
-    protected override async ValueTask<MarkdownNode> VisitLinkAsync(
+    protected override async ValueTask VisitLinkAsync(
         LinkNode link,
         CancellationToken cancellationToken = default)
     {
@@ -154,21 +184,21 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
 
         _buffer.Append(
             !string.IsNullOrWhiteSpace(linkedMessageId)
-                // language=HTML
+                // lang=html
                 ? $"""<a href="{HtmlEncode(link.Url)}" onclick="scrollToMessage(event, '{linkedMessageId}')">"""
-                // language=HTML
+                // lang=html
                 : $"""<a href="{HtmlEncode(link.Url)}">"""
         );
 
-        var result = await base.VisitLinkAsync(link, cancellationToken);
+        await VisitAsync(link.Children, cancellationToken);
 
-        // language=HTML
-        _buffer.Append("</a>");
-
-        return result;
+        _buffer.Append(
+            // lang=html
+            "</a>"
+        );
     }
 
-    protected override async ValueTask<MarkdownNode> VisitEmojiAsync(
+    protected override async ValueTask VisitEmojiAsync(
         EmojiNode emoji,
         CancellationToken cancellationToken = default)
     {
@@ -176,7 +206,7 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
         var jumboClass = _isJumbo ? "chatlog__emoji--large" : "";
 
         _buffer.Append(
-            // language=HTML
+            // lang=html
             $"""
             <img
                 loading="lazy"
@@ -186,18 +216,15 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
                 src="{await _context.ResolveAssetUrlAsync(emojiImageUrl, cancellationToken)}">
             """
         );
-
-        return await base.VisitEmojiAsync(emoji, cancellationToken);
     }
 
-    protected override async ValueTask<MarkdownNode> VisitMentionAsync(
-        MentionNode mention,
+    protected override async ValueTask VisitMentionAsync(MentionNode mention,
         CancellationToken cancellationToken = default)
     {
         if (mention.Kind == MentionKind.Everyone)
         {
             _buffer.Append(
-                // language=HTML
+                // lang=html
                 """
                 <span class="chatlog__markdown-mention">@everyone</span>
                 """
@@ -206,7 +233,7 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
         else if (mention.Kind == MentionKind.Here)
         {
             _buffer.Append(
-                // language=HTML
+                // lang=html
                 """
                 <span class="chatlog__markdown-mention">@here</span>
                 """
@@ -225,7 +252,7 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
             var nick = member?.Nick ?? member?.User.Name ?? "Unknown";
 
             _buffer.Append(
-                // language=HTML
+                // lang=html
                 $"""
                 <span class="chatlog__markdown-mention" title="{HtmlEncode(fullName)}">@{HtmlEncode(nick)}</span>
                 """
@@ -238,7 +265,7 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
             var name = channel?.Name ?? "deleted-channel";
 
             _buffer.Append(
-                // language=HTML
+                // lang=html
                 $"""
                 <span class="chatlog__markdown-mention">{symbol}{HtmlEncode(name)}</span>
                 """
@@ -254,20 +281,18 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
                 ? $"""
                   color: rgb({color.Value.R}, {color.Value.G}, {color.Value.B}); background-color: rgba({color.Value.R}, {color.Value.G}, {color.Value.B}, 0.1);
                   """
-                : "";
+                : null;
 
             _buffer.Append(
-                // language=HTML
+                // lang=html
                 $"""
                 <span class="chatlog__markdown-mention" style="{style}">@{HtmlEncode(name)}</span>
                 """
             );
         }
-
-        return await base.VisitMentionAsync(mention, cancellationToken);
     }
 
-    protected override async ValueTask<MarkdownNode> VisitTimestampAsync(
+    protected override ValueTask VisitTimestampAsync(
         TimestampNode timestamp,
         CancellationToken cancellationToken = default)
     {
@@ -280,13 +305,13 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
         var formattedLong = timestamp.Instant?.ToLocalString("dddd, MMMM d, yyyy h:mm tt") ?? "";
 
         _buffer.Append(
-            // language=HTML
+            // lang=html
             $"""
             <span class="chatlog__markdown-timestamp" title="{HtmlEncode(formattedLong)}">{HtmlEncode(formatted)}</span>
             """
         );
 
-        return await base.VisitTimestampAsync(timestamp, cancellationToken);
+        return default;
     }
 }
 

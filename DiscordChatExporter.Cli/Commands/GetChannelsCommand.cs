@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using CliFx.Attributes;
 using CliFx.Infrastructure;
@@ -36,6 +38,15 @@ public class GetChannelsCommand : DiscordCommandBase
             .ThenBy(c => c.Name)
             .ToArray();
 
+        var threads = Array.Empty<ChannelThread>();
+
+        if (IncludeThreads)
+        {
+            threads = (await Discord.GetGuildThreadsAsync(GuildId, cancellationToken))
+                .OrderBy(c => c.Name)
+                .ToArray();
+        }
+
         foreach (var channel in channels)
         {
             // Channel ID
@@ -51,13 +62,9 @@ public class GetChannelsCommand : DiscordCommandBase
             using (console.WithForegroundColor(ConsoleColor.White))
                 await console.Output.WriteLineAsync($"{channel.Category.Name} / {channel.Name}");
 
-            if (IncludeThreads)
+            foreach (var thread in threads)
             {
-                var threads = (await Discord.GetChannelThreadsAsync(channel.Id, cancellationToken))
-                    .OrderBy(c => c.Name)
-                    .ToArray();
-
-                foreach (var thread in threads)
+                if (thread.ParentId == channel.Id)
                 {
                     // Indent
                     await console.Output.WriteAsync('\t');
@@ -75,7 +82,7 @@ public class GetChannelsCommand : DiscordCommandBase
                     using (console.WithForegroundColor(ConsoleColor.White))
                         await console.Output.WriteLineAsync($"Thread / {thread.Name}");
                 }
-            }
+             }
         }
     }
 }

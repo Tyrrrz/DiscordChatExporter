@@ -317,27 +317,30 @@ public class DiscordClient
     {
         var channels = (await GetGuildChannelsAsync(guildId, cancellationToken))
             .ToArray();
-        var currentOffset = 0;
         var tokenKind = _resolvedTokenKind ??= await GetTokenKindAsync(cancellationToken);
         foreach (var channel in channels)
         {
-            var url = new UrlBuilder()
-                .SetPath($"channels/{channel.Id}/threads/search")
-                .SetQueryParameter("offset", currentOffset.ToString())
-                .Build();
-
-            var response = await TryGetJsonResponseAsync(url, cancellationToken);
-            if (response is null)
-                break;
-
-            foreach (var threadJson in response.Value.GetProperty("threads").EnumerateArray())
+            var currentOffset = 0;
+            while (true)
             {
-                yield return ChannelThread.Parse(threadJson);
-                currentOffset++;
-            }
+                var url = new UrlBuilder()
+                    .SetPath($"channels/{channel.Id}/threads/search")
+                    .SetQueryParameter("offset", currentOffset.ToString())
+                    .Build();
 
-            if (!response.Value.GetProperty("has_more").GetBoolean())
-                break;
+                var response = await TryGetJsonResponseAsync(url, cancellationToken);
+                if (response is null)
+                    break;
+
+                foreach (var threadJson in response.Value.GetProperty("threads").EnumerateArray())
+                {
+                    yield return ChannelThread.Parse(threadJson);
+                    currentOffset++;
+                }
+
+                if (!response.Value.GetProperty("has_more").GetBoolean())
+                    break;
+            }
         }
     }
 

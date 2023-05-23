@@ -353,6 +353,26 @@ public class DiscordClient
                         break;
                 }
             }
+            else
+            {
+                var responsePublic = await TryGetJsonResponseAsync($"channels/{channel.Id}/threads/archived/public", cancellationToken);
+                var responsePrivate = await TryGetJsonResponseAsync($"channels/{channel.Id}/threads/archived/private", cancellationToken);
+
+                if (responsePublic is not null)
+                {
+                    foreach (var threadJson in responsePublic.Value.GetProperty("threads").EnumerateArray())
+                    {
+                        yield return ChannelThread.Parse(threadJson);
+                    }
+                }
+                if (responsePrivate is not null)
+                {
+                    foreach (var threadJson in responsePrivate.Value.GetProperty("threads").EnumerateArray())
+                    {
+                        yield return ChannelThread.Parse(threadJson);
+                    }
+                }
+            }
         }
     }
 

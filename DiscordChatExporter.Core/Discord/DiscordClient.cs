@@ -311,15 +311,18 @@ public class DiscordClient
         return Channel.Parse(response, category);
     }
 
-    public async IAsyncEnumerable<ChannelThread> GetChannelThreadsAsync(
-        Snowflake channelId,
+    public async IAsyncEnumerable<ChannelThread> GetGuildThreadsAsync(
+        Snowflake guildId,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
+        var channels = (await GetGuildChannelsAsync(guildId, cancellationToken))
+            .ToArray();
         var currentOffset = 0;
-        while (true)
+        var tokenKind = _resolvedTokenKind ??= await GetTokenKindAsync(cancellationToken);
+        foreach (var channel in channels)
         {
             var url = new UrlBuilder()
-                .SetPath($"channels/{channelId}/threads/search")
+                .SetPath($"channels/{channel.Id}/threads/search")
                 .SetQueryParameter("offset", currentOffset.ToString())
                 .Build();
 

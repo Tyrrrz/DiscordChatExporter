@@ -318,28 +318,40 @@ public class DiscordClient
         var channels = (await GetGuildChannelsAsync(guildId, cancellationToken))
             .ToArray();
         var tokenKind = _resolvedTokenKind ??= await GetTokenKindAsync(cancellationToken);
+        
+        if (tokenKind == TokenKind.Bot)
+        {
+            var response = await TryGetJsonResponseAsync($"guilds/{guildId}/threads/active", cancellationToken);
+            foreach (var threadJson in response.Value.GetProperty("threads").EnumerateArray())
+            {
+                yield return ChannelThread.Parse(threadJson);
+            }
+        }
         foreach (var channel in channels)
         {
-            var currentOffset = 0;
-            while (true)
+            if (tokenKind == TokenKind.User)
             {
-                var url = new UrlBuilder()
-                    .SetPath($"channels/{channel.Id}/threads/search")
-                    .SetQueryParameter("offset", currentOffset.ToString())
-                    .Build();
-
-                var response = await TryGetJsonResponseAsync(url, cancellationToken);
-                if (response is null)
-                    break;
-
-                foreach (var threadJson in response.Value.GetProperty("threads").EnumerateArray())
+                var currentOffset = 0;
+                while (true)
                 {
-                    yield return ChannelThread.Parse(threadJson);
-                    currentOffset++;
-                }
+                    var url = new UrlBuilder()
+                        .SetPath($"channels/{channel.Id}/threads/search")
+                        .SetQueryParameter("offset", currentOffset.ToString())
+                        .Build();
 
-                if (!response.Value.GetProperty("has_more").GetBoolean())
-                    break;
+                    var response = await TryGetJsonResponseAsync(url, cancellationToken);
+                    if (response is null)
+                        break;
+
+                    foreach (var threadJson in response.Value.GetProperty("threads").EnumerateArray())
+                    {
+                        yield return ChannelThread.Parse(threadJson);
+                        currentOffset++;
+                    }
+
+                    if (!response.Value.GetProperty("has_more").GetBoolean())
+                        break;
+                }
             }
         }
     }

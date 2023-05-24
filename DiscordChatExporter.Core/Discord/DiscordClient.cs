@@ -220,7 +220,7 @@ public class DiscordClient
                 .ToArray();
 
             var categories = channelsJson
-                .Where(j => j.GetProperty("type").GetInt32() == (int) ChannelKind.GuildCategory)
+                .Where(j => j.GetProperty("type").GetInt32() == (int)ChannelKind.GuildCategory)
                 .Select((j, index) => ChannelCategory.Parse(j, index + 1))
                 .ToDictionary(j => j.Id.ToString(), StringComparer.Ordinal);
 
@@ -240,6 +240,78 @@ public class DiscordClient
 
                 yield return Channel.Parse(channelJson, category, position);
                 position++;
+            }
+        }
+    }
+
+    public async IAsyncEnumerable<ChannelThread> GetGuildThreadsAsync(
+        Snowflake guildId,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        var tokenKind = _resolvedTokenKind ??= await GetTokenKindAsync(cancellationToken);
+        var channels = await GetGuildChannelsAsync(guildId, cancellationToken);
+
+        // User accounts can only fetch threads using the search endpoint
+        if (tokenKind == TokenKind.User)
+        {
+            foreach (var channel in channels)
+            {
+                var currentOffset = 0;
+                while (true)
+                {
+                    var url = new UrlBuilder()
+                        .SetPath($"channels/{channel.Id}/threads/search")
+                        .SetQueryParameter("offset", currentOffset.ToString())
+                        .Build();
+
+                    var response = await TryGetJsonResponseAsync(url, cancellationToken);
+                    if (response is null)
+                        break;
+
+                    foreach (var threadJson in response.Value.GetProperty("threads").EnumerateArray())
+                    {
+                        yield return ChannelThread.Parse(threadJson);
+                        currentOffset++;
+                    }
+
+                    if (!response.Value.GetProperty("has_more").GetBoolean())
+                        break;
+                }
+            }
+        }
+        // Bot accounts can only fetch threads using the threads endpoint
+        else
+        {
+            // Active threads
+            {
+                var response = await GetJsonResponseAsync($"guilds/{guildId}/threads/active", cancellationToken);
+                foreach (var threadJson in response.GetProperty("threads").EnumerateArray())
+                    yield return ChannelThread.Parse(threadJson);
+            }
+
+            foreach (var channel in channels)
+            {
+                // Public archived threads
+                {
+                    var response = await GetJsonResponseAsync(
+                        $"channels/{channel.Id}/threads/archived/public",
+                        cancellationToken
+                    );
+
+                    foreach (var threadJson in response.GetProperty("threads").EnumerateArray())
+                        yield return ChannelThread.Parse(threadJson);
+                }
+
+                // Private archived threads
+                {
+                    var response = await GetJsonResponseAsync(
+                        $"channels/{channel.Id}/threads/archived/private",
+                        cancellationToken
+                    );
+
+                    foreach (var threadJson in response.GetProperty("threads").EnumerateArray())
+                        yield return ChannelThread.Parse(threadJson);
+                }
             }
         }
     }
@@ -309,71 +381,6 @@ public class DiscordClient
             : null;
 
         return Channel.Parse(response, category);
-    }
-
-    public async IAsyncEnumerable<ChannelThread> GetGuildThreadsAsync(
-        Snowflake guildId,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        var channels = (await GetGuildChannelsAsync(guildId, cancellationToken))
-            .ToArray();
-        var tokenKind = _resolvedTokenKind ??= await GetTokenKindAsync(cancellationToken);
-        
-        if (tokenKind == TokenKind.Bot)
-        {
-            var response = await GetJsonResponseAsync($"guilds/{guildId}/threads/active", cancellationToken);
-            foreach (var threadJson in response.GetProperty("threads").EnumerateArray())
-            {
-                yield return ChannelThread.Parse(threadJson);
-            }
-        }
-        foreach (var channel in channels)
-        {
-            if (tokenKind == TokenKind.User)
-            {
-                var currentOffset = 0;
-                while (true)
-                {
-                    var url = new UrlBuilder()
-                        .SetPath($"channels/{channel.Id}/threads/search")
-                        .SetQueryParameter("offset", currentOffset.ToString())
-                        .Build();
-
-                    var response = await TryGetJsonResponseAsync(url, cancellationToken);
-                    if (response is null)
-                        break;
-
-                    foreach (var threadJson in response.Value.GetProperty("threads").EnumerateArray())
-                    {
-                        yield return ChannelThread.Parse(threadJson);
-                        currentOffset++;
-                    }
-
-                    if (!response.Value.GetProperty("has_more").GetBoolean())
-                        break;
-                }
-            }
-            else
-            {
-                var responsePublic = await TryGetJsonResponseAsync($"channels/{channel.Id}/threads/archived/public", cancellationToken);
-                var responsePrivate = await TryGetJsonResponseAsync($"channels/{channel.Id}/threads/archived/private", cancellationToken);
-
-                if (responsePublic is not null)
-                {
-                    foreach (var threadJson in responsePublic.Value.GetProperty("threads").EnumerateArray())
-                    {
-                        yield return ChannelThread.Parse(threadJson);
-                    }
-                }
-                if (responsePrivate is not null)
-                {
-                    foreach (var threadJson in responsePrivate.Value.GetProperty("threads").EnumerateArray())
-                    {
-                        yield return ChannelThread.Parse(threadJson);
-                    }
-                }
-            }
-        }
     }
 
     private async ValueTask<Message?> TryGetLastMessageAsync(

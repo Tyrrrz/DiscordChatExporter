@@ -38,8 +38,8 @@ public class GetChannelsCommand : DiscordCommandBase
 
         var threads = IncludeThreads
             ? (await Discord.GetGuildThreadsAsync(GuildId, cancellationToken))
-                .OrderBy(c => c.Name)
-                .ToArray()
+            .OrderBy(c => c.Name)
+            .ToArray()
             : Array.Empty<ChannelThread>();
 
         foreach (var channel in channels)
@@ -74,7 +74,7 @@ public class GetChannelsCommand : DiscordCommandBase
                 // Thread name
                 using (console.WithForegroundColor(ConsoleColor.White))
                     await console.Output.WriteLineAsync($"Thread / {thread.Name}");
-             }
+            }
         }
     }
 }

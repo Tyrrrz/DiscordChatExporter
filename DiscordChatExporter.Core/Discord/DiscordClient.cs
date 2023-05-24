@@ -321,13 +321,10 @@ public class DiscordClient
         
         if (tokenKind == TokenKind.Bot)
         {
-            var response = await TryGetJsonResponseAsync($"guilds/{guildId}/threads/active", cancellationToken);
-            if (response is not null)
+            var response = await GetJsonResponseAsync($"guilds/{guildId}/threads/active", cancellationToken);
+            foreach (var threadJson in response.GetProperty("threads").EnumerateArray())
             {
-                foreach (var threadJson in response.Value.GetProperty("threads").EnumerateArray())
-                {
-                    yield return ChannelThread.Parse(threadJson);
-                }
+                yield return ChannelThread.Parse(threadJson);
             }
         }
         foreach (var channel in channels)

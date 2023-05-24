@@ -36,14 +36,11 @@ public class GetChannelsCommand : DiscordCommandBase
             .ThenBy(c => c.Name)
             .ToArray();
 
-        var threads = Array.Empty<ChannelThread>();
-
-        if (IncludeThreads)
-        {
-            threads = (await Discord.GetGuildThreadsAsync(GuildId, cancellationToken))
+        var threads = IncludeThreads
+            ? (await Discord.GetGuildThreadsAsync(GuildId, cancellationToken))
                 .OrderBy(c => c.Name)
-                .ToArray();
-        }
+                .ToArray()
+            : Array.Empty<ChannelThread>();
 
         foreach (var channel in channels)
         {

@@ -57,26 +57,23 @@ public class GetChannelsCommand : DiscordCommandBase
             using (console.WithForegroundColor(ConsoleColor.White))
                 await console.Output.WriteLineAsync($"{channel.Category.Name} / {channel.Name}");
 
-            foreach (var thread in threads)
+            foreach (var thread in threads.Where(t => t.ParentId == channel.Id))
             {
-                if (thread.ParentId == channel.Id)
-                {
-                    // Indent
-                    await console.Output.WriteAsync('\t');
+                // Indent
+                await console.Output.WriteAsync('\t');
 
-                    // Thread ID
-                    await console.Output.WriteAsync(
-                        thread.Id.ToString().PadRight(18, ' ')
-                    );
+                // Thread ID
+                await console.Output.WriteAsync(
+                    thread.Id.ToString().PadRight(18, ' ')
+                );
 
-                    // Separator
-                    using (console.WithForegroundColor(ConsoleColor.DarkGray))
-                        await console.Output.WriteAsync(" | ");
+                // Separator
+                using (console.WithForegroundColor(ConsoleColor.DarkGray))
+                    await console.Output.WriteAsync(" | ");
 
-                    // Thread name
-                    using (console.WithForegroundColor(ConsoleColor.White))
-                        await console.Output.WriteLineAsync($"Thread / {thread.Name}");
-                }
+                // Thread name
+                using (console.WithForegroundColor(ConsoleColor.White))
+                    await console.Output.WriteLineAsync($"Thread / {thread.Name}");
              }
         }
     }

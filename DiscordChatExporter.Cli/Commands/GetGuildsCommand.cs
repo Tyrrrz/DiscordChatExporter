@@ -19,13 +19,14 @@ public class GetGuildsCommand : DiscordCommandBase
         var guilds = (await Discord.GetUserGuildsAsync(cancellationToken))
             // Show direct messages first
             .OrderByDescending(g => g.Id == Guild.DirectMessages.Id)
-            .ThenBy(g => g.Name);
+            .ThenBy(g => g.Name)
+            .ToArray();
 
         foreach (var guild in guilds)
         {
             // Guild ID
             await console.Output.WriteAsync(
-                guild.Id.ToString().PadRight(18, ' ')
+                guild.Id.ToString().PadRight(20, ' ')
             );
 
             // Separator

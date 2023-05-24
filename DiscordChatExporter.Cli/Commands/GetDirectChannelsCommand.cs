@@ -26,7 +26,7 @@ public class GetDirectChannelsCommand : DiscordCommandBase
         {
             // Channel ID
             await console.Output.WriteAsync(
-                channel.Id.ToString().PadRight(18, ' ')
+                channel.Id.ToString().PadRight(20, ' ')
             );
 
             // Separator

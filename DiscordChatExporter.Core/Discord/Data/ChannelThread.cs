@@ -10,6 +10,7 @@ public record ChannelThread(
     Snowflake Id,
     ChannelKind Kind,
     Snowflake GuildId,
+    Snowflake ParentId,
     string Name,
     Snowflake? LastMessageId) : IHasId
 {
@@ -18,6 +19,7 @@ public record ChannelThread(
         var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
         var kind = (ChannelKind)json.GetProperty("type").GetInt32();
         var guildId = json.GetProperty("guild_id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
+        var parentId = json.GetProperty("parent_id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
         var name = json.GetProperty("name").GetNonWhiteSpaceString();
 
         var lastMessageId = json
@@ -29,6 +31,7 @@ public record ChannelThread(
             id,
             kind,
             guildId,
+            parentId,
             name,
             lastMessageId
         );

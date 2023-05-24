@@ -311,30 +311,68 @@ public class DiscordClient
         return Channel.Parse(response, category);
     }
 
-    public async IAsyncEnumerable<ChannelThread> GetChannelThreadsAsync(
-        Snowflake channelId,
+    public async IAsyncEnumerable<ChannelThread> GetGuildThreadsAsync(
+        Snowflake guildId,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        var currentOffset = 0;
-        while (true)
+        var channels = (await GetGuildChannelsAsync(guildId, cancellationToken))
+            .ToArray();
+        var tokenKind = _resolvedTokenKind ??= await GetTokenKindAsync(cancellationToken);
+        
+        if (tokenKind == TokenKind.Bot)
         {
-            var url = new UrlBuilder()
-                .SetPath($"channels/{channelId}/threads/search")
-                .SetQueryParameter("offset", currentOffset.ToString())
-                .Build();
-
-            var response = await TryGetJsonResponseAsync(url, cancellationToken);
-            if (response is null)
-                break;
-
-            foreach (var threadJson in response.Value.GetProperty("threads").EnumerateArray())
+            var response = await GetJsonResponseAsync($"guilds/{guildId}/threads/active", cancellationToken);
+            foreach (var threadJson in response.GetProperty("threads").EnumerateArray())
             {
                 yield return ChannelThread.Parse(threadJson);
-                currentOffset++;
             }
+        }
+        foreach (var channel in channels)
+        {
+            if (tokenKind == TokenKind.User)
+            {
+                var currentOffset = 0;
+                while (true)
+                {
+                    var url = new UrlBuilder()
+                        .SetPath($"channels/{channel.Id}/threads/search")
+                        .SetQueryParameter("offset", currentOffset.ToString())
+                        .Build();
 
-            if (!response.Value.GetProperty("has_more").GetBoolean())
-                break;
+                    var response = await TryGetJsonResponseAsync(url, cancellationToken);
+                    if (response is null)
+                        break;
+
+                    foreach (var threadJson in response.Value.GetProperty("threads").EnumerateArray())
+                    {
+                        yield return ChannelThread.Parse(threadJson);
+                        currentOffset++;
+                    }
+
+                    if (!response.Value.GetProperty("has_more").GetBoolean())
+                        break;
+                }
+            }
+            else
+            {
+                var responsePublic = await TryGetJsonResponseAsync($"channels/{channel.Id}/threads/archived/public", cancellationToken);
+                var responsePrivate = await TryGetJsonResponseAsync($"channels/{channel.Id}/threads/archived/private", cancellationToken);
+
+                if (responsePublic is not null)
+                {
+                    foreach (var threadJson in responsePublic.Value.GetProperty("threads").EnumerateArray())
+                    {
+                        yield return ChannelThread.Parse(threadJson);
+                    }
+                }
+                if (responsePrivate is not null)
+                {
+                    foreach (var threadJson in responsePrivate.Value.GetProperty("threads").EnumerateArray())
+                    {
+                        yield return ChannelThread.Parse(threadJson);
+                    }
+                }
+            }
         }
     }
 

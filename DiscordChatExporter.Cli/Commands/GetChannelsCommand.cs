@@ -36,6 +36,12 @@ public class GetChannelsCommand : DiscordCommandBase
             .ThenBy(c => c.Name)
             .ToArray();
 
+        var threads = IncludeThreads
+            ? (await Discord.GetGuildThreadsAsync(GuildId, cancellationToken))
+                .OrderBy(c => c.Name)
+                .ToArray()
+            : Array.Empty<ChannelThread>();
+
         foreach (var channel in channels)
         {
             // Channel ID
@@ -51,31 +57,24 @@ public class GetChannelsCommand : DiscordCommandBase
             using (console.WithForegroundColor(ConsoleColor.White))
                 await console.Output.WriteLineAsync($"{channel.Category.Name} / {channel.Name}");
 
-            if (IncludeThreads)
+            foreach (var thread in threads.Where(t => t.ParentId == channel.Id))
             {
-                var threads = (await Discord.GetChannelThreadsAsync(channel.Id, cancellationToken))
-                    .OrderBy(c => c.Name)
-                    .ToArray();
+                // Indent
+                await console.Output.WriteAsync('\t');
 
-                foreach (var thread in threads)
-                {
-                    // Indent
-                    await console.Output.WriteAsync('\t');
+                // Thread ID
+                await console.Output.WriteAsync(
+                    thread.Id.ToString().PadRight(18, ' ')
+                );
 
-                    // Thread ID
-                    await console.Output.WriteAsync(
-                        thread.Id.ToString().PadRight(18, ' ')
-                    );
+                // Separator
+                using (console.WithForegroundColor(ConsoleColor.DarkGray))
+                    await console.Output.WriteAsync(" | ");
 
-                    // Separator
-                    using (console.WithForegroundColor(ConsoleColor.DarkGray))
-                        await console.Output.WriteAsync(" | ");
-
-                    // Thread name
-                    using (console.WithForegroundColor(ConsoleColor.White))
-                        await console.Output.WriteLineAsync($"Thread / {thread.Name}");
-                }
-            }
+                // Thread name
+                using (console.WithForegroundColor(ConsoleColor.White))
+                    await console.Output.WriteLineAsync($"Thread / {thread.Name}");
+             }
         }
     }
 }

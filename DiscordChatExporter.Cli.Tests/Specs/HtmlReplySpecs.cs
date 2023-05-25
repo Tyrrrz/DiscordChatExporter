@@ -71,4 +71,21 @@ public class HtmlReplySpecs
         // Assert
         message.Text().Should().Contain("used /poll");
     }
+
+    [Fact]
+    public async Task I_can_export_a_channel_that_contains_a_message_cross_posted_from_another_guild()
+    {
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/633
+
+        // Act
+        var message = await ExportWrapper.GetMessageAsHtmlAsync(
+            ChannelIds.ReplyTestCases,
+            Snowflake.Parse("1072165330853576876")
+        );
+
+        // Assert
+        message.Text().Should().Contain("This is a test message from an announcement channel on another server");
+        message.Text().Should().Contain("SERVER");
+        message.QuerySelector(".chatlog__reply-link").Should().BeNull();
+    }
 }

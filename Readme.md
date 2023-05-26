@@ -12,6 +12,10 @@
 
 > 🟡 **Project status**: maintenance mode<sup>[[?]](https://github.com/Tyrrrz/.github/blob/master/docs/project-status.md)</sup>
 
+<p align="center">
+    <img src="favicon.png" alt="Icon" />
+</p>
+
 **DiscordChatExporter** is an application that can be used to export message history from any [Discord](https://discord.com) channel to a file.
 It works with direct messages, group messages, and server channels, and supports Discord's dialect of markdown as well as most other rich media features.
 

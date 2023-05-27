@@ -5,6 +5,9 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
 
     steps:
       - name: Checkout
@@ -30,6 +33,8 @@ jobs:
   deploy-latest:
     if: ${{ github.event_name == 'push' && github.ref_type == 'branch' && github.ref_name == 'master' }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout
@@ -55,6 +60,8 @@ jobs:
   deploy-stable:
     if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout

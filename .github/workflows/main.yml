@@ -5,6 +5,8 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: windows-latest
+    permissions:
+      contents: read
 
     env:
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
@@ -38,9 +40,12 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-  package:
+  pack:
     needs: test
     runs-on: windows-latest
+    permissions:
+      actions: write
+      contents: read
 
     env:
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
@@ -82,8 +87,11 @@ jobs:
 
   deploy:
     if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
-    needs: package
+    needs: pack
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: write
 
     steps:
       - name: Download artifacts (CLI)
@@ -128,6 +136,8 @@ jobs:
   notify:
     needs: deploy
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Get release version

@@ -85,7 +85,28 @@
                         materialDesign:TextFieldAssist.TextBoxViewMargin="0,0,2,0"
                         BorderThickness="0"
                         FontSize="16"
-                        Text="{Binding Token, UpdateSourceTrigger=PropertyChanged}" />
+                        Text="{Binding Token, UpdateSourceTrigger=PropertyChanged}">
+                        <TextBox.Style>
+                            <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}">
+                                <Style.Triggers>
+                                    <!--  Blur the token when it's out of focus  -->
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=materialDesign:Card}}" Value="False" />
+                                            <Condition Binding="{Binding IsFocused, RelativeSource={RelativeSource Self}}" Value="False" />
+                                            <!--  Don't blur if the token is not set, so the user can see the hint text  -->
+                                            <Condition Binding="{Binding IsTokenSet}" Value="True" />
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Effect">
+                                            <Setter.Value>
+                                                <BlurEffect Radius="12" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </MultiDataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
 
                     <!--  Pull data button  -->
                     <Button

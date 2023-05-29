@@ -38,6 +38,8 @@ public class DashboardViewModel : PropertyChangedBase
 
     public string? Token { get; set; }
 
+    public bool IsTokenSet => !string.IsNullOrWhiteSpace(Token);
+
     private IReadOnlyDictionary<Guild, IReadOnlyList<Channel>>? ChannelsByGuild { get; set; }
 
     public IReadOnlyList<Guild>? AvailableGuilds => ChannelsByGuild?.Keys.ToArray();

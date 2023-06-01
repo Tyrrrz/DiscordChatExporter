@@ -136,7 +136,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
     private ChannelExporter? _channelExporter;
     protected ChannelExporter Exporter => _channelExporter ??= new ChannelExporter(Discord);
 
-    protected async ValueTask ExecuteAsync(IConsole console, IReadOnlyList<Channel> channels)
+    protected async ValueTask ExecuteAsync(IConsole console, IReadOnlyList<Channel> channels, IReadOnlyList<ChannelThread> threads)
     {
         // Asset reuse can only be enabled if the download assets option is set
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/425
@@ -175,9 +175,9 @@ public abstract class ExportCommandBase : DiscordCommandBase
             );
         }
 
-        // Export
+        // Export channels
         var cancellationToken = console.RegisterCancellationHandler();
-        var errors = new ConcurrentDictionary<Channel, string>();
+        var channelErrors = new ConcurrentDictionary<Channel, string>();
 
         await console.Output.WriteLineAsync($"Exporting {channels.Count} channel(s)...");
         await console.CreateProgressTicker().StartAsync(async progressContext =>
@@ -225,7 +225,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
                     }
                     catch (DiscordChatExporterException ex) when (!ex.IsFatal)
                     {
-                        errors[channel] = ex.Message;
+                        channelErrors[channel] = ex.Message;
                     }
                 }
             );
@@ -235,23 +235,23 @@ public abstract class ExportCommandBase : DiscordCommandBase
         using (console.WithForegroundColor(ConsoleColor.White))
         {
             await console.Output.WriteLineAsync(
-                $"Successfully exported {channels.Count - errors.Count} channel(s)."
+                $"Successfully exported {channels.Count - channelErrors.Count} channel(s)."
             );
         }
 
         // Print errors
-        if (errors.Any())
+        if (channelErrors.Any())
         {
             await console.Output.WriteLineAsync();
 
             using (console.WithForegroundColor(ConsoleColor.Red))
             {
                 await console.Error.WriteLineAsync(
-                    $"Failed to export {errors.Count} channel(s):"
+                    $"Failed to export {channelErrors.Count} channel(s):"
                 );
             }
 
-            foreach (var (channel, error) in errors)
+            foreach (var (channel, error) in channelErrors)
             {
                 await console.Error.WriteAsync($"{channel.Category.Name} / {channel.Name}: ");
 
@@ -264,7 +264,99 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
         // Fail the command only if ALL channels failed to export.
         // If only some channels failed to export, it's okay.
-        if (errors.Count >= channels.Count)
+        if (channelErrors.Count >= channels.Count)
+            throw new CommandException("Export failed.");
+
+
+        // Export threads
+        var threadErrors = new ConcurrentDictionary<ChannelThread, string>();
+
+        await console.Output.WriteLineAsync($"Exporting {threads.Count} thread(s)...");
+        await console.CreateProgressTicker().StartAsync(async progressContext =>
+        {
+            await Parallel.ForEachAsync(
+                threads,
+                new ParallelOptions
+                {
+                    MaxDegreeOfParallelism = Math.Max(1, ParallelLimit),
+                    CancellationToken = cancellationToken
+                },
+                async (thread, innerCancellationToken) =>
+                {
+                    try
+                    {
+                        await progressContext.StartTaskAsync(
+                            $"{channels.First(c => c.Id == thread.ParentId).Name} / {thread.Name}",
+                            async progress =>
+                            {
+                                var guild = await Discord.GetGuildAsync(thread.GuildId, innerCancellationToken);
+
+                                var request = new ExportRequest(
+                                    guild,
+                                    thread,
+                                    OutputPath,
+                                    AssetsDirPath,
+                                    ExportFormat,
+                                    After,
+                                    Before,
+                                    PartitionLimit,
+                                    MessageFilter,
+                                    ShouldFormatMarkdown,
+                                    ShouldDownloadAssets,
+                                    ShouldReuseAssets,
+                                    DateFormat
+                                );
+
+                                await Exporter.ExportChannelAsync(
+                                    request,
+                                    progress.ToPercentageBased(),
+                                    innerCancellationToken
+                                );
+                            }
+                        );
+                    }
+                    catch (DiscordChatExporterException ex) when (!ex.IsFatal)
+                    {
+                        threadErrors[thread] = ex.Message;
+                    }
+                }
+            );
+        });
+
+        // Print the result
+        using (console.WithForegroundColor(ConsoleColor.White))
+        {
+            await console.Output.WriteLineAsync(
+                $"Successfully exported {threads.Count - threadErrors.Count} thread(s)."
+            );
+        }
+
+        // Print errors
+        if (threadErrors.Any())
+        {
+            await console.Output.WriteLineAsync();
+
+            using (console.WithForegroundColor(ConsoleColor.Red))
+            {
+                await console.Error.WriteLineAsync(
+                    $"Failed to export {threadErrors.Count} thread(s):"
+                );
+            }
+
+            foreach (var (thread, error) in threadErrors)
+            {
+                await console.Error.WriteAsync($"{channels.First(c => c.Id == thread.ParentId).Name} / {thread.Name}: ");
+
+                using (console.WithForegroundColor(ConsoleColor.Red))
+                    await console.Error.WriteLineAsync(error);
+            }
+
+            await console.Error.WriteLineAsync();
+        }
+
+        // Fail the command only if ALL threads failed to export.
+        // If only some threads failed to export, it's okay.
+        if (threadErrors.Count >= threads.Count)
             throw new CommandException("Export failed.");
     }
 
@@ -303,7 +395,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
             }
         }
 
-        await ExecuteAsync(console, channels);
+        await ExecuteAsync(console, channels, Array.Empty<ChannelThread>());
     }
 
     public override ValueTask ExecuteAsync(IConsole console)

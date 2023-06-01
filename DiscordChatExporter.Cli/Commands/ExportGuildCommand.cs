@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using CliFx.Attributes;
 using CliFx.Infrastructure;
@@ -19,6 +20,13 @@ public class ExportGuildCommand : ExportCommandBase
     )]
     public required Snowflake GuildId { get; init; }
 
+    [CommandOption(
+        "include-threads",
+        Description = "Include threads in the export."
+    )]
+
+    public bool IncludeThreads { get; init; }
+
     public override async ValueTask ExecuteAsync(IConsole console)
     {
         await base.ExecuteAsync(console);
@@ -31,6 +39,14 @@ public class ExportGuildCommand : ExportCommandBase
             .Where(c => c.Kind != ChannelKind.GuildCategory)
             .ToArray();
 
-        await base.ExecuteAsync(console, channels);
+        var threads = Array.Empty<ChannelThread>();
+        if (IncludeThreads)
+        {
+            threads = (await Discord.GetGuildThreadsAsync(GuildId, cancellationToken))
+                .OrderBy(c => c.Name)
+                .ToArray();
+        }
+
+        await base.ExecuteAsync(console, channels, threads);
     }
 }

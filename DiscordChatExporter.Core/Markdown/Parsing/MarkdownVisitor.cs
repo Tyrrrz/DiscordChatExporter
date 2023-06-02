@@ -16,10 +16,10 @@ internal abstract class MarkdownVisitor
         CancellationToken cancellationToken = default) =>
         await VisitAsync(formatting.Children, cancellationToken);
 
-    protected virtual async ValueTask VisitHeaderAsync(
-        HeaderNode header,
+    protected virtual async ValueTask VisitHeadingAsync(
+        HeadingNode heading,
         CancellationToken cancellationToken = default) =>
-        await VisitAsync(header.Children, cancellationToken);
+        await VisitAsync(heading.Children, cancellationToken);
 
     protected virtual async ValueTask VisitListAsync(
         ListNode list,
@@ -72,9 +72,9 @@ internal abstract class MarkdownVisitor
             return;
         }
 
-        if (node is HeaderNode header)
+        if (node is HeadingNode heading)
         {
-            await VisitHeaderAsync(header, cancellationToken);
+            await VisitHeadingAsync(heading, cancellationToken);
             return;
         }
 

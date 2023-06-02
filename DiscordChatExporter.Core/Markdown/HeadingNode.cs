@@ -2,7 +2,7 @@
 
 namespace DiscordChatExporter.Core.Markdown;
 
-internal record HeaderNode(
+internal record HeadingNode(
     int Level,
     IReadOnlyList<MarkdownNode> Children
 ) : MarkdownNode, IContainerNode;

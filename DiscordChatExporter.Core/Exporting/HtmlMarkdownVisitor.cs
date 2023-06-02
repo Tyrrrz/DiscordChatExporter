@@ -89,20 +89,20 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
         _buffer.Append(closingTag);
     }
 
-    protected override async ValueTask VisitHeaderAsync(
-        HeaderNode header,
+    protected override async ValueTask VisitHeadingAsync(
+        HeadingNode heading,
         CancellationToken cancellationToken = default)
     {
         _buffer.Append(
             // lang=html
-            $"<h{header.Level}>"
+            $"<h{heading.Level}>"
         );
 
-        await VisitAsync(header.Children, cancellationToken);
+        await VisitAsync(heading.Children, cancellationToken);
 
         _buffer.Append(
             // lang=html
-            $"</h{header.Level}>"
+            $"</h{heading.Level}>"
         );
     }
 

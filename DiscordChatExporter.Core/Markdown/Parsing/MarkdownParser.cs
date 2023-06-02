@@ -95,10 +95,10 @@ internal static partial class MarkdownParser
         (s, m) => new FormattingNode(FormattingKind.Quote, Parse(s.Relocate(m.Groups[1])))
     );
 
-    private static readonly IMatcher<MarkdownNode> HeaderNodeMatcher = new RegexMatcher<MarkdownNode>(
+    private static readonly IMatcher<MarkdownNode> HeadingNodeMatcher = new RegexMatcher<MarkdownNode>(
         // Consume the linebreak so that it's not attached to following nodes.
         new Regex(@"^(\#{1,3})\s(.+)\n", DefaultRegexOptions),
-        (s, m) => new HeaderNode(m.Groups[1].Length, Parse(s.Relocate(m.Groups[2])))
+        (s, m) => new HeadingNode(m.Groups[1].Length, Parse(s.Relocate(m.Groups[2])))
     );
 
     private static readonly IMatcher<MarkdownNode> ListNodeMatcher = new RegexMatcher<MarkdownNode>(
@@ -330,7 +330,7 @@ internal static partial class MarkdownParser
         MultiLineQuoteNodeMatcher,
         RepeatedSingleLineQuoteNodeMatcher,
         SingleLineQuoteNodeMatcher,
-        HeaderNodeMatcher,
+        HeadingNodeMatcher,
         ListNodeMatcher,
 
         // Code blocks

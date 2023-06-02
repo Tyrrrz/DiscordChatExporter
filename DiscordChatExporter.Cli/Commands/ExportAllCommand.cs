@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO.Compression;
 using System.Text.Json;
@@ -98,6 +99,6 @@ public class ExportAllCommand : ExportCommandBase
         if (!IncludeGuildChannels)
             channels.RemoveAll(c => c.Kind.IsGuild());
 
-        await base.ExecuteAsync(console, channels);
+        await base.ExecuteAsync(console, channels, Array.Empty<ChannelThread>());
     }
 }

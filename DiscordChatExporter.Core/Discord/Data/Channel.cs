@@ -16,7 +16,7 @@ public partial record Channel(
     int? Position,
     string? IconUrl,
     string? Topic,
-    Snowflake? LastMessageId) : IHasId
+    Snowflake? LastMessageId) : IChannel
 {
     public bool IsVoice => Kind is ChannelKind.GuildVoiceChat or ChannelKind.GuildStageVoice;
 }

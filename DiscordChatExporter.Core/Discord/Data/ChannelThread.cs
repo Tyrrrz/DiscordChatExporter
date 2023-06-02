@@ -13,7 +13,7 @@ public record ChannelThread(
     Snowflake ParentId,
     string Name,
     bool IsActive,
-    Snowflake? LastMessageId) : IHasId
+    Snowflake? LastMessageId) : IChannel
 {
     public static ChannelThread Parse(JsonElement json)
     {

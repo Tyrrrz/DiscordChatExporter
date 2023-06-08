@@ -59,9 +59,9 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
                 await _context.PopulateMemberAsync(mention.TargetId.Value, cancellationToken);
 
             var member = mention.TargetId?.Pipe(_context.TryGetMember);
-            var name = member?.User.Name ?? "Unknown";
+            var displayName = member?.DisplayName ?? member?.User.DisplayName ?? "Unknown";
 
-            _buffer.Append($"@{name}");
+            _buffer.Append($"@{displayName}");
         }
         else if (mention.Kind == MentionKind.Channel)
         {

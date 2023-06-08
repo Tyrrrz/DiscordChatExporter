@@ -42,7 +42,7 @@ public partial record Channel
             json.GetPropertyOrNull("recipients")?
                 .EnumerateArrayOrNull()?
                 .Select(User.Parse)
-                .Select(u => u.Name)
+                .Select(u => u.DisplayName)
                 .Pipe(s => string.Join(", ", s)) ??
 
             // Fallback

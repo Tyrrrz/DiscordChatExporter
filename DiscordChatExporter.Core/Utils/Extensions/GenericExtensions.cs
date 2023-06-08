@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace DiscordChatExporter.Core.Utils.Extensions;
 
@@ -10,4 +11,7 @@ public static class GenericExtensions
         !predicate(value)
             ? value
             : null;
+
+    public static T? NullIfDefault<T>(this T value) where T : struct =>
+        value.NullIf(v => EqualityComparer<T>.Default.Equals(v, default));
 }

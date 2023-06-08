@@ -9,13 +9,13 @@ internal static class PlainTextMessageExtensions
     public static string GetFallbackContent(this Message message) => message.Kind switch
     {
         MessageKind.RecipientAdd => message.MentionedUsers.Any()
-            ? $"Added {message.MentionedUsers.First().Name} to the group."
+            ? $"Added {message.MentionedUsers.First().DisplayName} to the group."
             : "Added a recipient.",
 
         MessageKind.RecipientRemove => message.MentionedUsers.Any()
             ? message.Author.Id == message.MentionedUsers.First().Id
                 ? "Left the group."
-                : $"Removed {message.MentionedUsers.First().Name} from the group."
+                : $"Removed {message.MentionedUsers.First().DisplayName} from the group."
             : "Removed a recipient.",
 
         MessageKind.Call =>

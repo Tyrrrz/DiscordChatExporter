@@ -249,12 +249,12 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
 
             var member = mention.TargetId?.Pipe(_context.TryGetMember);
             var fullName = member?.User.FullName ?? "Unknown";
-            var nick = member?.Nick ?? member?.User.Name ?? "Unknown";
+            var displayName = member?.DisplayName ?? member?.User.DisplayName ?? "Unknown";
 
             _buffer.Append(
                 // lang=html
                 $"""
-                <span class="chatlog__markdown-mention" title="{HtmlEncode(fullName)}">@{HtmlEncode(nick)}</span>
+                <span class="chatlog__markdown-mention" title="{HtmlEncode(fullName)}">@{HtmlEncode(displayName)}</span>
                 """
             );
         }

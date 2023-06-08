@@ -11,7 +11,7 @@ namespace DiscordChatExporter.Core.Discord.Data;
 // https://discord.com/developers/docs/resources/guild#guild-member-object
 public partial record Member(
     User User,
-    string? Nick,
+    string? DisplayName,
     string? AvatarUrl,
     IReadOnlyList<Snowflake> RoleIds) : IHasId
 {
@@ -25,7 +25,7 @@ public partial record Member
     public static Member Parse(JsonElement json, Snowflake? guildId = null)
     {
         var user = json.GetProperty("user").Pipe(User.Parse);
-        var nick = json.GetPropertyOrNull("nick")?.GetNonWhiteSpaceStringOrNull();
+        var displayName = json.GetPropertyOrNull("nick")?.GetNonWhiteSpaceStringOrNull();
 
         var roleIds = json
             .GetPropertyOrNull("roles")?
@@ -43,7 +43,7 @@ public partial record Member
 
         return new Member(
             user,
-            nick,
+            displayName,
             avatarUrl,
             roleIds
         );

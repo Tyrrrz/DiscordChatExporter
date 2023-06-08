@@ -44,7 +44,7 @@ internal class JsonMessageWriter : MessageWriter
         _writer.WriteString("id", user.Id.ToString());
         _writer.WriteString("name", user.Name);
         _writer.WriteString("discriminator", user.DiscriminatorFormatted);
-        _writer.WriteString("nickname", Context.TryGetMember(user.Id)?.Nick ?? user.Name);
+        _writer.WriteString("nickname", Context.TryGetMember(user.Id)?.DisplayName ?? user.DisplayName);
         _writer.WriteString("color", Context.TryGetUserColor(user.Id)?.ToHex());
         _writer.WriteBoolean("isBot", user.IsBot);
 

@@ -41,25 +41,13 @@ public class GuideCommand : ICommand
 
         // Guild or channel ID
         using (console.WithForegroundColor(ConsoleColor.White))
-            console.Output.WriteLine("To get guild ID or guild channel ID:");
+            console.Output.WriteLine("To get guild ID or channel ID:");
 
         console.Output.WriteLine(" 1. Open Discord");
         console.Output.WriteLine(" 2. Open Settings");
         console.Output.WriteLine(" 3. Go to Advanced section");
         console.Output.WriteLine(" 4. Enable Developer Mode");
-        console.Output.WriteLine(" 5. Right click on the desired guild or channel and click Copy ID");
-        console.Output.WriteLine();
-
-        // Direct message channel ID
-        using (console.WithForegroundColor(ConsoleColor.White))
-            console.Output.WriteLine("To get direct message channel ID:");
-
-        console.Output.WriteLine(" 1. Open Discord");
-        console.Output.WriteLine(" 2. Open the desired direct message channel");
-        console.Output.WriteLine(" 3. Press Ctrl+Shift+I to show developer tools");
-        console.Output.WriteLine(" 4. Navigate to the Console tab");
-        console.Output.WriteLine(" 5. Type \"window.location.href\" and press Enter");
-        console.Output.WriteLine(" 6. Copy the first long sequence of numbers inside the URL");
+        console.Output.WriteLine(" 5. Right-click on the desired guild or channel and click Copy Server ID or Copy Channel ID");
         console.Output.WriteLine();
 
         // Docs link

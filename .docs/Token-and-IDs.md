@@ -234,29 +234,9 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 
 ---
 
-## How to get a Server ID or a Server Channel ID
+## How to get a Server ID or a Channel ID
 
 1. Open Discord Settings
 2. Go to the **Advanced** section
 3. Enable **Developer Mode**
-4. Right-click on the desired server or channel and click Copy ID
-
-## How to get a Direct Message Channel ID
-
-1. Click the three dots next to any message in the channel you want to export.
-2. Paste the link into a text editor.
-3. Copy the text in the highlighted part of the link.
-
-> E.g. in https꞉//discord.com/channels/@me/**189716987098470**/0985709387059874, you should copy **189716987098470**
-
-Make sure you're not copying the user's ID.
-
-**Alternatively, you can also:**
-
-1. Open the desired direct message channel
-2. Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> (<kbd>⌥</kbd>+<kbd>⌘</kbd>+<kbd>I</kbd> on macOS) on Discord to show developer tools
-3. Navigate to the `Console` tab
-4. Type `window.location.href` and press Enter
-5. Copy the first long sequence of numbers inside the URL
-
-> E.g. in https꞉//discord.com/channels/@me/**84289740160**, you should copy **84289740160**
+4. Right-click on the desired server or channel and click Copy Server ID or Copy Channel ID

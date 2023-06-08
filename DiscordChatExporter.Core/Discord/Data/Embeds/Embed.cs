@@ -45,7 +45,7 @@ public partial record Embed
             EmbedKind.Rich;
 
         var url = json.GetPropertyOrNull("url")?.GetNonWhiteSpaceStringOrNull();
-        var timestamp = json.GetPropertyOrNull("timestamp")?.GetDateTimeOffset();
+        var timestamp = json.GetPropertyOrNull("timestamp")?.GetDateTimeOffsetOrNull();
 
         var color = json
             .GetPropertyOrNull("color")?

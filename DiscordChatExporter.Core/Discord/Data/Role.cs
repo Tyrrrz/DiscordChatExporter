@@ -17,7 +17,7 @@ public record Role(Snowflake Id, string Name, int Position, Color? Color) : IHas
 
         var color = json
             .GetPropertyOrNull("color")?
-            .GetInt32()
+            .GetInt32OrNull()?
             .Pipe(System.Drawing.Color.FromArgb)
             .ResetAlpha()
             .NullIf(c => c.ToRgb() <= 0);

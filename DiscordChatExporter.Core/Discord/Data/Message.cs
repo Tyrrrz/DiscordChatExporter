@@ -108,15 +108,16 @@ public partial record Message
     {
         var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
         var kind = (MessageKind)json.GetProperty("type").GetInt32();
-        var flags = (MessageFlags?)json.GetPropertyOrNull("flags")?.GetInt32() ?? MessageFlags.None;
+        var flags = (MessageFlags?)json.GetPropertyOrNull("flags")?.GetInt32OrNull() ?? MessageFlags.None;
         var author = json.GetProperty("author").Pipe(User.Parse);
 
         var timestamp = json.GetProperty("timestamp").GetDateTimeOffset();
-        var editedTimestamp = json.GetPropertyOrNull("edited_timestamp")?.GetDateTimeOffset();
+        var editedTimestamp = json.GetPropertyOrNull("edited_timestamp")?.GetDateTimeOffsetOrNull();
+
         var callEndedTimestamp = json
             .GetPropertyOrNull("call")?
             .GetPropertyOrNull("ended_timestamp")?
-            .GetDateTimeOffset();
+            .GetDateTimeOffsetOrNull();
 
         var isPinned = json.GetPropertyOrNull("pinned")?.GetBooleanOrNull() ?? false;
         var content = json.GetPropertyOrNull("content")?.GetStringOrNull() ?? "";

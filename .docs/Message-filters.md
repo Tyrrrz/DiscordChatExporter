@@ -2,7 +2,7 @@
 
 You can use a special notation to filter messages that you want to have included in an export. The notation syntax is designed to mimic Discord's search query syntax, but with additional capabilities.
 
-To configure a filter, specify it in advanced export parameters when using the GUI or by passing the `--filter` option when using the CLI.
+To configure a filter, specify it in advanced export parameters when using the GUI or by passing the `--filter` option when using the CLI. For the CLI version, see also [caveats](#cli-caveats).
 
 ## Examples
 
@@ -84,9 +84,21 @@ from:Tyrrrz | from:"96-LB"
 from:96\-LB
 ```
 
-## CLI Caveat
+## CLI Caveats
 
-Negated filters (those that start with `-`) may cause parsing issues when using the CLI version of DiscordChatExporter. To avoid this, use the tilde (`~`) character instead of the dash (`-`):
+In most cases, you will need to enclose your filter in quotes (`"`) to escape characters that may have special meaning in your shell:
+
+```
+DiscordChatExporter.Cli export [...] --filter "from:Tyrrrz has:image"
+```
+
+If you need to include quotes inside the filter itself as well, use single quotes (`'`) for those instead:
+
+```
+DiscordChatExporter.Cli export [...] --filter "from:Tyrrrz 'hello world'"
+```
+
+Additionally, negated filters (those that start with `-`) may cause parsing issues even when enclosed in quotes. To avoid this, use the tilde (`~`) character instead of the dash (`-`):
 
 ```
 DiscordChatExporter.Cli export [...] --filter ~from:Tyrrrz

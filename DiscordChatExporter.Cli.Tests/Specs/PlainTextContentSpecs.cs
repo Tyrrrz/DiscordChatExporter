@@ -15,7 +15,7 @@ public class PlainTextContentSpecs
 
         // Assert
         document.Should().ContainAll(
-            "Tyrrrz#5447",
+            "tyrrrz",
             "Hello world",
             "Goodbye world",
             "Foo bar",

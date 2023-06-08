@@ -64,7 +64,7 @@ public class FilterSpecs
             .EnumerateArray()
             .Select(j => j.GetProperty("author").GetProperty("name").GetString())
             .Should()
-            .AllBe("Tyrrrz");
+            .AllBe("tyrrrz");
     }
 
     [Fact]

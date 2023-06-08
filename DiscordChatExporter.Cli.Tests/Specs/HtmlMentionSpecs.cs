@@ -20,7 +20,7 @@ public class HtmlMentionSpecs
 
         // Assert
         message.Text().Should().Contain("User mention: @Tyrrrz");
-        message.InnerHtml.Should().Contain("Tyrrrz#5447");
+        message.InnerHtml.Should().Contain("tyrrrz");
     }
 
     [Fact]

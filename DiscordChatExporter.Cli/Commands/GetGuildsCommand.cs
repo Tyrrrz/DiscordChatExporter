@@ -22,11 +22,16 @@ public class GetGuildsCommand : DiscordCommandBase
             .ThenBy(g => g.Name)
             .ToArray();
 
+        var guildIdMaxLength = guilds
+            .Select(g => g.Id.ToString().Length)
+            .OrderDescending()
+            .FirstOrDefault();
+
         foreach (var guild in guilds)
         {
             // Guild ID
             await console.Output.WriteAsync(
-                guild.Id.ToString().PadRight(20, ' ')
+                guild.Id.ToString().PadRight(guildIdMaxLength, ' ')
             );
 
             // Separator

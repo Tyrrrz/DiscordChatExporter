@@ -36,19 +36,20 @@ public class GetChannelsCommand : DiscordCommandBase
             .ThenBy(c => c.Name)
             .ToArray();
 
-        var threads = Array.Empty<ChannelThread>();
-        if (IncludeThreads)
-        {
-            threads = (await Discord.GetGuildThreadsAsync(GuildId, cancellationToken))
-                .OrderBy(c => c.Name)
-                .ToArray();
-        }
+        var channelIdMaxLength = channels
+            .Select(c => c.Id.ToString().Length)
+            .OrderDescending()
+            .FirstOrDefault();
+
+        var threads = IncludeThreads
+            ? (await Discord.GetGuildThreadsAsync(GuildId, cancellationToken)).OrderBy(c => c.Name).ToArray()
+            : Array.Empty<ChannelThread>();
 
         foreach (var channel in channels)
         {
             // Channel ID
             await console.Output.WriteAsync(
-                channel.Id.ToString().PadRight(20, ' ')
+                channel.Id.ToString().PadRight(channelIdMaxLength, ' ')
             );
 
             // Separator
@@ -59,14 +60,20 @@ public class GetChannelsCommand : DiscordCommandBase
             using (console.WithForegroundColor(ConsoleColor.White))
                 await console.Output.WriteLineAsync($"{channel.Category.Name} / {channel.Name}");
 
-            foreach (var thread in threads.Where(t => t.ParentId == channel.Id))
+            var channelThreads = threads.Where(t => t.ParentId == channel.Id).ToArray();
+            var channelThreadIdMaxLength = channelThreads
+                .Select(t => t.Id.ToString().Length)
+                .OrderDescending()
+                .FirstOrDefault();
+
+            foreach (var thread in channelThreads)
             {
                 // Indent
-                await console.Output.WriteAsync('\t');
+                await console.Output.WriteAsync(" * ");
 
                 // Thread ID
                 await console.Output.WriteAsync(
-                    thread.Id.ToString().PadRight(20, ' ')
+                    thread.Id.ToString().PadRight(channelThreadIdMaxLength, ' ')
                 );
 
                 // Separator
@@ -75,7 +82,15 @@ public class GetChannelsCommand : DiscordCommandBase
 
                 // Thread name
                 using (console.WithForegroundColor(ConsoleColor.White))
-                    await console.Output.WriteLineAsync($"Thread / {thread.Name}");
+                    await console.Output.WriteAsync($"Thread / {thread.Name}");
+
+                // Separator
+                using (console.WithForegroundColor(ConsoleColor.DarkGray))
+                    await console.Output.WriteAsync(" | ");
+
+                // Thread status
+                using (console.WithForegroundColor(ConsoleColor.White))
+                    await console.Output.WriteLineAsync(thread.IsActive ? "Active" : "Archived");
             }
         }
     }

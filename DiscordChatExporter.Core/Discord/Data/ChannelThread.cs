@@ -12,6 +12,7 @@ public record ChannelThread(
     Snowflake GuildId,
     Snowflake ParentId,
     string Name,
+    bool IsActive,
     Snowflake? LastMessageId) : IHasId
 {
     public static ChannelThread Parse(JsonElement json)
@@ -21,6 +22,11 @@ public record ChannelThread(
         var guildId = json.GetProperty("guild_id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
         var parentId = json.GetProperty("parent_id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
         var name = json.GetProperty("name").GetNonWhiteSpaceString();
+
+        var isActive = !json
+            .GetPropertyOrNull("thread_metadata")?
+            .GetPropertyOrNull("archived")?
+            .GetBooleanOrNull() ?? true;
 
         var lastMessageId = json
             .GetPropertyOrNull("last_message_id")?
@@ -33,6 +39,7 @@ public record ChannelThread(
             guildId,
             parentId,
             name,
+            isActive,
             lastMessageId
         );
     }

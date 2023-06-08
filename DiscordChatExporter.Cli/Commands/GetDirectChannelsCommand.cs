@@ -22,11 +22,16 @@ public class GetDirectChannelsCommand : DiscordCommandBase
             .ThenBy(c => c.Name)
             .ToArray();
 
+        var channelIdMaxLength = channels
+            .Select(c => c.Id.ToString().Length)
+            .OrderDescending()
+            .FirstOrDefault();
+
         foreach (var channel in channels)
         {
             // Channel ID
             await console.Output.WriteAsync(
-                channel.Id.ToString().PadRight(20, ' ')
+                channel.Id.ToString().PadRight(channelIdMaxLength, ' ')
             );
 
             // Separator

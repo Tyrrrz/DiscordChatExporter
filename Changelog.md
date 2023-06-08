@@ -1,5 +1,19 @@
 # Changelog
 
+## v2.40 (08-Jun-2023)
+
+- General changes:
+  - Added support for users that don't have discriminators.
+  - Added a precondition check that verifies whether the requested channel contains any messages for the specified period, before starting the export process. This check works by comparing the export bounds against the ID of the last message in the channel, which is provided by the Discord API as part of the channel metadata. When exporting many channels in batches (e.g. using the `exportall` command), this check may eliminate a significant number of unnecessary API calls and speed up the export process.
+- CLI changes:
+  - Extended the `channels` command with the `--include-threads` option. When this option is provided, the command will include channel threads in the output. (Thanks [@WAUthethird](https://github.com/WAUthethird))
+  - Simplified the information in the `guide` command related to the extraction of DM channel IDs. Discord now provides a native way of copying IDs of DM channels, so the previous devtools-based workaround is no longer necessary.
+- GUI changes:
+  - Added a blur effect to the token text box, which activates when the control loses focus. This is done to reduce the risk of accidentally exposing the token when taking screenshots.
+- HTML format changes:
+  - Added support for the header markdown syntax.
+  - Added support for the list markdown syntax.
+
 ## v2.39.1 (10-Mar-2023)
 
 - Fixed an issue where messages containing mentions of users that left the server (but haven't deleted their account) were incorrectly rendered as `@Unknown`.
@@ -7,7 +21,7 @@
 
 ## v2.39 (25-Feb-2023)
 
-- Added an option to specify the directory path for downloaded assets. This can be used, in combination with the "reuse assets" option, to have a shared asset directory for multiple exports. In GUI, this option can be found in the advanced setion of the export dialog. In CLI, it's available as `--media-dir <path>`. (Thanks [@96-LB](https://github.com/96-LB))
+- Added an option to specify the directory path for downloaded assets. This can be used, in combination with the "reuse assets" option, to have a shared asset directory for multiple exports. In GUI, this option can be found in the advanced section of the export dialog. In CLI, it's available as `--media-dir <path>`. (Thanks [@96-LB](https://github.com/96-LB))
 - Added support for server-level user avatars. If a user has a custom avatar set on the server, it will be rendered instead of their main avatar.
 - CLI changes:
   - Extended the `exportall` command with the `--data-package` option. You can use this option to provide the path to your personal data package (`package.zip` file), requested from Discord. When provided, the command will pull channels listed in the package instead of using the Discord API to query them. This can be particularly useful if you want to export DM channels that have been closed, as the personal data package should still contain their IDs.

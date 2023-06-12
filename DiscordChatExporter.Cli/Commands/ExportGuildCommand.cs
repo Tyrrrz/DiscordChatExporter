@@ -24,7 +24,6 @@ public class ExportGuildCommand : ExportCommandBase
         "include-threads",
         Description = "Include threads in the export."
     )]
-
     public bool IncludeThreads { get; init; }
 
     public override async ValueTask ExecuteAsync(IConsole console)

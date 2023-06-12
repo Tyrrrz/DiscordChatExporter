@@ -1,11 +1,9 @@
-﻿namespace DiscordChatExporter.Core.Discord.Data.Common
+﻿namespace DiscordChatExporter.Core.Discord.Data.Common;
 
+public interface IChannel : IHasId
 {
-    public interface IChannel : IHasId
-    {
-        ChannelKind Kind { get; }
-        Snowflake GuildId { get; }
-        string Name { get; }
-        Snowflake? LastMessageId { get; }
-    }
+    ChannelKind Kind { get; }
+    Snowflake GuildId { get; }
+    string Name { get; }
+    Snowflake? LastMessageId { get; }
 }

@@ -11,6 +11,7 @@ public partial record Channel(
     Snowflake Id,
     ChannelKind Kind,
     Snowflake GuildId,
+    Snowflake ParentId,
     ChannelCategory Category,
     string Name,
     int? Position,
@@ -31,6 +32,8 @@ public partial record Channel
         var guildId =
             json.GetPropertyOrNull("guild_id")?.GetNonWhiteSpaceStringOrNull()?.Pipe(Snowflake.Parse) ??
             Guild.DirectMessages.Id;
+
+        var parentId = json.GetProperty("parent_id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
 
         var category = categoryHint ?? ChannelCategory.CreateDefault(kind);
 
@@ -69,6 +72,7 @@ public partial record Channel
             id,
             kind,
             guildId,
+            parentId,
             category,
             name,
             position,

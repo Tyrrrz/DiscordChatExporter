@@ -11,6 +11,7 @@ using DiscordChatExporter.Cli.Commands.Converters;
 using DiscordChatExporter.Cli.Utils.Extensions;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
+using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Core.Exporting.Filtering;
@@ -136,7 +137,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
     private ChannelExporter? _channelExporter;
     protected ChannelExporter Exporter => _channelExporter ??= new ChannelExporter(Discord);
 
-    protected async ValueTask ExecuteAsync(IConsole console, IReadOnlyList<Channel> channels, IReadOnlyList<ChannelThread> threads)
+    protected async ValueTask ExecuteAsync(IConsole console, IReadOnlyList<IChannel> channels)
     {
         // Asset reuse can only be enabled if the download assets option is set
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/425

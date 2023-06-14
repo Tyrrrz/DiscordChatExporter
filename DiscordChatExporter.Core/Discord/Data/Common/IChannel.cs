@@ -4,7 +4,12 @@ public interface IChannel : IHasId
 {
     ChannelKind Kind { get; }
     Snowflake GuildId { get; }
-    ChannelCategory Category { get; }
+    Snowflake ParentId { get; }
+    string? ParentName { get; }
+    int? ParentPosition { get; }
     string Name { get; }
+    int? Position { get; }
+    string? IconUrl { get; }
+    string? Topic { get; }
     Snowflake? LastMessageId { get; }
 }

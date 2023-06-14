@@ -396,7 +396,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
             }
         }
 
-        await ExecuteAsync(console, channels, Array.Empty<ChannelThread>());
+        await ExecuteAsync(console, channels);
     }
 
     public override ValueTask ExecuteAsync(IConsole console)

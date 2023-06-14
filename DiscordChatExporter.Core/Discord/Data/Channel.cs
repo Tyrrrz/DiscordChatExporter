@@ -12,6 +12,8 @@ public partial record Channel(
     ChannelKind Kind,
     Snowflake GuildId,
     Snowflake ParentId,
+    string? ParentName,
+    int? ParentPosition,
     ChannelCategory Category,
     string Name,
     int? Position,
@@ -24,7 +26,7 @@ public partial record Channel(
 
 public partial record Channel
 {
-    public static Channel Parse(JsonElement json, ChannelCategory? categoryHint = null, int? positionHint = null)
+    public static Channel Parse(JsonElement json, ChannelCategory? categoryHint = null, int? positionHint = null, string? parentName = null, int? parentPosition = null)
     {
         var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
         var kind = (ChannelKind)json.GetProperty("type").GetInt32();
@@ -73,6 +75,8 @@ public partial record Channel
             kind,
             guildId,
             parentId,
+            parentName,
+            parentPosition,
             category,
             name,
             position,

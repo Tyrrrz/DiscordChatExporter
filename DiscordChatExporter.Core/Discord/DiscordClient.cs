@@ -238,7 +238,7 @@ public class DiscordClient
                     ? categories.GetValueOrDefault(parentId)
                     : null;
 
-                yield return Channel.Parse(channelJson, category, position);
+                yield return Channel.Parse(channelJson, category, position, category?.Name, category?.Position);
                 position++;
             }
         }
@@ -270,7 +270,7 @@ public class DiscordClient
 
                     foreach (var threadJson in response.Value.GetProperty("threads").EnumerateArray())
                     {
-                        yield return ChannelThread.Parse(threadJson);
+                        yield return ChannelThread.Parse(threadJson, channel.Name);
                         currentOffset++;
                     }
 
@@ -286,7 +286,11 @@ public class DiscordClient
             {
                 var response = await GetJsonResponseAsync($"guilds/{guildId}/threads/active", cancellationToken);
                 foreach (var threadJson in response.GetProperty("threads").EnumerateArray())
-                    yield return ChannelThread.Parse(threadJson);
+                {
+                    var parentId = threadJson.GetProperty("parent_id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
+                    var parentChannel = channels.First(t => t.Id == parentId);
+                    yield return ChannelThread.Parse(threadJson, parentChannel.Name);
+                }
             }
 
             foreach (var channel in channels)
@@ -299,7 +303,7 @@ public class DiscordClient
                     );
 
                     foreach (var threadJson in response.GetProperty("threads").EnumerateArray())
-                        yield return ChannelThread.Parse(threadJson);
+                        yield return ChannelThread.Parse(threadJson, channel.Name);
                 }
 
                 // Private archived threads
@@ -310,7 +314,7 @@ public class DiscordClient
                     );
 
                     foreach (var threadJson in response.GetProperty("threads").EnumerateArray())
-                        yield return ChannelThread.Parse(threadJson);
+                        yield return ChannelThread.Parse(threadJson, channel.Name);
                 }
             }
         }
@@ -380,7 +384,7 @@ public class DiscordClient
             ? await GetChannelCategoryAsync(parentId.Value, cancellationToken)
             : null;
 
-        return Channel.Parse(response, category);
+        return Channel.Parse(response, category, parentName: category?.Name, parentPosition: category?.Position);
     }
 
     private async ValueTask<Message?> TryGetLastMessageAsync(

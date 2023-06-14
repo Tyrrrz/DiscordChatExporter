@@ -103,7 +103,7 @@ public partial class ExportRequest
         var buffer = new StringBuilder();
 
         // Guild and channel names
-        buffer.Append($"{guild.Name} - {channel.Category.Name} - {channel.Name} [{channel.Id}]");
+        buffer.Append($"{guild.Name} - {channel.ParentName} - {channel.Name} [{channel.Id}]");
 
         // Date range
         if (after is not null || before is not null)
@@ -149,12 +149,12 @@ public partial class ExportRequest
             {
                 "%g" => guild.Id.ToString(),
                 "%G" => guild.Name,
-                "%t" => channel.Category.Id.ToString(),
-                "%T" => channel.Category.Name,
+                "%t" => channel.ParentId.ToString(),
+                "%T" => channel.ParentName,
                 "%c" => channel.Id.ToString(),
                 "%C" => channel.Name,
                 "%p" => channel.Position?.ToString() ?? "0",
-                "%P" => channel.Category.Position?.ToString() ?? "0",
+                "%P" => channel.ParentPosition?.ToString() ?? "0",
                 "%a" => after?.ToDate().ToString("yyyy-MM-dd") ?? "",
                 "%b" => before?.ToDate().ToString("yyyy-MM-dd") ?? "",
                 "%d" => DateTimeOffset.Now.ToString("yyyy-MM-dd"),

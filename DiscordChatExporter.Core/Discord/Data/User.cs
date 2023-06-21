@@ -45,12 +45,14 @@ public partial record User
         var name = json.GetProperty("username").GetNonNullString();
         var displayName = json.GetPropertyOrNull("global_name")?.GetNonWhiteSpaceStringOrNull() ?? name;
 
+        var avatarIndex = discriminator % 5 ?? (int)((id.Value >> 22) % 6);
+
         var avatarUrl =
             json
                 .GetPropertyOrNull("avatar")?
                 .GetNonWhiteSpaceStringOrNull()?
                 .Pipe(h => ImageCdn.GetUserAvatarUrl(id, h)) ??
-            ImageCdn.GetFallbackUserAvatarUrl(discriminator ?? 0);
+            ImageCdn.GetFallbackUserAvatarUrl(avatarIndex);
 
         return new User(id, isBot, discriminator, name, displayName, avatarUrl);
     }

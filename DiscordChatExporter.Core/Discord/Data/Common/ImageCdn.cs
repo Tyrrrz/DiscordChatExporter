@@ -47,8 +47,8 @@ public static class ImageCdn
             ? $"https://cdn.discordapp.com/avatars/{userId}/{avatarHash}.gif?size={size}"
             : $"https://cdn.discordapp.com/avatars/{userId}/{avatarHash}.png?size={size}";
 
-    public static string GetFallbackUserAvatarUrl(int discriminator) =>
-        $"https://cdn.discordapp.com/embed/avatars/{discriminator % 5}.png";
+    public static string GetFallbackUserAvatarUrl(int index = 0) =>
+        $"https://cdn.discordapp.com/embed/avatars/{index}.png";
 
     public static string GetMemberAvatarUrl(Snowflake guildId, Snowflake userId, string avatarHash, int size = 512) =>
         avatarHash.StartsWith("a_", StringComparison.Ordinal)

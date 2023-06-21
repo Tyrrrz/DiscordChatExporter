@@ -12,7 +12,7 @@ public record Guild(Snowflake Id, string Name, string IconUrl) : IHasId
     public static Guild DirectMessages { get; } = new(
         Snowflake.Zero,
         "Direct Messages",
-        ImageCdn.GetFallbackUserAvatarUrl(0)
+        ImageCdn.GetFallbackUserAvatarUrl()
     );
 
     public static Guild Parse(JsonElement json)
@@ -25,7 +25,7 @@ public record Guild(Snowflake Id, string Name, string IconUrl) : IHasId
                 .GetPropertyOrNull("icon")?
                 .GetNonWhiteSpaceStringOrNull()?
                 .Pipe(h => ImageCdn.GetGuildIconUrl(id, h)) ??
-            ImageCdn.GetFallbackUserAvatarUrl(0);
+            ImageCdn.GetFallbackUserAvatarUrl();
 
         return new Guild(id, name, iconUrl);
     }

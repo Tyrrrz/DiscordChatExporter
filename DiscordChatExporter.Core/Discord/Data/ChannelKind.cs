@@ -24,4 +24,7 @@ public static class ChannelKindExtensions
 
     public static bool IsGuild(this ChannelKind kind) =>
         !kind.IsDirect();
+
+    public static bool IsVoice(this ChannelKind kind) =>
+        kind is ChannelKind.GuildVoiceChat or ChannelKind.GuildStageVoice;
 }

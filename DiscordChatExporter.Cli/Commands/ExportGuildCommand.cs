@@ -19,6 +19,12 @@ public class ExportGuildCommand : ExportCommandBase
     )]
     public required Snowflake GuildId { get; init; }
 
+    [CommandOption(
+        "include-vc",
+        Description = "Include voice channels."
+    )]
+    public bool IncludeVoiceChannels { get; init; } = true;
+
     public override async ValueTask ExecuteAsync(IConsole console)
     {
         await base.ExecuteAsync(console);
@@ -29,6 +35,7 @@ public class ExportGuildCommand : ExportCommandBase
 
         var channels = (await Discord.GetGuildChannelsAsync(GuildId, cancellationToken))
             .Where(c => c.Kind != ChannelKind.GuildCategory)
+            .Where(c => IncludeVoiceChannels || !c.Kind.IsVoice())
             .ToArray();
 
         await base.ExecuteAsync(console, channels);

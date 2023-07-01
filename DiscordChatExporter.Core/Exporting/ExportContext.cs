@@ -106,6 +106,18 @@ internal class ExportContext
             .FirstOrDefault();
     }
 
+    public IEnumerable<Role> TryGetUserRoles(Snowflake id)
+    {
+        var member = TryGetMember(id);
+
+        return member?
+            .RoleIds
+            .Select(TryGetRole)
+            .WhereNotNull()
+            .OrderByDescending(r => r.Position)
+            .ToArray() ?? Array.Empty<Role>();
+    }
+
     public async ValueTask<string> ResolveAssetUrlAsync(string url, CancellationToken cancellationToken = default)
     {
         if (!Request.ShouldDownloadAssets)

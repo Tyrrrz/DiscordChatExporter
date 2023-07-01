@@ -50,7 +50,7 @@ internal class JsonMessageWriter : MessageWriter
         _writer.WriteBoolean("isBot", user.IsBot);
 
         _writer.WritePropertyName("roles");
-        await WriteRolesAsync(Context.TryGetUserRoles(user.Id), cancellationToken);
+        await WriteRolesAsync(Context.GetUserRoles(user.Id), cancellationToken);
 
         _writer.WriteString(
             "avatarUrl",
@@ -65,7 +65,7 @@ internal class JsonMessageWriter : MessageWriter
     }
 
     private async ValueTask WriteRolesAsync(
-        IEnumerable<Role> roles,
+        IReadOnlyList<Role> roles,
         CancellationToken cancellationToken = default)
     {
         _writer.WriteStartArray();

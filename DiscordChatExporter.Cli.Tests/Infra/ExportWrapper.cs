@@ -48,23 +48,22 @@ public static class ExportWrapper
         var fileName = channelId.ToString() + '.' + format.GetFileExtension();
         var filePath = Path.Combine(DirPath, fileName);
 
-        // Lock separately for each channel and format
-        using (await Locker.LockAsync(filePath))
-        {
-            // Perform the export only if it hasn't been done before
-            if (!File.Exists(filePath))
-            {
-                await new ExportChannelsCommand
-                {
-                    Token = Secrets.DiscordToken,
-                    ChannelIds = new[] { channelId },
-                    ExportFormat = format,
-                    OutputPath = filePath
-                }.ExecuteAsync(new FakeConsole());
-            }
+        using var _ = await Locker.LockAsync(filePath);
+        using var console = new FakeConsole();
 
-            return await File.ReadAllTextAsync(filePath);
+        // Perform the export only if it hasn't been done before
+        if (!File.Exists(filePath))
+        {
+            await new ExportChannelsCommand
+            {
+                Token = Secrets.DiscordToken,
+                ChannelIds = new[] { channelId },
+                ExportFormat = format,
+                OutputPath = filePath
+            }.ExecuteAsync(console);
         }
+
+        return await File.ReadAllTextAsync(filePath);
     }
 
     public static async ValueTask<IHtmlDocument> ExportAsHtmlAsync(Snowflake channelId) => Html.Parse(

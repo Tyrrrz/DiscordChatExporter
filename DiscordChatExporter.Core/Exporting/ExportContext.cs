@@ -91,19 +91,24 @@ internal class ExportContext
 
     public Color? TryGetUserColor(Snowflake id)
     {
-        var member = TryGetMember(id);
-
-        var memberRoles = member?
-            .RoleIds
-            .Select(TryGetRole)
-            .WhereNotNull()
-            .ToArray();
+        var memberRoles = GetUserRoles(id);
 
         return memberRoles?
             .Where(r => r.Color is not null)
-            .OrderByDescending(r => r.Position)
             .Select(r => r.Color)
             .FirstOrDefault();
+    }
+
+    public IReadOnlyList<Role> GetUserRoles(Snowflake id)
+    {
+        var member = TryGetMember(id);
+
+        return member?
+            .RoleIds
+            .Select(TryGetRole)
+            .WhereNotNull()
+            .OrderByDescending(r => r.Position)
+            .ToArray() ?? Array.Empty<Role>();
     }
 
     public async ValueTask<string> ResolveAssetUrlAsync(string url, CancellationToken cancellationToken = default)

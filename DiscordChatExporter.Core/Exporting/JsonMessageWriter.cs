@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading;
@@ -48,6 +49,9 @@ internal class JsonMessageWriter : MessageWriter
         _writer.WriteString("color", Context.TryGetUserColor(user.Id)?.ToHex());
         _writer.WriteBoolean("isBot", user.IsBot);
 
+        _writer.WritePropertyName("roles");
+        await WriteRolesAsync(Context.GetUserRoles(user.Id), cancellationToken);
+
         _writer.WriteString(
             "avatarUrl",
             await Context.ResolveAssetUrlAsync(
@@ -57,6 +61,28 @@ internal class JsonMessageWriter : MessageWriter
         );
 
         _writer.WriteEndObject();
+        await _writer.FlushAsync(cancellationToken);
+    }
+
+    private async ValueTask WriteRolesAsync(
+        IReadOnlyList<Role> roles,
+        CancellationToken cancellationToken = default)
+    {
+        _writer.WriteStartArray();
+
+        foreach (var role in roles)
+        {
+            _writer.WriteStartObject();
+
+            _writer.WriteString("id", role.Id.ToString());
+            _writer.WriteString("name", role.Name);
+            _writer.WriteString("color", role.Color?.ToHex());
+            _writer.WriteNumber("position", role.Position);
+
+            _writer.WriteEndObject();
+        }
+
+        _writer.WriteEndArray();
         await _writer.FlushAsync(cancellationToken);
     }
 

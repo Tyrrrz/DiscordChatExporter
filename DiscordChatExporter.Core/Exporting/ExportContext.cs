@@ -89,22 +89,17 @@ internal class ExportContext
 
     public Role? TryGetRole(Snowflake id) => _roles.GetValueOrDefault(id);
 
-    public Color? TryGetUserColor(Snowflake id)
-    {
-        var member = TryGetMember(id);
+    public IReadOnlyList<Role> GetUserRoles(Snowflake id) => TryGetMember(id)?
+        .RoleIds
+        .Select(TryGetRole)
+        .WhereNotNull()
+        .OrderByDescending(r => r.Position)
+        .ToArray() ?? Array.Empty<Role>();
 
-        var memberRoles = member?
-            .RoleIds
-            .Select(TryGetRole)
-            .WhereNotNull()
-            .ToArray();
-
-        return memberRoles?
-            .Where(r => r.Color is not null)
-            .OrderByDescending(r => r.Position)
-            .Select(r => r.Color)
-            .FirstOrDefault();
-    }
+    public Color? TryGetUserColor(Snowflake id) => GetUserRoles(id)
+        .Where(r => r.Color is not null)
+        .Select(r => r.Color)
+        .FirstOrDefault();
 
     public async ValueTask<string> ResolveAssetUrlAsync(string url, CancellationToken cancellationToken = default)
     {
@@ -117,7 +112,7 @@ internal class ExportContext
             var relativeFilePath = Path.GetRelativePath(Request.OutputDirPath, filePath);
 
             // Prefer relative paths so that the output files can be copied around without breaking references.
-            // If the assets path is outside of the export directory, use an absolute path instead.
+            // If the asset directory is outside of the export directory, use an absolute path instead.
             var optimalFilePath =
                 relativeFilePath.StartsWith(".." + Path.DirectorySeparatorChar, StringComparison.Ordinal) ||
                 relativeFilePath.StartsWith(".." + Path.AltDirectorySeparatorChar, StringComparison.Ordinal)

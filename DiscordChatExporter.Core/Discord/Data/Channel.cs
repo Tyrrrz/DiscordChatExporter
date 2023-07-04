@@ -21,7 +21,8 @@ public partial record Channel(
     string? Topic,
     Snowflake? LastMessageId) : IChannel
 {
-    public bool IsVoice => Kind is ChannelKind.GuildVoiceChat or ChannelKind.GuildStageVoice;
+    // Only needed for WPF data binding. Don't use anywhere else.
+    public bool IsVoice => Kind.IsVoice();
 }
 
 public partial record Channel

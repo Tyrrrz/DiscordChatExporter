@@ -25,6 +25,13 @@ public class ExportGuildCommand : ExportCommandBase
         Description = "Include threads in the export."
     )]
     public bool IncludeThreads { get; init; }
+    
+    [CommandOption(
+        "include-vc",
+        Description = "Include voice channels."
+    )]
+    public bool IncludeVoiceChannels { get; init; } = true;
+
 
     public override async ValueTask ExecuteAsync(IConsole console)
     {
@@ -36,6 +43,7 @@ public class ExportGuildCommand : ExportCommandBase
 
         var channels = (await Discord.GetGuildChannelsAsync(GuildId, cancellationToken))
             .Where(c => c.Kind != ChannelKind.GuildCategory)
+            .Where(c => IncludeVoiceChannels || !c.Kind.IsVoice())
             .ToArray();
 
         var threads = Array.Empty<ChannelThread>();

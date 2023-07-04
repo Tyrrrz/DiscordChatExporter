@@ -30,6 +30,12 @@ public class ExportAllCommand : ExportCommandBase
     public bool IncludeGuildChannels { get; init; } = true;
 
     [CommandOption(
+        "include-vc",
+        Description = "Include voice channels."
+    )]
+    public bool IncludeVoiceChannels { get; init; } = true;
+
+    [CommandOption(
         "data-package",
         Description =
             "Path to the personal data package (ZIP file) requested from Discord. " +
@@ -98,6 +104,8 @@ public class ExportAllCommand : ExportCommandBase
             channels.RemoveAll(c => c.Kind.IsDirect());
         if (!IncludeGuildChannels)
             channels.RemoveAll(c => c.Kind.IsGuild());
+        if (!IncludeVoiceChannels)
+            channels.RemoveAll(c => c.Kind.IsVoice());
 
         await base.ExecuteAsync(console, channels, Array.Empty<ChannelThread>());
     }

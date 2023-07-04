@@ -12,14 +12,15 @@ public record ChannelThread(
     Snowflake GuildId,
     Snowflake ParentId,
     string? ParentName,
-    int? ParentPosition,
     string Name,
-    int? Position,
-    string? IconUrl,
-    string? Topic,
     bool IsActive,
     Snowflake? LastMessageId) : IChannel
 {
+    public int? ParentPosition => null;
+    public int? Position => null;
+    public string? IconUrl => null;
+    public string? Topic => null;
+
     public static ChannelThread Parse(JsonElement json, string parentName)
     {
         var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
@@ -27,10 +28,6 @@ public record ChannelThread(
         var guildId = json.GetProperty("guild_id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
         var parentId = json.GetProperty("parent_id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
         var name = json.GetProperty("name").GetNonWhiteSpaceString();
-        var position = 0;
-        string? iconUrl = null;
-        string? topic = null;
-        var parentPosition = 0;
 
 
         var isActive = !json
@@ -49,11 +46,7 @@ public record ChannelThread(
             guildId,
             parentId,
             parentName,
-            parentPosition,
             name,
-            position,
-            iconUrl,
-            topic,
             isActive,
             lastMessageId
         );

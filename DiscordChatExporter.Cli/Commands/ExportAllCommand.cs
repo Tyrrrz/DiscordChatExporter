@@ -107,6 +107,6 @@ public class ExportAllCommand : ExportCommandBase
         if (!IncludeVoiceChannels)
             channels.RemoveAll(c => c.Kind.IsVoice());
 
-        await base.ExecuteAsync(console, channels, Array.Empty<ChannelThread>());
+        await base.ExecuteAsync(console, channels);
     }
 }

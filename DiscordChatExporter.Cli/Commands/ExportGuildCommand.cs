@@ -19,12 +19,6 @@ public class ExportGuildCommand : ExportCommandBase
         Description = "Guild ID."
     )]
     public required Snowflake GuildId { get; init; }
-
-    [CommandOption(
-        "include-threads",
-        Description = "Include threads in the export."
-    )]
-    public bool IncludeThreads { get; init; }
     
     [CommandOption(
         "include-vc",
@@ -46,14 +40,6 @@ public class ExportGuildCommand : ExportCommandBase
             .Where(c => IncludeVoiceChannels || !c.Kind.IsVoice())
             .ToArray();
 
-        var threads = Array.Empty<ChannelThread>();
-        if (IncludeThreads)
-        {
-            threads = (await Discord.GetGuildThreadsAsync(GuildId, cancellationToken))
-                .OrderBy(c => c.Name)
-                .ToArray();
-        }
-
-        await base.ExecuteAsync(console, channels, threads);
+        await base.ExecuteAsync(console, channels);
     }
 }

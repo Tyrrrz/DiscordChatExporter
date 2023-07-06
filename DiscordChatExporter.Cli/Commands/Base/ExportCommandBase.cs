@@ -178,7 +178,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
         // Export channels
         var cancellationToken = console.RegisterCancellationHandler();
-        var channelErrors = new ConcurrentDictionary<Channel, string>();
+        var channelErrors = new ConcurrentDictionary<IChannel, string>();
 
         await console.Output.WriteLineAsync($"Exporting {channels.Count} channel(s)...");
         await console.CreateProgressTicker().StartAsync(async progressContext =>
@@ -195,7 +195,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
                     try
                     {
                         await progressContext.StartTaskAsync(
-                            $"{channel.Category.Name} / {channel.Name}",
+                            $"{channel.ParentName} / {channel.Name}",
                             async progress =>
                             {
                                 var guild = await Discord.GetGuildAsync(channel.GuildId, innerCancellationToken);
@@ -254,7 +254,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
             foreach (var (channel, error) in channelErrors)
             {
-                await console.Error.WriteAsync($"{channel.Category.Name} / {channel.Name}: ");
+                await console.Error.WriteAsync($"{channel.ParentName} / {channel.Name}: ");
 
                 using (console.WithForegroundColor(ConsoleColor.Red))
                     await console.Error.WriteLineAsync(error);

@@ -236,6 +236,9 @@ internal class JsonMessageWriter : MessageWriter
         _writer.WriteString("before", Context.Request.Before?.ToDate());
         _writer.WriteEndObject();
 
+        // Timestamp
+        _writer.WriteString("timestamp", System.DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.ffzzz"));
+
         // Message array (start)
         _writer.WriteStartArray("messages");
         await _writer.FlushAsync(cancellationToken);

@@ -193,7 +193,7 @@ internal class PlainTextMessageWriter : MessageWriter
     {
         await _writer.WriteLineAsync(new string('=', 62));
         await _writer.WriteLineAsync($"Guild: {Context.Request.Guild.Name}");
-        await _writer.WriteLineAsync($"Channel: {Context.Request.Channel.Category.Name} / {Context.Request.Channel.Name}");
+        await _writer.WriteLineAsync($"Channel: {Context.Request.Channel.ParentName} / {Context.Request.Channel.Name}");
 
         if (!string.IsNullOrWhiteSpace(Context.Request.Channel.Topic))
         {

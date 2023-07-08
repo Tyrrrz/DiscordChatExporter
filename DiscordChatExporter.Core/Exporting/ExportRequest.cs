@@ -149,7 +149,7 @@ public partial class ExportRequest
             {
                 "%g" => guild.Id.ToString(),
                 "%G" => guild.Name,
-                "%t" => channel.ParentId.ToString(),
+                "%t" => channel.ParentId.ToString() ?? "",
                 "%T" => channel.ParentName ?? "",
                 "%c" => channel.Id.ToString(),
                 "%C" => channel.Name,

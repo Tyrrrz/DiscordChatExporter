@@ -10,7 +10,7 @@ public record ChannelThread(
     Snowflake Id,
     ChannelKind Kind,
     Snowflake GuildId,
-    Snowflake ParentId,
+    Snowflake? ParentId,
     string? ParentName,
     string Name,
     bool IsActive,
@@ -28,7 +28,6 @@ public record ChannelThread(
         var guildId = json.GetProperty("guild_id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
         var parentId = json.GetProperty("parent_id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
         var name = json.GetProperty("name").GetNonWhiteSpaceString();
-
 
         var isActive = !json
             .GetPropertyOrNull("thread_metadata")?

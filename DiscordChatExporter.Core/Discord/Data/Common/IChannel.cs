@@ -4,7 +4,7 @@ public interface IChannel : IHasId
 {
     ChannelKind Kind { get; }
     Snowflake GuildId { get; }
-    Snowflake ParentId { get; }
+    Snowflake? ParentId { get; }
     string? ParentName { get; }
     int? ParentPosition { get; }
     string Name { get; }

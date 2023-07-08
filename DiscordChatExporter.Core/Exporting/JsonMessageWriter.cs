@@ -237,7 +237,7 @@ internal class JsonMessageWriter : MessageWriter
         _writer.WriteEndObject();
 
         // Timestamp
-        _writer.WriteString("timestamp", System.DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.ffzzz"));
+        _writer.WriteString("exportedAt", System.DateTimeOffset.UtcNow);
 
         // Message array (start)
         _writer.WriteStartArray("messages");

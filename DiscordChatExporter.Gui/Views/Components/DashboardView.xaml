@@ -6,6 +6,7 @@
     xmlns:behaviors="clr-namespace:DiscordChatExporter.Gui.Behaviors"
     xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
     xmlns:components="clr-namespace:DiscordChatExporter.Gui.ViewModels.Components"
+    xmlns:controls="clr-namespace:DiscordChatExporter.Gui.Views.Controls"
     xmlns:converters="clr-namespace:DiscordChatExporter.Gui.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:data="clr-namespace:DiscordChatExporter.Core.Discord.Data;assembly=DiscordChatExporter.Core"
@@ -75,38 +76,29 @@
                         Kind="Key" />
 
                     <!--  Token value  -->
-                    <TextBox
+                    <controls:RevealablePasswordBox
                         x:Name="TokenValueTextBox"
                         Grid.Column="1"
                         Margin="0,6,6,8"
                         VerticalAlignment="Bottom"
                         materialDesign:HintAssist.Hint="Token"
-                        materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
-                        materialDesign:TextFieldAssist.TextBoxViewMargin="0,0,2,0"
                         BorderThickness="0"
+                        FontFamily="Consolas"
                         FontSize="16"
-                        Text="{Binding Token, UpdateSourceTrigger=PropertyChanged}">
-                        <TextBox.Style>
-                            <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}">
+                        Password="{Binding Token, UpdateSourceTrigger=PropertyChanged}">
+                        <controls:RevealablePasswordBox.Style>
+                            <Style TargetType="{x:Type controls:RevealablePasswordBox}">
                                 <Style.Triggers>
-                                    <!--  Blur the token when it's out of focus  -->
-                                    <MultiDataTrigger>
-                                        <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=materialDesign:Card}}" Value="False" />
-                                            <Condition Binding="{Binding IsFocused, RelativeSource={RelativeSource Self}}" Value="False" />
-                                            <!--  Don't blur if the token is not set, so the user can see the hint text  -->
-                                            <Condition Binding="{Binding IsTokenSet}" Value="True" />
-                                        </MultiDataTrigger.Conditions>
-                                        <Setter Property="Effect">
-                                            <Setter.Value>
-                                                <BlurEffect Radius="12" />
-                                            </Setter.Value>
-                                        </Setter>
-                                    </MultiDataTrigger>
+                                    <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=materialDesign:Card}}" Value="True">
+                                        <Setter Property="IsRevealed" Value="True" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsKeyboardFocusWithin, RelativeSource={RelativeSource AncestorType=materialDesign:Card}}" Value="True">
+                                        <Setter Property="IsRevealed" Value="True" />
+                                    </DataTrigger>
                                 </Style.Triggers>
                             </Style>
-                        </TextBox.Style>
-                    </TextBox>
+                        </controls:RevealablePasswordBox.Style>
+                    </controls:RevealablePasswordBox>
 
                     <!--  Pull data button  -->
                     <Button

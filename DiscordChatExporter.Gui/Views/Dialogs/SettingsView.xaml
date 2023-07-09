@@ -60,10 +60,10 @@
                         <ToggleButton
                             x:Name="DarkModeToggleButton"
                             VerticalAlignment="Center"
-                            Checked="DarkModeToggleButton_Checked"
+                            Checked="DarkModeToggleButton_OnChecked"
                             DockPanel.Dock="Right"
                             IsChecked="{Binding IsDarkModeEnabled}"
-                            Unchecked="DarkModeToggleButton_Unchecked" />
+                            Unchecked="DarkModeToggleButton_OnUnchecked" />
                     </DockPanel>
 
                     <!--  Persist token  -->

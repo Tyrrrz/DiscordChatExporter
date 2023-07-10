@@ -19,7 +19,7 @@
 
         <TextBlock
             Grid.Row="0"
-            Margin="16,16,16,8"
+            Margin="16"
             FontSize="19"
             FontWeight="Light"
             Text="Settings" />
@@ -71,7 +71,7 @@
                         Margin="16,8"
                         Background="Transparent"
                         LastChildFill="False"
-                        ToolTip="Save last used token in a file so that it can be persisted between sessions">
+                        ToolTip="Save the last used token to a file so that it can be persisted between sessions">
                         <TextBlock
                             VerticalAlignment="Center"
                             DockPanel.Dock="Left"
@@ -132,13 +132,13 @@
             </ScrollViewer>
         </Border>
 
-        <!--  Save button  -->
+        <!--  Close button  -->
         <Button
             Grid.Row="2"
             Margin="16"
             HorizontalAlignment="Stretch"
             Command="{s:Action Close}"
-            Content="SAVE"
+            Content="CLOSE"
             IsCancel="True"
             IsDefault="True"
             Style="{DynamicResource MaterialDesignOutlinedButton}" />

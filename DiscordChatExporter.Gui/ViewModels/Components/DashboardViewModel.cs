@@ -65,8 +65,15 @@ public class DashboardViewModel : PropertyChangedBase
 
         _progressMuxer = Progress.CreateMuxer().WithAutoReset();
 
-        this.Bind(o => o.IsBusy, (_, _) => NotifyOfPropertyChange(() => IsProgressIndeterminate));
-        Progress.Bind(o => o.Current, (_, _) => NotifyOfPropertyChange(() => IsProgressIndeterminate));
+        this.Bind(
+            o => o.IsBusy,
+            (_, _) => NotifyOfPropertyChange(() => IsProgressIndeterminate)
+        );
+
+        Progress.Bind(
+            o => o.Current,
+            (_, _) => NotifyOfPropertyChange(() => IsProgressIndeterminate)
+        );
     }
 
     public void OnViewLoaded()

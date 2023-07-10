@@ -8,8 +8,8 @@ public static class BinaryExtensions
     {
         var buffer = new StringBuilder(2 * data.Length);
 
-        foreach (var t in data)
-            buffer.Append(t.ToString("X2"));
+        foreach (var b in data)
+            buffer.Append(b.ToString("X2"));
 
         return buffer.ToString();
     }

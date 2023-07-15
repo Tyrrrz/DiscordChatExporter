@@ -470,4 +470,45 @@ public class DiscordClient
             }
         }
     }
+
+    public async IAsyncEnumerable<User> GetMessageReactionsAsync(
+        Snowflake channelId,
+        Snowflake messageId,
+        Emoji emoji,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+
+        var reactionName = emoji.Name;  // default emoji
+        if (emoji.Id.HasValue) {        // custom emoji
+            reactionName = reactionName + ":" + emoji.Id.Value.ToString();
+        }
+        reactionName = Uri.EscapeDataString(reactionName);
+
+        var currentAfter = Snowflake.Zero;
+
+        while (true) {
+            var url = new UrlBuilder()
+                .SetPath($"channels/{channelId}/messages/{messageId}/reactions/{reactionName}")
+                .SetQueryParameter("limit", "100")
+                .SetQueryParameter("after", currentAfter.ToString())
+                .Build();
+
+            var response = await GetJsonResponseAsync(url, cancellationToken);
+
+            var newUsers = response.EnumerateArray().Select(User.Parse).ToArray();
+
+            if (!newUsers.Any())
+                yield break;
+
+            foreach (var user in newUsers) {
+                yield return user;
+            }
+
+            if (newUsers.Length < 100) {
+                yield break;
+            }
+
+            currentAfter = newUsers.Last().Id;
+        }
+    }
 }

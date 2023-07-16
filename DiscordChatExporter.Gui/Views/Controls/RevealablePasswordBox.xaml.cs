@@ -8,17 +8,7 @@ public partial class RevealablePasswordBox
         nameof(Password),
         typeof(string),
         typeof(RevealablePasswordBox),
-        new FrameworkPropertyMetadata(
-            string.Empty,
-            FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
-            (sender, args) =>
-            {
-                var revealablePasswordBox = (RevealablePasswordBox)sender;
-                var password = (string)args.NewValue;
-
-                revealablePasswordBox.PasswordBox.Password = password;
-            }
-        )
+        new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault)
     );
 
     public static readonly DependencyProperty IsRevealedProperty = DependencyProperty.Register(
@@ -44,7 +34,4 @@ public partial class RevealablePasswordBox
     {
         InitializeComponent();
     }
-
-    private void PasswordBox_OnPasswordChanged(object sender, RoutedEventArgs args) =>
-        Password = PasswordBox.Password;
 }

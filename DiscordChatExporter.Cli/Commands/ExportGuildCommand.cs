@@ -25,7 +25,6 @@ public class ExportGuildCommand : ExportCommandBase
     )]
     public bool IncludeVoiceChannels { get; init; } = true;
 
-
     public override async ValueTask ExecuteAsync(IConsole console)
     {
         await base.ExecuteAsync(console);

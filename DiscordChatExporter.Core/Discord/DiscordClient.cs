@@ -215,7 +215,7 @@ public class DiscordClient
 
             var channelsJson = response
                 .EnumerateArray()
-                .OrderBy(c => c.GetProperty("position").GetInt32())
+                .OrderBy(j => j.GetProperty("position").GetInt32())
                 .ThenBy(j => j.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse))
                 .ToArray();
 
@@ -349,7 +349,7 @@ public class DiscordClient
         return response?.Pipe(j => Member.Parse(j, guildId));
     }
 
-    public async ValueTask<Invite?> TryGetGuildInviteAsync(
+    public async ValueTask<Invite?> TryGetInviteAsync(
         string code,
         CancellationToken cancellationToken = default)
     {
@@ -357,32 +357,23 @@ public class DiscordClient
         return response?.Pipe(Invite.Parse);
     }
 
-    public async ValueTask<Channel?> TryGetChannelAsync(
+    public async ValueTask<Channel> GetChannelAsync(
         Snowflake channelId,
         CancellationToken cancellationToken = default)
     {
-        var response = await TryGetJsonResponseAsync($"channels/{channelId}", cancellationToken);
-        if (response is null)
-            return null;
+        var response = await GetJsonResponseAsync($"channels/{channelId}", cancellationToken);
 
         var parentId = response
-            .Value
             .GetPropertyOrNull("parent_id")?
             .GetNonWhiteSpaceStringOrNull()?
             .Pipe(Snowflake.Parse);
 
         var parent = parentId is not null
-            ? await TryGetChannelAsync(parentId.Value, cancellationToken)
+            ? await GetChannelAsync(parentId.Value, cancellationToken)
             : null;
 
-        return Channel.Parse(response.Value, parent);
+        return Channel.Parse(response, parent);
     }
-
-    public async ValueTask<Channel> GetChannelAsync(
-        Snowflake channelId,
-        CancellationToken cancellationToken = default) =>
-        await TryGetChannelAsync(channelId, cancellationToken) ??
-        throw new InvalidOperationException($"Channel {channelId} not found.");
 
     private async ValueTask<Message?> TryGetLastMessageAsync(
         Snowflake channelId,

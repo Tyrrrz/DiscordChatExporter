@@ -215,14 +215,14 @@ public class DiscordClient
 
             var channelsJson = response
                 .EnumerateArray()
-                .OrderBy(j => j.GetProperty("position").GetInt32())
+                .OrderBy(c => c.GetProperty("position").GetInt32())
                 .ThenBy(j => j.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse))
                 .ToArray();
 
-            var categories = channelsJson
+            var parentsById = channelsJson
                 .Where(j => j.GetProperty("type").GetInt32() == (int)ChannelKind.GuildCategory)
-                .Select((j, index) => ChannelCategory.Parse(j, index + 1))
-                .ToDictionary(j => j.Id.ToString(), StringComparer.Ordinal);
+                .Select((j, i) => Channel.Parse(j, null, i + 1))
+                .ToDictionary(j => j.Id);
 
             // Discord channel positions are relative, so we need to normalize them
             // so that the user may refer to them more easily in file name templates.
@@ -230,21 +230,19 @@ public class DiscordClient
 
             foreach (var channelJson in channelsJson)
             {
-                var parentId = channelJson
+                var parent = channelJson
                     .GetPropertyOrNull("parent_id")?
-                    .GetNonWhiteSpaceStringOrNull();
+                    .GetNonWhiteSpaceStringOrNull()?
+                    .Pipe(Snowflake.Parse)
+                    .Pipe(parentsById.GetValueOrDefault);
 
-                var category = !string.IsNullOrWhiteSpace(parentId)
-                    ? categories.GetValueOrDefault(parentId)
-                    : null;
-
-                yield return Channel.Parse(channelJson, category, position, category?.Name, category?.Position);
+                yield return Channel.Parse(channelJson, parent, position);
                 position++;
             }
         }
     }
 
-    public async IAsyncEnumerable<ChannelThread> GetGuildThreadsAsync(
+    public async IAsyncEnumerable<Channel> GetGuildThreadsAsync(
         Snowflake guildId,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
@@ -264,13 +262,14 @@ public class DiscordClient
                         .SetQueryParameter("offset", currentOffset.ToString())
                         .Build();
 
+                    // Can be null on channels that the user cannot access
                     var response = await TryGetJsonResponseAsync(url, cancellationToken);
                     if (response is null)
                         break;
 
                     foreach (var threadJson in response.Value.GetProperty("threads").EnumerateArray())
                     {
-                        yield return ChannelThread.Parse(threadJson, channel.Name);
+                        yield return Channel.Parse(threadJson, channel);
                         currentOffset++;
                     }
 
@@ -284,12 +283,18 @@ public class DiscordClient
         {
             // Active threads
             {
+                var parentsById = channels.ToDictionary(c => c.Id);
+
                 var response = await GetJsonResponseAsync($"guilds/{guildId}/threads/active", cancellationToken);
                 foreach (var threadJson in response.GetProperty("threads").EnumerateArray())
                 {
-                    var parentId = threadJson.GetProperty("parent_id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
-                    var parentChannel = channels.First(t => t.Id == parentId);
-                    yield return ChannelThread.Parse(threadJson, parentChannel.Name);
+                    var parent = threadJson
+                        .GetPropertyOrNull("parent_id")?
+                        .GetNonWhiteSpaceStringOrNull()?
+                        .Pipe(Snowflake.Parse)
+                        .Pipe(parentsById.GetValueOrDefault);
+
+                    yield return Channel.Parse(threadJson, parent);
                 }
             }
 
@@ -303,7 +308,7 @@ public class DiscordClient
                     );
 
                     foreach (var threadJson in response.GetProperty("threads").EnumerateArray())
-                        yield return ChannelThread.Parse(threadJson, channel.Name);
+                        yield return Channel.Parse(threadJson, channel);
                 }
 
                 // Private archived threads
@@ -314,7 +319,7 @@ public class DiscordClient
                     );
 
                     foreach (var threadJson in response.GetProperty("threads").EnumerateArray())
-                        yield return ChannelThread.Parse(threadJson, channel.Name);
+                        yield return Channel.Parse(threadJson, channel);
                 }
             }
         }
@@ -352,40 +357,32 @@ public class DiscordClient
         return response?.Pipe(Invite.Parse);
     }
 
-    public async ValueTask<ChannelCategory> GetChannelCategoryAsync(
+    public async ValueTask<Channel?> TryGetChannelAsync(
         Snowflake channelId,
         CancellationToken cancellationToken = default)
     {
-        try
-        {
-            var response = await GetJsonResponseAsync($"channels/{channelId}", cancellationToken);
-            return ChannelCategory.Parse(response);
-        }
-        // In some cases, Discord API returns an empty body when requesting a channel.
-        // Use an empty channel category as fallback for these cases.
-        catch (DiscordChatExporterException)
-        {
-            return new ChannelCategory(channelId, "Unknown Category", 0);
-        }
-    }
-
-    public async ValueTask<Channel> GetChannelAsync(
-        Snowflake channelId,
-        CancellationToken cancellationToken = default)
-    {
-        var response = await GetJsonResponseAsync($"channels/{channelId}", cancellationToken);
+        var response = await TryGetJsonResponseAsync($"channels/{channelId}", cancellationToken);
+        if (response is null)
+            return null;
 
         var parentId = response
+            .Value
             .GetPropertyOrNull("parent_id")?
             .GetNonWhiteSpaceStringOrNull()?
             .Pipe(Snowflake.Parse);
 
-        var category = parentId is not null
-            ? await GetChannelCategoryAsync(parentId.Value, cancellationToken)
+        var parent = parentId is not null
+            ? await TryGetChannelAsync(parentId.Value, cancellationToken)
             : null;
 
-        return Channel.Parse(response, category, parentName: category?.Name, parentPosition: category?.Position);
+        return Channel.Parse(response.Value, parent);
     }
+
+    public async ValueTask<Channel> GetChannelAsync(
+        Snowflake channelId,
+        CancellationToken cancellationToken = default) =>
+        await TryGetChannelAsync(channelId, cancellationToken) ??
+        throw new InvalidOperationException($"Channel {channelId} not found.");
 
     private async ValueTask<Message?> TryGetLastMessageAsync(
         Snowflake channelId,

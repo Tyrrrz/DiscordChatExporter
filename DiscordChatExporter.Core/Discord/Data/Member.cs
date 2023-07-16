@@ -20,7 +20,8 @@ public partial record Member(
 
 public partial record Member
 {
-    public static Member CreateDefault(User user) => new(user, null, null, Array.Empty<Snowflake>());
+    public static Member CreateFallback(User user) =>
+        new(user, null, null, Array.Empty<Snowflake>());
 
     public static Member Parse(JsonElement json, Snowflake? guildId = null)
     {

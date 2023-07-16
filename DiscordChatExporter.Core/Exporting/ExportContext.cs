@@ -63,7 +63,7 @@ internal class ExportContext
 
             // User may have been deleted since they were mentioned
             if (user is not null)
-                member = Member.CreateDefault(user);
+                member = Member.CreateFallback(user);
         }
 
         // Store the result even if it's null, to avoid re-fetching non-existing members

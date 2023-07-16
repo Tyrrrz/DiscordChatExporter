@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using CliFx.Extensibility;
 
 namespace DiscordChatExporter.Cli.Commands.Converters;

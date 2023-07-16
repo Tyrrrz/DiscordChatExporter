@@ -17,7 +17,7 @@ public partial record Channel(
     string? IconUrl,
     string? Topic,
     bool IsActive,
-    Snowflake? LastMessageId)
+    Snowflake? LastMessageId) : IHasId
 {
     // Used for visual backwards-compatibility with old exports, where
     // channels without a parent (i.e. mostly DM channels) had a fallback

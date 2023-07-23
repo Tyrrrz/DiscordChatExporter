@@ -368,11 +368,21 @@ public class DiscordClient
             .GetNonWhiteSpaceStringOrNull()?
             .Pipe(Snowflake.Parse);
 
-        var parent = parentId is not null
-            ? await GetChannelAsync(parentId.Value, cancellationToken)
-            : null;
+        try
+        {
+            var parent = parentId is not null
+                ? await GetChannelAsync(parentId.Value, cancellationToken)
+                : null;
 
-        return Channel.Parse(response, parent);
+            return Channel.Parse(response, parent);
+        }
+        // It's possible for the parent channel to be inaccessible, despite the
+        // child channel being accessible.
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/1108
+        catch (DiscordChatExporterException)
+        {
+            return Channel.Parse(response);
+        }
     }
 
     private async ValueTask<Message?> TryGetLastMessageAsync(

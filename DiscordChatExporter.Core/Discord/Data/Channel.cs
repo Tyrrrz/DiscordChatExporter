@@ -20,8 +20,9 @@ public partial record Channel(
     Snowflake? LastMessageId) : IHasId
 {
     // Used for visual backwards-compatibility with old exports, where
-    // channels without a parent (i.e. mostly DM channels) had a fallback
-    // category created for them.
+    // channels without a parent (i.e. mostly DM channels) or channels
+    // with an inaccessible parent (i.e. inside private categories) had
+    // a fallback category created for them.
     public string Category => Parent?.Name ?? Kind switch
     {
         ChannelKind.GuildCategory => "Category",

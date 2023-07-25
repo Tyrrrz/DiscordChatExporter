@@ -16,6 +16,21 @@ public static class StringExtensions
             ? str[..charCount]
             : str;
 
+    public static string ToSpaceSeparatedWords(this string str)
+    {
+        var builder = new StringBuilder(str.Length * 2);
+
+        foreach (var c in str)
+        {
+            if (char.IsUpper(c) && builder.Length > 0)
+                builder.Append(' ');
+
+            builder.Append(c);
+        }
+
+        return builder.ToString();
+    }
+
     public static IEnumerable<Rune> GetRunes(this string str)
     {
         var lastIndex = 0;

@@ -108,7 +108,7 @@ public class DiscordClient
         if (botResponse.StatusCode != HttpStatusCode.Unauthorized)
             return TokenKind.Bot;
 
-        throw DiscordChatExporterException.Unauthorized();
+        throw new DiscordChatExporterException("Authentication token is invalid.", true);
     }
 
     private async ValueTask<HttpResponseMessage> GetResponseAsync(
@@ -129,10 +129,26 @@ public class DiscordClient
         {
             throw response.StatusCode switch
             {
-                HttpStatusCode.Unauthorized => DiscordChatExporterException.Unauthorized(),
-                HttpStatusCode.Forbidden => DiscordChatExporterException.Forbidden(),
-                HttpStatusCode.NotFound => DiscordChatExporterException.NotFound(url),
-                _ => DiscordChatExporterException.FailedHttpRequest(response)
+                HttpStatusCode.Unauthorized => throw new DiscordChatExporterException(
+                    "Authentication token is invalid.",
+                    true
+                ),
+
+                HttpStatusCode.Forbidden => throw new DiscordChatExporterException(
+                    $"Request to '{url}' failed: forbidden."
+                ),
+
+                HttpStatusCode.NotFound => throw new DiscordChatExporterException(
+                    $"Request to '{url}' failed: not found."
+                ),
+
+                _ => throw new DiscordChatExporterException(
+                    $"""
+                    Request to '{url}' failed: {response.StatusCode.ToString().ToSpaceSeparatedWords().ToLowerInvariant()}.
+                    Response content: {await response.Content.ReadAsStringAsync(cancellationToken)}
+                    """,
+                    true
+                )
             };
         }
 

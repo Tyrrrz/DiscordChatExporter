@@ -41,30 +41,6 @@ public class RootViewModel : Screen, IHandle<NotificationMessage>, IDisposable
         DisplayName = $"{App.Name} v{App.VersionString}";
     }
 
-    private async Task ShowUkraineSupportMessageAsync()
-    {
-        if (!_settingsService.IsUkraineSupportMessageEnabled)
-            return;
-
-        var dialog = _viewModelFactory.CreateMessageBoxViewModel(
-            "Thank you for supporting Ukraine!",
-            """
-            As Russia wages a genocidal war against my country, I'm grateful to everyone who continues to stand with Ukraine in our fight for freedom.
-
-            Click LEARN MORE to find ways that you can help.
-            """,
-            "LEARN MORE",
-            "CLOSE"
-        );
-
-        // Disable this message in the future
-        _settingsService.IsUkraineSupportMessageEnabled = false;
-        _settingsService.Save();
-
-        if (await _dialogManager.ShowDialogAsync(dialog) == true)
-            ProcessEx.StartShellExecute("https://tyrrrz.me/ukraine?source=discordchatexporter");
-    }
-
     private async ValueTask CheckForUpdatesAsync()
     {
         try
@@ -94,7 +70,6 @@ public class RootViewModel : Screen, IHandle<NotificationMessage>, IDisposable
 
     public async void OnViewFullyLoaded()
     {
-        await ShowUkraineSupportMessageAsync();
         await CheckForUpdatesAsync();
     }
 

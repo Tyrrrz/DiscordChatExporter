@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.40.2 (27-Jul-2023)
+
+- General changes:
+  - Improved error reporting on unexpected HTTP errors.
+- CLI changes:
+  - Fixed an issue which caused a crash when trying to export a private (but accessible) channel inside a private (but not accessible) category.
+
 ## v2.40.1 (21-Jul-2023)
 
 - General changes:

@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.40.3 (29-Jul-2023)
+
+- GUI changes:
+  - Fixed an issue where guild categories were rendered with blank names.
+
 ## v2.40.2 (27-Jul-2023)
 
 - General changes:

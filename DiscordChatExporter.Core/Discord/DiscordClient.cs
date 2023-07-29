@@ -492,15 +492,18 @@ public class DiscordClient
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
 
-        var reactionName = emoji.Name;  // default emoji
-        if (emoji.Id.HasValue) {        // custom emoji
-            reactionName = reactionName + ":" + emoji.Id.Value.ToString();
-        }
-        reactionName = Uri.EscapeDataString(reactionName);
+        var reactionName = Uri.EscapeDataString(
+            emoji.Id is not null
+                // Custom emoji
+                ? emoji.Name + ':' + emoji.Id
+                // Standard emoji
+                : emoji.Name
+        );
 
         var currentAfter = Snowflake.Zero;
 
-        while (true) {
+        while (true)
+        {
             var url = new UrlBuilder()
                 .SetPath($"channels/{channelId}/messages/{messageId}/reactions/{reactionName}")
                 .SetQueryParameter("limit", "100")
@@ -509,20 +512,18 @@ public class DiscordClient
 
             var response = await GetJsonResponseAsync(url, cancellationToken);
 
-            var newUsers = response.EnumerateArray().Select(User.Parse).ToArray();
-
-            if (!newUsers.Any())
+            var users = response.EnumerateArray().Select(User.Parse).ToArray();
+            if (!users.Any())
                 yield break;
-
-            foreach (var user in newUsers) {
+            foreach (var user in users)
+            {
                 yield return user;
+                currentAfter = user.Id;
             }
-
-            if (newUsers.Length < 100) {
+            // Each batch can contain up to 100 users.
+            // If we got fewer, then it's definitely the last batch.
+            if (users.Length < 100)
                 yield break;
-            }
-
-            currentAfter = newUsers.Last().Id;
         }
     }
 }

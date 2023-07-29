@@ -138,10 +138,4 @@ internal class ExportContext
             return url;
         }
     }
-
-    internal async Task<IEnumerable<User>> ResolveReactionUsers(Snowflake messageId, Emoji emoji, CancellationToken cancellationToken)
-    {
-        var users = await Discord.GetMessageReactionsAsync(Request.Channel.Id, messageId, emoji, cancellationToken);
-        return users;
-    }
 }

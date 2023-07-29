@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -152,11 +153,11 @@ public partial class ExportRequest
                 "%T" => channel.Parent?.Name ?? "",
                 "%c" => channel.Id.ToString(),
                 "%C" => channel.Name,
-                "%p" => channel.Position?.ToString() ?? "0",
-                "%P" => channel.Parent?.Position?.ToString() ?? "0",
-                "%a" => after?.ToDate().ToString("yyyy-MM-dd") ?? "",
-                "%b" => before?.ToDate().ToString("yyyy-MM-dd") ?? "",
-                "%d" => DateTimeOffset.Now.ToString("yyyy-MM-dd"),
+                "%p" => channel.Position?.ToString(CultureInfo.InvariantCulture) ?? "0",
+                "%P" => channel.Parent?.Position?.ToString(CultureInfo.InvariantCulture) ?? "0",
+                "%a" => after?.ToDate().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) ?? "",
+                "%b" => before?.ToDate().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) ?? "",
+                "%d" => DateTimeOffset.Now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
                 "%%" => "%",
                 _ => m.Value
             })

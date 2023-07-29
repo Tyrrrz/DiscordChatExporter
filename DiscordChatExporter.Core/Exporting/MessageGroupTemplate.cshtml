@@ -1,5 +1,6 @@
 @using System
 @using System.Collections.Generic
+@using System.Globalization
 @using System.Linq
 @using System.Threading.Tasks
 @using DiscordChatExporter.Core.Discord.Data
@@ -99,7 +100,7 @@
                         }
                         else if (message.Kind == MessageKind.Call)
                         {
-                            <span>started a call that lasted @(((message.CallEndedTimestamp ?? message.Timestamp) - message.Timestamp).TotalMinutes) minutes</span>
+                            <span>started a call that lasted @(((message.CallEndedTimestamp ?? message.Timestamp) - message.Timestamp).TotalMinutes.ToString("n0", CultureInfo.InvariantCulture)) minutes</span>
                         }
                         else if (message.Kind == MessageKind.ChannelNameChange)
                         {
@@ -321,7 +322,7 @@
 
                         foreach (var inviteCode in inviteCodes)
                         {
-                            var invite = await Context.Discord.TryGetGuildInviteAsync(inviteCode, CancellationToken);
+                            var invite = await Context.Discord.TryGetInviteAsync(inviteCode, CancellationToken);
                             if (invite is null)
                             {
                                 continue;

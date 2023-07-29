@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using CliFx.Attributes;
 using CliFx.Infrastructure;
@@ -19,13 +18,12 @@ public class ExportGuildCommand : ExportCommandBase
         Description = "Guild ID."
     )]
     public required Snowflake GuildId { get; init; }
-    
+
     [CommandOption(
         "include-vc",
         Description = "Include voice channels."
     )]
     public bool IncludeVoiceChannels { get; init; } = true;
-
 
     public override async ValueTask ExecuteAsync(IConsole console)
     {

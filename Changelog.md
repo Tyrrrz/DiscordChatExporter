@@ -1,5 +1,29 @@
 # Changelog
 
+## v2.40.3 (29-Jul-2023)
+
+- GUI changes:
+  - Fixed an issue where guild categories were rendered with blank names.
+
+## v2.40.2 (27-Jul-2023)
+
+- General changes:
+  - Improved error reporting on unexpected HTTP errors.
+- CLI changes:
+  - Fixed an issue which caused a crash when trying to export a private (but accessible) channel inside a private (but not accessible) category.
+
+## v2.40.1 (21-Jul-2023)
+
+- General changes:
+  - Fixed an issue where the fallback avatar (i.e. the avatar used for when the user doesn't have a custom one set) was not resolved properly for users that don't have a discriminator.
+- CLI changes:
+  - Added the `--include-vc` option to `exportall` and `exportguild` commands, which instructs whether to include voice-channel-accompanying text channels in the export. By default, this is set to `true` to match the previous behavior. To disable the option, use `--include-vc false`.
+- GUI changes:
+  - Replaced the blur effect applied to the token text box with a password mask.
+- JSON format changes:
+  - Added the `exportedAt` field to the export metadata, which contains the timestamp corresponding to when the export was created. (Thanks [@slatinsky](https://github.com/slatinsky))
+  - Added the `roles` field to the object describing a user. This field contains an array of objects that describe the roles assigned to the user. (Thanks [@slatinsky](https://github.com/slatinsky))
+
 ## v2.40 (08-Jun-2023)
 
 - General changes:

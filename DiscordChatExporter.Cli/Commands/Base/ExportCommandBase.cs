@@ -11,7 +11,6 @@ using DiscordChatExporter.Cli.Commands.Converters;
 using DiscordChatExporter.Cli.Utils.Extensions;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
-using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Core.Exporting.Filtering;
@@ -137,7 +136,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
     private ChannelExporter? _channelExporter;
     protected ChannelExporter Exporter => _channelExporter ??= new ChannelExporter(Discord);
 
-    protected async ValueTask ExecuteAsync(IConsole console, IReadOnlyList<IChannel> channels)
+    protected async ValueTask ExecuteAsync(IConsole console, IReadOnlyList<Channel> channels)
     {
         // Asset reuse can only be enabled if the download assets option is set
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/425
@@ -176,9 +175,9 @@ public abstract class ExportCommandBase : DiscordCommandBase
             );
         }
 
-        // Export channels
+        // Export
         var cancellationToken = console.RegisterCancellationHandler();
-        var channelErrors = new ConcurrentDictionary<IChannel, string>();
+        var errors = new ConcurrentDictionary<Channel, string>();
 
         await console.Output.WriteLineAsync($"Exporting {channels.Count} channel(s)...");
         await console.CreateProgressTicker().StartAsync(async progressContext =>
@@ -195,7 +194,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
                     try
                     {
                         await progressContext.StartTaskAsync(
-                            $"{channel.ParentName} / {channel.Name}",
+                            $"{channel.Category} / {channel.Name}",
                             async progress =>
                             {
                                 var guild = await Discord.GetGuildAsync(channel.GuildId, innerCancellationToken);
@@ -226,7 +225,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
                     }
                     catch (DiscordChatExporterException ex) when (!ex.IsFatal)
                     {
-                        channelErrors[channel] = ex.Message;
+                        errors[channel] = ex.Message;
                     }
                 }
             );
@@ -236,25 +235,25 @@ public abstract class ExportCommandBase : DiscordCommandBase
         using (console.WithForegroundColor(ConsoleColor.White))
         {
             await console.Output.WriteLineAsync(
-                $"Successfully exported {channels.Count - channelErrors.Count} channel(s)."
+                $"Successfully exported {channels.Count - errors.Count} channel(s)."
             );
         }
 
         // Print errors
-        if (channelErrors.Any())
+        if (errors.Any())
         {
             await console.Output.WriteLineAsync();
 
             using (console.WithForegroundColor(ConsoleColor.Red))
             {
                 await console.Error.WriteLineAsync(
-                    $"Failed to export {channelErrors.Count} channel(s):"
+                    $"Failed to export {errors.Count} channel(s):"
                 );
             }
 
-            foreach (var (channel, error) in channelErrors)
+            foreach (var (channel, error) in errors)
             {
-                await console.Error.WriteAsync($"{channel.ParentName} / {channel.Name}: ");
+                await console.Error.WriteAsync($"{channel.Category} / {channel.Name}: ");
 
                 using (console.WithForegroundColor(ConsoleColor.Red))
                     await console.Error.WriteLineAsync(error);
@@ -265,7 +264,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
         // Fail the command only if ALL channels failed to export.
         // If only some channels failed to export, it's okay.
-        if (channelErrors.Count >= channels.Count)
+        if (errors.Count >= channels.Count)
             throw new CommandException("Export failed.");
     }
 
@@ -291,7 +290,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
                 foreach (var guildChannel in guildChannels)
                 {
-                    if (guildChannel.Category.Id == channel.Id)
+                    if (guildChannel.Parent?.Id == channel.Id)
                         channels.Add(guildChannel);
                 }
 

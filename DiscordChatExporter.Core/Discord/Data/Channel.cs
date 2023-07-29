@@ -11,23 +11,38 @@ public partial record Channel(
     Snowflake Id,
     ChannelKind Kind,
     Snowflake GuildId,
-    Snowflake? ParentId,
-    string? ParentName,
-    int? ParentPosition,
-    ChannelCategory Category,
+    Channel? Parent,
     string Name,
     int? Position,
     string? IconUrl,
     string? Topic,
-    Snowflake? LastMessageId) : IChannel
+    bool IsActive,
+    Snowflake? LastMessageId) : IHasId
 {
+    // Used for visual backwards-compatibility with old exports, where
+    // channels without a parent (i.e. mostly DM channels) or channels
+    // with an inaccessible parent (i.e. inside private categories) had
+    // a fallback category created for them.
+    public string Category => Parent?.Name ?? Kind switch
+    {
+        ChannelKind.GuildCategory => "Category",
+        ChannelKind.GuildTextChat => "Text",
+        ChannelKind.DirectTextChat => "Private",
+        ChannelKind.DirectGroupTextChat => "Group",
+        ChannelKind.GuildPrivateThread => "Private Thread",
+        ChannelKind.GuildPublicThread => "Public Thread",
+        ChannelKind.GuildNews => "News",
+        ChannelKind.GuildNewsThread => "News Thread",
+        _ => "Default"
+    };
+
     // Only needed for WPF data binding. Don't use anywhere else.
     public bool IsVoice => Kind.IsVoice();
 }
 
 public partial record Channel
 {
-    public static Channel Parse(JsonElement json, ChannelCategory? categoryHint = null, int? positionHint = null, string? parentName = null, int? parentPosition = null)
+    public static Channel Parse(JsonElement json, Channel? parent = null, int? positionHint = null)
     {
         var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
         var kind = (ChannelKind)json.GetProperty("type").GetInt32();
@@ -35,10 +50,6 @@ public partial record Channel
         var guildId =
             json.GetPropertyOrNull("guild_id")?.GetNonWhiteSpaceStringOrNull()?.Pipe(Snowflake.Parse) ??
             Guild.DirectMessages.Id;
-
-        var parentId = json.GetPropertyOrNull("parent_id")?.GetNonWhiteSpaceStringOrNull()?.Pipe(Snowflake.Parse);
-
-        var category = categoryHint ?? ChannelCategory.CreateDefault(kind);
 
         var name =
             // Guild channel
@@ -66,6 +77,11 @@ public partial record Channel
 
         var topic = json.GetPropertyOrNull("topic")?.GetStringOrNull();
 
+        var isActive = !json
+            .GetPropertyOrNull("thread_metadata")?
+            .GetPropertyOrNull("archived")?
+            .GetBooleanOrNull() ?? true;
+
         var lastMessageId = json
             .GetPropertyOrNull("last_message_id")?
             .GetNonWhiteSpaceStringOrNull()?
@@ -75,14 +91,12 @@ public partial record Channel
             id,
             kind,
             guildId,
-            parentId,
-            parentName,
-            parentPosition,
-            category,
+            parent,
             name,
             position,
             iconUrl,
             topic,
+            isActive,
             lastMessageId
         );
     }

@@ -20,11 +20,19 @@ public class ChannelExporter
     {
         // Check if the channel is empty
         if (request.Channel.LastMessageId is null)
-            throw DiscordChatExporterException.ChannelIsEmpty();
+        {
+            throw new DiscordChatExporterException(
+                "Channel does not contain any messages."
+            );
+        }
 
         // Check if the 'after' boundary is valid
         if (request.After is not null && request.Channel.LastMessageId < request.After)
-            throw DiscordChatExporterException.ChannelIsEmpty();
+        {
+            throw new DiscordChatExporterException(
+                "Channel does not contain any messages within the specified period."
+            );
+        }
 
         // Build context
         var context = new ExportContext(_discord, request);
@@ -50,6 +58,10 @@ public class ChannelExporter
 
         // Throw if no messages were exported
         if (messageExporter.MessagesExported <= 0)
-            throw DiscordChatExporterException.ChannelIsEmpty();
+        {
+            throw new DiscordChatExporterException(
+                "Channel does not contain any matching messages within the specified period."
+            );
+        }
     }
 }

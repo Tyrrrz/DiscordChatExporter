@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Globalization;
+using System.Linq;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Utils.Extensions;
 
@@ -19,7 +20,13 @@ internal static class PlainTextMessageExtensions
             : "Removed a recipient.",
 
         MessageKind.Call =>
-            $"Started a call that lasted {message.CallEndedTimestamp?.Pipe(t => t - message.Timestamp).Pipe(t => (int)t.TotalMinutes) ?? 0} minutes.",
+            $"Started a call that lasted {
+                message
+                    .CallEndedTimestamp?
+                    .Pipe(t => t - message.Timestamp)
+                    .Pipe(t => t.TotalMinutes)
+                    .ToString("n0", CultureInfo.InvariantCulture) ?? "0"
+            } minutes.",
 
         MessageKind.ChannelNameChange =>
             !string.IsNullOrWhiteSpace(message.Content)

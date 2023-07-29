@@ -29,7 +29,7 @@
         <!--  Sort guild channels by position  -->
         <CollectionViewSource x:Key="AvailableChannelsViewSource" Source="{Binding AvailableChannels, Mode=OneWay}">
             <CollectionViewSource.GroupDescriptions>
-                <PropertyGroupDescription PropertyName="Category.Name" />
+                <PropertyGroupDescription PropertyName="Category" />
             </CollectionViewSource.GroupDescriptions>
             <CollectionViewSource.SortDescriptions>
                 <componentModel:SortDescription Direction="Ascending" PropertyName="Position" />
@@ -53,7 +53,6 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <!--  Token and pull data button  -->
             <materialDesign:Card
                 Grid.Row="0"
                 Grid.Column="0"
@@ -75,7 +74,7 @@
                         Foreground="{DynamicResource PrimaryHueMidBrush}"
                         Kind="Key" />
 
-                    <!--  Token value  -->
+                    <!--  Token  -->
                     <controls:RevealablePasswordBox
                         x:Name="TokenValueTextBox"
                         Grid.Column="1"

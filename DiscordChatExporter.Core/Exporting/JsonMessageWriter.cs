@@ -360,6 +360,37 @@ internal class JsonMessageWriter : MessageWriter
 
             _writer.WriteNumber("count", reaction.Count);
 
+            _writer.WriteStartArray("users");
+            var users = await Context.Discord.GetMessageReactionsAsync(Context.Request.Channel.Id, message.Id, reaction.Emoji, cancellationToken);
+            foreach (var user in users) {
+
+                // write limited user information without color and roles,
+                // because if we would write the full user information,
+                // we would have to fetch the guild member information for each user
+                // which would be a lot of requests
+
+                 _writer.WriteStartObject();
+
+                _writer.WriteString("id", user.Id.ToString());
+                _writer.WriteString("name", user.Name);
+                _writer.WriteString("discriminator", user.DiscriminatorFormatted);
+                _writer.WriteString("nickname", Context.TryGetMember(user.Id)?.DisplayName ?? user.DisplayName);
+                _writer.WriteBoolean("isBot", user.IsBot);
+
+                _writer.WriteString(
+                    "avatarUrl",
+                    await Context.ResolveAssetUrlAsync(
+                        Context.TryGetMember(user.Id)?.AvatarUrl ?? user.AvatarUrl,
+                        cancellationToken
+                    )
+                );
+
+                _writer.WriteEndObject();
+                await _writer.FlushAsync(cancellationToken);
+            }
+
+            _writer.WriteEndArray();
+
             _writer.WriteEndObject();
         }
 

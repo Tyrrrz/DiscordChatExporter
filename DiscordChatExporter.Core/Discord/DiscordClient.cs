@@ -484,4 +484,46 @@ public class DiscordClient
             }
         }
     }
+
+    public async IAsyncEnumerable<User> GetMessageReactionsAsync(
+        Snowflake channelId,
+        Snowflake messageId,
+        Emoji emoji,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+
+        var reactionName = Uri.EscapeDataString(
+            emoji.Id is not null
+                // Custom emoji
+                ? emoji.Name + ':' + emoji.Id
+                // Standard emoji
+                : emoji.Name
+        );
+
+        var currentAfter = Snowflake.Zero;
+
+        while (true)
+        {
+            var url = new UrlBuilder()
+                .SetPath($"channels/{channelId}/messages/{messageId}/reactions/{reactionName}")
+                .SetQueryParameter("limit", "100")
+                .SetQueryParameter("after", currentAfter.ToString())
+                .Build();
+
+            var response = await GetJsonResponseAsync(url, cancellationToken);
+
+            var users = response.EnumerateArray().Select(User.Parse).ToArray();
+            if (!users.Any())
+                yield break;
+            foreach (var user in users)
+            {
+                yield return user;
+                currentAfter = user.Id;
+            }
+            // Each batch can contain up to 100 users.
+            // If we got fewer, then it's definitely the last batch.
+            if (users.Length < 100)
+                yield break;
+        }
+    }
 }

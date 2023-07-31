@@ -189,17 +189,17 @@ public class DiscordClient
 
             var response = await GetJsonResponseAsync(url, cancellationToken);
 
-            var isEmpty = true;
+            var count = 0;
             foreach (var guildJson in response.EnumerateArray())
             {
                 var guild = Guild.Parse(guildJson);
                 yield return guild;
 
                 currentAfter = guild.Id;
-                isEmpty = false;
+                count++;
             }
 
-            if (isEmpty)
+            if (count <= 0)
                 yield break;
         }
     }
@@ -491,38 +491,36 @@ public class DiscordClient
         Emoji emoji,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-
-        var reactionName = Uri.EscapeDataString(
-            emoji.Id is not null
-                // Custom emoji
-                ? emoji.Name + ':' + emoji.Id
-                // Standard emoji
-                : emoji.Name
-        );
+        var reactionName = emoji.Id is not null
+            // Custom emoji
+            ? emoji.Name + ':' + emoji.Id
+            // Standard emoji
+            : emoji.Name;
 
         var currentAfter = Snowflake.Zero;
-
         while (true)
         {
             var url = new UrlBuilder()
-                .SetPath($"channels/{channelId}/messages/{messageId}/reactions/{reactionName}")
+                .SetPath($"channels/{channelId}/messages/{messageId}/reactions/{Uri.EscapeDataString(reactionName)}")
                 .SetQueryParameter("limit", "100")
                 .SetQueryParameter("after", currentAfter.ToString())
                 .Build();
 
             var response = await GetJsonResponseAsync(url, cancellationToken);
 
-            var users = response.EnumerateArray().Select(User.Parse).ToArray();
-            if (!users.Any())
-                yield break;
-            foreach (var user in users)
+            var count = 0;
+            foreach (var userJson in response.EnumerateArray())
             {
+                var user = User.Parse(userJson);
                 yield return user;
+
                 currentAfter = user.Id;
+                count++;
             }
+
             // Each batch can contain up to 100 users.
             // If we got fewer, then it's definitely the last batch.
-            if (users.Length < 100)
+            if (count < 100)
                 yield break;
         }
     }

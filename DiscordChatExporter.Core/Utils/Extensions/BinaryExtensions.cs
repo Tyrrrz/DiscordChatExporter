@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 
 namespace DiscordChatExporter.Core.Utils.Extensions;
 
@@ -11,7 +12,7 @@ public static class BinaryExtensions
         foreach (var b in data)
         {
             buffer.Append(
-                b.ToString(isUpperCase ? "X2" : "x2")
+                b.ToString(isUpperCase ? "X2" : "x2", CultureInfo.InvariantCulture)
             );
         }
 

@@ -12,7 +12,7 @@ namespace DiscordChatExporter.Core.Markdown.Parsing;
 // Discord does NOT use a recursive-descent parser for markdown which becomes evident in some
 // scenarios, like when multiple formatting nodes are nested together.
 // To replicate Discord's behavior, we're employing a special parser that uses a set of regular
-// expressions that are executed sequentially in a first-match-first-serve manner.
+// expressions that are executed sequentially in a first-matched-first-served manner.
 internal static partial class MarkdownParser
 {
     private const RegexOptions DefaultRegexOptions =
@@ -83,7 +83,9 @@ internal static partial class MarkdownParser
 
     private static readonly IMatcher<MarkdownNode> RepeatedSingleLineQuoteNodeMatcher = new RegexMatcher<MarkdownNode>(
         // Include the linebreaks in the content, so that the lines are preserved in quotes.
-        new Regex(@"(?:^>\s(.+\n?)){2,}", DefaultRegexOptions),
+        // Empty content is allowed within quotes.
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/1115
+        new Regex(@"(?:^>\s(.*\n?)){2,}", DefaultRegexOptions),
         (s, m) => new FormattingNode(
             FormattingKind.Quote,
             m.Groups[1].Captures.SelectMany(c => Parse(s.Relocate(c))).ToArray()

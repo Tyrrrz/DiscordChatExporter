@@ -264,6 +264,7 @@ internal static partial class MarkdownParser
     private static readonly IMatcher<MarkdownNode> EscapedSymbolTextNodeMatcher = new RegexMatcher<MarkdownNode>(
         // Capture any "symbol/other" character or surrogate pair preceded by a backslash.
         // This escapes them from matching for emoji.
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/230
         new Regex(@"\\(\p{So}|\p{Cs}{2})", DefaultRegexOptions),
         (_, m) => new TextNode(m.Groups[1].Value)
     );

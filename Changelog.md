@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.40.4 (11-Aug-2023)
+
+- HTML changes:
+  - Fixed an issue where the "call lasted for X minutes" system message was unnecessarily too precise. Now, it's rounded to the nearest minute.
+  - Fixed an issue where multi-line quote blocks with empty lines in the middle were rendered as separate blocks.
+- JSON changes:
+  - Added the `users` field to the reaction object, containing an array with limited information about the users that reacted with that particular emoji. (Thanks [@slatinsky](https://github.com/slatinsky))
+
 ## v2.40.3 (29-Jul-2023)
 
 - GUI changes:

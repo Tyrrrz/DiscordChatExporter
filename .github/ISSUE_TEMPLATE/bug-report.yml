@@ -59,12 +59,15 @@ body:
       description: >
         Minimum steps required to reproduce the bug, including prerequisites, export settings, or other relevant items.
         The information provided in this field must be readily actionable, meaning that anyone should be able to reproduce the bug by following these steps.
-        If the bug depends on external factors (such as a specific server, channel, or message), please provide the server invite and the corresponding link.
+        If the bug depends on external factors (such as a specific server, channel, or message), then this field must include the server invite and the corresponding link.
       placeholder: |
         Server invite: https://discord.gg/...
         Channel or message link: https://discord.com/channels/.../...
 
         Export settings:
+        - ...
+
+        Application settings:
         - ...
 
         Steps:

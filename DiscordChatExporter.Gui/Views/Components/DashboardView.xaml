@@ -104,7 +104,7 @@
                         Grid.Column="2"
                         Margin="0,6,6,6"
                         Padding="4"
-                        Command="{s:Action PopulateGuildsAndChannels}"
+                        Command="{s:Action Populate}"
                         IsDefault="True"
                         Style="{DynamicResource MaterialDesignFlatButton}"
                         ToolTip="Pull available guilds and channels (Enter)">
@@ -348,7 +348,7 @@
                             <DataTemplate DataType="{x:Type data:Channel}">
                                 <Grid Margin="-8" Background="Transparent">
                                     <Grid.InputBindings>
-                                        <MouseBinding Command="{s:Action ExportChannels}" MouseAction="LeftDoubleClick" />
+                                        <MouseBinding Command="{s:Action Export}" MouseAction="LeftDoubleClick" />
                                     </Grid.InputBindings>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
@@ -410,9 +410,9 @@
                 Margin="32,24"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
-                Command="{s:Action ExportChannels}"
+                Command="{s:Action Export}"
                 Style="{DynamicResource MaterialDesignFloatingActionAccentButton}"
-                Visibility="{Binding CanExportChannels, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
+                Visibility="{Binding CanExport, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
                 <materialDesign:PackIcon
                     Width="32"
                     Height="32"

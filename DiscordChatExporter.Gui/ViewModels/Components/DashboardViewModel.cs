@@ -90,10 +90,9 @@ public class DashboardViewModel : PropertyChangedBase
 
     public void ShowHelp() => ProcessEx.StartShellExecute(App.DocumentationUrl);
 
-    public bool CanPopulateGuildsAndChannels =>
-        !IsBusy && !string.IsNullOrWhiteSpace(Token);
+    public bool CanPopulate => !IsBusy && !string.IsNullOrWhiteSpace(Token);
 
-    public async void PopulateGuildsAndChannels()
+    public async void Populate()
     {
         IsBusy = true;
         var progress = _progressMuxer.CreateInput();
@@ -142,13 +141,13 @@ public class DashboardViewModel : PropertyChangedBase
         }
     }
 
-    public bool CanExportChannels =>
+    public bool CanExport =>
         !IsBusy &&
         _discord is not null &&
         SelectedGuild is not null &&
         SelectedChannels?.Any() is true;
 
-    public async void ExportChannels()
+    public async void Export()
     {
         IsBusy = true;
 

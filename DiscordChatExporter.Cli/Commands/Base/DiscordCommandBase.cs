@@ -29,5 +29,23 @@ public abstract class DiscordCommandBase : ICommand
     private DiscordClient? _discordClient;
     protected DiscordClient Discord => _discordClient ??= new DiscordClient(Token);
 
-    public abstract ValueTask ExecuteAsync(IConsole console);
+    public virtual ValueTask ExecuteAsync(IConsole console)
+    {
+#pragma warning disable CS0618
+        // Warn if the bot option is used
+        if (IsBotToken)
+        {
+            using (console.WithForegroundColor(ConsoleColor.DarkYellow))
+            {
+                console.Error.WriteLine(
+                    "Warning: Option --bot is deprecated and should not be used. " +
+                    "The type of the provided token is now inferred automatically. " +
+                    "Please update your workflows as this option may be completely removed in a future version."
+                );
+            }
+        }
+#pragma warning restore CS0618
+
+        return default;
+    }
 }

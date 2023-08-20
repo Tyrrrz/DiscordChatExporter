@@ -38,6 +38,6 @@ public class ExportGuildCommand : ExportCommandBase
             .Where(c => IncludeVoiceChannels || !c.Kind.IsVoice())
             .ToArray();
 
-        await base.ExecuteAsync(console, channels);
+        await ExportAsync(console, channels);
     }
 }

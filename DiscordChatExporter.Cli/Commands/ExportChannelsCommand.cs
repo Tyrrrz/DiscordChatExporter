@@ -23,6 +23,6 @@ public class ExportChannelsCommand : ExportCommandBase
     public override async ValueTask ExecuteAsync(IConsole console)
     {
         await base.ExecuteAsync(console);
-        await base.ExecuteAsync(console, ChannelIds);
+        await ExportAsync(console, ChannelIds);
     }
 }

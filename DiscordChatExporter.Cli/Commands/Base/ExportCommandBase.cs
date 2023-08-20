@@ -136,7 +136,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
     private ChannelExporter? _channelExporter;
     protected ChannelExporter Exporter => _channelExporter ??= new ChannelExporter(Discord);
 
-    protected async ValueTask ExecuteAsync(IConsole console, IReadOnlyList<Channel> channels)
+    protected async ValueTask ExportAsync(IConsole console, IReadOnlyList<Channel> channels)
     {
         // Asset reuse can only be enabled if the download assets option is set
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/425
@@ -268,7 +268,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
             throw new CommandException("Export failed.");
     }
 
-    protected async ValueTask ExecuteAsync(IConsole console, IReadOnlyList<Snowflake> channelIds)
+    protected async ValueTask ExportAsync(IConsole console, IReadOnlyList<Snowflake> channelIds)
     {
         var cancellationToken = console.RegisterCancellationHandler();
 
@@ -303,10 +303,10 @@ public abstract class ExportCommandBase : DiscordCommandBase
             }
         }
 
-        await ExecuteAsync(console, channels);
+        await ExportAsync(console, channels);
     }
 
-    public override ValueTask ExecuteAsync(IConsole console)
+    public override async ValueTask ExecuteAsync(IConsole console)
     {
         // Support Ukraine callout
         if (!IsUkraineSupportMessageDisabled)
@@ -323,6 +323,6 @@ public abstract class ExportCommandBase : DiscordCommandBase
             console.Output.WriteLine("");
         }
 
-        return default;
+        await base.ExecuteAsync(console);
     }
 }

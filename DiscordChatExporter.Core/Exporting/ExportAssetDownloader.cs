@@ -25,7 +25,7 @@ internal partial class ExportAssetDownloader
     private readonly bool _reuse;
 
     // File paths of the previously downloaded assets
-    private readonly Dictionary<string, string> _pathCache = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, string> _previousPathsByUrl = new(StringComparer.Ordinal);
 
     public ExportAssetDownloader(string workingDirPath, bool reuse)
     {
@@ -40,12 +40,12 @@ internal partial class ExportAssetDownloader
 
         using var _ = await Locker.LockAsync(filePath, cancellationToken);
 
-        if (_pathCache.TryGetValue(url, out var cachedFilePath))
+        if (_previousPathsByUrl.TryGetValue(url, out var cachedFilePath))
             return cachedFilePath;
 
         // Reuse existing files if we're allowed to
         if (_reuse && File.Exists(filePath))
-            return _pathCache[url] = filePath;
+            return _previousPathsByUrl[url] = filePath;
 
         Directory.CreateDirectory(_workingDirPath);
 
@@ -80,7 +80,7 @@ internal partial class ExportAssetDownloader
             }
         });
 
-        return _pathCache[url] = filePath;
+        return _previousPathsByUrl[url] = filePath;
     }
 }
 

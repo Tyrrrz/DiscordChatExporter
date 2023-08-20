@@ -14,9 +14,9 @@ namespace DiscordChatExporter.Core.Exporting;
 
 internal class ExportContext
 {
-    private readonly Dictionary<Snowflake, Member?> _members = new();
-    private readonly Dictionary<Snowflake, Channel> _channels = new();
-    private readonly Dictionary<Snowflake, Role> _roles = new();
+    private readonly Dictionary<Snowflake, Member?> _membersById = new();
+    private readonly Dictionary<Snowflake, Channel> _channelsById = new();
+    private readonly Dictionary<Snowflake, Role> _rolesById = new();
     private readonly ExportAssetDownloader _assetDownloader;
 
     public DiscordClient Discord { get; }
@@ -38,10 +38,10 @@ internal class ExportContext
     public async ValueTask PopulateChannelsAndRolesAsync(CancellationToken cancellationToken = default)
     {
         await foreach (var channel in Discord.GetGuildChannelsAsync(Request.Guild.Id, cancellationToken))
-            _channels[channel.Id] = channel;
+            _channelsById[channel.Id] = channel;
 
         await foreach (var role in Discord.GetGuildRolesAsync(Request.Guild.Id, cancellationToken))
-            _roles[role.Id] = role;
+            _rolesById[role.Id] = role;
     }
 
     // Because members cannot be pulled in bulk, we need to populate them on demand
@@ -50,7 +50,7 @@ internal class ExportContext
         User? fallbackUser,
         CancellationToken cancellationToken = default)
     {
-        if (_members.ContainsKey(id))
+        if (_membersById.ContainsKey(id))
             return;
 
         var member = await Discord.TryGetGuildMemberAsync(Request.Guild.Id, id, cancellationToken);
@@ -67,7 +67,7 @@ internal class ExportContext
         }
 
         // Store the result even if it's null, to avoid re-fetching non-existing members
-        _members[id] = member;
+        _membersById[id] = member;
     }
 
     public async ValueTask PopulateMemberAsync(Snowflake id, CancellationToken cancellationToken = default) =>
@@ -83,11 +83,11 @@ internal class ExportContext
         var format => instant.ToLocalString(format)
     };
 
-    public Member? TryGetMember(Snowflake id) => _members.GetValueOrDefault(id);
+    public Member? TryGetMember(Snowflake id) => _membersById.GetValueOrDefault(id);
 
-    public Channel? TryGetChannel(Snowflake id) => _channels.GetValueOrDefault(id);
+    public Channel? TryGetChannel(Snowflake id) => _channelsById.GetValueOrDefault(id);
 
-    public Role? TryGetRole(Snowflake id) => _roles.GetValueOrDefault(id);
+    public Role? TryGetRole(Snowflake id) => _rolesById.GetValueOrDefault(id);
 
     public IReadOnlyList<Role> GetUserRoles(Snowflake id) => TryGetMember(id)?
         .RoleIds

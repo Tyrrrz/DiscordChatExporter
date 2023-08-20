@@ -177,7 +177,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
         // Export
         var cancellationToken = console.RegisterCancellationHandler();
-        var errors = new ConcurrentDictionary<Channel, string>();
+        var errorsByChannel = new ConcurrentDictionary<Channel, string>();
 
         await console.Output.WriteLineAsync($"Exporting {channels.Count} channel(s)...");
         await console.CreateProgressTicker().StartAsync(async progressContext =>
@@ -225,7 +225,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
                     }
                     catch (DiscordChatExporterException ex) when (!ex.IsFatal)
                     {
-                        errors[channel] = ex.Message;
+                        errorsByChannel[channel] = ex.Message;
                     }
                 }
             );
@@ -235,23 +235,23 @@ public abstract class ExportCommandBase : DiscordCommandBase
         using (console.WithForegroundColor(ConsoleColor.White))
         {
             await console.Output.WriteLineAsync(
-                $"Successfully exported {channels.Count - errors.Count} channel(s)."
+                $"Successfully exported {channels.Count - errorsByChannel.Count} channel(s)."
             );
         }
 
         // Print errors
-        if (errors.Any())
+        if (errorsByChannel.Any())
         {
             await console.Output.WriteLineAsync();
 
             using (console.WithForegroundColor(ConsoleColor.Red))
             {
                 await console.Error.WriteLineAsync(
-                    $"Failed to export {errors.Count} channel(s):"
+                    $"Failed to export {errorsByChannel.Count} channel(s):"
                 );
             }
 
-            foreach (var (channel, error) in errors)
+            foreach (var (channel, error) in errorsByChannel)
             {
                 await console.Error.WriteAsync($"{channel.Category} / {channel.Name}: ");
 
@@ -264,7 +264,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
         // Fail the command only if ALL channels failed to export.
         // If only some channels failed to export, it's okay.
-        if (errors.Count >= channels.Count)
+        if (errorsByChannel.Count >= channels.Count)
             throw new CommandException("Export failed.");
     }
 

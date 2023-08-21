@@ -263,6 +263,9 @@ public class DiscordClient
         bool includeArchived = false,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
+        if (guildId == Guild.DirectMessages.Id)
+            yield break;
+
         var tokenKind = _resolvedTokenKind ??= await GetTokenKindAsync(cancellationToken);
         var channels = await GetGuildChannelsAsync(guildId, cancellationToken);
 

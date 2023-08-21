@@ -38,17 +38,13 @@ public class DashboardViewModel : PropertyChangedBase
 
     public string? Token { get; set; }
 
-    private IReadOnlyDictionary<Guild, IReadOnlyList<Channel>>? ChannelsByGuild { get; set; }
-
-    public IReadOnlyList<Guild>? AvailableGuilds => ChannelsByGuild?.Keys.ToArray();
+    public IReadOnlyList<Guild>? AvailableGuilds { get; private set; }
 
     public Guild? SelectedGuild { get; set; }
 
     public bool IsDirectMessageGuildSelected => SelectedGuild?.Id == Guild.DirectMessages.Id;
 
-    public IReadOnlyList<Channel>? AvailableChannels => SelectedGuild is not null
-        ? ChannelsByGuild?[SelectedGuild]
-        : null;
+    public IReadOnlyList<Channel>? AvailableChannels { get; private set; }
 
     public IReadOnlyList<Channel>? SelectedChannels { get; set; }
 
@@ -82,7 +78,7 @@ public class DashboardViewModel : PropertyChangedBase
             Token = _settingsService.LastToken;
     }
 
-    public async void ShowSettings()
+    public async Task ShowSettingsAsync()
     {
         var dialog = _viewModelFactory.CreateSettingsViewModel();
         await _dialogManager.ShowDialogAsync(dialog);
@@ -90,9 +86,9 @@ public class DashboardViewModel : PropertyChangedBase
 
     public void ShowHelp() => ProcessEx.StartShellExecute(App.DocumentationUrl);
 
-    public bool CanPopulate => !IsBusy && !string.IsNullOrWhiteSpace(Token);
+    public bool CanPullGuildsAsync => !IsBusy && !string.IsNullOrWhiteSpace(Token);
 
-    public async void Populate()
+    public async Task PullGuildsAsync()
     {
         IsBusy = true;
         var progress = _progressMuxer.CreateInput();
@@ -103,21 +99,21 @@ public class DashboardViewModel : PropertyChangedBase
             if (string.IsNullOrWhiteSpace(token))
                 return;
 
+            AvailableGuilds = null;
+            SelectedGuild = null;
+            AvailableChannels = null;
+            SelectedChannels = null;
+
+            _discord = new DiscordClient(token);
             _settingsService.LastToken = token;
 
-            var discord = new DiscordClient(token);
+            var guilds = await _discord.GetUserGuildsAsync();
 
-            var channelsByGuild = new Dictionary<Guild, IReadOnlyList<Channel>>();
-            await foreach (var guild in discord.GetUserGuildsAsync())
-            {
-                channelsByGuild[guild] = (await discord.GetGuildChannelsAsync(guild.Id))
-                    .Where(c => c.Kind != ChannelKind.GuildCategory)
-                    .ToArray();
-            }
+            AvailableGuilds = guilds;
+            SelectedGuild = guilds.FirstOrDefault();
 
-            _discord = discord;
-            ChannelsByGuild = channelsByGuild;
-            SelectedGuild = channelsByGuild.Keys.FirstOrDefault();
+            // Pull channels for the selected guild
+            await PullChannelsAsync();
         }
         catch (DiscordChatExporterException ex) when (!ex.IsFatal)
         {
@@ -128,7 +124,7 @@ public class DashboardViewModel : PropertyChangedBase
         catch (Exception ex)
         {
             var dialog = _viewModelFactory.CreateMessageBoxViewModel(
-                "Error pulling guilds and channels",
+                "Error pulling guilds",
                 ex.ToString()
             );
 
@@ -141,13 +137,63 @@ public class DashboardViewModel : PropertyChangedBase
         }
     }
 
-    public bool CanExport =>
+    public bool CanPullChannelsAsync => !IsBusy && _discord is not null && SelectedGuild is not null;
+
+    public async Task PullChannelsAsync()
+    {
+        IsBusy = true;
+        var progress = _progressMuxer.CreateInput();
+
+        try
+        {
+            if (_discord is null || SelectedGuild is null)
+                return;
+
+            AvailableChannels = null;
+            SelectedChannels = null;
+
+            var channels = new List<Channel>();
+
+            await foreach (var channel in _discord.GetGuildChannelsAsync(SelectedGuild.Id))
+            {
+                if (channel.Kind == ChannelKind.GuildCategory)
+                    continue;
+
+                channels.Add(channel);
+            }
+
+            AvailableChannels = channels;
+            SelectedChannels = null;
+        }
+        catch (DiscordChatExporterException ex) when (!ex.IsFatal)
+        {
+            _eventAggregator.Publish(
+                new NotificationMessage(ex.Message.TrimEnd('.'))
+            );
+        }
+        catch (Exception ex)
+        {
+            var dialog = _viewModelFactory.CreateMessageBoxViewModel(
+                "Error pulling channels",
+                ex.ToString()
+            );
+
+            await _dialogManager.ShowDialogAsync(dialog);
+        }
+        finally
+        {
+            progress.ReportCompletion();
+            IsBusy = false;
+        }
+    }
+
+    public bool CanExportAsync =>
         !IsBusy &&
         _discord is not null &&
         SelectedGuild is not null &&
         SelectedChannels?.Any() is true;
 
-    public async void Export()
+    public async Task ExportAsync()
     {
         IsBusy = true;
 

@@ -99,12 +99,12 @@
                         </controls:RevealablePasswordBox.Style>
                     </controls:RevealablePasswordBox>
 
-                    <!--  Pull data button  -->
+                    <!--  Pull guilds button  -->
                     <Button
                         Grid.Column="2"
                         Margin="0,6,6,6"
                         Padding="4"
-                        Command="{s:Action Populate}"
+                        Command="{s:Action PullGuildsAsync}"
                         IsDefault="True"
                         Style="{DynamicResource MaterialDesignFlatButton}"
                         ToolTip="Pull available guilds and channels (Enter)">
@@ -121,7 +121,7 @@
                 Grid.Column="1"
                 Margin="6"
                 Padding="4"
-                Command="{s:Action ShowSettings}"
+                Command="{s:Action ShowSettingsAsync}"
                 Foreground="{DynamicResource MaterialDesignDarkForeground}"
                 Style="{DynamicResource MaterialDesignFlatButton}"
                 ToolTip="Settings">
@@ -273,6 +273,7 @@
                                     Margin="-8"
                                     Background="Transparent"
                                     Cursor="Hand"
+                                    MouseLeftButtonUp="{s:Action PullChannelsAsync}"
                                     ToolTip="{Binding Name}">
                                     <!--  Guild icon placeholder  -->
                                     <Ellipse
@@ -348,7 +349,7 @@
                             <DataTemplate DataType="{x:Type data:Channel}">
                                 <Grid Margin="-8" Background="Transparent">
                                     <Grid.InputBindings>
-                                        <MouseBinding Command="{s:Action Export}" MouseAction="LeftDoubleClick" />
+                                        <MouseBinding Command="{s:Action ExportAsync}" MouseAction="LeftDoubleClick" />
                                     </Grid.InputBindings>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
@@ -410,9 +411,9 @@
                 Margin="32,24"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
-                Command="{s:Action Export}"
+                Command="{s:Action ExportAsync}"
                 Style="{DynamicResource MaterialDesignFloatingActionAccentButton}"
-                Visibility="{Binding CanExport, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
+                Visibility="{Binding CanExportAsync, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
                 <materialDesign:PackIcon
                     Width="32"
                     Height="32"

@@ -24,7 +24,7 @@ public abstract class DiscordCommandBase : ICommand
         EnvironmentVariable = "DISCORD_TOKEN_BOT",
         Description = "This option doesn't do anything. Kept for backwards compatibility."
     )]
-    public bool IsBotToken { get; init; }
+    public bool IsBotToken { get; init; } = false;
 
     private DiscordClient? _discordClient;
     protected DiscordClient Discord => _discordClient ??= new DiscordClient(Token);

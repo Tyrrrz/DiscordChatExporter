@@ -94,13 +94,13 @@ public abstract class ExportCommandBase : DiscordCommandBase
         "media",
         Description = "Download assets referenced by the export (user avatars, attached files, embedded images, etc.)."
     )]
-    public bool ShouldDownloadAssets { get; init; }
+    public bool ShouldDownloadAssets { get; init; } = false;
 
     [CommandOption(
         "reuse-media",
         Description = "Reuse previously downloaded assets to avoid redundant requests."
     )]
-    public bool ShouldReuseAssets { get; init; }
+    public bool ShouldReuseAssets { get; init; } = false;
 
     private readonly string? _assetsDirPath;
 
@@ -131,7 +131,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
         // Use a converter to accept '1' as 'true' to reuse the existing environment variable
         Converter = typeof(TruthyBooleanBindingConverter)
     )]
-    public bool IsUkraineSupportMessageDisabled { get; init; }
+    public bool IsUkraineSupportMessageDisabled { get; init; } = false;
 
     private ChannelExporter? _channelExporter;
     protected ChannelExporter Exporter => _channelExporter ??= new ChannelExporter(Discord);

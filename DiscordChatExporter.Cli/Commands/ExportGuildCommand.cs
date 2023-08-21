@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using CliFx.Attributes;
 using CliFx.Exceptions;
@@ -7,7 +6,6 @@ using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands.Base;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
-using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Cli.Commands;
 
@@ -52,21 +50,31 @@ public class ExportGuildCommand : ExportCommandBase
         }
 
         var cancellationToken = console.RegisterCancellationHandler();
+        var channels = new List<Channel>();
 
         await console.Output.WriteLineAsync("Fetching channels...");
 
-        var channels = (await Discord.GetGuildChannelsAsync(GuildId, cancellationToken))
-            .Where(c => c.Kind != ChannelKind.GuildCategory)
-            .Where(c => IncludeVoiceChannels || !c.Kind.IsVoice())
-            .ToArray();
+        // Regular channels
+        await foreach (var channel in Discord.GetGuildChannelsAsync(GuildId, cancellationToken))
+        {
+            if (channel.Kind == ChannelKind.GuildCategory)
+                continue;
 
-        var threads = IncludeThreads
-            ? await Discord.GetGuildThreadsAsync(GuildId, IncludeArchivedThreads, cancellationToken)
-            : Array.Empty<Channel>();
+            if (!IncludeVoiceChannels && channel.Kind.IsVoice())
+                continue;
 
-        await ExportAsync(
-            console,
-            channels.Concat(threads).ToArray()
-        );
+            channels.Add(channel);
+        }
+
+        // Threads
+        if (IncludeThreads)
+        {
+            await foreach (var thread in Discord.GetGuildThreadsAsync(GuildId, IncludeArchivedThreads, cancellationToken))
+            {
+                channels.Add(thread);
+            }
+        }
+
+        await ExportAsync(console, channels);
     }
 }

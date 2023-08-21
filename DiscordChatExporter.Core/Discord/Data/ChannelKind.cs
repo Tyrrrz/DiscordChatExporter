@@ -27,4 +27,7 @@ public static class ChannelKindExtensions
 
     public static bool IsVoice(this ChannelKind kind) =>
         kind is ChannelKind.GuildVoiceChat or ChannelKind.GuildStageVoice;
+
+    public static bool IsThread(this ChannelKind kind) =>
+        kind is ChannelKind.GuildNewsThread or ChannelKind.GuildPublicThread or ChannelKind.GuildPrivateThread;
 }

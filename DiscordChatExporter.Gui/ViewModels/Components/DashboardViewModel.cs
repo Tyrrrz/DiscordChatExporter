@@ -78,7 +78,7 @@ public class DashboardViewModel : PropertyChangedBase
             Token = _settingsService.LastToken;
     }
 
-    public async Task ShowSettingsAsync()
+    public async ValueTask ShowSettingsAsync()
     {
         var dialog = _viewModelFactory.CreateSettingsViewModel();
         await _dialogManager.ShowDialogAsync(dialog);
@@ -88,7 +88,7 @@ public class DashboardViewModel : PropertyChangedBase
 
     public bool CanPullGuildsAsync => !IsBusy && !string.IsNullOrWhiteSpace(Token);
 
-    public async Task PullGuildsAsync()
+    public async ValueTask PullGuildsAsync()
     {
         IsBusy = true;
         var progress = _progressMuxer.CreateInput();
@@ -139,7 +139,7 @@ public class DashboardViewModel : PropertyChangedBase
 
     public bool CanPullChannelsAsync => !IsBusy && _discord is not null && SelectedGuild is not null;
 
-    public async Task PullChannelsAsync()
+    public async ValueTask PullChannelsAsync()
     {
         IsBusy = true;
         var progress = _progressMuxer.CreateInput();
@@ -193,7 +193,7 @@ public class DashboardViewModel : PropertyChangedBase
         SelectedGuild is not null &&
         SelectedChannels?.Any() is true;
 
-    public async Task ExportAsync()
+    public async ValueTask ExportAsync()
     {
         IsBusy = true;
 

@@ -260,6 +260,7 @@ public class DiscordClient
 
     public async IAsyncEnumerable<Channel> GetGuildThreadsAsync(
         Snowflake guildId,
+        bool includeArchived = false,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var tokenKind = _resolvedTokenKind ??= await GetTokenKindAsync(cancellationToken);
@@ -285,7 +286,11 @@ public class DiscordClient
 
                     foreach (var threadJson in response.Value.GetProperty("threads").EnumerateArray())
                     {
-                        yield return Channel.Parse(threadJson, channel);
+                        var thread = Channel.Parse(threadJson, channel);
+                        if (!includeArchived && thread.IsArchived)
+                            continue;
+
+                        yield return thread;
                         currentOffset++;
                     }
 
@@ -314,28 +319,32 @@ public class DiscordClient
                 }
             }
 
-            foreach (var channel in channels)
+            // Archived threads
+            if (includeArchived)
             {
-                // Public archived threads
+                foreach (var channel in channels)
                 {
-                    var response = await GetJsonResponseAsync(
-                        $"channels/{channel.Id}/threads/archived/public",
-                        cancellationToken
-                    );
+                    // Public archived threads
+                    {
+                        var response = await GetJsonResponseAsync(
+                            $"channels/{channel.Id}/threads/archived/public",
+                            cancellationToken
+                        );
 
-                    foreach (var threadJson in response.GetProperty("threads").EnumerateArray())
-                        yield return Channel.Parse(threadJson, channel);
-                }
+                        foreach (var threadJson in response.GetProperty("threads").EnumerateArray())
+                            yield return Channel.Parse(threadJson, channel);
+                    }
 
-                // Private archived threads
-                {
-                    var response = await GetJsonResponseAsync(
-                        $"channels/{channel.Id}/threads/archived/private",
-                        cancellationToken
-                    );
+                    // Private archived threads
+                    {
+                        var response = await GetJsonResponseAsync(
+                            $"channels/{channel.Id}/threads/archived/private",
+                            cancellationToken
+                        );
 
-                    foreach (var threadJson in response.GetProperty("threads").EnumerateArray())
-                        yield return Channel.Parse(threadJson, channel);
+                        foreach (var threadJson in response.GetProperty("threads").EnumerateArray())
+                            yield return Channel.Parse(threadJson, channel);
+                    }
                 }
             }
         }

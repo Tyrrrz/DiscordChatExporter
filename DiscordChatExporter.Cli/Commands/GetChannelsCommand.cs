@@ -26,6 +26,12 @@ public class GetChannelsCommand : DiscordCommandBase
     )]
     public bool IncludeThreads { get; init; }
 
+    [CommandOption(
+        "include-archived-threads",
+        Description = "Include archived threads in the output."
+    )]
+    public bool IncludeArchivedThreads { get; init; }
+
     public override async ValueTask ExecuteAsync(IConsole console)
     {
         var cancellationToken = console.RegisterCancellationHandler();
@@ -42,7 +48,9 @@ public class GetChannelsCommand : DiscordCommandBase
             .FirstOrDefault();
 
         var threads = IncludeThreads
-            ? (await Discord.GetGuildThreadsAsync(GuildId, cancellationToken)).OrderBy(c => c.Name).ToArray()
+            ? (await Discord.GetGuildThreadsAsync(GuildId, IncludeArchivedThreads, cancellationToken))
+                .OrderBy(c => c.Name)
+                .ToArray()
             : Array.Empty<Channel>();
 
         foreach (var channel in channels)
@@ -90,7 +98,7 @@ public class GetChannelsCommand : DiscordCommandBase
 
                 // Thread status
                 using (console.WithForegroundColor(ConsoleColor.White))
-                    await console.Output.WriteLineAsync(channelThread.IsActive ? "Active" : "Archived");
+                    await console.Output.WriteLineAsync(channelThread.IsArchived ? "Archived" : "Active");
             }
         }
     }

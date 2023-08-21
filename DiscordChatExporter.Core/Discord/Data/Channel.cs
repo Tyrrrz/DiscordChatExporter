@@ -16,7 +16,7 @@ public partial record Channel(
     int? Position,
     string? IconUrl,
     string? Topic,
-    bool IsActive,
+    bool IsArchived,
     Snowflake? LastMessageId) : IHasId
 {
     // Used for visual backwards-compatibility with old exports, where
@@ -77,10 +77,10 @@ public partial record Channel
 
         var topic = json.GetPropertyOrNull("topic")?.GetStringOrNull();
 
-        var isActive = !json
+        var isArchived = json
             .GetPropertyOrNull("thread_metadata")?
             .GetPropertyOrNull("archived")?
-            .GetBooleanOrNull() ?? true;
+            .GetBooleanOrNull() ?? false;
 
         var lastMessageId = json
             .GetPropertyOrNull("last_message_id")?
@@ -96,7 +96,7 @@ public partial record Channel
             position,
             iconUrl,
             topic,
-            isActive,
+            isArchived,
             lastMessageId
         );
     }

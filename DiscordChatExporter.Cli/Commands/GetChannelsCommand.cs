@@ -21,6 +21,12 @@ public class GetChannelsCommand : DiscordCommandBase
     public required Snowflake GuildId { get; init; }
 
     [CommandOption(
+        "include-vc",
+        Description = "Include voice channels."
+    )]
+    public bool IncludeVoiceChannels { get; init; } = true;
+
+    [CommandOption(
         "include-threads",
         Description = "Include threads in the output."
     )]
@@ -38,6 +44,7 @@ public class GetChannelsCommand : DiscordCommandBase
 
         var channels = (await Discord.GetGuildChannelsAsync(GuildId, cancellationToken))
             .Where(c => c.Kind != ChannelKind.GuildCategory)
+            .Where(c => IncludeVoiceChannels || !c.Kind.IsVoice())
             .OrderBy(c => c.Parent?.Position)
             .ThenBy(c => c.Name)
             .ToArray();

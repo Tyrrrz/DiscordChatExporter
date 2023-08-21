@@ -14,6 +14,8 @@ public class GetDirectChannelsCommand : DiscordCommandBase
 {
     public override async ValueTask ExecuteAsync(IConsole console)
     {
+        await base.ExecuteAsync(console);
+
         var cancellationToken = console.RegisterCancellationHandler();
 
         var channels = (await Discord.GetGuildChannelsAsync(Guild.DirectMessages.Id, cancellationToken))

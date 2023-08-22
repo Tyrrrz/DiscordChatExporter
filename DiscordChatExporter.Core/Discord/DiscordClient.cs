@@ -272,6 +272,7 @@ public class DiscordClient
         // User accounts can only fetch threads using the search endpoint
         if (tokenKind == TokenKind.User)
         {
+            // Active threads
             foreach (var channel in channels)
             {
                 var currentOffset = 0;
@@ -279,6 +280,7 @@ public class DiscordClient
                 {
                     var url = new UrlBuilder()
                         .SetPath($"channels/{channel.Id}/threads/search")
+                        .SetQueryParameter("archived", "false")
                         .SetQueryParameter("offset", currentOffset.ToString())
                         .Build();
 
@@ -289,16 +291,43 @@ public class DiscordClient
 
                     foreach (var threadJson in response.Value.GetProperty("threads").EnumerateArray())
                     {
-                        var thread = Channel.Parse(threadJson, channel);
-                        if (!includeArchived && thread.IsArchived)
-                            continue;
-
-                        yield return thread;
+                        yield return Channel.Parse(threadJson, channel);
                         currentOffset++;
                     }
 
                     if (!response.Value.GetProperty("has_more").GetBoolean())
                         break;
+                }
+            }
+
+            // Archived threads
+            if (includeArchived)
+            {
+                foreach (var channel in channels)
+                {
+                    var currentOffset = 0;
+                    while (true)
+                    {
+                        var url = new UrlBuilder()
+                            .SetPath($"channels/{channel.Id}/threads/search")
+                            .SetQueryParameter("archived", "true")
+                            .SetQueryParameter("offset", currentOffset.ToString())
+                            .Build();
+
+                        // Can be null on channels that the user cannot access
+                        var response = await TryGetJsonResponseAsync(url, cancellationToken);
+                        if (response is null)
+                            break;
+
+                        foreach (var threadJson in response.Value.GetProperty("threads").EnumerateArray())
+                        {
+                            yield return Channel.Parse(threadJson, channel);
+                            currentOffset++;
+                        }
+
+                        if (!response.Value.GetProperty("has_more").GetBoolean())
+                            break;
+                    }
                 }
             }
         }

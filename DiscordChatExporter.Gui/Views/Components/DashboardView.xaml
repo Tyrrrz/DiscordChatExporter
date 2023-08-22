@@ -304,7 +304,7 @@
                     <ListBox
                         HorizontalContentAlignment="Stretch"
                         SelectionMode="Extended"
-                        TextSearch.TextPath="Model.Name"
+                        TextSearch.TextPath="Name"
                         VirtualizingPanel.IsVirtualizingWhenGrouping="True">
                         <b:Interaction.Behaviors>
                             <behaviors:ChannelMultiSelectionListBoxBehavior SelectedItems="{Binding SelectedChannels}" />

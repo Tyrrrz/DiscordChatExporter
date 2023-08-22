@@ -82,6 +82,38 @@
                             IsChecked="{Binding IsTokenPersisted}" />
                     </DockPanel>
 
+                    <!--  Show threads  -->
+                    <DockPanel
+                        Margin="16,8"
+                        Background="Transparent"
+                        LastChildFill="False"
+                        ToolTip="Pull threads and show them in the channel list">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Left"
+                            Text="Show threads" />
+                        <ToggleButton
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Right"
+                            IsChecked="{Binding ShouldShowThreads}" />
+                    </DockPanel>
+
+                    <!--  Show archived threads  -->
+                    <DockPanel
+                        Margin="16,8"
+                        Background="Transparent"
+                        LastChildFill="False"
+                        ToolTip="Pull archived threads and show them in the channel list">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Left"
+                            Text="Show archived threads" />
+                        <ToggleButton
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Right"
+                            IsChecked="{Binding ShouldShowArchivedThreads}" />
+                    </DockPanel>
+
                     <!--  Date format  -->
                     <DockPanel
                         Margin="16,8"

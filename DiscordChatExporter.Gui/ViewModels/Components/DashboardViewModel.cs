@@ -89,11 +89,8 @@ public class DashboardViewModel : PropertyChangedBase
             Token = _settingsService.LastToken;
     }
 
-    public async ValueTask ShowSettingsAsync()
-    {
-        var dialog = _viewModelFactory.CreateSettingsViewModel();
-        await _dialogManager.ShowDialogAsync(dialog);
-    }
+    public async ValueTask ShowSettingsAsync() =>
+        await _dialogManager.ShowDialogAsync(_viewModelFactory.CreateSettingsViewModel());
 
     public void ShowHelp() => ProcessEx.StartShellExecute(App.DocumentationUrl);
 
@@ -165,12 +162,24 @@ public class DashboardViewModel : PropertyChangedBase
 
             var channels = new List<Channel>();
 
+            // Regular channels
             await foreach (var channel in _discord.GetGuildChannelsAsync(SelectedGuild.Id))
             {
                 if (channel.Kind == ChannelKind.GuildCategory)
                     continue;
 
                 channels.Add(channel);
+            }
+
+            // Threads
+            if (_settingsService.ShouldShowThreads)
+            {
+                await foreach (var thread in _discord.GetGuildThreadsAsync(
+                                   SelectedGuild.Id,
+                                   _settingsService.ShouldShowArchivedThreads))
+                {
+                    channels.Add(thread);
+                }
             }
 
             AvailableChannels = channels;

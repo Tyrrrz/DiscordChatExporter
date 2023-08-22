@@ -16,6 +16,10 @@ public partial class SettingsService : SettingsBase
 
     public bool IsTokenPersisted { get; set; } = true;
 
+    public bool ShouldShowThreads { get; set; }
+
+    public bool ShouldShowArchivedThreads { get; set; }
+
     public string DateFormat { get; set; } = "MM/dd/yyyy h:mm tt";
 
     public int ParallelLimit { get; set; } = 1;

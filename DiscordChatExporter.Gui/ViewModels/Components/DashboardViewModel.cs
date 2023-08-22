@@ -70,6 +70,17 @@ public class DashboardViewModel : PropertyChangedBase
             o => o.Current,
             (_, _) => NotifyOfPropertyChange(() => IsProgressIndeterminate)
         );
+
+        this.Bind(
+            o => o.SelectedGuild,
+            (_, _) =>
+            {
+                // Reset channels when the selected guild changes, to avoid jitter
+                // due to the channels being asynchronously loaded.
+                AvailableChannels = null;
+                SelectedChannels = null;
+            }
+        );
     }
 
     public void OnViewLoaded()

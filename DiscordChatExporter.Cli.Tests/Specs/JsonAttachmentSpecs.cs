@@ -24,9 +24,13 @@ public class JsonAttachmentSpecs
         var attachments = message.GetProperty("attachments").EnumerateArray().ToArray();
         attachments.Should().HaveCount(1);
 
-        attachments[0].GetProperty("url").GetString().Should().Be(
-            "https://cdn.discordapp.com/attachments/885587741654536192/885587844964417596/Test.txt"
-        );
+        attachments[0]
+            .GetProperty("url")
+            .GetString()
+            .Should()
+            .Be(
+                "https://cdn.discordapp.com/attachments/885587741654536192/885587844964417596/Test.txt"
+            );
         attachments[0].GetProperty("fileName").GetString().Should().Be("Test.txt");
         attachments[0].GetProperty("fileSizeBytes").GetInt64().Should().Be(11);
     }
@@ -46,9 +50,13 @@ public class JsonAttachmentSpecs
         var attachments = message.GetProperty("attachments").EnumerateArray().ToArray();
         attachments.Should().HaveCount(1);
 
-        attachments[0].GetProperty("url").GetString().Should().Be(
-            "https://cdn.discordapp.com/attachments/885587741654536192/885654862430359613/bird-thumbnail.png"
-        );
+        attachments[0]
+            .GetProperty("url")
+            .GetString()
+            .Should()
+            .Be(
+                "https://cdn.discordapp.com/attachments/885587741654536192/885654862430359613/bird-thumbnail.png"
+            );
         attachments[0].GetProperty("fileName").GetString().Should().Be("bird-thumbnail.png");
         attachments[0].GetProperty("fileSizeBytes").GetInt64().Should().Be(466335);
     }
@@ -68,10 +76,18 @@ public class JsonAttachmentSpecs
         var attachments = message.GetProperty("attachments").EnumerateArray().ToArray();
         attachments.Should().HaveCount(1);
 
-        attachments[0].GetProperty("url").GetString().Should().Be(
-            "https://cdn.discordapp.com/attachments/885587741654536192/885655761512968233/file_example_MP4_640_3MG.mp4"
-        );
-        attachments[0].GetProperty("fileName").GetString().Should().Be("file_example_MP4_640_3MG.mp4");
+        attachments[0]
+            .GetProperty("url")
+            .GetString()
+            .Should()
+            .Be(
+                "https://cdn.discordapp.com/attachments/885587741654536192/885655761512968233/file_example_MP4_640_3MG.mp4"
+            );
+        attachments[0]
+            .GetProperty("fileName")
+            .GetString()
+            .Should()
+            .Be("file_example_MP4_640_3MG.mp4");
         attachments[0].GetProperty("fileSizeBytes").GetInt64().Should().Be(3114374);
     }
 
@@ -90,9 +106,13 @@ public class JsonAttachmentSpecs
         var attachments = message.GetProperty("attachments").EnumerateArray().ToArray();
         attachments.Should().HaveCount(1);
 
-        attachments[0].GetProperty("url").GetString().Should().Be(
-            "https://cdn.discordapp.com/attachments/885587741654536192/885656175348187146/file_example_MP3_1MG.mp3"
-        );
+        attachments[0]
+            .GetProperty("url")
+            .GetString()
+            .Should()
+            .Be(
+                "https://cdn.discordapp.com/attachments/885587741654536192/885656175348187146/file_example_MP3_1MG.mp3"
+            );
         attachments[0].GetProperty("fileName").GetString().Should().Be("file_example_MP3_1MG.mp3");
         attachments[0].GetProperty("fileSizeBytes").GetInt64().Should().Be(1087849);
     }

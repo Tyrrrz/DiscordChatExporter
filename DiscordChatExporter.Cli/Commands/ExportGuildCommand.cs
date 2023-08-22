@@ -12,29 +12,16 @@ namespace DiscordChatExporter.Cli.Commands;
 [Command("exportguild", Description = "Exports all channels within the specified guild.")]
 public class ExportGuildCommand : ExportCommandBase
 {
-    [CommandOption(
-        "guild",
-        'g',
-        Description = "Guild ID."
-    )]
+    [CommandOption("guild", 'g', Description = "Guild ID.")]
     public required Snowflake GuildId { get; init; }
 
-    [CommandOption(
-        "include-vc",
-        Description = "Include voice channels."
-    )]
+    [CommandOption("include-vc", Description = "Include voice channels.")]
     public bool IncludeVoiceChannels { get; init; } = true;
 
-    [CommandOption(
-        "include-threads",
-        Description = "Include threads."
-    )]
+    [CommandOption("include-threads", Description = "Include threads.")]
     public bool IncludeThreads { get; init; } = false;
 
-    [CommandOption(
-        "include-archived-threads",
-        Description = "Include archived threads."
-    )]
+    [CommandOption("include-archived-threads", Description = "Include archived threads.")]
     public bool IncludeArchivedThreads { get; init; } = false;
 
     public override async ValueTask ExecuteAsync(IConsole console)
@@ -69,7 +56,13 @@ public class ExportGuildCommand : ExportCommandBase
         // Threads
         if (IncludeThreads)
         {
-            await foreach (var thread in Discord.GetGuildThreadsAsync(GuildId, IncludeArchivedThreads, cancellationToken))
+            await foreach (
+                var thread in Discord.GetGuildThreadsAsync(
+                    GuildId,
+                    IncludeArchivedThreads,
+                    cancellationToken
+                )
+            )
             {
                 channels.Add(thread);
             }

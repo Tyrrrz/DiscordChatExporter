@@ -28,11 +28,10 @@ public abstract class ExportCommandBase : DiscordCommandBase
     [CommandOption(
         "output",
         'o',
-        Description =
-            "Output file or directory path. " +
-            "Directory path must end with a slash to avoid ambiguity. " +
-            "If a directory is specified, file names will be generated automatically. " +
-            "Supports template tokens, see the documentation for more info."
+        Description = "Output file or directory path. "
+            + "Directory path must end with a slash to avoid ambiguity. "
+            + "If a directory is specified, file names will be generated automatically. "
+            + "Supports template tokens, see the documentation for more info."
     )]
     public string OutputPath
     {
@@ -42,11 +41,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
         init => _outputPath = Path.GetFullPath(value);
     }
 
-    [CommandOption(
-        "format",
-        'f',
-        Description = "Export format."
-    )]
+    [CommandOption("format", 'f', Description = "Export format.")]
     public ExportFormat ExportFormat { get; init; } = ExportFormat.HtmlDark;
 
     [CommandOption(
@@ -64,17 +59,15 @@ public abstract class ExportCommandBase : DiscordCommandBase
     [CommandOption(
         "partition",
         'p',
-        Description =
-            "Split the output into partitions, each limited to the specified " +
-            "number of messages (e.g. '100') or file size (e.g. '10mb')."
+        Description = "Split the output into partitions, each limited to the specified "
+            + "number of messages (e.g. '100') or file size (e.g. '10mb')."
     )]
     public PartitionLimit PartitionLimit { get; init; } = PartitionLimit.Null;
 
     [CommandOption(
         "filter",
-        Description =
-            "Only include messages that satisfy this filter. " +
-            "See the documentation for more info."
+        Description = "Only include messages that satisfy this filter. "
+            + "See the documentation for more info."
     )]
     public MessageFilter MessageFilter { get; init; } = MessageFilter.Null;
 
@@ -106,9 +99,8 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
     [CommandOption(
         "media-dir",
-        Description =
-            "Download assets to this directory. " +
-            "If not specified, the asset directory path will be derived from the output path."
+        Description = "Download assets to this directory. "
+            + "If not specified, the asset directory path will be derived from the output path."
     )]
     public string? AssetsDirPath
     {
@@ -118,10 +110,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
         init => _assetsDirPath = value is not null ? Path.GetFullPath(value) : null;
     }
 
-    [CommandOption(
-        "dateformat",
-        Description = "Format used when writing dates."
-    )]
+    [CommandOption("dateformat", Description = "Format used when writing dates.")]
     public string DateFormat { get; init; } = "MM/dd/yyyy h:mm tt";
 
     [CommandOption(
@@ -142,17 +131,13 @@ public abstract class ExportCommandBase : DiscordCommandBase
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/425
         if (ShouldReuseAssets && !ShouldDownloadAssets)
         {
-            throw new CommandException(
-                "Option --reuse-media cannot be used without --media."
-            );
+            throw new CommandException("Option --reuse-media cannot be used without --media.");
         }
 
         // Assets directory can only be specified if the download assets option is set
         if (!string.IsNullOrWhiteSpace(AssetsDirPath) && !ShouldDownloadAssets)
         {
-            throw new CommandException(
-                "Option --media-dir cannot be used without --media."
-            );
+            throw new CommandException("Option --media-dir cannot be used without --media.");
         }
 
         // Make sure the user does not try to export multiple channels into one file.
@@ -161,17 +146,20 @@ public abstract class ExportCommandBase : DiscordCommandBase
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/917
         var isValidOutputPath =
             // Anything is valid when exporting a single channel
-            channels.Count <= 1 ||
+            channels.Count <= 1
+            ||
             // When using template tokens, assume the user knows what they're doing
-            OutputPath.Contains('%') ||
+            OutputPath.Contains('%')
+            ||
             // Otherwise, require an existing directory or an unambiguous directory path
-            Directory.Exists(OutputPath) || PathEx.IsDirectoryPath(OutputPath);
+            Directory.Exists(OutputPath)
+            || PathEx.IsDirectoryPath(OutputPath);
 
         if (!isValidOutputPath)
         {
             throw new CommandException(
-                "Attempted to export multiple channels, but the output path is neither a directory nor a template. " +
-                "If the provided output path is meant to be treated as a directory, make sure it ends with a slash."
+                "Attempted to export multiple channels, but the output path is neither a directory nor a template. "
+                    + "If the provided output path is meant to be treated as a directory, make sure it ends with a slash."
             );
         }
 
@@ -180,56 +168,61 @@ public abstract class ExportCommandBase : DiscordCommandBase
         var errorsByChannel = new ConcurrentDictionary<Channel, string>();
 
         await console.Output.WriteLineAsync($"Exporting {channels.Count} channel(s)...");
-        await console.CreateProgressTicker().StartAsync(async progressContext =>
-        {
-            await Parallel.ForEachAsync(
-                channels,
-                new ParallelOptions
-                {
-                    MaxDegreeOfParallelism = Math.Max(1, ParallelLimit),
-                    CancellationToken = cancellationToken
-                },
-                async (channel, innerCancellationToken) =>
-                {
-                    try
+        await console
+            .CreateProgressTicker()
+            .StartAsync(async progressContext =>
+            {
+                await Parallel.ForEachAsync(
+                    channels,
+                    new ParallelOptions
                     {
-                        await progressContext.StartTaskAsync(
-                            $"{channel.Category} / {channel.Name}",
-                            async progress =>
-                            {
-                                var guild = await Discord.GetGuildAsync(channel.GuildId, innerCancellationToken);
-
-                                var request = new ExportRequest(
-                                    guild,
-                                    channel,
-                                    OutputPath,
-                                    AssetsDirPath,
-                                    ExportFormat,
-                                    After,
-                                    Before,
-                                    PartitionLimit,
-                                    MessageFilter,
-                                    ShouldFormatMarkdown,
-                                    ShouldDownloadAssets,
-                                    ShouldReuseAssets,
-                                    DateFormat
-                                );
-
-                                await Exporter.ExportChannelAsync(
-                                    request,
-                                    progress.ToPercentageBased(),
-                                    innerCancellationToken
-                                );
-                            }
-                        );
-                    }
-                    catch (DiscordChatExporterException ex) when (!ex.IsFatal)
+                        MaxDegreeOfParallelism = Math.Max(1, ParallelLimit),
+                        CancellationToken = cancellationToken
+                    },
+                    async (channel, innerCancellationToken) =>
                     {
-                        errorsByChannel[channel] = ex.Message;
+                        try
+                        {
+                            await progressContext.StartTaskAsync(
+                                $"{channel.Category} / {channel.Name}",
+                                async progress =>
+                                {
+                                    var guild = await Discord.GetGuildAsync(
+                                        channel.GuildId,
+                                        innerCancellationToken
+                                    );
+
+                                    var request = new ExportRequest(
+                                        guild,
+                                        channel,
+                                        OutputPath,
+                                        AssetsDirPath,
+                                        ExportFormat,
+                                        After,
+                                        Before,
+                                        PartitionLimit,
+                                        MessageFilter,
+                                        ShouldFormatMarkdown,
+                                        ShouldDownloadAssets,
+                                        ShouldReuseAssets,
+                                        DateFormat
+                                    );
+
+                                    await Exporter.ExportChannelAsync(
+                                        request,
+                                        progress.ToPercentageBased(),
+                                        innerCancellationToken
+                                    );
+                                }
+                            );
+                        }
+                        catch (DiscordChatExporterException ex) when (!ex.IsFatal)
+                        {
+                            errorsByChannel[channel] = ex.Message;
+                        }
                     }
-                }
-            );
-        });
+                );
+            });
 
         // Print the result
         using (console.WithForegroundColor(ConsoleColor.White))
@@ -285,8 +278,8 @@ public abstract class ExportCommandBase : DiscordCommandBase
             if (channel.Kind == ChannelKind.GuildCategory)
             {
                 var guildChannels =
-                    channelsByGuild.GetValueOrDefault(channel.GuildId) ??
-                    await Discord.GetGuildChannelsAsync(channel.GuildId, cancellationToken);
+                    channelsByGuild.GetValueOrDefault(channel.GuildId)
+                    ?? await Discord.GetGuildChannelsAsync(channel.GuildId, cancellationToken);
 
                 foreach (var guildChannel in guildChannels)
                 {
@@ -311,15 +304,33 @@ public abstract class ExportCommandBase : DiscordCommandBase
         // Support Ukraine callout
         if (!IsUkraineSupportMessageDisabled)
         {
-            console.Output.WriteLine("┌────────────────────────────────────────────────────────────────────┐");
-            console.Output.WriteLine("│   Thank you for supporting Ukraine <3                              │");
-            console.Output.WriteLine("│                                                                    │");
-            console.Output.WriteLine("│   As Russia wages a genocidal war against my country,              │");
-            console.Output.WriteLine("│   I'm grateful to everyone who continues to                        │");
-            console.Output.WriteLine("│   stand with Ukraine in our fight for freedom.                     │");
-            console.Output.WriteLine("│                                                                    │");
-            console.Output.WriteLine("│   Learn more: https://tyrrrz.me/ukraine                            │");
-            console.Output.WriteLine("└────────────────────────────────────────────────────────────────────┘");
+            console.Output.WriteLine(
+                "┌────────────────────────────────────────────────────────────────────┐"
+            );
+            console.Output.WriteLine(
+                "│   Thank you for supporting Ukraine <3                              │"
+            );
+            console.Output.WriteLine(
+                "│                                                                    │"
+            );
+            console.Output.WriteLine(
+                "│   As Russia wages a genocidal war against my country,              │"
+            );
+            console.Output.WriteLine(
+                "│   I'm grateful to everyone who continues to                        │"
+            );
+            console.Output.WriteLine(
+                "│   stand with Ukraine in our fight for freedom.                     │"
+            );
+            console.Output.WriteLine(
+                "│                                                                    │"
+            );
+            console.Output.WriteLine(
+                "│   Learn more: https://tyrrrz.me/ukraine                            │"
+            );
+            console.Output.WriteLine(
+                "└────────────────────────────────────────────────────────────────────┘"
+            );
             console.Output.WriteLine("");
         }
 

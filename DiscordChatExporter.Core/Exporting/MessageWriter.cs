@@ -22,15 +22,20 @@ internal abstract class MessageWriter : IAsyncDisposable
         Context = context;
     }
 
-    public virtual ValueTask WritePreambleAsync(CancellationToken cancellationToken = default) => default;
+    public virtual ValueTask WritePreambleAsync(CancellationToken cancellationToken = default) =>
+        default;
 
-    public virtual ValueTask WriteMessageAsync(Message message, CancellationToken cancellationToken = default)
+    public virtual ValueTask WriteMessageAsync(
+        Message message,
+        CancellationToken cancellationToken = default
+    )
     {
         MessagesWritten++;
         return default;
     }
 
-    public virtual ValueTask WritePostambleAsync(CancellationToken cancellationToken = default) => default;
+    public virtual ValueTask WritePostambleAsync(CancellationToken cancellationToken = default) =>
+        default;
 
     public virtual async ValueTask DisposeAsync() => await Stream.DisposeAsync();
 }

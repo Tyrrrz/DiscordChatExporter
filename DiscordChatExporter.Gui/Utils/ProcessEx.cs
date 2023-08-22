@@ -8,11 +8,7 @@ internal static class ProcessEx
     {
         using var process = new Process
         {
-            StartInfo = new ProcessStartInfo
-            {
-                FileName = path,
-                UseShellExecute = true
-            }
+            StartInfo = new ProcessStartInfo { FileName = path, UseShellExecute = true }
         };
 
         process.Start();

@@ -27,7 +27,8 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
 
     protected override ValueTask VisitTextAsync(
         TextNode text,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         _buffer.Append(HtmlEncode(text.Text));
         return default;
@@ -35,53 +36,63 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
 
     protected override async ValueTask VisitFormattingAsync(
         FormattingNode formatting,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         var (openingTag, closingTag) = formatting.Kind switch
         {
-            FormattingKind.Bold => (
-                // lang=html
-                "<strong>",
-                // lang=html
-                "</strong>"
-            ),
+            FormattingKind.Bold
+                => (
+                    // lang=html
+                    "<strong>",
+                    // lang=html
+                    "</strong>"
+                ),
 
-            FormattingKind.Italic => (
-                // lang=html
-                "<em>",
-                // lang=html
-                "</em>"
-            ),
+            FormattingKind.Italic
+                => (
+                    // lang=html
+                    "<em>",
+                    // lang=html
+                    "</em>"
+                ),
 
-            FormattingKind.Underline => (
-                // lang=html
-                "<u>",
-                // lang=html
-                "</u>"
-            ),
+            FormattingKind.Underline
+                => (
+                    // lang=html
+                    "<u>",
+                    // lang=html
+                    "</u>"
+                ),
 
-            FormattingKind.Strikethrough => (
-                // lang=html
-                "<s>",
-                // lang=html
-                "</s>"
-            ),
+            FormattingKind.Strikethrough
+                => (
+                    // lang=html
+                    "<s>",
+                    // lang=html
+                    "</s>"
+                ),
 
-            FormattingKind.Spoiler => (
-                // lang=html
-                """<span class="chatlog__markdown-spoiler chatlog__markdown-spoiler--hidden" onclick="showSpoiler(event, this)">""",
-                // lang=html
-                """</span>"""
-            ),
+            FormattingKind.Spoiler
+                => (
+                    // lang=html
+                    """<span class="chatlog__markdown-spoiler chatlog__markdown-spoiler--hidden" onclick="showSpoiler(event, this)">""",
+                    // lang=html
+                    """</span>"""
+                ),
 
-            FormattingKind.Quote => (
-                // lang=html
-                """<div class="chatlog__markdown-quote"><div class="chatlog__markdown-quote-border"></div><div class="chatlog__markdown-quote-content">""",
-                // lang=html
-                """</div></div>"""
-            ),
+            FormattingKind.Quote
+                => (
+                    // lang=html
+                    """<div class="chatlog__markdown-quote"><div class="chatlog__markdown-quote-border"></div><div class="chatlog__markdown-quote-content">""",
+                    // lang=html
+                    """</div></div>"""
+                ),
 
-            _ => throw new InvalidOperationException($"Unknown formatting kind '{formatting.Kind}'.")
+            _
+                => throw new InvalidOperationException(
+                    $"Unknown formatting kind '{formatting.Kind}'."
+                )
         };
 
         _buffer.Append(openingTag);
@@ -91,7 +102,8 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
 
     protected override async ValueTask VisitHeadingAsync(
         HeadingNode heading,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         _buffer.Append(
             // lang=html
@@ -108,7 +120,8 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
 
     protected override async ValueTask VisitListAsync(
         ListNode list,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         _buffer.Append(
             // lang=html
@@ -125,7 +138,8 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
 
     protected override async ValueTask VisitListItemAsync(
         ListItemNode listItem,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         _buffer.Append(
             // lang=html
@@ -142,7 +156,8 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
 
     protected override ValueTask VisitInlineCodeBlockAsync(
         InlineCodeBlockNode inlineCodeBlock,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         _buffer.Append(
             // lang=html
@@ -156,7 +171,8 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
 
     protected override ValueTask VisitMultiLineCodeBlockAsync(
         MultiLineCodeBlockNode multiLineCodeBlock,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         var highlightClass = !string.IsNullOrWhiteSpace(multiLineCodeBlock.Language)
             ? $"language-{multiLineCodeBlock.Language}"
@@ -174,13 +190,13 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
 
     protected override async ValueTask VisitLinkAsync(
         LinkNode link,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         // Try to extract the message ID if the link points to a Discord message
-        var linkedMessageId = Regex.Match(
-            link.Url,
-            @"^https?://(?:discord|discordapp)\.com/channels/.*?/(\d+)/?$"
-        ).Groups[1].Value;
+        var linkedMessageId = Regex
+            .Match(link.Url, @"^https?://(?:discord|discordapp)\.com/channels/.*?/(\d+)/?$")
+            .Groups[1].Value;
 
         _buffer.Append(
             !string.IsNullOrWhiteSpace(linkedMessageId)
@@ -200,7 +216,8 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
 
     protected override async ValueTask VisitEmojiAsync(
         EmojiNode emoji,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         var emojiImageUrl = Emoji.GetImageUrl(emoji.Id, emoji.Name, emoji.IsAnimated);
         var jumboClass = _isJumbo ? "chatlog__emoji--large" : "";
@@ -218,8 +235,10 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
         );
     }
 
-    protected override async ValueTask VisitMentionAsync(MentionNode mention,
-        CancellationToken cancellationToken = default)
+    protected override async ValueTask VisitMentionAsync(
+        MentionNode mention,
+        CancellationToken cancellationToken = default
+    )
     {
         if (mention.Kind == MentionKind.Everyone)
         {
@@ -294,7 +313,8 @@ internal partial class HtmlMarkdownVisitor : MarkdownVisitor
 
     protected override ValueTask VisitTimestampAsync(
         TimestampNode timestamp,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         var formatted = timestamp.Instant is not null
             ? !string.IsNullOrWhiteSpace(timestamp.Format)
@@ -323,16 +343,24 @@ internal partial class HtmlMarkdownVisitor
         ExportContext context,
         string markdown,
         bool isJumboAllowed = true,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         var nodes = MarkdownParser.Parse(markdown);
 
         var isJumbo =
-            isJumboAllowed &&
-            nodes.All(n => n is EmojiNode || n is TextNode textNode && string.IsNullOrWhiteSpace(textNode.Text));
+            isJumboAllowed
+            && nodes.All(
+                n =>
+                    n is EmojiNode
+                    || n is TextNode textNode && string.IsNullOrWhiteSpace(textNode.Text)
+            );
 
         var buffer = new StringBuilder();
-        await new HtmlMarkdownVisitor(context, buffer, isJumbo).VisitAsync(nodes, cancellationToken);
+        await new HtmlMarkdownVisitor(context, buffer, isJumbo).VisitAsync(
+            nodes,
+            cancellationToken
+        );
 
         return buffer.ToString();
     }

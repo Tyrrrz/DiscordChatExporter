@@ -16,7 +16,8 @@ public static class CollectionExtensions
             yield return (o, i++);
     }
 
-    public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source) where T : class
+    public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source)
+        where T : class
     {
         foreach (var o in source)
         {

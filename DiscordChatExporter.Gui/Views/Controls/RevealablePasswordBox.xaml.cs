@@ -8,7 +8,10 @@ public partial class RevealablePasswordBox
         nameof(Password),
         typeof(string),
         typeof(RevealablePasswordBox),
-        new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault)
+        new FrameworkPropertyMetadata(
+            string.Empty,
+            FrameworkPropertyMetadataOptions.BindsTwoWayByDefault
+        )
     );
 
     public static readonly DependencyProperty IsRevealedProperty = DependencyProperty.Register(

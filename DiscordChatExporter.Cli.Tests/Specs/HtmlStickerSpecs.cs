@@ -32,7 +32,9 @@ public class HtmlStickerSpecs
         );
 
         // Assert
-        var stickerUrl = message.QuerySelector("[title='Yikes'] [data-source]")?.GetAttribute("data-source");
+        var stickerUrl = message
+            .QuerySelector("[title='Yikes'] [data-source]")
+            ?.GetAttribute("data-source");
         stickerUrl.Should().Be("https://cdn.discordapp.com/stickers/816087132447178774.json");
     }
 }

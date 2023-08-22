@@ -17,24 +17,27 @@ public partial record Channel(
     string? IconUrl,
     string? Topic,
     bool IsArchived,
-    Snowflake? LastMessageId) : IHasId
+    Snowflake? LastMessageId
+) : IHasId
 {
     // Used for visual backwards-compatibility with old exports, where
     // channels without a parent (i.e. mostly DM channels) or channels
     // with an inaccessible parent (i.e. inside private categories) had
     // a fallback category created for them.
-    public string Category => Parent?.Name ?? Kind switch
-    {
-        ChannelKind.GuildCategory => "Category",
-        ChannelKind.GuildTextChat => "Text",
-        ChannelKind.DirectTextChat => "Private",
-        ChannelKind.DirectGroupTextChat => "Group",
-        ChannelKind.GuildPrivateThread => "Private Thread",
-        ChannelKind.GuildPublicThread => "Public Thread",
-        ChannelKind.GuildNews => "News",
-        ChannelKind.GuildNewsThread => "News Thread",
-        _ => "Default"
-    };
+    public string Category =>
+        Parent?.Name
+        ?? Kind switch
+        {
+            ChannelKind.GuildCategory => "Category",
+            ChannelKind.GuildTextChat => "Text",
+            ChannelKind.DirectTextChat => "Private",
+            ChannelKind.DirectGroupTextChat => "Group",
+            ChannelKind.GuildPrivateThread => "Private Thread",
+            ChannelKind.GuildPublicThread => "Public Thread",
+            ChannelKind.GuildNews => "News",
+            ChannelKind.GuildNewsThread => "News Thread",
+            _ => "Default"
+        };
 
     // Only needed for WPF data binding. Don't use anywhere else.
     public bool IsVoice => Kind.IsVoice();
@@ -48,44 +51,41 @@ public partial record Channel
         var kind = (ChannelKind)json.GetProperty("type").GetInt32();
 
         var guildId =
-            json.GetPropertyOrNull("guild_id")?.GetNonWhiteSpaceStringOrNull()?.Pipe(Snowflake.Parse) ??
-            Guild.DirectMessages.Id;
+            json.GetPropertyOrNull("guild_id")
+                ?.GetNonWhiteSpaceStringOrNull()
+                ?.Pipe(Snowflake.Parse) ?? Guild.DirectMessages.Id;
 
         var name =
             // Guild channel
-            json.GetPropertyOrNull("name")?.GetNonWhiteSpaceStringOrNull() ??
-
+            json.GetPropertyOrNull("name")?.GetNonWhiteSpaceStringOrNull()
+            ??
             // DM channel
-            json.GetPropertyOrNull("recipients")?
-                .EnumerateArrayOrNull()?
-                .Select(User.Parse)
+            json.GetPropertyOrNull("recipients")
+                ?.EnumerateArrayOrNull()
+                ?.Select(User.Parse)
                 .Select(u => u.DisplayName)
-                .Pipe(s => string.Join(", ", s)) ??
-
+                .Pipe(s => string.Join(", ", s))
+            ??
             // Fallback
             id.ToString();
 
-        var position =
-            positionHint ??
-            json.GetPropertyOrNull("position")?.GetInt32OrNull();
+        var position = positionHint ?? json.GetPropertyOrNull("position")?.GetInt32OrNull();
 
         // Icons can only be set for group DM channels
-        var iconUrl = json
-            .GetPropertyOrNull("icon")?
-            .GetNonWhiteSpaceStringOrNull()?
-            .Pipe(h => ImageCdn.GetChannelIconUrl(id, h));
+        var iconUrl = json.GetPropertyOrNull("icon")
+            ?.GetNonWhiteSpaceStringOrNull()
+            ?.Pipe(h => ImageCdn.GetChannelIconUrl(id, h));
 
         var topic = json.GetPropertyOrNull("topic")?.GetStringOrNull();
 
-        var isArchived = json
-            .GetPropertyOrNull("thread_metadata")?
-            .GetPropertyOrNull("archived")?
-            .GetBooleanOrNull() ?? false;
+        var isArchived =
+            json.GetPropertyOrNull("thread_metadata")
+                ?.GetPropertyOrNull("archived")
+                ?.GetBooleanOrNull() ?? false;
 
-        var lastMessageId = json
-            .GetPropertyOrNull("last_message_id")?
-            .GetNonWhiteSpaceStringOrNull()?
-            .Pipe(Snowflake.Parse);
+        var lastMessageId = json.GetPropertyOrNull("last_message_id")
+            ?.GetNonWhiteSpaceStringOrNull()
+            ?.Pipe(Snowflake.Parse);
 
         return new Channel(
             id,

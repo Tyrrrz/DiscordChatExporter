@@ -2,7 +2,6 @@
 
 namespace DiscordChatExporter.Core.Markdown;
 
-internal record FormattingNode(
-    FormattingKind Kind,
-    IReadOnlyList<MarkdownNode> Children
-) : MarkdownNode, IContainerNode;
+internal record FormattingNode(FormattingKind Kind, IReadOnlyList<MarkdownNode> Children)
+    : MarkdownNode,
+        IContainerNode;

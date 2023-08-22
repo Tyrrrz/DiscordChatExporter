@@ -15,8 +15,7 @@ internal static class HtmlMessageExtensions
 
         var embed = message.Embeds[0];
 
-        return
-            string.Equals(message.Content.Trim(), embed.Url, StringComparison.OrdinalIgnoreCase) &&
-            embed.Kind is EmbedKind.Image or EmbedKind.Gifv;
+        return string.Equals(message.Content.Trim(), embed.Url, StringComparison.OrdinalIgnoreCase)
+            && embed.Kind is EmbedKind.Image or EmbedKind.Gifv;
     }
 }

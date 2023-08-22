@@ -12,9 +12,7 @@ internal class AggregateMatcher<T> : IMatcher<T>
     }
 
     public AggregateMatcher(params IMatcher<T>[] matchers)
-        : this((IReadOnlyList<IMatcher<T>>) matchers)
-    {
-    }
+        : this((IReadOnlyList<IMatcher<T>>)matchers) { }
 
     public ParsedMatch<T>? TryMatch(StringSegment segment)
     {
@@ -31,7 +29,9 @@ internal class AggregateMatcher<T> : IMatcher<T>
                 continue;
 
             // If this match is earlier than previous earliest - replace
-            if (earliestMatch is null || match.Segment.StartIndex < earliestMatch.Segment.StartIndex)
+            if (
+                earliestMatch is null || match.Segment.StartIndex < earliestMatch.Segment.StartIndex
+            )
                 earliestMatch = match;
 
             // If the earliest match starts at the very beginning - break,

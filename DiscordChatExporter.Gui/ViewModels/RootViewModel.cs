@@ -27,7 +27,8 @@ public class RootViewModel : Screen, IHandle<NotificationMessage>, IDisposable
         IEventAggregator eventAggregator,
         DialogManager dialogManager,
         SettingsService settingsService,
-        UpdateService updateService)
+        UpdateService updateService
+    )
     {
         _viewModelFactory = viewModelFactory;
         _dialogManager = dialogManager;
@@ -78,7 +79,8 @@ public class RootViewModel : Screen, IHandle<NotificationMessage>, IDisposable
 
             Notifications.Enqueue(
                 "Update has been downloaded and will be installed when you exit",
-                "INSTALL NOW", () =>
+                "INSTALL NOW",
+                () =>
                 {
                     _updateService.FinalizeUpdate(true);
                     RequestClose();
@@ -115,11 +117,15 @@ public class RootViewModel : Screen, IHandle<NotificationMessage>, IDisposable
         }
 
         // App has just been updated, display the changelog
-        if (_settingsService.LastAppVersion is not null && _settingsService.LastAppVersion != App.Version)
+        if (
+            _settingsService.LastAppVersion is not null
+            && _settingsService.LastAppVersion != App.Version
+        )
         {
             Notifications.Enqueue(
                 $"Successfully updated to {App.Name} v{App.VersionString}",
-                "CHANGELOG", () => ProcessEx.StartShellExecute(App.ChangelogUrl)
+                "CHANGELOG",
+                () => ProcessEx.StartShellExecute(App.ChangelogUrl)
             );
 
             _settingsService.LastAppVersion = App.Version;

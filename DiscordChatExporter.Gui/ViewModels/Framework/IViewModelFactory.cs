@@ -7,7 +7,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Framework;
 public interface IViewModelFactory
 {
     DashboardViewModel CreateDashboardViewModel();
-    
+
     ExportSetupViewModel CreateExportSetupViewModel();
 
     MessageBoxViewModel CreateMessageBoxViewModel();

@@ -41,7 +41,10 @@ public readonly partial record struct FileSize(long TotalBytes)
 
     [ExcludeFromCodeCoverage]
     public override string ToString() =>
-        string.Create(CultureInfo.InvariantCulture, $"{GetLargestWholeNumberValue():0.##} {GetLargestWholeNumberSymbol()}");
+        string.Create(
+            CultureInfo.InvariantCulture,
+            $"{GetLargestWholeNumberValue():0.##} {GetLargestWholeNumberSymbol()}"
+        );
 }
 
 public partial record struct FileSize

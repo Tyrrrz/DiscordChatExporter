@@ -36,9 +36,11 @@ public class HtmlReplySpecs
 
         // Assert
         message.Text().Should().Contain("reply to deleted");
-        message.QuerySelector(".chatlog__reply-link")?.Text().Should().Contain(
-            "Original message was deleted or could not be loaded."
-        );
+        message
+            .QuerySelector(".chatlog__reply-link")
+            ?.Text()
+            .Should()
+            .Contain("Original message was deleted or could not be loaded.");
     }
 
     [Fact]
@@ -54,7 +56,11 @@ public class HtmlReplySpecs
 
         // Assert
         message.Text().Should().Contain("reply to attachment");
-        message.QuerySelector(".chatlog__reply-link")?.Text().Should().Contain("Click to see attachment");
+        message
+            .QuerySelector(".chatlog__reply-link")
+            ?.Text()
+            .Should()
+            .Contain("Click to see attachment");
     }
 
     [Fact]
@@ -84,7 +90,10 @@ public class HtmlReplySpecs
         );
 
         // Assert
-        message.Text().Should().Contain("This is a test message from an announcement channel on another server");
+        message
+            .Text()
+            .Should()
+            .Contain("This is a test message from an announcement channel on another server");
         message.Text().Should().Contain("SERVER");
         message.QuerySelector(".chatlog__reply-link").Should().BeNull();
     }

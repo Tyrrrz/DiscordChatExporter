@@ -4,11 +4,7 @@ using JsonExtensions.Reading;
 namespace DiscordChatExporter.Core.Discord.Data.Embeds;
 
 // https://discord.com/developers/docs/resources/channel#embed-object-embed-author-structure
-public record EmbedAuthor(
-    string? Name,
-    string? Url,
-    string? IconUrl,
-    string? IconProxyUrl)
+public record EmbedAuthor(string? Name, string? Url, string? IconUrl, string? IconProxyUrl)
 {
     public static EmbedAuthor Parse(JsonElement json)
     {

@@ -12,6 +12,6 @@ internal static class Secrets
         .Build();
 
     public static string DiscordToken =>
-        Configuration["DISCORD_TOKEN"] ??
-        throw new InvalidOperationException("Discord token not provided for tests.");
+        Configuration["DISCORD_TOKEN"]
+        ?? throw new InvalidOperationException("Discord token not provided for tests.");
 }

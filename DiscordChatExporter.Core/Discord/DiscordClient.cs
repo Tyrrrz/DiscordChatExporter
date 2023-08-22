@@ -30,48 +30,46 @@ public class DiscordClient
     private async ValueTask<HttpResponseMessage> GetResponseAsync(
         string url,
         TokenKind tokenKind,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
-        return await Http.ResponseResiliencePolicy.ExecuteAsync(async innerCancellationToken =>
-        {
-            using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, url));
-
-            // Don't validate because the token can have special characters
-            // https://github.com/Tyrrrz/DiscordChatExporter/issues/828
-            request.Headers.TryAddWithoutValidation(
-                "Authorization",
-                tokenKind == TokenKind.Bot
-                    ? $"Bot {_token}"
-                    : _token
-            );
-
-            var response = await Http.Client.SendAsync(
-                request,
-                HttpCompletionOption.ResponseHeadersRead,
-                innerCancellationToken
-            );
-
-            // If this was the last request available before hitting the rate limit,
-            // wait out the reset time so that future requests can succeed.
-            // This may add an unnecessary delay in case the user doesn't intend to
-            // make any more requests, but implementing a smarter solution would
-            // require properly keeping track of Discord's global/per-route/per-resource
-            // rate limits and that's just way too much effort.
-            // https://discord.com/developers/docs/topics/rate-limits
-            var remainingRequestCount = response
-                .Headers
-                .TryGetValue("X-RateLimit-Remaining")?
-                .Pipe(s => int.Parse(s, CultureInfo.InvariantCulture));
-
-            var resetAfterDelay = response
-                .Headers
-                .TryGetValue("X-RateLimit-Reset-After")?
-                .Pipe(s => double.Parse(s, CultureInfo.InvariantCulture))
-                .Pipe(TimeSpan.FromSeconds);
-
-            if (remainingRequestCount <= 0 && resetAfterDelay is not null)
+        return await Http.ResponseResiliencePolicy.ExecuteAsync(
+            async innerCancellationToken =>
             {
-                var delay =
+                using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, url));
+
+                // Don't validate because the token can have special characters
+                // https://github.com/Tyrrrz/DiscordChatExporter/issues/828
+                request.Headers.TryAddWithoutValidation(
+                    "Authorization",
+                    tokenKind == TokenKind.Bot ? $"Bot {_token}" : _token
+                );
+
+                var response = await Http.Client.SendAsync(
+                    request,
+                    HttpCompletionOption.ResponseHeadersRead,
+                    innerCancellationToken
+                );
+
+                // If this was the last request available before hitting the rate limit,
+                // wait out the reset time so that future requests can succeed.
+                // This may add an unnecessary delay in case the user doesn't intend to
+                // make any more requests, but implementing a smarter solution would
+                // require properly keeping track of Discord's global/per-route/per-resource
+                // rate limits and that's just way too much effort.
+                // https://discord.com/developers/docs/topics/rate-limits
+                var remainingRequestCount = response.Headers
+                    .TryGetValue("X-RateLimit-Remaining")
+                    ?.Pipe(s => int.Parse(s, CultureInfo.InvariantCulture));
+
+                var resetAfterDelay = response.Headers
+                    .TryGetValue("X-RateLimit-Reset-After")
+                    ?.Pipe(s => double.Parse(s, CultureInfo.InvariantCulture))
+                    .Pipe(TimeSpan.FromSeconds);
+
+                if (remainingRequestCount <= 0 && resetAfterDelay is not null)
+                {
+                    var delay =
                     // Adding a small buffer to the reset time reduces the chance of getting
                     // rate limited again, because it allows for more requests to be released.
                     (resetAfterDelay.Value + TimeSpan.FromSeconds(1))
@@ -79,14 +77,18 @@ public class DiscordClient
                     // is not actually enforced by the server. So we cap it at a reasonable value.
                     .Clamp(TimeSpan.Zero, TimeSpan.FromSeconds(60));
 
-                await Task.Delay(delay, innerCancellationToken);
-            }
+                    await Task.Delay(delay, innerCancellationToken);
+                }
 
-            return response;
-        }, cancellationToken);
+                return response;
+            },
+            cancellationToken
+        );
     }
 
-    private async ValueTask<TokenKind> GetTokenKindAsync(CancellationToken cancellationToken = default)
+    private async ValueTask<TokenKind> GetTokenKindAsync(
+        CancellationToken cancellationToken = default
+    )
     {
         // Try authenticating as a user
         using var userResponse = await GetResponseAsync(
@@ -113,7 +115,8 @@ public class DiscordClient
 
     private async ValueTask<HttpResponseMessage> GetResponseAsync(
         string url,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         var tokenKind = _resolvedTokenKind ??= await GetTokenKindAsync(cancellationToken);
         return await GetResponseAsync(url, tokenKind, cancellationToken);
@@ -121,7 +124,8 @@ public class DiscordClient
 
     private async ValueTask<JsonElement> GetJsonResponseAsync(
         string url,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         using var response = await GetResponseAsync(url, cancellationToken);
 
@@ -129,26 +133,30 @@ public class DiscordClient
         {
             throw response.StatusCode switch
             {
-                HttpStatusCode.Unauthorized => throw new DiscordChatExporterException(
-                    "Authentication token is invalid.",
-                    true
-                ),
+                HttpStatusCode.Unauthorized
+                    => throw new DiscordChatExporterException(
+                        "Authentication token is invalid.",
+                        true
+                    ),
 
-                HttpStatusCode.Forbidden => throw new DiscordChatExporterException(
-                    $"Request to '{url}' failed: forbidden."
-                ),
+                HttpStatusCode.Forbidden
+                    => throw new DiscordChatExporterException(
+                        $"Request to '{url}' failed: forbidden."
+                    ),
 
-                HttpStatusCode.NotFound => throw new DiscordChatExporterException(
-                    $"Request to '{url}' failed: not found."
-                ),
+                HttpStatusCode.NotFound
+                    => throw new DiscordChatExporterException(
+                        $"Request to '{url}' failed: not found."
+                    ),
 
-                _ => throw new DiscordChatExporterException(
-                    $"""
+                _
+                    => throw new DiscordChatExporterException(
+                        $"""
                     Request to '{url}' failed: {response.StatusCode.ToString().ToSpaceSeparatedWords().ToLowerInvariant()}.
                     Response content: {await response.Content.ReadAsStringAsync(cancellationToken)}
                     """,
-                    true
-                )
+                        true
+                    )
             };
         }
 
@@ -157,7 +165,8 @@ public class DiscordClient
 
     private async ValueTask<JsonElement?> TryGetJsonResponseAsync(
         string url,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         using var response = await GetResponseAsync(url, cancellationToken);
         return response.IsSuccessStatusCode
@@ -167,14 +176,16 @@ public class DiscordClient
 
     public async ValueTask<User?> TryGetUserAsync(
         Snowflake userId,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         var response = await TryGetJsonResponseAsync($"users/{userId}", cancellationToken);
         return response?.Pipe(User.Parse);
     }
 
     public async IAsyncEnumerable<Guild> GetUserGuildsAsync(
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        [EnumeratorCancellation] CancellationToken cancellationToken = default
+    )
     {
         yield return Guild.DirectMessages;
 
@@ -206,7 +217,8 @@ public class DiscordClient
 
     public async ValueTask<Guild> GetGuildAsync(
         Snowflake guildId,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         if (guildId == Guild.DirectMessages.Id)
             return Guild.DirectMessages;
@@ -217,7 +229,8 @@ public class DiscordClient
 
     public async IAsyncEnumerable<Channel> GetGuildChannelsAsync(
         Snowflake guildId,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        [EnumeratorCancellation] CancellationToken cancellationToken = default
+    )
     {
         if (guildId == Guild.DirectMessages.Id)
         {
@@ -227,7 +240,10 @@ public class DiscordClient
         }
         else
         {
-            var response = await GetJsonResponseAsync($"guilds/{guildId}/channels", cancellationToken);
+            var response = await GetJsonResponseAsync(
+                $"guilds/{guildId}/channels",
+                cancellationToken
+            );
 
             var channelsJson = response
                 .EnumerateArray()
@@ -247,9 +263,9 @@ public class DiscordClient
             foreach (var channelJson in channelsJson)
             {
                 var parent = channelJson
-                    .GetPropertyOrNull("parent_id")?
-                    .GetNonWhiteSpaceStringOrNull()?
-                    .Pipe(Snowflake.Parse)
+                    .GetPropertyOrNull("parent_id")
+                    ?.GetNonWhiteSpaceStringOrNull()
+                    ?.Pipe(Snowflake.Parse)
                     .Pipe(parentsById.GetValueOrDefault);
 
                 yield return Channel.Parse(channelJson, parent, position);
@@ -261,7 +277,8 @@ public class DiscordClient
     public async IAsyncEnumerable<Channel> GetGuildThreadsAsync(
         Snowflake guildId,
         bool includeArchived = false,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        [EnumeratorCancellation] CancellationToken cancellationToken = default
+    )
     {
         if (guildId == Guild.DirectMessages.Id)
             yield break;
@@ -289,7 +306,9 @@ public class DiscordClient
                     if (response is null)
                         break;
 
-                    foreach (var threadJson in response.Value.GetProperty("threads").EnumerateArray())
+                    foreach (
+                        var threadJson in response.Value.GetProperty("threads").EnumerateArray()
+                    )
                     {
                         yield return Channel.Parse(threadJson, channel);
                         currentOffset++;
@@ -319,7 +338,9 @@ public class DiscordClient
                         if (response is null)
                             break;
 
-                        foreach (var threadJson in response.Value.GetProperty("threads").EnumerateArray())
+                        foreach (
+                            var threadJson in response.Value.GetProperty("threads").EnumerateArray()
+                        )
                         {
                             yield return Channel.Parse(threadJson, channel);
                             currentOffset++;
@@ -338,13 +359,16 @@ public class DiscordClient
             {
                 var parentsById = channels.ToDictionary(c => c.Id);
 
-                var response = await GetJsonResponseAsync($"guilds/{guildId}/threads/active", cancellationToken);
+                var response = await GetJsonResponseAsync(
+                    $"guilds/{guildId}/threads/active",
+                    cancellationToken
+                );
                 foreach (var threadJson in response.GetProperty("threads").EnumerateArray())
                 {
                     var parent = threadJson
-                        .GetPropertyOrNull("parent_id")?
-                        .GetNonWhiteSpaceStringOrNull()?
-                        .Pipe(Snowflake.Parse)
+                        .GetPropertyOrNull("parent_id")
+                        ?.GetNonWhiteSpaceStringOrNull()
+                        ?.Pipe(Snowflake.Parse)
                         .Pipe(parentsById.GetValueOrDefault);
 
                     yield return Channel.Parse(threadJson, parent);
@@ -384,7 +408,8 @@ public class DiscordClient
 
     public async IAsyncEnumerable<Role> GetGuildRolesAsync(
         Snowflake guildId,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        [EnumeratorCancellation] CancellationToken cancellationToken = default
+    )
     {
         if (guildId == Guild.DirectMessages.Id)
             yield break;
@@ -397,18 +422,23 @@ public class DiscordClient
     public async ValueTask<Member?> TryGetGuildMemberAsync(
         Snowflake guildId,
         Snowflake memberId,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         if (guildId == Guild.DirectMessages.Id)
             return null;
 
-        var response = await TryGetJsonResponseAsync($"guilds/{guildId}/members/{memberId}", cancellationToken);
+        var response = await TryGetJsonResponseAsync(
+            $"guilds/{guildId}/members/{memberId}",
+            cancellationToken
+        );
         return response?.Pipe(j => Member.Parse(j, guildId));
     }
 
     public async ValueTask<Invite?> TryGetInviteAsync(
         string code,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         var response = await TryGetJsonResponseAsync($"invites/{code}", cancellationToken);
         return response?.Pipe(Invite.Parse);
@@ -416,14 +446,15 @@ public class DiscordClient
 
     public async ValueTask<Channel> GetChannelAsync(
         Snowflake channelId,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         var response = await GetJsonResponseAsync($"channels/{channelId}", cancellationToken);
 
         var parentId = response
-            .GetPropertyOrNull("parent_id")?
-            .GetNonWhiteSpaceStringOrNull()?
-            .Pipe(Snowflake.Parse);
+            .GetPropertyOrNull("parent_id")
+            ?.GetNonWhiteSpaceStringOrNull()
+            ?.Pipe(Snowflake.Parse);
 
         try
         {
@@ -445,7 +476,8 @@ public class DiscordClient
     private async ValueTask<Message?> TryGetLastMessageAsync(
         Snowflake channelId,
         Snowflake? before = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         var url = new UrlBuilder()
             .SetPath($"channels/{channelId}/messages")
@@ -462,7 +494,8 @@ public class DiscordClient
         Snowflake? after = null,
         Snowflake? before = null,
         IProgress<Percentage>? progress = null,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        [EnumeratorCancellation] CancellationToken cancellationToken = default
+    )
     {
         // Get the last message in the specified range, so we can later calculate the
         // progress based on the difference between message timestamps.
@@ -511,13 +544,15 @@ public class DiscordClient
                     var exportedDuration = (message.Timestamp - firstMessage.Timestamp).Duration();
                     var totalDuration = (lastMessage.Timestamp - firstMessage.Timestamp).Duration();
 
-                    progress.Report(Percentage.FromFraction(
-                        // Avoid division by zero if all messages have the exact same timestamp
-                        // (which happens when there's only one message in the channel)
-                        totalDuration > TimeSpan.Zero
-                            ? exportedDuration / totalDuration
-                            : 1
-                    ));
+                    progress.Report(
+                        Percentage.FromFraction(
+                            // Avoid division by zero if all messages have the exact same timestamp
+                            // (which happens when there's only one message in the channel)
+                            totalDuration > TimeSpan.Zero
+                                ? exportedDuration / totalDuration
+                                : 1
+                        )
+                    );
                 }
 
                 yield return message;
@@ -530,7 +565,8 @@ public class DiscordClient
         Snowflake channelId,
         Snowflake messageId,
         Emoji emoji,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        [EnumeratorCancellation] CancellationToken cancellationToken = default
+    )
     {
         var reactionName = emoji.Id is not null
             // Custom emoji
@@ -542,7 +578,9 @@ public class DiscordClient
         while (true)
         {
             var url = new UrlBuilder()
-                .SetPath($"channels/{channelId}/messages/{messageId}/reactions/{Uri.EscapeDataString(reactionName)}")
+                .SetPath(
+                    $"channels/{channelId}/messages/{messageId}/reactions/{Uri.EscapeDataString(reactionName)}"
+                )
                 .SetQueryParameter("limit", "100")
                 .SetQueryParameter("after", currentAfter.ToString())
                 .Build();

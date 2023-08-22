@@ -31,8 +31,6 @@ internal class RegexMatcher<T> : IMatcher<T>
         var segmentMatch = segment.Relocate(match);
         var value = _transform(segmentMatch, match);
 
-        return value is not null
-            ? new ParsedMatch<T>(segmentMatch, value)
-            : null;
+        return value is not null ? new ParsedMatch<T>(segmentMatch, value) : null;
     }
 }

@@ -8,11 +8,11 @@
 
   <ItemGroup>
     <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Include="*.secret" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="1.0.4" />
+    <PackageReference Include="CSharpier.MsBuild" Version="0.25.0" PrivateAssets="all" />
     <PackageReference Include="FluentAssertions" Version="6.11.0" />
     <PackageReference Include="GitHubActionsTestLogger" Version="2.3.2" PrivateAssets="all" />
     <PackageReference Include="JsonExtensions" Version="1.2.0" />

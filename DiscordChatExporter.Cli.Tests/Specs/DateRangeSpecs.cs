@@ -34,8 +34,7 @@ public class DateRangeSpecs
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        var timestamps = Json
-            .Parse(await File.ReadAllTextAsync(file.Path))
+        var timestamps = Json.Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("timestamp").GetDateTimeOffset())
@@ -43,21 +42,28 @@ public class DateRangeSpecs
 
         timestamps.All(t => t > after).Should().BeTrue();
 
-        timestamps.Should().BeEquivalentTo(new[]
-        {
-            new DateTimeOffset(2021, 07, 24, 13, 49, 13, TimeSpan.Zero),
-            new DateTimeOffset(2021, 07, 24, 14, 52, 38, TimeSpan.Zero),
-            new DateTimeOffset(2021, 07, 24, 14, 52, 39, TimeSpan.Zero),
-            new DateTimeOffset(2021, 07, 24, 14, 52, 40, TimeSpan.Zero),
-            new DateTimeOffset(2021, 09, 08, 14, 26, 35, TimeSpan.Zero)
-        }, o =>
-        {
-            return o
-                .Using<DateTimeOffset>(ctx =>
-                    ctx.Subject.Should().BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1))
-                )
-                .WhenTypeIs<DateTimeOffset>();
-        });
+        timestamps
+            .Should()
+            .BeEquivalentTo(
+                new[]
+                {
+                    new DateTimeOffset(2021, 07, 24, 13, 49, 13, TimeSpan.Zero),
+                    new DateTimeOffset(2021, 07, 24, 14, 52, 38, TimeSpan.Zero),
+                    new DateTimeOffset(2021, 07, 24, 14, 52, 39, TimeSpan.Zero),
+                    new DateTimeOffset(2021, 07, 24, 14, 52, 40, TimeSpan.Zero),
+                    new DateTimeOffset(2021, 09, 08, 14, 26, 35, TimeSpan.Zero)
+                },
+                o =>
+                {
+                    return o.Using<DateTimeOffset>(
+                            ctx =>
+                                ctx.Subject
+                                    .Should()
+                                    .BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1))
+                        )
+                        .WhenTypeIs<DateTimeOffset>();
+                }
+            );
     }
 
     [Fact]
@@ -78,8 +84,7 @@ public class DateRangeSpecs
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        var timestamps = Json
-            .Parse(await File.ReadAllTextAsync(file.Path))
+        var timestamps = Json.Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("timestamp").GetDateTimeOffset())
@@ -87,19 +92,26 @@ public class DateRangeSpecs
 
         timestamps.All(t => t < before).Should().BeTrue();
 
-        timestamps.Should().BeEquivalentTo(new[]
-        {
-            new DateTimeOffset(2021, 07, 19, 13, 34, 18, TimeSpan.Zero),
-            new DateTimeOffset(2021, 07, 19, 15, 58, 48, TimeSpan.Zero),
-            new DateTimeOffset(2021, 07, 19, 17, 23, 58, TimeSpan.Zero)
-        }, o =>
-        {
-            return o
-                .Using<DateTimeOffset>(ctx =>
-                    ctx.Subject.Should().BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1))
-                )
-                .WhenTypeIs<DateTimeOffset>();
-        });
+        timestamps
+            .Should()
+            .BeEquivalentTo(
+                new[]
+                {
+                    new DateTimeOffset(2021, 07, 19, 13, 34, 18, TimeSpan.Zero),
+                    new DateTimeOffset(2021, 07, 19, 15, 58, 48, TimeSpan.Zero),
+                    new DateTimeOffset(2021, 07, 19, 17, 23, 58, TimeSpan.Zero)
+                },
+                o =>
+                {
+                    return o.Using<DateTimeOffset>(
+                            ctx =>
+                                ctx.Subject
+                                    .Should()
+                                    .BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1))
+                        )
+                        .WhenTypeIs<DateTimeOffset>();
+                }
+            );
     }
 
     [Fact]
@@ -122,8 +134,7 @@ public class DateRangeSpecs
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        var timestamps = Json
-            .Parse(await File.ReadAllTextAsync(file.Path))
+        var timestamps = Json.Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("timestamp").GetDateTimeOffset())
@@ -131,19 +142,26 @@ public class DateRangeSpecs
 
         timestamps.All(t => t < before && t > after).Should().BeTrue();
 
-        timestamps.Should().BeEquivalentTo(new[]
-        {
-            new DateTimeOffset(2021, 07, 24, 13, 49, 13, TimeSpan.Zero),
-            new DateTimeOffset(2021, 07, 24, 14, 52, 38, TimeSpan.Zero),
-            new DateTimeOffset(2021, 07, 24, 14, 52, 39, TimeSpan.Zero),
-            new DateTimeOffset(2021, 07, 24, 14, 52, 40, TimeSpan.Zero)
-        }, o =>
-        {
-            return o
-                .Using<DateTimeOffset>(ctx =>
-                    ctx.Subject.Should().BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1))
-                )
-                .WhenTypeIs<DateTimeOffset>();
-        });
+        timestamps
+            .Should()
+            .BeEquivalentTo(
+                new[]
+                {
+                    new DateTimeOffset(2021, 07, 24, 13, 49, 13, TimeSpan.Zero),
+                    new DateTimeOffset(2021, 07, 24, 14, 52, 38, TimeSpan.Zero),
+                    new DateTimeOffset(2021, 07, 24, 14, 52, 39, TimeSpan.Zero),
+                    new DateTimeOffset(2021, 07, 24, 14, 52, 40, TimeSpan.Zero)
+                },
+                o =>
+                {
+                    return o.Using<DateTimeOffset>(
+                            ctx =>
+                                ctx.Subject
+                                    .Should()
+                                    .BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1))
+                        )
+                        .WhenTypeIs<DateTimeOffset>();
+                }
+            );
     }
 }

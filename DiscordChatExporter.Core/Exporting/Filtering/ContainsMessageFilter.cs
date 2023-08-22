@@ -17,25 +17,21 @@ internal class ContainsMessageFilter : MessageFilter
     // parentheses are not considered word characters.
     // https://github.com/Tyrrrz/DiscordChatExporter/issues/909
     private bool IsMatch(string? content) =>
-        !string.IsNullOrWhiteSpace(content) &&
-        Regex.IsMatch(
+        !string.IsNullOrWhiteSpace(content)
+        && Regex.IsMatch(
             content,
-            @"(?:\b|\s|^)" +
-            Regex.Escape(_text) +
-            @"(?:\b|\s|$)",
+            @"(?:\b|\s|^)" + Regex.Escape(_text) + @"(?:\b|\s|$)",
             RegexOptions.IgnoreCase | RegexOptions.CultureInvariant
         );
 
     public override bool IsMatch(Message message) =>
-        IsMatch(message.Content) ||
-        message.Embeds.Any(e =>
-            IsMatch(e.Title) ||
-            IsMatch(e.Author?.Name) ||
-            IsMatch(e.Description) ||
-            IsMatch(e.Footer?.Text) ||
-            e.Fields.Any(f =>
-                IsMatch(f.Name) ||
-                IsMatch(f.Value)
-            )
+        IsMatch(message.Content)
+        || message.Embeds.Any(
+            e =>
+                IsMatch(e.Title)
+                || IsMatch(e.Author?.Name)
+                || IsMatch(e.Description)
+                || IsMatch(e.Footer?.Text)
+                || e.Fields.Any(f => IsMatch(f.Name) || IsMatch(f.Value))
         );
 }

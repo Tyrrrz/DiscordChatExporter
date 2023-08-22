@@ -37,11 +37,18 @@ internal partial class MessageExporter : IAsyncDisposable
         }
     }
 
-    private async ValueTask<MessageWriter> GetWriterAsync(CancellationToken cancellationToken = default)
+    private async ValueTask<MessageWriter> GetWriterAsync(
+        CancellationToken cancellationToken = default
+    )
     {
         // Ensure that the partition limit has not been reached
-        if (_writer is not null &&
-            _context.Request.PartitionLimit.IsReached(_writer.MessagesWritten, _writer.BytesWritten))
+        if (
+            _writer is not null
+            && _context.Request.PartitionLimit.IsReached(
+                _writer.MessagesWritten,
+                _writer.BytesWritten
+            )
+        )
         {
             await ResetWriterAsync(cancellationToken);
             _partitionIndex++;
@@ -60,7 +67,10 @@ internal partial class MessageExporter : IAsyncDisposable
         return _writer = writer;
     }
 
-    public async ValueTask ExportMessageAsync(Message message, CancellationToken cancellationToken = default)
+    public async ValueTask ExportMessageAsync(
+        Message message,
+        CancellationToken cancellationToken = default
+    )
     {
         var writer = await GetWriterAsync(cancellationToken);
         await writer.WriteMessageAsync(message, cancellationToken);
@@ -84,22 +94,26 @@ internal partial class MessageExporter
         var fileName = $"{fileNameWithoutExt} [part {partitionIndex + 1}]{fileExt}";
         var dirPath = Path.GetDirectoryName(baseFilePath);
 
-        return !string.IsNullOrWhiteSpace(dirPath)
-            ? Path.Combine(dirPath, fileName)
-            : fileName;
+        return !string.IsNullOrWhiteSpace(dirPath) ? Path.Combine(dirPath, fileName) : fileName;
     }
 
     private static MessageWriter CreateMessageWriter(
         string filePath,
         ExportFormat format,
-        ExportContext context) =>
+        ExportContext context
+    ) =>
         format switch
         {
             ExportFormat.PlainText => new PlainTextMessageWriter(File.Create(filePath), context),
             ExportFormat.Csv => new CsvMessageWriter(File.Create(filePath), context),
             ExportFormat.HtmlDark => new HtmlMessageWriter(File.Create(filePath), context, "Dark"),
-            ExportFormat.HtmlLight => new HtmlMessageWriter(File.Create(filePath), context, "Light"),
+            ExportFormat.HtmlLight
+                => new HtmlMessageWriter(File.Create(filePath), context, "Light"),
             ExportFormat.Json => new JsonMessageWriter(File.Create(filePath), context),
-            _ => throw new ArgumentOutOfRangeException(nameof(format), $"Unknown export format '{format}'.")
+            _
+                => throw new ArgumentOutOfRangeException(
+                    nameof(format),
+                    $"Unknown export format '{format}'."
+                )
         };
 }

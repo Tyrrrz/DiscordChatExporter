@@ -31,8 +31,7 @@ public class SelfContainedSpecs
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        Html
-            .Parse(await File.ReadAllTextAsync(filePath))
+        Html.Parse(await File.ReadAllTextAsync(filePath))
             .QuerySelectorAll("body [src]")
             .Select(e => e.GetAttribute("src")!)
             .Select(f => Path.GetFullPath(f, dir.Path))

@@ -11,9 +11,7 @@ public static class BinaryExtensions
 
         foreach (var b in data)
         {
-            buffer.Append(
-                b.ToString(isUpperCase ? "X2" : "x2", CultureInfo.InvariantCulture)
-            );
+            buffer.Append(b.ToString(isUpperCase ? "X2" : "x2", CultureInfo.InvariantCulture));
         }
 
         return buffer.ToString();

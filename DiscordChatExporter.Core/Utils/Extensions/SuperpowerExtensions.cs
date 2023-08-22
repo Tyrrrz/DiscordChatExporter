@@ -16,11 +16,12 @@ public static class SuperpowerExtensions
     // Only used for debugging while writing Superpower parsers.
     // From https://twitter.com/nblumhardt/status/1389349059786264578
     [ExcludeFromCodeCoverage]
-    public static TextParser<T> Log<T>(this TextParser<T> parser, string description) => i =>
-    {
-        Console.WriteLine($"Trying {description} ->");
-        var r = parser(i);
-        Console.WriteLine($"Result was {r}");
-        return r;
-    };
+    public static TextParser<T> Log<T>(this TextParser<T> parser, string description) =>
+        i =>
+        {
+            Console.WriteLine($"Trying {description} ->");
+            var r = parser(i);
+            Console.WriteLine($"Result was {r}");
+            return r;
+        };
 }

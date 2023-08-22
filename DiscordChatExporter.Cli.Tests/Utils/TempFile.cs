@@ -9,8 +9,7 @@ internal partial class TempFile : IDisposable
 {
     public string Path { get; }
 
-    public TempFile(string path) =>
-        Path = path;
+    public TempFile(string path) => Path = path;
 
     public void Dispose()
     {
@@ -18,9 +17,7 @@ internal partial class TempFile : IDisposable
         {
             File.Delete(Path);
         }
-        catch (FileNotFoundException)
-        {
-        }
+        catch (FileNotFoundException) { }
     }
 }
 
@@ -29,16 +26,14 @@ internal partial class TempFile
     public static TempFile Create()
     {
         var dirPath = PathEx.Combine(
-            PathEx.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? Directory.GetCurrentDirectory(),
+            PathEx.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
+                ?? Directory.GetCurrentDirectory(),
             "Temp"
         );
 
         Directory.CreateDirectory(dirPath);
 
-        var filePath = PathEx.Combine(
-            dirPath,
-            Guid.NewGuid() + ".tmp"
-        );
+        var filePath = PathEx.Combine(dirPath, Guid.NewGuid() + ".tmp");
 
         return new TempFile(filePath);
     }

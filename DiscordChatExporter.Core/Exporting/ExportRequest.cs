@@ -54,7 +54,8 @@ public partial class ExportRequest
         bool shouldFormatMarkdown,
         bool shouldDownloadAssets,
         bool shouldReuseAssets,
-        string dateFormat)
+        string dateFormat
+    )
     {
         Guild = guild;
         Channel = channel;
@@ -68,25 +69,12 @@ public partial class ExportRequest
         ShouldReuseAssets = shouldReuseAssets;
         DateFormat = dateFormat;
 
-        OutputFilePath = GetOutputBaseFilePath(
-            Guild,
-            Channel,
-            outputPath,
-            Format,
-            After,
-            Before
-        );
+        OutputFilePath = GetOutputBaseFilePath(Guild, Channel, outputPath, Format, After, Before);
 
         OutputDirPath = Path.GetDirectoryName(OutputFilePath)!;
 
         AssetsDirPath = !string.IsNullOrWhiteSpace(assetsDirPath)
-            ? FormatPath(
-                assetsDirPath,
-                Guild,
-                Channel,
-                After,
-                Before
-            )
+            ? FormatPath(assetsDirPath, Guild, Channel, After, Before)
             : $"{OutputFilePath}_Files{Path.DirectorySeparatorChar}";
     }
 }
@@ -98,7 +86,8 @@ public partial class ExportRequest
         Channel channel,
         ExportFormat format,
         Snowflake? after = null,
-        Snowflake? before = null)
+        Snowflake? before = null
+    )
     {
         var buffer = new StringBuilder();
 
@@ -113,7 +102,9 @@ public partial class ExportRequest
             // Both 'after' and 'before' are set
             if (after is not null && before is not null)
             {
-                buffer.Append($"{after.Value.ToDate():yyyy-MM-dd} to {before.Value.ToDate():yyyy-MM-dd}");
+                buffer.Append(
+                    $"{after.Value.ToDate():yyyy-MM-dd} to {before.Value.ToDate():yyyy-MM-dd}"
+                );
             }
             // Only 'after' is set
             else if (after is not null)
@@ -140,27 +131,41 @@ public partial class ExportRequest
         Guild guild,
         Channel channel,
         Snowflake? after,
-        Snowflake? before)
+        Snowflake? before
+    )
     {
         return Regex.Replace(
             path,
             "%.",
-            m => PathEx.EscapeFileName(m.Value switch
-            {
-                "%g" => guild.Id.ToString(),
-                "%G" => guild.Name,
-                "%t" => channel.Parent?.Id.ToString() ?? "",
-                "%T" => channel.Parent?.Name ?? "",
-                "%c" => channel.Id.ToString(),
-                "%C" => channel.Name,
-                "%p" => channel.Position?.ToString(CultureInfo.InvariantCulture) ?? "0",
-                "%P" => channel.Parent?.Position?.ToString(CultureInfo.InvariantCulture) ?? "0",
-                "%a" => after?.ToDate().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) ?? "",
-                "%b" => before?.ToDate().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) ?? "",
-                "%d" => DateTimeOffset.Now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
-                "%%" => "%",
-                _ => m.Value
-            })
+            m =>
+                PathEx.EscapeFileName(
+                    m.Value switch
+                    {
+                        "%g" => guild.Id.ToString(),
+                        "%G" => guild.Name,
+                        "%t" => channel.Parent?.Id.ToString() ?? "",
+                        "%T" => channel.Parent?.Name ?? "",
+                        "%c" => channel.Id.ToString(),
+                        "%C" => channel.Name,
+                        "%p" => channel.Position?.ToString(CultureInfo.InvariantCulture) ?? "0",
+                        "%P"
+                            => channel.Parent?.Position?.ToString(CultureInfo.InvariantCulture)
+                                ?? "0",
+                        "%a"
+                            => after?.ToDate().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+                                ?? "",
+                        "%b"
+                            => before?.ToDate().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+                                ?? "",
+                        "%d"
+                            => DateTimeOffset.Now.ToString(
+                                "yyyy-MM-dd",
+                                CultureInfo.InvariantCulture
+                            ),
+                        "%%" => "%",
+                        _ => m.Value
+                    }
+                )
         );
     }
 
@@ -170,12 +175,16 @@ public partial class ExportRequest
         string outputPath,
         ExportFormat format,
         Snowflake? after = null,
-        Snowflake? before = null)
+        Snowflake? before = null
+    )
     {
         var actualOutputPath = FormatPath(outputPath, guild, channel, after, before);
 
         // Output is a directory
-        if (Directory.Exists(actualOutputPath) || string.IsNullOrWhiteSpace(Path.GetExtension(actualOutputPath)))
+        if (
+            Directory.Exists(actualOutputPath)
+            || string.IsNullOrWhiteSpace(Path.GetExtension(actualOutputPath))
+        )
         {
             var fileName = GetDefaultOutputFileName(guild, channel, format, after, before);
             return Path.Combine(actualOutputPath, fileName);

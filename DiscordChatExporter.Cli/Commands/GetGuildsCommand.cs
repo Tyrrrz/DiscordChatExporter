@@ -32,9 +32,7 @@ public class GetGuildsCommand : DiscordCommandBase
         foreach (var guild in guilds)
         {
             // Guild ID
-            await console.Output.WriteAsync(
-                guild.Id.ToString().PadRight(guildIdMaxLength, ' ')
-            );
+            await console.Output.WriteAsync(guild.Id.ToString().PadRight(guildIdMaxLength, ' '));
 
             // Separator
             using (console.WithForegroundColor(ConsoleColor.DarkGray))

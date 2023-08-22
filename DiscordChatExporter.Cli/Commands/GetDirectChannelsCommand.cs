@@ -18,7 +18,9 @@ public class GetDirectChannelsCommand : DiscordCommandBase
 
         var cancellationToken = console.RegisterCancellationHandler();
 
-        var channels = (await Discord.GetGuildChannelsAsync(Guild.DirectMessages.Id, cancellationToken))
+        var channels = (
+            await Discord.GetGuildChannelsAsync(Guild.DirectMessages.Id, cancellationToken)
+        )
             .Where(c => c.Kind != ChannelKind.GuildCategory)
             .OrderByDescending(c => c.LastMessageId)
             .ThenBy(c => c.Name)

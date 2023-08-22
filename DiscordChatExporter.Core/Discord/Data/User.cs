@@ -15,18 +15,16 @@ public partial record User(
     int? Discriminator,
     string Name,
     string DisplayName,
-    string AvatarUrl) : IHasId
+    string AvatarUrl
+) : IHasId
 {
-    public string DiscriminatorFormatted => Discriminator is not null
-        ? $"{Discriminator:0000}"
-        : "0000";
+    public string DiscriminatorFormatted =>
+        Discriminator is not null ? $"{Discriminator:0000}" : "0000";
 
     // This effectively represents the user's true identity.
     // In the old system, this is formed from the username and discriminator.
     // In the new system, the username is already the user's unique identifier.
-    public string FullName => Discriminator is not null
-        ? $"{Name}#{DiscriminatorFormatted}"
-        : Name;
+    public string FullName => Discriminator is not null ? $"{Name}#{DiscriminatorFormatted}" : Name;
 }
 
 public partial record User
@@ -36,23 +34,22 @@ public partial record User
         var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
         var isBot = json.GetPropertyOrNull("bot")?.GetBooleanOrNull() ?? false;
 
-        var discriminator = json
-            .GetPropertyOrNull("discriminator")?
-            .GetNonWhiteSpaceStringOrNull()?
-            .Pipe(int.Parse)
+        var discriminator = json.GetPropertyOrNull("discriminator")
+            ?.GetNonWhiteSpaceStringOrNull()
+            ?.Pipe(int.Parse)
             .NullIfDefault();
 
         var name = json.GetProperty("username").GetNonNullString();
-        var displayName = json.GetPropertyOrNull("global_name")?.GetNonWhiteSpaceStringOrNull() ?? name;
+        var displayName =
+            json.GetPropertyOrNull("global_name")?.GetNonWhiteSpaceStringOrNull() ?? name;
 
         var avatarIndex = discriminator % 5 ?? (int)((id.Value >> 22) % 6);
 
         var avatarUrl =
-            json
-                .GetPropertyOrNull("avatar")?
-                .GetNonWhiteSpaceStringOrNull()?
-                .Pipe(h => ImageCdn.GetUserAvatarUrl(id, h)) ??
-            ImageCdn.GetFallbackUserAvatarUrl(avatarIndex);
+            json.GetPropertyOrNull("avatar")
+                ?.GetNonWhiteSpaceStringOrNull()
+                ?.Pipe(h => ImageCdn.GetUserAvatarUrl(id, h))
+            ?? ImageCdn.GetFallbackUserAvatarUrl(avatarIndex);
 
         return new User(id, isBot, discriminator, name, displayName, avatarUrl);
     }

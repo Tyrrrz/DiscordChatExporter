@@ -16,14 +16,13 @@ public class ChannelExporter
     public async ValueTask ExportChannelAsync(
         ExportRequest request,
         IProgress<Percentage>? progress = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         // Check if the channel is empty
         if (request.Channel.LastMessageId is null)
         {
-            throw new DiscordChatExporterException(
-                "Channel does not contain any messages."
-            );
+            throw new DiscordChatExporterException("Channel does not contain any messages.");
         }
 
         // Check if the 'after' boundary is valid
@@ -40,12 +39,15 @@ public class ChannelExporter
 
         // Export messages
         await using var messageExporter = new MessageExporter(context);
-        await foreach (var message in _discord.GetMessagesAsync(
-                           request.Channel.Id,
-                           request.After,
-                           request.Before,
-                           progress,
-                           cancellationToken))
+        await foreach (
+            var message in _discord.GetMessagesAsync(
+                request.Channel.Id,
+                request.After,
+                request.Before,
+                progress,
+                cancellationToken
+            )
+        )
         {
             // Resolve members for referenced users
             foreach (var user in message.GetReferencedUsers())

@@ -14,29 +14,16 @@ namespace DiscordChatExporter.Cli.Commands;
 [Command("channels", Description = "Get the list of channels in a guild.")]
 public class GetChannelsCommand : DiscordCommandBase
 {
-    [CommandOption(
-        "guild",
-        'g',
-        Description = "Guild ID."
-    )]
+    [CommandOption("guild", 'g', Description = "Guild ID.")]
     public required Snowflake GuildId { get; init; }
 
-    [CommandOption(
-        "include-vc",
-        Description = "Include voice channels."
-    )]
+    [CommandOption("include-vc", Description = "Include voice channels.")]
     public bool IncludeVoiceChannels { get; init; } = true;
 
-    [CommandOption(
-        "include-threads",
-        Description = "Include threads."
-    )]
+    [CommandOption("include-threads", Description = "Include threads.")]
     public bool IncludeThreads { get; init; } = false;
 
-    [CommandOption(
-        "include-archived-threads",
-        Description = "Include archived threads."
-    )]
+    [CommandOption("include-archived-threads", Description = "Include archived threads.")]
     public bool IncludeArchivedThreads { get; init; } = false;
 
     public override async ValueTask ExecuteAsync(IConsole console)
@@ -66,7 +53,13 @@ public class GetChannelsCommand : DiscordCommandBase
             .FirstOrDefault();
 
         var threads = IncludeThreads
-            ? (await Discord.GetGuildThreadsAsync(GuildId, IncludeArchivedThreads, cancellationToken))
+            ? (
+                await Discord.GetGuildThreadsAsync(
+                    GuildId,
+                    IncludeArchivedThreads,
+                    cancellationToken
+                )
+            )
                 .OrderBy(c => c.Name)
                 .ToArray()
             : Array.Empty<Channel>();
@@ -116,7 +109,9 @@ public class GetChannelsCommand : DiscordCommandBase
 
                 // Thread status
                 using (console.WithForegroundColor(ConsoleColor.White))
-                    await console.Output.WriteLineAsync(channelThread.IsArchived ? "Archived" : "Active");
+                    await console.Output.WriteLineAsync(
+                        channelThread.IsArchived ? "Archived" : "Active"
+                    );
             }
         }
     }

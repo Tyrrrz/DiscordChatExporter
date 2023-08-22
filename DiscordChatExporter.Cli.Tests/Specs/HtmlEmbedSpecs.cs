@@ -21,15 +21,21 @@ public class HtmlEmbedSpecs
         );
 
         // Assert
-        message.Text().Should().ContainAll(
-            "Embed author",
-            "Embed title",
-            "Embed description",
-            "Field 1", "Value 1",
-            "Field 2", "Value 2",
-            "Field 3", "Value 3",
-            "Embed footer"
-        );
+        message
+            .Text()
+            .Should()
+            .ContainAll(
+                "Embed author",
+                "Embed title",
+                "Embed description",
+                "Field 1",
+                "Value 1",
+                "Field 2",
+                "Value 2",
+                "Field 3",
+                "Value 3",
+                "Embed footer"
+            );
     }
 
     [Fact]
@@ -83,7 +89,12 @@ public class HtmlEmbedSpecs
             .QuerySelectorAll("source")
             .Select(e => e.GetAttribute("src"))
             .WhereNotNull()
-            .Where(s => s.EndsWith("i_am_currently_feeling_slight_displeasure_of_what_you_have_just_sent_lqrem.mp4"))
+            .Where(
+                s =>
+                    s.EndsWith(
+                        "i_am_currently_feeling_slight_displeasure_of_what_you_have_just_sent_lqrem.mp4"
+                    )
+            )
             .Should()
             .ContainSingle();
     }

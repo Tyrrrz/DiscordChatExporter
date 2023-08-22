@@ -14,16 +14,18 @@ public class CsvContentSpecs
         var document = await ExportWrapper.ExportAsCsvAsync(ChannelIds.DateRangeTestCases);
 
         // Assert
-        document.Should().ContainAll(
-            "tyrrrz",
-            "Hello world",
-            "Goodbye world",
-            "Foo bar",
-            "Hurdle Durdle",
-            "One",
-            "Two",
-            "Three",
-            "Yeet"
-        );
+        document
+            .Should()
+            .ContainAll(
+                "tyrrrz",
+                "Hello world",
+                "Goodbye world",
+                "Foo bar",
+                "Hurdle Durdle",
+                "One",
+                "Two",
+                "Three",
+                "Yeet"
+            );
     }
 }

@@ -32,8 +32,7 @@ public class HtmlGroupingSpecs
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        var messageGroups = Html
-            .Parse(await File.ReadAllTextAsync(file.Path))
+        var messageGroups = Html.Parse(await File.ReadAllTextAsync(file.Path))
             .QuerySelectorAll(".chatlog__message-group");
 
         messageGroups.Should().HaveCount(2);
@@ -59,12 +58,6 @@ public class HtmlGroupingSpecs
             .QuerySelectorAll(".chatlog__content")
             .Select(e => e.Text())
             .Should()
-            .ContainInOrder(
-                "Eleventh",
-                "Twelveth",
-                "Thirteenth",
-                "Fourteenth",
-                "Fifteenth"
-            );
+            .ContainInOrder("Eleventh", "Twelveth", "Thirteenth", "Fourteenth", "Fifteenth");
     }
 }

@@ -9,13 +9,18 @@ public class DateTimeOffsetToDateTimeConverter : IValueConverter
 {
     public static DateTimeOffsetToDateTimeConverter Instance { get; } = new();
 
-    public object? Convert(object value, Type targetType, object parameter, CultureInfo culture) => 
+    public object? Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
         value is DateTimeOffset dateTimeOffsetValue
-            ? dateTimeOffsetValue.DateTime 
+            ? dateTimeOffsetValue.DateTime
             : default(DateTime?);
 
-    public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => 
-        value is DateTime dateTimeValue 
+    public object? ConvertBack(
+        object value,
+        Type targetType,
+        object parameter,
+        CultureInfo culture
+    ) =>
+        value is DateTime dateTimeValue
             ? new DateTimeOffset(dateTimeValue)
             : default(DateTimeOffset?);
 }

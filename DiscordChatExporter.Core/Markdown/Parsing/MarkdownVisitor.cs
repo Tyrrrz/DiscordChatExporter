@@ -9,56 +9,63 @@ internal abstract class MarkdownVisitor
 {
     protected virtual ValueTask VisitTextAsync(
         TextNode text,
-        CancellationToken cancellationToken = default) => default;
+        CancellationToken cancellationToken = default
+    ) => default;
 
     protected virtual async ValueTask VisitFormattingAsync(
         FormattingNode formatting,
-        CancellationToken cancellationToken = default) =>
-        await VisitAsync(formatting.Children, cancellationToken);
+        CancellationToken cancellationToken = default
+    ) => await VisitAsync(formatting.Children, cancellationToken);
 
     protected virtual async ValueTask VisitHeadingAsync(
         HeadingNode heading,
-        CancellationToken cancellationToken = default) =>
-        await VisitAsync(heading.Children, cancellationToken);
+        CancellationToken cancellationToken = default
+    ) => await VisitAsync(heading.Children, cancellationToken);
 
     protected virtual async ValueTask VisitListAsync(
         ListNode list,
-        CancellationToken cancellationToken = default) =>
-        await VisitAsync(list.Items, cancellationToken);
+        CancellationToken cancellationToken = default
+    ) => await VisitAsync(list.Items, cancellationToken);
 
     protected virtual async ValueTask VisitListItemAsync(
         ListItemNode listItem,
-        CancellationToken cancellationToken = default) =>
-        await VisitAsync(listItem.Children, cancellationToken);
+        CancellationToken cancellationToken = default
+    ) => await VisitAsync(listItem.Children, cancellationToken);
 
     protected virtual ValueTask VisitInlineCodeBlockAsync(
         InlineCodeBlockNode inlineCodeBlock,
-        CancellationToken cancellationToken = default) => default;
+        CancellationToken cancellationToken = default
+    ) => default;
 
     protected virtual ValueTask VisitMultiLineCodeBlockAsync(
         MultiLineCodeBlockNode multiLineCodeBlock,
-        CancellationToken cancellationToken = default) => default;
+        CancellationToken cancellationToken = default
+    ) => default;
 
     protected virtual async ValueTask VisitLinkAsync(
         LinkNode link,
-        CancellationToken cancellationToken = default) =>
-        await VisitAsync(link.Children, cancellationToken);
+        CancellationToken cancellationToken = default
+    ) => await VisitAsync(link.Children, cancellationToken);
 
     protected virtual ValueTask VisitEmojiAsync(
         EmojiNode emoji,
-        CancellationToken cancellationToken = default) => default;
+        CancellationToken cancellationToken = default
+    ) => default;
 
     protected virtual ValueTask VisitMentionAsync(
         MentionNode mention,
-        CancellationToken cancellationToken = default) => default;
+        CancellationToken cancellationToken = default
+    ) => default;
 
     protected virtual ValueTask VisitTimestampAsync(
         TimestampNode timestamp,
-        CancellationToken cancellationToken = default) => default;
+        CancellationToken cancellationToken = default
+    ) => default;
 
     public async ValueTask VisitAsync(
         MarkdownNode node,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         if (node is TextNode text)
         {
@@ -131,7 +138,8 @@ internal abstract class MarkdownVisitor
 
     public async ValueTask VisitAsync(
         IEnumerable<MarkdownNode> nodes,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         foreach (var node in nodes)
             await VisitAsync(node, cancellationToken);

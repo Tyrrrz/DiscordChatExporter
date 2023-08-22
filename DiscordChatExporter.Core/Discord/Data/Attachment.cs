@@ -15,30 +15,31 @@ public partial record Attachment(
     string? Description,
     int? Width,
     int? Height,
-    FileSize FileSize) : IHasId
+    FileSize FileSize
+) : IHasId
 {
     public string FileExtension => Path.GetExtension(FileName);
 
     public bool IsImage =>
-        string.Equals(FileExtension, ".jpg", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(FileExtension, ".jpeg", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(FileExtension, ".png", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(FileExtension, ".gif", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(FileExtension, ".bmp", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(FileExtension, ".webp", StringComparison.OrdinalIgnoreCase);
+        string.Equals(FileExtension, ".jpg", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(FileExtension, ".jpeg", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(FileExtension, ".png", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(FileExtension, ".gif", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(FileExtension, ".bmp", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(FileExtension, ".webp", StringComparison.OrdinalIgnoreCase);
 
     public bool IsVideo =>
-        string.Equals(FileExtension, ".gifv", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(FileExtension, ".mp4", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(FileExtension, ".webm", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(FileExtension, ".mov", StringComparison.OrdinalIgnoreCase);
+        string.Equals(FileExtension, ".gifv", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(FileExtension, ".mp4", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(FileExtension, ".webm", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(FileExtension, ".mov", StringComparison.OrdinalIgnoreCase);
 
     public bool IsAudio =>
-        string.Equals(FileExtension, ".mp3", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(FileExtension, ".wav", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(FileExtension, ".ogg", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(FileExtension, ".flac", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(FileExtension, ".m4a", StringComparison.OrdinalIgnoreCase);
+        string.Equals(FileExtension, ".mp3", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(FileExtension, ".wav", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(FileExtension, ".ogg", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(FileExtension, ".flac", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(FileExtension, ".m4a", StringComparison.OrdinalIgnoreCase);
 
     public bool IsSpoiler => FileName.StartsWith("SPOILER_", StringComparison.Ordinal);
 }

@@ -49,15 +49,17 @@ public class ExportSetupViewModel : DialogScreen
 
     public string? PartitionLimitValue { get; set; }
 
-    public PartitionLimit PartitionLimit => !string.IsNullOrWhiteSpace(PartitionLimitValue)
-        ? PartitionLimit.Parse(PartitionLimitValue)
-        : PartitionLimit.Null;
+    public PartitionLimit PartitionLimit =>
+        !string.IsNullOrWhiteSpace(PartitionLimitValue)
+            ? PartitionLimit.Parse(PartitionLimitValue)
+            : PartitionLimit.Null;
 
     public string? MessageFilterValue { get; set; }
 
-    public MessageFilter MessageFilter => !string.IsNullOrWhiteSpace(MessageFilterValue)
-        ? MessageFilter.Parse(MessageFilterValue)
-        : MessageFilter.Null;
+    public MessageFilter MessageFilter =>
+        !string.IsNullOrWhiteSpace(MessageFilterValue)
+            ? MessageFilter.Parse(MessageFilterValue)
+            : MessageFilter.Null;
 
     public bool ShouldFormatMarkdown { get; set; }
 
@@ -86,13 +88,13 @@ public class ExportSetupViewModel : DialogScreen
         // Show the "advanced options" section by default if any
         // of the advanced options are set to non-default values.
         IsAdvancedSectionDisplayed =
-            After is not null ||
-            Before is not null ||
-            !string.IsNullOrWhiteSpace(PartitionLimitValue) ||
-            !string.IsNullOrWhiteSpace(MessageFilterValue) ||
-            ShouldDownloadAssets ||
-            ShouldReuseAssets ||
-            !string.IsNullOrWhiteSpace(AssetsDirPath);
+            After is not null
+            || Before is not null
+            || !string.IsNullOrWhiteSpace(PartitionLimitValue)
+            || !string.IsNullOrWhiteSpace(MessageFilterValue)
+            || ShouldDownloadAssets
+            || ShouldReuseAssets
+            || !string.IsNullOrWhiteSpace(AssetsDirPath);
     }
 
     public void ToggleAdvancedSection() => IsAdvancedSectionDisplayed = !IsAdvancedSectionDisplayed;
@@ -161,7 +163,8 @@ public static class ExportSetupViewModelExtensions
     public static ExportSetupViewModel CreateExportSetupViewModel(
         this IViewModelFactory factory,
         Guild guild,
-        IReadOnlyList<Channel> channels)
+        IReadOnlyList<Channel> channels
+    )
     {
         var viewModel = factory.CreateExportSetupViewModel();
 

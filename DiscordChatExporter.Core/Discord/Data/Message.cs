@@ -27,7 +27,8 @@ public partial record Message(
     IReadOnlyList<User> MentionedUsers,
     MessageReference? Reference,
     Message? ReferencedMessage,
-    Interaction? Interaction) : IHasId
+    Interaction? Interaction
+) : IHasId
 {
     public bool IsReplyLike => Kind == MessageKind.Reply || Interaction is not null;
 
@@ -70,22 +71,26 @@ public partial record Message
                 // Find embeds with the same URL that only contain a single image and nothing else
                 var trailingEmbeds = embeds
                     .Skip(i + 1)
-                    .TakeWhile(e =>
-                        e.Url == embed.Url &&
-                        e.Timestamp is null &&
-                        e.Author is null &&
-                        e.Color is null &&
-                        string.IsNullOrWhiteSpace(e.Description) &&
-                        !e.Fields.Any() &&
-                        e.Images.Count == 1 &&
-                        e.Footer is null
+                    .TakeWhile(
+                        e =>
+                            e.Url == embed.Url
+                            && e.Timestamp is null
+                            && e.Author is null
+                            && e.Color is null
+                            && string.IsNullOrWhiteSpace(e.Description)
+                            && !e.Fields.Any()
+                            && e.Images.Count == 1
+                            && e.Footer is null
                     )
                     .ToArray();
 
                 if (trailingEmbeds.Any())
                 {
                     // Concatenate all images into one embed
-                    var images = embed.Images.Concat(trailingEmbeds.SelectMany(e => e.Images)).ToArray();
+                    var images = embed.Images
+                        .Concat(trailingEmbeds.SelectMany(e => e.Images))
+                        .ToArray();
+
                     normalizedEmbeds.Add(embed with { Images = images });
 
                     i += trailingEmbeds.Length;
@@ -108,42 +113,49 @@ public partial record Message
     {
         var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
         var kind = (MessageKind)json.GetProperty("type").GetInt32();
-        var flags = (MessageFlags?)json.GetPropertyOrNull("flags")?.GetInt32OrNull() ?? MessageFlags.None;
+        var flags =
+            (MessageFlags?)json.GetPropertyOrNull("flags")?.GetInt32OrNull() ?? MessageFlags.None;
         var author = json.GetProperty("author").Pipe(User.Parse);
 
         var timestamp = json.GetProperty("timestamp").GetDateTimeOffset();
         var editedTimestamp = json.GetPropertyOrNull("edited_timestamp")?.GetDateTimeOffsetOrNull();
 
-        var callEndedTimestamp = json
-            .GetPropertyOrNull("call")?
-            .GetPropertyOrNull("ended_timestamp")?
-            .GetDateTimeOffsetOrNull();
+        var callEndedTimestamp = json.GetPropertyOrNull("call")
+            ?.GetPropertyOrNull("ended_timestamp")
+            ?.GetDateTimeOffsetOrNull();
 
         var isPinned = json.GetPropertyOrNull("pinned")?.GetBooleanOrNull() ?? false;
         var content = json.GetPropertyOrNull("content")?.GetStringOrNull() ?? "";
 
         var attachments =
-            json.GetPropertyOrNull("attachments")?.EnumerateArrayOrNull()?.Select(Attachment.Parse).ToArray() ??
-            Array.Empty<Attachment>();
+            json.GetPropertyOrNull("attachments")
+                ?.EnumerateArrayOrNull()
+                ?.Select(Attachment.Parse)
+                .ToArray() ?? Array.Empty<Attachment>();
 
         var embeds = NormalizeEmbeds(
-            json.GetPropertyOrNull("embeds")?.EnumerateArrayOrNull()?.Select(Embed.Parse).ToArray() ??
-            Array.Empty<Embed>()
+            json.GetPropertyOrNull("embeds")?.EnumerateArrayOrNull()?.Select(Embed.Parse).ToArray()
+                ?? Array.Empty<Embed>()
         );
 
         var stickers =
-            json.GetPropertyOrNull("sticker_items")?.EnumerateArrayOrNull()?.Select(Sticker.Parse).ToArray() ??
-            Array.Empty<Sticker>();
+            json.GetPropertyOrNull("sticker_items")
+                ?.EnumerateArrayOrNull()
+                ?.Select(Sticker.Parse)
+                .ToArray() ?? Array.Empty<Sticker>();
 
         var reactions =
-            json.GetPropertyOrNull("reactions")?.EnumerateArrayOrNull()?.Select(Reaction.Parse).ToArray() ??
-            Array.Empty<Reaction>();
+            json.GetPropertyOrNull("reactions")
+                ?.EnumerateArrayOrNull()
+                ?.Select(Reaction.Parse)
+                .ToArray() ?? Array.Empty<Reaction>();
 
         var mentionedUsers =
-            json.GetPropertyOrNull("mentions")?.EnumerateArrayOrNull()?.Select(User.Parse).ToArray() ??
-            Array.Empty<User>();
+            json.GetPropertyOrNull("mentions")?.EnumerateArrayOrNull()?.Select(User.Parse).ToArray()
+            ?? Array.Empty<User>();
 
-        var messageReference = json.GetPropertyOrNull("message_reference")?.Pipe(MessageReference.Parse);
+        var messageReference = json.GetPropertyOrNull("message_reference")
+            ?.Pipe(MessageReference.Parse);
         var referencedMessage = json.GetPropertyOrNull("referenced_message")?.Pipe(Parse);
         var interaction = json.GetPropertyOrNull("interaction")?.Pipe(Interaction.Parse);
 

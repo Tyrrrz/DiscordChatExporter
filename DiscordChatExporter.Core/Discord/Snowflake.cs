@@ -6,9 +6,10 @@ namespace DiscordChatExporter.Core.Discord;
 
 public readonly partial record struct Snowflake(ulong Value)
 {
-    public DateTimeOffset ToDate() => DateTimeOffset.FromUnixTimeMilliseconds(
-        (long)((Value >> 22) + 1420070400000UL)
-    ).ToLocalTime();
+    public DateTimeOffset ToDate() =>
+        DateTimeOffset
+            .FromUnixTimeMilliseconds((long)((Value >> 22) + 1420070400000UL))
+            .ToLocalTime();
 
     [ExcludeFromCodeCoverage]
     public override string ToString() => Value.ToString(CultureInfo.InvariantCulture);
@@ -18,9 +19,8 @@ public partial record struct Snowflake
 {
     public static Snowflake Zero { get; } = new(0);
 
-    public static Snowflake FromDate(DateTimeOffset instant) => new(
-        ((ulong)instant.ToUnixTimeMilliseconds() - 1420070400000UL) << 22
-    );
+    public static Snowflake FromDate(DateTimeOffset instant) =>
+        new(((ulong)instant.ToUnixTimeMilliseconds() - 1420070400000UL) << 22);
 
     public static Snowflake? TryParse(string? str, IFormatProvider? formatProvider = null)
     {

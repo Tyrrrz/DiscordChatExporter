@@ -4,10 +4,7 @@ using JsonExtensions.Reading;
 namespace DiscordChatExporter.Core.Discord.Data.Embeds;
 
 // https://discord.com/developers/docs/resources/channel#embed-object-embed-footer-structure
-public record EmbedFooter(
-    string Text,
-    string? IconUrl,
-    string? IconProxyUrl)
+public record EmbedFooter(string Text, string? IconUrl, string? IconProxyUrl)
 {
     public static EmbedFooter Parse(JsonElement json)
     {

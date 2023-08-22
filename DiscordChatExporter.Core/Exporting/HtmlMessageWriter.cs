@@ -58,7 +58,13 @@ internal class HtmlMessageWriter : MessageWriter
 
             // If the author changed their name after the last message, their new messages
             // cannot join the existing group.
-            if (!string.Equals(message.Author.FullName, lastMessage.Author.FullName, StringComparison.Ordinal))
+            if (
+                !string.Equals(
+                    message.Author.FullName,
+                    lastMessage.Author.FullName,
+                    StringComparison.Ordinal
+                )
+            )
                 return false;
         }
 
@@ -69,7 +75,8 @@ internal class HtmlMessageWriter : MessageWriter
     private string Minify(string html) => _minifier.Minify(html, false).MinifiedContent;
 
     public override async ValueTask WritePreambleAsync(
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         await _writer.WriteLineAsync(
             Minify(
@@ -84,7 +91,8 @@ internal class HtmlMessageWriter : MessageWriter
 
     private async ValueTask WriteMessageGroupAsync(
         IReadOnlyList<Message> messages,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         await _writer.WriteLineAsync(
             Minify(
@@ -99,7 +107,8 @@ internal class HtmlMessageWriter : MessageWriter
 
     public override async ValueTask WriteMessageAsync(
         Message message,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         await base.WriteMessageAsync(message, cancellationToken);
 
@@ -118,7 +127,9 @@ internal class HtmlMessageWriter : MessageWriter
         }
     }
 
-    public override async ValueTask WritePostambleAsync(CancellationToken cancellationToken = default)
+    public override async ValueTask WritePostambleAsync(
+        CancellationToken cancellationToken = default
+    )
     {
         // Flush current message group
         if (_messageGroup.Any())

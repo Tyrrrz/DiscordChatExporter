@@ -16,41 +16,25 @@ namespace DiscordChatExporter.Cli.Commands;
 [Command("exportall", Description = "Exports all accessible channels.")]
 public class ExportAllCommand : ExportCommandBase
 {
-    [CommandOption(
-        "include-dm",
-        Description = "Include direct message channels."
-    )]
+    [CommandOption("include-dm", Description = "Include direct message channels.")]
     public bool IncludeDirectChannels { get; init; } = true;
 
-    [CommandOption(
-        "include-guilds",
-        Description = "Include guild channels."
-    )]
+    [CommandOption("include-guilds", Description = "Include guild channels.")]
     public bool IncludeGuildChannels { get; init; } = true;
 
-    [CommandOption(
-        "include-vc",
-        Description = "Include voice channels."
-    )]
+    [CommandOption("include-vc", Description = "Include voice channels.")]
     public bool IncludeVoiceChannels { get; init; } = true;
 
-    [CommandOption(
-        "include-threads",
-        Description = "Include threads."
-    )]
+    [CommandOption("include-threads", Description = "Include threads.")]
     public bool IncludeThreads { get; init; } = false;
 
-    [CommandOption(
-        "include-archived-threads",
-        Description = "Include archived threads."
-    )]
+    [CommandOption("include-archived-threads", Description = "Include archived threads.")]
     public bool IncludeArchivedThreads { get; init; } = false;
 
     [CommandOption(
         "data-package",
-        Description =
-            "Path to the personal data package (ZIP file) requested from Discord. " +
-            "If provided, only channels referenced in the dump will be exported."
+        Description = "Path to the personal data package (ZIP file) requested from Discord. "
+            + "If provided, only channels referenced in the dump will be exported."
     )]
     public string? DataPackageFilePath { get; init; }
 
@@ -77,7 +61,9 @@ public class ExportAllCommand : ExportCommandBase
             await foreach (var guild in Discord.GetUserGuildsAsync(cancellationToken))
             {
                 // Regular channels
-                await foreach (var channel in Discord.GetGuildChannelsAsync(guild.Id, cancellationToken))
+                await foreach (
+                    var channel in Discord.GetGuildChannelsAsync(guild.Id, cancellationToken)
+                )
                 {
                     if (channel.Kind == ChannelKind.GuildCategory)
                         continue;
@@ -91,7 +77,13 @@ public class ExportAllCommand : ExportCommandBase
                 // Threads
                 if (IncludeThreads)
                 {
-                    await foreach (var thread in Discord.GetGuildThreadsAsync(guild.Id, IncludeArchivedThreads, cancellationToken))
+                    await foreach (
+                        var thread in Discord.GetGuildThreadsAsync(
+                            guild.Id,
+                            IncludeArchivedThreads,
+                            cancellationToken
+                        )
+                    )
                     {
                         channels.Add(thread);
                     }
@@ -120,7 +112,9 @@ public class ExportAllCommand : ExportCommandBase
                 if (channelName is null)
                     continue;
 
-                await console.Output.WriteLineAsync($"Fetching channel '{channelName}' ({channelId})...");
+                await console.Output.WriteLineAsync(
+                    $"Fetching channel '{channelName}' ({channelId})..."
+                );
 
                 try
                 {
@@ -129,7 +123,9 @@ public class ExportAllCommand : ExportCommandBase
                 }
                 catch (DiscordChatExporterException)
                 {
-                    await console.Error.WriteLineAsync($"Channel '{channelName}' ({channelId}) is inaccessible.");
+                    await console.Error.WriteLineAsync(
+                        $"Channel '{channelName}' ({channelId}) is inaccessible."
+                    );
                 }
             }
         }

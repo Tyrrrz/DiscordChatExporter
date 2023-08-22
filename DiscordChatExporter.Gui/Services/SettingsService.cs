@@ -43,9 +43,7 @@ public partial class SettingsService : SettingsBase
     public string? LastAssetsDirPath { get; set; }
 
     public SettingsService()
-        : base(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.dat"))
-    {
-    }
+        : base(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.dat")) { }
 
     public override void Save()
     {
@@ -66,10 +64,13 @@ public partial class SettingsService
     {
         try
         {
-            return Registry.CurrentUser.OpenSubKey(
-                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
-                false
-            )?.GetValue("AppsUseLightTheme") is 0;
+            return Registry.CurrentUser
+                .OpenSubKey(
+                    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+                    false
+                )
+                ?.GetValue("AppsUseLightTheme")
+                is 0;
         }
         catch
         {

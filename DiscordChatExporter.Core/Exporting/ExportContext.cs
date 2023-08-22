@@ -23,8 +23,7 @@ internal class ExportContext
 
     public ExportRequest Request { get; }
 
-    public ExportContext(DiscordClient discord,
-        ExportRequest request)
+    public ExportContext(DiscordClient discord, ExportRequest request)
     {
         Discord = discord;
         Request = request;
@@ -35,9 +34,13 @@ internal class ExportContext
         );
     }
 
-    public async ValueTask PopulateChannelsAndRolesAsync(CancellationToken cancellationToken = default)
+    public async ValueTask PopulateChannelsAndRolesAsync(
+        CancellationToken cancellationToken = default
+    )
     {
-        await foreach (var channel in Discord.GetGuildChannelsAsync(Request.Guild.Id, cancellationToken))
+        await foreach (
+            var channel in Discord.GetGuildChannelsAsync(Request.Guild.Id, cancellationToken)
+        )
             _channelsById[channel.Id] = channel;
 
         await foreach (var role in Discord.GetGuildRolesAsync(Request.Guild.Id, cancellationToken))
@@ -48,7 +51,8 @@ internal class ExportContext
     private async ValueTask PopulateMemberAsync(
         Snowflake id,
         User? fallbackUser,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         if (_membersById.ContainsKey(id))
             return;
@@ -70,18 +74,23 @@ internal class ExportContext
         _membersById[id] = member;
     }
 
-    public async ValueTask PopulateMemberAsync(Snowflake id, CancellationToken cancellationToken = default) =>
-        await PopulateMemberAsync(id, null, cancellationToken);
+    public async ValueTask PopulateMemberAsync(
+        Snowflake id,
+        CancellationToken cancellationToken = default
+    ) => await PopulateMemberAsync(id, null, cancellationToken);
 
-    public async ValueTask PopulateMemberAsync(User user, CancellationToken cancellationToken = default) =>
-        await PopulateMemberAsync(user.Id, user, cancellationToken);
+    public async ValueTask PopulateMemberAsync(
+        User user,
+        CancellationToken cancellationToken = default
+    ) => await PopulateMemberAsync(user.Id, user, cancellationToken);
 
-    public string FormatDate(DateTimeOffset instant) => Request.DateFormat switch
-    {
-        "unix" => instant.ToUnixTimeSeconds().ToString(),
-        "unixms" => instant.ToUnixTimeMilliseconds().ToString(),
-        var format => instant.ToLocalString(format)
-    };
+    public string FormatDate(DateTimeOffset instant) =>
+        Request.DateFormat switch
+        {
+            "unix" => instant.ToUnixTimeSeconds().ToString(),
+            "unixms" => instant.ToUnixTimeMilliseconds().ToString(),
+            var format => instant.ToLocalString(format)
+        };
 
     public Member? TryGetMember(Snowflake id) => _membersById.GetValueOrDefault(id);
 
@@ -89,19 +98,20 @@ internal class ExportContext
 
     public Role? TryGetRole(Snowflake id) => _rolesById.GetValueOrDefault(id);
 
-    public IReadOnlyList<Role> GetUserRoles(Snowflake id) => TryGetMember(id)?
-        .RoleIds
-        .Select(TryGetRole)
-        .WhereNotNull()
-        .OrderByDescending(r => r.Position)
-        .ToArray() ?? Array.Empty<Role>();
+    public IReadOnlyList<Role> GetUserRoles(Snowflake id) =>
+        TryGetMember(id)?.RoleIds
+            .Select(TryGetRole)
+            .WhereNotNull()
+            .OrderByDescending(r => r.Position)
+            .ToArray() ?? Array.Empty<Role>();
 
-    public Color? TryGetUserColor(Snowflake id) => GetUserRoles(id)
-        .Where(r => r.Color is not null)
-        .Select(r => r.Color)
-        .FirstOrDefault();
+    public Color? TryGetUserColor(Snowflake id) =>
+        GetUserRoles(id).Where(r => r.Color is not null).Select(r => r.Color).FirstOrDefault();
 
-    public async ValueTask<string> ResolveAssetUrlAsync(string url, CancellationToken cancellationToken = default)
+    public async ValueTask<string> ResolveAssetUrlAsync(
+        string url,
+        CancellationToken cancellationToken = default
+    )
     {
         if (!Request.ShouldDownloadAssets)
             return url;
@@ -114,8 +124,14 @@ internal class ExportContext
             // Prefer relative paths so that the output files can be copied around without breaking references.
             // If the asset directory is outside of the export directory, use an absolute path instead.
             var optimalFilePath =
-                relativeFilePath.StartsWith(".." + Path.DirectorySeparatorChar, StringComparison.Ordinal) ||
-                relativeFilePath.StartsWith(".." + Path.AltDirectorySeparatorChar, StringComparison.Ordinal)
+                relativeFilePath.StartsWith(
+                    ".." + Path.DirectorySeparatorChar,
+                    StringComparison.Ordinal
+                )
+                || relativeFilePath.StartsWith(
+                    ".." + Path.AltDirectorySeparatorChar,
+                    StringComparison.Ordinal
+                )
                     ? filePath
                     : relativeFilePath;
 

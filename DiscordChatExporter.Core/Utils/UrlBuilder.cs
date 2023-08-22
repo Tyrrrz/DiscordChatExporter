@@ -10,7 +10,8 @@ public class UrlBuilder
 {
     private string _path = "";
 
-    private readonly Dictionary<string, string?> _queryParameters = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, string?> _queryParameters =
+        new(StringComparer.OrdinalIgnoreCase);
 
     public UrlBuilder SetPath(string path)
     {
@@ -37,7 +38,9 @@ public class UrlBuilder
         buffer.Append(_path);
 
         if (_queryParameters.Any())
-            buffer.Append('?').AppendJoin('&', _queryParameters.Select(kvp => $"{kvp.Key}={kvp.Value}"));
+            buffer
+                .Append('?')
+                .AppendJoin('&', _queryParameters.Select(kvp => $"{kvp.Key}={kvp.Value}"));
 
         return buffer.ToString();
     }

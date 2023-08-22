@@ -31,9 +31,7 @@ public class PartitioningSpecs
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        Directory.EnumerateFiles(dir.Path, "output*")
-            .Should()
-            .HaveCount(3);
+        Directory.EnumerateFiles(dir.Path, "output*").Should().HaveCount(3);
     }
 
     [Fact]
@@ -54,8 +52,6 @@ public class PartitioningSpecs
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        Directory.EnumerateFiles(dir.Path, "output*")
-            .Should()
-            .HaveCount(8);
+        Directory.EnumerateFiles(dir.Path, "output*").Should().HaveCount(8);
     }
 }

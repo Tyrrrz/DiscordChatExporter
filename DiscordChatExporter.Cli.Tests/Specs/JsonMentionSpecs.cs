@@ -39,7 +39,11 @@ public class JsonMentionSpecs
         );
 
         // Assert
-        message.GetProperty("content").GetString().Should().Be("Text channel mention: #mention-tests");
+        message
+            .GetProperty("content")
+            .GetString()
+            .Should()
+            .Be("Text channel mention: #mention-tests");
     }
 
     [Fact]
@@ -52,7 +56,11 @@ public class JsonMentionSpecs
         );
 
         // Assert
-        message.GetProperty("content").GetString().Should().Be("Voice channel mention: #general [voice]");
+        message
+            .GetProperty("content")
+            .GetString()
+            .Should()
+            .Be("Voice channel mention: #general [voice]");
     }
 
     [Fact]

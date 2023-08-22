@@ -19,10 +19,7 @@ public static class ImageCdn
             ? runes
             : runes.Where(r => r.Value != 0xfe0f);
 
-        var twemojiId = string.Join(
-            "-",
-            filteredRunes.Select(r => r.Value.ToString("x"))
-        );
+        var twemojiId = string.Join("-", filteredRunes.Select(r => r.Value.ToString("x")));
 
         return $"https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/{twemojiId}.svg";
     }
@@ -50,7 +47,12 @@ public static class ImageCdn
     public static string GetFallbackUserAvatarUrl(int index = 0) =>
         $"https://cdn.discordapp.com/embed/avatars/{index}.png";
 
-    public static string GetMemberAvatarUrl(Snowflake guildId, Snowflake userId, string avatarHash, int size = 512) =>
+    public static string GetMemberAvatarUrl(
+        Snowflake guildId,
+        Snowflake userId,
+        string avatarHash,
+        int size = 512
+    ) =>
         avatarHash.StartsWith("a_", StringComparison.Ordinal)
             ? $"https://cdn.discordapp.com/guilds/{guildId}/users/{userId}/avatars/{avatarHash}.gif?size={size}"
             : $"https://cdn.discordapp.com/guilds/{guildId}/users/{userId}/avatars/{avatarHash}.png?size={size}";

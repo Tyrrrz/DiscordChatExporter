@@ -170,7 +170,10 @@ public class HtmlMarkdownSpecs
             );
 
             // Assert
-            message.Text().Should().Contain("Full long timestamp: Sunday, February 12, 2023 3:36 PM");
+            message
+                .Text()
+                .Should()
+                .Contain("Full long timestamp: Sunday, February 12, 2023 3:36 PM");
             message.InnerHtml.Should().Contain("Sunday, February 12, 2023 3:36 PM");
         }
         finally

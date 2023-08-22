@@ -15,13 +15,16 @@ public record Sticker(Snowflake Id, string Name, StickerFormat Format, string So
         var name = json.GetProperty("name").GetNonNullString();
         var format = (StickerFormat)json.GetProperty("format_type").GetInt32();
 
-        var sourceUrl = ImageCdn.GetStickerUrl(id, format switch
-        {
-            StickerFormat.Png => "png",
-            StickerFormat.Apng => "png",
-            StickerFormat.Lottie => "json",
-            _ => throw new InvalidOperationException($"Unknown sticker format '{format}'.")
-        });
+        var sourceUrl = ImageCdn.GetStickerUrl(
+            id,
+            format switch
+            {
+                StickerFormat.Png => "png",
+                StickerFormat.Apng => "png",
+                StickerFormat.Lottie => "json",
+                _ => throw new InvalidOperationException($"Unknown sticker format '{format}'.")
+            }
+        );
 
         return new Sticker(id, name, format, sourceUrl);
     }

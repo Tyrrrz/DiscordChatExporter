@@ -301,7 +301,7 @@ public class DiscordClient
                         .SetQueryParameter("offset", currentOffset.ToString())
                         .Build();
 
-                    // Can be null on channels that the user cannot access
+                    // Can be null on channels that the user cannot access or channels without threads
                     var response = await TryGetJsonResponseAsync(url, cancellationToken);
                     if (response is null)
                         break;
@@ -333,7 +333,7 @@ public class DiscordClient
                             .SetQueryParameter("offset", currentOffset.ToString())
                             .Build();
 
-                        // Can be null on channels that the user cannot access
+                        // Can be null on channels that the user cannot access or channels without threads
                         var response = await TryGetJsonResponseAsync(url, cancellationToken);
                         if (response is null)
                             break;
@@ -363,6 +363,7 @@ public class DiscordClient
                     $"guilds/{guildId}/threads/active",
                     cancellationToken
                 );
+
                 foreach (var threadJson in response.GetProperty("threads").EnumerateArray())
                 {
                     var parent = threadJson
@@ -382,23 +383,35 @@ public class DiscordClient
                 {
                     // Public archived threads
                     {
-                        var response = await GetJsonResponseAsync(
+                        // Can be null on certain channels
+                        var response = await TryGetJsonResponseAsync(
                             $"channels/{channel.Id}/threads/archived/public",
                             cancellationToken
                         );
 
-                        foreach (var threadJson in response.GetProperty("threads").EnumerateArray())
+                        if (response is null)
+                            continue;
+
+                        foreach (
+                            var threadJson in response.Value.GetProperty("threads").EnumerateArray()
+                        )
                             yield return Channel.Parse(threadJson, channel);
                     }
 
                     // Private archived threads
                     {
-                        var response = await GetJsonResponseAsync(
+                        // Can be null on certain channels
+                        var response = await TryGetJsonResponseAsync(
                             $"channels/{channel.Id}/threads/archived/private",
                             cancellationToken
                         );
 
-                        foreach (var threadJson in response.GetProperty("threads").EnumerateArray())
+                        if (response is null)
+                            continue;
+
+                        foreach (
+                            var threadJson in response.Value.GetProperty("threads").EnumerateArray()
+                        )
                             yield return Channel.Parse(threadJson, channel);
                     }
                 }

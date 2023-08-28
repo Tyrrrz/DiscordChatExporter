@@ -35,7 +35,14 @@ public class SettingsViewModel : DialogScreen
     public bool ShouldShowArchivedThreads
     {
         get => _settingsService.ShouldShowArchivedThreads;
-        set => _settingsService.ShouldShowArchivedThreads = value;
+        set
+        {
+            _settingsService.ShouldShowArchivedThreads = value;
+
+            // Enabling archived threads implicitly enables threads
+            if (value)
+                ShouldShowThreads = true;
+        }
     }
 
     public string DateFormat

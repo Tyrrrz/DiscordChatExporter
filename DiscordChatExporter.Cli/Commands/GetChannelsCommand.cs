@@ -77,7 +77,7 @@ public class GetChannelsCommand : DiscordCommandBase
 
             // Channel category / name
             using (console.WithForegroundColor(ConsoleColor.White))
-                await console.Output.WriteLineAsync($"{channel.Category} / {channel.Name}");
+                await console.Output.WriteLineAsync($"{channel.ParentNameWithFallback} / {channel.Name}");
 
             var channelThreads = threads.Where(t => t.Parent?.Id == channel.Id).ToArray();
             var channelThreadIdMaxLength = channelThreads

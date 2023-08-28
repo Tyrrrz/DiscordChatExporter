@@ -92,7 +92,9 @@ public partial class ExportRequest
         var buffer = new StringBuilder();
 
         // Guild and channel names
-        buffer.Append($"{guild.Name} - {channel.Category} - {channel.Name} [{channel.Id}]");
+        buffer.Append(
+            $"{guild.Name} - {channel.ParentNameWithFallback} - {channel.Name} [{channel.Id}]"
+        );
 
         // Date range
         if (after is not null || before is not null)

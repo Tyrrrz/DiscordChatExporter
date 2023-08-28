@@ -19,19 +19,20 @@
     Loaded="{s:Action OnViewLoaded}"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <!--  Sort DMs by last message  -->
+        <!--  Collection view for DM channels  -->
         <CollectionViewSource x:Key="AvailableDirectChannelsViewSource" Source="{Binding AvailableChannels, Mode=OneWay}">
             <CollectionViewSource.SortDescriptions>
                 <componentModel:SortDescription Direction="Descending" PropertyName="LastMessageId" />
                 <componentModel:SortDescription Direction="Ascending" PropertyName="Name" />
             </CollectionViewSource.SortDescriptions>
         </CollectionViewSource>
-        <!--  Sort guild channels by position  -->
+        <!--  Collection view for guild channels  -->
         <CollectionViewSource x:Key="AvailableChannelsViewSource" Source="{Binding AvailableChannels, Mode=OneWay}">
             <CollectionViewSource.GroupDescriptions>
-                <PropertyGroupDescription PropertyName="Category" />
+                <PropertyGroupDescription Converter="{x:Static converters:ChannelToGroupKeyConverter.Instance}" />
             </CollectionViewSource.GroupDescriptions>
             <CollectionViewSource.SortDescriptions>
+                <componentModel:SortDescription Direction="Ascending" PropertyName="IsThread" />
                 <componentModel:SortDescription Direction="Ascending" PropertyName="Position" />
                 <componentModel:SortDescription Direction="Ascending" PropertyName="Name" />
             </CollectionViewSource.SortDescriptions>

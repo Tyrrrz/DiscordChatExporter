@@ -1004,7 +1004,7 @@
     </div>
     <div class="preamble__entries-container">
         <div class="preamble__entry">@Context.Request.Guild.Name</div>
-        <div class="preamble__entry">@Context.Request.Channel.Category / @Context.Request.Channel.Name</div>
+        <div class="preamble__entry">@Context.Request.Channel.ParentNameWithFallback / @Context.Request.Channel.Name</div>
 
         @if (!string.IsNullOrWhiteSpace(Context.Request.Channel.Topic))
         {

@@ -184,7 +184,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
                         try
                         {
                             await progressContext.StartTaskAsync(
-                                $"{channel.Category} / {channel.Name}",
+                                $"{channel.ParentNameWithFallback} / {channel.Name}",
                                 async progress =>
                                 {
                                     var guild = await Discord.GetGuildAsync(
@@ -246,7 +246,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
             foreach (var (channel, error) in errorsByChannel)
             {
-                await console.Error.WriteAsync($"{channel.Category} / {channel.Name}: ");
+                await console.Error.WriteAsync($"{channel.ParentNameWithFallback} / {channel.Name}: ");
 
                 using (console.WithForegroundColor(ConsoleColor.Red))
                     await console.Error.WriteLineAsync(error);

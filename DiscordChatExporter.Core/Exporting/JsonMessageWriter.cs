@@ -273,7 +273,7 @@ internal class JsonMessageWriter : MessageWriter
         _writer.WriteString("id", Context.Request.Channel.Id.ToString());
         _writer.WriteString("type", Context.Request.Channel.Kind.ToString());
         _writer.WriteString("categoryId", Context.Request.Channel.Parent?.Id.ToString());
-        _writer.WriteString("category", Context.Request.Channel.Category);
+        _writer.WriteString("category", Context.Request.Channel.ParentNameWithFallback);
         _writer.WriteString("name", Context.Request.Channel.Name);
         _writer.WriteString("topic", Context.Request.Channel.Topic);
 

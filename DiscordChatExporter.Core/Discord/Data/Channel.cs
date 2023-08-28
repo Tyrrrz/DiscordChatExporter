@@ -24,7 +24,7 @@ public partial record Channel(
     // channels without a parent (i.e. mostly DM channels) or channels
     // with an inaccessible parent (i.e. inside private categories) had
     // a fallback category created for them.
-    public string Category =>
+    public string ParentNameWithFallback =>
         Parent?.Name
         ?? Kind switch
         {
@@ -41,6 +41,9 @@ public partial record Channel(
 
     // Only needed for WPF data binding. Don't use anywhere else.
     public bool IsVoice => Kind.IsVoice();
+
+    // Only needed for WPF data binding. Don't use anywhere else.
+    public bool IsThread => Kind.IsThread();
 }
 
 public partial record Channel

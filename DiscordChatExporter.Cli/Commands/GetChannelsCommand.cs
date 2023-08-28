@@ -23,14 +23,10 @@ public class GetChannelsCommand : DiscordCommandBase
 
     [CommandOption(
         "include-threads",
-        Description = "Specifies which types of threads should be included.",
+        Description = "Which types of threads should be included.",
         Converter = typeof(ThreadInclusionBindingConverter)
     )]
     public ThreadInclusion ThreadInclusion { get; init; } = ThreadInclusion.None;
-
-    private bool IncludeThreads => ThreadInclusion != ThreadInclusion.None;
-
-    private bool IncludeArchivedThreads => ThreadInclusion.HasFlag(ThreadInclusion.Archived);
 
     public override async ValueTask ExecuteAsync(IConsole console)
     {
@@ -50,17 +46,18 @@ public class GetChannelsCommand : DiscordCommandBase
             .OrderDescending()
             .FirstOrDefault();
 
-        var threads = IncludeThreads
-            ? (
-                await Discord.GetGuildThreadsAsync(
-                    GuildId,
-                    IncludeArchivedThreads,
-                    cancellationToken
+        var threads =
+            ThreadInclusion != ThreadInclusion.None
+                ? (
+                    await Discord.GetGuildThreadsAsync(
+                        GuildId,
+                        ThreadInclusion == ThreadInclusion.All,
+                        cancellationToken
+                    )
                 )
-            )
-                .OrderBy(c => c.Name)
-                .ToArray()
-            : Array.Empty<Channel>();
+                    .OrderBy(c => c.Name)
+                    .ToArray()
+                : Array.Empty<Channel>();
 
         foreach (var channel in channels)
         {

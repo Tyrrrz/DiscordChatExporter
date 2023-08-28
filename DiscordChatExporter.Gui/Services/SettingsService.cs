@@ -2,6 +2,7 @@
 using System.IO;
 using Cogwheel;
 using DiscordChatExporter.Core.Exporting;
+using DiscordChatExporter.Gui.Models;
 using Microsoft.Win32;
 
 namespace DiscordChatExporter.Gui.Services;
@@ -16,9 +17,7 @@ public partial class SettingsService : SettingsBase
 
     public bool IsTokenPersisted { get; set; } = true;
 
-    public bool ShouldShowThreads { get; set; }
-
-    public bool ShouldShowArchivedThreads { get; set; }
+    public ThreadInclusion ThreadInclusion { get; set; } = ThreadInclusion.None;
 
     public string DateFormat { get; set; } = "MM/dd/yyyy h:mm tt";
 

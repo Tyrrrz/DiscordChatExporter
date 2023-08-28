@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using DiscordChatExporter.Gui.Models;
 using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.ViewModels.Framework;
 
@@ -26,23 +28,13 @@ public class SettingsViewModel : DialogScreen
         set => _settingsService.IsTokenPersisted = value;
     }
 
-    public bool ShouldShowThreads
-    {
-        get => _settingsService.ShouldShowThreads;
-        set => _settingsService.ShouldShowThreads = value;
-    }
+    public IReadOnlyList<ThreadInclusion> AvailableThreadInclusions { get; } =
+        Enum.GetValues<ThreadInclusion>();
 
-    public bool ShouldShowArchivedThreads
+    public ThreadInclusion ThreadInclusion
     {
-        get => _settingsService.ShouldShowArchivedThreads;
-        set
-        {
-            _settingsService.ShouldShowArchivedThreads = value;
-
-            // Enabling archived threads implicitly enables threads
-            if (value)
-                ShouldShowThreads = true;
-        }
+        get => _settingsService.ThreadInclusion;
+        set => _settingsService.ThreadInclusion = value;
     }
 
     public string DateFormat

@@ -21,14 +21,10 @@ public class ExportGuildCommand : ExportCommandBase
 
     [CommandOption(
         "include-threads",
-        Description = "Specifies which types of threads should be included.",
+        Description = "Which types of threads should be included.",
         Converter = typeof(ThreadInclusionBindingConverter)
     )]
     public ThreadInclusion ThreadInclusion { get; init; } = ThreadInclusion.None;
-
-    private bool IncludeThreads => ThreadInclusion != ThreadInclusion.None;
-
-    private bool IncludeArchivedThreads => ThreadInclusion.HasFlag(ThreadInclusion.Archived);
 
     public override async ValueTask ExecuteAsync(IConsole console)
     {
@@ -52,12 +48,12 @@ public class ExportGuildCommand : ExportCommandBase
         }
 
         // Threads
-        if (IncludeThreads)
+        if (ThreadInclusion != ThreadInclusion.None)
         {
             await foreach (
                 var thread in Discord.GetGuildThreadsAsync(
                     GuildId,
-                    IncludeArchivedThreads,
+                    ThreadInclusion == ThreadInclusion.All,
                     cancellationToken
                 )
             )

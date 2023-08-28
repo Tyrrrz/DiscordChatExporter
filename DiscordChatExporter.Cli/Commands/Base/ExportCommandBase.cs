@@ -246,7 +246,9 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
             foreach (var (channel, error) in errorsByChannel)
             {
-                await console.Error.WriteAsync($"{channel.ParentNameWithFallback} / {channel.Name}: ");
+                await console.Error.WriteAsync(
+                    $"{channel.ParentNameWithFallback} / {channel.Name}: "
+                );
 
                 using (console.WithForegroundColor(ConsoleColor.Red))
                     await console.Error.WriteLineAsync(error);

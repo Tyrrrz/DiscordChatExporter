@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using CliFx.Attributes;
-using CliFx.Exceptions;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands.Base;
+using DiscordChatExporter.Cli.Commands.Converters;
+using DiscordChatExporter.Cli.Commands.Shared;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 
@@ -18,23 +19,20 @@ public class ExportGuildCommand : ExportCommandBase
     [CommandOption("include-vc", Description = "Include voice channels.")]
     public bool IncludeVoiceChannels { get; init; } = true;
 
-    [CommandOption("include-threads", Description = "Include threads.")]
-    public bool IncludeThreads { get; init; } = false;
+    [CommandOption(
+        "include-threads",
+        Description = "Specifies which types of threads should be included.",
+        Converter = typeof(ThreadInclusionBindingConverter)
+    )]
+    public ThreadInclusion ThreadInclusion { get; init; } = ThreadInclusion.None;
 
-    [CommandOption("include-archived-threads", Description = "Include archived threads.")]
-    public bool IncludeArchivedThreads { get; init; } = false;
+    private bool IncludeThreads => ThreadInclusion != ThreadInclusion.None;
+
+    private bool IncludeArchivedThreads => ThreadInclusion.HasFlag(ThreadInclusion.Archived);
 
     public override async ValueTask ExecuteAsync(IConsole console)
     {
         await base.ExecuteAsync(console);
-
-        // Cannot include archived threads without including active threads as well
-        if (IncludeArchivedThreads && !IncludeThreads)
-        {
-            throw new CommandException(
-                "Option --include-archived-threads can only be used when --include-threads is also specified."
-            );
-        }
 
         var cancellationToken = console.RegisterCancellationHandler();
         var channels = new List<Channel>();

@@ -7,19 +7,15 @@ internal class TruthyBooleanBindingConverter : BindingConverter<bool>
 {
     public override bool Convert(string? rawValue)
     {
-        // Null is still considered true, to match the base behavior
-        if (rawValue is null)
+        // Empty or unset value is treated as 'true', to match the regular boolean behavior
+        if (string.IsNullOrWhiteSpace(rawValue))
             return true;
 
-        if (string.IsNullOrWhiteSpace(rawValue))
-            return false;
+        // Number '1' is treated as 'true', other numbers are treated as 'false'
+        if (int.TryParse(rawValue, CultureInfo.InvariantCulture, out var intValue))
+            return intValue == 1;
 
-        if (bool.TryParse(rawValue, out var boolValue))
-            return boolValue;
-
-        if (int.TryParse(rawValue, CultureInfo.InvariantCulture, out var intValue) && intValue == 0)
-            return false;
-
-        return true;
+        // Otherwise, fall back to regular boolean parsing
+        return bool.Parse(rawValue);
     }
 }

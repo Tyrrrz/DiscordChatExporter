@@ -170,12 +170,12 @@ public class DashboardViewModel : PropertyChangedBase
             }
 
             // Threads
-            if (_settingsService.ThreadInclusion != ThreadInclusion.None)
+            if (_settingsService.ThreadInclusionMode != ThreadInclusionMode.None)
             {
                 await foreach (
                     var thread in _discord.GetGuildThreadsAsync(
                         SelectedGuild.Id,
-                        _settingsService.ThreadInclusion == ThreadInclusion.All
+                        _settingsService.ThreadInclusionMode == ThreadInclusionMode.All
                     )
                 )
                 {

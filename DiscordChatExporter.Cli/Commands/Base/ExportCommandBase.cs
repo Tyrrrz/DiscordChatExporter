@@ -147,12 +147,10 @@ public abstract class ExportCommandBase : DiscordCommandBase
         var isValidOutputPath =
             // Anything is valid when exporting a single channel
             channels.Count <= 1
-            ||
             // When using template tokens, assume the user knows what they're doing
-            OutputPath.Contains('%')
-            ||
+            || OutputPath.Contains('%')
             // Otherwise, require an existing directory or an unambiguous directory path
-            Directory.Exists(OutputPath)
+            || Directory.Exists(OutputPath)
             || PathEx.IsDirectoryPath(OutputPath);
 
         if (!isValidOutputPath)

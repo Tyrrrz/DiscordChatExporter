@@ -1,6 +1,6 @@
 ﻿namespace DiscordChatExporter.Cli.Commands.Shared;
 
-public enum ThreadInclusion
+public enum ThreadInclusionMode
 {
     None,
     Active,

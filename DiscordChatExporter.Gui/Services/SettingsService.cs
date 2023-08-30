@@ -17,7 +17,7 @@ public partial class SettingsService : SettingsBase
 
     public bool IsTokenPersisted { get; set; } = true;
 
-    public ThreadInclusion ThreadInclusion { get; set; } = ThreadInclusion.None;
+    public ThreadInclusionMode ThreadInclusionMode { get; set; } = ThreadInclusionMode.None;
 
     public string DateFormat { get; set; } = "MM/dd/yyyy h:mm tt";
 

@@ -24,9 +24,9 @@ public class GetChannelsCommand : DiscordCommandBase
     [CommandOption(
         "include-threads",
         Description = "Which types of threads should be included.",
-        Converter = typeof(ThreadInclusionBindingConverter)
+        Converter = typeof(ThreadInclusionModeBindingConverter)
     )]
-    public ThreadInclusion ThreadInclusion { get; init; } = ThreadInclusion.None;
+    public ThreadInclusionMode ThreadInclusionMode { get; init; } = ThreadInclusionMode.None;
 
     public override async ValueTask ExecuteAsync(IConsole console)
     {
@@ -47,11 +47,11 @@ public class GetChannelsCommand : DiscordCommandBase
             .FirstOrDefault();
 
         var threads =
-            ThreadInclusion != ThreadInclusion.None
+            ThreadInclusionMode != ThreadInclusionMode.None
                 ? (
                     await Discord.GetGuildThreadsAsync(
                         GuildId,
-                        ThreadInclusion == ThreadInclusion.All,
+                        ThreadInclusionMode == ThreadInclusionMode.All,
                         cancellationToken
                     )
                 )

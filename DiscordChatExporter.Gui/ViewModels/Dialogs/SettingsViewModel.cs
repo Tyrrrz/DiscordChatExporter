@@ -28,13 +28,13 @@ public class SettingsViewModel : DialogScreen
         set => _settingsService.IsTokenPersisted = value;
     }
 
-    public IReadOnlyList<ThreadInclusion> AvailableThreadInclusions { get; } =
-        Enum.GetValues<ThreadInclusion>();
+    public IReadOnlyList<ThreadInclusionMode> AvailableThreadInclusions { get; } =
+        Enum.GetValues<ThreadInclusionMode>();
 
-    public ThreadInclusion ThreadInclusion
+    public ThreadInclusionMode ThreadInclusionMode
     {
-        get => _settingsService.ThreadInclusion;
-        set => _settingsService.ThreadInclusion = value;
+        get => _settingsService.ThreadInclusionMode;
+        set => _settingsService.ThreadInclusionMode = value;
     }
 
     public string DateFormat

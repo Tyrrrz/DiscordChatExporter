@@ -1,6 +1,6 @@
 ﻿namespace DiscordChatExporter.Gui.Models;
 
-public enum ThreadInclusion
+public enum ThreadInclusionMode
 {
     None,
     Active,

@@ -82,7 +82,7 @@
                             IsChecked="{Binding IsTokenPersisted}" />
                     </DockPanel>
 
-                    <!--  Thread inclusion  -->
+                    <!--  Thread inclusion mode  -->
                     <DockPanel
                         Margin="16,8"
                         Background="Transparent"
@@ -96,7 +96,7 @@
                             VerticalAlignment="Center"
                             DockPanel.Dock="Right"
                             ItemsSource="{Binding AvailableThreadInclusions}"
-                            SelectedItem="{Binding ThreadInclusion}" />
+                            SelectedItem="{Binding ThreadInclusionMode}" />
                     </DockPanel>
 
                     <!--  Date format  -->

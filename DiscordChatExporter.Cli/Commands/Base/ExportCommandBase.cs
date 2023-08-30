@@ -18,6 +18,7 @@ using DiscordChatExporter.Core.Exporting.Partitioning;
 using DiscordChatExporter.Core.Utils;
 using DiscordChatExporter.Core.Utils.Extensions;
 using Gress;
+using Spectre.Console;
 
 namespace DiscordChatExporter.Cli.Commands.Base;
 
@@ -168,6 +169,12 @@ public abstract class ExportCommandBase : DiscordCommandBase
         await console.Output.WriteLineAsync($"Exporting {channels.Count} channel(s)...");
         await console
             .CreateProgressTicker()
+            .HideCompleted(
+                // When exporting multiple channels in parallel, hide the completed tasks
+                // because it gets hard to visually parse them as they complete out of order.
+                // https://github.com/Tyrrrz/DiscordChatExporter/issues/1124
+                ParallelLimit > 1
+            )
             .StartAsync(async progressContext =>
             {
                 await Parallel.ForEachAsync(

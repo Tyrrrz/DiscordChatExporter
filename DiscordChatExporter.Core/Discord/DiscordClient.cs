@@ -277,6 +277,8 @@ public class DiscordClient
     public async IAsyncEnumerable<Channel> GetGuildThreadsAsync(
         Snowflake guildId,
         bool includeArchived = false,
+        Snowflake? Before = null,
+        Snowflake? After = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default
     )
     {
@@ -286,17 +288,29 @@ public class DiscordClient
         var tokenKind = _resolvedTokenKind ??= await GetTokenKindAsync(cancellationToken);
         var channels = await GetGuildChannelsAsync(guildId, cancellationToken);
 
+        var filteredChannels = channels
+            // Categories cannot have threads
+            .Where(c => c.Kind != ChannelKind.GuildCategory)
+            // Voice channels cannot have threads
+            .Where(c => !c.Kind.IsVoice())
+            // Ordinary channel or forum channel without LastMessageId cannot have threads
+            .Where(c => c.LastMessageId != null)
+            // if --before is specified, skip channels created after the specified date
+            .Where(c => Before == null || Before > c.Id);
+
         // User accounts can only fetch threads using the search endpoint
         if (tokenKind == TokenKind.User)
         {
             // Active threads
-            foreach (var channel in channels)
+            foreach (var channel in filteredChannels)
             {
                 var currentOffset = 0;
                 while (true)
                 {
                     var url = new UrlBuilder()
                         .SetPath($"channels/{channel.Id}/threads/search")
+                        .SetQueryParameter("sort_by", "last_message_time")
+                        .SetQueryParameter("sort_order", "desc")
                         .SetQueryParameter("archived", "false")
                         .SetQueryParameter("offset", currentOffset.ToString())
                         .Build();
@@ -306,13 +320,29 @@ public class DiscordClient
                     if (response is null)
                         break;
 
+                    var containsOlder = false;
+
                     foreach (
                         var threadJson in response.Value.GetProperty("threads").EnumerateArray()
                     )
                     {
-                        yield return Channel.Parse(threadJson, channel);
+                        var thread = Channel.Parse(threadJson, channel);
+
+                        // if --after is specified, break early if last message is older than the specified date
+                        // because the threads are sorted by last message time, we can break early
+                        if (After != null && After > thread.LastMessageId)
+                        {
+                            containsOlder = true;
+                            break;
+                        }
+
+                        yield return thread;
+
                         currentOffset++;
                     }
+
+                    if (containsOlder)
+                        break;
 
                     if (!response.Value.GetProperty("has_more").GetBoolean())
                         break;
@@ -322,13 +352,15 @@ public class DiscordClient
             // Archived threads
             if (includeArchived)
             {
-                foreach (var channel in channels)
+                foreach (var channel in filteredChannels)
                 {
                     var currentOffset = 0;
                     while (true)
                     {
                         var url = new UrlBuilder()
                             .SetPath($"channels/{channel.Id}/threads/search")
+                            .SetQueryParameter("sort_by", "last_message_time")
+                            .SetQueryParameter("sort_order", "desc")
                             .SetQueryParameter("archived", "true")
                             .SetQueryParameter("offset", currentOffset.ToString())
                             .Build();
@@ -338,13 +370,29 @@ public class DiscordClient
                         if (response is null)
                             break;
 
+                        var containsOlder = false;
+
                         foreach (
                             var threadJson in response.Value.GetProperty("threads").EnumerateArray()
                         )
                         {
-                            yield return Channel.Parse(threadJson, channel);
+                            var thread = Channel.Parse(threadJson, channel);
+
+                            // if --after is specified, break early if last message is older than the specified date
+                            // because the threads are sorted by last message time, we can break early
+                            if (After != null && After > thread.LastMessageId)
+                            {
+                                containsOlder = true;
+                                break;
+                            }
+
+                            yield return thread;
+
                             currentOffset++;
                         }
+
+                        if (containsOlder)
+                            break;
 
                         if (!response.Value.GetProperty("has_more").GetBoolean())
                             break;

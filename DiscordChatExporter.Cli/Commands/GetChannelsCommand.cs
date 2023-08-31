@@ -52,6 +52,8 @@ public class GetChannelsCommand : DiscordCommandBase
                     await Discord.GetGuildThreadsAsync(
                         GuildId,
                         ThreadInclusionMode == ThreadInclusionMode.All,
+                        null,
+                        null,
                         cancellationToken
                     )
                 )

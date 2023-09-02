@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord;
+using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exceptions;
 using Gress;
 
@@ -31,6 +32,20 @@ public class ChannelExporter
             throw new DiscordChatExporterException(
                 "Channel does not contain any messages within the specified period."
             );
+        }
+
+        // Check if the 'before' boundary is valid
+        if (request.Before is not null && request.Channel.Id > request.Before)
+        {
+            throw new DiscordChatExporterException(
+                "Channel does not contain any messages within the specified period."
+            );
+        }
+
+        // Skip forum channels, they are exported as threads
+        if (request.Channel.Kind == ChannelKind.GuildForum)
+        {
+            throw new DiscordChatExporterException("Channel is a forum.");
         }
 
         // Build context

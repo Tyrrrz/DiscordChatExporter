@@ -277,8 +277,8 @@ public class DiscordClient
     public async IAsyncEnumerable<Channel> GetGuildThreadsAsync(
         Snowflake guildId,
         bool includeArchived = false,
-        Snowflake? Before = null,
-        Snowflake? After = null,
+        Snowflake? before = null,
+        Snowflake? after = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default
     )
     {
@@ -295,8 +295,8 @@ public class DiscordClient
             .Where(c => !c.Kind.IsVoice())
             // Ordinary channel or forum channel without LastMessageId cannot have threads
             .Where(c => c.LastMessageId != null)
-            // if --before is specified, skip channels created after the specified date
-            .Where(c => Before == null || Before > c.Id);
+            // Ff --before is specified, skip channels created after the specified date
+            .Where(c => before == null || before > c.Id);
 
         // User accounts can only fetch threads using the search endpoint
         if (tokenKind == TokenKind.User)
@@ -328,9 +328,8 @@ public class DiscordClient
                     {
                         var thread = Channel.Parse(threadJson, channel);
 
-                        // if --after is specified, break early if last message is older than the specified date
-                        // because the threads are sorted by last message time, we can break early
-                        if (After != null && After > thread.LastMessageId)
+                        // if --after is specified, we can break early, because the threads are sorted by last message time
+                        if (after != null && after > thread.LastMessageId)
                         {
                             containsOlder = true;
                             break;
@@ -378,9 +377,8 @@ public class DiscordClient
                         {
                             var thread = Channel.Parse(threadJson, channel);
 
-                            // if --after is specified, break early if last message is older than the specified date
-                            // because the threads are sorted by last message time, we can break early
-                            if (After != null && After > thread.LastMessageId)
+                            // if --after is specified, we can break early, because the threads are sorted by last message time
+                            if (after != null && after > thread.LastMessageId)
                             {
                                 containsOlder = true;
                                 break;
@@ -405,7 +403,7 @@ public class DiscordClient
         {
             // Active threads
             {
-                var parentsById = channels.ToDictionary(c => c.Id);
+                var parentsById = filteredChannels.ToDictionary(c => c.Id);
 
                 var response = await GetJsonResponseAsync(
                     $"guilds/{guildId}/threads/active",
@@ -427,7 +425,7 @@ public class DiscordClient
             // Archived threads
             if (includeArchived)
             {
-                foreach (var channel in channels)
+                foreach (var channel in filteredChannels)
                 {
                     // Public archived threads
                     {

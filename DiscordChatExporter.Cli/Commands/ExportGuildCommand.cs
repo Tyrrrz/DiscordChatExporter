@@ -44,18 +44,6 @@ public class ExportGuildCommand : ExportCommandBase
             if (!IncludeVoiceChannels && channel.Kind.IsVoice())
                 continue;
 
-            // if --after is specified, skip channels with no new messages
-            if (After != null && channel.LastMessageId != null && After > channel.LastMessageId)
-                continue;
-
-            // if --before is specified, skip channels created after the specified date
-            if (Before != null && Before < channel.Id)
-                continue;
-
-            // skip forums, they are exported as threads
-            if (channel.Kind == ChannelKind.GuildForum)
-                continue;
-
             channels.Add(channel);
         }
         // return;

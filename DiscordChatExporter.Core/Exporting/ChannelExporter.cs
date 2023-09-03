@@ -20,14 +20,16 @@ public class ChannelExporter
         CancellationToken cancellationToken = default
     )
     {
+        // Forum channels don't have messages, they are just a list of threads
+        if (request.Channel.Kind == ChannelKind.GuildForum)
+            throw new DiscordChatExporterException("Channel is a forum.");
+
         // Check if the channel is empty
-        if (request.Channel.LastMessageId is null)
-        {
+        if (request.Channel.IsEmpty)
             throw new DiscordChatExporterException("Channel does not contain any messages.");
-        }
 
         // Check if the 'after' boundary is valid
-        if (request.After is not null && request.Channel.LastMessageId < request.After)
+        if (request.After is not null && !request.Channel.MayHaveMessagesAfter(request.After.Value))
         {
             throw new DiscordChatExporterException(
                 "Channel does not contain any messages within the specified period."
@@ -35,17 +37,14 @@ public class ChannelExporter
         }
 
         // Check if the 'before' boundary is valid
-        if (request.Before is not null && request.Channel.Id > request.Before)
+        if (
+            request.Before is not null
+            && !request.Channel.MayHaveMessagesBefore(request.Before.Value)
+        )
         {
             throw new DiscordChatExporterException(
                 "Channel does not contain any messages within the specified period."
             );
-        }
-
-        // Skip forum channels, they are exported as threads
-        if (request.Channel.Kind == ChannelKind.GuildForum)
-        {
-            throw new DiscordChatExporterException("Channel is a forum.");
         }
 
         // Build context

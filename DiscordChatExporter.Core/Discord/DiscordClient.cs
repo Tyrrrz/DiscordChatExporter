@@ -286,23 +286,25 @@ public class DiscordClient
             yield break;
 
         var tokenKind = _resolvedTokenKind ??= await GetTokenKindAsync(cancellationToken);
-        var channels = await GetGuildChannelsAsync(guildId, cancellationToken);
-
-        var filteredChannels = channels
+        var channels = (await GetGuildChannelsAsync(guildId, cancellationToken))
             // Categories cannot have threads
             .Where(c => c.Kind != ChannelKind.GuildCategory)
             // Voice channels cannot have threads
             .Where(c => !c.Kind.IsVoice())
-            // Ordinary channel or forum channel without LastMessageId cannot have threads
-            .Where(c => c.LastMessageId != null)
-            // Ff --before is specified, skip channels created after the specified date
-            .Where(c => before == null || before > c.Id);
+            // Empty channels cannot have threads
+            .Where(c => !c.IsEmpty)
+            // If the 'before' boundary is specified, skip channels that don't have messages
+            // for that range, because thread-start event should always be accompanied by a message.
+            // Note that we don't perform a similar check for the 'after' boundary, because
+            // threads may have messages in range, even if the parent channel doesn't.
+            .Where(c => before is null || c.MayHaveMessagesBefore(before.Value))
+            .ToArray();
 
         // User accounts can only fetch threads using the search endpoint
         if (tokenKind == TokenKind.User)
         {
             // Active threads
-            foreach (var channel in filteredChannels)
+            foreach (var channel in channels)
             {
                 var currentOffset = 0;
                 while (true)
@@ -320,7 +322,7 @@ public class DiscordClient
                     if (response is null)
                         break;
 
-                    var containsOlder = false;
+                    var breakOuter = false;
 
                     foreach (
                         var threadJson in response.Value.GetProperty("threads").EnumerateArray()
@@ -328,19 +330,19 @@ public class DiscordClient
                     {
                         var thread = Channel.Parse(threadJson, channel);
 
-                        // if --after is specified, we can break early, because the threads are sorted by last message time
-                        if (after is not null && after > thread.LastMessageId)
+                        // If the 'after' boundary is specified, we can break early,
+                        // because threads are sorted by last message time.
+                        if (after is not null && !thread.MayHaveMessagesAfter(after.Value))
                         {
-                            containsOlder = true;
+                            breakOuter = true;
                             break;
                         }
 
                         yield return thread;
-
                         currentOffset++;
                     }
 
-                    if (containsOlder)
+                    if (breakOuter)
                         break;
 
                     if (!response.Value.GetProperty("has_more").GetBoolean())
@@ -351,7 +353,7 @@ public class DiscordClient
             // Archived threads
             if (includeArchived)
             {
-                foreach (var channel in filteredChannels)
+                foreach (var channel in channels)
                 {
                     var currentOffset = 0;
                     while (true)
@@ -369,7 +371,7 @@ public class DiscordClient
                         if (response is null)
                             break;
 
-                        var containsOlder = false;
+                        var breakOuter = false;
 
                         foreach (
                             var threadJson in response.Value.GetProperty("threads").EnumerateArray()
@@ -377,19 +379,19 @@ public class DiscordClient
                         {
                             var thread = Channel.Parse(threadJson, channel);
 
-                            // if --after is specified, we can break early, because the threads are sorted by last message time
-                            if (after is not null && after > thread.LastMessageId)
+                            // If the 'after' boundary is specified, we can break early,
+                            // because threads are sorted by last message time.
+                            if (after is not null && !thread.MayHaveMessagesAfter(after.Value))
                             {
-                                containsOlder = true;
+                                breakOuter = true;
                                 break;
                             }
 
                             yield return thread;
-
                             currentOffset++;
                         }
 
-                        if (containsOlder)
+                        if (breakOuter)
                             break;
 
                         if (!response.Value.GetProperty("has_more").GetBoolean())
@@ -403,7 +405,7 @@ public class DiscordClient
         {
             // Active threads
             {
-                var parentsById = filteredChannels.ToDictionary(c => c.Id);
+                var parentsById = channels.ToDictionary(c => c.Id);
 
                 var response = await GetJsonResponseAsync(
                     $"guilds/{guildId}/threads/active",
@@ -425,7 +427,7 @@ public class DiscordClient
             // Archived threads
             if (includeArchived)
             {
-                foreach (var channel in filteredChannels)
+                foreach (var channel in channels)
                 {
                     // Public archived threads
                     {

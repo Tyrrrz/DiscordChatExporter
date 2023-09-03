@@ -39,11 +39,17 @@ public partial record Channel(
             _ => "Default"
         };
 
+    public bool IsEmpty => LastMessageId is null;
+
     // Only needed for WPF data binding. Don't use anywhere else.
     public bool IsVoice => Kind.IsVoice();
 
     // Only needed for WPF data binding. Don't use anywhere else.
     public bool IsThread => Kind.IsThread();
+
+    public bool MayHaveMessagesAfter(Snowflake messageId) => !IsEmpty && messageId < LastMessageId;
+
+    public bool MayHaveMessagesBefore(Snowflake messageId) => !IsEmpty && messageId > Id;
 }
 
 public partial record Channel

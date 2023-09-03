@@ -39,7 +39,9 @@ public partial class ExportRequest
 
     public bool ShouldReuseAssets { get; }
 
-    public string DateFormat { get; }
+    public CultureInfo Locale { get; }
+
+    public TimeSpan UtcOffset { get; }
 
     public ExportRequest(
         Guild guild,
@@ -54,7 +56,8 @@ public partial class ExportRequest
         bool shouldFormatMarkdown,
         bool shouldDownloadAssets,
         bool shouldReuseAssets,
-        string dateFormat
+        CultureInfo locale,
+        TimeSpan utcOffset
     )
     {
         Guild = guild;
@@ -67,7 +70,8 @@ public partial class ExportRequest
         ShouldFormatMarkdown = shouldFormatMarkdown;
         ShouldDownloadAssets = shouldDownloadAssets;
         ShouldReuseAssets = shouldReuseAssets;
-        DateFormat = dateFormat;
+        Locale = locale;
+        UtcOffset = utcOffset;
 
         OutputFilePath = GetOutputBaseFilePath(Guild, Channel, outputPath, Format, After, Before);
 

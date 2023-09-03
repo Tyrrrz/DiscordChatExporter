@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -111,8 +112,18 @@ public abstract class ExportCommandBase : DiscordCommandBase
         init => _assetsDirPath = value is not null ? Path.GetFullPath(value) : null;
     }
 
-    [CommandOption("dateformat", Description = "Format used when writing dates.")]
+    [Obsolete("This option doesn't do anything. Kept for backwards compatibility.")]
+    [CommandOption(
+        "dateformat",
+        Description = "This option doesn't do anything. Kept for backwards compatibility."
+    )]
     public string DateFormat { get; init; } = "MM/dd/yyyy h:mm tt";
+
+    [CommandOption("locale", Description = "Locale to use for formatting dates and numbers.")]
+    public CultureInfo Locale { get; init; } = CultureInfo.CurrentCulture;
+
+    [CommandOption("utc-offset", Description = "UTC offset to use for formatting dates.")]
+    public TimeSpan UtcOffset { get; init; } = TimeZoneInfo.Local.BaseUtcOffset;
 
     [CommandOption(
         "fuck-russia",
@@ -210,7 +221,8 @@ public abstract class ExportCommandBase : DiscordCommandBase
                                         ShouldFormatMarkdown,
                                         ShouldDownloadAssets,
                                         ShouldReuseAssets,
-                                        DateFormat
+                                        Locale,
+                                        UtcOffset
                                     );
 
                                     await Exporter.ExportChannelAsync(

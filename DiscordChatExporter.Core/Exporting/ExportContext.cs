@@ -34,6 +34,9 @@ internal class ExportContext
         );
     }
 
+    public string FormatDate(DateTimeOffset instant, string format = "g") =>
+        instant.ToOffset(Request.UtcOffset).ToString(format, Request.Locale);
+
     public async ValueTask PopulateChannelsAndRolesAsync(
         CancellationToken cancellationToken = default
     )
@@ -41,10 +44,14 @@ internal class ExportContext
         await foreach (
             var channel in Discord.GetGuildChannelsAsync(Request.Guild.Id, cancellationToken)
         )
+        {
             _channelsById[channel.Id] = channel;
+        }
 
         await foreach (var role in Discord.GetGuildRolesAsync(Request.Guild.Id, cancellationToken))
+        {
             _rolesById[role.Id] = role;
+        }
     }
 
     // Because members cannot be pulled in bulk, we need to populate them on demand
@@ -83,14 +90,6 @@ internal class ExportContext
         User user,
         CancellationToken cancellationToken = default
     ) => await PopulateMemberAsync(user.Id, user, cancellationToken);
-
-    public string FormatDate(DateTimeOffset instant) =>
-        Request.DateFormat switch
-        {
-            "unix" => instant.ToUnixTimeSeconds().ToString(),
-            "unixms" => instant.ToUnixTimeMilliseconds().ToString(),
-            var format => instant.ToLocalString(format)
-        };
 
     public Member? TryGetMember(Snowflake id) => _membersById.GetValueOrDefault(id);
 

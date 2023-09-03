@@ -267,7 +267,8 @@ public class DashboardViewModel : PropertyChangedBase
                             dialog.ShouldFormatMarkdown,
                             dialog.ShouldDownloadAssets,
                             dialog.ShouldReuseAssets,
-                            _settingsService.DateFormat
+                            _settingsService.Locale,
+                            _settingsService.UtcOffset
                         );
 
                         await exporter.ExportChannelAsync(request, progress, cancellationToken);

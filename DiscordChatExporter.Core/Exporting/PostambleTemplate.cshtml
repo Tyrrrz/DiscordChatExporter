@@ -1,7 +1,7 @@
 ﻿@inherits RazorBlade.HtmlTemplate
 
 @functions {
-    public required ExportContext ExportContext { get; init; }
+    public required ExportContext Context { get; init; }
 
     public required long MessagesWritten { get; init; }
 }
@@ -14,7 +14,7 @@
 <!--/wmm:ignore-->
 
 <div class="postamble">
-    <div class="postamble__entry">Exported @MessagesWritten.ToString("n0") message(s)</div>
+    <div class="postamble__entry">Exported @MessagesWritten.ToString("n0", Context.Request.Locale) message(s)</div>
 </div>
 
 </body>

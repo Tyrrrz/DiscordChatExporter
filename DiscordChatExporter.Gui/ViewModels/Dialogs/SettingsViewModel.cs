@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using DiscordChatExporter.Gui.Models;
 using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.ViewModels.Framework;
@@ -37,10 +38,19 @@ public class SettingsViewModel : DialogScreen
         set => _settingsService.ThreadInclusionMode = value;
     }
 
-    public string DateFormat
+    public IReadOnlyList<CultureInfo> AvailableLocales { get; } =
+        CultureInfo.GetCultures(CultureTypes.SpecificCultures);
+
+    public CultureInfo Locale
     {
-        get => _settingsService.DateFormat;
-        set => _settingsService.DateFormat = value;
+        get => _settingsService.Locale;
+        set => _settingsService.Locale = value;
+    }
+
+    public TimeSpan UtcOffset
+    {
+        get => _settingsService.UtcOffset;
+        set => _settingsService.UtcOffset = value;
     }
 
     public int ParallelLimit

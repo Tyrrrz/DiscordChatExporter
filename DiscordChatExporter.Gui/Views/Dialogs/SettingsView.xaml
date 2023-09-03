@@ -2,6 +2,7 @@
     x:Class="DiscordChatExporter.Gui.Views.Dialogs.SettingsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:DiscordChatExporter.Gui.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dialogs="clr-namespace:DiscordChatExporter.Gui.ViewModels.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -93,27 +94,59 @@
                             DockPanel.Dock="Left"
                             Text="Show threads" />
                         <ComboBox
+                            Width="150"
                             VerticalAlignment="Center"
                             DockPanel.Dock="Right"
                             ItemsSource="{Binding AvailableThreadInclusions}"
                             SelectedItem="{Binding ThreadInclusionMode}" />
                     </DockPanel>
 
-                    <!--  Date format  -->
+                    <!--  Locale  -->
                     <DockPanel
                         Margin="16,8"
                         Background="Transparent"
                         LastChildFill="False"
-                        ToolTip="Format used when writing dates (uses .NET date formatting rules)">
+                        ToolTip="Locale to use for formatting dates and numbers">
                         <TextBlock
                             VerticalAlignment="Center"
                             DockPanel.Dock="Left"
-                            Text="Date format" />
-                        <TextBox
+                            Text="Locale" />
+                        <ComboBox
                             Width="150"
                             VerticalAlignment="Center"
                             DockPanel.Dock="Right"
-                            Text="{Binding DateFormat}" />
+                            ItemsSource="{Binding AvailableLocales}"
+                            Text="{Binding Locale}" />
+                    </DockPanel>
+
+                    <!--  UTC offset  -->
+                    <DockPanel
+                        Margin="16,8"
+                        Background="Transparent"
+                        LastChildFill="False"
+                        ToolTip="UTC offset to use for formatting dates">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Left"
+                            Text="UTC Offset" />
+                        <StackPanel
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Right"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                Margin="10,0"
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold"
+                                Text="{Binding UtcOffset, StringFormat=\{0:hh\:mm\}}" />
+                            <Slider
+                                Width="150"
+                                VerticalAlignment="Center"
+                                Interval="0.5"
+                                Maximum="14"
+                                Minimum="-12"
+                                Style="{DynamicResource MaterialDesignThinSlider}"
+                                Value="{Binding UtcOffset, Converter={x:Static converters:TimeSpanToHoursConverter.Instance}}" />
+                        </StackPanel>
                     </DockPanel>
 
                     <!--  Parallel limit  -->
@@ -139,6 +172,7 @@
                             <Slider
                                 Width="150"
                                 VerticalAlignment="Center"
+                                Interval="1"
                                 Maximum="10"
                                 Minimum="1"
                                 Style="{DynamicResource MaterialDesignThinSlider}"

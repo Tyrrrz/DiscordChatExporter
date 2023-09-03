@@ -20,8 +20,8 @@
     ValueTask<string> ResolveAssetUrlAsync(string url) =>
         Context.ResolveAssetUrlAsync(url, CancellationToken);
 
-    string FormatDate(DateTimeOffset instant) =>
-        Context.FormatDate(instant);
+    string FormatDate(DateTimeOffset instant, string format = "g") =>
+        Context.FormatDate(instant, format);
 
     async ValueTask<string> FormatMarkdownAsync(string markdown) =>
         Context.Request.ShouldFormatMarkdown
@@ -100,7 +100,7 @@
                         }
                         else if (message.Kind == MessageKind.Call)
                         {
-                            <span>started a call that lasted @(((message.CallEndedTimestamp ?? message.Timestamp) - message.Timestamp).TotalMinutes.ToString("n0", CultureInfo.InvariantCulture)) minutes</span>
+                            <span>started a call that lasted @(((message.CallEndedTimestamp ?? message.Timestamp) - message.Timestamp).TotalMinutes.ToString("n0", Context.Request.Locale)) minutes</span>
                         }
                         else if (message.Kind == MessageKind.ChannelNameChange)
                         {
@@ -132,7 +132,7 @@
                     </span>
 
                     @* Timestamp *@
-                    <span class="chatlog__system-notification-timestamp">
+                    <span class="chatlog__system-notification-timestamp" title="@FormatDate(message.Timestamp, "f")">
                         <a href="#chatlog__message-container-@message.Id">@FormatDate(message.Timestamp)</a>
                     </span>
                 </div>
@@ -154,7 +154,7 @@
                     }
                     else
                     {
-                        <div class="chatlog__short-timestamp" title="@FormatDate(message.Timestamp)">@message.Timestamp.ToLocalString("t")</div>
+                        <div class="chatlog__short-timestamp" title="@FormatDate(message.Timestamp, "f")">@FormatDate(message.Timestamp, "t")</div>
                     }
                 </div>
 
@@ -194,7 +194,7 @@
 
                                         @if (message.ReferencedMessage.EditedTimestamp is not null)
                                         {
-                                            <span class="chatlog__reply-edited-timestamp" title="@FormatDate(message.ReferencedMessage.EditedTimestamp.Value)">(edited)</span>
+                                            <span class="chatlog__reply-edited-timestamp" title="@FormatDate(message.ReferencedMessage.EditedTimestamp.Value, "f")">(edited)</span>
                                         }
                                     </div>
                                 }
@@ -241,7 +241,7 @@
                             }
 
                             @* Timestamp *@
-                            <span class="chatlog__timestamp"><a href="#chatlog__message-container-@message.Id">@FormatDate(message.Timestamp)</a></span>
+                            <span class="chatlog__timestamp" title="@FormatDate(message.Timestamp, "f")"><a href="#chatlog__message-container-@message.Id">@FormatDate(message.Timestamp)</a></span>
                         </div>
                     }
 
@@ -258,7 +258,7 @@
                             @* Edited timestamp *@
                             @if (message.EditedTimestamp is not null)
                             {
-                                <span class="chatlog__edited-timestamp" title="@FormatDate(message.EditedTimestamp.Value)">(edited)</span>
+                                <span class="chatlog__edited-timestamp" title="@FormatDate(message.EditedTimestamp.Value, "f")">(edited)</span>
                             }
                         </div>
                     }

@@ -139,7 +139,7 @@ internal class HtmlMessageWriter : MessageWriter
             Minify(
                 await new PostambleTemplate
                 {
-                    ExportContext = Context,
+                    Context = Context,
                     MessagesWritten = MessagesWritten
                 }.RenderAsync(cancellationToken)
             )

@@ -329,7 +329,7 @@ public class DiscordClient
                         var thread = Channel.Parse(threadJson, channel);
 
                         // if --after is specified, we can break early, because the threads are sorted by last message time
-                        if (after != null && after > thread.LastMessageId)
+                        if (after is not null && after > thread.LastMessageId)
                         {
                             containsOlder = true;
                             break;

@@ -46,7 +46,6 @@ public class ExportGuildCommand : ExportCommandBase
 
             channels.Add(channel);
         }
-        // return;
 
         // Threads
         if (ThreadInclusionMode != ThreadInclusionMode.None)

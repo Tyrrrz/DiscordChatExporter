@@ -67,16 +67,14 @@ public partial record Channel
         var name =
             // Guild channel
             json.GetPropertyOrNull("name")?.GetNonWhiteSpaceStringOrNull()
-            ??
             // DM channel
-            json.GetPropertyOrNull("recipients")
+            ?? json.GetPropertyOrNull("recipients")
                 ?.EnumerateArrayOrNull()
                 ?.Select(User.Parse)
                 .Select(u => u.DisplayName)
                 .Pipe(s => string.Join(", ", s))
-            ??
             // Fallback
-            id.ToString();
+            ?? id.ToString();
 
         var position = positionHint ?? json.GetPropertyOrNull("position")?.GetInt32OrNull();
 

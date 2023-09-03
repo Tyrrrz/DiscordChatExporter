@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord;
+using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exceptions;
 using Gress;
 
@@ -19,14 +20,27 @@ public class ChannelExporter
         CancellationToken cancellationToken = default
     )
     {
+        // Forum channels don't have messages, they are just a list of threads
+        if (request.Channel.Kind == ChannelKind.GuildForum)
+            throw new DiscordChatExporterException("Channel is a forum.");
+
         // Check if the channel is empty
-        if (request.Channel.LastMessageId is null)
-        {
+        if (request.Channel.IsEmpty)
             throw new DiscordChatExporterException("Channel does not contain any messages.");
-        }
 
         // Check if the 'after' boundary is valid
-        if (request.After is not null && request.Channel.LastMessageId < request.After)
+        if (request.After is not null && !request.Channel.MayHaveMessagesAfter(request.After.Value))
+        {
+            throw new DiscordChatExporterException(
+                "Channel does not contain any messages within the specified period."
+            );
+        }
+
+        // Check if the 'before' boundary is valid
+        if (
+            request.Before is not null
+            && !request.Channel.MayHaveMessagesBefore(request.Before.Value)
+        )
         {
             throw new DiscordChatExporterException(
                 "Channel does not contain any messages within the specified period."

@@ -54,6 +54,8 @@ public class ExportGuildCommand : ExportCommandBase
                 var thread in Discord.GetGuildThreadsAsync(
                     GuildId,
                     ThreadInclusionMode == ThreadInclusionMode.All,
+                    Before,
+                    After,
                     cancellationToken
                 )
             )

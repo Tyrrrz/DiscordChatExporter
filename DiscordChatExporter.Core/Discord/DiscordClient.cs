@@ -277,6 +277,8 @@ public class DiscordClient
     public async IAsyncEnumerable<Channel> GetGuildThreadsAsync(
         Snowflake guildId,
         bool includeArchived = false,
+        Snowflake? before = null,
+        Snowflake? after = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default
     )
     {
@@ -284,7 +286,19 @@ public class DiscordClient
             yield break;
 
         var tokenKind = _resolvedTokenKind ??= await GetTokenKindAsync(cancellationToken);
-        var channels = await GetGuildChannelsAsync(guildId, cancellationToken);
+        var channels = (await GetGuildChannelsAsync(guildId, cancellationToken))
+            // Categories cannot have threads
+            .Where(c => c.Kind != ChannelKind.GuildCategory)
+            // Voice channels cannot have threads
+            .Where(c => !c.Kind.IsVoice())
+            // Empty channels cannot have threads
+            .Where(c => !c.IsEmpty)
+            // If the 'before' boundary is specified, skip channels that don't have messages
+            // for that range, because thread-start event should always be accompanied by a message.
+            // Note that we don't perform a similar check for the 'after' boundary, because
+            // threads may have messages in range, even if the parent channel doesn't.
+            .Where(c => before is null || c.MayHaveMessagesBefore(before.Value))
+            .ToArray();
 
         // User accounts can only fetch threads using the search endpoint
         if (tokenKind == TokenKind.User)
@@ -297,6 +311,8 @@ public class DiscordClient
                 {
                     var url = new UrlBuilder()
                         .SetPath($"channels/{channel.Id}/threads/search")
+                        .SetQueryParameter("sort_by", "last_message_time")
+                        .SetQueryParameter("sort_order", "desc")
                         .SetQueryParameter("archived", "false")
                         .SetQueryParameter("offset", currentOffset.ToString())
                         .Build();
@@ -306,13 +322,28 @@ public class DiscordClient
                     if (response is null)
                         break;
 
+                    var breakOuter = false;
+
                     foreach (
                         var threadJson in response.Value.GetProperty("threads").EnumerateArray()
                     )
                     {
-                        yield return Channel.Parse(threadJson, channel);
+                        var thread = Channel.Parse(threadJson, channel);
+
+                        // If the 'after' boundary is specified, we can break early,
+                        // because threads are sorted by last message time.
+                        if (after is not null && !thread.MayHaveMessagesAfter(after.Value))
+                        {
+                            breakOuter = true;
+                            break;
+                        }
+
+                        yield return thread;
                         currentOffset++;
                     }
+
+                    if (breakOuter)
+                        break;
 
                     if (!response.Value.GetProperty("has_more").GetBoolean())
                         break;
@@ -329,6 +360,8 @@ public class DiscordClient
                     {
                         var url = new UrlBuilder()
                             .SetPath($"channels/{channel.Id}/threads/search")
+                            .SetQueryParameter("sort_by", "last_message_time")
+                            .SetQueryParameter("sort_order", "desc")
                             .SetQueryParameter("archived", "true")
                             .SetQueryParameter("offset", currentOffset.ToString())
                             .Build();
@@ -338,13 +371,28 @@ public class DiscordClient
                         if (response is null)
                             break;
 
+                        var breakOuter = false;
+
                         foreach (
                             var threadJson in response.Value.GetProperty("threads").EnumerateArray()
                         )
                         {
-                            yield return Channel.Parse(threadJson, channel);
+                            var thread = Channel.Parse(threadJson, channel);
+
+                            // If the 'after' boundary is specified, we can break early,
+                            // because threads are sorted by last message time.
+                            if (after is not null && !thread.MayHaveMessagesAfter(after.Value))
+                            {
+                                breakOuter = true;
+                                break;
+                            }
+
+                            yield return thread;
                             currentOffset++;
                         }
+
+                        if (breakOuter)
+                            break;
 
                         if (!response.Value.GetProperty("has_more").GetBoolean())
                             break;

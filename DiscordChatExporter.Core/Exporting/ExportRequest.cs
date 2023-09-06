@@ -39,7 +39,9 @@ public partial class ExportRequest
 
     public bool ShouldReuseAssets { get; }
 
-    public Locale Locale { get; }
+    public string Locale { get; }
+
+    public CultureInfo CultureInfo { get; }
 
     public bool IsUtcNormalizationEnabled { get; }
 
@@ -56,7 +58,7 @@ public partial class ExportRequest
         bool shouldFormatMarkdown,
         bool shouldDownloadAssets,
         bool shouldReuseAssets,
-        Locale locale,
+        string locale,
         bool isUtcNormalizationEnabled
     )
     {
@@ -80,6 +82,8 @@ public partial class ExportRequest
         AssetsDirPath = !string.IsNullOrWhiteSpace(assetsDirPath)
             ? FormatPath(assetsDirPath, Guild, Channel, After, Before)
             : $"{OutputFilePath}_Files{Path.DirectorySeparatorChar}";
+
+        CultureInfo = CultureInfo.GetCultureInfo(Locale);
     }
 }
 

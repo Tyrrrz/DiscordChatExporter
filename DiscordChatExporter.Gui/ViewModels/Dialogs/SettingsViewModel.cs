@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Gui.Models;
 using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.ViewModels.Framework;
@@ -39,43 +39,43 @@ public class SettingsViewModel : DialogScreen
         set => _settingsService.ThreadInclusionMode = value;
     }
 
-    public IReadOnlyList<Locale> AvailableLocales { get; } = new[]
+    public IReadOnlyList<string> AvailableLocales { get; } = new[]
         {
             // Current locale
-            Locale.Current,
+            CultureInfo.CurrentCulture.Name,
             // Locales supported by the Discord app
-            new Locale("da-DK"),
-            new Locale("de-DE"),
-            new Locale("en-GB"),
-            new Locale("en-US"),
-            new Locale("es-ES"),
-            new Locale("fr-FR"),
-            new Locale("hr-HR"),
-            new Locale("it-IT"),
-            new Locale("lt-LT"),
-            new Locale("hu-HU"),
-            new Locale("nl-NL"),
-            new Locale("no-NO"),
-            new Locale("pl-PL"),
-            new Locale("pt-BR"),
-            new Locale("ro-RO"),
-            new Locale("fi-FI"),
-            new Locale("sv-SE"),
-            new Locale("vi-VN"),
-            new Locale("tr-TR"),
-            new Locale("cs-CZ"),
-            new Locale("el-GR"),
-            new Locale("bg-BG"),
-            new Locale("ru-RU"),
-            new Locale("uk-UA"),
-            new Locale("th-TH"),
-            new Locale("zh-CN"),
-            new Locale("ja-JP"),
-            new Locale("zh-TW"),
-            new Locale("ko-KR")
-        }.Distinct().ToArray();
+            "da-DK",
+            "de-DE",
+            "en-GB",
+            "en-US",
+            "es-ES",
+            "fr-FR",
+            "hr-HR",
+            "it-IT",
+            "lt-LT",
+            "hu-HU",
+            "nl-NL",
+            "no-NO",
+            "pl-PL",
+            "pt-BR",
+            "ro-RO",
+            "fi-FI",
+            "sv-SE",
+            "vi-VN",
+            "tr-TR",
+            "cs-CZ",
+            "el-GR",
+            "bg-BG",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "zh-CN",
+            "ja-JP",
+            "zh-TW",
+            "ko-KR"
+        }.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
 
-    public Locale Locale
+    public string Locale
     {
         get => _settingsService.Locale;
         set => _settingsService.Locale = value;

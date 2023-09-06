@@ -99,7 +99,7 @@
                         }
                         else if (message.Kind == MessageKind.Call)
                         {
-                            <span>started a call that lasted @(((message.CallEndedTimestamp ?? message.Timestamp) - message.Timestamp).TotalMinutes.ToString("n0", Context.Request.Locale.ToCultureInfo())) minutes</span>
+                            <span>started a call that lasted @(((message.CallEndedTimestamp ?? message.Timestamp) - message.Timestamp).TotalMinutes.ToString("n0", Context.Request.CultureInfo)) minutes</span>
                         }
                         else if (message.Kind == MessageKind.ChannelNameChange)
                         {

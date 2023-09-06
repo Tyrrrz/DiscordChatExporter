@@ -61,7 +61,7 @@ public class HtmlMarkdownSpecs
         );
 
         // Assert
-        message.Text().Should().Contain("Short date timestamp: 02/12/2023");
+        message.Text().Should().Contain("Short date timestamp: 2/12/2023");
         message.InnerHtml.Should().Contain("Sunday, February 12, 2023 1:36 PM");
     }
 
@@ -75,7 +75,7 @@ public class HtmlMarkdownSpecs
         );
 
         // Assert
-        message.Text().Should().Contain("Long date timestamp: February 12, 2023");
+        message.Text().Should().Contain("Long date timestamp: Sunday, February 12, 2023");
         message.InnerHtml.Should().Contain("Sunday, February 12, 2023 1:36 PM");
     }
 
@@ -89,7 +89,7 @@ public class HtmlMarkdownSpecs
         );
 
         // Assert
-        message.Text().Should().Contain("Full timestamp: February 12, 2023 1:36 PM");
+        message.Text().Should().Contain("Full timestamp: Sunday, February 12, 2023 1:36 PM");
         message.InnerHtml.Should().Contain("Sunday, February 12, 2023 1:36 PM");
     }
 
@@ -103,7 +103,10 @@ public class HtmlMarkdownSpecs
         );
 
         // Assert
-        message.Text().Should().Contain("Full long timestamp: Sunday, February 12, 2023 1:36 PM");
+        message
+            .Text()
+            .Should()
+            .Contain("Full long timestamp: Sunday, February 12, 2023 1:36:12 PM");
         message.InnerHtml.Should().Contain("Sunday, February 12, 2023 1:36 PM");
     }
 

@@ -164,10 +164,13 @@
                             <Slider
                                 Width="150"
                                 VerticalAlignment="Center"
-                                Interval="1"
+                                IsSnapToTickEnabled="True"
+                                LargeChange="1"
                                 Maximum="10"
                                 Minimum="1"
+                                SmallChange="1"
                                 Style="{DynamicResource MaterialDesignThinSlider}"
+                                TickFrequency="1"
                                 Value="{Binding ParallelLimit}" />
                         </StackPanel>
                     </DockPanel>

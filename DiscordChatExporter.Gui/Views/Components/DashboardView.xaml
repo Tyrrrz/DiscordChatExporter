@@ -105,7 +105,7 @@
                         Grid.Column="2"
                         Margin="0,6,6,6"
                         Padding="4"
-                        Command="{s:Action PullGuildsAsync}"
+                        Command="{s:Action PullGuilds}"
                         IsDefault="True"
                         Style="{DynamicResource MaterialDesignFlatButton}"
                         ToolTip="Pull available guilds and channels (Enter)">
@@ -122,7 +122,7 @@
                 Grid.Column="1"
                 Margin="6"
                 Padding="4"
-                Command="{s:Action ShowSettingsAsync}"
+                Command="{s:Action ShowSettings}"
                 Foreground="{DynamicResource MaterialDesignDarkForeground}"
                 Style="{DynamicResource MaterialDesignFlatButton}"
                 ToolTip="Settings">
@@ -274,7 +274,7 @@
                                     Margin="-8"
                                     Background="Transparent"
                                     Cursor="Hand"
-                                    MouseLeftButtonUp="{s:Action PullChannelsAsync}"
+                                    MouseLeftButtonUp="{s:Action PullChannels}"
                                     ToolTip="{Binding Name}">
                                     <!--  Guild icon placeholder  -->
                                     <Ellipse

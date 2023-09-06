@@ -78,6 +78,9 @@ public class DashboardViewModel : PropertyChangedBase
                 // due to the channels being asynchronously loaded.
                 AvailableChannels = null;
                 SelectedChannels = null;
+
+                // Pull channels for the selected guild
+                PullChannels();
             }
         );
     }
@@ -88,14 +91,14 @@ public class DashboardViewModel : PropertyChangedBase
             Token = _settingsService.LastToken;
     }
 
-    public async ValueTask ShowSettingsAsync() =>
+    public async void ShowSettings() =>
         await _dialogManager.ShowDialogAsync(_viewModelFactory.CreateSettingsViewModel());
 
     public void ShowHelp() => ProcessEx.StartShellExecute(App.DocumentationUrl);
 
-    public bool CanPullGuildsAsync => !IsBusy && !string.IsNullOrWhiteSpace(Token);
+    public bool CanPullGuilds => !IsBusy && !string.IsNullOrWhiteSpace(Token);
 
-    public async ValueTask PullGuildsAsync()
+    public async void PullGuilds()
     {
         IsBusy = true;
         var progress = _progressMuxer.CreateInput();
@@ -118,9 +121,6 @@ public class DashboardViewModel : PropertyChangedBase
 
             AvailableGuilds = guilds;
             SelectedGuild = guilds.FirstOrDefault();
-
-            // Pull channels for the selected guild
-            await PullChannelsAsync();
         }
         catch (DiscordChatExporterException ex) when (!ex.IsFatal)
         {
@@ -142,10 +142,9 @@ public class DashboardViewModel : PropertyChangedBase
         }
     }
 
-    public bool CanPullChannelsAsync =>
-        !IsBusy && _discord is not null && SelectedGuild is not null;
+    public bool CanPullChannels => !IsBusy && _discord is not null && SelectedGuild is not null;
 
-    public async ValueTask PullChannelsAsync()
+    public async void PullChannels()
     {
         IsBusy = true;
         var progress = _progressMuxer.CreateInput();
@@ -268,7 +267,7 @@ public class DashboardViewModel : PropertyChangedBase
                             dialog.ShouldDownloadAssets,
                             dialog.ShouldReuseAssets,
                             _settingsService.Locale,
-                            _settingsService.UtcOffset
+                            _settingsService.IsUtcNormalizationEnabled
                         );
 
                         await exporter.ExportChannelAsync(request, progress, cancellationToken);

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -119,11 +118,15 @@ public abstract class ExportCommandBase : DiscordCommandBase
     )]
     public string DateFormat { get; init; } = "MM/dd/yyyy h:mm tt";
 
-    [CommandOption("locale", Description = "Locale to use for formatting dates and numbers.")]
-    public CultureInfo Locale { get; init; } = CultureInfo.CurrentCulture;
+    [CommandOption(
+        "locale",
+        Description = "Locale to use when formatting dates and numbers.",
+        Converter = typeof(LocaleBindingConverter)
+    )]
+    public Locale Locale { get; init; } = Locale.Current;
 
-    [CommandOption("utc-offset", Description = "UTC offset to use for formatting dates.")]
-    public TimeSpan UtcOffset { get; init; } = TimeZoneInfo.Local.BaseUtcOffset;
+    [CommandOption("utc", Description = "Normalize all timestamps to UTC+0.")]
+    public bool IsUtcNormalizationEnabled { get; init; } = false;
 
     [CommandOption(
         "fuck-russia",
@@ -222,7 +225,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
                                         ShouldDownloadAssets,
                                         ShouldReuseAssets,
                                         Locale,
-                                        UtcOffset
+                                        IsUtcNormalizationEnabled
                                     );
 
                                     await Exporter.ExportChannelAsync(

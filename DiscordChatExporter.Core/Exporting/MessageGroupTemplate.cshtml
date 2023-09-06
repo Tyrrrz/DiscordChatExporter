@@ -1,6 +1,5 @@
 @using System
 @using System.Collections.Generic
-@using System.Globalization
 @using System.Linq
 @using System.Threading.Tasks
 @using DiscordChatExporter.Core.Discord.Data
@@ -100,7 +99,7 @@
                         }
                         else if (message.Kind == MessageKind.Call)
                         {
-                            <span>started a call that lasted @(((message.CallEndedTimestamp ?? message.Timestamp) - message.Timestamp).TotalMinutes.ToString("n0", Context.Request.Locale)) minutes</span>
+                            <span>started a call that lasted @(((message.CallEndedTimestamp ?? message.Timestamp) - message.Timestamp).TotalMinutes.ToString("n0", Context.Request.Locale.ToCultureInfo())) minutes</span>
                         }
                         else if (message.Kind == MessageKind.ChannelNameChange)
                         {

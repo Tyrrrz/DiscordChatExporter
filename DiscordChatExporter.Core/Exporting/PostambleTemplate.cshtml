@@ -14,7 +14,7 @@
 <!--/wmm:ignore-->
 
 <div class="postamble">
-    <div class="postamble__entry">Exported @MessagesWritten.ToString("n0", Context.Request.Locale) message(s)</div>
+    <div class="postamble__entry">Exported @MessagesWritten.ToString("n0", Context.Request.Locale.ToCultureInfo()) message(s)</div>
 </div>
 
 </body>

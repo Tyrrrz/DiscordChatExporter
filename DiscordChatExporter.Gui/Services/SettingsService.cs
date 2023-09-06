@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Globalization;
 using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Cogwheel;
 using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Gui.Models;
@@ -20,9 +21,10 @@ public partial class SettingsService : SettingsBase
 
     public ThreadInclusionMode ThreadInclusionMode { get; set; } = ThreadInclusionMode.None;
 
-    public CultureInfo Locale { get; set; } = CultureInfo.CurrentCulture;
+    [JsonConverter(typeof(LocaleJsonConverter))]
+    public Locale Locale { get; set; } = Locale.Current;
 
-    public TimeSpan UtcOffset { get; set; } = TimeZoneInfo.Local.BaseUtcOffset;
+    public bool IsUtcNormalizationEnabled { get; set; }
 
     public int ParallelLimit { get; set; } = 1;
 
@@ -78,5 +80,29 @@ public partial class SettingsService
         {
             return false;
         }
+    }
+}
+
+public partial class SettingsService
+{
+    private class LocaleJsonConverter : JsonConverter<Locale>
+    {
+        public override Locale Read(
+            ref Utf8JsonReader reader,
+            Type typeToConvert,
+            JsonSerializerOptions options
+        ) =>
+            new(
+                reader.GetString()
+                    ?? throw new InvalidOperationException(
+                        $"Invalid JSON for type '{typeToConvert.FullName}'."
+                    )
+            );
+
+        public override void Write(
+            Utf8JsonWriter writer,
+            Locale value,
+            JsonSerializerOptions options
+        ) => writer.WriteStringValue(value.Code);
     }
 }

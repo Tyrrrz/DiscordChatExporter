@@ -35,7 +35,9 @@ internal class ExportContext
     }
 
     public string FormatDate(DateTimeOffset instant, string format = "g") =>
-        instant.ToOffset(Request.UtcOffset).ToString(format, Request.Locale);
+        (
+            Request.IsUtcNormalizationEnabled ? instant.ToUniversalTime() : instant.ToLocalTime()
+        ).ToString(format, Request.Locale.ToCultureInfo());
 
     public async ValueTask PopulateChannelsAndRolesAsync(
         CancellationToken cancellationToken = default

@@ -106,7 +106,7 @@
                         Margin="16,8"
                         Background="Transparent"
                         LastChildFill="False"
-                        ToolTip="Locale to use for formatting dates and numbers">
+                        ToolTip="Locale to use when formatting dates and numbers">
                         <TextBlock
                             VerticalAlignment="Center"
                             DockPanel.Dock="Left"
@@ -116,37 +116,29 @@
                             VerticalAlignment="Center"
                             DockPanel.Dock="Right"
                             ItemsSource="{Binding AvailableLocales}"
-                            Text="{Binding Locale}" />
+                            SelectedItem="{Binding Locale}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Converter={x:Static converters:LocaleToDisplayNameConverter.Instance}}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
                     </DockPanel>
 
-                    <!--  UTC offset  -->
+                    <!--  UTC normalization  -->
                     <DockPanel
                         Margin="16,8"
                         Background="Transparent"
                         LastChildFill="False"
-                        ToolTip="UTC offset to use for formatting dates">
+                        ToolTip="Normalize all timestamps to UTC+0">
                         <TextBlock
                             VerticalAlignment="Center"
                             DockPanel.Dock="Left"
-                            Text="UTC Offset" />
-                        <StackPanel
+                            Text="Normalize to UTC" />
+                        <ToggleButton
                             VerticalAlignment="Center"
                             DockPanel.Dock="Right"
-                            Orientation="Horizontal">
-                            <TextBlock
-                                Margin="10,0"
-                                VerticalAlignment="Center"
-                                FontWeight="SemiBold"
-                                Text="{Binding UtcOffset, StringFormat=\{0:hh\:mm\}}" />
-                            <Slider
-                                Width="150"
-                                VerticalAlignment="Center"
-                                Interval="0.5"
-                                Maximum="14"
-                                Minimum="-12"
-                                Style="{DynamicResource MaterialDesignThinSlider}"
-                                Value="{Binding UtcOffset, Converter={x:Static converters:TimeSpanToHoursConverter.Instance}}" />
-                        </StackPanel>
+                            IsChecked="{Binding IsUtcNormalizationEnabled}" />
                     </DockPanel>
 
                     <!--  Parallel limit  -->

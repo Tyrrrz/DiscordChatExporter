@@ -80,6 +80,8 @@ public class DashboardViewModel : PropertyChangedBase
                 SelectedChannels = null;
 
                 // Pull channels for the selected guild
+                // (ideally this should be called inside `PullGuilds()`,
+                // but Stylet doesn't support async commands)
                 PullChannels();
             }
         );

@@ -205,13 +205,13 @@ public class DashboardViewModel : PropertyChangedBase
         }
     }
 
-    public bool CanExportAsync =>
+    public bool CanExport =>
         !IsBusy
         && _discord is not null
         && SelectedGuild is not null
         && SelectedChannels?.Any() is true;
 
-    public async ValueTask ExportAsync()
+    public async void Export()
     {
         IsBusy = true;
 

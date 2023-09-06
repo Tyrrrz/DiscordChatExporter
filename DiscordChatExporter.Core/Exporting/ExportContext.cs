@@ -34,10 +34,11 @@ internal class ExportContext
         );
     }
 
+    public DateTimeOffset NormalizeDate(DateTimeOffset instant) =>
+        Request.IsUtcNormalizationEnabled ? instant.ToUniversalTime() : instant.ToLocalTime();
+
     public string FormatDate(DateTimeOffset instant, string format = "g") =>
-        (
-            Request.IsUtcNormalizationEnabled ? instant.ToUniversalTime() : instant.ToLocalTime()
-        ).ToString(format, Request.CultureInfo);
+        NormalizeDate(instant).ToString(format, Request.CultureInfo);
 
     public async ValueTask PopulateChannelsAndRolesAsync(
         CancellationToken cancellationToken = default

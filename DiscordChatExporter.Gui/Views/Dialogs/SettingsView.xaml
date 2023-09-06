@@ -116,7 +116,13 @@
                             VerticalAlignment="Center"
                             DockPanel.Dock="Right"
                             ItemsSource="{Binding AvailableLocales}"
-                            SelectedItem="{Binding Locale}" />
+                            SelectedItem="{Binding Locale}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Converter={x:Static converters:LocaleToDisplayNameConverter.Instance}}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
                     </DockPanel>
 
                     <!--  UTC normalization  -->

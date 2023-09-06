@@ -1,4 +1,6 @@
-﻿@inherits RazorBlade.HtmlTemplate
+﻿@using System
+
+@inherits RazorBlade.HtmlTemplate
 
 @functions {
     public required ExportContext Context { get; init; }
@@ -15,6 +17,7 @@
 
 <div class="postamble">
     <div class="postamble__entry">Exported @MessagesWritten.ToString("n0", Context.Request.CultureInfo) message(s)</div>
+    <div class="postamble__entry">Timezone: UTC@((Context.Request.IsUtcNormalizationEnabled ? 0 : TimeZoneInfo.Local.BaseUtcOffset.TotalHours).ToString("+#.#;-#.#;+0", Context.Request.CultureInfo))</div>
 </div>
 
 </body>

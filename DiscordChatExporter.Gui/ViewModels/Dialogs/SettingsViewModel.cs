@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using DiscordChatExporter.Gui.Models;
 using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.ViewModels.Framework;
@@ -37,10 +39,52 @@ public class SettingsViewModel : DialogScreen
         set => _settingsService.ThreadInclusionMode = value;
     }
 
-    public string DateFormat
+    public IReadOnlyList<string> AvailableLocales { get; } = new[]
+        {
+            // Current locale
+            CultureInfo.CurrentCulture.Name,
+            // Locales supported by the Discord app
+            "da-DK",
+            "de-DE",
+            "en-GB",
+            "en-US",
+            "es-ES",
+            "fr-FR",
+            "hr-HR",
+            "it-IT",
+            "lt-LT",
+            "hu-HU",
+            "nl-NL",
+            "no-NO",
+            "pl-PL",
+            "pt-BR",
+            "ro-RO",
+            "fi-FI",
+            "sv-SE",
+            "vi-VN",
+            "tr-TR",
+            "cs-CZ",
+            "el-GR",
+            "bg-BG",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "zh-CN",
+            "ja-JP",
+            "zh-TW",
+            "ko-KR"
+        }.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+
+    public string Locale
     {
-        get => _settingsService.DateFormat;
-        set => _settingsService.DateFormat = value;
+        get => _settingsService.Locale;
+        set => _settingsService.Locale = value;
+    }
+
+    public bool IsUtcNormalizationEnabled
+    {
+        get => _settingsService.IsUtcNormalizationEnabled;
+        set => _settingsService.IsUtcNormalizationEnabled = value;
     }
 
     public int ParallelLimit

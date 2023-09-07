@@ -91,9 +91,7 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
     {
         _buffer.Append(
             timestamp.Instant is not null
-                ? !string.IsNullOrWhiteSpace(timestamp.Format)
-                    ? timestamp.Instant.Value.ToLocalString(timestamp.Format)
-                    : _context.FormatDate(timestamp.Instant.Value)
+                ? _context.FormatDate(timestamp.Instant.Value, timestamp.Format ?? "g")
                 : "Invalid date"
         );
 

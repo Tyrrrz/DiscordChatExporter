@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -196,7 +197,7 @@ internal class JsonMessageWriter : MessageWriter
             await FormatMarkdownAsync(embed.Title ?? "", cancellationToken)
         );
         _writer.WriteString("url", embed.Url);
-        _writer.WriteString("timestamp", embed.Timestamp);
+        _writer.WriteString("timestamp", embed.Timestamp?.Pipe(Context.NormalizeDate));
         _writer.WriteString(
             "description",
             await FormatMarkdownAsync(embed.Description ?? "", cancellationToken)
@@ -292,12 +293,12 @@ internal class JsonMessageWriter : MessageWriter
 
         // Date range
         _writer.WriteStartObject("dateRange");
-        _writer.WriteString("after", Context.Request.After?.ToDate());
-        _writer.WriteString("before", Context.Request.Before?.ToDate());
+        _writer.WriteString("after", Context.Request.After?.ToDate().Pipe(Context.NormalizeDate));
+        _writer.WriteString("before", Context.Request.Before?.ToDate().Pipe(Context.NormalizeDate));
         _writer.WriteEndObject();
 
         // Timestamp
-        _writer.WriteString("exportedAt", System.DateTimeOffset.UtcNow);
+        _writer.WriteString("exportedAt", Context.NormalizeDate(DateTimeOffset.UtcNow));
 
         // Message array (start)
         _writer.WriteStartArray("messages");
@@ -316,9 +317,15 @@ internal class JsonMessageWriter : MessageWriter
         // Metadata
         _writer.WriteString("id", message.Id.ToString());
         _writer.WriteString("type", message.Kind.ToString());
-        _writer.WriteString("timestamp", message.Timestamp);
-        _writer.WriteString("timestampEdited", message.EditedTimestamp);
-        _writer.WriteString("callEndedTimestamp", message.CallEndedTimestamp);
+        _writer.WriteString("timestamp", Context.NormalizeDate(message.Timestamp));
+        _writer.WriteString(
+            "timestampEdited",
+            message.EditedTimestamp?.Pipe(Context.NormalizeDate)
+        );
+        _writer.WriteString(
+            "callEndedTimestamp",
+            message.CallEndedTimestamp?.Pipe(Context.NormalizeDate)
+        );
         _writer.WriteBoolean("isPinned", message.IsPinned);
 
         // Content

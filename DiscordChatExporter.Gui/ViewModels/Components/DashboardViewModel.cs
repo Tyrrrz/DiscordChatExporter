@@ -43,8 +43,6 @@ public class DashboardViewModel : PropertyChangedBase
 
     public Guild? SelectedGuild { get; set; }
 
-    public bool IsDirectMessageGuildSelected => SelectedGuild?.Id == Guild.DirectMessages.Id;
-
     public IReadOnlyList<Channel>? AvailableChannels { get; private set; }
 
     public IReadOnlyList<Channel>? SelectedChannels { get; set; }
@@ -164,7 +162,7 @@ public class DashboardViewModel : PropertyChangedBase
             // Regular channels
             await foreach (var channel in _discord.GetGuildChannelsAsync(SelectedGuild.Id))
             {
-                if (channel.Kind == ChannelKind.GuildCategory)
+                if (channel.IsCategory)
                     continue;
 
                 channels.Add(channel);

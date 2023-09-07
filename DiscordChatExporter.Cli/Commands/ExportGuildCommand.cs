@@ -38,10 +38,10 @@ public class ExportGuildCommand : ExportCommandBase
         // Regular channels
         await foreach (var channel in Discord.GetGuildChannelsAsync(GuildId, cancellationToken))
         {
-            if (channel.Kind == ChannelKind.GuildCategory)
+            if (channel.IsCategory)
                 continue;
 
-            if (!IncludeVoiceChannels && channel.Kind.IsVoice())
+            if (!IncludeVoiceChannels && channel.IsVoice)
                 continue;
 
             channels.Add(channel);

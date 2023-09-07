@@ -14,8 +14,3 @@ public enum MessageKind
     ThreadCreated = 18,
     Reply = 19
 }
-
-public static class MessageKindExtensions
-{
-    public static bool IsSystemNotification(this MessageKind kind) => (int)kind is >= 1 and <= 18;
-}

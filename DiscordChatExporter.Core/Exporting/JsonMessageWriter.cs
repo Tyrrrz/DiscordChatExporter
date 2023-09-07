@@ -273,8 +273,11 @@ internal class JsonMessageWriter : MessageWriter
         _writer.WriteStartObject("channel");
         _writer.WriteString("id", Context.Request.Channel.Id.ToString());
         _writer.WriteString("type", Context.Request.Channel.Kind.ToString());
+
+        // Original schema did not account for threads, so 'category' actually refers to the parent channel
         _writer.WriteString("categoryId", Context.Request.Channel.Parent?.Id.ToString());
-        _writer.WriteString("category", Context.Request.Channel.ParentNameWithFallback);
+        _writer.WriteString("category", Context.Request.Channel.Parent?.Name);
+
         _writer.WriteString("name", Context.Request.Channel.Name);
         _writer.WriteString("topic", Context.Request.Channel.Topic);
 
@@ -329,7 +332,7 @@ internal class JsonMessageWriter : MessageWriter
         _writer.WriteBoolean("isPinned", message.IsPinned);
 
         // Content
-        if (message.Kind.IsSystemNotification())
+        if (message.IsSystemNotification)
         {
             _writer.WriteString("content", message.GetFallbackContent());
         }

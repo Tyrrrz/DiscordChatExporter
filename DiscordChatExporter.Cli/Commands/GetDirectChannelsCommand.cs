@@ -21,7 +21,6 @@ public class GetDirectChannelsCommand : DiscordCommandBase
         var channels = (
             await Discord.GetGuildChannelsAsync(Guild.DirectMessages.Id, cancellationToken)
         )
-            .Where(c => c.Kind != ChannelKind.GuildCategory)
             .OrderByDescending(c => c.LastMessageId)
             .ThenBy(c => c.Name)
             .ToArray();
@@ -42,11 +41,9 @@ public class GetDirectChannelsCommand : DiscordCommandBase
             using (console.WithForegroundColor(ConsoleColor.DarkGray))
                 await console.Output.WriteAsync(" | ");
 
-            // Channel category / name
+            // Channel name
             using (console.WithForegroundColor(ConsoleColor.White))
-                await console.Output.WriteLineAsync(
-                    $"{channel.ParentNameWithFallback} / {channel.Name}"
-                );
+                await console.Output.WriteLineAsync(channel.GetHierarchicalName());
         }
     }
 }

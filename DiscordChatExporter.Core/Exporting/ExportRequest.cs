@@ -99,10 +99,21 @@ public partial class ExportRequest
     {
         var buffer = new StringBuilder();
 
-        // Guild and channel names
-        buffer.Append(
-            $"{guild.Name} - {channel.ParentNameWithFallback} - {channel.Name} [{channel.Id}]"
-        );
+        // Guild name
+        buffer.Append(guild.Name);
+
+        // Parent name
+        if (channel.Parent is not null)
+            buffer.Append(" - ").Append(channel.Parent.Name);
+
+        // Channel name and ID
+        buffer
+            .Append(" - ")
+            .Append(channel.Name)
+            .Append(' ')
+            .Append('[')
+            .Append(channel.Id)
+            .Append(']');
 
         // Date range
         if (after is not null || before is not null)
@@ -142,9 +153,8 @@ public partial class ExportRequest
         Channel channel,
         Snowflake? after,
         Snowflake? before
-    )
-    {
-        return Regex.Replace(
+    ) =>
+        Regex.Replace(
             path,
             "%.",
             m =>
@@ -153,14 +163,18 @@ public partial class ExportRequest
                     {
                         "%g" => guild.Id.ToString(),
                         "%G" => guild.Name,
+
                         "%t" => channel.Parent?.Id.ToString() ?? "",
                         "%T" => channel.Parent?.Name ?? "",
+
                         "%c" => channel.Id.ToString(),
                         "%C" => channel.Name,
+
                         "%p" => channel.Position?.ToString(CultureInfo.InvariantCulture) ?? "0",
                         "%P"
                             => channel.Parent?.Position?.ToString(CultureInfo.InvariantCulture)
                                 ?? "0",
+
                         "%a"
                             => after?.ToDate().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
                                 ?? "",
@@ -172,12 +186,12 @@ public partial class ExportRequest
                                 "yyyy-MM-dd",
                                 CultureInfo.InvariantCulture
                             ),
+
                         "%%" => "%",
                         _ => m.Value
                     }
                 )
         );
-    }
 
     private static string GetOutputBaseFilePath(
         Guild guild,

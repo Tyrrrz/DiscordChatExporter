@@ -72,7 +72,7 @@ internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
             _buffer.Append($"#{name}");
 
             // Voice channel marker
-            if (channel?.Kind.IsVoice() == true)
+            if (channel?.IsVoice == true)
                 _buffer.Append(" [voice]");
         }
         else if (mention.Kind == MentionKind.Role)

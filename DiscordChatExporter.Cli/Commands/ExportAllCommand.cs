@@ -60,10 +60,10 @@ public class ExportAllCommand : ExportCommandBase
                     var channel in Discord.GetGuildChannelsAsync(guild.Id, cancellationToken)
                 )
                 {
-                    if (channel.Kind == ChannelKind.GuildCategory)
+                    if (channel.IsCategory)
                         continue;
 
-                    if (!IncludeVoiceChannels && channel.Kind.IsVoice())
+                    if (!IncludeVoiceChannels && channel.IsVoice)
                         continue;
 
                     channels.Add(channel);
@@ -129,15 +129,15 @@ public class ExportAllCommand : ExportCommandBase
 
         // Filter out unwanted channels
         if (!IncludeDirectChannels)
-            channels.RemoveAll(c => c.Kind.IsDirect());
+            channels.RemoveAll(c => c.IsDirect);
         if (!IncludeGuildChannels)
-            channels.RemoveAll(c => c.Kind.IsGuild());
+            channels.RemoveAll(c => c.IsGuild);
         if (!IncludeVoiceChannels)
-            channels.RemoveAll(c => c.Kind.IsVoice());
+            channels.RemoveAll(c => c.IsVoice);
         if (ThreadInclusionMode == ThreadInclusionMode.None)
-            channels.RemoveAll(c => c.Kind.IsThread());
+            channels.RemoveAll(c => c.IsThread);
         if (ThreadInclusionMode != ThreadInclusionMode.All)
-            channels.RemoveAll(c => c.Kind.IsThread() && c.IsArchived);
+            channels.RemoveAll(c => c is { IsThread: true, IsArchived: true });
 
         await ExportAsync(console, channels);
     }

@@ -92,7 +92,7 @@ internal partial class CsvMessageWriter : MessageWriter
         await _writer.WriteAsync(',');
 
         // Message content
-        if (message.Kind.IsSystemNotification())
+        if (message.IsSystemNotification)
         {
             await _writer.WriteAsync(CsvEncode(message.GetFallbackContent()));
         }

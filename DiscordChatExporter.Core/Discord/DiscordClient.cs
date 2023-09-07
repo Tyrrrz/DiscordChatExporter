@@ -286,11 +286,12 @@ public class DiscordClient
             yield break;
 
         var tokenKind = _resolvedTokenKind ??= await GetTokenKindAsync(cancellationToken);
+
         var channels = (await GetGuildChannelsAsync(guildId, cancellationToken))
             // Categories cannot have threads
-            .Where(c => c.Kind != ChannelKind.GuildCategory)
+            .Where(c => !c.IsCategory)
             // Voice channels cannot have threads
-            .Where(c => !c.Kind.IsVoice())
+            .Where(c => !c.IsVoice)
             // Empty channels cannot have threads
             .Where(c => !c.IsEmpty)
             // If the 'before' boundary is specified, skip channels that don't have messages

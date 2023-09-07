@@ -313,10 +313,10 @@
                         <ListBox.Style>
                             <Style BasedOn="{StaticResource {x:Type ListBox}}" TargetType="{x:Type ListBox}">
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsDirectMessageGuildSelected}" Value="True">
+                                    <DataTrigger Binding="{Binding SelectedGuild.IsDirect}" Value="True">
                                         <Setter Property="ItemsSource" Value="{Binding Source={StaticResource AvailableDirectChannelsViewSource}}" />
                                     </DataTrigger>
-                                    <DataTrigger Binding="{Binding IsDirectMessageGuildSelected}" Value="False">
+                                    <DataTrigger Binding="{Binding SelectedGuild.IsDirect}" Value="False">
                                         <Setter Property="ItemsSource" Value="{Binding Source={StaticResource AvailableChannelsViewSource}}" />
                                     </DataTrigger>
                                 </Style.Triggers>

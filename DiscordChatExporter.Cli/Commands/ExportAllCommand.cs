@@ -92,6 +92,9 @@ public class ExportAllCommand : ExportCommandBase
                         );
                         channels.Add(thread);
                     }
+                    await console.Output.WriteLineAsync(
+                        $"  Found {progress - 1} threads.".PadRight(80).Substring(0, 80)
+                    );
                 }
             }
         }

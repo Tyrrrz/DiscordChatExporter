@@ -47,9 +47,13 @@ public class ExportGuildCommand : ExportCommandBase
             channels.Add(channel);
         }
 
+        await console.Output.WriteLineAsync($"  Found {channels.Count} channels.");
+
         // Threads
         if (ThreadInclusionMode != ThreadInclusionMode.None)
         {
+            await console.Output.WriteLineAsync("Fetching threads...");
+            var progress = 1;
             await foreach (
                 var thread in Discord.GetGuildThreadsAsync(
                     GuildId,
@@ -60,8 +64,18 @@ public class ExportGuildCommand : ExportCommandBase
                 )
             )
             {
+                await console.Output.WriteAsync(
+                    $"  Found {progress++} threads.  {thread.Parent?.Name} - {thread.Name}"
+                        .PadRight(80)
+                        .Substring(0, 80) + '\r'
+                );
+
                 channels.Add(thread);
             }
+
+            await console.Output.WriteLineAsync(
+                $"  Found {progress - 1} threads.".PadRight(80).Substring(0, 80)
+            );
         }
 
         await ExportAsync(console, channels);

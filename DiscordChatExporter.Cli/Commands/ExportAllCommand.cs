@@ -51,10 +51,9 @@ public class ExportAllCommand : ExportCommandBase
         // Pull from the API
         if (string.IsNullOrWhiteSpace(DataPackageFilePath))
         {
-            await console.Output.WriteLineAsync("Fetching channels...");
-
             await foreach (var guild in Discord.GetUserGuildsAsync(cancellationToken))
             {
+                await console.Output.WriteLineAsync($"Fetching channels...  ({guild.Name})");
                 // Regular channels
                 await foreach (
                     var channel in Discord.GetGuildChannelsAsync(guild.Id, cancellationToken)
@@ -69,9 +68,13 @@ public class ExportAllCommand : ExportCommandBase
                     channels.Add(channel);
                 }
 
+                await console.Output.WriteLineAsync($"  Found {channels.Count} channels.");
+
                 // Threads
                 if (ThreadInclusionMode != ThreadInclusionMode.None)
                 {
+                    await console.Output.WriteLineAsync($"Fetching threads...   ({guild.Name})");
+                    var progress = 1;
                     await foreach (
                         var thread in Discord.GetGuildThreadsAsync(
                             guild.Id,
@@ -82,6 +85,11 @@ public class ExportAllCommand : ExportCommandBase
                         )
                     )
                     {
+                        await console.Output.WriteAsync(
+                            $"  Found {progress++} threads.  {thread.Parent?.Name} - {thread.Name}"
+                                .PadRight(80)
+                                .Substring(0, 80) + '\r'
+                        );
                         channels.Add(thread);
                     }
                 }

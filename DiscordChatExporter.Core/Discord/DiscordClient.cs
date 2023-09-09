@@ -301,21 +301,11 @@ public class DiscordClient
             .Where(c => before is null || c.MayHaveMessagesBefore(before.Value))
             .ToArray();
 
-        var filteredChannels = channels
-            // Categories cannot have threads
-            .Where(c => c.Kind != ChannelKind.GuildCategory)
-            // Voice channels cannot have threads
-            .Where(c => !c.Kind.IsVoice())
-            // Ordinary channel or forum channel without LastMessageId cannot have threads
-            .Where(c => c.LastMessageId != null)
-            // Ff --before is specified, skip channels created after the specified date
-            .Where(c => before == null || before > c.Id);
-
         // User accounts can only fetch threads using the search endpoint
         if (tokenKind == TokenKind.User)
         {
             // Active threads
-            foreach (var channel in filteredChannels)
+            foreach (var channel in channels)
             {
                 var currentOffset = 0;
                 while (true)
@@ -364,7 +354,7 @@ public class DiscordClient
             // Archived threads
             if (includeArchived)
             {
-                foreach (var channel in filteredChannels)
+                foreach (var channel in channels)
                 {
                     var currentOffset = 0;
                     while (true)
@@ -416,7 +406,7 @@ public class DiscordClient
         {
             // Active threads
             {
-                var parentsById = filteredChannels.ToDictionary(c => c.Id);
+                var parentsById = channels.ToDictionary(c => c.Id);
 
                 var response = await GetJsonResponseAsync(
                     $"guilds/{guildId}/threads/active",
@@ -438,7 +428,7 @@ public class DiscordClient
             // Archived threads
             if (includeArchived)
             {
-                foreach (var channel in filteredChannels)
+                foreach (var channel in channels)
                 {
                     // Public archived threads
                     {

@@ -47,20 +47,6 @@ public class ChannelExporter
             );
         }
 
-        // Check if the 'before' boundary is valid
-        if (request.Before is not null && request.Channel.Id > request.Before)
-        {
-            throw new DiscordChatExporterException(
-                "Channel does not contain any messages within the specified period."
-            );
-        }
-
-        // Skip forum channels, they are exported as threads
-        if (request.Channel.Kind == ChannelKind.GuildForum)
-        {
-            throw new DiscordChatExporterException("Channel is a forum.");
-        }
-
         // Build context
         var context = new ExportContext(_discord, request);
         await context.PopulateChannelsAndRolesAsync(cancellationToken);

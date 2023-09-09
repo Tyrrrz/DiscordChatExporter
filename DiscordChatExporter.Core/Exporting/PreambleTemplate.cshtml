@@ -21,8 +21,8 @@
     ValueTask<string> ResolveAssetUrlAsync(string url) =>
         Context.ResolveAssetUrlAsync(url, CancellationToken);
 
-    string FormatDate(DateTimeOffset instant) =>
-        Context.FormatDate(instant);
+    string FormatDate(DateTimeOffset instant, string format = "g") =>
+        Context.FormatDate(instant, format);
 
     async ValueTask<string> FormatMarkdownAsync(string markdown) =>
         Context.Request.ShouldFormatMarkdown
@@ -1004,7 +1004,7 @@
     </div>
     <div class="preamble__entries-container">
         <div class="preamble__entry">@Context.Request.Guild.Name</div>
-        <div class="preamble__entry">@Context.Request.Channel.ParentNameWithFallback / @Context.Request.Channel.Name</div>
+        <div class="preamble__entry">@Context.Request.Channel.GetHierarchicalName()</div>
 
         @if (!string.IsNullOrWhiteSpace(Context.Request.Channel.Topic))
         {

@@ -105,7 +105,7 @@
                         Grid.Column="2"
                         Margin="0,6,6,6"
                         Padding="4"
-                        Command="{s:Action PullGuildsAsync}"
+                        Command="{s:Action PullGuilds}"
                         IsDefault="True"
                         Style="{DynamicResource MaterialDesignFlatButton}"
                         ToolTip="Pull available guilds and channels (Enter)">
@@ -122,7 +122,7 @@
                 Grid.Column="1"
                 Margin="6"
                 Padding="4"
-                Command="{s:Action ShowSettingsAsync}"
+                Command="{s:Action ShowSettings}"
                 Foreground="{DynamicResource MaterialDesignDarkForeground}"
                 Style="{DynamicResource MaterialDesignFlatButton}"
                 ToolTip="Settings">
@@ -274,7 +274,7 @@
                                     Margin="-8"
                                     Background="Transparent"
                                     Cursor="Hand"
-                                    MouseLeftButtonUp="{s:Action PullChannelsAsync}"
+                                    MouseLeftButtonUp="{s:Action PullChannels}"
                                     ToolTip="{Binding Name}">
                                     <!--  Guild icon placeholder  -->
                                     <Ellipse
@@ -313,10 +313,10 @@
                         <ListBox.Style>
                             <Style BasedOn="{StaticResource {x:Type ListBox}}" TargetType="{x:Type ListBox}">
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsDirectMessageGuildSelected}" Value="True">
+                                    <DataTrigger Binding="{Binding SelectedGuild.IsDirect}" Value="True">
                                         <Setter Property="ItemsSource" Value="{Binding Source={StaticResource AvailableDirectChannelsViewSource}}" />
                                     </DataTrigger>
-                                    <DataTrigger Binding="{Binding IsDirectMessageGuildSelected}" Value="False">
+                                    <DataTrigger Binding="{Binding SelectedGuild.IsDirect}" Value="False">
                                         <Setter Property="ItemsSource" Value="{Binding Source={StaticResource AvailableChannelsViewSource}}" />
                                     </DataTrigger>
                                 </Style.Triggers>
@@ -350,7 +350,7 @@
                             <DataTemplate DataType="{x:Type data:Channel}">
                                 <Grid Margin="-8" Background="Transparent">
                                     <Grid.InputBindings>
-                                        <MouseBinding Command="{s:Action ExportAsync}" MouseAction="LeftDoubleClick" />
+                                        <MouseBinding Command="{s:Action Export}" MouseAction="LeftDoubleClick" />
                                     </Grid.InputBindings>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
@@ -412,9 +412,9 @@
                 Margin="32,24"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
-                Command="{s:Action ExportAsync}"
+                Command="{s:Action Export}"
                 Style="{DynamicResource MaterialDesignFloatingActionAccentButton}"
-                Visibility="{Binding CanExportAsync, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
+                Visibility="{Binding CanExport, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
                 <materialDesign:PackIcon
                     Width="32"
                     Height="32"

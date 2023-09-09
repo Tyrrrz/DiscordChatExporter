@@ -200,9 +200,7 @@ internal class PlainTextMessageWriter : MessageWriter
     {
         await _writer.WriteLineAsync(new string('=', 62));
         await _writer.WriteLineAsync($"Guild: {Context.Request.Guild.Name}");
-        await _writer.WriteLineAsync(
-            $"Channel: {Context.Request.Channel.ParentNameWithFallback} / {Context.Request.Channel.Name}"
-        );
+        await _writer.WriteLineAsync($"Channel: {Context.Request.Channel.GetHierarchicalName()}");
 
         if (!string.IsNullOrWhiteSpace(Context.Request.Channel.Topic))
         {
@@ -238,7 +236,7 @@ internal class PlainTextMessageWriter : MessageWriter
         await WriteMessageHeaderAsync(message);
 
         // Content
-        if (message.Kind.IsSystemNotification())
+        if (message.IsSystemNotification)
         {
             await _writer.WriteLineAsync(message.GetFallbackContent());
         }

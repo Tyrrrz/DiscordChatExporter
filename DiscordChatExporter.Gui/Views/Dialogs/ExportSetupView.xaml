@@ -60,8 +60,10 @@
                 FontWeight="Light"
                 TextTrimming="CharacterEllipsis"
                 Visibility="{Binding IsSingleChannel, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
-                <Run Text="{Binding Channels[0].ParentNameWithFallback, Mode=OneWay}" ToolTip="{Binding Channels[0].ParentNameWithFallback, Mode=OneWay}" />
-                <Run Text="/" />
+                <TextBlock Visibility="{Binding Channels[0].Parent, Converter={x:Static s:BoolToVisibilityConverter.Instance}}">
+                    <Run Text="{Binding Channels[0].Parent.Name, Mode=OneWay}" ToolTip="{Binding Channels[0].Parent.Name, Mode=OneWay}" />
+                    <Run Text="/" />
+                </TextBlock>
                 <Run
                     FontWeight="SemiBold"
                     Text="{Binding Channels[0].Name, Mode=OneWay}"

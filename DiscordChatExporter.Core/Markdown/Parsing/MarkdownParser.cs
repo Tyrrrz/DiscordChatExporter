@@ -340,16 +340,13 @@ internal static partial class MarkdownParser
                             )
                         );
 
-                    var format = m.Groups[2].Value switch
+                    var format = m.Groups[2].Value.NullIfWhiteSpace() switch
                     {
-                        "t" => "h:mm tt",
-                        "T" => "h:mm:ss tt",
-                        "d" => "MM/dd/yyyy",
-                        "D" => "MMMM dd, yyyy",
-                        "f" => "MMMM dd, yyyy h:mm tt",
-                        "F" => "dddd, MMMM dd, yyyy h:mm tt",
-                        // Relative format is ignored because it doesn't make much sense in a static export
-                        _ => null
+                        // Ignore the 'relative' format because it doesn't make sense in a static export
+                        "r" => null,
+                        "R" => null,
+                        // Discord's date formats are (mostly) compatible with .NET's date formats
+                        var f => f
                     };
 
                     return new TimestampNode(instant, format);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using Cogwheel;
 using DiscordChatExporter.Core.Exporting;
@@ -19,7 +20,9 @@ public partial class SettingsService : SettingsBase
 
     public ThreadInclusionMode ThreadInclusionMode { get; set; } = ThreadInclusionMode.None;
 
-    public string DateFormat { get; set; } = "MM/dd/yyyy h:mm tt";
+    public string Locale { get; set; } = CultureInfo.CurrentCulture.Name;
+
+    public bool IsUtcNormalizationEnabled { get; set; }
 
     public int ParallelLimit { get; set; } = 1;
 

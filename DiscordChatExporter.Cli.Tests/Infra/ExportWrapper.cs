@@ -59,7 +59,9 @@ public static class ExportWrapper
                 Token = Secrets.DiscordToken,
                 ChannelIds = new[] { channelId },
                 ExportFormat = format,
-                OutputPath = filePath
+                OutputPath = filePath,
+                Locale = "en-US",
+                IsUtcNormalizationEnabled = true
             }.ExecuteAsync(console);
         }
 

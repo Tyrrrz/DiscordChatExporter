@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Utils.Extensions;
@@ -20,30 +21,40 @@ public partial record Channel(
     Snowflake? LastMessageId
 ) : IHasId
 {
-    // Used for visual backwards-compatibility with old exports, where
-    // channels without a parent (i.e. mostly DM channels) or channels
-    // with an inaccessible parent (i.e. inside private categories) had
-    // a fallback category created for them.
-    public string ParentNameWithFallback =>
-        Parent?.Name
-        ?? Kind switch
+    public bool IsDirect => Kind is ChannelKind.DirectTextChat or ChannelKind.DirectGroupTextChat;
+
+    public bool IsGuild => !IsDirect;
+
+    public bool IsCategory => Kind == ChannelKind.GuildCategory;
+
+    public bool IsVoice => Kind is ChannelKind.GuildVoiceChat or ChannelKind.GuildStageVoice;
+
+    public bool IsThread =>
+        Kind
+            is ChannelKind.GuildNewsThread
+                or ChannelKind.GuildPublicThread
+                or ChannelKind.GuildPrivateThread;
+
+    public bool IsEmpty => LastMessageId is null;
+
+    public IEnumerable<Channel> GetParents()
+    {
+        var current = Parent;
+        while (current is not null)
         {
-            ChannelKind.GuildCategory => "Category",
-            ChannelKind.GuildTextChat => "Text",
-            ChannelKind.DirectTextChat => "Private",
-            ChannelKind.DirectGroupTextChat => "Group",
-            ChannelKind.GuildPrivateThread => "Private Thread",
-            ChannelKind.GuildPublicThread => "Public Thread",
-            ChannelKind.GuildNews => "News",
-            ChannelKind.GuildNewsThread => "News Thread",
-            _ => "Default"
-        };
+            yield return current;
+            current = current.Parent;
+        }
+    }
 
-    // Only needed for WPF data binding. Don't use anywhere else.
-    public bool IsVoice => Kind.IsVoice();
+    public Channel? TryGetRootParent() => GetParents().LastOrDefault();
 
-    // Only needed for WPF data binding. Don't use anywhere else.
-    public bool IsThread => Kind.IsThread();
+    public string GetHierarchicalName() =>
+        string.Join(" / ", GetParents().Reverse().Select(c => c.Name).Append(Name));
+
+    public bool MayHaveMessagesAfter(Snowflake messageId) => !IsEmpty && messageId < LastMessageId;
+
+    public bool MayHaveMessagesBefore(Snowflake messageId) => !IsEmpty && messageId > Id;
 }
 
 public partial record Channel
@@ -61,16 +72,14 @@ public partial record Channel
         var name =
             // Guild channel
             json.GetPropertyOrNull("name")?.GetNonWhiteSpaceStringOrNull()
-            ??
             // DM channel
-            json.GetPropertyOrNull("recipients")
+            ?? json.GetPropertyOrNull("recipients")
                 ?.EnumerateArrayOrNull()
                 ?.Select(User.Parse)
                 .Select(u => u.DisplayName)
                 .Pipe(s => string.Join(", ", s))
-            ??
             // Fallback
-            id.ToString();
+            ?? id.ToString();
 
         var position = positionHint ?? json.GetPropertyOrNull("position")?.GetInt32OrNull();
 

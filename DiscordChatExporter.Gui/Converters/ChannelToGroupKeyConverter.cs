@@ -13,10 +13,10 @@ public class ChannelToGroupKeyConverter : IValueConverter
     public object? Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
         value switch
         {
-            Channel channel when channel.Kind.IsThread()
-                => $"Threads in #{channel.ParentNameWithFallback}",
+            Channel { IsThread: true, Parent: not null } channel
+                => $"Threads in #{channel.Parent.Name}",
 
-            Channel channel => channel.ParentNameWithFallback,
+            Channel channel => channel.Parent?.Name ?? "???",
 
             _ => null
         };

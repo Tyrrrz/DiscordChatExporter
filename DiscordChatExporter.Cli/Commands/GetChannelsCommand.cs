@@ -35,8 +35,8 @@ public class GetChannelsCommand : DiscordCommandBase
         var cancellationToken = console.RegisterCancellationHandler();
 
         var channels = (await Discord.GetGuildChannelsAsync(GuildId, cancellationToken))
-            .Where(c => c.Kind != ChannelKind.GuildCategory)
-            .Where(c => IncludeVoiceChannels || !c.Kind.IsVoice())
+            .Where(c => !c.IsCategory)
+            .Where(c => IncludeVoiceChannels || !c.IsVoice)
             .OrderBy(c => c.Parent?.Position)
             .ThenBy(c => c.Name)
             .ToArray();
@@ -72,11 +72,9 @@ public class GetChannelsCommand : DiscordCommandBase
             using (console.WithForegroundColor(ConsoleColor.DarkGray))
                 await console.Output.WriteAsync(" | ");
 
-            // Channel category / name
+            // Channel name
             using (console.WithForegroundColor(ConsoleColor.White))
-                await console.Output.WriteLineAsync(
-                    $"{channel.ParentNameWithFallback} / {channel.Name}"
-                );
+                await console.Output.WriteLineAsync(channel.GetHierarchicalName());
 
             var channelThreads = threads.Where(t => t.Parent?.Id == channel.Id).ToArray();
             var channelThreadIdMaxLength = channelThreads

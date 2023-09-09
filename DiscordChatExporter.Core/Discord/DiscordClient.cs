@@ -286,7 +286,20 @@ public class DiscordClient
             yield break;
 
         var tokenKind = _resolvedTokenKind ??= await GetTokenKindAsync(cancellationToken);
-        var channels = await GetGuildChannelsAsync(guildId, cancellationToken);
+
+        var channels = (await GetGuildChannelsAsync(guildId, cancellationToken))
+            // Categories cannot have threads
+            .Where(c => !c.IsCategory)
+            // Voice channels cannot have threads
+            .Where(c => !c.IsVoice)
+            // Empty channels cannot have threads
+            .Where(c => !c.IsEmpty)
+            // If the 'before' boundary is specified, skip channels that don't have messages
+            // for that range, because thread-start event should always be accompanied by a message.
+            // Note that we don't perform a similar check for the 'after' boundary, because
+            // threads may have messages in range, even if the parent channel doesn't.
+            .Where(c => before is null || c.MayHaveMessagesBefore(before.Value))
+            .ToArray();
 
         var filteredChannels = channels
             // Categories cannot have threads
@@ -320,7 +333,7 @@ public class DiscordClient
                     if (response is null)
                         break;
 
-                    var containsOlder = false;
+                    var breakOuter = false;
 
                     foreach (
                         var threadJson in response.Value.GetProperty("threads").EnumerateArray()
@@ -328,19 +341,19 @@ public class DiscordClient
                     {
                         var thread = Channel.Parse(threadJson, channel);
 
-                        // if --after is specified, we can break early, because the threads are sorted by last message time
-                        if (after is not null && after > thread.LastMessageId)
+                        // If the 'after' boundary is specified, we can break early,
+                        // because threads are sorted by last message time.
+                        if (after is not null && !thread.MayHaveMessagesAfter(after.Value))
                         {
-                            containsOlder = true;
+                            breakOuter = true;
                             break;
                         }
 
                         yield return thread;
-
                         currentOffset++;
                     }
 
-                    if (containsOlder)
+                    if (breakOuter)
                         break;
 
                     if (!response.Value.GetProperty("has_more").GetBoolean())
@@ -369,7 +382,7 @@ public class DiscordClient
                         if (response is null)
                             break;
 
-                        var containsOlder = false;
+                        var breakOuter = false;
 
                         foreach (
                             var threadJson in response.Value.GetProperty("threads").EnumerateArray()
@@ -377,19 +390,19 @@ public class DiscordClient
                         {
                             var thread = Channel.Parse(threadJson, channel);
 
-                            // if --after is specified, we can break early, because the threads are sorted by last message time
-                            if (after is not null && after > thread.LastMessageId)
+                            // If the 'after' boundary is specified, we can break early,
+                            // because threads are sorted by last message time.
+                            if (after is not null && !thread.MayHaveMessagesAfter(after.Value))
                             {
-                                containsOlder = true;
+                                breakOuter = true;
                                 break;
                             }
 
                             yield return thread;
-
                             currentOffset++;
                         }
 
-                        if (containsOlder)
+                        if (breakOuter)
                             break;
 
                         if (!response.Value.GetProperty("has_more").GetBoolean())

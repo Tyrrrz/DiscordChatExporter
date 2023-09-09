@@ -30,22 +30,22 @@ internal class HtmlMessageWriter : MessageWriter
         if (_messageGroup.LastOrDefault() is not { } lastMessage)
             return true;
 
-        // Reply messages cannot join existing groups because they need to appear first
-        if (message.Kind == MessageKind.Reply)
+        // Reply-like messages cannot join existing groups because they need to appear first
+        if (message.IsReplyLike)
             return false;
 
         // Grouping for system notifications
-        if (message.Kind.IsSystemNotification())
+        if (message.IsSystemNotification)
         {
             // Can only be grouped with other system notifications
-            if (!lastMessage.Kind.IsSystemNotification())
+            if (!lastMessage.IsSystemNotification)
                 return false;
         }
         // Grouping for normal messages
         else
         {
             // Can only be grouped with other normal messages
-            if (lastMessage.Kind.IsSystemNotification())
+            if (lastMessage.IsSystemNotification)
                 return false;
 
             // Messages must be within 7 minutes of each other
@@ -139,7 +139,7 @@ internal class HtmlMessageWriter : MessageWriter
             Minify(
                 await new PostambleTemplate
                 {
-                    ExportContext = Context,
+                    Context = Context,
                     MessagesWritten = MessagesWritten
                 }.RenderAsync(cancellationToken)
             )

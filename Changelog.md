@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.41.1 (28-Sep-2023)
+
+- CLI changes:
+  - Fixed an issue where the export failed to export channels with an empty name.
+
 ## v2.41 (15-Sep-2023)
 
 - General changes:

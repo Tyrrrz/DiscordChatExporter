@@ -21,10 +21,10 @@ If you are using the CLI from Docker, installing the runtime on the host machine
 - [.NET v7.0 Runtime for **Macs with an Intel processor**](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-7.0.11-macos-x64-installer)
 
 > **Note**:
-[How can I tell if my computer is running a 32-bit (x86) or a 64-bit (x64) version of Windows?](https://support.microsoft.com/help/15056/windows-32-64-bit-faq)
+> [How can I tell if my computer is running a 32-bit (x86) or a 64-bit (x64) version of Windows?](https://support.microsoft.com/help/15056/windows-32-64-bit-faq)
 
 > **Note**:
-[Is my Mac using an Intel processor or Apple silicon?](https://support.apple.com/HT211814)
+> [Is my Mac using an Intel processor or Apple silicon?](https://support.apple.com/HT211814)
 
 **Otherwise:**
 [Check out the latest version on this page](https://dotnet.microsoft.com/download/dotnet/7.0).

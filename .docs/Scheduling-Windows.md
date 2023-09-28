@@ -4,7 +4,7 @@ We'll be using [DiscordChatExporter CLI](https://github.com/Tyrrrz/DiscordChatEx
 
 1. Open a text editor such as Notepad and paste:
 
-```powershell
+```console
 # Info: https://github.com/Tyrrrz/DiscordChatExporter/wiki
 
 $TOKEN = "tokenhere"
@@ -56,7 +56,7 @@ Please notice your computer must be turned on so the exportation can occur.
 
 <img src="https://i.imgur.com/MHRVGDi.png" height="500"/>
 
-[ ![](https://i.imgur.com/m2DKhA8.png) ](https://i.imgur.com/3gHkF0t.png)
+[](https://i.imgur.com/m2DKhA8.png) ](https://i.imgur.com/3gHkF0t.png)
 
 3. At 'Start a Program', write `powershell -file -ExecutionPolicy ByPass -WindowStyle Hidden "C:\path\to\filename.ps1"` in the Program/script text box
 

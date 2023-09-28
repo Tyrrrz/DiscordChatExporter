@@ -61,37 +61,37 @@ In this screen you can customize the following:
 
 ## Settings
 
-**Auto-update**
+- **Auto-update**
 Perform automatic updates on every launch.
 Default: Enabled
 
-> **Note**:
-> Keep this option enabled to receive the latest features and bug fixes!
+  > **Note**:
+  > Keep this option enabled to receive the latest features and bug fixes!
 
-**Dark mode**
+- **Dark mode**
 Use darker colors in the UI (User Interface).
 Default: Disabled
 
-**Persist token**
+- **Persist token**
 Persist last used token between sessions.
 Default: Enabled
 
-**Show threads**
+- **Show threads**
 Controls whether threads are shown in the channel list.
 Default: none
 
-**Locale**
+- **Locale**
 Customize how dates are formatted in the exported files.
 
-**Date format**
+- **Date format**
 Customize how dates are formatted in the exported files in the settings menu ().
 
-**Parallel limit**
+- **Parallel limit**
 The number of channels that will be exported at the same time.
 Default: 1
 
-**Normalize to UTC**
+- **Normalize to UTC**
 Convert all dates to UTC before exporting.
 
-> **Note**:
-> Try to keep this number low so that your account doesn't get flagged.
+  > **Note**:
+  > Try to keep this number low so that your account doesn't get flagged.

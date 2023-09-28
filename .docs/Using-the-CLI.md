@@ -29,7 +29,7 @@ Now we're ready to run the commands. The examples on this page follow the Window
 
 Type the following in Command Prompt (Terminal), then press ENTER to run it. This will list DCE's options.
 
-```powershell
+```console
 dotnet DiscordChatExporter.Cli.dll
 ```
 
@@ -51,7 +51,7 @@ dotnet DiscordChatExporter.Cli.dll
 To use the commands, you'll need a token. For the instructions on how to get a token, please refer to [this page](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md), or run `dotnet DiscordChatExporter.Cli.dll guide`.
 To get help with a specific command, please run:
 
-```powershell
+```console
 dotnet DiscordChatExporter.Cli.dll command -h
 ```
 
@@ -84,7 +84,7 @@ With this command you can export server channels and direct messages.
 
 You can quickly export with DCE's default settings by using just `-t token` and `-c channelid`.
 
-```powershell
+```console
 dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555
 ```
 
@@ -92,7 +92,7 @@ dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555
 
 You can change the export format to `HtmlDark`, `HtmlLight`, `PlainText` `Json` or `Csv` with `-f format`. The default format is `HtmlDark`.
 
-```powershell
+```console
 dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -f Json
 ```
 
@@ -100,7 +100,7 @@ dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -f Json
 
 You can change the filename by using `-o name.ext`. e.g. for the `HTML` format:
 
-```powershell
+```console
 dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -o myserver.html
 ```
 
@@ -109,7 +109,7 @@ dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -o myserver.htm
 You can change the export directory by using `-o` and providing a path that ends with a slash or does not have a file extension.
 If any of the folders in the path have a space in its name, escape them with quotes (").
 
-```powershell
+```console
 dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -o "C:\Discord Exports"
 ```
 
@@ -119,7 +119,7 @@ You can change both the filename and export directory by using `-o directory\nam
 Note that the filename must have an extension, otherwise it will be considered a directory name.
 If any of the folders in the path have a space in its name, escape them with quotes (").
 
-```powershell
+```console
 dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -o "C:\Discord Exports\myserver.html"
 ```
 
@@ -127,7 +127,7 @@ dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -o "C:\Discord 
 
 You can use template tokens to generate the output file path based on the guild and channel metadata.
 
-```powershell
+```console
 dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -o "C:\Discord Exports\%G\%T\%C.html"
 ```
 
@@ -152,13 +152,13 @@ Here is the full list of supported template tokens:
 You can use partitioning to split files after a given number of messages or file size.
 For example, a channel with 36 messages set to be partitioned every 10 messages will output 4 files.
 
-```powershell
+```console
 dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -p 10
 ```
 
 A 45mb channel set to be partitioned every 20mb will output 3 files.
 
-```powershell
+```console
 dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -p 20mb
 ```
 
@@ -168,7 +168,7 @@ If this option is set, the export will include additional files such as user ava
 Only files that are referenced by the export are downloaded, which means that, for example, user avatars will not be downloaded when using the plain text (TXT) export format.
 A folder containing the assets will be created along with the exported chat. They must be kept together.
 
-```powershell
+```console
 dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --media
 ```
 
@@ -176,7 +176,7 @@ dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --media
 
 Previously downloaded assets can be reused to skip redundant downloads as long as the chat is always exported to the same folder. Using this option can speed up future exports. This option requires the `--media` option.
 
-```powershell
+```console
 dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --media --reuse-media
 ```
 
@@ -184,7 +184,7 @@ dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --media --reuse
 
 You can customize how dates are formatted in the exported files by using `--locale` and inserting one of Discord's locales. The default locale is `en-US`.
 
-```powershell
+```console
 dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --locale "de-DE"
 ```
 
@@ -193,21 +193,21 @@ dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --locale "de-DE
 **Messages sent before a date**
 Use `--before` to export messages sent before the provided date. E.g. messages sent before September 18th, 2019:
 
-```powershell
+```console
 dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --before 2019-09-18
 ```
 
 **Messages sent after a date**
 Use `--after` to export messages sent after the provided date. E.g. messages sent after September 17th, 2019 11:34 PM:
 
-```powershell
+```console
 dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --after "2019-09-17 23:34"
 ```
 
 **Messages sent in a date range**
 Use `--before` and `--after` to export messages sent during the provided date range. E.g. messages sent between September 17th, 2019 11:34 PM and September 18th:
 
-```powershell
+```console
 dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --after "2019-09-17 23:34" --before "2019-09-18"
 ```
 
@@ -287,7 +287,7 @@ This command exports all accessible channels, including server channels and DMs.
 
 To exclude DMs, add the `--include-dm false` option:
 
-```powershell
+```console
 dotnet DiscordChatExporter.Cli.dll exportall -t "mfa.Ifrn" --include-dm false
 ```
 
@@ -308,7 +308,7 @@ This command outputs a server's channels in the following format:
 `Channel ID | Channel Name`
 To save the output to a file, run the command below. If the file already exists, it will be overwritten.
 
-```powershell
+```console
 dotnet DiscordChatExporter.Cli.dll channels -t "mfa.Ifrn" -g 21814 > C:\path\to\output.txt
 ```
 
@@ -325,7 +325,7 @@ dotnet DiscordChatExporter.Cli.dll channels -t "mfa.Ifrn" -g 21814 > C:\path\to\
 This command outputs a list of your direct messages.
 To save the output to a file, run the command with `> C:\path\…` like the example below. If the file already exists, it will be overwritten.
 
-```powershell
+```console
 dotnet DiscordChatExporter.Cli.dll dm -t "mfa.Ifrn" > C:\path\to\output.txt
 ```
 
@@ -342,7 +342,7 @@ dotnet DiscordChatExporter.Cli.dll dm -t "mfa.Ifrn" > C:\path\to\output.txt
 This command outputs a list of your servers.
 To save the output to a file, run the command with `> C:\path\…` like the example below. If the file already exists, it will be overwritten.
 
-```powershell
+```console
 dotnet DiscordChatExporter.Cli.dll guilds -t "mfa.Ifrn" > C:\path\to\output.txt
 ```
 

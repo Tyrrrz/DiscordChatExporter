@@ -5,11 +5,11 @@
     <PackageReference Include="CSharpier.MsBuild" Version="0.25.0" PrivateAssets="all" />
     <PackageReference Include="Gress" Version="2.1.1" />
     <PackageReference Include="JsonExtensions" Version="1.2.0" />
-    <PackageReference Include="Polly" Version="7.2.4" />
-    <PackageReference Include="RazorBlade" Version="0.4.3" />
+    <PackageReference Include="Polly" Version="8.0.0" />
+    <PackageReference Include="RazorBlade" Version="0.4.4" />
     <PackageReference Include="Superpower" Version="3.0.0" />
     <PackageReference Include="WebMarkupMin.Core" Version="2.14.0" />
-    <PackageReference Include="YoutubeExplode" Version="6.3.1" />
+    <PackageReference Include="YoutubeExplode" Version="6.3.4" />
   </ItemGroup>
 
 </Project>

@@ -88,7 +88,7 @@ After copying and pasting, make sure the file/folder name is not missing. If a f
 - `/Users/user/Documents/Discord\ Exports` - Correct ✓
 - `/Users/user/Desktop/DiscordChatExporter` - Correct ✓
 
-![](https://i.imgur.com/29u6Nyx.png)
+![Screenshot of mac info window](https://i.imgur.com/29u6Nyx.png)
 
 5. Save the file as `filename.sh`, not `.txt`
 6. Open Terminal.app, type `chmod +x`, press the SPACE key, then drag & drop the `filename.sh` into the Terminal window and hit RETURN. You may be prompted for your password, and you won't be able to see it as you type.
@@ -200,19 +200,19 @@ Every Sunday at midnight and every Wednesday full hour (xx:00). Notice the inclu
 <key>StartCalendarInterval</key>
 <array>
         <dict>
-		<key>Weekday</key>
-		<integer>0</integer>
+  <key>Weekday</key>
+  <integer>0</integer>
                 <key>Hour</key>
                 <integer>00</integer>
                 <key>Minute</key>
                 <integer>00</integer>
         </dict>
-	<dict>
-		<key>Weekday</key>
-		<integer>3</integer>
-		<key>Minute</key>
-		<integer>00</integer>
-	</dict>
+ <dict>
+  <key>Weekday</key>
+  <integer>3</integer>
+  <key>Minute</key>
+  <integer>00</integer>
+ </dict>
 </array>
 ```
 

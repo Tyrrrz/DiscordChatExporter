@@ -7,6 +7,7 @@ using System.Security.Authentication;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Utils.Extensions;
 using Polly;
+using Polly.Retry;
 
 namespace DiscordChatExporter.Core.Utils;
 
@@ -31,29 +32,45 @@ public static class Http
                         && IsRetryableStatusCode(hrex.StatusCode ?? HttpStatusCode.OK)
             );
 
-    public static IAsyncPolicy ResiliencePolicy { get; } =
-        Policy
-            .Handle<Exception>(IsRetryableException)
-            .WaitAndRetryAsync(4, i => TimeSpan.FromSeconds(Math.Pow(2, i) + 1));
-
-    public static IAsyncPolicy<HttpResponseMessage> ResponseResiliencePolicy { get; } =
-        Policy
-            .Handle<Exception>(IsRetryableException)
-            .OrResult<HttpResponseMessage>(m => IsRetryableStatusCode(m.StatusCode))
-            .WaitAndRetryAsync(
-                8,
-                (i, result, _) =>
+    public static ResiliencePipeline ResiliencePipeline { get; } =
+        new ResiliencePipelineBuilder()
+            .AddRetry(
+                new RetryStrategyOptions
                 {
-                    // If rate-limited, use retry-after header as the guide.
-                    // The response can be null here if an exception was thrown.
-                    if (result.Result?.Headers.RetryAfter?.Delta is { } retryAfter)
-                    {
-                        // Add some buffer just in case
-                        return retryAfter + TimeSpan.FromSeconds(1);
-                    }
+                    ShouldHandle = new PredicateBuilder().Handle<Exception>(IsRetryableException),
+                    MaxRetryAttempts = 4,
+                    BackoffType = DelayBackoffType.Exponential,
+                    Delay = TimeSpan.FromSeconds(1)
+                }
+            )
+            .Build();
 
-                    return TimeSpan.FromSeconds(Math.Pow(2, i) + 1);
-                },
-                (_, _, _, _) => Task.CompletedTask
-            );
+    public static ResiliencePipeline<HttpResponseMessage> ResponseResiliencePipeline { get; } =
+        new ResiliencePipelineBuilder<HttpResponseMessage>()
+            .AddRetry(
+                new RetryStrategyOptions<HttpResponseMessage>
+                {
+                    ShouldHandle = new PredicateBuilder<HttpResponseMessage>()
+                        .Handle<Exception>(IsRetryableException)
+                        .HandleResult(m => IsRetryableStatusCode(m.StatusCode)),
+                    MaxRetryAttempts = 8,
+                    DelayGenerator = args =>
+                    {
+                        // If rate-limited, use retry-after header as the guide.
+                        // The response can be null here if an exception was thrown.
+                        if (args.Outcome.Result?.Headers.RetryAfter?.Delta is { } retryAfter)
+                        {
+                            // Add some buffer just in case
+                            return ValueTask.FromResult<TimeSpan?>(
+                                retryAfter + TimeSpan.FromSeconds(1)
+                            );
+                        }
+
+                        return ValueTask.FromResult<TimeSpan?>(
+                            TimeSpan.FromSeconds(Math.Pow(2, args.AttemptNumber) + 1)
+                        );
+                    }
+                }
+            )
+            .Build();
 }

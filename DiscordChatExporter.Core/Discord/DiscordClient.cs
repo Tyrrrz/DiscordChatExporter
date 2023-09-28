@@ -33,7 +33,7 @@ public class DiscordClient
         CancellationToken cancellationToken = default
     )
     {
-        return await Http.ResponseResiliencePolicy.ExecuteAsync(
+        return await Http.ResponseResiliencePipeline.ExecuteAsync(
             async innerCancellationToken =>
             {
                 using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, url));

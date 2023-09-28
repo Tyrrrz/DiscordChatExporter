@@ -6,7 +6,7 @@ Here you'll find the answers to most of the questions related to **DiscordChatEx
 - ❓ If you still have unanswered questions _after_ reading this page, feel free to [create a new discussion](https://github.com/Tyrrrz/DiscordChatExporter/discussions/new).
 - 🐞 If you have encountered a problem that's not described here, has not [been discussed before](https://github.com/Tyrrrz/DiscordChatExporter/discussions), and is not a [known issue](https://github.com/Tyrrrz/DiscordChatExporter/issues?q=is%3Aissue), please [create a new discussion](https://github.com/Tyrrrz/DiscordChatExporter/discussions/new) or [open a bug report](https://github.com/Tyrrrz/DiscordChatExporter/issues/new). Don't forget to include your platform (Windows, Mac, Linux, etc.) and a detailed description of your question/problem.
 
-## General
+## General questions
 
 ### Token stealer?
 
@@ -46,6 +46,10 @@ Yes, and other media too. Export using the "Download media" (`--media`) option.
 
 Yes.
 
+### Can DCE export multiple formats at once?
+
+No, you can only export one format at a time.
+
 ### Can DCE recreate the exported chats in Discord?
 
 No, DCE is an exporter.
@@ -54,17 +58,21 @@ No, DCE is an exporter.
 
 No, DCE is an exporter.
 
+### Can DCE add new messages to an existing export?
+
+No.
+
 ## First steps
 
 ### How can I find my token?
 
 Check the following page: [Obtaining token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md)
 
-### When I open DCE a black window pops up quickly or nothing shows up.
+### When I open DCE a black window pops up quickly or nothing shows up
 
-If you have [.NET Core Runtime correctly installed](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Dotnet.md), you might have downloaded DCE.CLI, try [downloading the GUI](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#gui-or-cli) instead.
+If you have [.NET Core Runtime correctly installed](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Dotnet.md), you might have downloaded the CLi flavor, try [downloading the GUI](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#gui-or-cli) instead.
 
-### I can't open DCE. It sends me to a Visual Studio webpage.
+### I can't open DCE, it sends me to a Visual Studio webpage
 
 Check the following page:
 [Installation and usage](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Readme.md#installation--usage)
@@ -84,19 +92,23 @@ Check the following pages to learn how to schedule **DiscordChatExporter.CLI** r
 - [macOS scheduling](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/scheduling-MacOS.md)
 - [Linux scheduling](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/scheduling-Linux.md)
 
-### The exported file is too large, I can't open it!
+### The exported file is too large, I can't open it
 
 Try opening it with a different program, try partitioning or use a different file format, like `PlainText`.
 
-### DCE is crashing/failing.
+### DCE is crashing/failing
 
 Check the following page: [Installing .NET Core Runtime](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Dotnet.md)
 
 If you already have .NET Core installed, please check if your problem is a [known issue](https://github.com/Tyrrrz/DiscordChatExporter/issues?q=is%3Aissue) before [opening a bug report](https://github.com/Tyrrrz/DiscordChatExporter/issues/new).
 
-### .NET Core Runtime is required.
+### .NET Core Runtime is required
 
 Check the following page: [Installing .NET Core Runtime](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Dotnet.md)
+
+### I see messages in the export, but they have no content
+
+Your bot is missing the 'Message Content Intent'. Go to the [Discord Developer Portal](https://discord.com/developers/applications), navigate to the 'Bot' section and enable it.
 
 ## CLI
 
@@ -126,32 +138,32 @@ Make sure you're [copying the DM Channel ID](https://github.com/Tyrrrz/DiscordCh
 
 ## Errors
 
-```
+```console
 DiscordChatExporter.Domain.Exceptions.DiscordChatExporterException: Authentication token is invalid.
 ...
 ```
 
 ↳ Make sure the provided token is correct.
 
-```
+```console
 DiscordChatExporter.Domain.Exceptions.DiscordChatExporterException: Requested resource does not exist.
 ```
 
 ↳ Check your channel ID, it might be invalid. [Read this if you need help](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md).
 
-```
+```console
 DiscordChatExporter.Domain.Exceptions.DiscordChatExporterException: Access is forbidden.
 ```
 
 ↳ This means you don't have access to the channel.
 
-```
+```console
 The application to execute does not exist:
 ```
 
 ↳ The `DiscordChatExporter.Cli.dll` file is missing. Keep the `.exe` and all the `.dll` files together. If you didn't move the files, try unzipping again.
 
-```
+```console
 System.Net.WebException: Error: TrustFailure ... Invalid certificate received from server.
 ...
 ```
@@ -167,5 +179,5 @@ If it still doesn't work, try mozroots: `mozroots --import --ask-remove`
 ---
 
 > ❓ If you still have unanswered questions, feel free to [create a new discussion](https://github.com/Tyrrrz/DiscordChatExporter/discussions/new).
-
+>
 > 🐞 If you have encountered a problem that's not described here, has not [been discussed before](https://github.com/Tyrrrz/DiscordChatExporter/discussions), and is not a [known issue](https://github.com/Tyrrrz/DiscordChatExporter/issues?q=is%3Aissue), please [create a new discussion](https://github.com/Tyrrrz/DiscordChatExporter/discussions/new) or [open a bug report](https://github.com/Tyrrrz/DiscordChatExporter/issues/new).

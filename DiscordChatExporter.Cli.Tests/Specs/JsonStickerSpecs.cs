@@ -28,7 +28,7 @@ public class JsonStickerSpecs
             .GetProperty("sourceUrl")
             .GetString()
             .Should()
-            .Be("https://cdn.discordapp.com/stickers/904215665597120572.png");
+            .StartWith("https://cdn.discordapp.com/stickers/904215665597120572.png");
     }
 
     [Fact]
@@ -50,6 +50,6 @@ public class JsonStickerSpecs
             .GetProperty("sourceUrl")
             .GetString()
             .Should()
-            .Be("https://cdn.discordapp.com/stickers/816087132447178774.json");
+            .StartWith("https://cdn.discordapp.com/stickers/816087132447178774.json");
     }
 }

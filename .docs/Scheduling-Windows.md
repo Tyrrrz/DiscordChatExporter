@@ -38,7 +38,7 @@ exit
 - `dirhere` with the export directory (e.g. C:\Users\User\Documents\Exports)
 - `formathere` with one of the available export formats
 
-    Make sure not to delete the quotes (")
+Make sure not to delete the quotes (")
 
 3. Save the file as `filename.ps1`, not as `.txt`
 

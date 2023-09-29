@@ -13,7 +13,7 @@ Please follow the [instructions provided here](https://github.com/Tyrrrz/Discord
 3. In the Terminal window, type `cd` , press the SPACE key, then drag and drop the extracted folder into the window, then press the RETURN key.
 4. Execute the following command to export, replacing `TOKEN` and `CHANNEL` with your own values:
 
-```
+```console
 dotnet DiscordChatExporter.Cli.dll export -t TOKEN -c CHANNEL
 ```
 

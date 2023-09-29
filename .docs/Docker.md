@@ -8,7 +8,7 @@ Note that only the CLI flavor of DiscordChatExporter is available for use with D
 
 This will download the [Docker image from the registry](https://hub.docker.com/r/tyrrrz/discordchatexporter) to your computer. You can run this command again to update when a new version is released.
 
-```
+```console
 docker pull tyrrrz/discordchatexporter:stable
 ```
 
@@ -24,19 +24,19 @@ You can see all available tags [here](https://hub.docker.com/r/tyrrrz/discordcha
 
 To run the CLI in Docker and render help text:
 
-```
+```console
 docker run --rm tyrrrz/discordchatexporter:stable
 ```
 
 To export a channel:
 
-```
+```console
 docker run --rm -v /path/on/machine:/out tyrrrz/discordchatexporter:stable export -t TOKEN -c CHANNELID
 ```
 
 If you want colored output and real-time progress reporting, pass the `-it` (interactive) option:
 
-```
+```console
 docker run --rm -it -v /path/on/machine:/out tyrrrz/discordchatexporter:stable export -t TOKEN -c CHANNELID
 ```
 
@@ -45,7 +45,7 @@ Note the `-v /path/on/machine:/out` option, which instructs Docker to bind the `
 > **Note**:
 > If you are running SELinux, you will need to add the `:z` option after `/out`, e.g.:
 >
-> ```
+> ```console
 > docker run --rm -v /path/on/machine:/out:z tyrrrz/discordchatexporter:stable export -t TOKEN -c CHANNELID
 > ```
 >

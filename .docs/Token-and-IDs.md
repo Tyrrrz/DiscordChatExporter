@@ -14,6 +14,23 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 
 #### In Chrome
 
+##### Using the console
+
+1. <img width="500" align="right" src="https://i.imgur.com/zdDwIT5.jpg" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> (<kbd>⌥</kbd>+<kbd>⌘</kbd>+<kbd>I</kbd> on macOS). Chrome's [DevTools](https://developer.chrome.com/docs/devtools/overview) tools will display.
+
+<br clear="right" />
+<br />
+
+2. Click the `Console` tab. The [console](https://developer.chrome.com/docs/devtools/console/) will open.
+
+3. Type
+
+    ```console
+    (webpackChunkdiscord_app.push([[''],{},e=>{m=[];for(let c in e.c)m.push(e.c[c])}]),m).find(m=>m?.exports?.default?.getToken!==void 0).exports.default.getToken()
+    ```
+
+    into the console and press <kbd>Enter</kbd>. The console will display your user token.
+
 ##### Using the network monitor
 
 1. <img width="500" align="right" src="https://i.imgur.com/zdDwIT5.jpg" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> (<kbd>⌥</kbd>+<kbd>⌘</kbd>+<kbd>I</kbd> on macOS). Chrome's [DevTools](https://developer.chrome.com/docs/devtools/overview) tools will display.
@@ -90,6 +107,23 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 
 #### In Firefox
 
+##### Using the console
+
+1. <img width="500" align="right" src="https://i.imgur.com/O34nwdG.png" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>K</kbd> (<kbd>⌥</kbd>+<kbd>⌘</kbd>+<kbd>K</kbd> on macOS). Firefox’s [web developer tools](https://firefox-source-docs.mozilla.org/devtools-user/) will display at the bottom of the window, and the [web console](https://firefox-source-docs.mozilla.org/devtools-user/console/index.html) will display.
+
+<br clear="right" />
+<br />
+
+2. Click the `Console` tab. The [console](https://firefox-source-docs.mozilla.org/devtools-user/console/index.html) will open.
+
+1. Type
+
+    ```console
+    (webpackChunkdiscord_app.push([[''],{},e=>{m=[];for(let c in e.c)m.push(e.c[c])}]),m).find(m=>m?.exports?.default?.getToken!==void 0).exports.default.getToken()
+    ```
+
+    into the console and press <kbd>Enter</kbd>. The console will display your user token.
+
 ##### Using the network monitor
 
 1. <img width="500" align="right" src="https://i.imgur.com/O34nwdG.png" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>E</kbd> (<kbd>⌥</kbd>+<kbd>⌘</kbd>+<kbd>E</kbd> on macOS). Firefox’s [web developer tools](https://firefox-source-docs.mozilla.org/devtools-user/) will display at the bottom of the window, and the [network monitor](https://firefox-source-docs.mozilla.org/devtools-user/network_monitor/) will display.
@@ -164,7 +198,7 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 <br clear="right" />
 <br />
 
-### Through the desktop app / Enabling web developer tools
+### Through the desktop app / enabling web developer tools
 
 #### By editing the settings file
 
@@ -239,4 +273,4 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 1. Open Discord Settings
 2. Go to the **Advanced** section
 3. Enable **Developer Mode**
-4. Right-click on the desired server or channel and click Copy Server ID or Copy Channel ID
+4. Right-click on the desired server or channel and click **Copy Server ID** or **Copy Channel ID**

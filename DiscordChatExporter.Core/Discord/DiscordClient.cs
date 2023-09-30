@@ -86,10 +86,13 @@ public class DiscordClient
         );
     }
 
-    private async ValueTask<TokenKind> GetTokenKindAsync(
+    private async ValueTask<TokenKind> ResolveTokenKindAsync(
         CancellationToken cancellationToken = default
     )
     {
+        if (_resolvedTokenKind is not null)
+            return _resolvedTokenKind.Value;
+
         // Try authenticating as a user
         using var userResponse = await GetResponseAsync(
             "users/@me",
@@ -98,7 +101,7 @@ public class DiscordClient
         );
 
         if (userResponse.StatusCode != HttpStatusCode.Unauthorized)
-            return TokenKind.User;
+            return (_resolvedTokenKind = TokenKind.User).Value;
 
         // Try authenticating as a bot
         using var botResponse = await GetResponseAsync(
@@ -108,7 +111,7 @@ public class DiscordClient
         );
 
         if (botResponse.StatusCode != HttpStatusCode.Unauthorized)
-            return TokenKind.Bot;
+            return (_resolvedTokenKind = TokenKind.Bot).Value;
 
         throw new DiscordChatExporterException("Authentication token is invalid.", true);
     }
@@ -116,11 +119,12 @@ public class DiscordClient
     private async ValueTask<HttpResponseMessage> GetResponseAsync(
         string url,
         CancellationToken cancellationToken = default
-    )
-    {
-        var tokenKind = _resolvedTokenKind ??= await GetTokenKindAsync(cancellationToken);
-        return await GetResponseAsync(url, tokenKind, cancellationToken);
-    }
+    ) =>
+        await GetResponseAsync(
+            url,
+            await ResolveTokenKindAsync(cancellationToken),
+            cancellationToken
+        );
 
     private async ValueTask<JsonElement> GetJsonResponseAsync(
         string url,
@@ -152,9 +156,9 @@ public class DiscordClient
                 _
                     => throw new DiscordChatExporterException(
                         $"""
-                    Request to '{url}' failed: {response.StatusCode.ToString().ToSpaceSeparatedWords().ToLowerInvariant()}.
-                    Response content: {await response.Content.ReadAsStringAsync(cancellationToken)}
-                    """,
+                        Request to '{url}' failed: {response.StatusCode.ToString().ToSpaceSeparatedWords().ToLowerInvariant()}.
+                        Response content: {await response.Content.ReadAsStringAsync(cancellationToken)}
+                        """,
                         true
                     )
             };
@@ -172,6 +176,14 @@ public class DiscordClient
         return response.IsSuccessStatusCode
             ? await response.Content.ReadAsJsonAsync(cancellationToken)
             : null;
+    }
+
+    public async ValueTask<Application> GetApplicationAsync(
+        CancellationToken cancellationToken = default
+    )
+    {
+        var response = await GetJsonResponseAsync("applications/@me", cancellationToken);
+        return Application.Parse(response);
     }
 
     public async ValueTask<User?> TryGetUserAsync(
@@ -285,7 +297,7 @@ public class DiscordClient
         if (guildId == Guild.DirectMessages.Id)
             yield break;
 
-        var tokenKind = _resolvedTokenKind ??= await GetTokenKindAsync(cancellationToken);
+        var tokenKind = await ResolveTokenKindAsync(cancellationToken);
 
         var channels = (await GetGuildChannelsAsync(guildId, cancellationToken))
             // Categories cannot have threads
@@ -559,6 +571,22 @@ public class DiscordClient
         [EnumeratorCancellation] CancellationToken cancellationToken = default
     )
     {
+        // If authenticating as a bot, ensure that we have the correct permissions to
+        // retrieve message content.
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/1106#issuecomment-1741548959
+        var tokenKind = await ResolveTokenKindAsync(cancellationToken);
+        if (tokenKind == TokenKind.Bot)
+        {
+            var application = await GetApplicationAsync(cancellationToken);
+            if (!application.IsMessageContentIntentEnabled)
+            {
+                throw new DiscordChatExporterException(
+                    "Bot account does not have the Message Content Intent enabled.",
+                    true
+                );
+            }
+        }
+
         // Get the last message in the specified range, so we can later calculate the
         // progress based on the difference between message timestamps.
         // This also snapshots the boundaries, which means that messages posted after

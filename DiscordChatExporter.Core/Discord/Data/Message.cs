@@ -118,14 +118,15 @@ public partial record Message
     public static Message Parse(JsonElement json)
     {
         var id = json.GetProperty("id").GetNonWhiteSpaceString().Pipe(Snowflake.Parse);
-        var kind = (MessageKind)json.GetProperty("type").GetInt32();
-        var flags =
-            (MessageFlags?)json.GetPropertyOrNull("flags")?.GetInt32OrNull() ?? MessageFlags.None;
-        var author = json.GetProperty("author").Pipe(User.Parse);
+        var kind = json.GetProperty("type").GetInt32().Pipe(t => (MessageKind)t);
 
+        var flags =
+            json.GetPropertyOrNull("flags")?.GetInt32OrNull()?.Pipe(f => (MessageFlags)f)
+            ?? MessageFlags.None;
+
+        var author = json.GetProperty("author").Pipe(User.Parse);
         var timestamp = json.GetProperty("timestamp").GetDateTimeOffset();
         var editedTimestamp = json.GetPropertyOrNull("edited_timestamp")?.GetDateTimeOffsetOrNull();
-
         var callEndedTimestamp = json.GetPropertyOrNull("call")
             ?.GetPropertyOrNull("ended_timestamp")
             ?.GetDateTimeOffsetOrNull();

@@ -38,6 +38,12 @@ public partial record Message(
     // App interactions are rendered as replies in the Discord client, but they are not actually replies
     public bool IsReplyLike => IsReply || Interaction is not null;
 
+    public bool IsEmpty =>
+        string.IsNullOrWhiteSpace(Content)
+        && !Attachments.Any()
+        && !Embeds.Any()
+        && !Stickers.Any();
+
     public IEnumerable<User> GetReferencedUsers()
     {
         yield return Author;

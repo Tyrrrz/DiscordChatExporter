@@ -297,8 +297,6 @@ public class DiscordClient
         if (guildId == Guild.DirectMessages.Id)
             yield break;
 
-        var tokenKind = await ResolveTokenKindAsync(cancellationToken);
-
         var channels = (await GetGuildChannelsAsync(guildId, cancellationToken))
             // Categories cannot have threads
             .Where(c => !c.IsCategory)
@@ -314,7 +312,7 @@ public class DiscordClient
             .ToArray();
 
         // User accounts can only fetch threads using the search endpoint
-        if (tokenKind == TokenKind.User)
+        if (await ResolveTokenKindAsync(cancellationToken) == TokenKind.User)
         {
             // Active threads
             foreach (var channel in channels)
@@ -571,22 +569,6 @@ public class DiscordClient
         [EnumeratorCancellation] CancellationToken cancellationToken = default
     )
     {
-        // If authenticating as a bot, ensure that we have the correct permissions to
-        // retrieve message content.
-        // https://github.com/Tyrrrz/DiscordChatExporter/issues/1106#issuecomment-1741548959
-        var tokenKind = await ResolveTokenKindAsync(cancellationToken);
-        if (tokenKind == TokenKind.Bot)
-        {
-            var application = await GetApplicationAsync(cancellationToken);
-            if (!application.IsMessageContentIntentEnabled)
-            {
-                throw new DiscordChatExporterException(
-                    "Bot account does not have the Message Content Intent enabled.",
-                    true
-                );
-            }
-        }
-
         // Get the last message in the specified range, so we can later calculate the
         // progress based on the difference between message timestamps.
         // This also snapshots the boundaries, which means that messages posted after
@@ -619,6 +601,24 @@ public class DiscordClient
             // Break if there are no messages (can happen if messages are deleted during execution)
             if (!messages.Any())
                 yield break;
+
+            // If all messages are empty, make sure that it's not because the bot account doesn't
+            // have the Message Content Intent enabled.
+            // https://github.com/Tyrrrz/DiscordChatExporter/issues/1106#issuecomment-1741548959
+            if (
+                messages.All(m => m.IsEmpty)
+                && await ResolveTokenKindAsync(cancellationToken) == TokenKind.Bot
+            )
+            {
+                var application = await GetApplicationAsync(cancellationToken);
+                if (!application.IsMessageContentIntentEnabled)
+                {
+                    throw new DiscordChatExporterException(
+                        "Bot account does not have the Message Content Intent enabled.",
+                        true
+                    );
+                }
+            }
 
             foreach (var message in messages)
             {

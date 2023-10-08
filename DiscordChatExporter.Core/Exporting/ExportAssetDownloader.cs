@@ -104,15 +104,23 @@ internal partial class ExportAssetDownloader
 {
     private static string GetUrlHash(string url)
     {
-        // Strip out ex, is and hm query params to create a consistent hash
-        var uriBuilder = new UriBuilder(url);
-        var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-        query.Remove("ex");
-        query.Remove("is");
-        query.Remove("hm");
-        uriBuilder.Query = query.ToString();
-        url = uriBuilder.ToString();
-        url = url.Replace(":443", "");
+        // Strip out ex, is and hm query params from Discord CDN URLs to create a consistent hash
+        if (
+            url.Contains("cdn.discordapp.com")
+            && url.Contains("ex")
+            && url.Contains("is")
+            && url.Contains("hm")
+        )
+        {
+            var uriBuilder = new UriBuilder(url);
+            var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+            query.Remove("ex");
+            query.Remove("is");
+            query.Remove("hm");
+            uriBuilder.Query = query.ToString();
+            url = uriBuilder.ToString();
+            url = url.Replace(":443", "");
+        }
 
         return SHA256
             .HashData(Encoding.UTF8.GetBytes(url))

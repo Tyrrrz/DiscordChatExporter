@@ -1,5 +1,30 @@
 # Changelog
 
+## v2.41.2 (05-Oct-2023)
+
+- General changes:
+  - Added a check that will trigger an error if the provided bot account does not have the message content intent enabled. Unlike the previous attempt, this approach does not rely on heuristics.
+
+## v2.41.1 (28-Sep-2023)
+
+- CLI changes:
+  - Fixed an issue where the export failed to export channels with an empty name.
+
+## v2.41 (15-Sep-2023)
+
+- General changes:
+  - Replaced the "date format" option with a "locale" option. Now, you can choose one of the locales supported by the Discord app, and DiscordChatExporter will infer all the required date, time, and number formats automatically. In GUI, the locale can be selected from the settings window. In CLI, the locale can be specified using the `--locale` option (e.g. `--locale "en-US"`). By default, the current system locale is used.
+  - Optimized the algorithm for fetching threads to improve performance. (Thanks [@slatinsky](https://github.com/slatinsky))
+- GUI changes:
+  - Improved the initial load time after submitting the token. Now, only the guilds are loaded initially, and the channels are loaded on-demand when the user selects a guild. This should significantly improve performance for accounts with many guilds.
+  - Added an option to include threads in the channel list, which is configurable in settings. When enabled, threads will appear at the bottom of the list, grouped by the parent channel. Note that pulling threads (especially archived threads) can be a very time-consuming process, depending on the guild size. By default, threads are not included.
+- CLI changes:
+  - Added a warning when using the `--bot` option, informing that it's obsolete and shouldn't be used.
+  - Changed the `--include-threads` option on the `channels` command from a switch (boolean) option, to an enum (choice) option. It now has possible values of `none`, `active`, or `all`, indicating which threads should be included. To include both active and archived threads, use `--include-threads all`. For backwards compatibility, the `--include-threads` option can still be used as a switch, in which case it will be treated as `--include-threads active`. Note that pulling threads (especially archived threads) can be a very time-consuming process, depending on the guild size.
+  - Added the `--include-threads` option to the `exportguild` and `exportall` commands. Using this option, you can specify whether to include threads (and which type) in the export. By default, threads are not included.
+  - Added the `--include-vc` option to the `channels` command. Using this option, you can specify whether to include voice-channel-accompanying text channels in the output. By default, these channels are included.
+  - Changed the progress reporting behavior of export commands such that tasks are now hidden on completion if parallelization is enabled (i.e. `--parallel` is set to `2` or higher). This should help improve visual clarity when exporting many channels in parallel.
+
 ## v2.40.4 (11-Aug-2023)
 
 - HTML changes:
@@ -25,7 +50,7 @@
 - General changes:
   - Fixed an issue where the fallback avatar (i.e. the avatar used for when the user doesn't have a custom one set) was not resolved properly for users that don't have a discriminator.
 - CLI changes:
-  - Added the `--include-vc` option to `exportall` and `exportguild` commands, which instructs whether to include voice-channel-accompanying text channels in the export. By default, this is set to `true` to match the previous behavior. To disable the option, use `--include-vc false`.
+  - Added the `--include-vc` option to the `exportall` and `exportguild` commands, which instructs whether to include voice-channel-accompanying text channels in the export. By default, this is set to `true` to match the previous behavior. To disable the option, use `--include-vc false`.
 - GUI changes:
   - Replaced the blur effect applied to the token text box with a password mask.
 - JSON format changes:
@@ -72,7 +97,7 @@
   - Updated the usage guide with additional steps required to retrieve the user token.
   - Fixed an issue where certain user mentions were incorrectly rendered as `@Unknown`.
   - Fixed an issue where some embed images were rendered using their actual URLs instead of Discord proxy URLs.
-- GUI changes: 
+- GUI changes:
   - Added a text box for specifying the output path when exporting channels. It can be used to set an output path that uses template tokens, which previously required hacky workarounds. This text box can be left empty, in which case clicking on the "Export" button will open the file or folder picker dialog, matching the previous behavior.
   - Added a notification when the application is updated to a new version, containing the changelog link.
   - Moved the "reuse assets" option from the settings dialog to the export dialog.
@@ -80,7 +105,7 @@
   - Minor cosmetic improvements.
 - CLI changes:
   - Changed the behavior of the `export` command when providing IDs of category channels. Now, instead of displaying an error, the command will export all channels contained within the corresponding categories.
-- HTML format changes: 
+- HTML format changes:
   - Added proper support for more system notification messages.
   - Added support for rendering server invites. Now, if the message contains an invite link, the export will show the server icon and include additional information, such as the name of the server and the target channel.
   - Changed the preamble part of the export to show the channel icon when available, instead of the default Discord logo. This is only available for group DM channels. (Thanks [@CanePlayz](https://github.com/CanePlayz))
@@ -128,7 +153,7 @@
 
 ## v2.36.1 (24-Sep-2022)
 
-- Added a check which will trigger an error if the provided bot account does not have the message content intent enabled. Note, however, that this check is based on heuristics which may result in false negatives.
+- Added a check that will trigger an error if the provided bot account does not have the message content intent enabled. Note, however, that this check is based on heuristics which may result in false negatives.
 - Fixed an issue where certain transient HTTP errors were not retried.
 - Fixed an issue which caused the export process to fail with the `IndexOutOfRangeException` exception on certain automated messages.
 - Fixed an issue which caused the export process to fail on unrecognized embed types.

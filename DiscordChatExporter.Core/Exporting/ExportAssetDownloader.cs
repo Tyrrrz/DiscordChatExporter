@@ -53,44 +53,47 @@ internal partial class ExportAssetDownloader
 
         Directory.CreateDirectory(_workingDirPath);
 
-        await Http.ResiliencePolicy.ExecuteAsync(async () =>
-        {
-            // Download the file
-            using var response = await Http.Client.GetAsync(url, cancellationToken);
-            await using (var output = File.Create(filePath))
-                await response.Content.CopyToAsync(output, cancellationToken);
-
-            // Try to set the file date according to the last-modified header
-            try
+        await Http.ResiliencePipeline.ExecuteAsync(
+            async innerCancellationToken =>
             {
-                var lastModified = response.Content.Headers
-                    .TryGetValue("Last-Modified")
-                    ?.Pipe(
-                        s =>
-                            DateTimeOffset.TryParse(
-                                s,
-                                CultureInfo.InvariantCulture,
-                                DateTimeStyles.None,
-                                out var instant
-                            )
-                                ? instant
-                                : (DateTimeOffset?)null
-                    );
+                // Download the file
+                using var response = await Http.Client.GetAsync(url, innerCancellationToken);
+                await using (var output = File.Create(filePath))
+                    await response.Content.CopyToAsync(output, innerCancellationToken);
 
-                if (lastModified is not null)
+                // Try to set the file date according to the last-modified header
+                try
                 {
-                    File.SetCreationTimeUtc(filePath, lastModified.Value.UtcDateTime);
-                    File.SetLastWriteTimeUtc(filePath, lastModified.Value.UtcDateTime);
-                    File.SetLastAccessTimeUtc(filePath, lastModified.Value.UtcDateTime);
+                    var lastModified = response.Content.Headers
+                        .TryGetValue("Last-Modified")
+                        ?.Pipe(
+                            s =>
+                                DateTimeOffset.TryParse(
+                                    s,
+                                    CultureInfo.InvariantCulture,
+                                    DateTimeStyles.None,
+                                    out var instant
+                                )
+                                    ? instant
+                                    : (DateTimeOffset?)null
+                        );
+
+                    if (lastModified is not null)
+                    {
+                        File.SetCreationTimeUtc(filePath, lastModified.Value.UtcDateTime);
+                        File.SetLastWriteTimeUtc(filePath, lastModified.Value.UtcDateTime);
+                        File.SetLastAccessTimeUtc(filePath, lastModified.Value.UtcDateTime);
+                    }
                 }
-            }
-            catch
-            {
-                // This can apparently fail for some reason.
-                // Updating the file date is not a critical task, so we'll just ignore exceptions thrown here.
-                // https://github.com/Tyrrrz/DiscordChatExporter/issues/585
-            }
-        });
+                catch
+                {
+                    // This can apparently fail for some reason.
+                    // Updating the file date is not a critical task, so we'll just ignore exceptions thrown here.
+                    // https://github.com/Tyrrrz/DiscordChatExporter/issues/585
+                }
+            },
+            cancellationToken
+        );
 
         return _previousPathsByUrl[url] = filePath;
     }

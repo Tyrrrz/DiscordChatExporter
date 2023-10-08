@@ -108,7 +108,7 @@ Verify your cron time [here](https://crontab.guru).
 
 ---
 
-**Extra information**
+**Additional information**
 
 The week starts on Sunday. 0 = SUN, 1 = MON ... 7 = SUN.
 

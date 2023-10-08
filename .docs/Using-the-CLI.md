@@ -1,0 +1,382 @@
+# Using the CLI
+
+## Guide
+
+> **Note**:
+> Make sure you have [.NET Core installed](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Dotnet.md) before attempting to run the commands below.
+> **Docker** users, please refer to the [Docker usage instructions](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Docker.md).
+
+## Step 1
+
+After extracting the `.zip`, open Command Prompt, aka `cmd` (`Terminal` on **macOS** and **Linux**).
+
+## Step 2
+
+Change the current directory to DCE's folder with `cd C:\path\to\directory`, then press ENTER to run the command.
+
+**Windows** users can quickly get the directory's path by clicking the address bar while inside the folder.
+![Copy path from Explorer](https://i.imgur.com/XncnhC2.gif)
+
+**macOS** users can select the `.exe`, hit Command+I (⌘I), and copy what's after `Where:` to get the directory
+![Mac info panel](https://camo.githubusercontent.com/3c51a904b0099c9f68a4797461d4a7914902fc04/68747470733a2f2f692e696d6775722e636f6d2f323975364e79782e706e67)
+
+You can also drag and drop the folder on **every platform**.
+![Drag and drop folder](https://i.imgur.com/sOpZQAb.gif)
+
+## Step 3
+
+Now we're ready to run the commands. The examples on this page follow the Windows file path format, change the file paths according to your system.
+
+Type the following in Command Prompt (Terminal), then press ENTER to run it. This will list DCE's options.
+
+```console
+dotnet DiscordChatExporter.Cli.dll
+```
+
+> **Docker** users, please refer to the [Docker usage instructions](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Docker.md).
+
+## CLI commands
+
+| Command                                                                                                       | Description                                         |
+| ------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| [export](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#export)           | Exports a channel                                   |
+| [exportdm](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#exportdm)       | Exports all direct message channels                 |
+| [exportguild](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#exportguild) | Exports all channels within the specified server    |
+| [exportall](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#exportall)     | Exports all accessible channels                     |
+| [channels](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#channels)       | Outputs the list of channels in the given server    |
+| [dm](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#dm)                   | Outputs the list of direct message channels         |
+| [guilds](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#guilds)           | Outputs the list of accessible servers              |
+| [guide](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#guide)             | Explains how to obtain token, guild, and channel ID |
+
+To use the commands, you'll need a token. For the instructions on how to get a token, please refer to [this page](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md), or run `dotnet DiscordChatExporter.Cli.dll guide`.
+To get help with a specific command, please run:
+
+```console
+dotnet DiscordChatExporter.Cli.dll command -h
+```
+
+### `export`
+
+With this command, you can export **server channels** and **direct messages**.
+
+|        | Option                                                                                                                | Description |
+| ------ | --------------------------------------------------------------------------------------------------------------------- | ----------- |
+| **\*** | [-c](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#basic-usage)                  | [Channel ID(s)](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md#how-to-get-guild-id-or-guild-channel-id) |
+| **\*** | [-t](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#basic-usage)                  | [Authorization token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md#how-to-get-user-token). Environment variable: `DISCORD_TOKEN` |
+|        | [-o](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#changing-the-output-filename) | Output file or directory path                                                                                                                                        |
+|        | [-f](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#changing-the-format)          | [Output file format](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#file-formats). Default: HtmlDark |
+|        | [--after](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#date-ranges)               | Only include messages sent after this date |
+|        | [--before](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#date-ranges)              | Only include messages sent before this date |
+|        | [-p](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#partitioning)                   | Split output into partitions, each limited to this number of messages (e.g. 100) or file size (e.g. 10mb) |
+|        | [--filter](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Message-filters.md)                        | Special notation for filtering the messages that get included in the export |
+|        | [--media](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#downloading-assets)        | Download assets referenced by the export (user avatars, attached files, embedded images, etc.). Default: false |
+|        | [--reuse-media](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#reuse-assets)        | Reuse previously downloaded assets to avoid redundant requests. Default: false |
+|        | [--media-dir](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#downloading-assets)    | Directory to store assets from all exported channels in the same place |
+|        | [--locale](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#changing-the-date-format) | Format used when writing dates. Default: en-US |
+|        | -h                                                                                                                    | Shows help text |
+
+> **Note**:
+> Options with an asterisk (**\***) are required. The order of the options doesn't matter.
+
+#### Basic usage
+
+You can quickly export with DCE's default settings by using just `-t token` and `-c channelid`.
+
+```console
+dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555
+```
+
+#### Changing the format
+
+You can change the export format to `HtmlDark`, `HtmlLight`, `PlainText` `Json` or `Csv` with `-f format`. The default format is `HtmlDark`.
+
+```console
+dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -f Json
+```
+
+#### Changing the output filename
+
+You can change the filename by using `-o name.ext`. e.g. for the `HTML` format:
+
+```console
+dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -o myserver.html
+```
+
+#### Changing the output directory
+
+You can change the export directory by using `-o` and providing a path that ends with a slash or does not have a file extension.
+If any of the folders in the path have a space in its name, escape them with quotes (").
+
+```console
+dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -o "C:\Discord Exports"
+```
+
+#### Changing the filename and output directory
+
+You can change both the filename and export directory by using `-o directory\name.ext`.
+Note that the filename must have an extension, otherwise it will be considered a directory name.
+If any of the folders in the path have a space in its name, escape them with quotes (").
+
+```console
+dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -o "C:\Discord Exports\myserver.html"
+```
+
+#### Generating the filename and output directory dynamically
+
+You can use template tokens to generate the output file path based on the guild and channel metadata.
+
+```console
+dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -o "C:\Discord Exports\%G\%T\%C.html"
+```
+
+Assuming you are exporting a channel named `"my-channel"` in the `"Text channels"` category from a server called `"My server"`, you will get the following output file path: `C:\Discord Exports\My server\Text channels\my-channel.html`
+
+Here is the full list of supported template tokens:
+
+- `%g` - guild ID
+- `%G` - guild name
+- `%t` - category ID
+- `%T` - category name
+- `%c` - channel ID
+- `%C` - channel name
+- `%p` - channel position
+- `%P` - category position
+- `%a` - the "after" date
+- `%b` - the "before" date
+- `%%` - escapes `%`
+
+#### Partitioning
+
+You can use partitioning to split files after a given number of messages or file size.
+For example, a channel with 36 messages set to be partitioned every 10 messages will output 4 files.
+
+```console
+dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -p 10
+```
+
+A 45 MB channel set to be partitioned every 20 MB will output 3 files.
+
+```console
+dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -p 20mb
+```
+
+#### Downloading assets
+
+If this option is set, the export will include additional files such as user avatars, attached files, images, etc.
+Only files that are referenced by the export are downloaded, which means that, for example, user avatars will not be downloaded when using the plain text (TXT) export format.
+A folder containing the assets will be created along with the exported chat. They must be kept together.
+
+```console
+dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --media
+```
+
+#### Reusing assets
+
+Previously downloaded assets can be reused to skip redundant downloads as long as the chat is always exported to the same folder. Using this option can speed up future exports. This option requires the `--media` option.
+
+```console
+dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --media --reuse-media
+```
+
+#### Changing the media directory
+
+By default, the media directory is created alongside the exported chat. You can change this by using `--media-dir` and providing a path that ends with a slash. All of the exported media will be stored in this directory.
+
+```console
+dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --media --media-dir "C:\Discord Media"
+```
+
+#### Changing the date format
+
+You can customize how dates are formatted in the exported files by using `--locale` and inserting one of Discord's locales. The default locale is `en-US`.
+
+```console
+dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --locale "de-DE"
+```
+
+#### Date ranges
+
+**Messages sent before a date**
+Use `--before` to export messages sent before the provided date. E.g. messages sent before September 18th, 2019:
+
+```console
+dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --before 2019-09-18
+```
+
+**Messages sent after a date**
+Use `--after` to export messages sent after the provided date. E.g. messages sent after September 17th, 2019 11:34 PM:
+
+```console
+dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --after "2019-09-17 23:34"
+```
+
+**Messages sent in a date range**
+Use `--before` and `--after` to export messages sent during the provided date range. E.g. messages sent between September 17th, 2019 11:34 PM and September 18th:
+
+```console
+dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --after "2019-09-17 23:34" --before "2019-09-18"
+```
+
+You can try different formats like `17-SEP-2019 11:34 PM` or even refine your ranges down to milliseconds `17-SEP-2019 23:45:30.6170`!
+Don't forget to quote (") the date if it has spaces!
+More info about .NET date formats [here](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings).
+
+### `exportdm`
+
+This command exports all your **direct messages**.
+
+|        | Option                                                                                                                | Description |
+| ------ | --------------------------------------------------------------------------------------------------------------------- | ----------- |
+| **\*** | [-c](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#basic-usage)                  | [Channel ID(s)](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md#how-to-get-guild-id-or-guild-channel-id) |
+| **\*** | [-t](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#basic-usage)                  | [Authorization token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md#how-to-get-user-token). Environment variable: `DISCORD_TOKEN` |
+|        | [-o](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#changing-the-output-filename) | Output file or directory path                                                                                                                                        |
+|        | [-f](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#changing-the-format)          | [Output file format](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#file-formats). Default: HtmlDark |
+|        | [--after](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#date-ranges)               | Only include messages sent after this date |
+|        | [--before](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#date-ranges)              | Only include messages sent before this date |
+|        | [-p](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#partitioning)                   | Split output into partitions, each limited to this number of messages (e.g. 100) or file size (e.g. 10mb) |
+|        | [--filter](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Message-filters.md)                        | Special notation for filtering the messages that get included in the export |
+|        | [--media](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#downloading-assets)        | Download assets referenced by the export (user avatars, attached files, embedded images, etc.). Default: false |
+|        | [--reuse-media](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#reuse-assets)        | Reuse previously downloaded assets to avoid redundant requests. Default: false |
+|        | [--media-dir](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#downloading-assets)    | Directory to store assets from all exported channels in the same place |
+|        | [--locale](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#changing-the-date-format) | Format used when writing dates. Default: en-US |
+|        | -h                                                                                                                    | Shows help text |
+
+> **Note**:
+> Options with an asterisk (**\***) are required. The order of the options doesn't matter.
+
+### `exportguild`
+
+This command exports all channels of a **server**.
+
+|        | Option                                                                                                                    | Description |
+| ------ | ------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| **\*** | -g                                                                                                                        | [Server ID](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md#how-to-get-guild-id-or-guild-channel-id) |
+| **\*** | [-t](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#basic-usage)                      | [Authorization token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md#how-to-get-user-token). Environment variable: `DISCORD_TOKEN` |
+|        | [-o](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#changing-the-output-filename)     | Output file or directory path                                                                                                                                        |
+|        | [-f](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#changing-the-format)              | [Output file format](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#file-formats). Default: HtmlDark |
+|        | [--after](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#date-ranges)                   | Only include messages sent after this date |
+|        | [--before](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#date-ranges)                  | Only include messages sent before this date |
+|        | [-p](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#partitioning)                       | Split output into partitions, each limited to this number of messages (e.g. 100) or file size (e.g. 10mb) |
+|        | [--filter](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Message-filters.md)                            | Special notation for filtering the messages that get included in the export |
+|        | [--media](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#downloading-assets)            | Download assets referenced by the export (user avatars, attached files, embedded images, etc.). Default: false |
+|        | [--reuse-media](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#reuse-assets)            | Reuse previously downloaded assets to avoid redundant requests. Default: false |
+|        | [--media-dir](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#downloading-assets)        | Directory to store assets from all exported channels in the same place |
+|        | [--locale](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#changing-the-date-format)     | Format used when writing dates. Default: en-US |
+|        | [--include-threads](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#including-threads)   | Specify whether to include threads (and which type) in the export. By default, threads are not included. It has possible values of `none`, `active`, or `all`, indicating which threads should be included. To include both active and archived threads, use `--include-threads all`. |
+|        | [--include-vc](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#including-voice-channels) | Include voice channels in the export. Default: true |
+|        | -h                                                                                                                        | Shows help text |
+
+> **Note**:
+> Options with an asterisk (**\***) are required. The order of the options doesn't matter.
+
+#### Including threads
+
+By default, threads are not included in the export. You can change this behavior by using `--include-threads` and specifying which threads should be included. It has possible values of `none`, `active`, or `all`, indicating which threads should be included. To include both active and archived threads, use `--include-threads all`.
+
+```console
+dotnet DiscordChatExporter.Cli.dll exportguild -t "mfa.Ifrn" -g 21814 --include-threads all
+```
+
+#### Including voice channels
+
+By default, voice channels are included in the export. You can change this behavior by using `--include-vc` and specifying whether to include voice channels in the export. It has possible values of `true` or `false`, to exclude voice channels, use `--include-vc false`.
+
+```console
+dotnet DiscordChatExporter.Cli.dll exportguild -t "mfa.Ifrn" -g 21814 --include-vc false
+```
+
+### `exportall`
+
+This command exports **all accessible channels**, including server channels and DMs.
+
+|        | Option                                                                                                                    | Description |
+| ------ | ------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| **\*** | [-t](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#basic-usage)                      | [Authorization token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md#how-to-get-user-token). Environment variable: `DISCORD_TOKEN` |
+|        | [-o](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#changing-the-output-filename)     | Output file or directory path                                                                                                                                        |
+|        | [-f](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#changing-the-format)              | [Output file format](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#file-formats). Default: HtmlDark |
+|        | [--after](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#date-ranges)                   | Only include messages sent after this date |
+|        | [--before](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#date-ranges)                  | Only include messages sent before this date |
+|        | [-p](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#partitioning)                       | Split output into partitions, each limited to this number of messages (e.g. 100) or file size (e.g. 10mb) |
+|        | [--filter](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Message-filters.md)                            | Special notation for filtering the messages that get included in the export |
+|        | [--media](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#downloading-assets)            | Download assets referenced by the export (user avatars, attached files, embedded images, etc.). Default: false |
+|        | [--reuse-media](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#reuse-assets)            | Reuse previously downloaded assets to avoid redundant requests. Default: false |
+|        | [--media-dir](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#downloading-assets)        | Directory to store assets from all exported channels in the same place |
+|        | [--locale](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#changing-the-date-format)     | Format used when writing dates. Default: en-US |
+|        | [--include-threads](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#including-threads)   | Specify whether to include threads (and which type) in the export. By default, threads are not included. It has possible values of `none`, `active`, or `all`, indicating which threads should be included. To include both active and archived threads, use `--include-threads all`. |
+|        | [--include-vc](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#including-voice-channels) | Include voice channels in the export. Default: true |
+|        | [--include-dm](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#excluding-dms)            | Include direct messages in the export. Default: true |
+|        | -h                                                                                                                        | Shows help text |
+
+> **Note**:
+> Options with an asterisk (**\***) are required. The order of the options doesn't matter.
+
+#### Excluding DMs
+
+To exclude DMs, add the `--include-dm false` option.
+
+```console
+dotnet DiscordChatExporter.Cli.dll exportall -t "mfa.Ifrn" --include-dm false
+```
+
+### `channels`
+
+This command outputs a **server's channels** in the following format:
+`Channel ID | Channel Name`
+To save the output to a file, run the command below. If the file already exists, it will be overwritten.
+
+|        | Option                                                                                               | Description |
+| ------ | ---------------------------------------------------------------------------------------------------- | ----------- |
+| **\*** | -g                                                                                                   | [Server ID](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md#how-to-get-guild-id-or-guild-channel-id)                                |
+| **\*** | [-t](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#basic-usage) | [Authorization token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md#how-to-get-user-token). Environment variable: `DISCORD_TOKEN` |
+|        | [--include-threads](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#including-threads)   | Specify whether to include threads (and which type) in the output. By default, threads are not included. It has possible values of `none`, `active`, or `all`, indicating which threads should be included. To include both active and archived threads, use `--include-threads all`. |
+|        | [--include-vc](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Using-the-CLI.md#including-voice-channels) | Include voice channels in the output. Default: true |
+|        | -h        | Shows help text                                                                                                                                                      |
+
+> **Note**:
+> Options with an asterisk (**\***) are required. The order of the options doesn't matter.
+
+To save the output to a file, run the command with `> C:\path\…` like the example below. If the file already exists, it will be overwritten.
+
+```console
+dotnet DiscordChatExporter.Cli.dll channels -t "mfa.Ifrn" -g 21814 > C:\path\to\output.txt
+```
+
+### `dm`
+
+This command outputs a list of your **direct messages**.
+
+|        | Option                                                                                               | Description |
+| ------ | ---------------------------------------------------------------------------------------------------- | ----------- |
+| **\*** | [-t](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#basic-usage) | [Authorization token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md#how-to-get-user-token). Environment variable: `DISCORD_TOKEN` |
+|        | -h                                                                                                   | Shows help text |
+
+> **Note**:
+> Options with an asterisk (**\***) are required. The order of the options doesn't matter.
+
+To save the output to a file, run the command with `> C:\path\…` like the example below. If the file already exists, it will be overwritten.
+
+```console
+dotnet DiscordChatExporter.Cli.dll dm -t "mfa.Ifrn" > C:\path\to\output.txt
+```
+
+### `guilds`
+
+This command outputs a list of your **servers**.
+
+|        | Option                                                                                               | Description |
+| ------ | ---------------------------------------------------------------------------------------------------- | ----------- |
+| **\*** | [-t](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#basic-usage) | [Authorization token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md#how-to-get-user-token). Environment variable: `DISCORD_TOKEN` |
+|        | -h                                                                                                   | Shows help text |
+
+> **Note**:
+> Options with an asterisk (**\***) are required. The order of the options doesn't matter.
+
+To save the output to a file, run the command with `> C:\path\…` like the example below. If the file already exists, it will be overwritten.
+
+```console
+dotnet DiscordChatExporter.Cli.dll guilds -t "mfa.Ifrn" > C:\path\to\output.txt
+```
+
+### `guide`
+
+This command explains [how to get your token, guild, and channel IDs](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md).

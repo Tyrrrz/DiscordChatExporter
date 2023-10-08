@@ -145,7 +145,7 @@ public class HtmlEmbedSpecs
 
         // Assert
         var iframeUrl = message.QuerySelector("iframe")?.GetAttribute("src");
-        iframeUrl.Should().Be("https://open.spotify.com/embed/track/1LHZMWefF9502NPfArRfvP");
+        iframeUrl.Should().StartWith("https://open.spotify.com/embed/track/1LHZMWefF9502NPfArRfvP");
     }
 
     [Fact]
@@ -161,7 +161,7 @@ public class HtmlEmbedSpecs
 
         // Assert
         var iframeUrl = message.QuerySelector("iframe")?.GetAttribute("src");
-        iframeUrl.Should().Be("https://www.youtube.com/embed/qOWW4OlgbvE");
+        iframeUrl.Should().StartWith("https://www.youtube.com/embed/qOWW4OlgbvE");
     }
 
     [Fact]

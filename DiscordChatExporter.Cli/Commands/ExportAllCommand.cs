@@ -55,7 +55,7 @@ public class ExportAllCommand : ExportCommandBase
         {
             await foreach (var guild in Discord.GetUserGuildsAsync(cancellationToken))
             {
-                await console.Output.WriteLineAsync($"Fetching channels...  ({guild.Name})");
+                await console.Output.WriteLineAsync($"Fetching channels for guild '{guild.Name}'...");
 
                 // Regular channels
                 await foreach (

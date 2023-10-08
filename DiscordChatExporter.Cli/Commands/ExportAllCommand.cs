@@ -13,6 +13,7 @@ using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exceptions;
 using JsonExtensions.Reading;
+using Spectre.Console;
 
 namespace DiscordChatExporter.Cli.Commands;
 
@@ -75,28 +76,32 @@ public class ExportAllCommand : ExportCommandBase
                 // Threads
                 if (ThreadInclusionMode != ThreadInclusionMode.None)
                 {
-                    await console.Output.WriteLineAsync($"Fetching threads...   ({guild.Name})");
-                    await foreach (
-                        var thread in Discord.GetGuildThreadsAsync(
-                            guild.Id,
-                            ThreadInclusionMode == ThreadInclusionMode.All,
-                            Before,
-                            After,
-                            cancellationToken
-                        )
-                    )
-                    {
-                        channels.Add(thread);
-                        await console.Output.WriteAsync(
-                            $"  Found {channels.Count(channel => channel.IsThread)} threads.  {thread.GetHierarchicalName()}"
-                                .PadRight(80)
-                                .Substring(0, 80) + '\r'
+                    AnsiConsole.MarkupLine("Fetching threads...");
+                    await AnsiConsole
+                        .Status()
+                        .StartAsync(
+                            "Found 0 threads.",
+                            async ctx =>
+                            {
+                                await foreach (
+                                    var thread in Discord.GetGuildThreadsAsync(
+                                        guild.Id,
+                                        ThreadInclusionMode == ThreadInclusionMode.All,
+                                        Before,
+                                        After,
+                                        cancellationToken
+                                    )
+                                )
+                                {
+                                    channels.Add(thread);
+                                    ctx.Status(
+                                        $"Found {channels.Count(channel => channel.IsThread)} threads: {thread.GetHierarchicalName()}"
+                                    );
+                                }
+                            }
                         );
-                    }
                     await console.Output.WriteLineAsync(
                         $"  Found {channels.Count(channel => channel.IsThread)} threads."
-                            .PadRight(80)
-                            .Substring(0, 80)
                     );
                 }
             }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO.Compression;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using CliFx.Attributes;
@@ -54,6 +55,7 @@ public class ExportAllCommand : ExportCommandBase
             await foreach (var guild in Discord.GetUserGuildsAsync(cancellationToken))
             {
                 await console.Output.WriteLineAsync($"Fetching channels...  ({guild.Name})");
+
                 // Regular channels
                 await foreach (
                     var channel in Discord.GetGuildChannelsAsync(guild.Id, cancellationToken)
@@ -74,7 +76,6 @@ public class ExportAllCommand : ExportCommandBase
                 if (ThreadInclusionMode != ThreadInclusionMode.None)
                 {
                     await console.Output.WriteLineAsync($"Fetching threads...   ({guild.Name})");
-                    var progress = 1;
                     await foreach (
                         var thread in Discord.GetGuildThreadsAsync(
                             guild.Id,
@@ -85,15 +86,17 @@ public class ExportAllCommand : ExportCommandBase
                         )
                     )
                     {
+                        channels.Add(thread);
                         await console.Output.WriteAsync(
-                            $"  Found {progress++} threads.  {thread.Parent?.Name} - {thread.Name}"
+                            $"  Found {channels.Count(channel => channel.IsThread)} threads.  {thread.GetHierarchicalName()}"
                                 .PadRight(80)
                                 .Substring(0, 80) + '\r'
                         );
-                        channels.Add(thread);
                     }
                     await console.Output.WriteLineAsync(
-                        $"  Found {progress - 1} threads.".PadRight(80).Substring(0, 80)
+                        $"  Found {channels.Count(channel => channel.IsThread)} threads."
+                            .PadRight(80)
+                            .Substring(0, 80)
                     );
                 }
             }

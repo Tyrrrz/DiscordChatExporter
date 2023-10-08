@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CliFx.Attributes;
 using CliFx.Infrastructure;
@@ -53,7 +54,6 @@ public class ExportGuildCommand : ExportCommandBase
         if (ThreadInclusionMode != ThreadInclusionMode.None)
         {
             await console.Output.WriteLineAsync("Fetching threads...");
-            var progress = 1;
             await foreach (
                 var thread in Discord.GetGuildThreadsAsync(
                     GuildId,
@@ -64,17 +64,18 @@ public class ExportGuildCommand : ExportCommandBase
                 )
             )
             {
+                channels.Add(thread);
                 await console.Output.WriteAsync(
-                    $"  Found {progress++} threads.  {thread.Parent?.Name} - {thread.Name}"
+                    $"  Found {channels.Count(channel => channel.IsThread)} threads.  {thread.GetHierarchicalName()}"
                         .PadRight(80)
                         .Substring(0, 80) + '\r'
                 );
-
-                channels.Add(thread);
             }
 
             await console.Output.WriteLineAsync(
-                $"  Found {progress - 1} threads.".PadRight(80).Substring(0, 80)
+                $"  Found {channels.Count(channel => channel.IsThread)} threads."
+                    .PadRight(80)
+                    .Substring(0, 80)
             );
         }
 

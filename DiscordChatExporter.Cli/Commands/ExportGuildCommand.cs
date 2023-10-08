@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CliFx.Attributes;
 using CliFx.Infrastructure;
@@ -7,6 +8,7 @@ using DiscordChatExporter.Cli.Commands.Converters;
 using DiscordChatExporter.Cli.Commands.Shared;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
+using Spectre.Console;
 
 namespace DiscordChatExporter.Cli.Commands;
 
@@ -47,21 +49,38 @@ public class ExportGuildCommand : ExportCommandBase
             channels.Add(channel);
         }
 
+        await console.Output.WriteLineAsync($"  Found {channels.Count} channels.");
+
         // Threads
         if (ThreadInclusionMode != ThreadInclusionMode.None)
         {
-            await foreach (
-                var thread in Discord.GetGuildThreadsAsync(
-                    GuildId,
-                    ThreadInclusionMode == ThreadInclusionMode.All,
-                    Before,
-                    After,
-                    cancellationToken
-                )
-            )
-            {
-                channels.Add(thread);
-            }
+            AnsiConsole.MarkupLine("Fetching threads...");
+            await AnsiConsole
+                .Status()
+                .StartAsync(
+                    "Found 0 threads.",
+                    async ctx =>
+                    {
+                        await foreach (
+                            var thread in Discord.GetGuildThreadsAsync(
+                                GuildId,
+                                ThreadInclusionMode == ThreadInclusionMode.All,
+                                Before,
+                                After,
+                                cancellationToken
+                            )
+                        )
+                        {
+                            channels.Add(thread);
+                            ctx.Status(
+                                $"Found {channels.Count(channel => channel.IsThread)} threads: {thread.GetHierarchicalName()}"
+                            );
+                        }
+                    }
+                );
+            await console.Output.WriteLineAsync(
+                $"  Found {channels.Count(channel => channel.IsThread)} threads."
+            );
         }
 
         await ExportAsync(console, channels);

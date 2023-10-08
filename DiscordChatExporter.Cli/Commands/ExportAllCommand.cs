@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO.Compression;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using CliFx.Attributes;
@@ -12,6 +13,7 @@ using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exceptions;
 using JsonExtensions.Reading;
+using Spectre.Console;
 
 namespace DiscordChatExporter.Cli.Commands;
 
@@ -51,10 +53,10 @@ public class ExportAllCommand : ExportCommandBase
         // Pull from the API
         if (string.IsNullOrWhiteSpace(DataPackageFilePath))
         {
-            await console.Output.WriteLineAsync("Fetching channels...");
-
             await foreach (var guild in Discord.GetUserGuildsAsync(cancellationToken))
             {
+                await console.Output.WriteLineAsync($"Fetching channels for guild '{guild.Name}'...");
+
                 // Regular channels
                 await foreach (
                     var channel in Discord.GetGuildChannelsAsync(guild.Id, cancellationToken)
@@ -69,21 +71,38 @@ public class ExportAllCommand : ExportCommandBase
                     channels.Add(channel);
                 }
 
+                await console.Output.WriteLineAsync($"  Found {channels.Count} channels.");
+
                 // Threads
                 if (ThreadInclusionMode != ThreadInclusionMode.None)
                 {
-                    await foreach (
-                        var thread in Discord.GetGuildThreadsAsync(
-                            guild.Id,
-                            ThreadInclusionMode == ThreadInclusionMode.All,
-                            Before,
-                            After,
-                            cancellationToken
-                        )
-                    )
-                    {
-                        channels.Add(thread);
-                    }
+                    AnsiConsole.MarkupLine("Fetching threads...");
+                    await AnsiConsole
+                        .Status()
+                        .StartAsync(
+                            "Found 0 threads.",
+                            async ctx =>
+                            {
+                                await foreach (
+                                    var thread in Discord.GetGuildThreadsAsync(
+                                        guild.Id,
+                                        ThreadInclusionMode == ThreadInclusionMode.All,
+                                        Before,
+                                        After,
+                                        cancellationToken
+                                    )
+                                )
+                                {
+                                    channels.Add(thread);
+                                    ctx.Status(
+                                        $"Found {channels.Count(channel => channel.IsThread)} threads: {thread.GetHierarchicalName()}"
+                                    );
+                                }
+                            }
+                        );
+                    await console.Output.WriteLineAsync(
+                        $"  Found {channels.Count(channel => channel.IsThread)} threads."
+                    );
                 }
             }
         }

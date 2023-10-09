@@ -102,28 +102,27 @@ internal partial class ExportAssetDownloader
 
 internal partial class ExportAssetDownloader
 {
+    // Remove signature parameters from Discord CDN URLs to normalize them
+    private static string StripUrlSignatureParameters(string url)
+    {
+        var uri = new Uri(url);
+        if (!string.Equals(uri.Host, "cdn.discordapp.com", StringComparison.OrdinalIgnoreCase))
+            return url;
+
+        var query = HttpUtility.ParseQueryString(uri.Query);
+        query.Remove("ex");
+        query.Remove("is");
+        query.Remove("hm");
+
+        return uri.GetLeftPart(UriPartial.Path) + query;
+    }
+
     private static string GetUrlHash(string url)
     {
-        // Strip out ex, is and hm query params from Discord CDN URLs to create a consistent hash
-        if (
-            url.Contains("cdn.discordapp.com")
-            && url.Contains("ex")
-            && url.Contains("is")
-            && url.Contains("hm")
-        )
-        {
-            var uriBuilder = new UriBuilder(url);
-            var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-            query.Remove("ex");
-            query.Remove("is");
-            query.Remove("hm");
-            uriBuilder.Query = query.ToString();
-            url = uriBuilder.ToString();
-            url = url.Replace(":443", "");
-        }
+        var normalizedUrl = StripUrlSignatureParameters(url);
 
         return SHA256
-            .HashData(Encoding.UTF8.GetBytes(url))
+            .HashData(Encoding.UTF8.GetBytes(normalizedUrl))
             .ToHex()
             // 5 chars ought to be enough for anybody
             .Truncate(5);

@@ -186,7 +186,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
                 // https://github.com/Tyrrrz/DiscordChatExporter/issues/1124
                 ParallelLimit > 1
             )
-            .StartAsync(async progressContext =>
+            .StartAsync(async ctx =>
             {
                 await Parallel.ForEachAsync(
                     channels,
@@ -199,7 +199,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
                     {
                         try
                         {
-                            await progressContext.StartTaskAsync(
+                            await ctx.StartTaskAsync(
                                 channel.GetHierarchicalName(),
                                 async progress =>
                                 {
@@ -257,7 +257,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
             using (console.WithForegroundColor(ConsoleColor.Red))
             {
                 await console.Error.WriteLineAsync(
-                    $"Failed to export {errorsByChannel.Count} channel(s):"
+                    $"Failed to export {errorsByChannel.Count} the following channel(s):"
                 );
             }
 

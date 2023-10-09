@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using AsyncKeyedLock;
 using DiscordChatExporter.Core.Utils;
 using DiscordChatExporter.Core.Utils.Extensions;
@@ -101,12 +102,32 @@ internal partial class ExportAssetDownloader
 
 internal partial class ExportAssetDownloader
 {
-    private static string GetUrlHash(string url) =>
-        SHA256
+    private static string GetUrlHash(string url)
+    {
+        // Strip out ex, is and hm query params from Discord CDN URLs to create a consistent hash
+        if (
+            url.Contains("cdn.discordapp.com")
+            && url.Contains("ex")
+            && url.Contains("is")
+            && url.Contains("hm")
+        )
+        {
+            var uriBuilder = new UriBuilder(url);
+            var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+            query.Remove("ex");
+            query.Remove("is");
+            query.Remove("hm");
+            uriBuilder.Query = query.ToString();
+            url = uriBuilder.ToString();
+            url = url.Replace(":443", "");
+        }
+
+        return SHA256
             .HashData(Encoding.UTF8.GetBytes(url))
             .ToHex()
             // 5 chars ought to be enough for anybody
             .Truncate(5);
+    }
 
     private static string GetFileNameFromUrl(string url)
     {

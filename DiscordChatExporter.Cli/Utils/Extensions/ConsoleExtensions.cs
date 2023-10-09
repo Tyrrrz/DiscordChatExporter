@@ -17,6 +17,9 @@ internal static class ConsoleExtensions
             }
         );
 
+    public static Status CreateStatusTicker(this IConsole console) =>
+        console.CreateAnsiConsole().Status().AutoRefresh(true);
+
     public static Progress CreateProgressTicker(this IConsole console) =>
         console
             .CreateAnsiConsole()
@@ -31,16 +34,16 @@ internal static class ConsoleExtensions
             );
 
     public static async ValueTask StartTaskAsync(
-        this ProgressContext progressContext,
+        this ProgressContext context,
         string description,
         Func<ProgressTask, ValueTask> performOperationAsync
     )
     {
         // Description cannot be empty
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/1133
-        var actualDescription = !string.IsNullOrWhiteSpace(description) ? description : "?";
+        var actualDescription = !string.IsNullOrWhiteSpace(description) ? description : "...";
 
-        var progressTask = progressContext.AddTask(
+        var progressTask = context.AddTask(
             // Don't recognize random square brackets as style tags
             Markup.Escape(actualDescription),
             new ProgressTaskSettings { MaxValue = 1 }

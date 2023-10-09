@@ -6,6 +6,7 @@ using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands.Base;
 using DiscordChatExporter.Cli.Commands.Converters;
 using DiscordChatExporter.Cli.Commands.Shared;
+using DiscordChatExporter.Cli.Utils.Extensions;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using Spectre.Console;
@@ -35,30 +36,46 @@ public class ExportGuildCommand : ExportCommandBase
         var cancellationToken = console.RegisterCancellationHandler();
         var channels = new List<Channel>();
 
+        // Regular channels
         await console.Output.WriteLineAsync("Fetching channels...");
 
-        // Regular channels
-        await foreach (var channel in Discord.GetGuildChannelsAsync(GuildId, cancellationToken))
-        {
-            if (channel.IsCategory)
-                continue;
+        var fetchedChannelsCount = 0;
+        await console
+            .CreateStatusTicker()
+            .StartAsync(
+                "...",
+                async ctx =>
+                {
+                    await foreach (
+                        var channel in Discord.GetGuildChannelsAsync(GuildId, cancellationToken)
+                    )
+                    {
+                        if (channel.IsCategory)
+                            continue;
 
-            if (!IncludeVoiceChannels && channel.IsVoice)
-                continue;
+                        if (!IncludeVoiceChannels && channel.IsVoice)
+                            continue;
 
-            channels.Add(channel);
-        }
+                        channels.Add(channel);
 
-        await console.Output.WriteLineAsync($"  Found {channels.Count} channels.");
+                        ctx.Status($"Fetched '{channel.GetHierarchicalName()}'.");
+                        fetchedChannelsCount++;
+                    }
+                }
+            );
+
+        await console.Output.WriteLineAsync($"Fetched {fetchedChannelsCount} channel(s).");
 
         // Threads
         if (ThreadInclusionMode != ThreadInclusionMode.None)
         {
-            AnsiConsole.MarkupLine("Fetching threads...");
-            await AnsiConsole
-                .Status()
+            await console.Output.WriteLineAsync("Fetching threads...");
+
+            var fetchedThreadsCount = 0;
+            await console
+                .CreateStatusTicker()
                 .StartAsync(
-                    "Found 0 threads.",
+                    "...",
                     async ctx =>
                     {
                         await foreach (
@@ -72,15 +89,14 @@ public class ExportGuildCommand : ExportCommandBase
                         )
                         {
                             channels.Add(thread);
-                            ctx.Status(
-                                $"Found {channels.Count(channel => channel.IsThread)} threads: {thread.GetHierarchicalName()}"
-                            );
+
+                            ctx.Status($"Fetched '{thread.GetHierarchicalName()}'.");
+                            fetchedThreadsCount++;
                         }
                     }
                 );
-            await console.Output.WriteLineAsync(
-                $"  Found {channels.Count(channel => channel.IsThread)} threads."
-            );
+
+            await console.Output.WriteLineAsync($"Fetched {fetchedThreadsCount} thread(s).");
         }
 
         await ExportAsync(console, channels);

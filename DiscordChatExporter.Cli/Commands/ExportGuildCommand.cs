@@ -58,7 +58,8 @@ public class ExportGuildCommand : ExportCommandBase
 
                         channels.Add(channel);
 
-                        ctx.Status($"Fetched '{channel.GetHierarchicalName()}'.");
+                        ctx.Status(Markup.Escape($"Fetched '{channel.GetHierarchicalName()}'."));
+
                         fetchedChannelsCount++;
                     }
                 }
@@ -90,7 +91,8 @@ public class ExportGuildCommand : ExportCommandBase
                         {
                             channels.Add(thread);
 
-                            ctx.Status($"Fetched '{thread.GetHierarchicalName()}'.");
+                            ctx.Status(Markup.Escape($"Fetched '{thread.GetHierarchicalName()}'."));
+
                             fetchedThreadsCount++;
                         }
                     }

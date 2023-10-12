@@ -80,7 +80,10 @@ public class ExportAllCommand : ExportCommandBase
 
                                 channels.Add(channel);
 
-                                ctx.Status($"Fetched '{channel.GetHierarchicalName()}'.");
+                                ctx.Status(
+                                    Markup.Escape($"Fetched '{channel.GetHierarchicalName()}'.")
+                                );
+
                                 fetchedChannelsCount++;
                             }
                         }
@@ -114,7 +117,10 @@ public class ExportAllCommand : ExportCommandBase
                                 {
                                     channels.Add(thread);
 
-                                    ctx.Status($"Fetched '{thread.GetHierarchicalName()}'.");
+                                    ctx.Status(
+                                        Markup.Escape($"Fetched '{thread.GetHierarchicalName()}'.")
+                                    );
+
                                     fetchedThreadsCount++;
                                 }
                             }
@@ -142,7 +148,11 @@ public class ExportAllCommand : ExportCommandBase
                     {
                         foreach (var dumpChannel in dump.Channels)
                         {
-                            ctx.Status($"Fetching '{dumpChannel.Name}' ({dumpChannel.Id})...");
+                            ctx.Status(
+                                Markup.Escape(
+                                    $"Fetching '{dumpChannel.Name}' ({dumpChannel.Id})..."
+                                )
+                            );
 
                             try
                             {

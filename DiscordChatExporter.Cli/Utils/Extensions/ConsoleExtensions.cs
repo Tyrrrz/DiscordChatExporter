@@ -44,8 +44,7 @@ internal static class ConsoleExtensions
         var actualDescription = !string.IsNullOrWhiteSpace(description) ? description : "...";
 
         var progressTask = context.AddTask(
-            // Don't recognize random square brackets as style tags
-            Markup.Escape(actualDescription),
+            actualDescription,
             new ProgressTaskSettings { MaxValue = 1 }
         );
 

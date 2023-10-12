@@ -200,7 +200,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
                         try
                         {
                             await ctx.StartTaskAsync(
-                                channel.GetHierarchicalName(),
+                                Markup.Escape(channel.GetHierarchicalName()),
                                 async progress =>
                                 {
                                     var guild = await Discord.GetGuildAsync(

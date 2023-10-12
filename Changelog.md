@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.42 (12-Oct-2023)
+
+- General changes:
+  - Fixed an issue where the "reuse assets" option did not work as intended due to Discord recently introducing signatures in the CDN URLs. (Thanks [@slatinsky](https://github.com/slatinsky))
+- CLI changes:
+  - Added progress reporting for the "fetching channels" stage of the `exportguild` and `exportall` commands. (Thanks [@slatinsky](https://github.com/slatinsky))
+
 ## v2.41.2 (05-Oct-2023)
 
 - General changes:

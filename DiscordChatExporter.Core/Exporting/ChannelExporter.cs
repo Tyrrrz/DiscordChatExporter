@@ -22,11 +22,18 @@ public class ChannelExporter
     {
         // Forum channels don't have messages, they are just a list of threads
         if (request.Channel.Kind == ChannelKind.GuildForum)
-            throw new DiscordChatExporterException("Channel is a forum.");
+        {
+            throw new DiscordChatExporterException(
+                "Channel is a forum and cannot be exported directly. "
+                    + "You need to pull its threads and export them individually."
+            );
+        }
 
         // Check if the channel is empty
         if (request.Channel.IsEmpty)
+        {
             throw new DiscordChatExporterException("Channel does not contain any messages.");
+        }
 
         // Check if the 'after' boundary is valid
         if (request.After is not null && !request.Channel.MayHaveMessagesAfter(request.After.Value))

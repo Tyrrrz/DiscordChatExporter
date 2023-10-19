@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.42.1 (19-Oct-2023)
+
+- General changes:
+  - Improved the error message shown when trying to export a forum channel. Such channels cannot be exported directly, you need to fetch and export their individual threads instead.
+- CLI changes:
+  - Fixed an issue where fetching threads with `[` or `]` in their name crashed the application.
+
 ## v2.42 (12-Oct-2023)
 
 - General changes:

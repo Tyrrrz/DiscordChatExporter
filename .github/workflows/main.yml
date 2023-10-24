@@ -25,6 +25,8 @@ jobs:
       - name: Run tests
         # Tests need access to secrets, so we can't run them against PRs because of limited trust
         if: ${{ github.event_name != 'pull_request' }}
+        env:
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
         run: >
           dotnet test
           --configuration Release
@@ -33,8 +35,6 @@ jobs:
           --
           RunConfiguration.CollectSourceInformation=true
           DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
-        env:
-          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
 
       - name: Upload coverage
         uses: codecov/codecov-action@eaaf4bedf32dbdc6b720b63067d99c4d77d6047d # 3.1.4
@@ -42,6 +42,10 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   pack:
+    strategy:
+      matrix:
+        app: [DiscordChatExporter.Cli, DiscordChatExporter.Gui]
+
     runs-on: windows-latest
     permissions:
       actions: write
@@ -56,35 +60,25 @@ jobs:
         with:
           dotnet-version: 7.0.x
 
-      - name: Publish (CLI)
+      - name: Publish app
         run: >
-          dotnet publish DiscordChatExporter.Cli
-          --output DiscordChatExporter.Cli/publish/
+          dotnet publish ${{ matrix.app }}
+          --output ${{ matrix.app }}/publish/
           --configuration Release
 
-      - name: Publish (GUI)
-        run: >
-          dotnet publish DiscordChatExporter.Gui
-          --output DiscordChatExporter.Gui/publish/
-          --configuration Release
-
-      - name: Upload artifacts (CLI)
+      - name: Upload artifacts
         uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # 3.1.3
         with:
-          name: DiscordChatExporter.Cli
-          path: DiscordChatExporter.Cli/publish/
-
-      - name: Upload artifacts (GUI)
-        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # 3.1.3
-        with:
-          name: DiscordChatExporter
-          path: DiscordChatExporter.Gui/publish/
+          name: ${{ matrix.app }}
+          path: ${{ matrix.app }}/publish/
 
   deploy:
     if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
+
     needs:
       - test
       - pack
+
     runs-on: ubuntu-latest
     permissions:
       actions: read
@@ -95,29 +89,19 @@ jobs:
         uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # 3.0.2
         with:
           name: DiscordChatExporter.Cli
-          path: DiscordChatExporter.Cli
+          path: DiscordChatExporter.Cli/
 
       - name: Download artifacts (GUI)
         uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # 3.0.2
         with:
-          name: DiscordChatExporter
-          path: DiscordChatExporter.Gui
+          name: DiscordChatExporter.Gui
+          path: DiscordChatExporter.Gui/
 
       - name: Create package (CLI)
-        shell: pwsh
-        run: >
-          Compress-Archive
-          -Path DiscordChatExporter.Cli/*
-          -DestinationPath DiscordChatExporter.Cli.zip
-          -Force
+        run: zip -r DiscordChatExporter.Cli.zip DiscordChatExporter.Cli/
 
       - name: Create package (GUI)
-        shell: pwsh
-        run: >
-          Compress-Archive
-          -Path DiscordChatExporter.Gui/*
-          -DestinationPath DiscordChatExporter.zip
-          -Force
+        run: zip -r DiscordChatExporter.Gui.zip DiscordChatExporter.Gui/
 
       - name: Create release
         env:
@@ -125,7 +109,7 @@ jobs:
         run: >
           gh release create "${{ github.ref_name }}"
           "DiscordChatExporter.Cli.zip"
-          "DiscordChatExporter.zip"
+          "DiscordChatExporter.Gui.zip#DiscordChatExporter.zip"
           --repo "${{ github.event.repository.full_name }}"
           --title "${{ github.ref_name }}"
           --notes "[Changelog](${{ github.event.repository.html_url }}/blob/${{ github.ref_name }}/Changelog.md)"

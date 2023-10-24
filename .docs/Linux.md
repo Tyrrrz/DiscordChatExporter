@@ -19,6 +19,8 @@ If the above command throws a "Permission denied" error, execute this command to
 
 ```console
 chmod 644 *.dll DiscordChatExporter.*
+```
+
 > [How to get Token and Channel IDs](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md).
 
 There's much more you can do with DCE.CLI! Read the [CLI explained](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#dcecli-commands-) page to get started.

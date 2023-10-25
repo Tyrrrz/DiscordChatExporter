@@ -44,7 +44,9 @@ jobs:
   pack:
     strategy:
       matrix:
-        app: [DiscordChatExporter.Cli, DiscordChatExporter.Gui]
+        app:
+          - DiscordChatExporter.Cli
+          - DiscordChatExporter.Gui
 
     runs-on: windows-latest
     permissions:
@@ -72,7 +74,7 @@ jobs:
           name: ${{ matrix.app }}
           path: ${{ matrix.app }}/publish/
 
-  deploy:
+  release:
     if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
 
     needs:
@@ -81,43 +83,57 @@ jobs:
 
     runs-on: ubuntu-latest
     permissions:
-      actions: read
       contents: write
 
     steps:
-      - name: Download artifacts (CLI)
-        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # 3.0.2
-        with:
-          name: DiscordChatExporter.Cli
-          path: DiscordChatExporter.Cli/
-
-      - name: Download artifacts (GUI)
-        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # 3.0.2
-        with:
-          name: DiscordChatExporter.Gui
-          path: DiscordChatExporter.Gui/
-
-      - name: Create package (CLI)
-        # Change into the artifacts directory to avoid including the directory itself in the zip archive
-        working-directory: DiscordChatExporter.Cli/
-        run: zip -r ../DiscordChatExporter.Cli.zip .
-
-      - name: Create package (GUI)
-        # Change into the artifacts directory to avoid including the directory itself in the zip archive
-        working-directory: DiscordChatExporter.Gui/
-        run: zip -r ../DiscordChatExporter.Gui.zip .
-
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >
           gh release create "${{ github.ref_name }}"
-          "DiscordChatExporter.Cli.zip"
-          "DiscordChatExporter.Gui.zip#DiscordChatExporter.zip"
           --repo "${{ github.event.repository.full_name }}"
           --title "${{ github.ref_name }}"
           --notes "[Changelog](${{ github.event.repository.html_url }}/blob/${{ github.ref_name }}/Changelog.md)"
           --verify-tag
+
+  deploy:
+    strategy:
+      matrix:
+        app:
+          - DiscordChatExporter.Cli
+          - DiscordChatExporter.Gui
+        include:
+          - app: DiscordChatExporter.Cli
+            asset: DiscordChatExporter.Cli
+          - app: DiscordChatExporter.Gui
+            # GUI asset isn't suffixed, unlike the CLI asset
+            asset: DiscordChatExporter
+
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: write
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # 3.0.2
+        with:
+          name: ${{ matrix.app }}
+          path: ${{ matrix.app }}/
+
+      - name: Create package
+        # Change into the artifacts directory to avoid including the directory itself in the zip archive
+        working-directory: ${{ matrix.app }}/
+        run: zip -r ../${{ matrix.asset }}.zip .
+
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+          gh release upload "${{ github.ref_name }}"
+          "${{ matrix.asset }}.zip"
+          --repo "${{ github.event.repository.full_name }}"
 
   notify:
     needs: deploy

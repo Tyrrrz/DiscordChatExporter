@@ -98,10 +98,14 @@ jobs:
           path: DiscordChatExporter.Gui/
 
       - name: Create package (CLI)
-        run: zip -r DiscordChatExporter.Cli.zip DiscordChatExporter.Cli/
+        # Change into the artifacts directory to avoid including the directory itself in the zip archive
+        working-directory: DiscordChatExporter.Cli/
+        run: zip -r ../DiscordChatExporter.Cli.zip .
 
       - name: Create package (GUI)
-        run: zip -r DiscordChatExporter.Gui.zip DiscordChatExporter.Gui/
+        # Change into the artifacts directory to avoid including the directory itself in the zip archive
+        working-directory: DiscordChatExporter.Gui/
+        run: zip -r ../DiscordChatExporter.Gui.zip .
 
       - name: Create release
         env:

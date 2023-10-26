@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <Version>2.42.1</Version>
+    <Version>2.42.2</Version>
     <Company>Tyrrrz</Company>
     <Copyright>Copyright (c) Oleksii Holub</Copyright>
     <LangVersion>preview</LangVersion>

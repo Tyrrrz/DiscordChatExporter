@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.42.2 (26-Oct-2023)
+
+- General changes:
+  - Fixed an issue where trying to export a channel that contained application interactions with empty command names crashed the application.
+
 ## v2.42.1 (19-Oct-2023)
 
 - General changes:

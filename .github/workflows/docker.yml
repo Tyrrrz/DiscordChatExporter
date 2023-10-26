@@ -3,6 +3,8 @@ name: docker
 on: [push, pull_request]
 
 jobs:
+  # Outputs from this job aren't really used, but it's here to verify that
+  # the Dockerfile builds correctly on pull requests.
   build:
     runs-on: ubuntu-latest
     permissions:
@@ -30,8 +32,9 @@ jobs:
           name: DiscordChatExporter.Cli.Docker
           path: DiscordChatExporter.Cli.Docker.tar
 
-  deploy-latest:
-    if: ${{ github.event_name == 'push' && github.ref_type == 'branch' && github.ref_name == 'master' }}
+  deploy:
+    # Deploy to DockerHub only on tag push or master branch push
+    if: ${{ github.event_name == 'push' && (github.ref_type == 'tag' || github.ref_type == 'branch' && github.ref_name == 'master') }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -55,32 +58,6 @@ jobs:
           --platform linux/amd64,linux/arm64
           --push
           --tag tyrrrz/discordchatexporter:latest
-          .
-
-  deploy-stable:
-    if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # 4.1.0
-
-      - name: Install Docker Buildx
-        uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # 3.0.0
-
-      - name: Login to DockerHub
-        run: >
-          echo ${{ secrets.DOCKER_TOKEN }} |
-          docker login --username tyrrrz --password-stdin
-
-      - name: Build & push image
-        run: >
-          docker buildx build
-          --file DiscordChatExporter.Cli.dockerfile
-          --platform linux/amd64,linux/arm64
-          --push
-          --tag tyrrrz/discordchatexporter:stable
-          --tag tyrrrz/discordchatexporter:${{ github.ref_name }}
+          ${{ github.ref_type == 'tag' && '--tag tyrrrz/discordchatexporter:$GITHUB_REF_NAME' || '' }}
+          ${{ github.ref_type == 'tag' && '--tag tyrrrz/discordchatexporter:stable' || '' }}
           .

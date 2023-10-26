@@ -127,7 +127,7 @@ jobs:
         working-directory: ${{ matrix.app }}/
         run: zip -r ../${{ matrix.asset }}.zip .
 
-      - name: Create release
+      - name: Upload release asset
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >

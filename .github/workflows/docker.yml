@@ -1,6 +1,8 @@
 name: docker
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
 
 jobs:
   # Outputs from this job aren't really used, but it's here to verify that
@@ -31,6 +33,7 @@ jobs:
         with:
           name: DiscordChatExporter.Cli.Docker
           path: DiscordChatExporter.Cli.Docker.tar
+          if-no-files-found: error
 
   deploy:
     # Deploy to DockerHub only on tag push or master branch push

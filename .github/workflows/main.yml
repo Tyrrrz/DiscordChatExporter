@@ -100,6 +100,8 @@ jobs:
           --verify-tag
 
   deploy:
+    needs: release
+
     strategy:
       matrix:
         app:
@@ -112,7 +114,6 @@ jobs:
             # GUI asset isn't suffixed, unlike the CLI asset
             asset: DiscordChatExporter
 
-    needs: release
     runs-on: ubuntu-latest
     permissions:
       actions: read

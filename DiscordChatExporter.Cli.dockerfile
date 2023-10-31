@@ -12,7 +12,7 @@ FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0-preview AS build
 # we can build the assembly for the correct platform.
 ARG TARGETARCH
 
-WORKDIR /build
+WORKDIR /tmp/dce
 
 COPY favicon.ico .
 COPY NuGet.config .
@@ -27,7 +27,7 @@ RUN dotnet publish DiscordChatExporter.Cli \
     --self-contained \
     --use-current-runtime \
     --arch $TARGETARCH \
-    --output publish/
+    --output DiscordChatExporter.Cli/bin/publish/
 
 # -- Run
 # Use `runtime-deps` instead of `runtime` because we have a self-contained assembly
@@ -42,5 +42,5 @@ USER dce
 # stays the same for backwards compatibility.
 WORKDIR /out
 
-COPY --from=build /build/publish /opt/dce
+COPY --from=build /tmp/dce/DiscordChatExporter.Cli/bin/publish /opt/dce
 ENTRYPOINT ["/opt/dce/DiscordChatExporter.Cli"]

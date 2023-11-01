@@ -22,8 +22,8 @@ COPY DiscordChatExporter.Cli DiscordChatExporter.Cli
 
 # Publish a self-contained assembly so we can use a slimmer runtime image
 RUN dotnet publish DiscordChatExporter.Cli \
-    --configuration Release \
     -p:CSharpier_Bypass=true \
+    --configuration Release \
     --self-contained \
     --use-current-runtime \
     --arch $TARGETARCH \

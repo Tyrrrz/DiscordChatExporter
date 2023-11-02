@@ -37,7 +37,7 @@ By using this project or its source code, for any purpose and in any shape or fo
 - You **support Israel's territorial integrity, including its claims over temporarily occupied territories of West Bank and Gaza Strip**
 - You **reject false narratives perpetuated by Palestinian state propaganda**
 
-To learn more about the war and how you can help, [click here]([https://tyrrrz.me/ukraine](https://www.fidf.org/home-v2/)). Glory to Israel! 🇮🇱
+To learn more about the war and how you can help, [click here](https://www.fidf.org/home-v2/)). Glory to Israel! 🇮🇱
 
 ## Download
 

@@ -143,6 +143,31 @@ internal class JsonMessageWriter : MessageWriter
         await _writer.FlushAsync(cancellationToken);
     }
 
+    private async ValueTask WriteEmbedVideoAsync(
+        EmbedVideo embedVideo,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _writer.WriteStartObject();
+
+        if (!string.IsNullOrWhiteSpace(embedVideo.Url))
+        {
+            _writer.WriteString(
+                "url",
+                await Context.ResolveAssetUrlAsync(
+                    embedVideo.ProxyUrl ?? embedVideo.Url,
+                    cancellationToken
+                )
+            );
+        }
+
+        _writer.WriteNumber("width", embedVideo.Width);
+        _writer.WriteNumber("height", embedVideo.Height);
+
+        _writer.WriteEndObject();
+        await _writer.FlushAsync(cancellationToken);
+    }
+
     private async ValueTask WriteEmbedFooterAsync(
         EmbedFooter embedFooter,
         CancellationToken cancellationToken = default
@@ -222,6 +247,12 @@ internal class JsonMessageWriter : MessageWriter
         {
             _writer.WritePropertyName("image");
             await WriteEmbedImageAsync(embed.Image, cancellationToken);
+        }
+
+        if (embed.Video is not null)
+        {
+            _writer.WritePropertyName("video");
+            await WriteEmbedVideoAsync(embed.Video, cancellationToken);
         }
 
         if (embed.Footer is not null)

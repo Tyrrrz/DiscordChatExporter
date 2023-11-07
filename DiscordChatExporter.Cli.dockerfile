@@ -33,6 +33,13 @@ RUN dotnet publish DiscordChatExporter.Cli \
 # Use `runtime-deps` instead of `runtime` because we have a self-contained assembly
 FROM --platform=$TARGETPLATFORM mcr.microsoft.com/dotnet/runtime-deps:7.0 AS run
 
+LABEL org.opencontainers.image.title="DiscordChatExporter.CLI"
+LABEL org.opencontainers.image.description="DiscordChatExporter is an application that can be used to export message history from any Discord channel to a file."
+LABEL org.opencontainers.image.authors="tyrrrz.me"
+LABEL org.opencontainers.image.url="https://github.com/Tyrrrz/DiscordChatExporter"
+LABEL org.opencontainers.image.source="https://github.com/Tyrrrz/DiscordChatExporter/blob/master/DiscordChatExporter.Cli.dockerfile"
+LABEL org.opencontainers.image.licenses="MIT"
+
 # Create a non-root user to run the app, so that the output files can be accessed by the host
 # https://github.com/Tyrrrz/DiscordChatExporter/issues/851
 RUN adduser --disabled-password --no-create-home dce

@@ -88,7 +88,7 @@ internal partial class CsvMessageWriter : MessageWriter
         await _writer.WriteAsync(',');
 
         // Message timestamp
-        await _writer.WriteAsync(CsvEncode(Context.FormatDate(message.Timestamp)));
+        await _writer.WriteAsync(CsvEncode(Context.FormatDate(message.Timestamp, "o")));
         await _writer.WriteAsync(',');
 
         // Message content

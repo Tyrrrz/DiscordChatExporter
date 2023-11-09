@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.42.3 (09-Nov-2023)
+
+- JSON changes:
+  - Added the `video` field to the embed object, which may contain additional information about an embedded video resource.
+- CSV changes:
+  - Fixed an issue where the `Date` field was incorrectly formatted. Now, the dates follow the `ISO 8601` standard.
+
 ## v2.42.2 (26-Oct-2023)
 
 - General changes:

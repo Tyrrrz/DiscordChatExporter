@@ -99,7 +99,8 @@ public partial record Message
                 if (trailingEmbeds.Any())
                 {
                     // Concatenate all images into one embed
-                    var images = embed.Images
+                    var images = embed
+                        .Images
                         .Concat(trailingEmbeds.SelectMany(e => e.Images))
                         .ToArray();
 

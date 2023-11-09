@@ -101,7 +101,8 @@ internal class ExportContext
     public Role? TryGetRole(Snowflake id) => _rolesById.GetValueOrDefault(id);
 
     public IReadOnlyList<Role> GetUserRoles(Snowflake id) =>
-        TryGetMember(id)?.RoleIds
+        TryGetMember(id)
+            ?.RoleIds
             .Select(TryGetRole)
             .WhereNotNull()
             .OrderByDescending(r => r.Position)

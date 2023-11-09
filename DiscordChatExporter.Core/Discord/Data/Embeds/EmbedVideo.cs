@@ -1,5 +1,5 @@
-using JsonExtensions.Reading;
 using System.Text.Json;
+using JsonExtensions.Reading;
 
 namespace DiscordChatExporter.Core.Discord.Data.Embeds;
 

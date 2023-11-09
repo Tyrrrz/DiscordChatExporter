@@ -64,9 +64,9 @@ public class GetChannelsCommand : DiscordCommandBase
         foreach (var channel in channels)
         {
             // Channel ID
-            await console.Output.WriteAsync(
-                channel.Id.ToString().PadRight(channelIdMaxLength, ' ')
-            );
+            await console
+                .Output
+                .WriteAsync(channel.Id.ToString().PadRight(channelIdMaxLength, ' '));
 
             // Separator
             using (console.WithForegroundColor(ConsoleColor.DarkGray))
@@ -88,9 +88,11 @@ public class GetChannelsCommand : DiscordCommandBase
                 await console.Output.WriteAsync(" * ");
 
                 // Thread ID
-                await console.Output.WriteAsync(
-                    channelThread.Id.ToString().PadRight(channelThreadIdMaxLength, ' ')
-                );
+                await console
+                    .Output
+                    .WriteAsync(
+                        channelThread.Id.ToString().PadRight(channelThreadIdMaxLength, ' ')
+                    );
 
                 // Separator
                 using (console.WithForegroundColor(ConsoleColor.DarkGray))
@@ -106,9 +108,9 @@ public class GetChannelsCommand : DiscordCommandBase
 
                 // Thread status
                 using (console.WithForegroundColor(ConsoleColor.White))
-                    await console.Output.WriteLineAsync(
-                        channelThread.IsArchived ? "Archived" : "Active"
-                    );
+                    await console
+                        .Output
+                        .WriteLineAsync(channelThread.IsArchived ? "Archived" : "Active");
             }
         }
     }

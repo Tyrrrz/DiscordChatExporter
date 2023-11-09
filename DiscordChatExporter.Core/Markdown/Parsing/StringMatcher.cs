@@ -24,12 +24,10 @@ internal class StringMatcher<T> : IMatcher<T>
 
     public ParsedMatch<T>? TryMatch(StringSegment segment)
     {
-        var index = segment.Source.IndexOf(
-            _needle,
-            segment.StartIndex,
-            segment.Length,
-            _comparison
-        );
+        var index = segment
+            .Source
+            .IndexOf(_needle, segment.StartIndex, segment.Length, _comparison);
+
         if (index < 0)
             return null;
 

@@ -65,7 +65,9 @@ internal partial class ExportAssetDownloader
                 // Try to set the file date according to the last-modified header
                 try
                 {
-                    var lastModified = response.Content.Headers
+                    var lastModified = response
+                        .Content
+                        .Headers
                         .TryGetValue("Last-Modified")
                         ?.Pipe(
                             s =>

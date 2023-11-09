@@ -54,9 +54,9 @@ public class ExportAllCommand : ExportCommandBase
             await foreach (var guild in Discord.GetUserGuildsAsync(cancellationToken))
             {
                 // Regular channels
-                await console.Output.WriteLineAsync(
-                    $"Fetching channels for guild '{guild.Name}'..."
-                );
+                await console
+                    .Output
+                    .WriteLineAsync($"Fetching channels for guild '{guild.Name}'...");
 
                 var fetchedChannelsCount = 0;
                 await console
@@ -94,9 +94,9 @@ public class ExportAllCommand : ExportCommandBase
                 // Threads
                 if (ThreadInclusionMode != ThreadInclusionMode.None)
                 {
-                    await console.Output.WriteLineAsync(
-                        $"Fetching threads for guild '{guild.Name}'..."
-                    );
+                    await console
+                        .Output
+                        .WriteLineAsync($"Fetching threads for guild '{guild.Name}'...");
 
                     var fetchedThreadsCount = 0;
                     await console
@@ -126,9 +126,9 @@ public class ExportAllCommand : ExportCommandBase
                             }
                         );
 
-                    await console.Output.WriteLineAsync(
-                        $"Fetched {fetchedThreadsCount} thread(s)."
-                    );
+                    await console
+                        .Output
+                        .WriteLineAsync($"Fetched {fetchedThreadsCount} thread(s).");
                 }
             }
         }
@@ -180,9 +180,9 @@ public class ExportAllCommand : ExportCommandBase
 
                 using (console.WithForegroundColor(ConsoleColor.Red))
                 {
-                    await console.Error.WriteLineAsync(
-                        "Failed to access the following channel(s):"
-                    );
+                    await console
+                        .Error
+                        .WriteLineAsync("Failed to access the following channel(s):");
                 }
 
                 foreach (var dumpChannel in inaccessibleChannels)

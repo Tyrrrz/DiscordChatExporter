@@ -11,11 +11,13 @@ internal class MentionsMessageFilter : MessageFilter
     public MentionsMessageFilter(string value) => _value = value;
 
     public override bool IsMatch(Message message) =>
-        message.MentionedUsers.Any(
-            user =>
-                string.Equals(_value, user.Name, StringComparison.OrdinalIgnoreCase)
-                || string.Equals(_value, user.DisplayName, StringComparison.OrdinalIgnoreCase)
-                || string.Equals(_value, user.FullName, StringComparison.OrdinalIgnoreCase)
-                || string.Equals(_value, user.Id.ToString(), StringComparison.OrdinalIgnoreCase)
-        );
+        message
+            .MentionedUsers
+            .Any(
+                user =>
+                    string.Equals(_value, user.Name, StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(_value, user.DisplayName, StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(_value, user.FullName, StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(_value, user.Id.ToString(), StringComparison.OrdinalIgnoreCase)
+            );
 }

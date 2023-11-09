@@ -37,11 +37,13 @@ public abstract class DiscordCommandBase : ICommand
         {
             using (console.WithForegroundColor(ConsoleColor.DarkYellow))
             {
-                console.Error.WriteLine(
-                    "Warning: Option --bot is deprecated and should not be used. "
-                        + "The type of the provided token is now inferred automatically. "
-                        + "Please update your workflows as this option may be completely removed in a future version."
-                );
+                console
+                    .Error
+                    .WriteLine(
+                        "Warning: Option --bot is deprecated and should not be used. "
+                            + "The type of the provided token is now inferred automatically. "
+                            + "Please update your workflows as this option may be completely removed in a future version."
+                    );
             }
         }
 #pragma warning restore CS0618

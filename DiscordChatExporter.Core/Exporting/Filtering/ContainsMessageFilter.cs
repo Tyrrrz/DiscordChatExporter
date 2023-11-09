@@ -26,12 +26,14 @@ internal class ContainsMessageFilter : MessageFilter
 
     public override bool IsMatch(Message message) =>
         IsMatch(message.Content)
-        || message.Embeds.Any(
-            e =>
-                IsMatch(e.Title)
-                || IsMatch(e.Author?.Name)
-                || IsMatch(e.Description)
-                || IsMatch(e.Footer?.Text)
-                || e.Fields.Any(f => IsMatch(f.Name) || IsMatch(f.Value))
-        );
+        || message
+            .Embeds
+            .Any(
+                e =>
+                    IsMatch(e.Title)
+                    || IsMatch(e.Author?.Name)
+                    || IsMatch(e.Description)
+                    || IsMatch(e.Footer?.Text)
+                    || e.Fields.Any(f => IsMatch(f.Name) || IsMatch(f.Value))
+            );
 }

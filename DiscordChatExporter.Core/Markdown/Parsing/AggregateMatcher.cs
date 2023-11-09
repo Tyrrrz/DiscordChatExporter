@@ -30,7 +30,8 @@ internal class AggregateMatcher<T> : IMatcher<T>
 
             // If this match is earlier than previous earliest - replace
             if (
-                earliestMatch is null || match.Segment.StartIndex < earliestMatch.Segment.StartIndex
+                earliestMatch is null
+                || match.Segment.StartIndex < earliestMatch.Segment.StartIndex
             )
                 earliestMatch = match;
 

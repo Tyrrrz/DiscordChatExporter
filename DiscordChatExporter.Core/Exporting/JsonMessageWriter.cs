@@ -450,12 +450,14 @@ internal class JsonMessageWriter : MessageWriter
 
             _writer.WriteStartArray("users");
             await foreach (
-                var user in Context.Discord.GetMessageReactionsAsync(
-                    Context.Request.Channel.Id,
-                    message.Id,
-                    reaction.Emoji,
-                    cancellationToken
-                )
+                var user in Context
+                    .Discord
+                    .GetMessageReactionsAsync(
+                        Context.Request.Channel.Id,
+                        message.Id,
+                        reaction.Emoji,
+                        cancellationToken
+                    )
             )
             {
                 _writer.WriteStartObject();

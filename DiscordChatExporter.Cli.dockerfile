@@ -1,12 +1,7 @@
 # -- Build
 # Specify the platform here so that we pull the SDK image matching the host platform,
 # instead of the target platform specified during build by the `--platform` option.
-# Use the .NET 8.0 preview because the `--arch` option is only available in that version.
-# https://github.com/dotnet/dotnet-docker/issues/4388#issuecomment-1459038566
-# TODO: switch images to Alpine once .NET 8.0 is released.
-# Currently, the correct preview version is only available on Debian.
-# https://github.com/dotnet/dotnet-docker/blob/main/samples/selecting-tags.md
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0-preview AS build
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:7.0-alpine AS build
 
 # Expose the target architecture set by the `docker build --platform` option, so that
 # we can build the assembly for the correct platform.
@@ -31,7 +26,7 @@ RUN dotnet publish DiscordChatExporter.Cli \
 
 # -- Run
 # Use `runtime-deps` instead of `runtime` because we have a self-contained assembly
-FROM --platform=$TARGETPLATFORM mcr.microsoft.com/dotnet/runtime-deps:7.0 AS run
+FROM --platform=$TARGETPLATFORM mcr.microsoft.com/dotnet/runtime-deps:7.0-alpine AS run
 
 LABEL org.opencontainers.image.title="DiscordChatExporter.Cli"
 LABEL org.opencontainers.image.description="DiscordChatExporter is an application that can be used to export message history from any Discord channel to a file."

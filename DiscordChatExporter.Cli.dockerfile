@@ -39,6 +39,8 @@ LABEL org.opencontainers.image.licenses="MIT"
 RUN apk add --no-cache icu-libs
 RUN apk add --no-cache icu-data-full
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+ENV LC_ALL=en_US.UTF-8
+ENV LANG=en_US.UTF-8
 
 # Create a non-root user to run the app, so that the output files can be accessed by the host
 # https://github.com/Tyrrrz/DiscordChatExporter/issues/851

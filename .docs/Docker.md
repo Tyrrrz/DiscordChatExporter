@@ -59,7 +59,7 @@ You can also use the current working directory as the output directory by specif
 
 For more information, please refer to the [Dockerfile](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/DiscordChatExporter.Cli.dockerfile) and [Docker documentation](https://docs.docker.com/engine/reference/run).
 
-To get your Token and Channel IDs, please refer to [this page](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md).
+To get your Token and Channel IDs, please refer to [this page](Token-and-IDs.md).
 
 ## Environment variables
 

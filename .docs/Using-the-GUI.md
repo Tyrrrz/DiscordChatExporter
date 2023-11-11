@@ -46,7 +46,7 @@ In this screen you can customize the following:
 
 - **Partition limit** (Optional) - Split output into partitions, each limited to this number of messages (e.g. 100) or file size (e.g. 10mb). For example, a channel with 36 messages set to be partitioned every 10 messages will output 4 files.
 
-- **Message Filter** (Optional) - Special notation for filtering the messages that get included in the export. See [Message filters](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Message-filters.md) for more info.
+- **Message Filter** (Optional) - Special notation for filtering the messages that get included in the export. See [Message filters](Message-filters.md) for more info.
 
 - **Format markdown** (Optional) - Disable markdown processing when exporting. You can use this to produce JSON or plain text exports without unwrapping mentions, custom emoji, and certain other special tokens.
 

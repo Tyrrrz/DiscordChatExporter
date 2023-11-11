@@ -232,7 +232,7 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 
 4. Launch Discord.
 
-5. To find your user token, continue [here](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md#in-chrome).
+5. To find your user token, continue [here](#in-chrome).
 
 #### Via settings menu (BetterDiscord only)
 
@@ -252,7 +252,7 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 <br />
 
 4. Press <kbd>Esc</kbd>. The settings page will close.
-5. To find your user token, continue [here](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md#in-chrome).
+5. To find your user token, continue [here](#in-chrome).
 
 ## How to get a Bot Token
 

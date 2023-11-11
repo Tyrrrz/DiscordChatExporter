@@ -20,7 +20,7 @@ A token can be used to log into your account, so treat it like a password and ne
 
 ### How can I reset my token?
 
-Follow the [instructions here](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md).
+Follow the [instructions here](Token-and-IDs.md).
 
 ### Will I get banned if I use this?
 
@@ -66,31 +66,26 @@ No.
 
 ### How can I find my token?
 
-Check the following page: [Obtaining token](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md)
+Check the following page: [Obtaining token](Token-and-IDs.md)
 
 ### When I open DCE a black window pops up quickly or nothing shows up
 
-If you have [.NET Core Runtime correctly installed](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Dotnet.md), you might have downloaded the CLi flavor, try [downloading the GUI](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#gui-or-cli) instead.
-
-### I can't open DCE, it sends me to a Visual Studio webpage
-
-Check the following page:
-[Installation and usage](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Readme.md#installation--usage)
+If you have [.NET Core Runtime correctly installed](Dotnet.md), you might have downloaded the CLi flavor, try [downloading the GUI](Getting-started.md#gui-or-cli) instead.
 
 ### How do I run DCE on macOS or Linux?
 
 Check the following pages:
 
-- [macOS usage instructions](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/MacOS.md)
-- [Linux usage instructions](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Linux.md)
+- [macOS usage instructions](MacOS.md)
+- [Linux usage instructions](Linux.md)
 
 ### How can I set DCE to export automatically at certain times?
 
 Check the following pages to learn how to schedule **DiscordChatExporter.CLI** runs (advanced):
 
-- [Windows scheduling](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/scheduling-windows.md)
-- [macOS scheduling](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/scheduling-MacOS.md)
-- [Linux scheduling](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/scheduling-Linux.md)
+- [Windows scheduling](Scheduling-Windows.md)
+- [macOS scheduling](Scheduling-MacOS.md)
+- [Linux scheduling](Scheduling-Linux.md)
 
 ### The exported file is too large, I can't open it
 
@@ -98,13 +93,13 @@ Try opening it with a different program, try partitioning or use a different fil
 
 ### DCE is crashing/failing
 
-Check the following page: [Installing .NET Core Runtime](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Dotnet.md)
+Check the following page: [Installing .NET Core Runtime](Dotnet.md)
 
 If you already have .NET Core installed, please check if your problem is a [known issue](https://github.com/Tyrrrz/DiscordChatExporter/issues?q=is%3Aissue) before [opening a bug report](https://github.com/Tyrrrz/DiscordChatExporter/issues/new).
 
 ### .NET Core Runtime is required
 
-Check the following page: [Installing .NET Core Runtime](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Dotnet.md)
+Check the following page: [Installing .NET Core Runtime](Dotnet.md)
 
 ### I see messages in the export, but they have no content
 
@@ -116,25 +111,25 @@ Your bot is missing the 'Message Content Intent'. Go to the [Discord Developer P
 
 Check the following page:
 
-- [Using the CLI](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Getting-started.md#using-the-cli)
+- [Using the CLI](Using-the-CLI.md)
 
-If you're using **Docker**, please refer to the [Docker Usage Instructions](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Docker.md) instead.
+If you're using **Docker**, please refer to the [Docker Usage Instructions](Docker.md) instead.
 
 ### Where can I find the 'Channel IDs'?
 
 Check the following page:
 
-- [Obtaining Channel IDs](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md)
+- [Obtaining Channel IDs](Token-and-IDs.md)
 
 ### I can't find Docker exported chats
 
 Check the following page:
 
-- [Docker usage instructions](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/docker)
+- [Docker usage instructions](Docker.md)
 
 ### I can't export Direct Messages
 
-Make sure you're [copying the DM Channel ID](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md#how-to-get-a-direct-message-channel-id), not the person's user ID.
+Make sure you're [copying the DM Channel ID](Token-and-IDs.md#how-to-get-a-direct-message-channel-id), not the person's user ID.
 
 ## Errors
 
@@ -149,7 +144,7 @@ DiscordChatExporter.Domain.Exceptions.DiscordChatExporterException: Authenticati
 DiscordChatExporter.Domain.Exceptions.DiscordChatExporterException: Requested resource does not exist.
 ```
 
-↳ Check your channel ID, it might be invalid. [Read this if you need help](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Token-and-IDs.md).
+↳ Check your channel ID, it might be invalid. [Read this if you need help](Token-and-IDs.md).
 
 ```console
 DiscordChatExporter.Domain.Exceptions.DiscordChatExporterException: Access is forbidden.

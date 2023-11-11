@@ -35,6 +35,10 @@ LABEL org.opencontainers.image.url="https://github.com/Tyrrrz/DiscordChatExporte
 LABEL org.opencontainers.image.source="https://github.com/Tyrrrz/DiscordChatExporter/blob/master/DiscordChatExporter.Cli.dockerfile"
 LABEL org.opencontainers.image.licenses="MIT"
 
+# Alpine image doesn't come with the ICU libraries pre-installed, so we need to install them manually
+RUN apk add --no-cache icu-libs
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+
 # Create a non-root user to run the app, so that the output files can be accessed by the host
 # https://github.com/Tyrrrz/DiscordChatExporter/issues/851
 RUN adduser --disabled-password --no-create-home dce

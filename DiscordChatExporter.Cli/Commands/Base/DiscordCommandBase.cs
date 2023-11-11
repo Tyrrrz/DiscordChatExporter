@@ -48,6 +48,17 @@ public abstract class DiscordCommandBase : ICommand
         }
 #pragma warning restore CS0618
 
+        // Note about interactivity
+        if (console.IsOutputRedirected)
+        {
+            console
+                .Output
+                .WriteLine(
+                    "Note: Output streams are redirected, rich console interactions are disabled. "
+                        + "If you are running this command in Docker, consider allocating a pseudo-terminal for better user experience (docker run -it ...)."
+                );
+        }
+
         return default;
     }
 }

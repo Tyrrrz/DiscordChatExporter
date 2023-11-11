@@ -36,6 +36,7 @@ LABEL org.opencontainers.image.source="https://github.com/Tyrrrz/DiscordChatExpo
 LABEL org.opencontainers.image.licenses="MIT"
 
 # Alpine image doesn't come with the ICU libraries pre-installed, so we need to install them manually
+RUN apk add --no-cache icu-libs
 RUN apk add --no-cache icu-data-full
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 

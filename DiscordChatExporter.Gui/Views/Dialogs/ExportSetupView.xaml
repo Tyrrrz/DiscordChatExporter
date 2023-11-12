@@ -271,7 +271,10 @@
                         </Grid>
 
                         <!--  Reuse assets  -->
-                        <Grid Margin="16,8" ToolTip="Reuse previously downloaded assets to avoid redundant requests">
+                        <Grid
+                            Margin="16,8"
+                            IsEnabled="{Binding ShouldDownloadAssets}"
+                            ToolTip="Reuse previously downloaded assets to avoid redundant requests">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
@@ -289,7 +292,7 @@
                         </Grid>
 
                         <!--  Assets path  -->
-                        <Grid Margin="16,8">
+                        <Grid Margin="16,8" IsEnabled="{Binding ShouldDownloadAssets}">
                             <TextBox
                                 Padding="16,16,42,16"
                                 materialDesign:HintAssist.Hint="Assets directory path"

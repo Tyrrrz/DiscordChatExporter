@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AngleSharp" Version="1.0.5" />
+    <PackageReference Include="AngleSharp" Version="1.0.6" />
     <PackageReference Include="coverlet.collector" Version="6.0.0" PrivateAssets="all" />
     <PackageReference Include="CSharpier.MsBuild" Version="0.26.1" PrivateAssets="all" />
     <PackageReference Include="FluentAssertions" Version="6.12.0" />

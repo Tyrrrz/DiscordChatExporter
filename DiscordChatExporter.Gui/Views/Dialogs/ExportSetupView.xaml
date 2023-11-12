@@ -292,14 +292,16 @@
                         </Grid>
 
                         <!--  Assets path  -->
-                        <Grid Margin="16,8" IsEnabled="{Binding ShouldDownloadAssets}">
+                        <Grid
+                            Margin="16,8"
+                            IsEnabled="{Binding ShouldDownloadAssets}"
+                            ToolTip="Download assets to this directory. If not specified, the asset directory path will be derived from the output path.">
                             <TextBox
                                 Padding="16,16,42,16"
                                 materialDesign:HintAssist.Hint="Assets directory path"
                                 materialDesign:HintAssist.IsFloating="True"
                                 Style="{DynamicResource MaterialDesignOutlinedTextBox}"
-                                Text="{Binding AssetsDirPath}"
-                                ToolTip="Download assets to this directory. If not specified, the asset directory path will be derived from the output path." />
+                                Text="{Binding AssetsDirPath}" />
                             <Button
                                 Width="24"
                                 Height="24"

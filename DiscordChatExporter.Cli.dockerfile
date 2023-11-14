@@ -7,7 +7,7 @@ FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
 # we can build the assembly for the correct platform.
 ARG TARGETARCH
 
-WORKDIR /tmp/dce
+WORKDIR /tmp/app
 
 COPY favicon.ico .
 COPY NuGet.config .
@@ -46,7 +46,7 @@ ENV LANG=en_US.UTF-8
 # stays the same for backwards compatibility.
 WORKDIR /out
 
-COPY --from=build /tmp/dce/DiscordChatExporter.Cli/bin/publish /opt/dce
+COPY --from=build /tmp/dce/DiscordChatExporter.Cli/bin/publish /opt/app
 
 USER $APP_UID
-ENTRYPOINT ["/opt/dce/DiscordChatExporter.Cli"]
+ENTRYPOINT ["/opt/app/DiscordChatExporter.Cli"]

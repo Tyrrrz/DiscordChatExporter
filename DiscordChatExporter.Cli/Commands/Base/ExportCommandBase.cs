@@ -16,7 +16,6 @@ using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Core.Exporting.Filtering;
 using DiscordChatExporter.Core.Exporting.Partitioning;
-using DiscordChatExporter.Core.Utils;
 using DiscordChatExporter.Core.Utils.Extensions;
 using Gress;
 using Spectre.Console;
@@ -163,7 +162,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
             || OutputPath.Contains('%')
             // Otherwise, require an existing directory or an unambiguous directory path
             || Directory.Exists(OutputPath)
-            || PathEx.IsDirectoryPath(OutputPath);
+            || Path.EndsInDirectorySeparator(OutputPath);
 
         if (!isValidOutputPath)
         {

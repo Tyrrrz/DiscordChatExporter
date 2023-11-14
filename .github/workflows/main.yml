@@ -22,7 +22,7 @@ jobs:
       - name: Install .NET
         uses: actions/setup-dotnet@3447fd6a9f9e57506b15f895c5b76d3b197dc7c2 # 3.2.0
         with:
-          dotnet-version: 7.0.x
+          dotnet-version: 8.0.x
 
       - name: Run tests
         # Tests need access to secrets, so we can't run them against PRs because of limited trust
@@ -62,7 +62,7 @@ jobs:
       - name: Install .NET
         uses: actions/setup-dotnet@3447fd6a9f9e57506b15f895c5b76d3b197dc7c2 # 3.2.0
         with:
-          dotnet-version: 7.0.x
+          dotnet-version: 8.0.x
 
       - name: Publish app
         run: >

@@ -42,14 +42,11 @@ ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 ENV LC_ALL=en_US.UTF-8
 ENV LANG=en_US.UTF-8
 
-# Create a non-root user to run the app, so that the output files can be accessed by the host
-# https://github.com/Tyrrrz/DiscordChatExporter/issues/851
-RUN adduser --disabled-password --no-create-home dce
-USER dce
-
 # This directory is exposed to the user for mounting purposes, so it's important that it always
 # stays the same for backwards compatibility.
 WORKDIR /out
 
 COPY --from=build /tmp/dce/DiscordChatExporter.Cli/bin/publish /opt/dce
+
+USER $APP_UID
 ENTRYPOINT ["/opt/dce/DiscordChatExporter.Cli"]

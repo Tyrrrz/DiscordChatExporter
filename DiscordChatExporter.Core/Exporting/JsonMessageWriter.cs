@@ -12,26 +12,21 @@ using JsonExtensions.Writing;
 
 namespace DiscordChatExporter.Core.Exporting;
 
-internal class JsonMessageWriter : MessageWriter
+internal class JsonMessageWriter(Stream stream, ExportContext context)
+    : MessageWriter(stream, context)
 {
-    private readonly Utf8JsonWriter _writer;
-
-    public JsonMessageWriter(Stream stream, ExportContext context)
-        : base(stream, context)
-    {
-        _writer = new Utf8JsonWriter(
-            stream,
-            new JsonWriterOptions
-            {
-                // https://github.com/Tyrrrz/DiscordChatExporter/issues/450
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                Indented = true,
-                // Validation errors may mask actual failures
-                // https://github.com/Tyrrrz/DiscordChatExporter/issues/413
-                SkipValidation = true
-            }
-        );
-    }
+    private readonly Utf8JsonWriter _writer = new Utf8JsonWriter(
+        stream,
+        new JsonWriterOptions
+        {
+            // https://github.com/Tyrrrz/DiscordChatExporter/issues/450
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            Indented = true,
+            // Validation errors may mask actual failures
+            // https://github.com/Tyrrrz/DiscordChatExporter/issues/413
+            SkipValidation = true
+        }
+    );
 
     private async ValueTask<string> FormatMarkdownAsync(
         string markdown,

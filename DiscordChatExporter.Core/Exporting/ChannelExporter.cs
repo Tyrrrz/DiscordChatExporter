@@ -8,11 +8,9 @@ using Gress;
 
 namespace DiscordChatExporter.Core.Exporting;
 
-public class ChannelExporter
+public class ChannelExporter(DiscordClient discord)
 {
-    private readonly DiscordClient _discord;
-
-    public ChannelExporter(DiscordClient discord) => _discord = discord;
+    private readonly DiscordClient _discord = discord;
 
     public async ValueTask ExportChannelAsync(
         ExportRequest request,

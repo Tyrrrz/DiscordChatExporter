@@ -12,27 +12,18 @@ using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting;
 
-internal class ExportContext
+internal class ExportContext(DiscordClient discord, ExportRequest request)
 {
     private readonly Dictionary<Snowflake, Member?> _membersById = new();
     private readonly Dictionary<Snowflake, Channel> _channelsById = new();
     private readonly Dictionary<Snowflake, Role> _rolesById = new();
-    private readonly ExportAssetDownloader _assetDownloader;
 
-    public DiscordClient Discord { get; }
+    private readonly ExportAssetDownloader _assetDownloader =
+        new(request.AssetsDirPath, request.ShouldReuseAssets);
 
-    public ExportRequest Request { get; }
+    public DiscordClient Discord { get; } = discord;
 
-    public ExportContext(DiscordClient discord, ExportRequest request)
-    {
-        Discord = discord;
-        Request = request;
-
-        _assetDownloader = new ExportAssetDownloader(
-            request.AssetsDirPath,
-            request.ShouldReuseAssets
-        );
-    }
+    public ExportRequest Request { get; } = request;
 
     public DateTimeOffset NormalizeDate(DateTimeOffset instant) =>
         Request.IsUtcNormalizationEnabled ? instant.ToUniversalTime() : instant.ToLocalTime();

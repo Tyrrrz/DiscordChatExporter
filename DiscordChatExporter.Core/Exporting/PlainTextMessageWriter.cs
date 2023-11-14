@@ -8,15 +8,10 @@ using DiscordChatExporter.Core.Discord.Data.Embeds;
 
 namespace DiscordChatExporter.Core.Exporting;
 
-internal class PlainTextMessageWriter : MessageWriter
+internal class PlainTextMessageWriter(Stream stream, ExportContext context)
+    : MessageWriter(stream, context)
 {
-    private readonly TextWriter _writer;
-
-    public PlainTextMessageWriter(Stream stream, ExportContext context)
-        : base(stream, context)
-    {
-        _writer = new StreamWriter(stream);
-    }
+    private readonly TextWriter _writer = new StreamWriter(stream);
 
     private async ValueTask<string> FormatMarkdownAsync(
         string markdown,

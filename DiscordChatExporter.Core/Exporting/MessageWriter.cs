@@ -6,21 +6,15 @@ using DiscordChatExporter.Core.Discord.Data;
 
 namespace DiscordChatExporter.Core.Exporting;
 
-internal abstract class MessageWriter : IAsyncDisposable
+internal abstract class MessageWriter(Stream stream, ExportContext context) : IAsyncDisposable
 {
-    protected Stream Stream { get; }
+    protected Stream Stream { get; } = stream;
 
-    protected ExportContext Context { get; }
+    protected ExportContext Context { get; } = context;
 
     public long MessagesWritten { get; private set; }
 
     public long BytesWritten => Stream.Length;
-
-    protected MessageWriter(Stream stream, ExportContext context)
-    {
-        Stream = stream;
-        Context = context;
-    }
 
     public virtual ValueTask WritePreambleAsync(CancellationToken cancellationToken = default) =>
         default;

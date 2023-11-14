@@ -8,16 +8,11 @@ using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting;
 
-internal partial class PlainTextMarkdownVisitor : MarkdownVisitor
+internal partial class PlainTextMarkdownVisitor(ExportContext context, StringBuilder buffer)
+    : MarkdownVisitor
 {
-    private readonly ExportContext _context;
-    private readonly StringBuilder _buffer;
-
-    public PlainTextMarkdownVisitor(ExportContext context, StringBuilder buffer)
-    {
-        _context = context;
-        _buffer = buffer;
-    }
+    private readonly ExportContext _context = context;
+    private readonly StringBuilder _buffer = buffer;
 
     protected override ValueTask VisitTextAsync(
         TextNode text,

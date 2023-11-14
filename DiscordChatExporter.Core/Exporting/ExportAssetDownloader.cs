@@ -14,7 +14,7 @@ using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting;
 
-internal partial class ExportAssetDownloader
+internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
 {
     private static readonly AsyncKeyedLocker<string> Locker =
         new(o =>
@@ -23,17 +23,11 @@ internal partial class ExportAssetDownloader
             o.PoolInitialFill = 1;
         });
 
-    private readonly string _workingDirPath;
-    private readonly bool _reuse;
+    private readonly string _workingDirPath = workingDirPath;
+    private readonly bool _reuse = reuse;
 
     // File paths of the previously downloaded assets
     private readonly Dictionary<string, string> _previousPathsByUrl = new(StringComparer.Ordinal);
-
-    public ExportAssetDownloader(string workingDirPath, bool reuse)
-    {
-        _workingDirPath = workingDirPath;
-        _reuse = reuse;
-    }
 
     public async ValueTask<string> DownloadAsync(
         string url,

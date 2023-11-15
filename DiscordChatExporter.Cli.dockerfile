@@ -35,14 +35,16 @@ LABEL org.opencontainers.image.url="https://github.com/Tyrrrz/DiscordChatExporte
 LABEL org.opencontainers.image.source="https://github.com/Tyrrrz/DiscordChatExporter/blob/master/DiscordChatExporter.Cli.dockerfile"
 LABEL org.opencontainers.image.licenses="MIT"
 
-# Alpine image doesn't come with the ICU libraries pre-installed, so we need to install them manually
+# Alpine image doesn't come with the ICU libraries pre-installed, so we need to install them manually.
+# We need the full ICU data because we allow the user to specify any locale for formatting purposes.
 RUN apk add --no-cache icu-libs
 RUN apk add --no-cache icu-data-full
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 ENV LC_ALL=en_US.UTF-8
 ENV LANG=en_US.UTF-8
 
-# Use a non-root user to ensure that the files shared with the host are accessible by the host user
+# Use a non-root user to ensure that the files shared with the host are accessible by the host user.
+# We can use the default user provided by the base image for this purpose.
 # https://github.com/Tyrrrz/DiscordChatExporter/issues/851
 USER $APP_UID
 

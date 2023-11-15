@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.42.4 (16-Nov-2023)
+
+- General changes:
+  - Switched from .NET 7.0 to .NET 8.0. If running on Windows, the application should update all required prerequisites automatically. Alternatively, you can download the latest version of the runtime for your system [here](https://dotnet.microsoft.com/download/dotnet/8.0).
+- CLI changes:
+  - Added a message that is displayed when the application is running with the output stream redirected, informing the user that they will not get rich progress reporting in this mode.
+- GUI changes:
+  - Changed the presentation of the "Reuse assets" and "Assets path" options, such that the corresponding controls are now disabled if the "Download assets" option is not enabled.
+- HTML changes:
+  - Fixed an issue where exporting a channel with a custom assets path could result in an HTML output that did not render properly in Firefox.
+
 ## v2.42.3 (09-Nov-2023)
 
 - JSON changes:

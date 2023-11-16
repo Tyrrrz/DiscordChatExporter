@@ -22,7 +22,7 @@ public class ChannelExporter(DiscordClient discord)
         if (request.Channel.Kind == ChannelKind.GuildForum)
         {
             throw new DiscordChatExporterException(
-                "Channel is a forum and cannot be exported directly. "
+                $"Channel '{request.Channel.Name}' (#{request.Channel.Id}) is a forum and cannot be exported directly. "
                     + "You need to pull its threads and export them individually."
             );
         }
@@ -30,14 +30,16 @@ public class ChannelExporter(DiscordClient discord)
         // Check if the channel is empty
         if (request.Channel.IsEmpty)
         {
-            throw new DiscordChatExporterException("Channel does not contain any messages.");
+            throw new DiscordChatExporterException(
+                $"Channel '{request.Channel.Name}' (#{request.Channel.Id}) does not contain any messages."
+            );
         }
 
         // Check if the 'after' boundary is valid
         if (request.After is not null && !request.Channel.MayHaveMessagesAfter(request.After.Value))
         {
             throw new DiscordChatExporterException(
-                "Channel does not contain any messages within the specified period."
+                $"Channel '{request.Channel.Name}' (#{request.Channel.Id}) does not contain any messages within the specified period."
             );
         }
 
@@ -48,7 +50,7 @@ public class ChannelExporter(DiscordClient discord)
         )
         {
             throw new DiscordChatExporterException(
-                "Channel does not contain any messages within the specified period."
+                $"Channel '{request.Channel.Name}' (#{request.Channel.Id}) does not contain any messages within the specified period."
             );
         }
 
@@ -68,20 +70,32 @@ public class ChannelExporter(DiscordClient discord)
             )
         )
         {
-            // Resolve members for referenced users
-            foreach (var user in message.GetReferencedUsers())
-                await context.PopulateMemberAsync(user, cancellationToken);
+            try
+            {
+                // Resolve members for referenced users
+                foreach (var user in message.GetReferencedUsers())
+                    await context.PopulateMemberAsync(user, cancellationToken);
 
-            // Export the message
-            if (request.MessageFilter.IsMatch(message))
-                await messageExporter.ExportMessageAsync(message, cancellationToken);
+                // Export the message
+                if (request.MessageFilter.IsMatch(message))
+                    await messageExporter.ExportMessageAsync(message, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                // Provide more context to the exception, to simplify debugging based on error messages
+                throw new DiscordChatExporterException(
+                    $"Failed to export message #{message.Id} in channel '{request.Channel.Name}' (#{request.Channel.Id}).",
+                    ex is not DiscordChatExporterException dex || dex.IsFatal,
+                    ex
+                );
+            }
         }
 
         // Throw if no messages were exported
         if (messageExporter.MessagesExported <= 0)
         {
             throw new DiscordChatExporterException(
-                "Channel does not contain any matching messages within the specified period."
+                $"Channel '{request.Channel.Name}' (#{request.Channel.Id}) does not contain any matching messages within the specified period."
             );
         }
     }

@@ -168,7 +168,9 @@ public abstract class ExportCommandBase : DiscordCommandBase
         {
             throw new CommandException(
                 "Attempted to export multiple channels, but the output path is neither a directory nor a template. "
-                    + "If the provided output path is meant to be treated as a directory, make sure it ends with a slash."
+                    + "If the provided output path is meant to be treated as a directory, make sure it ends with a slash. "
+                    + "Provided output path: "
+                    + OutputPath
             );
         }
 

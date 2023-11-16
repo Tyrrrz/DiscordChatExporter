@@ -1,6 +1,7 @@
 name: main
 
 on:
+  workflow_dispatch:
   push:
   pull_request:
 
@@ -79,7 +80,7 @@ jobs:
           if-no-files-found: error
 
   release:
-    if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
+    if: ${{ github.ref_type == 'tag' }}
 
     needs:
       - test

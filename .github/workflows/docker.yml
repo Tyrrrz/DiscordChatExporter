@@ -1,6 +1,7 @@
 name: docker
 
 on:
+  workflow_dispatch:
   push:
   pull_request:
 
@@ -36,7 +37,7 @@ jobs:
 
   deploy:
     # Deploy to DockerHub only on tag push or master branch push
-    if: ${{ github.event_name == 'push' && (github.ref_type == 'tag' || github.ref_type == 'branch' && github.ref_name == 'master') }}
+    if: ${{ github.ref_type == 'tag' || github.ref_type == 'branch' && github.ref_name == 'master' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read

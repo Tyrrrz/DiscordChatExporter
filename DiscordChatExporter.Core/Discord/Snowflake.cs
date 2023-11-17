@@ -39,7 +39,8 @@ public partial record struct Snowflake
     }
 
     public static Snowflake Parse(string value, IFormatProvider? formatProvider) =>
-        TryParse(value, formatProvider) ?? throw new FormatException($"Invalid snowflake '{value}'.");
+        TryParse(value, formatProvider)
+        ?? throw new FormatException($"Invalid snowflake '{value}'.");
 
     public static Snowflake Parse(string value) => Parse(value, null);
 }

@@ -22,26 +22,26 @@ public partial record struct Snowflake
     public static Snowflake FromDate(DateTimeOffset instant) =>
         new(((ulong)instant.ToUnixTimeMilliseconds() - 1420070400000UL) << 22);
 
-    public static Snowflake? TryParse(string? str, IFormatProvider? formatProvider = null)
+    public static Snowflake? TryParse(string? value, IFormatProvider? formatProvider = null)
     {
-        if (string.IsNullOrWhiteSpace(str))
+        if (string.IsNullOrWhiteSpace(value))
             return null;
 
         // As number
-        if (ulong.TryParse(str, NumberStyles.None, formatProvider, out var value))
-            return new Snowflake(value);
+        if (ulong.TryParse(value, NumberStyles.None, formatProvider, out var number))
+            return new Snowflake(number);
 
         // As date
-        if (DateTimeOffset.TryParse(str, formatProvider, DateTimeStyles.None, out var instant))
+        if (DateTimeOffset.TryParse(value, formatProvider, DateTimeStyles.None, out var instant))
             return FromDate(instant);
 
         return null;
     }
 
-    public static Snowflake Parse(string str, IFormatProvider? formatProvider) =>
-        TryParse(str, formatProvider) ?? throw new FormatException($"Invalid snowflake '{str}'.");
+    public static Snowflake Parse(string value, IFormatProvider? formatProvider) =>
+        TryParse(value, formatProvider) ?? throw new FormatException($"Invalid snowflake '{value}'.");
 
-    public static Snowflake Parse(string str) => Parse(str, null);
+    public static Snowflake Parse(string value) => Parse(value, null);
 }
 
 public partial record struct Snowflake : IComparable<Snowflake>, IComparable

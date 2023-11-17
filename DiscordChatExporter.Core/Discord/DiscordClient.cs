@@ -618,7 +618,7 @@ public class DiscordClient
                 if (!application.IsMessageContentIntentEnabled)
                 {
                     throw new DiscordChatExporterException(
-                        "Bot account does not have the Message Content Intent enabled.",
+                        "Provided bot account does not have the Message Content Intent enabled.",
                         true
                     );
                 }

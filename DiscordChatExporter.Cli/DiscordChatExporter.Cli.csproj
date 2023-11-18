@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CliFx" Version="2.3.4" />
-    <PackageReference Include="CSharpier.MsBuild" Version="0.26.1" PrivateAssets="all" />
+    <PackageReference Include="CliFx" Version="2.3.5" />
+    <PackageReference Include="CSharpier.MsBuild" Version="0.26.2" PrivateAssets="all" />
     <PackageReference Include="Deorcify" Version="1.0.2" PrivateAssets="all" />
     <PackageReference Include="DotnetRuntimeBootstrapper" Version="2.5.1" PrivateAssets="all" />
     <PackageReference Include="Gress" Version="2.1.1" />

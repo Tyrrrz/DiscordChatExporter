@@ -353,6 +353,8 @@ internal static partial class MarkdownParser
                         // Relative format: ignore because it doesn't make sense in a static export
                         "r" => null,
                         "R" => null,
+                        // Unspecified format: will be mapped to the default format
+                        null => null,
                         // Unknown format: throw an exception to consider this timestamp invalid
                         // https://github.com/Tyrrrz/DiscordChatExporter/issues/1156
                         var f

@@ -340,13 +340,25 @@ internal static partial class MarkdownParser
                             )
                         );
 
+                    // https://discord.com/developers/docs/reference#message-formatting-timestamp-styles
                     var format = m.Groups[2].Value.NullIfWhiteSpace() switch
                     {
-                        // Ignore the 'relative' format because it doesn't make sense in a static export
+                        // Known formats
+                        "t" => "t",
+                        "T" => "T",
+                        "d" => "d",
+                        "D" => "D",
+                        "f" => "f",
+                        "F" => "F",
+                        // Relative format: ignore because it doesn't make sense in a static export
                         "r" => null,
                         "R" => null,
-                        // Discord's date formats are (mostly) compatible with .NET's date formats
-                        var f => f
+                        // Unknown format: throw an exception to consider this timestamp invalid
+                        // https://github.com/Tyrrrz/DiscordChatExporter/issues/1156
+                        var f
+                            => throw new InvalidOperationException(
+                                $"Unknown timestamp format '{f}'."
+                            )
                     };
 
                     return new TimestampNode(instant, format);
@@ -354,7 +366,12 @@ internal static partial class MarkdownParser
                 // https://github.com/Tyrrrz/DiscordChatExporter/issues/681
                 // https://github.com/Tyrrrz/DiscordChatExporter/issues/766
                 catch (Exception ex)
-                    when (ex is FormatException or ArgumentOutOfRangeException or OverflowException)
+                    when (ex
+                            is FormatException
+                                or ArgumentOutOfRangeException
+                                or OverflowException
+                                or InvalidOperationException
+                    )
                 {
                     // For invalid timestamps, Discord renders "Invalid Date" instead of ignoring the markdown
                     return TimestampNode.Invalid;

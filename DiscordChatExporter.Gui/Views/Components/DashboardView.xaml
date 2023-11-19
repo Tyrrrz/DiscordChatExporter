@@ -193,9 +193,8 @@
                         <LineBreak />
                         <Run Text="6. Switch between random channels to trigger network requests" />
                         <LineBreak />
-                        <Run Text="7. Search for a request containing" />
-                        <Run FontWeight="SemiBold" Text="messages?limit=50" />
-                        <Run Text="or similar" />
+                        <Run Text="7. Search for a request that starts with" />
+                        <Run FontWeight="SemiBold" Text="messages" />
                         <LineBreak />
                         <Run Text="8. Select the" />
                         <Run FontWeight="SemiBold" Text="Headers" />

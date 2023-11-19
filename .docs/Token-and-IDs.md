@@ -48,12 +48,12 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 <br clear="right" />
 <br />
 
-4. <img width="500" align="right" src="https://i.imgur.com/rnZG8Id.png" />Click the text box labelled `Filter` and type `library`. The entries will filter down to a single entry named `library`.
+4. <img width="500" align="right" src="https://i.imgur.com/rnZG8Id.png" />Click the text box labelled `Filter` and type `messages`. The entries will filter down to a single request named `messages`. If the request doesn't appear, switch to any other Discord channel to trigger it.
 
 <br clear="right" />
 <br />
 
-5. <img width="500" align="right" src="https://i.imgur.com/29dE3fR.png" />Click the entry named `library`. A panel will open to the right and display details about the entry. Click the `Headers` tab if it isn't already active.
+5. <img width="500" align="right" src="https://i.imgur.com/29dE3fR.png" />Click the entry named `messages`. A panel will open to the right and display details about the entry. Click the `Headers` tab if it isn't already active.
 
 <br clear="right" />
 <br />
@@ -136,12 +136,12 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 <br clear="right" />
 <br />
 
-3. <img width="500" align="right" src="https://i.imgur.com/efUCfBO.png" />Type `library` into the filter. The network request list will filter out any entries not containing the string `library`.
+3. <img width="500" align="right" src="https://i.imgur.com/efUCfBO.png" />Type `messages` into the filter. The network request list will filter out any entries not containing the string `messages`. If the request doesn't appear, switch to any other Discord channel to trigger it.
 
 <br clear="right" />
 <br />
 
-4. <img width="500" align="right" src="https://i.imgur.com/cdJZ7Q1.png" />Click `library`. The [network request details pane](https://firefox-source-docs.mozilla.org/devtools-user/network_monitor/request_details/index.html) will display. The [headers tab](https://firefox-source-docs.mozilla.org/devtools-user/network_monitor/request_details/index.html#network-monitor-request-details-headers-tab) should be active by default. If it isn’t, click it.
+4. <img width="500" align="right" src="https://i.imgur.com/cdJZ7Q1.png" />Click `messages`. The [network request details pane](https://firefox-source-docs.mozilla.org/devtools-user/network_monitor/request_details/index.html) will display. The [headers tab](https://firefox-source-docs.mozilla.org/devtools-user/network_monitor/request_details/index.html#network-monitor-request-details-headers-tab) should be active by default. If it isn’t, click it.
 
 <br clear="right" />
 <br />

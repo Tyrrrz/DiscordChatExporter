@@ -47,7 +47,7 @@ jobs:
 
       - name: Run tests
         # Tests need access to secrets, so we can't run them against PRs because of limited trust
-        if: ${{ github.event_name != 'pull_request' }}
+        if: ${{ github.event_name != 'pull_request' && env.DISCORD_TOKEN != '' }}
         env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
         run: >

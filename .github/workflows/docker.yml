@@ -8,7 +8,7 @@ on:
 jobs:
   # Outputs from this job aren't really used, but it's here to verify that
   # the Dockerfile builds correctly on pull requests.
-  build:
+  pack:
     runs-on: ubuntu-latest
     permissions:
       actions: write

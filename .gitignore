@@ -10,3 +10,4 @@ obj/
 
 # Test results
 TestResults/
+*.userprefs

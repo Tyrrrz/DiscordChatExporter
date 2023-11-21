@@ -32,6 +32,8 @@ jobs:
           --configuration Release
 
   test:
+    # Tests need access to secrets, so we can't run them against PRs because of limited trust
+    if: ${{ github.event_name != 'pull_request' }}
     runs-on: windows-latest
     permissions:
       contents: read
@@ -46,8 +48,6 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Run tests
-        # Tests need access to secrets, so we can't run them against PRs because of limited trust
-        if: ${{ github.event_name != 'pull_request' }}
         env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
         run: >

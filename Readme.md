@@ -119,7 +119,7 @@ The following table lists all available download options:
 ![channel list](.assets/list.png)
 ![rendered output](.assets/output.png)
 
-## Related projects
+## See also
 
 - [**Chat Analytics**](https://github.com/mlomb/chat-analytics) — solution for analyzing chat patterns of Discord users, using exports produced by **DiscordChatExporter**.
 - [**DiscordChatExporter-frontend**](https://github.com/slatinsky/DiscordChatExporter-frontend) — convenient viewer for exports produced by **DiscordChatExporter**.

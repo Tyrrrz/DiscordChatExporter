@@ -89,11 +89,7 @@ The following table lists all available download options:
   </tbody>
 </table>
 
-> **Note**:
-> AUR and Nix packages linked above are maintained by the community.
-> If you have any issues with them, please contact the corresponding maintainers.
-
-> **Warning**:
+> **Important**:
 > To run **DiscordChatExporter** on macOS and Linux, you need to make sure that **.NET 8.0 Runtime** is installed.
 > You can download it here:
 >
@@ -103,6 +99,10 @@ The following table lists all available download options:
 >
 > This should not be necessary if you install **DiscordChatExporter** using a package manager, as it should take care of the dependencies for you.
 > This is also not necessary if you are running **DiscordChatExporter** via Docker, because the image already contains the runtime.
+
+> **Note**:
+> AUR and Nix packages linked above are maintained by the community.
+> If you have any issues with them, please contact the corresponding maintainers.
 
 ## Features
 

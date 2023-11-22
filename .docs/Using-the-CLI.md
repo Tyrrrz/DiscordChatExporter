@@ -38,49 +38,32 @@ dotnet DiscordChatExporter.Cli.dll
 
 ## CLI commands
 
-| Command                     | Description                                         |
-|-----------------------------|-----------------------------------------------------|
-| [export](#export)           | Exports a channel                                   |
-| [exportdm](#exportdm)       | Exports all direct message channels                 |
-| [exportguild](#exportguild) | Exports all channels within the specified server    |
-| [exportall](#exportall)     | Exports all accessible channels                     |
-| [channels](#channels)       | Outputs the list of channels in the given server    |
-| [dm](#dm)                   | Outputs the list of direct message channels         |
-| [guilds](#guilds)           | Outputs the list of accessible servers              |
-| [guide](#guide)             | Explains how to obtain token, guild, and channel ID |
+| Command                 | Description                                         |
+|-------------------------|-----------------------------------------------------|
+| export                  | Exports a channel                                   |
+| exportdm                | Exports all direct message channels                 |
+| exportguild             | Exports all channels within the specified server    |
+| exportall               | Exports all accessible channels                     |
+| channels                | Outputs the list of channels in the given server    |
+| dm                      | Outputs the list of direct message channels         |
+| guilds                  | Outputs the list of accessible servers              |
+| guide                   | Explains how to obtain token, guild, and channel ID |
 
-To use the commands, you'll need a token. For the instructions on how to get a token, please refer
-to [this page](Token-and-IDs.md), or run `dotnet DiscordChatExporter.Cli.dll guide`.
-To get help with a specific command, please run:
+To use the commands, you'll need a token. For the instructions on how to get a token, please refer to [this page](Token-and-IDs.md), or run `dotnet DiscordChatExporter.Cli.dll guide`.
+
+To get help with a specific command, run:
 
 ```console
-dotnet DiscordChatExporter.Cli.dll command -h
+dotnet DiscordChatExporter.Cli.dll command --help
 ```
 
-### `export`
+For example, to figure out how to use the `export` command, run:
 
-With this command, you can export **server channels** and **direct messages**.
+```console
+dotnet DiscordChatExporter.Cli.dll export --help
+```
 
-|        | Option                                | Description                                                                                                    |
-|--------|---------------------------------------|----------------------------------------------------------------------------------------------------------------|
-| **\*** | [-c](#basic-usage)                    | [Channel ID(s)](Token-and-IDs.md#how-to-get-guild-id-or-guild-channel-id)                                      |
-| **\*** | [-t](#basic-usage)                    | [Authorization token](Token-and-IDs.md#how-to-get-user-token). Environment variable: `DISCORD_TOKEN`           |
-|        | [-o](#changing-the-output-filename)   | Output file or directory path                                                                                  |
-|        | [-f](#changing-the-format)            | [Output file format](Getting-started.md#file-formats). Default: HtmlDark                                       |
-|        | [--after](#date-ranges)               | Only include messages sent after this date                                                                     |
-|        | [--before](#date-ranges)              | Only include messages sent before this date                                                                    |
-|        | [-p](#partitioning)                   | Split output into partitions, each limited to this number of messages (e.g. 100) or file size (e.g. 10mb)      |
-|        | [--filter](Message-filters.md)        | Special notation for filtering the messages that get included in the export                                    |
-|        | [--media](#downloading-assets)        | Download assets referenced by the export (user avatars, attached files, embedded images, etc.). Default: false |
-|        | [--reuse-media](#reuse-assets)        | Reuse previously downloaded assets to avoid redundant requests. Default: false                                 |
-|        | [--media-dir](#downloading-assets)    | Directory to store assets from all exported channels in the same place                                         |
-|        | [--locale](#changing-the-date-format) | Format used when writing dates. Default: en-US                                                                 |
-|        | -h                                    | Shows help text                                                                                                |
-
-> **Note**:
-> Options with an asterisk (**\***) are required. The order of the options doesn't matter.
-
-#### Basic usage
+## Export a specific channel
 
 You can quickly export with DCE's default settings by using just `-t token` and `-c channelid`.
 
@@ -234,53 +217,13 @@ Don't forget to quote (") the date if it has spaces!
 More info about .NET date
 formats [here](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings).
 
-### `exportdm`
+### Export channels from a specific guild (server)
 
-This command exports all your **direct messages**.
+To export all channels in a specific guild, use the `exportguild` command and provide the guild ID through the `-g|--guild` option:
 
-|        | Option                                | Description                                                                                                    |
-|--------|---------------------------------------|----------------------------------------------------------------------------------------------------------------|
-| **\*** | [-c](#basic-usage)                    | [Channel ID(s)](Token-and-IDs.md#how-to-get-guild-id-or-guild-channel-id)                                      |
-| **\*** | [-t](#basic-usage)                    | [Authorization token](Token-and-IDs.md#how-to-get-user-token). Environment variable: `DISCORD_TOKEN`           |
-|        | [-o](#changing-the-output-filename)   | Output file or directory path                                                                                  |
-|        | [-f](#changing-the-format)            | [Output file format](Getting-started.md#file-formats). Default: HtmlDark                                       |
-|        | [--after](#date-ranges)               | Only include messages sent after this date                                                                     |
-|        | [--before](#date-ranges)              | Only include messages sent before this date                                                                    |
-|        | [-p](#partitioning)                   | Split output into partitions, each limited to this number of messages (e.g. 100) or file size (e.g. 10mb)      |
-|        | [--filter](Message-filters.md)        | Special notation for filtering the messages that get included in the export                                    |
-|        | [--media](#downloading-assets)        | Download assets referenced by the export (user avatars, attached files, embedded images, etc.). Default: false |
-|        | [--reuse-media](#reuse-assets)        | Reuse previously downloaded assets to avoid redundant requests. Default: false                                 |
-|        | [--media-dir](#downloading-assets)    | Directory to store assets from all exported channels in the same place                                         |
-|        | [--locale](#changing-the-date-format) | Format used when writing dates. Default: en-US                                                                 |
-|        | -h                                    | Shows help text                                                                                                |
-
-> **Note**:
-> Options with an asterisk (**\***) are required. The order of the options doesn't matter.
-
-### `exportguild`
-
-This command exports all channels of a **server**.
-
-|        | Option                                    | Description                                                                                                                                                                                                                                                                           |
-|--------|-------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **\*** | -g                                        | [Server ID](Token-and-IDs.md#how-to-get-guild-id-or-guild-channel-id)                                                                                                                                                                                                                 |
-| **\*** | [-t](#basic-usage)                        | [Authorization token](Token-and-IDs.md#how-to-get-user-token). Environment variable: `DISCORD_TOKEN`                                                                                                                                                                                  |
-|        | [-o](#changing-the-output-filename)       | Output file or directory path                                                                                                                                                                                                                                                         |
-|        | [-f](#changing-the-format)                | [Output file format](Getting-started.md#file-formats). Default: HtmlDark                                                                                                                                                                                                              |
-|        | [--after](#date-ranges)                   | Only include messages sent after this date                                                                                                                                                                                                                                            |
-|        | [--before](#date-ranges)                  | Only include messages sent before this date                                                                                                                                                                                                                                           |
-|        | [-p](#partitioning)                       | Split output into partitions, each limited to this number of messages (e.g. 100) or file size (e.g. 10mb)                                                                                                                                                                             |
-|        | [--filter](Message-filters.md)            | Special notation for filtering the messages that get included in the export                                                                                                                                                                                                           |
-|        | [--media](#downloading-assets)            | Download assets referenced by the export (user avatars, attached files, embedded images, etc.). Default: false                                                                                                                                                                        |
-|        | [--reuse-media](#reuse-assets)            | Reuse previously downloaded assets to avoid redundant requests. Default: false                                                                                                                                                                                                        |
-|        | [--media-dir](#downloading-assets)        | Directory to store assets from all exported channels in the same place                                                                                                                                                                                                                |
-|        | [--locale](#changing-the-date-format)     | Format used when writing dates. Default: en-US                                                                                                                                                                                                                                        |
-|        | [--include-threads](#including-threads)   | Specify whether to include threads (and which type) in the export. By default, threads are not included. It has possible values of `none`, `active`, or `all`, indicating which threads should be included. To include both active and archived threads, use `--include-threads all`. |
-|        | [--include-vc](#including-voice-channels) | Include voice channels in the export. Default: true                                                                                                                                                                                                                                   |
-|        | -h                                        | Shows help text                                                                                                                                                                                                                                                                       |
-
-> **Note**:
-> Options with an asterisk (**\***) are required. The order of the options doesn't matter.
+```console
+dotnet DiscordChatExporter.Cli.dll exportguild -t "mfa.Ifrn" -g 21814
+```
 
 #### Including threads
 
@@ -302,30 +245,13 @@ voice channels, use `--include-vc false`.
 dotnet DiscordChatExporter.Cli.dll exportguild -t "mfa.Ifrn" -g 21814 --include-vc false
 ```
 
-### `exportall`
+### Export all channels
 
-This command exports **all accessible channels**, including server channels and DMs.
+To export all accessible channels, use the `exportall` command:
 
-|        | Option                                    | Description                                                                                                                                                                                                                                                                           |
-|--------|-------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **\*** | [-t](#basic-usage)                        | [Authorization token](Token-and-IDs.md#how-to-get-user-token). Environment variable: `DISCORD_TOKEN`                                                                                                                                                                                  |
-|        | [-o](#changing-the-output-filename)       | Output file or directory path                                                                                                                                                                                                                                                         |
-|        | [-f](#changing-the-format)                | [Output file format](Getting-started.md#file-formats). Default: HtmlDark                                                                                                                                                                                                              |
-|        | [--after](#date-ranges)                   | Only include messages sent after this date                                                                                                                                                                                                                                            |
-|        | [--before](#date-ranges)                  | Only include messages sent before this date                                                                                                                                                                                                                                           |
-|        | [-p](#partitioning)                       | Split output into partitions, each limited to this number of messages (e.g. 100) or file size (e.g. 10mb)                                                                                                                                                                             |
-|        | [--filter](Message-filters.md)            | Special notation for filtering the messages that get included in the export                                                                                                                                                                                                           |
-|        | [--media](#downloading-assets)            | Download assets referenced by the export (user avatars, attached files, embedded images, etc.). Default: false                                                                                                                                                                        |
-|        | [--reuse-media](#reuse-assets)            | Reuse previously downloaded assets to avoid redundant requests. Default: false                                                                                                                                                                                                        |
-|        | [--media-dir](#downloading-assets)        | Directory to store assets from all exported channels in the same place                                                                                                                                                                                                                |
-|        | [--locale](#changing-the-date-format)     | Format used when writing dates. Default: en-US                                                                                                                                                                                                                                        |
-|        | [--include-threads](#including-threads)   | Specify whether to include threads (and which type) in the export. By default, threads are not included. It has possible values of `none`, `active`, or `all`, indicating which threads should be included. To include both active and archived threads, use `--include-threads all`. |
-|        | [--include-vc](#including-voice-channels) | Include voice channels in the export. Default: true                                                                                                                                                                                                                                   |
-|        | [--include-dm](#excluding-dms)            | Include direct messages in the export. Default: true                                                                                                                                                                                                                                  |
-|        | -h                                        | Shows help text                                                                                                                                                                                                                                                                       |
-
-> **Note**:
-> Options with an asterisk (**\***) are required. The order of the options doesn't matter.
+```console
+dotnet DiscordChatExporter.Cli.dll exportall -t "mfa.Ifrn"
+```
 
 #### Excluding DMs
 
@@ -335,68 +261,26 @@ To exclude DMs, add the `--include-dm false` option.
 dotnet DiscordChatExporter.Cli.dll exportall -t "mfa.Ifrn" --include-dm false
 ```
 
-### `channels`
+### List channels in a guild (server)
 
-This command outputs a **server's channels** in the following format:
-`Channel ID | Channel Name`
-To save the output to a file, run the command below. If the file already exists, it will be overwritten.
-
-|        | Option                                    | Description                                                                                                                                                                                                                                                                           |
-|--------|-------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **\*** | -g                                        | [Server ID](Token-and-IDs.md#how-to-get-guild-id-or-guild-channel-id)                                                                                                                                                                                                                 |
-| **\*** | [-t](#basic-usage)                        | [Authorization token](Token-and-IDs.md#how-to-get-user-token). Environment variable: `DISCORD_TOKEN`                                                                                                                                                                                  |
-|        | [--include-threads](#including-threads)   | Specify whether to include threads (and which type) in the output. By default, threads are not included. It has possible values of `none`, `active`, or `all`, indicating which threads should be included. To include both active and archived threads, use `--include-threads all`. |
-|        | [--include-vc](#including-voice-channels) | Include voice channels in the output. Default: true                                                                                                                                                                                                                                   |
-|        | -h                                        | Shows help text                                                                                                                                                                                                                                                                       |
-
-> **Note**:
-> Options with an asterisk (**\***) are required. The order of the options doesn't matter.
-
-To save the output to a file, run the command with `> C:\path\…` like the example below. If the file already exists, it
-will be overwritten.
+To list the channels available in a specific guild, use the `channels` command and provide the guild ID through the `-g|--guild` option:
 
 ```console
-dotnet DiscordChatExporter.Cli.dll channels -t "mfa.Ifrn" -g 21814 > C:\path\to\output.txt
+dotnet DiscordChatExporter.Cli.dll channels -t "mfa.Ifrn" -g 21814
 ```
 
-### `dm`
+### List direct message channels
 
-This command outputs a list of your **direct messages**.
-
-|        | Option             | Description                                                                                          |
-|--------|--------------------|------------------------------------------------------------------------------------------------------|
-| **\*** | [-t](#basic-usage) | [Authorization token](Token-and-IDs.md#how-to-get-user-token). Environment variable: `DISCORD_TOKEN` |
-|        | -h                 | Shows help text                                                                                      |
-
-> **Note**:
-> Options with an asterisk (**\***) are required. The order of the options doesn't matter.
-
-To save the output to a file, run the command with `> C:\path\…` like the example below. If the file already exists, it
-will be overwritten.
+To list all DM channels accessible to the current account, use the `dm` command:
 
 ```console
-dotnet DiscordChatExporter.Cli.dll dm -t "mfa.Ifrn" > C:\path\to\output.txt
+dotnet DiscordChatExporter.Cli.dll dm -t "mfa.Ifrn"
 ```
 
-### `guilds`
+### List guilds (servers)
 
-This command outputs a list of your **servers**.
-
-|        | Option             | Description                                                                                          |
-|--------|--------------------|------------------------------------------------------------------------------------------------------|
-| **\*** | [-t](#basic-usage) | [Authorization token](Token-and-IDs.md#how-to-get-user-token). Environment variable: `DISCORD_TOKEN` |
-|        | -h                 | Shows help text                                                                                      |
-
-> **Note**:
-> Options with an asterisk (**\***) are required. The order of the options doesn't matter.
-
-To save the output to a file, run the command with `> C:\path\…` like the example below. If the file already exists, it
-will be overwritten.
+To list all guilds accessible by the current account, use the `guilds` command:
 
 ```console
 dotnet DiscordChatExporter.Cli.dll guilds -t "mfa.Ifrn" > C:\path\to\output.txt
 ```
-
-### `guide`
-
-This command explains [how to get your token, guild, and channel IDs](Token-and-IDs.md).

@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.42.5 (23-Nov-2023)
+
+- General changes:
+  - Fixed an issue where the application crashed when trying to export a channel that contained a message with an invalid timestamp (e.g. `<t:0:x>`).
+
 ## v2.42.4 (16-Nov-2023)
 
 - General changes:

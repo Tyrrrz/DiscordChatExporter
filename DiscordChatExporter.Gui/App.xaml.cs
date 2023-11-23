@@ -17,9 +17,9 @@ public partial class App
 
     public static string ProjectUrl { get; } = "https://github.com/Tyrrrz/DiscordChatExporter";
 
-    public static string ChangelogUrl { get; } = ProjectUrl + "/blob/master/Changelog.md";
+    public static string LatestReleaseUrl { get; } = ProjectUrl + "/releases/latest";
 
-    public static string DocumentationUrl { get; } = ProjectUrl + "/blob/master/.docs";
+    public static string DocumentationUrl { get; } = ProjectUrl + "/tree/master/.docs";
 }
 
 public partial class App

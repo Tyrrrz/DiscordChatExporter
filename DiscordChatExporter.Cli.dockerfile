@@ -7,6 +7,9 @@ FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
 # we can build the assembly for the correct platform.
 ARG TARGETARCH
 
+# Allow setting the assembly version from the build command
+ARG VERSION=0.0.0
+
 WORKDIR /tmp/app
 
 COPY favicon.ico .
@@ -17,6 +20,7 @@ COPY DiscordChatExporter.Cli DiscordChatExporter.Cli
 
 # Publish a self-contained assembly so we can use a slimmer runtime image
 RUN dotnet publish DiscordChatExporter.Cli \
+    -p:Version=$VERSION \
     -p:CSharpier_Bypass=true \
     --configuration Release \
     --self-contained \
@@ -31,8 +35,7 @@ FROM --platform=$TARGETPLATFORM mcr.microsoft.com/dotnet/runtime-deps:8.0-alpine
 LABEL org.opencontainers.image.title="DiscordChatExporter.Cli"
 LABEL org.opencontainers.image.description="DiscordChatExporter is an application that can be used to export message history from any Discord channel to a file."
 LABEL org.opencontainers.image.authors="tyrrrz.me"
-LABEL org.opencontainers.image.url="https://github.com/Tyrrrz/DiscordChatExporter"
-LABEL org.opencontainers.image.source="https://github.com/Tyrrrz/DiscordChatExporter/blob/master/DiscordChatExporter.Cli.dockerfile"
+LABEL org.opencontainers.image.source="https://github.com/Tyrrrz/DiscordChatExporter"
 LABEL org.opencontainers.image.licenses="MIT"
 
 # Alpine image doesn't come with the ICU libraries pre-installed, so we need to install them manually.

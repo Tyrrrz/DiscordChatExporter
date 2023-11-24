@@ -59,7 +59,7 @@ jobs:
           docker buildx build .
           --file DiscordChatExporter.Cli.dockerfile
           --platform linux/amd64,linux/arm64
-          --build-arg VERSION=${{ github.ref_type == 'tag' && github.ref_name || '0.0.0' }}
+          --build-arg VERSION=${{ github.ref_type == 'tag' && github.ref_name || format('999.9.9-ci-{0}', github.sha) }}
           --push
           --tag tyrrrz/discordchatexporter:latest
           ${{ github.ref_type == 'tag' && '--tag tyrrrz/discordchatexporter:$GITHUB_REF_NAME' || '' }}

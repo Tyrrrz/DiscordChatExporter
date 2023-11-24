@@ -13,6 +13,8 @@ env:
 jobs:
   format:
     runs-on: windows-latest
+    timeout-minutes: 10
+
     permissions:
       contents: read
 
@@ -34,7 +36,10 @@ jobs:
   test:
     # Tests need access to secrets, so we can't run them against PRs because of limited trust
     if: ${{ github.event_name != 'pull_request' }}
+
     runs-on: windows-latest
+    timeout-minutes: 10
+
     permissions:
       contents: read
 
@@ -73,6 +78,8 @@ jobs:
           - DiscordChatExporter.Gui
 
     runs-on: windows-latest
+    timeout-minutes: 10
+
     permissions:
       actions: write
       contents: read
@@ -110,6 +117,8 @@ jobs:
       - pack
 
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+
     permissions:
       contents: write
 
@@ -140,6 +149,8 @@ jobs:
             asset: DiscordChatExporter
 
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+
     permissions:
       actions: read
       contents: write
@@ -167,6 +178,8 @@ jobs:
   notify:
     needs: deploy
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+
     permissions:
       contents: read
 

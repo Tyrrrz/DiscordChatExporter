@@ -10,6 +10,8 @@ jobs:
   # the Dockerfile builds correctly on pull requests.
   pack:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+
     permissions:
       actions: write
       contents: read
@@ -38,7 +40,10 @@ jobs:
   deploy:
     # Deploy to DockerHub only on tag push or master branch push
     if: ${{ github.ref_type == 'tag' || github.ref_type == 'branch' && github.ref_name == 'master' }}
+
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+
     permissions:
       contents: read
 

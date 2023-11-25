@@ -3,7 +3,11 @@ name: docker
 on:
   workflow_dispatch:
   push:
+    branches:
+      - master
   pull_request:
+    branches:
+      - master
 
 jobs:
   # Outputs from this job aren't really used, but it's here to verify that

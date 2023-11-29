@@ -634,7 +634,7 @@
                     @foreach (var sticker in message.Stickers)
                     {
                         <div class="chatlog__sticker" title="@sticker.Name">
-                            @if (sticker.Format is StickerFormat.Png or StickerFormat.Apng)
+                            @if (sticker.IsImage)
                             {
                                 <img class="chatlog__sticker--media" src="@await ResolveAssetUrlAsync(sticker.SourceUrl)" alt="Sticker">
                             }

@@ -5,7 +5,7 @@
 - [Get .NET Core Runtime](Dotnet.md) (Required for CLI; Installed automatically for GUI; Not required in Docker)
 - [Windows](Getting-started.md#gui-or-cli) | [macOS](MacOS.md) | [Linux](Linux.md) | [Docker](Docker.md)
 - Getting started:
-  - [Using the GUI](Using-the-CLI.md)
+  - [Using the GUI](Using-the-GUI.md)
   - [Using the CLI](Using-the-CLI.md)
   - [File formats](Getting-started.md#file-formats)
 

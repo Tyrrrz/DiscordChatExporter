@@ -5,11 +5,9 @@ using PathEx = System.IO.Path;
 
 namespace DiscordChatExporter.Cli.Tests.Utils;
 
-internal partial class TempDir : IDisposable
+internal partial class TempDir(string path) : IDisposable
 {
-    public string Path { get; }
-
-    public TempDir(string path) => Path = path;
+    public string Path { get; } = path;
 
     public void Dispose()
     {

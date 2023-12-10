@@ -2,15 +2,8 @@
 
 namespace DiscordChatExporter.Core.Markdown.Parsing;
 
-internal class AggregateMatcher<T> : IMatcher<T>
+internal class AggregateMatcher<T>(IReadOnlyList<IMatcher<T>> matchers) : IMatcher<T>
 {
-    private readonly IReadOnlyList<IMatcher<T>> _matchers;
-
-    public AggregateMatcher(IReadOnlyList<IMatcher<T>> matchers)
-    {
-        _matchers = matchers;
-    }
-
     public AggregateMatcher(params IMatcher<T>[] matchers)
         : this((IReadOnlyList<IMatcher<T>>)matchers) { }
 
@@ -19,7 +12,7 @@ internal class AggregateMatcher<T> : IMatcher<T>
         ParsedMatch<T>? earliestMatch = null;
 
         // Try to match the input with each matcher and get the match with the lowest start index
-        foreach (var matcher in _matchers)
+        foreach (var matcher in matchers)
         {
             // Try to match
             var match = matcher.TryMatch(segment);

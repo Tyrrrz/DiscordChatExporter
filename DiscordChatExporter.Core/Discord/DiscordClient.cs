@@ -18,14 +18,10 @@ using JsonExtensions.Reading;
 
 namespace DiscordChatExporter.Core.Discord;
 
-public class DiscordClient
+public class DiscordClient(string token)
 {
-    private readonly string _token;
     private readonly Uri _baseUri = new("https://discord.com/api/v10/", UriKind.Absolute);
-
     private TokenKind? _resolvedTokenKind;
-
-    public DiscordClient(string token) => _token = token;
 
     private async ValueTask<HttpResponseMessage> GetResponseAsync(
         string url,
@@ -44,7 +40,7 @@ public class DiscordClient
                     .Headers
                     .TryAddWithoutValidation(
                         "Authorization",
-                        tokenKind == TokenKind.Bot ? $"Bot {_token}" : _token
+                        tokenKind == TokenKind.Bot ? $"Bot {token}" : token
                     );
 
                 var response = await Http.Client.SendAsync(

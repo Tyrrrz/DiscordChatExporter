@@ -8,7 +8,8 @@ using Microsoft.Win32;
 
 namespace DiscordChatExporter.Gui.Services;
 
-public partial class SettingsService : SettingsBase
+public partial class SettingsService()
+    : SettingsBase(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.dat"))
 {
     public bool IsUkraineSupportMessageEnabled { get; set; } = true;
 
@@ -43,9 +44,6 @@ public partial class SettingsService : SettingsBase
     public bool LastShouldReuseAssets { get; set; }
 
     public string? LastAssetsDirPath { get; set; }
-
-    public SettingsService()
-        : base(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.dat")) { }
 
     public override void Save()
     {

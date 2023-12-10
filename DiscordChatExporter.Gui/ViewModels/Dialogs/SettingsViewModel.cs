@@ -8,26 +8,24 @@ using DiscordChatExporter.Gui.ViewModels.Framework;
 
 namespace DiscordChatExporter.Gui.ViewModels.Dialogs;
 
-public class SettingsViewModel : DialogScreen
+public class SettingsViewModel(SettingsService settingsService) : DialogScreen
 {
-    private readonly SettingsService _settingsService;
-
     public bool IsAutoUpdateEnabled
     {
-        get => _settingsService.IsAutoUpdateEnabled;
-        set => _settingsService.IsAutoUpdateEnabled = value;
+        get => settingsService.IsAutoUpdateEnabled;
+        set => settingsService.IsAutoUpdateEnabled = value;
     }
 
     public bool IsDarkModeEnabled
     {
-        get => _settingsService.IsDarkModeEnabled;
-        set => _settingsService.IsDarkModeEnabled = value;
+        get => settingsService.IsDarkModeEnabled;
+        set => settingsService.IsDarkModeEnabled = value;
     }
 
     public bool IsTokenPersisted
     {
-        get => _settingsService.IsTokenPersisted;
-        set => _settingsService.IsTokenPersisted = value;
+        get => settingsService.IsTokenPersisted;
+        set => settingsService.IsTokenPersisted = value;
     }
 
     public IReadOnlyList<ThreadInclusionMode> AvailableThreadInclusions { get; } =
@@ -35,8 +33,8 @@ public class SettingsViewModel : DialogScreen
 
     public ThreadInclusionMode ThreadInclusionMode
     {
-        get => _settingsService.ThreadInclusionMode;
-        set => _settingsService.ThreadInclusionMode = value;
+        get => settingsService.ThreadInclusionMode;
+        set => settingsService.ThreadInclusionMode = value;
     }
 
     public IReadOnlyList<string> AvailableLocales { get; } = new[]
@@ -77,21 +75,19 @@ public class SettingsViewModel : DialogScreen
 
     public string Locale
     {
-        get => _settingsService.Locale;
-        set => _settingsService.Locale = value;
+        get => settingsService.Locale;
+        set => settingsService.Locale = value;
     }
 
     public bool IsUtcNormalizationEnabled
     {
-        get => _settingsService.IsUtcNormalizationEnabled;
-        set => _settingsService.IsUtcNormalizationEnabled = value;
+        get => settingsService.IsUtcNormalizationEnabled;
+        set => settingsService.IsUtcNormalizationEnabled = value;
     }
 
     public int ParallelLimit
     {
-        get => _settingsService.ParallelLimit;
-        set => _settingsService.ParallelLimit = Math.Clamp(value, 1, 10);
+        get => settingsService.ParallelLimit;
+        set => settingsService.ParallelLimit = Math.Clamp(value, 1, 10);
     }
-
-    public SettingsViewModel(SettingsService settingsService) => _settingsService = settingsService;
 }

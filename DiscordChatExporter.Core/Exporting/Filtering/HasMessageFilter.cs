@@ -5,14 +5,10 @@ using DiscordChatExporter.Core.Discord.Data;
 
 namespace DiscordChatExporter.Core.Exporting.Filtering;
 
-internal class HasMessageFilter : MessageFilter
+internal class HasMessageFilter(MessageContentMatchKind kind) : MessageFilter
 {
-    private readonly MessageContentMatchKind _kind;
-
-    public HasMessageFilter(MessageContentMatchKind kind) => _kind = kind;
-
     public override bool IsMatch(Message message) =>
-        _kind switch
+        kind switch
         {
             MessageContentMatchKind.Link
                 => Regex.IsMatch(message.Content, "https?://\\S*[^\\.,:;\"\'\\s]"),
@@ -24,7 +20,7 @@ internal class HasMessageFilter : MessageFilter
             MessageContentMatchKind.Pin => message.IsPinned,
             _
                 => throw new InvalidOperationException(
-                    $"Unknown message content match kind '{_kind}'."
+                    $"Unknown message content match kind '{kind}'."
                 )
         };
 }

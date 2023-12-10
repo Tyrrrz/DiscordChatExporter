@@ -4,12 +4,8 @@ using DiscordChatExporter.Core.Discord.Data;
 
 namespace DiscordChatExporter.Core.Exporting.Filtering;
 
-internal class ContainsMessageFilter : MessageFilter
+internal class ContainsMessageFilter(string text) : MessageFilter
 {
-    private readonly string _text;
-
-    public ContainsMessageFilter(string text) => _text = text;
-
     // Match content within word boundaries, between spaces, or as the whole input.
     // For example, "max" shouldn't match on content "our maximum effort",
     // but should match on content "our max effort".
@@ -20,7 +16,7 @@ internal class ContainsMessageFilter : MessageFilter
         !string.IsNullOrWhiteSpace(content)
         && Regex.IsMatch(
             content,
-            @"(?:\b|\s|^)" + Regex.Escape(_text) + @"(?:\b|\s|$)",
+            @"(?:\b|\s|^)" + Regex.Escape(text) + @"(?:\b|\s|$)",
             RegexOptions.IgnoreCase | RegexOptions.CultureInvariant
         );
 

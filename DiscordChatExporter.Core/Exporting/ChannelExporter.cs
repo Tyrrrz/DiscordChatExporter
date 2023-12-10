@@ -10,8 +10,6 @@ namespace DiscordChatExporter.Core.Exporting;
 
 public class ChannelExporter(DiscordClient discord)
 {
-    private readonly DiscordClient _discord = discord;
-
     public async ValueTask ExportChannelAsync(
         ExportRequest request,
         IProgress<Percentage>? progress = null,
@@ -63,13 +61,13 @@ public class ChannelExporter(DiscordClient discord)
         }
 
         // Build context
-        var context = new ExportContext(_discord, request);
+        var context = new ExportContext(discord, request);
         await context.PopulateChannelsAndRolesAsync(cancellationToken);
 
         // Export messages
         await using var messageExporter = new MessageExporter(context);
         await foreach (
-            var message in _discord.GetMessagesAsync(
+            var message in discord.GetMessagesAsync(
                 request.Channel.Id,
                 request.After,
                 request.Before,

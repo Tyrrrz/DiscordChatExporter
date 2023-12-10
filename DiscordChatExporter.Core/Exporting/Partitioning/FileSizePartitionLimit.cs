@@ -1,11 +1,7 @@
 ﻿namespace DiscordChatExporter.Core.Exporting.Partitioning;
 
-internal class FileSizePartitionLimit : PartitionLimit
+internal class FileSizePartitionLimit(long limit) : PartitionLimit
 {
-    private readonly long _limit;
-
-    public FileSizePartitionLimit(long limit) => _limit = limit;
-
     public override bool IsReached(long messagesWritten, long bytesWritten) =>
-        bytesWritten >= _limit;
+        bytesWritten >= limit;
 }

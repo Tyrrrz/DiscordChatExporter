@@ -8,8 +8,6 @@ namespace DiscordChatExporter.Core.Exporting;
 
 internal partial class MessageExporter(ExportContext context) : IAsyncDisposable
 {
-    private readonly ExportContext _context = context;
-
     private int _partitionIndex;
     private MessageWriter? _writer;
 
@@ -39,7 +37,7 @@ internal partial class MessageExporter(ExportContext context) : IAsyncDisposable
         // Ensure that the partition limit has not been reached
         if (
             _writer is not null
-            && _context
+            && context
                 .Request
                 .PartitionLimit
                 .IsReached(_writer.MessagesWritten, _writer.BytesWritten)
@@ -53,10 +51,10 @@ internal partial class MessageExporter(ExportContext context) : IAsyncDisposable
         if (_writer is not null)
             return _writer;
 
-        Directory.CreateDirectory(_context.Request.OutputDirPath);
-        var filePath = GetPartitionFilePath(_context.Request.OutputFilePath, _partitionIndex);
+        Directory.CreateDirectory(context.Request.OutputDirPath);
+        var filePath = GetPartitionFilePath(context.Request.OutputFilePath, _partitionIndex);
 
-        var writer = CreateMessageWriter(filePath, _context.Request.Format, _context);
+        var writer = CreateMessageWriter(filePath, context.Request.Format, context);
         await writer.WritePreambleAsync(cancellationToken);
 
         return _writer = writer;

@@ -18,16 +18,12 @@ internal partial class HtmlMarkdownVisitor(
     bool isJumbo
 ) : MarkdownVisitor
 {
-    private readonly ExportContext _context = context;
-    private readonly StringBuilder _buffer = buffer;
-    private readonly bool _isJumbo = isJumbo;
-
     protected override ValueTask VisitTextAsync(
         TextNode text,
         CancellationToken cancellationToken = default
     )
     {
-        _buffer.Append(HtmlEncode(text.Text));
+        buffer.Append(HtmlEncode(text.Text));
         return default;
     }
 
@@ -92,9 +88,9 @@ internal partial class HtmlMarkdownVisitor(
                 )
         };
 
-        _buffer.Append(openingTag);
+        buffer.Append(openingTag);
         await VisitAsync(formatting.Children, cancellationToken);
-        _buffer.Append(closingTag);
+        buffer.Append(closingTag);
     }
 
     protected override async ValueTask VisitHeadingAsync(
@@ -102,14 +98,14 @@ internal partial class HtmlMarkdownVisitor(
         CancellationToken cancellationToken = default
     )
     {
-        _buffer.Append(
+        buffer.Append(
             // lang=html
             $"<h{heading.Level}>"
         );
 
         await VisitAsync(heading.Children, cancellationToken);
 
-        _buffer.Append(
+        buffer.Append(
             // lang=html
             $"</h{heading.Level}>"
         );
@@ -120,14 +116,14 @@ internal partial class HtmlMarkdownVisitor(
         CancellationToken cancellationToken = default
     )
     {
-        _buffer.Append(
+        buffer.Append(
             // lang=html
             "<ul>"
         );
 
         await VisitAsync(list.Items, cancellationToken);
 
-        _buffer.Append(
+        buffer.Append(
             // lang=html
             "</ul>"
         );
@@ -138,14 +134,14 @@ internal partial class HtmlMarkdownVisitor(
         CancellationToken cancellationToken = default
     )
     {
-        _buffer.Append(
+        buffer.Append(
             // lang=html
             "<li>"
         );
 
         await VisitAsync(listItem.Children, cancellationToken);
 
-        _buffer.Append(
+        buffer.Append(
             // lang=html
             "</li>"
         );
@@ -156,7 +152,7 @@ internal partial class HtmlMarkdownVisitor(
         CancellationToken cancellationToken = default
     )
     {
-        _buffer.Append(
+        buffer.Append(
             // lang=html
             $"""
             <code class="chatlog__markdown-pre chatlog__markdown-pre--inline">{HtmlEncode(inlineCodeBlock.Code)}</code>
@@ -175,7 +171,7 @@ internal partial class HtmlMarkdownVisitor(
             ? $"language-{multiLineCodeBlock.Language}"
             : "nohighlight";
 
-        _buffer.Append(
+        buffer.Append(
             // lang=html
             $"""
             <code class="chatlog__markdown-pre chatlog__markdown-pre--multiline {highlightClass}">{HtmlEncode(multiLineCodeBlock.Code)}</code>
@@ -196,7 +192,7 @@ internal partial class HtmlMarkdownVisitor(
             .Groups[1]
             .Value;
 
-        _buffer.Append(
+        buffer.Append(
             !string.IsNullOrWhiteSpace(linkedMessageId)
                 // lang=html
                 ? $"""<a href="{HtmlEncode(link.Url)}" onclick="scrollToMessage(event, '{linkedMessageId}')">"""
@@ -206,7 +202,7 @@ internal partial class HtmlMarkdownVisitor(
 
         await VisitAsync(link.Children, cancellationToken);
 
-        _buffer.Append(
+        buffer.Append(
             // lang=html
             "</a>"
         );
@@ -218,9 +214,9 @@ internal partial class HtmlMarkdownVisitor(
     )
     {
         var emojiImageUrl = Emoji.GetImageUrl(emoji.Id, emoji.Name, emoji.IsAnimated);
-        var jumboClass = _isJumbo ? "chatlog__emoji--large" : "";
+        var jumboClass = isJumbo ? "chatlog__emoji--large" : "";
 
-        _buffer.Append(
+        buffer.Append(
             // lang=html
             $"""
             <img
@@ -228,7 +224,7 @@ internal partial class HtmlMarkdownVisitor(
                 class="chatlog__emoji {jumboClass}"
                 alt="{emoji.Name}"
                 title="{emoji.Code}"
-                src="{await _context.ResolveAssetUrlAsync(emojiImageUrl, cancellationToken)}">
+                src="{await context.ResolveAssetUrlAsync(emojiImageUrl, cancellationToken)}">
             """
         );
     }
@@ -240,7 +236,7 @@ internal partial class HtmlMarkdownVisitor(
     {
         if (mention.Kind == MentionKind.Everyone)
         {
-            _buffer.Append(
+            buffer.Append(
                 // lang=html
                 """
                 <span class="chatlog__markdown-mention">@everyone</span>
@@ -249,7 +245,7 @@ internal partial class HtmlMarkdownVisitor(
         }
         else if (mention.Kind == MentionKind.Here)
         {
-            _buffer.Append(
+            buffer.Append(
                 // lang=html
                 """
                 <span class="chatlog__markdown-mention">@here</span>
@@ -262,13 +258,13 @@ internal partial class HtmlMarkdownVisitor(
             // which means they need to be populated on demand.
             // https://github.com/Tyrrrz/DiscordChatExporter/issues/304
             if (mention.TargetId is not null)
-                await _context.PopulateMemberAsync(mention.TargetId.Value, cancellationToken);
+                await context.PopulateMemberAsync(mention.TargetId.Value, cancellationToken);
 
-            var member = mention.TargetId?.Pipe(_context.TryGetMember);
+            var member = mention.TargetId?.Pipe(context.TryGetMember);
             var fullName = member?.User.FullName ?? "Unknown";
             var displayName = member?.DisplayName ?? member?.User.DisplayName ?? "Unknown";
 
-            _buffer.Append(
+            buffer.Append(
                 // lang=html
                 $"""
                 <span class="chatlog__markdown-mention" title="{HtmlEncode(fullName)}">@{HtmlEncode(displayName)}</span>
@@ -277,11 +273,11 @@ internal partial class HtmlMarkdownVisitor(
         }
         else if (mention.Kind == MentionKind.Channel)
         {
-            var channel = mention.TargetId?.Pipe(_context.TryGetChannel);
+            var channel = mention.TargetId?.Pipe(context.TryGetChannel);
             var symbol = channel?.IsVoice == true ? "🔊" : "#";
             var name = channel?.Name ?? "deleted-channel";
 
-            _buffer.Append(
+            buffer.Append(
                 // lang=html
                 $"""
                 <span class="chatlog__markdown-mention">{symbol}{HtmlEncode(name)}</span>
@@ -290,7 +286,7 @@ internal partial class HtmlMarkdownVisitor(
         }
         else if (mention.Kind == MentionKind.Role)
         {
-            var role = mention.TargetId?.Pipe(_context.TryGetRole);
+            var role = mention.TargetId?.Pipe(context.TryGetRole);
             var name = role?.Name ?? "deleted-role";
             var color = role?.Color;
 
@@ -300,7 +296,7 @@ internal partial class HtmlMarkdownVisitor(
                   """
                 : null;
 
-            _buffer.Append(
+            buffer.Append(
                 // lang=html
                 $"""
                 <span class="chatlog__markdown-mention" style="{style}">@{HtmlEncode(name)}</span>
@@ -315,14 +311,14 @@ internal partial class HtmlMarkdownVisitor(
     )
     {
         var formatted = timestamp.Instant is not null
-            ? _context.FormatDate(timestamp.Instant.Value, timestamp.Format ?? "g")
+            ? context.FormatDate(timestamp.Instant.Value, timestamp.Format ?? "g")
             : "Invalid date";
 
         var formattedLong = timestamp.Instant is not null
-            ? _context.FormatDate(timestamp.Instant.Value, "f")
+            ? context.FormatDate(timestamp.Instant.Value, "f")
             : "";
 
-        _buffer.Append(
+        buffer.Append(
             // lang=html
             $"""
             <span class="chatlog__markdown-timestamp" title="{HtmlEncode(formattedLong)}">{HtmlEncode(formatted)}</span>

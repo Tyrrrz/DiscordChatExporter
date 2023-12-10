@@ -13,7 +13,6 @@ internal class HtmlMessageWriter(Stream stream, ExportContext context, string th
     : MessageWriter(stream, context)
 {
     private readonly TextWriter _writer = new StreamWriter(stream);
-    private readonly string _themeName = themeName;
 
     private readonly HtmlMinifier _minifier = new();
     private readonly List<Message> _messageGroup = new();
@@ -74,11 +73,9 @@ internal class HtmlMessageWriter(Stream stream, ExportContext context, string th
     {
         await _writer.WriteLineAsync(
             Minify(
-                await new PreambleTemplate
-                {
-                    Context = Context,
-                    ThemeName = _themeName
-                }.RenderAsync(cancellationToken)
+                await new PreambleTemplate { Context = Context, ThemeName = themeName }.RenderAsync(
+                    cancellationToken
+                )
             )
         );
     }

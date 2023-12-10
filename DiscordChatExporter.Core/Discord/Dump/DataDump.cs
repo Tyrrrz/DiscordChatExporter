@@ -8,11 +8,9 @@ using JsonExtensions.Reading;
 
 namespace DiscordChatExporter.Core.Discord.Dump;
 
-public partial class DataDump
+public partial class DataDump(IReadOnlyList<DataDumpChannel> channels)
 {
-    public IReadOnlyList<DataDumpChannel> Channels { get; }
-
-    public DataDump(IReadOnlyList<DataDumpChannel> channels) => Channels = channels;
+    public IReadOnlyList<DataDumpChannel> Channels { get; } = channels;
 }
 
 public partial class DataDump

@@ -23,9 +23,6 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
             o.PoolInitialFill = 1;
         });
 
-    private readonly string _workingDirPath = workingDirPath;
-    private readonly bool _reuse = reuse;
-
     // File paths of the previously downloaded assets
     private readonly Dictionary<string, string> _previousPathsByUrl = new(StringComparer.Ordinal);
 
@@ -35,7 +32,7 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
     )
     {
         var fileName = GetFileNameFromUrl(url);
-        var filePath = Path.Combine(_workingDirPath, fileName);
+        var filePath = Path.Combine(workingDirPath, fileName);
 
         using var _ = await Locker.LockAsync(filePath, cancellationToken);
 
@@ -43,10 +40,10 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
             return cachedFilePath;
 
         // Reuse existing files if we're allowed to
-        if (_reuse && File.Exists(filePath))
+        if (reuse && File.Exists(filePath))
             return _previousPathsByUrl[url] = filePath;
 
-        Directory.CreateDirectory(_workingDirPath);
+        Directory.CreateDirectory(workingDirPath);
 
         await Http.ResiliencePipeline.ExecuteAsync(
             async innerCancellationToken =>

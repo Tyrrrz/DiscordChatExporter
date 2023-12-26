@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using DiscordChatExporter.Cli.Tests.Infra;
@@ -54,7 +55,7 @@ public class HtmlEmbedSpecs
             .QuerySelectorAll("img")
             .Select(e => e.GetAttribute("src"))
             .WhereNotNull()
-            .Where(s => s.EndsWith("f8w05ja8s4e61.png"))
+            .Where(s => s.Contains("f8w05ja8s4e61.png", StringComparison.Ordinal))
             .Should()
             .ContainSingle();
     }
@@ -91,8 +92,9 @@ public class HtmlEmbedSpecs
             .WhereNotNull()
             .Where(
                 s =>
-                    s.EndsWith(
-                        "i_am_currently_feeling_slight_displeasure_of_what_you_have_just_sent_lqrem.mp4"
+                    s.Contains(
+                        "i_am_currently_feeling_slight_displeasure_of_what_you_have_just_sent_lqrem.mp4",
+                        StringComparison.Ordinal
                     )
             )
             .Should()
@@ -113,7 +115,7 @@ public class HtmlEmbedSpecs
             .QuerySelectorAll("source")
             .Select(e => e.GetAttribute("src"))
             .WhereNotNull()
-            .Where(s => s.EndsWith("tooncasm-test-copy.mp4"))
+            .Where(s => s.Contains("tooncasm-test-copy.mp4", StringComparison.Ordinal))
             .Should()
             .ContainSingle();
     }

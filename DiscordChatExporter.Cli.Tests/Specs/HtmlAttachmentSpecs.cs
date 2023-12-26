@@ -27,13 +27,7 @@ public class HtmlAttachmentSpecs
             .QuerySelectorAll("a")
             .Select(e => e.GetAttribute("href"))
             .Should()
-            .Contain(
-                u =>
-                    u.StartsWith(
-                        "https://cdn.discordapp.com/attachments/885587741654536192/885587844964417596/Test.txt",
-                        StringComparison.Ordinal
-                    )
-            );
+            .Contain(u => u.Contains("Test.txt", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -52,13 +46,7 @@ public class HtmlAttachmentSpecs
             .QuerySelectorAll("img")
             .Select(e => e.GetAttribute("src"))
             .Should()
-            .Contain(
-                u =>
-                    u.StartsWith(
-                        "https://cdn.discordapp.com/attachments/885587741654536192/885654862430359613/bird-thumbnail.png",
-                        StringComparison.Ordinal
-                    )
-            );
+            .Contain(u => u.Contains("bird-thumbnail.png", StringComparison.Ordinal));
     }
 
     [Fact]

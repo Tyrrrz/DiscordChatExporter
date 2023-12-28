@@ -166,44 +166,55 @@
                         <Run
                             FontSize="16"
                             FontWeight="SemiBold"
-                            Text="To get token for your personal account:" />
+                            Text="To get the token for your personal account:" />
                         <LineBreak />
+
                         <Run Text="*  Automating user accounts is technically against TOS —" />
                         <Run FontWeight="SemiBold" Text="use at your own risk" /><Run Text="!" />
                         <LineBreak />
+
                         <Run Text="1. Open Discord in your" />
                         <Hyperlink Command="{s:Action OpenDiscord}">
                             <Run Text="web browser" />
                         </Hyperlink>
                         <Run Text="and login" />
                         <LineBreak />
+
                         <Run Text="2. Open any server or direct message channel" />
                         <LineBreak />
+
                         <Run Text="3. Press" />
                         <Run FontWeight="SemiBold" Text="Ctrl+Shift+I" />
                         <Run Text="to show developer tools" />
                         <LineBreak />
+
                         <Run Text="4. Navigate to the" />
                         <Run FontWeight="SemiBold" Text="Network" />
                         <Run Text="tab" />
                         <LineBreak />
+
                         <Run Text="5. Press" />
                         <Run FontWeight="SemiBold" Text="Ctrl+R" />
                         <Run Text="to reload" />
                         <LineBreak />
+
                         <Run Text="6. Switch between random channels to trigger network requests" />
                         <LineBreak />
+
                         <Run Text="7. Search for a request that starts with" />
                         <Run FontWeight="SemiBold" Text="messages" />
                         <LineBreak />
+
                         <Run Text="8. Select the" />
                         <Run FontWeight="SemiBold" Text="Headers" />
                         <Run Text="tab on the right" />
                         <LineBreak />
+
                         <Run Text="9. Scroll down to the" />
                         <Run FontWeight="SemiBold" Text="Request Headers" />
                         <Run Text="section" />
                         <LineBreak />
+
                         <Run Text="10. Copy the value of the" />
                         <Run FontWeight="SemiBold" Text="authorization" />
                         <Run Text="header" />
@@ -220,25 +231,30 @@
                         <Run
                             FontSize="16"
                             FontWeight="SemiBold"
-                            Text="To get token for a bot account:" />
+                            Text="To get the token for your bot:" />
                         <LineBreak />
+
                         <Run Text="1. Open Discord" />
                         <Hyperlink Command="{s:Action OpenDiscordDeveloperPortal}">
                             <Run Text="developer portal" />
                         </Hyperlink>
                         <LineBreak />
+
                         <Run Text="2. Open your application's settings" />
                         <LineBreak />
+
                         <Run Text="3. Navigate to the" />
                         <Run FontWeight="SemiBold" Text="Bot" />
                         <Run Text="section on the left" />
                         <LineBreak />
+
                         <Run Text="4. Under" />
                         <Run FontWeight="SemiBold" Text="Token" />
                         <Run Text="click" />
                         <Run FontWeight="SemiBold" Text="Copy" />
                         <LineBreak />
-                        <Run Text="*  Your bot needs to have" />
+
+                        <Run Text="*  Your bot needs to have the" />
                         <Run FontWeight="SemiBold" Text="Message Content Intent" />
                         <Run Text="enabled to read messages" />
                         <LineBreak />

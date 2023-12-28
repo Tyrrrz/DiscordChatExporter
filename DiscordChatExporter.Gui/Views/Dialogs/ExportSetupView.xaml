@@ -89,8 +89,9 @@
                             <TextBox.ToolTip>
                                 <TextBlock>
                                     <Run Text="Output file or directory path." />
-                                    <Run Text="If a directory is specified, file names will be generated automatically based on the channel names and other parameters." />
-                                    <Run Text="Directory path should end with a slash to avoid ambiguity." />
+                                    <Run Text="If a directory is specified, file names will be generated automatically based on the channel names and export parameters." />
+                                    <Run Text="Directory paths must end with a slash to avoid ambiguity." />
+                                    <Run Text="Supports template tokens, see the documentation for more info." />
                                     <LineBreak />
                                     <LineBreak />
                                     <Run Text="Available template tokens:" />
@@ -232,7 +233,7 @@
                             materialDesign:HintAssist.IsFloating="True"
                             Style="{DynamicResource MaterialDesignOutlinedTextBox}"
                             Text="{Binding MessageFilterValue}"
-                            ToolTip="Only include messages that satisfy this filter (e.g. 'from:foo#1234' or 'has:image')" />
+                            ToolTip="Only include messages that satisfy this filter (e.g. 'from:foo#1234' or 'has:image'). See the documentation for more info." />
 
                         <!--  Markdown formatting  -->
                         <Grid Margin="16,8" ToolTip="Process markdown, mentions, and other special tokens">

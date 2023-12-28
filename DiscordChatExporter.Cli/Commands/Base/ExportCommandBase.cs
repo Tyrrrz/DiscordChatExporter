@@ -30,8 +30,8 @@ public abstract class ExportCommandBase : DiscordCommandBase
         "output",
         'o',
         Description = "Output file or directory path. "
-            + "Directory path must end with a slash to avoid ambiguity. "
-            + "If a directory is specified, file names will be generated automatically. "
+            + "If a directory is specified, file names will be generated automatically based on the channel names and export parameters. "
+            + "Directory paths must end with a slash to avoid ambiguity. "
             + "Supports template tokens, see the documentation for more info."
     )]
     public string OutputPath

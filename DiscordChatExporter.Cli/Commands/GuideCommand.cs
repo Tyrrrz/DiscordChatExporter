@@ -13,7 +13,7 @@ public class GuideCommand : ICommand
     {
         // User token
         using (console.WithForegroundColor(ConsoleColor.White))
-            console.Output.WriteLine("To get user token:");
+            console.Output.WriteLine("To get the token for your personal account:");
 
         console
             .Output
@@ -34,7 +34,7 @@ public class GuideCommand : ICommand
 
         // Bot token
         using (console.WithForegroundColor(ConsoleColor.White))
-            console.Output.WriteLine("To get bot token:");
+            console.Output.WriteLine("To get the token for your bot:");
 
         console.Output.WriteLine(" 1. Go to Discord developer portal");
         console.Output.WriteLine(" 2. Open your application's settings");
@@ -43,13 +43,13 @@ public class GuideCommand : ICommand
         console
             .Output
             .WriteLine(
-                " *  Your bot needs to have Message Content Intent enabled to read messages"
+                " *  Your bot needs to have the Message Content Intent enabled to read messages"
             );
         console.Output.WriteLine();
 
         // Guild or channel ID
         using (console.WithForegroundColor(ConsoleColor.White))
-            console.Output.WriteLine("To get guild ID or channel ID:");
+            console.Output.WriteLine("To get the ID of a guild or a channel:");
 
         console.Output.WriteLine(" 1. Open Discord");
         console.Output.WriteLine(" 2. Open Settings");
@@ -64,13 +64,18 @@ public class GuideCommand : ICommand
 
         // Docs link
         using (console.WithForegroundColor(ConsoleColor.White))
+        {
             console
                 .Output
                 .WriteLine("If you have questions or issues, please refer to the documentation:");
+        }
+
         using (console.WithForegroundColor(ConsoleColor.DarkCyan))
+        {
             console
                 .Output
                 .WriteLine("https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs");
+        }
 
         return default;
     }

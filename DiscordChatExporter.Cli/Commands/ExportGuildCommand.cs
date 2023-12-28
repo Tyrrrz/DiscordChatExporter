@@ -12,10 +12,10 @@ using Spectre.Console;
 
 namespace DiscordChatExporter.Cli.Commands;
 
-[Command("exportguild", Description = "Exports all channels within the specified guild.")]
+[Command("exportguild", Description = "Exports all channels within the specified server.")]
 public class ExportGuildCommand : ExportCommandBase
 {
-    [CommandOption("guild", 'g', Description = "Guild ID.")]
+    [CommandOption("guild", 'g', Description = "Server ID.")]
     public required Snowflake GuildId { get; init; }
 
     [CommandOption("include-vc", Description = "Include voice channels.")]

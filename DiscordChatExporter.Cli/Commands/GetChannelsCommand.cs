@@ -12,10 +12,10 @@ using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Cli.Commands;
 
-[Command("channels", Description = "Get the list of channels in a guild.")]
+[Command("channels", Description = "Get the list of channels in a server.")]
 public class GetChannelsCommand : DiscordCommandBase
 {
-    [CommandOption("guild", 'g', Description = "Guild ID.")]
+    [CommandOption("guild", 'g', Description = "Server ID.")]
     public required Snowflake GuildId { get; init; }
 
     [CommandOption("include-vc", Description = "Include voice channels.")]

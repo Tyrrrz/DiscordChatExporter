@@ -38,16 +38,16 @@ dotnet DiscordChatExporter.Cli.dll
 
 ## CLI commands
 
-| Command                 | Description                                         |
-|-------------------------|-----------------------------------------------------|
-| export                  | Exports a channel                                   |
-| exportdm                | Exports all direct message channels                 |
-| exportguild             | Exports all channels within the specified server    |
-| exportall               | Exports all accessible channels                     |
-| channels                | Outputs the list of channels in the given server    |
-| dm                      | Outputs the list of direct message channels         |
-| guilds                  | Outputs the list of accessible servers              |
-| guide                   | Explains how to obtain token, guild, and channel ID |
+| Command                 | Description                                          |
+|-------------------------|------------------------------------------------------|
+| export                  | Exports a channel                                    |
+| exportdm                | Exports all direct message channels                  |
+| exportguild             | Exports all channels within the specified server     |
+| exportall               | Exports all accessible channels                      |
+| channels                | Outputs the list of channels in the given server     |
+| dm                      | Outputs the list of direct message channels          |
+| guilds                  | Outputs the list of accessible servers               |
+| guide                   | Explains how to obtain token, server, and channel ID |
 
 To use the commands, you'll need a token. For the instructions on how to get a token, please refer to [this page](Token-and-IDs.md), or run `dotnet DiscordChatExporter.Cli.dll guide`.
 
@@ -110,7 +110,7 @@ dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -o "C:\Discord 
 
 #### Generating the filename and output directory dynamically
 
-You can use template tokens to generate the output file path based on the guild and channel metadata.
+You can use template tokens to generate the output file path based on the server and channel metadata.
 
 ```console
 dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -o "C:\Discord Exports\%G\%T\%C.html"
@@ -122,8 +122,8 @@ path: `C:\Discord Exports\My server\Text channels\my-channel.html`
 
 Here is the full list of supported template tokens:
 
-- `%g` - guild ID
-- `%G` - guild name
+- `%g` - server ID
+- `%G` - server name
 - `%t` - category ID
 - `%T` - category name
 - `%c` - channel ID
@@ -217,9 +217,9 @@ Don't forget to quote (") the date if it has spaces!
 More info about .NET date
 formats [here](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings).
 
-### Export channels from a specific guild (server)
+### Export channels from a specific server
 
-To export all channels in a specific guild, use the `exportguild` command and provide the guild ID through the `-g|--guild` option:
+To export all channels in a specific server, use the `exportguild` command and provide the server ID through the `-g|--guild` option:
 
 ```console
 dotnet DiscordChatExporter.Cli.dll exportguild -t "mfa.Ifrn" -g 21814
@@ -261,9 +261,9 @@ To exclude DMs, add the `--include-dm false` option.
 dotnet DiscordChatExporter.Cli.dll exportall -t "mfa.Ifrn" --include-dm false
 ```
 
-### List channels in a guild (server)
+### List channels in a server
 
-To list the channels available in a specific guild, use the `channels` command and provide the guild ID through the `-g|--guild` option:
+To list the channels available in a specific server, use the `channels` command and provide the server ID through the `-g|--guild` option:
 
 ```console
 dotnet DiscordChatExporter.Cli.dll channels -t "mfa.Ifrn" -g 21814
@@ -277,9 +277,9 @@ To list all DM channels accessible to the current account, use the `dm` command:
 dotnet DiscordChatExporter.Cli.dll dm -t "mfa.Ifrn"
 ```
 
-### List guilds (servers)
+### List servers
 
-To list all guilds accessible by the current account, use the `guilds` command:
+To list all servers accessible by the current account, use the `guilds` command:
 
 ```console
 dotnet DiscordChatExporter.Cli.dll guilds -t "mfa.Ifrn" > C:\path\to\output.txt

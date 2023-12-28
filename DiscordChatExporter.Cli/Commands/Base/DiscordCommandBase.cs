@@ -4,6 +4,7 @@ using CliFx;
 using CliFx.Attributes;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Core.Discord;
+using DiscordChatExporter.Core.Utils;
 
 namespace DiscordChatExporter.Cli.Commands.Base;
 
@@ -46,10 +47,10 @@ public abstract class DiscordCommandBase : ICommand
         }
 #pragma warning restore CS0618
 
-        // Note about interactivity
-        if (console.IsOutputRedirected)
+        // Note about interactivity for Docker
+        if (console.IsOutputRedirected && Docker.IsRunningInDocker)
         {
-            console.Output.WriteLine(
+            console.Error.WriteLine(
                 "Note: Output streams are redirected, rich console interactions are disabled. "
                     + "If you are running this command in Docker, consider allocating a pseudo-terminal for better user experience (docker run -it ...)."
             );

@@ -48,7 +48,7 @@ public abstract class DiscordCommandBase : ICommand
 #pragma warning restore CS0618
 
         // Note about interactivity for Docker
-        if (console.IsOutputRedirected && Docker.IsRunningInDocker)
+        if (console.IsOutputRedirected && Docker.IsRunningInContainer)
         {
             console.Error.WriteLine(
                 "Note: Output streams are redirected, rich console interactions are disabled. "

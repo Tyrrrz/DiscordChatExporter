@@ -33,9 +33,9 @@ public class GetDirectChannelsCommand : DiscordCommandBase
         foreach (var channel in channels)
         {
             // Channel ID
-            await console
-                .Output
-                .WriteAsync(channel.Id.ToString().PadRight(channelIdMaxLength, ' '));
+            await console.Output.WriteAsync(
+                channel.Id.ToString().PadRight(channelIdMaxLength, ' ')
+            );
 
             // Separator
             using (console.WithForegroundColor(ConsoleColor.DarkGray))

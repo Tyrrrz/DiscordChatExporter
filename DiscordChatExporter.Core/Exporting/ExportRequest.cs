@@ -182,9 +182,10 @@ public partial class ExportRequest
                             => before?.ToDate().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
                                 ?? "",
                         "%d"
-                            => DateTimeOffset
-                                .Now
-                                .ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+                            => DateTimeOffset.Now.ToString(
+                                "yyyy-MM-dd",
+                                CultureInfo.InvariantCulture
+                            ),
 
                         "%%" => "%",
                         _ => m.Value

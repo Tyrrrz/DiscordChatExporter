@@ -7,9 +7,9 @@
 
   <ItemGroup>
     <PackageReference Include="CliFx" Version="2.3.5" />
-    <PackageReference Include="CSharpier.MsBuild" Version="0.26.5" PrivateAssets="all" />
+    <PackageReference Include="CSharpier.MsBuild" Version="0.26.7" PrivateAssets="all" />
     <PackageReference Include="Deorcify" Version="1.0.2" PrivateAssets="all" />
-    <PackageReference Include="DotnetRuntimeBootstrapper" Version="2.5.1" PrivateAssets="all" />
+    <PackageReference Include="DotnetRuntimeBootstrapper" Version="2.5.2" PrivateAssets="all" />
     <PackageReference Include="Gress" Version="2.1.1" />
     <PackageReference Include="Spectre.Console" Version="0.48.0" />
   </ItemGroup>

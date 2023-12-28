@@ -37,10 +37,10 @@ internal partial class MessageExporter(ExportContext context) : IAsyncDisposable
         // Ensure that the partition limit has not been reached
         if (
             _writer is not null
-            && context
-                .Request
-                .PartitionLimit
-                .IsReached(_writer.MessagesWritten, _writer.BytesWritten)
+            && context.Request.PartitionLimit.IsReached(
+                _writer.MessagesWritten,
+                _writer.BytesWritten
+            )
         )
         {
             await ResetWriterAsync(cancellationToken);

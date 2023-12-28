@@ -54,15 +54,12 @@ public class DateRangeSpecs
                     new DateTimeOffset(2021, 09, 08, 14, 26, 35, TimeSpan.Zero)
                 },
                 o =>
-                {
-                    return o.Using<DateTimeOffset>(
+                    o.Using<DateTimeOffset>(
                             ctx =>
-                                ctx.Subject
-                                    .Should()
+                                ctx.Subject.Should()
                                     .BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1))
                         )
-                        .WhenTypeIs<DateTimeOffset>();
-                }
+                        .WhenTypeIs<DateTimeOffset>()
             );
     }
 
@@ -102,15 +99,12 @@ public class DateRangeSpecs
                     new DateTimeOffset(2021, 07, 19, 17, 23, 58, TimeSpan.Zero)
                 },
                 o =>
-                {
-                    return o.Using<DateTimeOffset>(
+                    o.Using<DateTimeOffset>(
                             ctx =>
-                                ctx.Subject
-                                    .Should()
+                                ctx.Subject.Should()
                                     .BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1))
                         )
-                        .WhenTypeIs<DateTimeOffset>();
-                }
+                        .WhenTypeIs<DateTimeOffset>()
             );
     }
 
@@ -153,15 +147,12 @@ public class DateRangeSpecs
                     new DateTimeOffset(2021, 07, 24, 14, 52, 40, TimeSpan.Zero)
                 },
                 o =>
-                {
-                    return o.Using<DateTimeOffset>(
+                    o.Using<DateTimeOffset>(
                             ctx =>
-                                ctx.Subject
-                                    .Should()
+                                ctx.Subject.Should()
                                     .BeCloseTo(ctx.Expectation, TimeSpan.FromSeconds(1))
                         )
-                        .WhenTypeIs<DateTimeOffset>();
-                }
+                        .WhenTypeIs<DateTimeOffset>()
             );
     }
 }

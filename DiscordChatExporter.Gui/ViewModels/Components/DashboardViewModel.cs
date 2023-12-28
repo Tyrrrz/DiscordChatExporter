@@ -235,8 +235,7 @@ public class DashboardViewModel : PropertyChangedBase
             var exporter = new ChannelExporter(_discord);
 
             var channelProgressPairs = dialog
-                .Channels!
-                .Select(c => new { Channel = c, Progress = _progressMuxer.CreateInput() })
+                .Channels!.Select(c => new { Channel = c, Progress = _progressMuxer.CreateInput() })
                 .ToArray();
 
             var successfulExportCount = 0;

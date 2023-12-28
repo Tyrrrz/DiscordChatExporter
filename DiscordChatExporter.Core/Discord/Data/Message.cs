@@ -100,8 +100,7 @@ public partial record Message
                 {
                     // Concatenate all images into one embed
                     var images = embed
-                        .Images
-                        .Concat(trailingEmbeds.SelectMany(e => e.Images))
+                        .Images.Concat(trailingEmbeds.SelectMany(e => e.Images))
                         .ToArray();
 
                     normalizedEmbeds.Add(embed with { Images = images });

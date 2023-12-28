@@ -57,9 +57,7 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
                 try
                 {
                     var lastModified = response
-                        .Content
-                        .Headers
-                        .TryGetValue("Last-Modified")
+                        .Content.Headers.TryGetValue("Last-Modified")
                         ?.Pipe(
                             s =>
                                 DateTimeOffset.TryParse(

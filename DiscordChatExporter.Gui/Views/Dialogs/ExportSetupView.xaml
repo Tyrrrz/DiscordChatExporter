@@ -97,10 +97,10 @@
                                     <Run Text="Available template tokens:" />
                                     <LineBreak />
                                     <Run FontWeight="SemiBold" Text="%g" />
-                                    <Run Text="— guild ID" />
+                                    <Run Text="— server ID" />
                                     <LineBreak />
                                     <Run FontWeight="SemiBold" Text="%G" />
-                                    <Run Text="— guild name" />
+                                    <Run Text="— server name" />
                                     <LineBreak />
                                     <Run FontWeight="SemiBold" Text="%t" />
                                     <Run Text="— category ID" />

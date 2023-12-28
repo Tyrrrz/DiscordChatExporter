@@ -21,7 +21,7 @@ public class ExportAllCommand : ExportCommandBase
     [CommandOption("include-dm", Description = "Include direct message channels.")]
     public bool IncludeDirectChannels { get; init; } = true;
 
-    [CommandOption("include-guilds", Description = "Include guild channels.")]
+    [CommandOption("include-guilds", Description = "Include server channels.")]
     public bool IncludeGuildChannels { get; init; } = true;
 
     [CommandOption("include-vc", Description = "Include voice channels.")]
@@ -56,7 +56,7 @@ public class ExportAllCommand : ExportCommandBase
                 // Regular channels
                 await console
                     .Output
-                    .WriteLineAsync($"Fetching channels for guild '{guild.Name}'...");
+                    .WriteLineAsync($"Fetching channels for server '{guild.Name}'...");
 
                 var fetchedChannelsCount = 0;
                 await console
@@ -96,7 +96,7 @@ public class ExportAllCommand : ExportCommandBase
                 {
                     await console
                         .Output
-                        .WriteLineAsync($"Fetching threads for guild '{guild.Name}'...");
+                        .WriteLineAsync($"Fetching threads for server '{guild.Name}'...");
 
                     var fetchedThreadsCount = 0;
                     await console

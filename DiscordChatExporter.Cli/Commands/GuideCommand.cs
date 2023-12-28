@@ -6,7 +6,7 @@ using CliFx.Infrastructure;
 
 namespace DiscordChatExporter.Cli.Commands;
 
-[Command("guide", Description = "Explains how to obtain the token, guild or channel ID.")]
+[Command("guide", Description = "Explains how to obtain the token, server or channel ID.")]
 public class GuideCommand : ICommand
 {
     public ValueTask ExecuteAsync(IConsole console)
@@ -49,7 +49,7 @@ public class GuideCommand : ICommand
 
         // Guild or channel ID
         using (console.WithForegroundColor(ConsoleColor.White))
-            console.Output.WriteLine("To get the ID of a guild or a channel:");
+            console.Output.WriteLine("To get the ID of a server or a channel:");
 
         console.Output.WriteLine(" 1. Open Discord");
         console.Output.WriteLine(" 2. Open Settings");
@@ -58,7 +58,7 @@ public class GuideCommand : ICommand
         console
             .Output
             .WriteLine(
-                " 5. Right-click on the desired guild or channel and click Copy Server ID or Copy Channel ID"
+                " 5. Right-click on the desired server or channel and click Copy Server ID or Copy Channel ID"
             );
         console.Output.WriteLine();
 

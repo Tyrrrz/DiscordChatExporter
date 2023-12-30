@@ -90,12 +90,13 @@ The following table lists all available download options:
 </table>
 
 > **Important**:
-> To run **DiscordChatExporter** on macOS and Linux, you need to make sure that **.NET 8.0 Runtime** is installed.
+> To run **DiscordChatExporter**, you need to make sure that the **.NET 8.0 Runtime** is installed.
 > You can download it here:
 >
 > - [.NET 8.0 Runtime for **macOS x64**](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-8.0.0-macos-x64-installer)
 > - [.NET 8.0 Runtime for **macOS arm64**](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-8.0.0-macos-arm64-installer)
 > - [.NET 8.0 Runtime for **Linux**](https://learn.microsoft.com/dotnet/core/install/linux) (find the correct download for your distro)
+> - On Windows, the runtime should be installed automatically when you run the application for the first time
 >
 > This should not be necessary if you install **DiscordChatExporter** using a package manager, as it should take care of the dependencies for you.
 > This is also not necessary if you are running **DiscordChatExporter** via Docker, because the image already contains the runtime.
@@ -108,11 +109,11 @@ The following table lists all available download options:
 
 - Graphical user interface (Windows)
 - Command-line interface (Windows, Linux, macOS)
-- Authentication via both user and bot tokens
+- Authentication via either a user or a bot token
 - Multiple output formats: HTML (dark/light), TXT, CSV, JSON
 - Support for markdown, attachments, embeds, emoji, and other rich media features
 - File partitioning, date ranges, message filtering, and other export options
-- Self-contained exports that don't require internet
+- Self-contained exports that can be viewed offline
 
 ## Screenshots
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace DiscordChatExporter.Core.Utils.Extensions;
@@ -25,16 +24,6 @@ public static class StringExtensions
         }
 
         return builder.ToString();
-    }
-
-    public static IEnumerable<Rune> GetRunes(this string str)
-    {
-        var lastIndex = 0;
-        while (lastIndex < str.Length && Rune.TryGetRuneAt(str, lastIndex, out var rune))
-        {
-            yield return rune;
-            lastIndex += rune.Utf16SequenceLength;
-        }
     }
 
     public static T? ParseEnumOrNull<T>(this string str, bool ignoreCase = true)

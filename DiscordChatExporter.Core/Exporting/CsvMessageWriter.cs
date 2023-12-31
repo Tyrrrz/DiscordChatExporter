@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -122,7 +123,7 @@ internal partial class CsvMessageWriter
 {
     private static string CsvEncode(string value)
     {
-        value = value.Replace("\"", "\"\"");
+        value = value.Replace("\"", "\"\"", StringComparison.Ordinal);
         return $"\"{value}\"";
     }
 }

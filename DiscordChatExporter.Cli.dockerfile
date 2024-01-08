@@ -49,7 +49,7 @@ ENV LANG=en_US.UTF-8
 # Use a non-root user to ensure that the files shared with the host are accessible by the host user.
 # We can use the default user provided by the base image for this purpose.
 # https://github.com/Tyrrrz/DiscordChatExporter/issues/851
-USER $APP_UID
+USER app
 
 # This directory is exposed to the user for mounting purposes, so it's important that it always
 # stays the same for backwards compatibility.

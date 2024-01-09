@@ -46,8 +46,7 @@ ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 ENV LC_ALL=en_US.UTF-8
 ENV LANG=en_US.UTF-8
 
-# Use a non-root user to ensure that the files shared with the host are accessible by the host user.
-# We can use the default user provided by the base image for this purpose.
+# Use a non-root user to ensure that the files shared with the host are accessible by the host user
 # https://github.com/Tyrrrz/DiscordChatExporter/issues/851
 RUN useradd dce
 USER dce

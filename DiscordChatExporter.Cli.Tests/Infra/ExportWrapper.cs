@@ -57,7 +57,7 @@ public static class ExportWrapper
             await new ExportChannelsCommand
             {
                 Token = Secrets.DiscordToken,
-                ChannelIds = new[] { channelId },
+                ChannelIds = [channelId],
                 ExportFormat = format,
                 OutputPath = filePath,
                 Locale = "en-US",

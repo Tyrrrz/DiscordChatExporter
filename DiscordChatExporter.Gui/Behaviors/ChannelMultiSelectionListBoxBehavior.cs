@@ -2,4 +2,4 @@
 
 namespace DiscordChatExporter.Gui.Behaviors;
 
-public class ChannelMultiSelectionListBoxBehavior : MultiSelectionListBoxBehavior<Channel> { }
+public class ChannelMultiSelectionListBoxBehavior : MultiSelectionListBoxBehavior<Channel>;

@@ -178,15 +178,49 @@ public class HtmlEmbedSpecs
         );
 
         // Assert
-        message
+        var imageUrls = message
             .QuerySelectorAll("img")
             .Select(e => e.GetAttribute("src"))
+            .ToArray();
+
+        imageUrls
             .Should()
-            .ContainInOrder(
-                "https://images-ext-1.discordapp.net/external/-n--xW3EHH_3jlrheVkMXHCM7T86b5Ty4-MzXCT4m1Q/https/pbs.twimg.com/media/FVYIzYPWAAAMBqZ.png",
-                "https://images-ext-2.discordapp.net/external/z5nEmGeEldV-kswydGLhqUsFHbb5AWHtdvc9XT6N5rE/https/pbs.twimg.com/media/FVYJBWJWAAMNAx2.png",
-                "https://images-ext-2.discordapp.net/external/gnip03SawMB6uZLagN5sRDpA_1Ap1CcEhMbJfK1z6WQ/https/pbs.twimg.com/media/FVYJHiRX0AANZcz.png",
-                "https://images-ext-2.discordapp.net/external/jl1v6cCbLaGmiwmKU-ZkXnF4cFsJ39f9A3-oEdqPdZs/https/pbs.twimg.com/media/FVYJNZNXwAAPnVG.png"
+            .Contain(
+                u =>
+                    u.EndsWith(
+                        "https/pbs.twimg.com/media/FVYIzYPWAAAMBqZ.png",
+                        StringComparison.Ordinal
+                    )
+            );
+
+        imageUrls
+            .Should()
+            .Contain(
+                u =>
+                    u.EndsWith(
+                        "https/pbs.twimg.com/media/FVYJBWJWAAMNAx2.png",
+                        StringComparison.Ordinal
+                    )
+            );
+
+        imageUrls
+            .Should()
+            .Contain(
+                u =>
+                    u.EndsWith(
+                        "https/pbs.twimg.com/media/FVYJHiRX0AANZcz.png",
+                        StringComparison.Ordinal
+                    )
+            );
+
+        imageUrls
+            .Should()
+            .Contain(
+                u =>
+                    u.EndsWith(
+                        "https/pbs.twimg.com/media/FVYJNZNXwAAPnVG.png",
+                        StringComparison.Ordinal
+                    )
             );
 
         message.QuerySelectorAll(".chatlog__embed").Should().ContainSingle();

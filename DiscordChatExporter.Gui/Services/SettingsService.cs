@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.IO;
 using Cogwheel;
 using DiscordChatExporter.Core.Exporting;
@@ -21,7 +20,7 @@ public partial class SettingsService()
 
     public ThreadInclusionMode ThreadInclusionMode { get; set; } = ThreadInclusionMode.None;
 
-    public string Locale { get; set; } = CultureInfo.CurrentCulture.Name;
+    public string? Locale { get; set; }
 
     public bool IsUtcNormalizationEnabled { get; set; }
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
+using DiscordChatExporter.Core.Utils.Extensions;
 using DiscordChatExporter.Gui.Models;
 using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.ViewModels.Framework;
@@ -37,10 +37,11 @@ public class SettingsViewModel(SettingsService settingsService) : DialogScreen
         set => settingsService.ThreadInclusionMode = value;
     }
 
+    // These items have to be non-nullable because WPF ComboBox doesn't allow a null value to be selected
     public IReadOnlyList<string> AvailableLocales { get; } = new[]
         {
-            // Current locale
-            CultureInfo.CurrentCulture.Name,
+            // Current locale (maps to null downstream)
+            "",
             // Locales supported by the Discord app
             "da-DK",
             "de-DE",
@@ -73,10 +74,12 @@ public class SettingsViewModel(SettingsService settingsService) : DialogScreen
             "ko-KR"
         }.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
 
+    // This has to be non-nullable because WPF ComboBox doesn't allow a null value to be selected
     public string Locale
     {
-        get => settingsService.Locale;
-        set => settingsService.Locale = value;
+        get => settingsService.Locale ?? "";
+        // Important to reduce empty strings to nulls, because empty strings don't correspond to valid cultures
+        set => settingsService.Locale = value.NullIfWhiteSpace();
     }
 
     public bool IsUtcNormalizationEnabled

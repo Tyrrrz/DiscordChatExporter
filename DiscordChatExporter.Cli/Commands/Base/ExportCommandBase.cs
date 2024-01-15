@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -118,8 +117,12 @@ public abstract class ExportCommandBase : DiscordCommandBase
     )]
     public string DateFormat { get; init; } = "MM/dd/yyyy h:mm tt";
 
-    [CommandOption("locale", Description = "Locale to use when formatting dates and numbers.")]
-    public string Locale { get; init; } = CultureInfo.CurrentCulture.Name;
+    [CommandOption(
+        "locale",
+        Description = "Locale to use when formatting dates and numbers. "
+            + "If not specified, the default system locale will be used."
+    )]
+    public string? Locale { get; init; }
 
     [CommandOption("utc", Description = "Normalize all timestamps to UTC+0.")]
     public bool IsUtcNormalizationEnabled { get; init; } = false;

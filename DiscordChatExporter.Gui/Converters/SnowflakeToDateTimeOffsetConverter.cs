@@ -10,13 +10,17 @@ public class SnowflakeToDateTimeOffsetConverter : IValueConverter
 {
     public static SnowflakeToDateTimeOffsetConverter Instance { get; } = new();
 
-    public object? Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
-        value is Snowflake snowflake ? snowflake.ToDate() : null;
+    public object? Convert(
+        object? value,
+        Type targetType,
+        object? parameter,
+        CultureInfo culture
+    ) => value is Snowflake snowflake ? snowflake.ToDate() : null;
 
     public object ConvertBack(
-        object value,
+        object? value,
         Type targetType,
-        object parameter,
+        object? parameter,
         CultureInfo culture
     ) => throw new NotSupportedException();
 }

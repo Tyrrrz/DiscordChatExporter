@@ -37,7 +37,7 @@ public class FilterSpecs
             .EnumerateArray()
             .Select(j => j.GetProperty("content").GetString())
             .Should()
-            .ContainSingle("Some random text");
+            .AllBe("Some random text");
     }
 
     [Fact]
@@ -66,7 +66,7 @@ public class FilterSpecs
     }
 
     [Fact]
-    public async Task I_can_filter_the_export_to_only_include_messages_that_contain_the_specified_content()
+    public async Task I_can_filter_the_export_to_only_include_messages_that_contain_images()
     {
         // Arrange
         using var file = TempFile.Create();
@@ -87,7 +87,32 @@ public class FilterSpecs
             .EnumerateArray()
             .Select(j => j.GetProperty("content").GetString())
             .Should()
-            .ContainSingle("This has image");
+            .AllBe("This has image");
+    }
+
+    [Fact]
+    public async Task I_can_filter_the_export_to_only_include_messages_that_contain_guild_invites()
+    {
+        // Arrange
+        using var file = TempFile.Create();
+
+        // Act
+        await new ExportChannelsCommand
+        {
+            Token = Secrets.DiscordToken,
+            ChannelIds = [ChannelIds.FilterTestCases],
+            ExportFormat = ExportFormat.Json,
+            OutputPath = file.Path,
+            MessageFilter = MessageFilter.Parse("has:invite")
+        }.ExecuteAsync(new FakeConsole());
+
+        // Assert
+        Json.Parse(await File.ReadAllTextAsync(file.Path))
+            .GetProperty("messages")
+            .EnumerateArray()
+            .Select(j => j.GetProperty("content").GetString())
+            .Should()
+            .AllBe("This has invite");
     }
 
     [Fact]
@@ -112,7 +137,7 @@ public class FilterSpecs
             .EnumerateArray()
             .Select(j => j.GetProperty("content").GetString())
             .Should()
-            .ContainSingle("This is pinned");
+            .AllBe("This is pinned");
     }
 
     [Fact]
@@ -137,6 +162,6 @@ public class FilterSpecs
             .EnumerateArray()
             .Select(j => j.GetProperty("content").GetString())
             .Should()
-            .ContainSingle("This has mention");
+            .AllBe("This has mention");
     }
 }

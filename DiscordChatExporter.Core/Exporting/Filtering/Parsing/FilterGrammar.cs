@@ -61,18 +61,28 @@ internal static class FilterGrammar
         .IgnoreThen(
             Parse.OneOf(
                 Span.EqualToIgnoreCase("link")
-                    .IgnoreThen(Parse.Return(MessageContentMatchKind.Link)),
+                    .IgnoreThen(Parse.Return(MessageContentMatchKind.Link))
+                    .Try(),
                 Span.EqualToIgnoreCase("embed")
-                    .IgnoreThen(Parse.Return(MessageContentMatchKind.Embed)),
+                    .IgnoreThen(Parse.Return(MessageContentMatchKind.Embed))
+                    .Try(),
                 Span.EqualToIgnoreCase("file")
-                    .IgnoreThen(Parse.Return(MessageContentMatchKind.File)),
+                    .IgnoreThen(Parse.Return(MessageContentMatchKind.File))
+                    .Try(),
                 Span.EqualToIgnoreCase("video")
-                    .IgnoreThen(Parse.Return(MessageContentMatchKind.Video)),
+                    .IgnoreThen(Parse.Return(MessageContentMatchKind.Video))
+                    .Try(),
                 Span.EqualToIgnoreCase("image")
-                    .IgnoreThen(Parse.Return(MessageContentMatchKind.Image)),
+                    .IgnoreThen(Parse.Return(MessageContentMatchKind.Image))
+                    .Try(),
                 Span.EqualToIgnoreCase("sound")
                     .IgnoreThen(Parse.Return(MessageContentMatchKind.Sound)),
-                Span.EqualToIgnoreCase("pin").IgnoreThen(Parse.Return(MessageContentMatchKind.Pin))
+                Span.EqualToIgnoreCase("pin")
+                    .IgnoreThen(Parse.Return(MessageContentMatchKind.Pin))
+                    .Try(),
+                Span.EqualToIgnoreCase("invite")
+                    .IgnoreThen(Parse.Return(MessageContentMatchKind.Invite))
+                    .Try()
             )
         )
         .Select(k => (MessageFilter)new HasMessageFilter(k))

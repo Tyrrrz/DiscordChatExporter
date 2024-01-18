@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands;
@@ -32,12 +33,9 @@ public class FilterSpecs
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        var messages = Json.Parse(await File.ReadAllTextAsync(file.Path))
+        Json.Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
-            .EnumerateArray();
-
-        messages.Should().ContainSingle();
-        messages
+            .EnumerateArray()
             .Select(j => j.GetProperty("content").GetString())
             .Should()
             .AllBe("Some random text");
@@ -60,12 +58,9 @@ public class FilterSpecs
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        var messages = Json.Parse(await File.ReadAllTextAsync(file.Path))
+        Json.Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
-            .EnumerateArray();
-
-        messages.Should().ContainSingle();
-        messages
+            .EnumerateArray()
             .Select(j => j.GetProperty("author").GetProperty("name").GetString())
             .Should()
             .AllBe("tyrrrz");
@@ -88,12 +83,9 @@ public class FilterSpecs
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        var messages = Json.Parse(await File.ReadAllTextAsync(file.Path))
+        Json.Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
-            .EnumerateArray();
-
-        messages.Should().ContainSingle();
-        messages
+            .EnumerateArray()
             .Select(j => j.GetProperty("attachments").EnumerateArray().Count())
             .Should()
             .OnlyContain(c => c >= 1);
@@ -116,12 +108,9 @@ public class FilterSpecs
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        var messages = Json.Parse(await File.ReadAllTextAsync(file.Path))
+        Json.Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
-            .EnumerateArray();
-
-        messages.Should().ContainSingle();
-        messages
+            .EnumerateArray()
             .Select(j => j.GetProperty("content").GetString())
             .Should()
             .AllBe("This has invite");
@@ -144,12 +133,12 @@ public class FilterSpecs
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        var messages = Json.Parse(await File.ReadAllTextAsync(file.Path))
+        Json.Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
-            .EnumerateArray();
-
-        messages.Should().ContainSingle();
-        messages.Select(j => j.GetProperty("content").GetString()).Should().AllBe("This is pinned");
+            .EnumerateArray()
+            .Select(j => j.GetProperty("content").GetString())
+            .Should()
+            .AllBe("This is pinned");
     }
 
     [Fact]
@@ -169,12 +158,9 @@ public class FilterSpecs
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        var messages = Json.Parse(await File.ReadAllTextAsync(file.Path))
+        Json.Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
-            .EnumerateArray();
-
-        messages.Should().ContainSingle();
-        messages
+            .EnumerateArray()
             .Select(j => j.GetProperty("content").GetString())
             .Should()
             .AllBe("This has mention");

@@ -85,9 +85,9 @@ public class FilterSpecs
         Json.Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
             .EnumerateArray()
-            .Select(j => j.GetProperty("attachments").EnumerateArray().Count())
+            .Select(j => j.GetProperty("content").GetString())
             .Should()
-            .OnlyContain(c => c >= 1);
+            .AllBe("This has image");
     }
 
     [Fact]

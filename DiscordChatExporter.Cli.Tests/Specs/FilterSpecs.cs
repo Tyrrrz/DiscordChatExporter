@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands;

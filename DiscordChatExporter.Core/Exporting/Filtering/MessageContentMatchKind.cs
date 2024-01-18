@@ -8,5 +8,6 @@ internal enum MessageContentMatchKind
     Video,
     Image,
     Sound,
-    Pin
+    Pin,
+    Invite
 }

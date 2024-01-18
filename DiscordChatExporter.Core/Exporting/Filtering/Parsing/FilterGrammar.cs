@@ -72,7 +72,9 @@ internal static class FilterGrammar
                     .IgnoreThen(Parse.Return(MessageContentMatchKind.Image)),
                 Span.EqualToIgnoreCase("sound")
                     .IgnoreThen(Parse.Return(MessageContentMatchKind.Sound)),
-                Span.EqualToIgnoreCase("pin").IgnoreThen(Parse.Return(MessageContentMatchKind.Pin))
+                Span.EqualToIgnoreCase("pin").IgnoreThen(Parse.Return(MessageContentMatchKind.Pin)),
+                Span.EqualToIgnoreCase("invite")
+                    .IgnoreThen(Parse.Return(MessageContentMatchKind.Invite))
             )
         )
         .Select(k => (MessageFilter)new HasMessageFilter(k))

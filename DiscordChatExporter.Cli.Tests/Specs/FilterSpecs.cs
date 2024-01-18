@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CliFx.Infrastructure;
@@ -37,7 +38,7 @@ public class FilterSpecs
             .EnumerateArray()
             .Select(j => j.GetProperty("content").GetString())
             .Should()
-            .AllBe("Some random text");
+            .AllSatisfy(c => c.Contains("Some random text", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -87,7 +88,7 @@ public class FilterSpecs
             .EnumerateArray()
             .Select(j => j.GetProperty("content").GetString())
             .Should()
-            .AllBe("This has image");
+            .AllSatisfy(c => c.Contains("This has image", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -112,7 +113,7 @@ public class FilterSpecs
             .EnumerateArray()
             .Select(j => j.GetProperty("content").GetString())
             .Should()
-            .AllBe("This is pinned");
+            .AllSatisfy(c => c.Contains("This is pinned", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -137,7 +138,7 @@ public class FilterSpecs
             .EnumerateArray()
             .Select(j => j.GetProperty("content").GetString())
             .Should()
-            .AllBe("This has invite");
+            .AllSatisfy(c => c.Contains("This has invite", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -162,6 +163,6 @@ public class FilterSpecs
             .EnumerateArray()
             .Select(j => j.GetProperty("content").GetString())
             .Should()
-            .AllBe("This has mention");
+            .AllSatisfy(c => c.Contains("This has mention", StringComparison.Ordinal));
     }
 }

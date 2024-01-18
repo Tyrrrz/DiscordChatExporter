@@ -238,6 +238,6 @@ public class HtmlEmbedSpecs
         );
 
         // Assert
-        message.Text().Should().Contain("DiscordChatExporter TestServer");
+        message.Text().Should().Contain("DiscordChatExporter Test Server");
     }
 }

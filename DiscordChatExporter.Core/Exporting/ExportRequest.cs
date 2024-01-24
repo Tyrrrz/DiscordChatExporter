@@ -209,15 +209,16 @@ public partial class ExportRequest
         // We are looking for any structure in the path which contains either %y or %z. If the channel is a thread, we can resolve the placeholders, otherwise, that whole structure needs to be removed.
         string formattedPath = Regex.Replace(
             preFormattedPath,
-            @"\\[^\\]*%[yz][^\\]*\\",
+            @"\\[^\\]*%[xyz][^\\]*\\",
             m =>
                 channel.IsThread
                     ? Regex.Replace(
                         m.Value,
-                        "%[yz]",
+                        "%[xyz]",
                         n =>
                             n.Value switch
                             {
+                                "%x" => channel.Parent?.Id.ToString() ?? "",
                                 "%y"
                                     => channel
                                         .Parent?.Position

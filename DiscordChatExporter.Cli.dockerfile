@@ -45,14 +45,14 @@ ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 ENV LC_ALL=en_US.UTF-8
 ENV LANG=en_US.UTF-8
 
-# Use a non-root user to ensure that the files shared with the host are accessible by the host user
-# https://github.com/Tyrrrz/DiscordChatExporter/issues/851
-RUN adduser --disabled-password --no-create-home dce
-USER dce
+# Use a non-root user
+RUN apk add --no-cache su-exec
+RUN addgroup -S -g 1000 dce && adduser -S -H -G dce -u 1000 dce
 
 # This directory is exposed to the user for mounting purposes, so it's important that it always
 # stays the same for backwards compatibility.
 WORKDIR /out
 
 COPY --from=build /tmp/app/DiscordChatExporter.Cli/bin/publish /opt/app
-ENTRYPOINT ["/opt/app/DiscordChatExporter.Cli"]
+COPY docker-entrypoint.sh /
+ENTRYPOINT ["/docker-entrypoint.sh"]

@@ -61,6 +61,17 @@ For more information, please refer to the [Dockerfile](https://github.com/Tyrrrz
 
 To get your Token and Channel IDs, please refer to [this page](Token-and-IDs.md).
 
+## Unix permissions issues
+
+This image was designed with a user running as uid:gid of 1000:1000.
+
+If your current user has different IDs, and you want to generate files directly editable for your user, you might want to run the container like this:
+
+```console
+mkdir data # or chown -R $(id -u):$(id -g) data
+docker run -it --rm -v $PWD/data:/out --user $(id -u):$(id -g) tyrrrz/discordchatexporter:stable export -t TOKEN -g CHANNELID
+```
+
 ## Environment variables
 
 DiscordChatExpoter CLI accepts the `DISCORD_TOKEN` environment variable as a fallback for the `--token` option. You can set this variable either with the `--env` Docker option or with a combination of the `--env-file` Docker option and a `.env` file.

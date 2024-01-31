@@ -61,7 +61,7 @@ For more information, please refer to the [Dockerfile](https://github.com/Tyrrrz
 
 To get your Token and Channel IDs, please refer to [this page](Token-and-IDs.md).
 
-## Permissions issues
+## Unix permissions issues
 
 This image was designed with a user running as uid:gid of 1000:1000.
 

@@ -7,4 +7,4 @@ if [ "$(id -u)" = '0' ]; then
   exec su-exec dce "$0" "$@"
 fi
 
-exec /opt/app/DiscordChatExporter.Cli "$@"
+exec ./DiscordChatExporter.Cli "$@"

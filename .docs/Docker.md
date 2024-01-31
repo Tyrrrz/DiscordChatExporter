@@ -67,7 +67,7 @@ This image was designed with a user running as uid:gid of 1000:1000.
 
 If your current user has different ids, and you want to generate files directly editable for your user, you might want to run the container like this:
 
-``` console
+```console
 mkdir data # or chown -R $(id -u):$(id -g) data
 docker run -it --rm -v $PWD/data:/out --user $(id -u):$(id -g) tyrrrz/discordchatexporter:stable export -t TOKEN -g CHANNELID
 ```

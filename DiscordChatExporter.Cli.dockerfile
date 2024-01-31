@@ -57,4 +57,4 @@ WORKDIR /out
 
 COPY --from=build /tmp/app/DiscordChatExporter.Cli/bin/publish /opt/app
 COPY docker-entrypoint.sh /opt/app
-ENTRYPOINT ["/docker-entrypoint.sh"]
+ENTRYPOINT ["/opt/app/docker-entrypoint.sh"]

@@ -45,7 +45,9 @@ ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 ENV LC_ALL=en_US.UTF-8
 ENV LANG=en_US.UTF-8
 
-# Use a non-root user
+# Use a non-root user to ensure that the files shared with the host are accessible by the host user
+# https://github.com/Tyrrrz/DiscordChatExporter/issues/851
+# https://github.com/Tyrrrz/DiscordChatExporter/issues/1174
 RUN apk add --no-cache su-exec
 RUN addgroup -S -g 1000 dce && adduser -S -H -G dce -u 1000 dce
 

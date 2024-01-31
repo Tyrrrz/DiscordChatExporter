@@ -56,5 +56,5 @@ RUN addgroup -S -g 1000 dce && adduser -S -H -G dce -u 1000 dce
 WORKDIR /out
 
 COPY --from=build /tmp/app/DiscordChatExporter.Cli/bin/publish /opt/app
-COPY docker-entrypoint.sh /
+COPY docker-entrypoint.sh /opt/app
 ENTRYPOINT ["/docker-entrypoint.sh"]

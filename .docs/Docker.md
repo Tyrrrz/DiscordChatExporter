@@ -65,7 +65,7 @@ To get your Token and Channel IDs, please refer to [this page](Token-and-IDs.md)
 
 This image was designed with a user running as uid:gid of 1000:1000.
 
-If your current user has different ids, and you want to generate files directly editable for your user, you might want to run the container like this:
+If your current user has different IDs, and you want to generate files directly editable for your user, you might want to run the container like this:
 
 ```console
 mkdir data # or chown -R $(id -u):$(id -g) data

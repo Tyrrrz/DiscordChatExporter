@@ -150,7 +150,7 @@ public class HtmlEmbedSpecs
         iframeUrl.Should().StartWith("https://open.spotify.com/embed/track/1LHZMWefF9502NPfArRfvP");
     }
 
-    [Fact]
+    [Fact(Skip = "Twitch does not allow embeds from inside local HTML files")]
     public async Task I_can_export_a_channel_that_contains_a_message_with_a_Twitch_clip_embed()
     {
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/1196

@@ -365,6 +365,15 @@
                                 </div>
                             </div>
                         }
+                        // Twitch embed
+                        else if (embed.TryGetTwitchClip() is { } twitchClipEmbed)
+                        {
+                            <div class="chatlog__embed">
+                                <div class="chatlog__embed-twitch-container">
+                                    <iframe class="chatlog__embed-twitch" src="@twitchClipEmbed.Url" width="400" height="225"></iframe>
+                                </div>
+                            </div>
+                        }
                         // YouTube embed
                         else if (embed.TryGetYouTubeVideo() is { } youTubeVideoEmbed)
                         {

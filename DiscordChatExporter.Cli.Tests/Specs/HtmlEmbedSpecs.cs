@@ -151,6 +151,26 @@ public class HtmlEmbedSpecs
     }
 
     [Fact]
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_Twitch_clip_embed()
+    {
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/1196
+
+        // Act
+        var message = await ExportWrapper.GetMessageAsHtmlAsync(
+            ChannelIds.EmbedTestCases,
+            Snowflake.Parse("1207002986128216074")
+        );
+
+        // Assert
+        var iframeUrl = message.QuerySelector("iframe")?.GetAttribute("src");
+        iframeUrl
+            .Should()
+            .StartWith(
+                "https://clips.twitch.tv/embed?clip=SpicyMildCiderThisIsSparta--PQhbllrvej_Ee7v"
+            );
+    }
+
+    [Fact]
     public async Task I_can_export_a_channel_that_contains_a_message_with_a_YouTube_video_embed()
     {
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/570

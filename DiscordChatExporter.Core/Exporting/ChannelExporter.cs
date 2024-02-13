@@ -20,8 +20,8 @@ public class ChannelExporter(DiscordClient discord)
         if (request.Channel.Kind == ChannelKind.GuildForum)
         {
             throw new DiscordChatExporterException(
-                $"Channel '{request.Channel.Name}' (#{request.Channel.Id}) "
-                    + $"of guild '{request.Guild.Name}' (#{request.Guild.Id}) "
+                $"Channel '{request.Channel.Name}' "
+                    + $"of guild '{request.Guild.Name}' "
                     + $"is a forum and cannot be exported directly. "
                     + "You need to pull its threads and export them individually."
             );
@@ -31,8 +31,8 @@ public class ChannelExporter(DiscordClient discord)
         if (request.Channel.IsEmpty)
         {
             throw new DiscordChatExporterException(
-                $"Channel '{request.Channel.Name}' (#{request.Channel.Id}) "
-                    + $"of guild '{request.Guild.Name}' (#{request.Guild.Id}) "
+                $"Channel '{request.Channel.Name}' "
+                    + $"of guild '{request.Guild.Name}' "
                     + $"does not contain any messages."
             );
         }
@@ -41,8 +41,8 @@ public class ChannelExporter(DiscordClient discord)
         if (request.After is not null && !request.Channel.MayHaveMessagesAfter(request.After.Value))
         {
             throw new DiscordChatExporterException(
-                $"Channel '{request.Channel.Name}' (#{request.Channel.Id}) "
-                    + $"of guild '{request.Guild.Name}' (#{request.Guild.Id}) "
+                $"Channel '{request.Channel.Name}' "
+                    + $"of guild '{request.Guild.Name}' "
                     + $"does not contain any messages within the specified period."
             );
         }
@@ -54,8 +54,8 @@ public class ChannelExporter(DiscordClient discord)
         )
         {
             throw new DiscordChatExporterException(
-                $"Channel '{request.Channel.Name}' (#{request.Channel.Id}) "
-                    + $"of guild '{request.Guild.Name}' (#{request.Guild.Id}) "
+                $"Channel '{request.Channel.Name}' "
+                    + $"of guild '{request.Guild.Name}' "
                     + $"does not contain any messages within the specified period."
             );
         }

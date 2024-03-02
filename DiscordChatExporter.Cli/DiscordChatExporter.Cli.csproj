@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="DiscordChatExporter.Cli.sh" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <PackageReference Include="CliFx" Version="2.3.5" />
     <PackageReference Include="CSharpier.MsBuild" Version="0.26.7" PrivateAssets="all" />
     <PackageReference Include="Deorcify" Version="1.0.2" PrivateAssets="all" />

@@ -1,0 +1,1 @@
+dotnet DiscordChatExporter.Cli.dll "$@"

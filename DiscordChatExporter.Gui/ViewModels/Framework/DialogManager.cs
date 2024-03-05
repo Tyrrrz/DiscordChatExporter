@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
+using AsyncKeyedLock;
 using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
 using Stylet;
@@ -10,7 +10,7 @@ namespace DiscordChatExporter.Gui.ViewModels.Framework;
 
 public class DialogManager(IViewManager viewManager) : IDisposable
 {
-    private readonly SemaphoreSlim _dialogLock = new(1, 1);
+    private readonly AsyncNonKeyedLocker _dialogLock = new();
 
     public async ValueTask<T?> ShowDialogAsync<T>(DialogScreen<T> dialogScreen)
     {
@@ -34,15 +34,10 @@ public class DialogManager(IViewManager viewManager) : IDisposable
             dialogScreen.Closed += OnScreenClosed;
         }
 
-        await _dialogLock.WaitAsync();
-        try
+        using (await _dialogLock.LockAsync())
         {
             await DialogHost.Show(view, OnDialogOpened);
             return dialogScreen.DialogResult;
-        }
-        finally
-        {
-            _dialogLock.Release();
         }
     }
 

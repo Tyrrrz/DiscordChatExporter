@@ -14,6 +14,18 @@ Please follow the [instructions provided here](Dotnet.md).
 4. Execute the following command to export, replacing `TOKEN` and `CHANNEL` with your own values:
 
 ```console
+./DiscordChatExporter.Cli.sh export -t TOKEN -c CHANNEL
+```
+
+If the above command throws a "Permission denied" error, use `chmod` to fix the permissions:
+
+```console
+chmod +x DiscordChatExporter.Cli.sh
+```
+
+Alternatively, if the script doesn't work, you can run the following command to run the application directly:
+
+```console
 dotnet DiscordChatExporter.Cli.dll export -t TOKEN -c CHANNEL
 ```
 

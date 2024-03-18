@@ -167,11 +167,16 @@ jobs:
         with:
           name: ${{ matrix.app }}
           path: ${{ matrix.app }}/
+          
+      - name: Configure permissions
+        # Remove this when the GUI also becomes cross-platform
+        if: ${{ matrix.app == 'DiscordChatExporter.Cli' }}
+        run: chmod +x ${{ matrix.app }}/${{ matrix.app }}.sh
 
       - name: Create package
         # Change into the artifacts directory to avoid including the directory itself in the zip archive
         working-directory: ${{ matrix.app }}/
-        run: zip -r ../${{ matrix.asset }}.zip .
+        run: zip -rX ../${{ matrix.asset }}.zip .
 
       - name: Upload release asset
         env:

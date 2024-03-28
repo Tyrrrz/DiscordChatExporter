@@ -97,7 +97,7 @@ internal class ExportContext(DiscordClient discord, ExportRequest request)
             .Select(TryGetRole)
             .WhereNotNull()
             .OrderByDescending(r => r.Position)
-            .ToArray() ?? Array.Empty<Role>();
+            .ToArray() ?? [];
 
     public Color? TryGetUserColor(Snowflake id) =>
         GetUserRoles(id).Where(r => r.Color is not null).Select(r => r.Color).FirstOrDefault();

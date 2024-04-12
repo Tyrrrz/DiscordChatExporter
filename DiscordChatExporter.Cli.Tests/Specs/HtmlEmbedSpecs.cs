@@ -90,12 +90,11 @@ public class HtmlEmbedSpecs
             .QuerySelectorAll("source")
             .Select(e => e.GetAttribute("src"))
             .WhereNotNull()
-            .Where(
-                s =>
-                    s.Contains(
-                        "i_am_currently_feeling_slight_displeasure_of_what_you_have_just_sent_lqrem.mp4",
-                        StringComparison.Ordinal
-                    )
+            .Where(s =>
+                s.Contains(
+                    "i_am_currently_feeling_slight_displeasure_of_what_you_have_just_sent_lqrem.mp4",
+                    StringComparison.Ordinal
+                )
             )
             .Should()
             .ContainSingle();
@@ -205,42 +204,38 @@ public class HtmlEmbedSpecs
 
         imageUrls
             .Should()
-            .Contain(
-                u =>
-                    u.EndsWith(
-                        "https/pbs.twimg.com/media/FVYIzYPWAAAMBqZ.png",
-                        StringComparison.Ordinal
-                    )
+            .Contain(u =>
+                u.EndsWith(
+                    "https/pbs.twimg.com/media/FVYIzYPWAAAMBqZ.png",
+                    StringComparison.Ordinal
+                )
             );
 
         imageUrls
             .Should()
-            .Contain(
-                u =>
-                    u.EndsWith(
-                        "https/pbs.twimg.com/media/FVYJBWJWAAMNAx2.png",
-                        StringComparison.Ordinal
-                    )
+            .Contain(u =>
+                u.EndsWith(
+                    "https/pbs.twimg.com/media/FVYJBWJWAAMNAx2.png",
+                    StringComparison.Ordinal
+                )
             );
 
         imageUrls
             .Should()
-            .Contain(
-                u =>
-                    u.EndsWith(
-                        "https/pbs.twimg.com/media/FVYJHiRX0AANZcz.png",
-                        StringComparison.Ordinal
-                    )
+            .Contain(u =>
+                u.EndsWith(
+                    "https/pbs.twimg.com/media/FVYJHiRX0AANZcz.png",
+                    StringComparison.Ordinal
+                )
             );
 
         imageUrls
             .Should()
-            .Contain(
-                u =>
-                    u.EndsWith(
-                        "https/pbs.twimg.com/media/FVYJNZNXwAAPnVG.png",
-                        StringComparison.Ordinal
-                    )
+            .Contain(u =>
+                u.EndsWith(
+                    "https/pbs.twimg.com/media/FVYJNZNXwAAPnVG.png",
+                    StringComparison.Ordinal
+                )
             );
 
         message.QuerySelectorAll(".chatlog__embed").Should().ContainSingle();

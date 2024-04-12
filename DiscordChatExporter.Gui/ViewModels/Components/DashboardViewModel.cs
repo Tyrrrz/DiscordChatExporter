@@ -11,12 +11,9 @@ using DiscordChatExporter.Core.Utils.Extensions;
 using DiscordChatExporter.Gui.Models;
 using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.Utils;
-using DiscordChatExporter.Gui.ViewModels.Dialogs;
-using DiscordChatExporter.Gui.ViewModels.Framework;
 using DiscordChatExporter.Gui.ViewModels.Messages;
 using Gress;
 using Gress.Completable;
-using Stylet;
 
 namespace DiscordChatExporter.Gui.ViewModels.Components;
 

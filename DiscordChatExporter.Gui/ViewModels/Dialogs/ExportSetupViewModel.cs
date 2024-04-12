@@ -7,12 +7,12 @@ using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Core.Exporting.Filtering;
 using DiscordChatExporter.Core.Exporting.Partitioning;
 using DiscordChatExporter.Core.Utils.Extensions;
+using DiscordChatExporter.Gui.Framework;
 using DiscordChatExporter.Gui.Services;
-using DiscordChatExporter.Gui.ViewModels.Framework;
 
 namespace DiscordChatExporter.Gui.ViewModels.Dialogs;
 
-public class ExportSetupViewModel : DialogScreen
+public class ExportSetupViewModel : DialogViewModelBase
 {
     private readonly DialogManager _dialogManager;
     private readonly SettingsService _settingsService;
@@ -155,22 +155,5 @@ public class ExportSetupViewModel : DialogScreen
         _settingsService.LastAssetsDirPath = AssetsDirPath;
 
         Close(true);
-    }
-}
-
-public static class ExportSetupViewModelExtensions
-{
-    public static ExportSetupViewModel CreateExportSetupViewModel(
-        this IViewModelFactory factory,
-        Guild guild,
-        IReadOnlyList<Channel> channels
-    )
-    {
-        var viewModel = factory.CreateExportSetupViewModel();
-
-        viewModel.Guild = guild;
-        viewModel.Channels = channels;
-
-        return viewModel;
     }
 }

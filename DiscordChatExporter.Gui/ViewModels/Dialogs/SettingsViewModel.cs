@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using DiscordChatExporter.Core.Utils.Extensions;
+using DiscordChatExporter.Gui.Framework;
 using DiscordChatExporter.Gui.Models;
 using DiscordChatExporter.Gui.Services;
-using DiscordChatExporter.Gui.ViewModels.Framework;
 
 namespace DiscordChatExporter.Gui.ViewModels.Dialogs;
 
-public class SettingsViewModel(SettingsService settingsService) : DialogScreen
+public class SettingsViewModel(SettingsService settingsService) : DialogViewModelBase
 {
     public bool IsAutoUpdateEnabled
     {
@@ -37,7 +37,7 @@ public class SettingsViewModel(SettingsService settingsService) : DialogScreen
         set => settingsService.ThreadInclusionMode = value;
     }
 
-    // These items have to be non-nullable because WPF ComboBox doesn't allow a null value to be selected
+    // These items have to be non-nullable because Avalonia ComboBox doesn't allow a null value to be selected
     public IReadOnlyList<string> AvailableLocales { get; } = new[]
         {
             // Current locale (maps to null downstream)
@@ -74,7 +74,7 @@ public class SettingsViewModel(SettingsService settingsService) : DialogScreen
             "ko-KR"
         }.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
 
-    // This has to be non-nullable because WPF ComboBox doesn't allow a null value to be selected
+    // This has to be non-nullable because Avalonia ComboBox doesn't allow a null value to be selected
     public string Locale
     {
         get => settingsService.Locale ?? "";

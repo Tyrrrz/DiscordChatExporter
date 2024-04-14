@@ -10,7 +10,7 @@ public partial class DashboardView : UserControl<DashboardViewModel>
 
     private void UserControl_OnLoaded(object? sender, RoutedEventArgs args)
     {
-        DataContext.initializeCommand.Execute(null);
+        DataContext.InitializeCommand.Execute(null);
         TokenValueTextBox.Focus();
     }
 }

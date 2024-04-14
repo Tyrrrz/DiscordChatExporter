@@ -2,6 +2,7 @@
     x:Class="DiscordChatExporter.Gui.Views.Dialogs.SettingsView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:DiscordChatExporter.Gui.Converters"
     xmlns:dialogs="clr-namespace:DiscordChatExporter.Gui.ViewModels.Dialogs"
     Width="380">
     <Design.DataContext>
@@ -50,11 +51,11 @@
                             DockPanel.Dock="Left"
                             Text="Dark mode" />
                         <ToggleButton
-                            x:Name="DarkModeToggleButton"
+                            x:Name="DarkModeToggleSwitch"
                             VerticalAlignment="Center"
                             DockPanel.Dock="Right"
                             IsChecked="{Binding IsDarkModeEnabled}"
-                            IsCheckedChanged="DarkModeToggleButton_OnIsCheckedChanged" />
+                            IsCheckedChanged="DarkModeToggleSwitch_OnIsCheckedChanged" />
                     </DockPanel>
 
                     <!--  Persist token  -->
@@ -94,13 +95,9 @@
                         Margin="16,8"
                         LastChildFill="False"
                         ToolTip.Tip="Locale to use when formatting dates and numbers">
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            DockPanel.Dock="Left"
-                            Text="Locale" />
+                        <TextBlock DockPanel.Dock="Left" Text="Locale" />
                         <ComboBox
                             Width="150"
-                            VerticalAlignment="Center"
                             DockPanel.Dock="Right"
                             ItemsSource="{Binding AvailableLocales}"
                             SelectedItem="{Binding Locale}">
@@ -117,14 +114,8 @@
                         Margin="16,8"
                         LastChildFill="False"
                         ToolTip.Tip="Normalize all timestamps to UTC+0">
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            DockPanel.Dock="Left"
-                            Text="Normalize to UTC" />
-                        <ToggleButton
-                            VerticalAlignment="Center"
-                            DockPanel.Dock="Right"
-                            IsChecked="{Binding IsUtcNormalizationEnabled}" />
+                        <TextBlock DockPanel.Dock="Left" Text="Normalize to UTC" />
+                        <ToggleButton DockPanel.Dock="Right" IsChecked="{Binding IsUtcNormalizationEnabled}" />
                     </DockPanel>
 
                     <!--  Parallel limit  -->
@@ -132,28 +123,14 @@
                         Margin="16,8"
                         LastChildFill="False"
                         ToolTip.Tip="How many channels can be exported at the same time">
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            DockPanel.Dock="Left"
-                            Text="Parallel limit"
-                            TextAlignment="Right" />
-                        <StackPanel
-                            VerticalAlignment="Center"
-                            DockPanel.Dock="Right"
-                            Orientation="Horizontal">
-                            <TextBlock
-                                Margin="10,0"
-                                VerticalAlignment="Center"
-                                FontWeight="SemiBold"
-                                Text="{Binding ParallelLimit}" />
+                        <TextBlock DockPanel.Dock="Left" Text="Parallel limit" />
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                            <TextBlock Margin="10,0" Text="{Binding ParallelLimit}" />
                             <Slider
                                 Width="150"
-                                VerticalAlignment="Center"
                                 IsSnapToTickEnabled="True"
-                                LargeChange="1"
                                 Maximum="10"
                                 Minimum="1"
-                                SmallChange="1"
                                 TickFrequency="1"
                                 Value="{Binding ParallelLimit}" />
                         </StackPanel>

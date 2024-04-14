@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Globalization;
-using System.Windows.Data;
+using Avalonia.Data.Converters;
 
 namespace DiscordChatExporter.Gui.Converters;
 
-[ValueConversion(typeof(string), typeof(string))]
 public class LocaleToDisplayNameConverter : IValueConverter
 {
     public static LocaleToDisplayNameConverter Instance { get; } = new();

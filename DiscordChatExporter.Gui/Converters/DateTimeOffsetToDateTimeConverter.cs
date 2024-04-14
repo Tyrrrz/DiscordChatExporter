@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Globalization;
-using System.Windows.Data;
+using Avalonia.Data.Converters;
 
 namespace DiscordChatExporter.Gui.Converters;
 
-[ValueConversion(typeof(DateTimeOffset?), typeof(DateTime?))]
 public class DateTimeOffsetToDateTimeConverter : IValueConverter
 {
     public static DateTimeOffsetToDateTimeConverter Instance { get; } = new();

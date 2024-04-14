@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Globalization;
-using System.Windows.Data;
+using Avalonia.Data.Converters;
 using DiscordChatExporter.Core.Discord;
 
 namespace DiscordChatExporter.Gui.Converters;
 
-[ValueConversion(typeof(Snowflake?), typeof(DateTimeOffset?))]
 public class SnowflakeToDateTimeOffsetConverter : IValueConverter
 {
     public static SnowflakeToDateTimeOffsetConverter Instance { get; } = new();

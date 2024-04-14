@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Globalization;
-using System.Windows.Data;
+using Avalonia.Data.Converters;
 
 namespace DiscordChatExporter.Gui.Converters;
 
-[ValueConversion(typeof(bool), typeof(bool))]
 public class InverseBoolConverter : IValueConverter
 {
     public static InverseBoolConverter Instance { get; } = new();

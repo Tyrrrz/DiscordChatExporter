@@ -5,27 +5,40 @@ using DiscordChatExporter.Core.Utils.Extensions;
 using DiscordChatExporter.Gui.Framework;
 using DiscordChatExporter.Gui.Models;
 using DiscordChatExporter.Gui.Services;
+using DiscordChatExporter.Gui.Utils;
+using DiscordChatExporter.Gui.Utils.Extensions;
 
 namespace DiscordChatExporter.Gui.ViewModels.Dialogs;
 
-public class SettingsViewModel(SettingsService settingsService) : DialogViewModelBase
+public class SettingsViewModel : DialogViewModelBase
 {
+    private readonly SettingsService _settingsService;
+
+    private readonly DisposableCollector _eventRoot = new();
+
+    public SettingsViewModel(SettingsService settingsService)
+    {
+        _settingsService = settingsService;
+        
+        _eventRoot.Add(_settingsService.WatchAllProperties(OnAllPropertiesChanged));
+    }
+
     public bool IsAutoUpdateEnabled
     {
-        get => settingsService.IsAutoUpdateEnabled;
-        set => settingsService.IsAutoUpdateEnabled = value;
+        get => _settingsService.IsAutoUpdateEnabled;
+        set => _settingsService.IsAutoUpdateEnabled = value;
     }
 
     public bool IsDarkModeEnabled
     {
-        get => settingsService.IsDarkModeEnabled;
-        set => settingsService.IsDarkModeEnabled = value;
+        get => _settingsService.IsDarkModeEnabled;
+        set => _settingsService.IsDarkModeEnabled = value;
     }
 
     public bool IsTokenPersisted
     {
-        get => settingsService.IsTokenPersisted;
-        set => settingsService.IsTokenPersisted = value;
+        get => _settingsService.IsTokenPersisted;
+        set => _settingsService.IsTokenPersisted = value;
     }
 
     public IReadOnlyList<ThreadInclusionMode> AvailableThreadInclusions { get; } =
@@ -33,8 +46,8 @@ public class SettingsViewModel(SettingsService settingsService) : DialogViewMode
 
     public ThreadInclusionMode ThreadInclusionMode
     {
-        get => settingsService.ThreadInclusionMode;
-        set => settingsService.ThreadInclusionMode = value;
+        get => _settingsService.ThreadInclusionMode;
+        set => _settingsService.ThreadInclusionMode = value;
     }
 
     // These items have to be non-nullable because Avalonia ComboBox doesn't allow a null value to be selected
@@ -77,20 +90,30 @@ public class SettingsViewModel(SettingsService settingsService) : DialogViewMode
     // This has to be non-nullable because Avalonia ComboBox doesn't allow a null value to be selected
     public string Locale
     {
-        get => settingsService.Locale ?? "";
+        get => _settingsService.Locale ?? "";
         // Important to reduce empty strings to nulls, because empty strings don't correspond to valid cultures
-        set => settingsService.Locale = value.NullIfWhiteSpace();
+        set => _settingsService.Locale = value.NullIfWhiteSpace();
     }
 
     public bool IsUtcNormalizationEnabled
     {
-        get => settingsService.IsUtcNormalizationEnabled;
-        set => settingsService.IsUtcNormalizationEnabled = value;
+        get => _settingsService.IsUtcNormalizationEnabled;
+        set => _settingsService.IsUtcNormalizationEnabled = value;
     }
 
     public int ParallelLimit
     {
-        get => settingsService.ParallelLimit;
-        set => settingsService.ParallelLimit = Math.Clamp(value, 1, 10);
+        get => _settingsService.ParallelLimit;
+        set => _settingsService.ParallelLimit = Math.Clamp(value, 1, 10);
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _eventRoot.Dispose();
+        }
+        
+        base.Dispose(disposing);
     }
 }

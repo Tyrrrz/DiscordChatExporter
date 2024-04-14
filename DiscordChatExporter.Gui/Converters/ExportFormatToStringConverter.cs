@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Globalization;
-using System.Windows.Data;
+using Avalonia.Data.Converters;
 using DiscordChatExporter.Core.Exporting;
 
 namespace DiscordChatExporter.Gui.Converters;
 
-[ValueConversion(typeof(ExportFormat), typeof(string))]
 public class ExportFormatToStringConverter : IValueConverter
 {
     public static ExportFormatToStringConverter Instance { get; } = new();

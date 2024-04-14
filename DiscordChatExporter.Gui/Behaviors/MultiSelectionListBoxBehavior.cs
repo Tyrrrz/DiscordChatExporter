@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Avalonia.Controls;
 using Microsoft.Xaml.Behaviors;
 
 namespace DiscordChatExporter.Gui.Behaviors;

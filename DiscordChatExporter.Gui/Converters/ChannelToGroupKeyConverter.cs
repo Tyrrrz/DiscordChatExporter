@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Globalization;
-using System.Windows.Data;
+using Avalonia.Data.Converters;
 using DiscordChatExporter.Core.Discord.Data;
 
 namespace DiscordChatExporter.Gui.Converters;
 
-[ValueConversion(typeof(Channel), typeof(string))]
 public class ChannelToGroupKeyConverter : IValueConverter
 {
     public static ChannelToGroupKeyConverter Instance { get; } = new();

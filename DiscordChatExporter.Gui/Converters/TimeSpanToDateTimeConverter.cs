@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Globalization;
-using System.Windows.Data;
+using Avalonia.Data.Converters;
 
 namespace DiscordChatExporter.Gui.Converters;
 
-[ValueConversion(typeof(TimeSpan?), typeof(DateTime?))]
 public class TimeSpanToDateTimeConverter : IValueConverter
 {
     public static TimeSpanToDateTimeConverter Instance { get; } = new();

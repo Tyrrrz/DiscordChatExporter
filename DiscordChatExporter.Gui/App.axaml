@@ -2,11 +2,11 @@
     x:Class="DiscordChatExporter.Gui.App"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:MaterialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
     xmlns:framework="clr-namespace:DiscordChatExporter.Gui.Framework"
     xmlns:materialAssists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
     xmlns:materialControls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
+    xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     xmlns:materialStyles="clr-namespace:Material.Styles.Themes;assembly=Material.Styles">
     <Application.DataTemplates>
         <framework:ViewManager />
@@ -14,7 +14,7 @@
 
     <Application.Styles>
         <materialStyles:MaterialTheme />
-        <MaterialIcons:MaterialIconStyles />
+        <materialIcons:MaterialIconStyles />
         <dialogHostAvalonia:DialogHostStyles />
 
         <!--  Combo box  -->

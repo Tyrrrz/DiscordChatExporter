@@ -19,7 +19,7 @@ public class SettingsViewModel : DialogViewModelBase
     public SettingsViewModel(SettingsService settingsService)
     {
         _settingsService = settingsService;
-        
+
         _eventRoot.Add(_settingsService.WatchAllProperties(OnAllPropertiesChanged));
     }
 
@@ -51,8 +51,8 @@ public class SettingsViewModel : DialogViewModelBase
     }
 
     // These items have to be non-nullable because Avalonia ComboBox doesn't allow a null value to be selected
-    public IReadOnlyList<string> AvailableLocales { get; } = new[]
-        {
+    public IReadOnlyList<string> AvailableLocales { get; } =
+        [
             // Current locale (maps to null downstream)
             "",
             // Locales supported by the Discord app
@@ -85,7 +85,7 @@ public class SettingsViewModel : DialogViewModelBase
             "ja-JP",
             "zh-TW",
             "ko-KR"
-        }.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+        ];
 
     // This has to be non-nullable because Avalonia ComboBox doesn't allow a null value to be selected
     public string Locale
@@ -113,7 +113,7 @@ public class SettingsViewModel : DialogViewModelBase
         {
             _eventRoot.Dispose();
         }
-        
+
         base.Dispose(disposing);
     }
 }

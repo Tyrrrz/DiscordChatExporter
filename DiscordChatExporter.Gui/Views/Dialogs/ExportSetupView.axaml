@@ -309,21 +309,20 @@
         <Grid Grid.Row="2" Margin="16" ColumnDefinitions="Auto,*,Auto,Auto">
             <Button
                 Grid.Column="0"
+                Classes.displayed="{Binding IsAdvancedSectionDisplayed}" Theme="{DynamicResource MaterialOutlinedButton}"
+                Classes.not-displayed="{Binding !IsAdvancedSectionDisplayed}"
                 Command="{Binding ToggleAdvancedSectionCommand}"
-                IsDefault="True"
                 ToolTip.Tip="Toggle advanced options">
-                <Button.Style>
-                    <Style BasedOn="{StaticResource MaterialDesignOutlinedButton}" TargetType="{x:Type Button}">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsAdvancedSectionDisplayed}" Value="False">
-                                <Setter Property="Content" Value="MORE" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding IsAdvancedSectionDisplayed}" Value="True">
-                                <Setter Property="Content" Value="LESS" />
-                            </DataTrigger>
-                        </Style.Triggers>
+                <Button.Styles>
+                    <Style Selector="Button">
+                        <Style Selector="^.displayed">
+                            <Setter Property="Content" Value="LESS" />
+                        </Style>
+                        <Style Selector="^.not-displayed">
+                            <Setter Property="Content" Value="MORE" />
+                        </Style>
                     </Style>
-                </Button.Style>
+                </Button.Styles>
             </Button>
 
             <Button

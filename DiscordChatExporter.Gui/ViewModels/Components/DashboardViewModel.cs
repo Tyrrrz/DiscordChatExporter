@@ -45,19 +45,19 @@ public partial class DashboardViewModel : ViewModelBase
 
     [ObservableProperty]
     private IReadOnlyList<Guild>? _availableGuilds;
-    
+
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PullChannelsAsync))]
     [NotifyCanExecuteChangedFor(nameof(ExportAsync))]
     private Guild? _selectedGuild;
-    
+
     [ObservableProperty]
     private IReadOnlyList<Channel>? _availableChannels;
-    
+
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ExportAsync))]
     private IReadOnlyList<Channel>? _selectedChannels;
-    
+
     public DashboardViewModel(
         ViewModelManager viewModelManager,
         DialogManager dialogManager,
@@ -78,13 +78,12 @@ public partial class DashboardViewModel : ViewModelBase
                 () => OnPropertyChanged(nameof(IsProgressIndeterminate))
             )
         );
-
     }
-    
+
     public ProgressContainer<Percentage> Progress { get; } = new();
 
     public bool IsProgressIndeterminate => IsBusy && Progress.Current.Fraction is <= 0 or >= 1;
-    
+
     [RelayCommand]
     private void Initialize()
     {
@@ -329,7 +328,7 @@ public partial class DashboardViewModel : ViewModelBase
         {
             _eventRoot.Dispose();
         }
-        
+
         base.Dispose(disposing);
     }
 }

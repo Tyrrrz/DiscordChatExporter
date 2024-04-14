@@ -22,46 +22,46 @@ public partial class SettingsService()
 
     [ObservableProperty]
     private bool _isDarkModeEnabled;
-    
+
     [ObservableProperty]
     private bool _isTokenPersisted = true;
-    
+
     [ObservableProperty]
     private ThreadInclusionMode _threadInclusionMode;
-    
+
     [ObservableProperty]
     private string? _locale;
-    
+
     [ObservableProperty]
     private bool _isUtcNormalizationEnabled;
-    
+
     [ObservableProperty]
     private int _parallelLimit = 1;
-    
+
     [ObservableProperty]
     private Version? _lastAppVersion;
-    
+
     [ObservableProperty]
     private string? _lastToken;
-    
+
     [ObservableProperty]
     private ExportFormat _lastExportFormat = ExportFormat.HtmlDark;
-    
+
     [ObservableProperty]
     private string? _lastPartitionLimitValue;
-    
+
     [ObservableProperty]
     private string? _lastMessageFilterValue;
-    
+
     [ObservableProperty]
     private bool _lastShouldFormatMarkdown = true;
-    
+
     [ObservableProperty]
     private bool _lastShouldDownloadAssets;
-    
+
     [ObservableProperty]
     private bool _lastShouldReuseAssets;
-    
+
     [ObservableProperty]
     private string? _lastAssetsDirPath;
 
@@ -75,7 +75,7 @@ public partial class SettingsService()
             Application.Current?.PlatformSettings?.GetColorValues().ThemeVariant
             == PlatformThemeVariant.Dark;
     }
-    
+
     public override void Save()
     {
         // Clear the token if it's not supposed to be persisted

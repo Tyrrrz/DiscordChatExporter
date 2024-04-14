@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Avalonia.Platform.Storage;
+using CommunityToolkit.Mvvm.Input;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exporting;
@@ -12,7 +15,7 @@ using DiscordChatExporter.Gui.Services;
 
 namespace DiscordChatExporter.Gui.ViewModels.Dialogs;
 
-public class ExportSetupViewModel : DialogViewModelBase
+public partial class ExportSetupViewModel : DialogViewModelBase
 {
     private readonly DialogManager _dialogManager;
     private readonly SettingsService _settingsService;
@@ -97,9 +100,12 @@ public class ExportSetupViewModel : DialogViewModelBase
             || !string.IsNullOrWhiteSpace(AssetsDirPath);
     }
 
-    public void ToggleAdvancedSection() => IsAdvancedSectionDisplayed = !IsAdvancedSectionDisplayed;
+    [RelayCommand]
+    private void ToggleAdvancedSection() =>
+        IsAdvancedSectionDisplayed = !IsAdvancedSectionDisplayed;
 
-    public void ShowOutputPathPrompt()
+    [RelayCommand]
+    private async Task ShowOutputPathPromptAsync()
     {
         if (IsSingleChannel)
         {
@@ -112,33 +118,42 @@ public class ExportSetupViewModel : DialogViewModelBase
             );
 
             var extension = SelectedFormat.GetFileExtension();
-            var filter = $"{extension.ToUpperInvariant()} files|*.{extension}";
 
-            var path = _dialogManager.PromptSaveFilePath(filter, defaultFileName);
+            var path = await _dialogManager.PromptSaveFilePathAsync(
+                [
+                    new FilePickerFileType($"{extension.ToUpperInvariant()} file")
+                    {
+                        Patterns = [$"*.{extension}"]
+                    }
+                ],
+                defaultFileName
+            );
             if (!string.IsNullOrWhiteSpace(path))
                 OutputPath = path;
         }
         else
         {
-            var path = _dialogManager.PromptDirectoryPath();
+            var path = await _dialogManager.PromptDirectoryPathAsync();
             if (!string.IsNullOrWhiteSpace(path))
                 OutputPath = path;
         }
     }
 
-    public void ShowAssetsDirPathPrompt()
+    [RelayCommand]
+    private async Task ShowAssetsDirPathPromptAsync()
     {
-        var path = _dialogManager.PromptDirectoryPath();
+        var path = await _dialogManager.PromptDirectoryPathAsync();
         if (!string.IsNullOrWhiteSpace(path))
             AssetsDirPath = path;
     }
 
-    public void Confirm()
+    [RelayCommand]
+    private async Task ConfirmAsync()
     {
         // Prompt the output path if it's not set yet
         if (string.IsNullOrWhiteSpace(OutputPath))
         {
-            ShowOutputPathPrompt();
+            await ShowOutputPathPromptAsync();
 
             // If the output path is still not set, cancel the export
             if (string.IsNullOrWhiteSpace(OutputPath))

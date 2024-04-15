@@ -5,9 +5,9 @@
     xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
     xmlns:converters="clr-namespace:DiscordChatExporter.Gui.Converters"
     xmlns:dialogs="clr-namespace:DiscordChatExporter.Gui.ViewModels.Dialogs"
-    xmlns:materialStyles="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
-    xmlns:utils="clr-namespace:DiscordChatExporter.Gui.Utils"
+    xmlns:materialAssists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
     xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:utils="clr-namespace:DiscordChatExporter.Gui.Utils"
     Width="380">
     <Design.DataContext>
         <dialogs:ExportSetupViewModel />
@@ -19,7 +19,6 @@
             Grid.Row="0"
             Margin="16"
             ColumnDefinitions="Auto,*">
-
             <!--  Guild icon  -->
             <Ellipse
                 Grid.Column="0"
@@ -74,9 +73,9 @@
                     <Grid Margin="16,8">
                         <TextBox
                             Padding="16,16,42,16"
-                            Watermark="Output path"
                             Text="{Binding OutputPath}"
-                            Theme="{DynamicResource MaterialOutlinedTextBox}">
+                            Theme="{DynamicResource MaterialOutlinedTextBox}"
+                            Watermark="Output path">
                             <ToolTip.Tip>
                                 <TextBlock>
                                     <Run Text="Output file or directory path." />
@@ -87,40 +86,51 @@
                                     <LineBreak />
                                     <Run Text="Available template tokens:" />
                                     <LineBreak />
+                                    <Run Text=" " />
                                     <Run FontWeight="SemiBold" Text="%g" />
                                     <Run Text="— server ID" />
                                     <LineBreak />
+                                    <Run Text=" " />
                                     <Run FontWeight="SemiBold" Text="%G" />
                                     <Run Text="— server name" />
                                     <LineBreak />
+                                    <Run Text=" " />
                                     <Run FontWeight="SemiBold" Text="%t" />
                                     <Run Text="— category ID" />
                                     <LineBreak />
+                                    <Run Text=" " />
                                     <Run FontWeight="SemiBold" Text="%T" />
                                     <Run Text="— category name" />
                                     <LineBreak />
+                                    <Run Text=" " />
                                     <Run FontWeight="SemiBold" Text="%c" />
                                     <Run Text="— channel ID" />
                                     <LineBreak />
+                                    <Run Text=" " />
                                     <Run FontWeight="SemiBold" Text="%C" />
                                     <Run Text="— channel name" />
                                     <LineBreak />
+                                    <Run Text=" " />
                                     <Run FontWeight="SemiBold" Text="%p" />
                                     <Run Text="— channel position" />
                                     <LineBreak />
+                                    <Run Text=" " />
                                     <Run FontWeight="SemiBold" Text="%P" />
                                     <Run Text="— category position" />
                                     <LineBreak />
+                                    <Run Text=" " />
                                     <Run FontWeight="SemiBold" Text="%a" />
                                     <Run Text="— after date" />
                                     <LineBreak />
+                                    <Run Text=" " />
                                     <Run FontWeight="SemiBold" Text="%b" />
                                     <Run Text="— before date" />
                                     <LineBreak />
+                                    <Run Text=" " />
                                     <Run FontWeight="SemiBold" Text="%d" />
                                     <Run Text="— current date" />
                                 </TextBlock>
-                            </.ToolTip.Tip>
+                            </ToolTip.Tip>
                         </TextBox>
                         <Button
                             Width="24"
@@ -137,8 +147,7 @@
                     <!--  Format  -->
                     <ComboBox
                         Margin="16,8"
-                        materialDesign:HintAssist.Hint="Format"
-                        materialDesign:HintAssist.IsFloating="True"
+                        materialAssists:TextFieldAssist.Label="Format"
                         ItemsSource="{Binding AvailableFormats}"
                         SelectedItem="{Binding SelectedFormat}"
                         Theme="{DynamicResource MaterialOutlinedComboBox}"
@@ -151,16 +160,14 @@
                     </ComboBox>
 
                     <!--  Advanced section  -->
-                    <StackPanel Orientation="Vertical" IsVisible="{Binding IsAdvancedSectionDisplayed}">
+                    <StackPanel IsVisible="{Binding IsAdvancedSectionDisplayed}" Orientation="Vertical">
                         <!--  Date limits  -->
                         <Grid ColumnDefinitions="*,*" RowDefinitions="*,*">
                             <DatePicker
                                 Grid.Row="0"
                                 Grid.Column="0"
                                 Margin="16,8,16,4"
-                                materialDesign:HintAssist.Hint="After (date)"
-                                materialDesign:HintAssist.IsFloating="True"
-                                DisplayDateEnd="{Binding BeforeDate}"
+                                materialAssists:TextFieldAssist.Label="After (date)"
                                 SelectedDate="{Binding AfterDate}"
                                 Theme="{DynamicResource MaterialOutlinedDatePicker}"
                                 ToolTip.Tip="Only include messages sent after this date" />
@@ -168,9 +175,7 @@
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 Margin="16,8,16,4"
-                                materialDesign:HintAssist.Hint="Before (date)"
-                                materialDesign:HintAssist.IsFloating="True"
-                                DisplayDateStart="{Binding AfterDate}"
+                                materialAssists:TextFieldAssist.Label="Before (date)"
                                 SelectedDate="{Binding BeforeDate}"
                                 Theme="{DynamicResource MaterialOutlinedDatePicker}"
                                 ToolTip.Tip="Only include messages sent before this date" />
@@ -178,8 +183,7 @@
                                 Grid.Row="1"
                                 Grid.Column="0"
                                 Margin="16,4,16,8"
-                                materialDesign:HintAssist.Hint="After (time)"
-                                materialDesign:HintAssist.IsFloating="True"
+                                materialAssists:TextFieldAssist.Label="After (time)"
                                 Classes.is24Hours="{x:Static utils:Internationalization.Is24Hours}"
                                 IsEnabled="{Binding IsAfterDateSet}"
                                 SelectedTime="{Binding AfterTime}"
@@ -197,9 +201,8 @@
                                 Grid.Row="1"
                                 Grid.Column="1"
                                 Margin="16,4,16,8"
-                                materialDesign:HintAssist.Hint="Before (time)"
+                                materialAssists:TextFieldAssist.Label="Before (time)"
                                 Classes.is24Hours="{x:Static utils:Internationalization.Is24Hours}"
-                                materialDesign:HintAssist.IsFloating="True"
                                 IsEnabled="{Binding IsBeforeDateSet}"
                                 SelectedTime="{Binding BeforeTime}"
                                 Theme="{DynamicResource MaterialOutlinedTimePicker}"
@@ -217,109 +220,114 @@
                         <!--  Partitioning  -->
                         <TextBox
                             Margin="16,8"
-                            materialDesign:HintAssist.Hint="Partition limit"
-                            materialDesign:HintAssist.IsFloating="True"
                             Text="{Binding PartitionLimitValue}"
                             Theme="{DynamicResource MaterialOutlinedTextBox}"
-                            ToolTip.Tip="Split the output into partitions, each limited to the specified number of messages (e.g. '100') or file size (e.g. '10mb')" />
+                            ToolTip.Tip="Split the output into partitions, each limited to the specified number of messages (e.g. '100') or file size (e.g. '10mb')"
+                            UseFloatingWatermark="True"
+                            Watermark="Partition limit" />
 
                         <!--  Filtering  -->
                         <TextBox
                             Margin="16,8"
-                            materialDesign:HintAssist.Hint="Message filter"
-                            materialDesign:HintAssist.IsFloating="True"
                             Text="{Binding MessageFilterValue}"
                             Theme="{DynamicResource MaterialOutlinedTextBox}"
-                            ToolTip.Tip="Only include messages that satisfy this filter (e.g. 'from:foo#1234' or 'has:image'). See the documentation for more info." />
+                            ToolTip.Tip="Only include messages that satisfy this filter (e.g. 'from:foo#1234' or 'has:image'). See the documentation for more info."
+                            UseFloatingWatermark="True"
+                            Watermark="Message filter" />
 
                         <!--  Markdown formatting  -->
-                        <DockPanel LastChildFill="False" Margin="16,8" ToolTip.Tip="Process markdown, mentions, and other special tokens"
-                              >
+                        <DockPanel
+                            Margin="16,8"
+                            LastChildFill="False"
+                            ToolTip.Tip="Process markdown, mentions, and other special tokens">
                             <TextBlock
-                                DockPanel.Dock="Left"
                                 VerticalAlignment="Center"
+                                DockPanel.Dock="Left"
                                 Text="Format markdown" />
                             <ToggleButton
-                                DockPanel.Dock="Right"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
+                                DockPanel.Dock="Right"
                                 IsChecked="{Binding ShouldFormatMarkdown}" />
                         </DockPanel>
 
                         <!--  Download assets  -->
-                        <DockPanel Margin="16,8" LastChildFill="False" ToolTip.Tip="Download assets referenced by the export (user avatars, attached files, embedded images, etc.)"
-                              >
+                        <DockPanel
+                            Margin="16,8"
+                            LastChildFill="False"
+                            ToolTip.Tip="Download assets referenced by the export (user avatars, attached files, embedded images, etc.)">
                             <TextBlock
-                                DockPanel.Dock="Left"
                                 VerticalAlignment="Center"
+                                DockPanel.Dock="Left"
                                 Text="Download assets" />
                             <ToggleButton
-                                DockPanel.Dock="Right"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
+                                DockPanel.Dock="Right"
                                 IsChecked="{Binding ShouldDownloadAssets}" />
                         </DockPanel>
 
                         <!--  Reuse assets  -->
-                        <DockPanel LastChildFill="False"
+                        <DockPanel
                             Margin="16,8"
                             IsEnabled="{Binding ShouldDownloadAssets}"
-                            ToolTip.Tip="Reuse previously downloaded assets to avoid redundant requests"
-                            >
+                            LastChildFill="False"
+                            ToolTip.Tip="Reuse previously downloaded assets to avoid redundant requests">
                             <TextBlock
-                                DockPanel.Dock="Left"
                                 VerticalAlignment="Center"
+                                DockPanel.Dock="Left"
                                 Text="Reuse assets" />
                             <ToggleButton
-                                DockPanel.Dock="Right"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
+                                DockPanel.Dock="Right"
                                 IsChecked="{Binding ShouldReuseAssets}" />
                         </DockPanel>
 
                         <!--  Assets path  -->
-                            <TextBox
-                                Margin="16,8"
-                                IsEnabled="{Binding ShouldDownloadAssets}"
-                                ToolTip.Tip="Download assets to this directory. If not specified, the asset directory path will be derived from the output path."
-                                Padding="16,16,42,16"
-                                materialDesign:HintAssist.Hint="Assets directory path"
-                                materialDesign:HintAssist.IsFloating="True"
-                                Text="{Binding AssetsDirPath}"
-                                Theme="{DynamicResource MaterialOutlinedTextBox}">
-                                <TextBox.InnerRightContent>
-                                    <Button
-                                        Width="24"
-                                        Height="24"
-                                        Margin="0,0,12,0"
-                                        Padding="0"
-                                        HorizontalAlignment="Right"
-                                        Command="{Binding ShowAssetsDirPathPromptCommand}"
-                                        Theme="{DynamicResource MaterialToolForegroundButton}">
-                                        <materialIcons:MaterialIcon Kind="FolderOpen" />
-                                    </Button> 
-                                </TextBox.InnerRightContent>
-                            </TextBox>
+                        <TextBox
+                            Margin="16,8"
+                            Padding="16,16,42,16"
+                            IsEnabled="{Binding ShouldDownloadAssets}"
+                            Text="{Binding AssetsDirPath}"
+                            Theme="{DynamicResource MaterialOutlinedTextBox}"
+                            ToolTip.Tip="Download assets to this directory. If not specified, the asset directory path will be derived from the output path."
+                            UseFloatingWatermark="True"
+                            Watermark="Assets directory path">
+                            <TextBox.InnerRightContent>
+                                <Button
+                                    Width="24"
+                                    Height="24"
+                                    Margin="0,0,12,0"
+                                    Padding="0"
+                                    HorizontalAlignment="Right"
+                                    Command="{Binding ShowAssetsDirPathPromptCommand}"
+                                    Theme="{DynamicResource MaterialToolForegroundButton}">
+                                    <materialIcons:MaterialIcon Kind="FolderOpen" />
+                                </Button>
+                            </TextBox.InnerRightContent>
+                        </TextBox>
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>
         </Border>
 
         <!--  Buttons  -->
-        <Grid Grid.Row="2" Margin="16" ColumnDefinitions="Auto,*,Auto,Auto">
+        <Grid
+            Grid.Row="2"
+            Margin="16"
+            ColumnDefinitions="Auto,*,Auto,Auto">
             <Button
                 Grid.Column="0"
-                Classes.displayed="{Binding IsAdvancedSectionDisplayed}" Theme="{DynamicResource MaterialOutlinedButton}"
-                Classes.not-displayed="{Binding !IsAdvancedSectionDisplayed}"
+                Classes.displayed="{Binding IsAdvancedSectionDisplayed}"
                 Command="{Binding ToggleAdvancedSectionCommand}"
+                Content="MORE"
+                Theme="{DynamicResource MaterialOutlinedButton}"
                 ToolTip.Tip="Toggle advanced options">
                 <Button.Styles>
                     <Style Selector="Button">
                         <Style Selector="^.displayed">
                             <Setter Property="Content" Value="LESS" />
-                        </Style>
-                        <Style Selector="^.not-displayed">
-                            <Setter Property="Content" Value="MORE" />
                         </Style>
                     </Style>
                 </Button.Styles>

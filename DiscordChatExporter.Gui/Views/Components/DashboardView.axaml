@@ -2,21 +2,19 @@
     x:Class="DiscordChatExporter.Gui.Views.Components.DashboardView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:behaviors="clr-namespace:DiscordChatExporter.Gui.Behaviors"
+    xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
     xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
     xmlns:components="clr-namespace:DiscordChatExporter.Gui.ViewModels.Components"
-    xmlns:controls="clr-namespace:DiscordChatExporter.Gui.Views.Controls"
     xmlns:converters="clr-namespace:DiscordChatExporter.Gui.Converters"
     xmlns:data="clr-namespace:DiscordChatExporter.Core.Discord.Data;assembly=DiscordChatExporter.Core"
-    xmlns:globalization="clr-namespace:System.Globalization;assembly=System.Runtime"
+    xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     xmlns:materialStyles="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
-    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     x:Name="UserControl"
     Loaded="UserControl_OnLoaded">
     <Design.DataContext>
         <components:DashboardViewModel />
     </Design.DataContext>
-    
+
     <UserControl.Resources>
         <!--  Collection view for DM channels  -->
         <CollectionViewSource x:Key="AvailableDirectChannelsViewSource" Source="{Binding AvailableChannels, Mode=OneWay}">
@@ -38,94 +36,87 @@
         </CollectionViewSource>
     </UserControl.Resources>
 
-    <Grid RowDefinitions="Auto,Auto,*,Auto">
-        <!--  Toolbar  -->
-        <Grid Grid.Row="0" Background="{DynamicResource MaterialDarkBackgroundBrush}" ColumnDefinitions="*,Auto">
-            <materialStyles:Card
-                Grid.Row="0"
-                Grid.Column="0"
-                Margin="12,12,0,12">
-                <Grid ColumnDefinitions="Auto,*,Auto">
-                    <!--  Token icon  -->
-                    <avalonia:MaterialIcon
-                        Grid.Column="0"
+    <DockPanel>
+        <!--  Header  -->
+        <StackPanel
+            Background="{DynamicResource MaterialDarkBackgroundBrush}"
+            DockPanel.Dock="Top"
+            Orientation="Vertical">
+            <Grid ColumnDefinitions="*,Auto">
+                <materialStyles:Card
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="12,12,0,12">
+                    <!--  Token  -->
+                    <TextBox
+                        x:Name="TokenValueTextBox"
+                        MinHeight="36"
+                        VerticalAlignment="Bottom"
+                        BorderThickness="0"
+                        FontFamily="Consolas, Monospace, Courier"
+                        FontSize="16"
+                        PasswordChar="*"
+                        RevealPassword="{Binding IsFocused, RelativeSource={RelativeSource Self}}"
+                        Text="{Binding Token}"
+                        Watermark="Token">
+                        <TextBox.InnerLeftContent>
+                            <materialIcons:MaterialIcon
+                                Grid.Column="0"
+                                Width="24"
+                                Height="24"
+                                Margin="4,0,8,0"
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                Kind="Key" />
+                        </TextBox.InnerLeftContent>
+                        <TextBox.InnerRightContent>
+                            <Button
+                                Grid.Column="2"
+                                Margin="0,0,4,0"
+                                Padding="4"
+                                Command="{Binding PullGuildsCommand}"
+                                IsDefault="True"
+                                Theme="{DynamicResource MaterialFlatButton}"
+                                ToolTip.Tip="Pull available guilds and channels (Enter)">
+                                <materialIcons:MaterialIcon
+                                    Width="24"
+                                    Height="24"
+                                    Kind="ArrowRight" />
+                            </Button>
+                        </TextBox.InnerRightContent>
+                    </TextBox>
+                </materialStyles:Card>
+
+                <!--  Settings button  -->
+                <Button
+                    Grid.Column="1"
+                    Margin="4,0"
+                    Padding="8"
+                    VerticalAlignment="Center"
+                    Command="{Binding ShowSettingsCommand}"
+                    Foreground="{DynamicResource MaterialDarkForegroundBrush}"
+                    Theme="{DynamicResource MaterialFlatButton}"
+                    ToolTip.Tip="Settings">
+                    <materialIcons:MaterialIcon
                         Width="24"
                         Height="24"
-                        Margin="8"
-                        VerticalAlignment="Center"
-                        Foreground="{DynamicResource PrimaryHueMidBrush}"
-                        Kind="Key" />
+                        Kind="Settings" />
+                </Button>
+            </Grid>
 
-                    <!--  Token  -->
-                    <controls:RevealablePasswordBox
-                        x:Name="TokenValueTextBox"
-                        Grid.Column="1"
-                        Margin="0,6,6,8"
-                        VerticalAlignment="Bottom"
-                        materialDesign:HintAssist.Hint="Token"
-                        BorderThickness="0"
-                        FontFamily="Consolas"
-                        FontSize="16"
-                        Password="{Binding Token, UpdateSourceTrigger=PropertyChanged}">
-                        <controls:RevealablePasswordBox.Style>
-                            <Style TargetType="{x:Type controls:RevealablePasswordBox}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=materialDesign:Card}}" Value="True">
-                                        <Setter Property="IsRevealed" Value="True" />
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding IsKeyboardFocusWithin, RelativeSource={RelativeSource AncestorType=materialDesign:Card}}" Value="True">
-                                        <Setter Property="IsRevealed" Value="True" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </controls:RevealablePasswordBox.Style>
-                    </controls:RevealablePasswordBox>
+            <!--  Progress  -->
+            <ProgressBar
+                Height="2"
+                Background="Transparent"
+                IsIndeterminate="{Binding IsProgressIndeterminate}"
+                Value="{Binding Progress.Current.Fraction, Mode=OneWay}" />
+        </StackPanel>
 
-                    <!--  Pull guilds button  -->
-                    <Button
-                        Grid.Column="2"
-                        Margin="0,6,6,6"
-                        Padding="4"
-                        Command="{Binding PullGuildsCommand}"
-                        IsDefault="True"
-                        Theme="{DynamicResource MaterialFlatButton}"
-                        ToolTip.Tip="Pull available guilds and channels (Enter)">
-                        <materialDesign:MaterialIcon
-                            Width="24"
-                            Height="24"
-                            Kind="ArrowRight" />
-                    </Button>
-                </Grid>
-            </materialStyles:Card>
-
-            <!--  Settings button  -->
-            <Button
-                Grid.Column="1"
-                Margin="6"
-                Padding="4"
-                Command="{Binding ShowSettingsCommand}"
-                Foreground="{DynamicResource MaterialDarkForegroundBrush}"
-                Theme="{DynamicResource MaterialFlatButton}"
-                ToolTip.Tip="Settings">
-                <Button.Resources>
-                    <SolidColorBrush x:Key="MaterialDesignFlatButtonClick" Color="#4C4C4C" />
-                </Button.Resources>
-                <materialDesign:MaterialIcon
-                    Width="24"
-                    Height="24"
-                    Kind="Settings" />
-            </Button>
-        </Grid>
-
-        <!--  Progress bar  -->
-        <ProgressBar
-            Grid.Row="1"
-            Background="{DynamicResource MaterialDarkBackgroundBrush}"
-            IsIndeterminate="{Binding IsProgressIndeterminate}"
-            Value="{Binding Progress.Current.Fraction, Mode=OneWay}" />
-
-        <!--  Content  -->
-        <Panel Grid.Row="2" IsEnabled="{Binding IsBusy, Converter={x:Static converters:InverseBoolConverter.Instance}}">
+        <!--  Body  -->
+        <Panel
+            Background="{DynamicResource MaterialCardBackgroundBrush}"
+            DockPanel.Dock="Bottom"
+            IsEnabled="{Binding !IsBusy}">
             <!--  Placeholder / usage instructions  -->
             <Panel IsVisible="{Binding !AvailableGuilds}">
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
@@ -136,7 +127,7 @@
                         LineHeight="20">
                         <!--  User token  -->
                         <InlineUIContainer>
-                            <materialDesign:MaterialIcon
+                            <materialIcons:MaterialIcon
                                 Margin="0,0,2,-2"
                                 Foreground="{DynamicResource PrimaryHueMidBrush}"
                                 Kind="Account" />
@@ -201,7 +192,7 @@
 
                         <!--  Bot token  -->
                         <InlineUIContainer>
-                            <materialDesign:MaterialIcon
+                            <materialIcons:MaterialIcon
                                 Margin="0,0,2,-2"
                                 Foreground="{DynamicResource PrimaryHueMidBrush}"
                                 Kind="Robot" />
@@ -245,7 +236,7 @@
             </Panel>
 
             <!--  Guilds and channels  -->
-            <Grid IsVisible="{Binding AvailableGuilds}" ColumnDefinitions="Auto,*">
+            <Grid ColumnDefinitions="Auto,*" IsVisible="{Binding AvailableGuilds}">
                 <!--  Guilds  -->
                 <Border
                     Grid.Column="0"
@@ -259,10 +250,10 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Panel
+                                    x:Name="GuildPanel"
                                     Margin="-8"
                                     Cursor="Hand"
-                                    PointerReleased=""
-                                    MouseLeftButtonUp="{s:Action PullChannels}"
+                                    PointerReleased="GuildPanel_OnPointerReleased"
                                     ToolTip.Tip="{Binding Name}">
                                     <!--  Guild icon placeholder  -->
                                     <Ellipse
@@ -279,7 +270,7 @@
                                         Stroke="{DynamicResource MaterialDividerBrush}"
                                         StrokeThickness="1">
                                         <Ellipse.Fill>
-                                            <ImageBrush ImageSource="{Binding IconUrl}" />
+                                            <ImageBrush asyncImageLoader:ImageLoader.Source="{Binding IconUrl}" />
                                         </Ellipse.Fill>
                                     </Ellipse>
                                 </Panel>
@@ -291,79 +282,38 @@
                 <!--  Channels  -->
                 <Border Grid.Column="1">
                     <ListBox
-                        HorizontalContentAlignment="Stretch"
-                        SelectionMode="Extended"
-                        TextSearch.TextPath="Name"
-                        VirtualizingPanel.IsVirtualizingWhenGrouping="True">
-                        <b:Interaction.Behaviors>
-                            <behaviors:ChannelMultiSelectionListBoxBehavior SelectedItems="{Binding SelectedChannels}" />
-                        </b:Interaction.Behaviors>
-                        <ListBox.Style>
-                            <Style BasedOn="{StaticResource {x:Type ListBox}}" TargetType="{x:Type ListBox}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding SelectedGuild.IsDirect}" Value="True">
-                                        <Setter Property="ItemsSource" Value="{Binding Source={StaticResource AvailableDirectChannelsViewSource}}" />
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding SelectedGuild.IsDirect}" Value="False">
-                                        <Setter Property="ItemsSource" Value="{Binding Source={StaticResource AvailableChannelsViewSource}}" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ListBox.Style>
-                        <ListBox.GroupStyle>
-                            <GroupStyle>
-                                <GroupStyle.ContainerStyle>
-                                    <Style TargetType="{x:Type GroupItem}">
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate d:DataContext="{x:Type CollectionViewGroup}">
-                                                    <Expander
-                                                        Margin="0"
-                                                        Padding="0"
-                                                        BorderBrush="{DynamicResource MaterialDividerBrush}"
-                                                        BorderThickness="0,0,0,1"
-                                                        Header="{Binding Name}"
-                                                        IsExpanded="False">
-                                                        <ItemsPresenter />
-                                                    </Expander>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </GroupStyle.ContainerStyle>
-                            </GroupStyle>
-                        </ListBox.GroupStyle>
+                        ItemsSource="{Binding AvailableChannels}"
+                        SelectionMode="Multiple, Toggle"
+                        TextSearch.Text="Name">
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="{x:Type data:Channel}">
-                                <Grid Margin="-8" ColumnDefinitions="Auto,*,Auto">
-                                    <Grid.InputBindings>
-                                        <MouseBinding Command="{s:Action Export}" MouseAction="LeftDoubleClick" />
-                                    </Grid.InputBindings>
-                                    <Grid.ToolTip>
+                                <Grid
+                                    x:Name="ChannelListBoxItemGrid"
+                                    Margin="-8"
+                                    ColumnDefinitions="Auto,*,Auto"
+                                    PointerPressed="ChannelListBoxItemGrid_OnPointerPressed">
+                                    <ToolTip.Tip>
                                         <TextBlock>
                                             <Run Text="Last message:" />
-                                            <Run FontWeight="SemiBold" Text="{Binding LastMessageId, Converter={x:Static converters:SnowflakeToDateTimeOffsetConverter.Instance}, ConverterCulture={x:Static globalization:CultureInfo.CurrentCulture}, TargetNullValue=never}" />
+                                            <Run FontWeight="SemiBold" Text="{Binding LastMessageId, Converter={x:Static converters:SnowflakeToDateTimeOffsetConverter.Instance}, TargetNullValue=never}" />
                                         </TextBlock>
-                                    </Grid.ToolTip>
+                                    </ToolTip.Tip>
 
                                     <!--  Channel icon  -->
-                                    <materialDesign:MaterialIcon
+                                    <materialIcons:MaterialIcon
                                         Grid.Column="0"
                                         Margin="16,7,0,6"
-                                        VerticalAlignment="Center">
-                                        <materialDesign:MaterialIcon.Style>
-                                            <Style TargetType="{x:Type materialDesign:MaterialIcon}">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsVoice}" Value="True">
-                                                        <Setter Property="Kind" Value="VolumeHigh" />
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding IsVoice}" Value="False">
-                                                        <Setter Property="Kind" Value="Pound" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
+                                        VerticalAlignment="Center"
+                                        Classes.voice="{Binding IsVoice}"
+                                        Kind="Pound">
+                                        <materialIcons:MaterialIcon.Styles>
+                                            <Style Selector="materialIcons|MaterialIcon">
+                                                <Style Selector="^.voice">
+                                                    <Setter Property="Kind" Value="VolumeHigh" />
+                                                </Style>
                                             </Style>
-                                        </materialDesign:MaterialIcon.Style>
-                                    </materialDesign:MaterialIcon>
+                                        </materialIcons:MaterialIcon.Styles>
+                                    </materialIcons:MaterialIcon>
 
                                     <!--  Channel name  -->
                                     <TextBlock
@@ -374,14 +324,14 @@
                                         Text="{Binding Name, Mode=OneWay}" />
 
                                     <!--  Is selected checkmark  -->
-                                    <materialDesign:MaterialIcon
+                                    <materialIcons:MaterialIcon
                                         Grid.Column="2"
                                         Width="24"
                                         Height="24"
                                         Margin="8,0"
                                         VerticalAlignment="Center"
-                                        Kind="Check"
-                                        Visibility="{Binding IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}, Converter={x:Static s:BoolToVisibilityConverter.Instance}, Mode=OneWay}" />
+                                        IsVisible="{Binding $parent[ListBoxItem].IsSelected, Mode=OneWay}"
+                                        Kind="Check" />
                                 </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -397,11 +347,11 @@
                 Command="{Binding ExportCommand}"
                 IsVisible="{Binding CanExport}"
                 Theme="{DynamicResource MaterialFloatingActionAccentButton}">
-                <materialDesign:MaterialIcon
+                <materialIcons:MaterialIcon
                     Width="32"
                     Height="32"
                     Kind="Download" />
             </Button>
         </Panel>
-    </Grid>
+    </DockPanel>
 </UserControl>

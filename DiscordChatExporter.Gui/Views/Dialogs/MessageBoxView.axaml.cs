@@ -1,9 +1,9 @@
-﻿namespace DiscordChatExporter.Gui.Views.Dialogs;
+﻿using DiscordChatExporter.Gui.Framework;
+using DiscordChatExporter.Gui.ViewModels.Dialogs;
 
-public partial class MessageBoxView
+namespace DiscordChatExporter.Gui.Views.Dialogs;
+
+public partial class MessageBoxView : UserControl<MessageBoxViewModel>
 {
-    public MessageBoxView()
-    {
-        InitializeComponent();
-    }
+    public MessageBoxView() => InitializeComponent();
 }

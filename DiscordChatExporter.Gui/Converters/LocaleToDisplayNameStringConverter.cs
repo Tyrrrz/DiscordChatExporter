@@ -4,9 +4,9 @@ using Avalonia.Data.Converters;
 
 namespace DiscordChatExporter.Gui.Converters;
 
-public class LocaleToDisplayNameConverter : IValueConverter
+public class LocaleToDisplayNameStringConverter : IValueConverter
 {
-    public static LocaleToDisplayNameConverter Instance { get; } = new();
+    public static LocaleToDisplayNameStringConverter Instance { get; } = new();
 
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
         value is string locale && !string.IsNullOrWhiteSpace(locale)

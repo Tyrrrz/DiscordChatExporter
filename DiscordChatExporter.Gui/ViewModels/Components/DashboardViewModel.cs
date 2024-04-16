@@ -34,28 +34,28 @@ public partial class DashboardViewModel : ViewModelBase
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsProgressIndeterminate))]
-    [NotifyCanExecuteChangedFor(nameof(PullGuildsAsync))]
-    [NotifyCanExecuteChangedFor(nameof(PullChannelsAsync))]
-    [NotifyCanExecuteChangedFor(nameof(ExportAsync))]
+    [NotifyCanExecuteChangedFor(nameof(PullGuildsCommand))]
+    [NotifyCanExecuteChangedFor(nameof(PullChannelsCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ExportCommand))]
     private bool _isBusy;
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(PullGuildsAsync))]
+    [NotifyCanExecuteChangedFor(nameof(PullGuildsCommand))]
     private string? _token;
 
     [ObservableProperty]
     private IReadOnlyList<Guild>? _availableGuilds;
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(PullChannelsAsync))]
-    [NotifyCanExecuteChangedFor(nameof(ExportAsync))]
+    [NotifyCanExecuteChangedFor(nameof(PullChannelsCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ExportCommand))]
     private Guild? _selectedGuild;
 
     [ObservableProperty]
     private IReadOnlyList<Channel>? _availableChannels;
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(ExportAsync))]
+    [NotifyCanExecuteChangedFor(nameof(ExportCommand))]
     private IReadOnlyList<Channel>? _selectedChannels;
 
     public DashboardViewModel(

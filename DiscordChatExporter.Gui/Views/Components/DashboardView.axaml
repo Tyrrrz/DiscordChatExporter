@@ -3,10 +3,10 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
-    xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
     xmlns:components="clr-namespace:DiscordChatExporter.Gui.ViewModels.Components"
     xmlns:converters="clr-namespace:DiscordChatExporter.Gui.Converters"
     xmlns:data="clr-namespace:DiscordChatExporter.Core.Discord.Data;assembly=DiscordChatExporter.Core"
+    xmlns:hyperText="clr-namespace:HyperText.Avalonia.Controls;assembly=HyperText.Avalonia"
     xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     xmlns:materialStyles="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
     x:Name="UserControl"
@@ -14,27 +14,6 @@
     <Design.DataContext>
         <components:DashboardViewModel />
     </Design.DataContext>
-
-    <UserControl.Resources>
-        <!--  Collection view for DM channels  -->
-        <CollectionViewSource x:Key="AvailableDirectChannelsViewSource" Source="{Binding AvailableChannels, Mode=OneWay}">
-            <CollectionViewSource.SortDescriptions>
-                <componentModel:SortDescription Direction="Descending" PropertyName="LastMessageId" />
-                <componentModel:SortDescription Direction="Ascending" PropertyName="Name" />
-            </CollectionViewSource.SortDescriptions>
-        </CollectionViewSource>
-        <!--  Collection view for guild channels  -->
-        <CollectionViewSource x:Key="AvailableChannelsViewSource" Source="{Binding AvailableChannels, Mode=OneWay}">
-            <CollectionViewSource.GroupDescriptions>
-                <PropertyGroupDescription Converter="{x:Static converters:ChannelToGroupKeyConverter.Instance}" />
-            </CollectionViewSource.GroupDescriptions>
-            <CollectionViewSource.SortDescriptions>
-                <componentModel:SortDescription Direction="Ascending" PropertyName="IsThread" />
-                <componentModel:SortDescription Direction="Ascending" PropertyName="Position" />
-                <componentModel:SortDescription Direction="Ascending" PropertyName="Name" />
-            </CollectionViewSource.SortDescriptions>
-        </CollectionViewSource>
-    </UserControl.Resources>
 
     <DockPanel>
         <!--  Header  -->
@@ -143,9 +122,9 @@
                         <LineBreak />
 
                         <Run Text="1. Open Discord in your" />
-                        <Hyperlink Command="{s:Action OpenDiscord}">
+                        <hyperText:Hyperlink Command="{Binding OpenDiscordCommand}">
                             <Run Text="web browser" />
-                        </Hyperlink>
+                        </hyperText:Hyperlink>
                         <Run Text="and login" />
                         <LineBreak />
 
@@ -204,9 +183,9 @@
                         <LineBreak />
 
                         <Run Text="1. Open Discord" />
-                        <Hyperlink Command="{s:Action OpenDiscordDeveloperPortal}">
+                        <hyperText:Hyperlink Command="{Binding OpenDiscordDeveloperPortalCommand}">
                             <Run Text="developer portal" />
-                        </Hyperlink>
+                        </hyperText:Hyperlink>
                         <LineBreak />
 
                         <Run Text="2. Open your application's settings" />
@@ -230,7 +209,7 @@
                         <LineBreak />
 
                         <Run Text="If you have questions or issues, please refer to the" />
-                        <Hyperlink Command="{s:Action ShowHelp}">documentation</Hyperlink>
+                        <hyperText:Hyperlink Command="{Binding ShowHelpCommand}">documentation</hyperText:Hyperlink>
                     </TextBlock>
                 </ScrollViewer>
             </Panel>
@@ -270,7 +249,7 @@
                                         Stroke="{DynamicResource MaterialDividerBrush}"
                                         StrokeThickness="1">
                                         <Ellipse.Fill>
-                                            <ImageBrush asyncImageLoader:ImageLoader.Source="{Binding IconUrl}" />
+                                            <ImageBrush asyncImageLoader:ImageBrushLoader.Source="{Binding IconUrl}" />
                                         </Ellipse.Fill>
                                     </Ellipse>
                                 </Panel>

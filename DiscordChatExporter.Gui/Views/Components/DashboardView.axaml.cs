@@ -14,15 +14,18 @@ public partial class DashboardView : UserControl<DashboardViewModel>
         DataContext.InitializeCommand.Execute(null);
         TokenValueTextBox.Focus();
     }
-    
+
     private void GuildPanel_OnPointerReleased(object? sender, PointerReleasedEventArgs args) =>
         DataContext.PullChannelsCommand.Execute(null);
 
-    private void ChannelListBoxItemGrid_OnPointerPressed(object? sender, PointerPressedEventArgs args)
+    private void ChannelListBoxItemGrid_OnPointerPressed(
+        object? sender,
+        PointerPressedEventArgs args
+    )
     {
         if (args.ClickCount == 2)
         {
-            if (DataContext.ExportCommand.CanExecute(null)) 
+            if (DataContext.ExportCommand.CanExecute(null))
                 DataContext.ExportCommand.Execute(null);
         }
     }

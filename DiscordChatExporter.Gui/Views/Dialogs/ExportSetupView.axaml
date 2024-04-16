@@ -25,7 +25,7 @@
                 Width="32"
                 Height="32">
                 <Ellipse.Fill>
-                    <ImageBrush asyncImageLoader:ImageLoader.Source="{Binding Guild.IconUrl}" />
+                    <ImageBrush asyncImageLoader:ImageBrushLoader.Source="{Binding Guild.IconUrl}" />
                 </Ellipse.Fill>
             </Ellipse>
 
@@ -50,15 +50,13 @@
                 FontSize="19"
                 FontWeight="Light"
                 IsVisible="{Binding IsSingleChannel}"
-                TextTrimming="CharacterEllipsis">
+                TextTrimming="CharacterEllipsis"
+                ToolTip.Tip="{Binding Channels[0], Converter={x:Static converters:ChannelToHierarchicalNameStringConverter.Instance}}">
                 <TextBlock IsVisible="{Binding Channels[0].Parent}">
-                    <Run Text="{Binding Channels[0].Parent.Name, Mode=OneWay}" ToolTip.Tip="{Binding Channels[0].Parent.Name, Mode=OneWay}" />
+                    <Run Text="{Binding Channels[0].Parent.Name, Mode=OneWay}" />
                     <Run Text="/" />
                 </TextBlock>
-                <Run
-                    FontWeight="SemiBold"
-                    Text="{Binding Channels[0].Name, Mode=OneWay}"
-                    ToolTip.Tip="{Binding Channels[0].Name, Mode=OneWay}" />
+                <Run FontWeight="SemiBold" Text="{Binding Channels[0].Name, Mode=OneWay}" />
             </TextBlock>
         </Grid>
 

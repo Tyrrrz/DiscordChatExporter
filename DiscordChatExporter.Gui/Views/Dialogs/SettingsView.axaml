@@ -31,14 +31,8 @@
                                                Windows=True}"
                         LastChildFill="False"
                         ToolTip.Tip="Perform automatic updates on every launch">
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            DockPanel.Dock="Left"
-                            Text="Auto-update" />
-                        <ToggleButton
-                            VerticalAlignment="Center"
-                            DockPanel.Dock="Right"
-                            IsChecked="{Binding IsAutoUpdateEnabled}" />
+                        <TextBlock DockPanel.Dock="Left" Text="Auto-update" />
+                        <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding IsAutoUpdateEnabled}" />
                     </DockPanel>
 
                     <!--  Dark mode  -->
@@ -46,13 +40,9 @@
                         Margin="16,8"
                         LastChildFill="False"
                         ToolTip.Tip="Use darker colors in the UI">
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            DockPanel.Dock="Left"
-                            Text="Dark mode" />
-                        <ToggleButton
+                        <TextBlock DockPanel.Dock="Left" Text="Dark mode" />
+                        <ToggleSwitch
                             x:Name="DarkModeToggleSwitch"
-                            VerticalAlignment="Center"
                             DockPanel.Dock="Right"
                             IsChecked="{Binding IsDarkModeEnabled}"
                             IsCheckedChanged="DarkModeToggleSwitch_OnIsCheckedChanged" />
@@ -63,14 +53,8 @@
                         Margin="16,8"
                         LastChildFill="False"
                         ToolTip.Tip="Save the last used token to a file so that it can be persisted between sessions">
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            DockPanel.Dock="Left"
-                            Text="Persist token" />
-                        <ToggleButton
-                            VerticalAlignment="Center"
-                            DockPanel.Dock="Right"
-                            IsChecked="{Binding IsTokenPersisted}" />
+                        <TextBlock DockPanel.Dock="Left" Text="Persist token" />
+                        <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding IsTokenPersisted}" />
                     </DockPanel>
 
                     <!--  Thread inclusion mode  -->
@@ -115,7 +99,7 @@
                         LastChildFill="False"
                         ToolTip.Tip="Normalize all timestamps to UTC+0">
                         <TextBlock DockPanel.Dock="Left" Text="Normalize to UTC" />
-                        <ToggleButton DockPanel.Dock="Right" IsChecked="{Binding IsUtcNormalizationEnabled}" />
+                        <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding IsUtcNormalizationEnabled}" />
                     </DockPanel>
 
                     <!--  Parallel limit  -->

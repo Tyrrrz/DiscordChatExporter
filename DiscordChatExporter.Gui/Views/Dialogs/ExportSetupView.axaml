@@ -242,7 +242,7 @@
                                 VerticalAlignment="Center"
                                 DockPanel.Dock="Left"
                                 Text="Format markdown" />
-                            <ToggleButton
+                            <ToggleSwitch
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
                                 DockPanel.Dock="Right"
@@ -258,7 +258,7 @@
                                 VerticalAlignment="Center"
                                 DockPanel.Dock="Left"
                                 Text="Download assets" />
-                            <ToggleButton
+                            <ToggleSwitch
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
                                 DockPanel.Dock="Right"
@@ -275,7 +275,7 @@
                                 VerticalAlignment="Center"
                                 DockPanel.Dock="Left"
                                 Text="Reuse assets" />
-                            <ToggleButton
+                            <ToggleSwitch
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
                                 DockPanel.Dock="Right"

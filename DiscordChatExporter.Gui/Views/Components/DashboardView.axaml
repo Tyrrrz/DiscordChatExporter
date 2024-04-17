@@ -21,22 +21,17 @@
             Background="{DynamicResource MaterialDarkBackgroundBrush}"
             DockPanel.Dock="Top"
             Orientation="Vertical">
-            <Grid ColumnDefinitions="*,Auto">
-                <materialStyles:Card
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    Margin="12,12,0,12">
+            <Grid Margin="12,12,8,12" ColumnDefinitions="*,Auto">
+                <materialStyles:Card Grid.Column="0">
                     <!--  Token  -->
                     <TextBox
                         x:Name="TokenValueTextBox"
                         MinHeight="36"
-                        VerticalAlignment="Bottom"
-                        BorderThickness="0"
-                        FontFamily="Consolas, Monospace, Courier"
                         FontSize="16"
                         PasswordChar="*"
                         RevealPassword="{Binding IsFocused, RelativeSource={RelativeSource Self}}"
                         Text="{Binding Token}"
+                        Theme="{DynamicResource SoloTextBox}"
                         Watermark="Token">
                         <TextBox.InnerLeftContent>
                             <materialIcons:MaterialIcon
@@ -51,12 +46,12 @@
                         <TextBox.InnerRightContent>
                             <Button
                                 Grid.Column="2"
-                                Margin="0,0,4,0"
+                                Margin="8,0,0,0"
                                 Padding="4"
                                 Command="{Binding PullGuildsCommand}"
                                 IsDefault="True"
                                 Theme="{DynamicResource MaterialFlatButton}"
-                                ToolTip.Tip="Pull available guilds and channels (Enter)">
+                                ToolTip.Tip="Pull available servers and channels (Enter)">
                                 <materialIcons:MaterialIcon
                                     Width="24"
                                     Height="24"
@@ -69,7 +64,7 @@
                 <!--  Settings button  -->
                 <Button
                     Grid.Column="1"
-                    Margin="4,0"
+                    Margin="8,0,0,0"
                     Padding="8"
                     VerticalAlignment="Center"
                     Command="{Binding ShowSettingsCommand}"
@@ -97,7 +92,7 @@
             DockPanel.Dock="Bottom"
             IsEnabled="{Binding !IsBusy}">
             <!--  Placeholder / usage instructions  -->
-            <Panel IsVisible="{Binding !AvailableGuilds}">
+            <Panel IsVisible="{Binding !AreGuildsAvailable}">
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                     <TextBlock
                         Margin="32,16"
@@ -215,7 +210,7 @@
             </Panel>
 
             <!--  Guilds and channels  -->
-            <Grid ColumnDefinitions="Auto,*" IsVisible="{Binding AvailableGuilds}">
+            <Grid ColumnDefinitions="Auto,*" IsVisible="{Binding AreGuildsAvailable}">
                 <!--  Guilds  -->
                 <Border
                     Grid.Column="0"
@@ -226,28 +221,28 @@
                         ScrollViewer.VerticalScrollBarVisibility="Hidden"
                         SelectedItem="{Binding SelectedGuild}"
                         SelectionMode="Single">
+                        <ListBox.Styles>
+                            <Style Selector="ListBox">
+                                <Style Selector="^ ListBoxItem">
+                                    <Setter Property="Cursor" Value="Hand" />
+                                </Style>
+                            </Style>
+                        </ListBox.Styles>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Panel
                                     x:Name="GuildPanel"
-                                    Margin="-8"
-                                    Cursor="Hand"
+                                    Margin="8"
                                     PointerReleased="GuildPanel_OnPointerReleased"
                                     ToolTip.Tip="{Binding Name}">
                                     <!--  Guild icon placeholder  -->
                                     <Ellipse
                                         Width="48"
                                         Height="48"
-                                        Margin="12,4,12,4"
                                         Fill="{DynamicResource MaterialDividerBrush}" />
 
                                     <!--  Guild icon  -->
-                                    <Ellipse
-                                        Width="48"
-                                        Height="48"
-                                        Margin="12,4,12,4"
-                                        Stroke="{DynamicResource MaterialDividerBrush}"
-                                        StrokeThickness="1">
+                                    <Ellipse Width="48" Height="48">
                                         <Ellipse.Fill>
                                             <ImageBrush asyncImageLoader:ImageBrushLoader.Source="{Binding IconUrl}" />
                                         </Ellipse.Fill>
@@ -262,7 +257,7 @@
                 <Border Grid.Column="1">
                     <ListBox
                         ItemsSource="{Binding AvailableChannels}"
-                        SelectionMode="Multiple, Toggle"
+                        SelectionMode="Multiple"
                         TextSearch.Text="Name">
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="{x:Type data:Channel}">
@@ -274,7 +269,7 @@
                                     <ToolTip.Tip>
                                         <TextBlock>
                                             <Run Text="Last message:" />
-                                            <Run FontWeight="SemiBold" Text="{Binding LastMessageId, Converter={x:Static converters:SnowflakeToDateTimeOffsetConverter.Instance}, TargetNullValue=never}" />
+                                            <Run FontWeight="SemiBold" Text="{Binding LastMessageId, Converter={x:Static converters:SnowflakeToDateTimeStringConverter.Instance}, TargetNullValue=never, Mode=OneWay}" />
                                         </TextBlock>
                                     </ToolTip.Tip>
 
@@ -323,9 +318,7 @@
                 Margin="32,24"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
-                Command="{Binding ExportCommand}"
-                IsVisible="{Binding CanExport}"
-                Theme="{DynamicResource MaterialFloatingActionAccentButton}">
+                Command="{Binding ExportCommand}">
                 <materialIcons:MaterialIcon
                     Width="32"
                     Height="32"

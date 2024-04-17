@@ -5,16 +5,16 @@ using DiscordChatExporter.Core.Discord;
 
 namespace DiscordChatExporter.Gui.Converters;
 
-public class SnowflakeToDateTimeOffsetConverter : IValueConverter
+public class SnowflakeToDateTimeStringConverter : IValueConverter
 {
-    public static SnowflakeToDateTimeOffsetConverter Instance { get; } = new();
+    public static SnowflakeToDateTimeStringConverter Instance { get; } = new();
 
     public object? Convert(
         object? value,
         Type targetType,
         object? parameter,
         CultureInfo culture
-    ) => value is Snowflake snowflake ? snowflake.ToDate() : null;
+    ) => value is Snowflake snowflake ? snowflake.ToDate().ToString("g", culture) : null;
 
     public object ConvertBack(
         object? value,

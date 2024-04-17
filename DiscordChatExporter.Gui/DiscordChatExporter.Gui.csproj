@@ -4,11 +4,11 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>$(TargetFramework)-windows</TargetFramework>
     <AssemblyName>DiscordChatExporter</AssemblyName>
-    <ApplicationIcon>../favicon.ico</ApplicationIcon>
+    <ApplicationIcon>..\favicon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <Resource Include="../favicon.ico" />
+    <AvaloniaResource Include="..\favicon.ico" Link="favicon.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,10 +34,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DiscordChatExporter.Core\DiscordChatExporter.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Views\Controls\RevealablePasswordBox.axaml" />
   </ItemGroup>
 
 </Project>

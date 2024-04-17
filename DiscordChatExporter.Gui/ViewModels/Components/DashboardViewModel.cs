@@ -44,6 +44,7 @@ public partial class DashboardViewModel : ViewModelBase
     private string? _token;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(AreGuildsAvailable))]
     private IReadOnlyList<Guild>? _availableGuilds;
 
     [ObservableProperty]
@@ -83,6 +84,8 @@ public partial class DashboardViewModel : ViewModelBase
     public ProgressContainer<Percentage> Progress { get; } = new();
 
     public bool IsProgressIndeterminate => IsBusy && Progress.Current.Fraction is <= 0 or >= 1;
+
+    public bool AreGuildsAvailable => AvailableGuilds is not null && AvailableGuilds.Any();
 
     [RelayCommand]
     private void Initialize()
@@ -211,7 +214,7 @@ public partial class DashboardViewModel : ViewModelBase
         }
     }
 
-    private bool CanExport =>
+    private bool CanExport() =>
         !IsBusy
         && _discord is not null
         && SelectedGuild is not null

@@ -4,9 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
     xmlns:components="clr-namespace:DiscordChatExporter.Gui.ViewModels.Components"
+    xmlns:controls="clr-namespace:DiscordChatExporter.Gui.Views.Controls"
     xmlns:converters="clr-namespace:DiscordChatExporter.Gui.Converters"
     xmlns:data="clr-namespace:DiscordChatExporter.Core.Discord.Data;assembly=DiscordChatExporter.Core"
-    xmlns:hyperText="clr-namespace:HyperText.Avalonia.Controls;assembly=HyperText.Avalonia"
     xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     xmlns:materialStyles="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
     x:Name="UserControl"
@@ -98,14 +98,17 @@
                         Margin="32,16"
                         FontSize="14"
                         FontWeight="Light"
-                        LineHeight="20">
+                        LineHeight="23">
                         <!--  User token  -->
                         <InlineUIContainer>
                             <materialIcons:MaterialIcon
-                                Margin="0,0,2,-2"
+                                Width="18"
+                                Height="18"
+                                Margin="0,-2,0,0"
                                 Foreground="{DynamicResource PrimaryHueMidBrush}"
                                 Kind="Account" />
                         </InlineUIContainer>
+                        <Run Text="" />
                         <Run
                             FontSize="16"
                             FontWeight="SemiBold"
@@ -117,9 +120,7 @@
                         <LineBreak />
 
                         <Run Text="1. Open Discord in your" />
-                        <hyperText:Hyperlink Command="{Binding OpenDiscordCommand}">
-                            <Run Text="web browser" />
-                        </hyperText:Hyperlink>
+                        <controls:HyperLink Command="{Binding OpenDiscordCommand}" Text="web browser" />
                         <Run Text="and login" />
                         <LineBreak />
 
@@ -167,10 +168,13 @@
                         <!--  Bot token  -->
                         <InlineUIContainer>
                             <materialIcons:MaterialIcon
-                                Margin="0,0,2,-2"
+                                Width="18"
+                                Height="18"
+                                Margin="0,-2,0,0"
                                 Foreground="{DynamicResource PrimaryHueMidBrush}"
                                 Kind="Robot" />
                         </InlineUIContainer>
+                        <Run Text="" />
                         <Run
                             FontSize="16"
                             FontWeight="SemiBold"
@@ -178,9 +182,7 @@
                         <LineBreak />
 
                         <Run Text="1. Open Discord" />
-                        <hyperText:Hyperlink Command="{Binding OpenDiscordDeveloperPortalCommand}">
-                            <Run Text="developer portal" />
-                        </hyperText:Hyperlink>
+                        <controls:HyperLink Command="{Binding OpenDiscordDeveloperPortalCommand}" Text="developer portal" />
                         <LineBreak />
 
                         <Run Text="2. Open your application's settings" />
@@ -204,7 +206,7 @@
                         <LineBreak />
 
                         <Run Text="If you have questions or issues, please refer to the" />
-                        <hyperText:Hyperlink Command="{Binding ShowHelpCommand}">documentation</hyperText:Hyperlink>
+                        <controls:HyperLink Command="{Binding ShowHelpCommand}" Text="documentation" />
                     </TextBlock>
                 </ScrollViewer>
             </Panel>

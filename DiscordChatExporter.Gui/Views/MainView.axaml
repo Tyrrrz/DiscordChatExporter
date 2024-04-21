@@ -7,7 +7,9 @@
     xmlns:viewModels="clr-namespace:DiscordChatExporter.Gui.ViewModels"
     Title="{Binding Title}"
     Width="625"
-    Height="575"
+    Height="625"
+    MinWidth="600"
+    MinHeight="400"
     Icon="/favicon.ico"
     WindowStartupLocation="CenterScreen">
     <Design.DataContext>

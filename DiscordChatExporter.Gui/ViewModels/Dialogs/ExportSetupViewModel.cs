@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
@@ -15,78 +16,96 @@ using DiscordChatExporter.Gui.Services;
 
 namespace DiscordChatExporter.Gui.ViewModels.Dialogs;
 
-public partial class ExportSetupViewModel : DialogViewModelBase
+public partial class ExportSetupViewModel(
+    DialogManager dialogManager,
+    SettingsService settingsService
+) : DialogViewModelBase
 {
-    private readonly DialogManager _dialogManager;
-    private readonly SettingsService _settingsService;
+    [ObservableProperty]
+    private Guild? _guild;
 
-    public Guild? Guild { get; set; }
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsSingleChannel))]
+    private IReadOnlyList<Channel>? _channels;
 
-    public IReadOnlyList<Channel>? Channels { get; set; }
+    [ObservableProperty]
+    private string? _outputPath;
+
+    [ObservableProperty]
+    private ExportFormat _selectedFormat;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsAfterDateSet))]
+    [NotifyPropertyChangedFor(nameof(After))]
+    private DateTimeOffset? _afterDate;
+
+    [ObservableProperty]
+    private TimeSpan? _afterTime;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsBeforeDateSet))]
+    [NotifyPropertyChangedFor(nameof(Before))]
+    private DateTimeOffset? _beforeDate;
+
+    [ObservableProperty]
+    private TimeSpan? _beforeTime;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(PartitionLimit))]
+    private string? _partitionLimitValue;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(MessageFilter))]
+    private string? _messageFilterValue;
+
+    [ObservableProperty]
+    private bool _shouldFormatMarkdown;
+
+    [ObservableProperty]
+    private bool _shouldDownloadAssets;
+
+    [ObservableProperty]
+    private bool _shouldReuseAssets;
+
+    [ObservableProperty]
+    private string? _assetsDirPath;
+
+    [ObservableProperty]
+    private bool _isAdvancedSectionDisplayed;
 
     public bool IsSingleChannel => Channels?.Count == 1;
 
-    public string? OutputPath { get; set; }
-
     public IReadOnlyList<ExportFormat> AvailableFormats { get; } = Enum.GetValues<ExportFormat>();
-
-    public ExportFormat SelectedFormat { get; set; }
-
-    // This date/time abomination is required because we use separate controls to set these
-
-    public DateTimeOffset? AfterDate { get; set; }
 
     public bool IsAfterDateSet => AfterDate is not null;
 
-    public TimeSpan? AfterTime { get; set; }
-
     public DateTimeOffset? After => AfterDate?.Add(AfterTime ?? TimeSpan.Zero);
-
-    public DateTimeOffset? BeforeDate { get; set; }
 
     public bool IsBeforeDateSet => BeforeDate is not null;
 
-    public TimeSpan? BeforeTime { get; set; }
-
     public DateTimeOffset? Before => BeforeDate?.Add(BeforeTime ?? TimeSpan.Zero);
-
-    public string? PartitionLimitValue { get; set; }
 
     public PartitionLimit PartitionLimit =>
         !string.IsNullOrWhiteSpace(PartitionLimitValue)
             ? PartitionLimit.Parse(PartitionLimitValue)
             : PartitionLimit.Null;
 
-    public string? MessageFilterValue { get; set; }
-
     public MessageFilter MessageFilter =>
         !string.IsNullOrWhiteSpace(MessageFilterValue)
             ? MessageFilter.Parse(MessageFilterValue)
             : MessageFilter.Null;
 
-    public bool ShouldFormatMarkdown { get; set; }
-
-    public bool ShouldDownloadAssets { get; set; }
-
-    public bool ShouldReuseAssets { get; set; }
-
-    public string? AssetsDirPath { get; set; }
-
-    public bool IsAdvancedSectionDisplayed { get; set; }
-
-    public ExportSetupViewModel(DialogManager dialogManager, SettingsService settingsService)
+    [RelayCommand]
+    private void Initialize()
     {
-        _dialogManager = dialogManager;
-        _settingsService = settingsService;
-
         // Persist preferences
-        SelectedFormat = _settingsService.LastExportFormat;
-        PartitionLimitValue = _settingsService.LastPartitionLimitValue;
-        MessageFilterValue = _settingsService.LastMessageFilterValue;
-        ShouldFormatMarkdown = _settingsService.LastShouldFormatMarkdown;
-        ShouldDownloadAssets = _settingsService.LastShouldDownloadAssets;
-        ShouldReuseAssets = _settingsService.LastShouldReuseAssets;
-        AssetsDirPath = _settingsService.LastAssetsDirPath;
+        SelectedFormat = settingsService.LastExportFormat;
+        PartitionLimitValue = settingsService.LastPartitionLimitValue;
+        MessageFilterValue = settingsService.LastMessageFilterValue;
+        ShouldFormatMarkdown = settingsService.LastShouldFormatMarkdown;
+        ShouldDownloadAssets = settingsService.LastShouldDownloadAssets;
+        ShouldReuseAssets = settingsService.LastShouldReuseAssets;
+        AssetsDirPath = settingsService.LastAssetsDirPath;
 
         // Show the "advanced options" section by default if any
         // of the advanced options are set to non-default values.
@@ -99,10 +118,6 @@ public partial class ExportSetupViewModel : DialogViewModelBase
             || ShouldReuseAssets
             || !string.IsNullOrWhiteSpace(AssetsDirPath);
     }
-
-    [RelayCommand]
-    private void ToggleAdvancedSection() =>
-        IsAdvancedSectionDisplayed = !IsAdvancedSectionDisplayed;
 
     [RelayCommand]
     private async Task ShowOutputPathPromptAsync()
@@ -119,7 +134,7 @@ public partial class ExportSetupViewModel : DialogViewModelBase
 
             var extension = SelectedFormat.GetFileExtension();
 
-            var path = await _dialogManager.PromptSaveFilePathAsync(
+            var path = await dialogManager.PromptSaveFilePathAsync(
                 [
                     new FilePickerFileType($"{extension.ToUpperInvariant()} file")
                     {
@@ -133,7 +148,7 @@ public partial class ExportSetupViewModel : DialogViewModelBase
         }
         else
         {
-            var path = await _dialogManager.PromptDirectoryPathAsync();
+            var path = await dialogManager.PromptDirectoryPathAsync();
             if (!string.IsNullOrWhiteSpace(path))
                 OutputPath = path;
         }
@@ -142,7 +157,7 @@ public partial class ExportSetupViewModel : DialogViewModelBase
     [RelayCommand]
     private async Task ShowAssetsDirPathPromptAsync()
     {
-        var path = await _dialogManager.PromptDirectoryPathAsync();
+        var path = await dialogManager.PromptDirectoryPathAsync();
         if (!string.IsNullOrWhiteSpace(path))
             AssetsDirPath = path;
     }
@@ -161,13 +176,13 @@ public partial class ExportSetupViewModel : DialogViewModelBase
         }
 
         // Persist preferences
-        _settingsService.LastExportFormat = SelectedFormat;
-        _settingsService.LastPartitionLimitValue = PartitionLimitValue;
-        _settingsService.LastMessageFilterValue = MessageFilterValue;
-        _settingsService.LastShouldFormatMarkdown = ShouldFormatMarkdown;
-        _settingsService.LastShouldDownloadAssets = ShouldDownloadAssets;
-        _settingsService.LastShouldReuseAssets = ShouldReuseAssets;
-        _settingsService.LastAssetsDirPath = AssetsDirPath;
+        settingsService.LastExportFormat = SelectedFormat;
+        settingsService.LastPartitionLimitValue = PartitionLimitValue;
+        settingsService.LastMessageFilterValue = MessageFilterValue;
+        settingsService.LastShouldFormatMarkdown = ShouldFormatMarkdown;
+        settingsService.LastShouldDownloadAssets = ShouldDownloadAssets;
+        settingsService.LastShouldReuseAssets = ShouldReuseAssets;
+        settingsService.LastAssetsDirPath = AssetsDirPath;
 
         Close(true);
     }

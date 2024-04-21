@@ -8,7 +8,9 @@
     xmlns:materialAssists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
     xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     xmlns:utils="clr-namespace:DiscordChatExporter.Gui.Utils"
-    Width="380">
+    x:Name="UserControl"
+    Width="380"
+    Loaded="UserControl_OnLoaded">
     <Design.DataContext>
         <dialogs:ExportSetupViewModel />
     </Design.DataContext>
@@ -77,9 +79,10 @@
                             <ToolTip.Tip>
                                 <TextBlock>
                                     <Run Text="Output file or directory path." />
+                                    <LineBreak />
                                     <Run Text="If a directory is specified, file names will be generated automatically based on the channel names and export parameters." />
+                                    <LineBreak />
                                     <Run Text="Directory paths must end with a slash to avoid ambiguity." />
-                                    <Run Text="Supports template tokens, see the documentation for more info." />
                                     <LineBreak />
                                     <LineBreak />
                                     <Run Text="Available template tokens:" />
@@ -129,17 +132,19 @@
                                     <Run Text="— current date" />
                                 </TextBlock>
                             </ToolTip.Tip>
+                            <TextBox.InnerRightContent>
+                                <Button
+                                    Margin="8,0,0,0"
+                                    Padding="4"
+                                    Command="{Binding ShowOutputPathPromptCommand}"
+                                    Theme="{DynamicResource MaterialFlatButton}">
+                                    <materialIcons:MaterialIcon
+                                        Width="16"
+                                        Height="16"
+                                        Kind="FolderOpen" />
+                                </Button>
+                            </TextBox.InnerRightContent>
                         </TextBox>
-                        <Button
-                            Width="24"
-                            Height="24"
-                            Margin="0,0,12,0"
-                            Padding="0"
-                            HorizontalAlignment="Right"
-                            Command="{Binding ShowOutputPathPromptCommand}"
-                            Theme="{DynamicResource MaterialToolForegroundButton}">
-                            <materialIcons:MaterialIcon Kind="FolderOpen" />
-                        </Button>
                     </Grid>
 
                     <!--  Format  -->
@@ -294,14 +299,14 @@
                             Watermark="Assets directory path">
                             <TextBox.InnerRightContent>
                                 <Button
-                                    Width="24"
-                                    Height="24"
-                                    Margin="0,0,12,0"
+                                    Margin="8,0,0,0"
                                     Padding="0"
-                                    HorizontalAlignment="Right"
                                     Command="{Binding ShowAssetsDirPathPromptCommand}"
-                                    Theme="{DynamicResource MaterialToolForegroundButton}">
-                                    <materialIcons:MaterialIcon Kind="FolderOpen" />
+                                    Theme="{DynamicResource MaterialFlatButton}">
+                                    <materialIcons:MaterialIcon
+                                        Width="16"
+                                        Height="16"
+                                        Kind="FolderOpen" />
                                 </Button>
                             </TextBox.InnerRightContent>
                         </TextBox>
@@ -315,35 +320,35 @@
             Grid.Row="2"
             Margin="16"
             ColumnDefinitions="Auto,*,Auto,Auto">
-            <Button
+            <ToggleButton
                 Grid.Column="0"
-                Classes.displayed="{Binding IsAdvancedSectionDisplayed}"
-                Command="{Binding ToggleAdvancedSectionCommand}"
-                Content="MORE"
-                Theme="{DynamicResource MaterialOutlinedButton}"
+                IsChecked="{Binding IsAdvancedSectionDisplayed}"
+                Theme="{DynamicResource MaterialOutlineButton}"
                 ToolTip.Tip="Toggle advanced options">
                 <Button.Styles>
-                    <Style Selector="Button">
-                        <Style Selector="^.displayed">
+                    <Style Selector="ToggleButton">
+                        <Setter Property="Content" Value="MORE" />
+
+                        <Style Selector="^:checked">
                             <Setter Property="Content" Value="LESS" />
                         </Style>
                     </Style>
                 </Button.Styles>
-            </Button>
+            </ToggleButton>
 
             <Button
                 Grid.Column="2"
                 Command="{Binding ConfirmCommand}"
                 Content="EXPORT"
                 IsDefault="True"
-                Theme="{DynamicResource MaterialOutlinedButton}" />
+                Theme="{DynamicResource MaterialOutlineButton}" />
             <Button
                 Grid.Column="3"
-                Margin="8,0,0,0"
+                Margin="16,0,0,0"
                 Command="{Binding CloseCommand}"
                 Content="CANCEL"
                 IsCancel="True"
-                Theme="{DynamicResource MaterialOutlinedButton}" />
+                Theme="{DynamicResource MaterialOutlineButton}" />
         </Grid>
     </Grid>
 </UserControl>

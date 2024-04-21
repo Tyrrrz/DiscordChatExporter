@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -55,10 +56,6 @@ public partial class DashboardViewModel : ViewModelBase
     [ObservableProperty]
     private IReadOnlyList<Channel>? _availableChannels;
 
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(ExportCommand))]
-    private IReadOnlyList<Channel>? _selectedChannels;
-
     public DashboardViewModel(
         ViewModelManager viewModelManager,
         DialogManager dialogManager,
@@ -79,6 +76,13 @@ public partial class DashboardViewModel : ViewModelBase
                 () => OnPropertyChanged(nameof(IsProgressIndeterminate))
             )
         );
+
+        _eventRoot.Add(
+            SelectedChannels.WatchProperty(
+                o => o.Count,
+                () => ExportCommand.NotifyCanExecuteChanged()
+            )
+        );
     }
 
     public ProgressContainer<Percentage> Progress { get; } = new();
@@ -86,6 +90,8 @@ public partial class DashboardViewModel : ViewModelBase
     public bool IsProgressIndeterminate => IsBusy && Progress.Current.Fraction is <= 0 or >= 1;
 
     public bool AreGuildsAvailable => AvailableGuilds is not null && AvailableGuilds.Any();
+
+    public ObservableCollection<Channel> SelectedChannels { get; } = [];
 
     [RelayCommand]
     private void Initialize()
@@ -118,7 +124,7 @@ public partial class DashboardViewModel : ViewModelBase
             AvailableGuilds = null;
             SelectedGuild = null;
             AvailableChannels = null;
-            SelectedChannels = null;
+            SelectedChannels.Clear();
 
             _discord = new DiscordClient(token);
             _settingsService.LastToken = token;
@@ -164,7 +170,7 @@ public partial class DashboardViewModel : ViewModelBase
                 return;
 
             AvailableChannels = null;
-            SelectedChannels = null;
+            SelectedChannels.Clear();
 
             var channels = new List<Channel>();
 
@@ -192,7 +198,7 @@ public partial class DashboardViewModel : ViewModelBase
             }
 
             AvailableChannels = channels;
-            SelectedChannels = null;
+            SelectedChannels.Clear();
         }
         catch (DiscordChatExporterException ex) when (!ex.IsFatal)
         {

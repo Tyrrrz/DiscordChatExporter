@@ -74,7 +74,7 @@
                         Margin="16,8"
                         materialAssists:TextFieldAssist.Label="Output path"
                         Text="{Binding OutputPath}"
-                        Theme="{DynamicResource OutlineTextBox}">
+                        Theme="{DynamicResource FilledTextBox}">
                         <ToolTip.Tip>
                             <TextBlock>
                                 <Run Text="Output file or directory path." />
@@ -133,13 +133,14 @@
                         </ToolTip.Tip>
                         <TextBox.InnerRightContent>
                             <Button
-                                Margin="8,0,0,0"
-                                Padding="4"
+                                Margin="8,8,8,6"
+                                Padding="8"
+                                VerticalAlignment="Center"
                                 Command="{Binding ShowOutputPathPromptCommand}"
                                 Theme="{DynamicResource MaterialFlatButton}">
                                 <materialIcons:MaterialIcon
-                                    Width="16"
-                                    Height="16"
+                                    Width="20"
+                                    Height="20"
                                     Kind="FolderOpen" />
                             </Button>
                         </TextBox.InnerRightContent>
@@ -151,7 +152,7 @@
                         materialAssists:ComboBoxAssist.Label="Format"
                         ItemsSource="{Binding AvailableFormats}"
                         SelectedItem="{Binding SelectedFormat}"
-                        Theme="{DynamicResource MaterialOutlineComboBox}"
+                        Theme="{DynamicResource MaterialFilledComboBox}"
                         ToolTip.Tip="Export format">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
@@ -167,33 +168,46 @@
                             <DatePicker
                                 Grid.Row="0"
                                 Grid.Column="0"
-                                Margin="16,8,16,4"
+                                Margin="16,8,8,8"
                                 materialAssists:TextFieldAssist.Label="After (date)"
                                 SelectedDate="{Binding AfterDate}"
-                                Theme="{DynamicResource OutlineDatePicker}"
-                                ToolTip.Tip="Only include messages sent after this date" />
+                                ToolTip.Tip="Only include messages sent after this date">
+                                <DatePicker.Styles>
+                                    <Style Selector="DatePicker">
+                                        <Style Selector="^ /template/ TextBox#DisplayTextBox">
+                                            <Setter Property="Theme" Value="{DynamicResource FilledTextBox}" />
+                                        </Style>
+                                    </Style>
+                                </DatePicker.Styles>
+                            </DatePicker>
                             <DatePicker
                                 Grid.Row="0"
                                 Grid.Column="1"
-                                Margin="16,8,16,4"
+                                Margin="8,8,16,8"
                                 materialAssists:TextFieldAssist.Label="Before (date)"
                                 SelectedDate="{Binding BeforeDate}"
-                                Theme="{DynamicResource OutlineDatePicker}"
-                                ToolTip.Tip="Only include messages sent before this date" />
+                                ToolTip.Tip="Only include messages sent before this date">
+                                <DatePicker.Styles>
+                                    <Style Selector="DatePicker">
+                                        <Style Selector="^ /template/ TextBox#DisplayTextBox">
+                                            <Setter Property="Theme" Value="{DynamicResource FilledTextBox}" />
+                                        </Style>
+                                    </Style>
+                                </DatePicker.Styles>
+                            </DatePicker>
                             <TimePicker
                                 Grid.Row="1"
                                 Grid.Column="0"
-                                Margin="16,4,16,8"
+                                Margin="16,8,8,8"
                                 materialAssists:TextFieldAssist.Label="After (time)"
-                                Classes.is24Hours="{x:Static utils:Internationalization.Is24Hours}"
+                                ClockIdentifier="{x:Static utils:Internationalization.AvaloniaClockIdentifier}"
                                 IsEnabled="{Binding IsAfterDateSet}"
                                 SelectedTime="{Binding AfterTime}"
-                                Theme="{DynamicResource OutlineTimePicker}"
                                 ToolTip.Tip="Only include messages sent after this time">
                                 <TimePicker.Styles>
                                     <Style Selector="TimePicker">
-                                        <Style Selector="^.is24Hours">
-                                            <Setter Property="ClockIdentifier" Value="24HourClock" />
+                                        <Style Selector="^ /template/ TextBox#PART_DisplayTextBox">
+                                            <Setter Property="Theme" Value="{DynamicResource FilledTextBox}" />
                                         </Style>
                                     </Style>
                                 </TimePicker.Styles>
@@ -201,17 +215,16 @@
                             <TimePicker
                                 Grid.Row="1"
                                 Grid.Column="1"
-                                Margin="16,4,16,8"
+                                Margin="8,8,16,8"
                                 materialAssists:TextFieldAssist.Label="Before (time)"
-                                Classes.is24Hours="{x:Static utils:Internationalization.Is24Hours}"
+                                ClockIdentifier="{x:Static utils:Internationalization.AvaloniaClockIdentifier}"
                                 IsEnabled="{Binding IsBeforeDateSet}"
                                 SelectedTime="{Binding BeforeTime}"
-                                Theme="{DynamicResource OutlineTimePicker}"
                                 ToolTip.Tip="Only include messages sent before this time">
                                 <TimePicker.Styles>
                                     <Style Selector="TimePicker">
-                                        <Style Selector="^.is24Hours">
-                                            <Setter Property="ClockIdentifier" Value="24HourClock" />
+                                        <Style Selector="^ /template/ TextBox#PART_DisplayTextBox">
+                                            <Setter Property="Theme" Value="{DynamicResource FilledTextBox}" />
                                         </Style>
                                     </Style>
                                 </TimePicker.Styles>
@@ -223,7 +236,7 @@
                             Margin="16,8"
                             materialAssists:TextFieldAssist.Label="Partition limit"
                             Text="{Binding PartitionLimitValue}"
-                            Theme="{DynamicResource OutlineTextBox}"
+                            Theme="{DynamicResource FilledTextBox}"
                             ToolTip.Tip="Split the output into partitions, each limited to the specified number of messages (e.g. '100') or file size (e.g. '10mb')" />
 
                         <!--  Filtering  -->
@@ -231,7 +244,7 @@
                             Margin="16,8"
                             materialAssists:TextFieldAssist.Label="Message filter"
                             Text="{Binding MessageFilterValue}"
-                            Theme="{DynamicResource OutlineTextBox}"
+                            Theme="{DynamicResource FilledTextBox}"
                             ToolTip.Tip="Only include messages that satisfy this filter (e.g. 'from:foo#1234' or 'has:image'). See the documentation for more info." />
 
                         <!--  Markdown formatting  -->
@@ -289,17 +302,18 @@
                             materialAssists:TextFieldAssist.Label="Assets directory path"
                             IsEnabled="{Binding ShouldDownloadAssets}"
                             Text="{Binding AssetsDirPath}"
-                            Theme="{DynamicResource OutlineTextBox}"
+                            Theme="{DynamicResource FilledTextBox}"
                             ToolTip.Tip="Download assets to this directory. If not specified, the asset directory path will be derived from the output path.">
                             <TextBox.InnerRightContent>
                                 <Button
-                                    Margin="8,0,0,0"
-                                    Padding="0"
+                                    Margin="8,8,8,6"
+                                    Padding="8"
+                                    VerticalAlignment="Center"
                                     Command="{Binding ShowAssetsDirPathPromptCommand}"
                                     Theme="{DynamicResource MaterialFlatButton}">
                                     <materialIcons:MaterialIcon
-                                        Width="16"
-                                        Height="16"
+                                        Width="20"
+                                        Height="20"
                                         Kind="FolderOpen" />
                                 </Button>
                             </TextBox.InnerRightContent>

@@ -5,21 +5,22 @@
     xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
     xmlns:materialStyles="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
     xmlns:viewModels="clr-namespace:DiscordChatExporter.Gui.ViewModels"
-    x:Name="Window"
     Title="{Binding Title}"
     Width="625"
     Height="625"
     MinWidth="600"
     MinHeight="400"
     Icon="/favicon.ico"
-    Loaded="Window_OnLoaded"
     RenderOptions.BitmapInterpolationMode="HighQuality"
     WindowStartupLocation="CenterScreen">
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
 
-    <dialogHostAvalonia:DialogHost CloseOnClickAway="False">
+    <dialogHostAvalonia:DialogHost
+        x:Name="DialogHost"
+        CloseOnClickAway="False"
+        Loaded="DialogHost_OnLoaded">
         <materialStyles:SnackbarHost HostName="Root">
             <ContentControl Content="{Binding Dashboard}" />
         </materialStyles:SnackbarHost>

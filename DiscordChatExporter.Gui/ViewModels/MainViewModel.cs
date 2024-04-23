@@ -42,7 +42,7 @@ public partial class MainViewModel(
         settingsService.Save();
 
         if (await dialogManager.ShowDialogAsync(dialog) == true)
-            ProcessEx.StartShellExecute("https://tyrrrz.me/ukraine?source=youtubedownloader");
+            ProcessEx.StartShellExecute("https://tyrrrz.me/ukraine?source=discordchatexporter");
     }
 
     private async Task CheckForUpdatesAsync()

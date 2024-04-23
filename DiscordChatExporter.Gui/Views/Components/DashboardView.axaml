@@ -26,7 +26,6 @@
                     <!--  Token  -->
                     <TextBox
                         x:Name="TokenValueTextBox"
-                        MinHeight="36"
                         FontSize="16"
                         PasswordChar="*"
                         RevealPassword="{Binding $self.IsFocused}"
@@ -91,6 +90,13 @@
             Background="{DynamicResource MaterialCardBackgroundBrush}"
             DockPanel.Dock="Bottom"
             IsEnabled="{Binding !IsBusy}">
+            <Panel.Styles>
+                <Style Selector="Panel">
+                    <Style Selector="^:disabled">
+                        <Setter Property="Opacity" Value="0.5" />
+                    </Style>
+                </Style>
+            </Panel.Styles>
             <!--  Placeholder / usage instructions  -->
             <Panel IsVisible="{Binding !AreGuildsAvailable}">
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">

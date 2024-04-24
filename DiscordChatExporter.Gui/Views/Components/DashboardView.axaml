@@ -285,12 +285,13 @@
                             <DataTemplate DataType="{x:Type data:Channel}">
                                 <Grid
                                     x:Name="ChannelListBoxItemGrid"
+                                    Margin="16,8"
                                     Background="Transparent"
                                     ColumnDefinitions="Auto,*,Auto"
                                     PointerPressed="ChannelListBoxItemGrid_OnPointerPressed">
                                     <ToolTip.Tip>
                                         <TextBlock>
-                                            <Run Text="Last message:" />
+                                            <Run Text="Last message sent:" />
                                             <Run FontWeight="SemiBold" Text="{Binding LastMessageId, Converter={x:Static converters:SnowflakeToDateTimeStringConverter.Instance}, TargetNullValue=never, Mode=OneWay}" />
                                         </TextBlock>
                                     </ToolTip.Tip>
@@ -298,7 +299,6 @@
                                     <!--  Channel icon  -->
                                     <materialIcons:MaterialIcon
                                         Grid.Column="0"
-                                        Margin="16,7,0,6"
                                         VerticalAlignment="Center"
                                         Classes.voice="{Binding IsVoice}">
                                         <materialIcons:MaterialIcon.Styles>
@@ -315,7 +315,7 @@
                                     <!--  Channel name  -->
                                     <TextBlock
                                         Grid.Column="1"
-                                        Margin="3,8,8,8"
+                                        Margin="4"
                                         VerticalAlignment="Center"
                                         FontSize="14"
                                         Text="{Binding Name, Mode=OneWay}" />
@@ -325,7 +325,6 @@
                                         Grid.Column="2"
                                         Width="24"
                                         Height="24"
-                                        Margin="8,0"
                                         VerticalAlignment="Center"
                                         IsVisible="{Binding $parent[ListBoxItem].IsSelected, Mode=OneWay}"
                                         Kind="Check" />

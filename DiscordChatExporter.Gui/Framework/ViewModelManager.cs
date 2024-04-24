@@ -5,7 +5,6 @@ using DiscordChatExporter.Gui.ViewModels;
 using DiscordChatExporter.Gui.ViewModels.Components;
 using DiscordChatExporter.Gui.ViewModels.Dialogs;
 using Microsoft.Extensions.DependencyInjection;
-using YoutubeExplode.Videos;
 
 namespace DiscordChatExporter.Gui.Framework;
 

@@ -221,10 +221,7 @@ public partial class DashboardViewModel : ViewModelBase
     }
 
     private bool CanExport() =>
-        !IsBusy
-        && _discord is not null
-        && SelectedGuild is not null
-        && SelectedChannels?.Any() is true;
+        !IsBusy && _discord is not null && SelectedGuild is not null && SelectedChannels.Any();
 
     [RelayCommand(CanExecute = nameof(CanExport))]
     private async Task ExportAsync()
@@ -233,18 +230,14 @@ public partial class DashboardViewModel : ViewModelBase
 
         try
         {
-            if (
-                _discord is null
-                || SelectedGuild is null
-                || SelectedChannels is null
-                || !SelectedChannels.Any()
-            )
+            if (_discord is null || SelectedGuild is null || !SelectedChannels.Any())
                 return;
 
             var dialog = _viewModelManager.CreateExportSetupViewModel(
                 SelectedGuild,
                 SelectedChannels
             );
+
             if (await _dialogManager.ShowDialogAsync(dialog) != true)
                 return;
 

@@ -283,12 +283,10 @@
                         </ListBox.Styles>
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="{x:Type data:Channel}">
-                                <Grid
-                                    x:Name="ChannelListBoxItemGrid"
-                                    Margin="16,8"
+                                <Panel
+                                    x:Name="ChannelListBoxItemPanel"
                                     Background="Transparent"
-                                    ColumnDefinitions="Auto,*,Auto"
-                                    PointerPressed="ChannelListBoxItemGrid_OnPointerPressed">
+                                    PointerPressed="ChannelListBoxItemPanel_OnPointerPressed">
                                     <ToolTip.Tip>
                                         <TextBlock>
                                             <Run Text="Last message sent:" />
@@ -296,39 +294,44 @@
                                         </TextBlock>
                                     </ToolTip.Tip>
 
-                                    <!--  Channel icon  -->
-                                    <materialIcons:MaterialIcon
-                                        Grid.Column="0"
-                                        VerticalAlignment="Center"
-                                        Classes.voice="{Binding IsVoice}">
-                                        <materialIcons:MaterialIcon.Styles>
-                                            <Style Selector="materialIcons|MaterialIcon">
-                                                <Setter Property="Kind" Value="Pound" />
+                                    <Grid
+                                        Margin="16,8"
+                                        Background="Transparent"
+                                        ColumnDefinitions="Auto,*,Auto">
+                                        <!--  Channel icon  -->
+                                        <materialIcons:MaterialIcon
+                                            Grid.Column="0"
+                                            VerticalAlignment="Center"
+                                            Classes.voice="{Binding IsVoice}">
+                                            <materialIcons:MaterialIcon.Styles>
+                                                <Style Selector="materialIcons|MaterialIcon">
+                                                    <Setter Property="Kind" Value="Pound" />
 
-                                                <Style Selector="^.voice">
-                                                    <Setter Property="Kind" Value="VolumeHigh" />
+                                                    <Style Selector="^.voice">
+                                                        <Setter Property="Kind" Value="VolumeHigh" />
+                                                    </Style>
                                                 </Style>
-                                            </Style>
-                                        </materialIcons:MaterialIcon.Styles>
-                                    </materialIcons:MaterialIcon>
+                                            </materialIcons:MaterialIcon.Styles>
+                                        </materialIcons:MaterialIcon>
 
-                                    <!--  Channel name  -->
-                                    <TextBlock
-                                        Grid.Column="1"
-                                        Margin="4"
-                                        VerticalAlignment="Center"
-                                        FontSize="14"
-                                        Text="{Binding Name, Mode=OneWay}" />
+                                        <!--  Channel name  -->
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            Margin="4"
+                                            VerticalAlignment="Center"
+                                            FontSize="14"
+                                            Text="{Binding Name, Mode=OneWay}" />
 
-                                    <!--  Is selected checkmark  -->
-                                    <materialIcons:MaterialIcon
-                                        Grid.Column="2"
-                                        Width="24"
-                                        Height="24"
-                                        VerticalAlignment="Center"
-                                        IsVisible="{Binding $parent[ListBoxItem].IsSelected, Mode=OneWay}"
-                                        Kind="Check" />
-                                </Grid>
+                                        <!--  Is selected checkmark  -->
+                                        <materialIcons:MaterialIcon
+                                            Grid.Column="2"
+                                            Width="24"
+                                            Height="24"
+                                            VerticalAlignment="Center"
+                                            IsVisible="{Binding $parent[ListBoxItem].IsSelected, Mode=OneWay}"
+                                            Kind="Check" />
+                                    </Grid>
+                                </Panel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>

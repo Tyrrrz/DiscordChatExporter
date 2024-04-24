@@ -18,7 +18,7 @@ public partial class DashboardView : UserControl<DashboardViewModel>
     private void GuildPanel_OnPointerReleased(object? sender, PointerReleasedEventArgs args) =>
         DataContext.PullChannelsCommand.Execute(null);
 
-    private void ChannelListBoxItemGrid_OnPointerPressed(
+    private void ChannelListBoxItemPanel_OnPointerPressed(
         object? sender,
         PointerPressedEventArgs args
     )

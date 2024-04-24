@@ -6,7 +6,7 @@
         x:Name="TextBlock"
         Cursor="Hand"
         Foreground="{DynamicResource MaterialSecondaryDarkBrush}"
-        PointerPressed="TextBlock_OnPointerPressed"
+        PointerReleased="TextBlock_OnPointerReleased"
         Text="{Binding $parent[UserControl].Text, Mode=OneWay}">
         <TextBlock.Styles>
             <Style Selector="TextBlock">

@@ -36,7 +36,7 @@ public partial class HyperLink : UserControl
         set => SetValue(CommandParameterProperty, value);
     }
 
-    private void TextBlock_OnPointerPressed(object? sender, PointerPressedEventArgs args)
+    private void TextBlock_OnPointerReleased(object? sender, PointerReleasedEventArgs args)
     {
         if (Command is null)
             return;

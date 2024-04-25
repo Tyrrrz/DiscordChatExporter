@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
+using AsyncKeyedLock;
 using Avalonia;
 using Avalonia.Platform.Storage;
 using DialogHostAvalonia;
@@ -13,12 +13,11 @@ namespace DiscordChatExporter.Gui.Framework;
 
 public class DialogManager : IDisposable
 {
-    private readonly SemaphoreSlim _dialogLock = new(1, 1);
+    private readonly AsyncNonKeyedLocker _dialogLock = new();
 
     public async Task<T?> ShowDialogAsync<T>(DialogViewModelBase<T> dialog)
     {
-        await _dialogLock.WaitAsync();
-        try
+        using (await _dialogLock.LockAsync())
         {
             await DialogHost.Show(
                 dialog,
@@ -41,10 +40,6 @@ public class DialogManager : IDisposable
 
             return dialog.DialogResult;
         }
-        finally
-        {
-            _dialogLock.Release();
-        }
     }
 
     public async Task<string?> PromptSaveFilePathAsync(
@@ -65,7 +60,7 @@ public class DialogManager : IDisposable
             }
         );
 
-        return file?.Path?.LocalPath;
+        return file?.Path.LocalPath;
     }
 
     public async Task<string?> PromptDirectoryPathAsync(string defaultDirPath = "")

@@ -6,7 +6,6 @@
     xmlns:components="clr-namespace:DiscordChatExporter.Gui.ViewModels.Components"
     xmlns:controls="clr-namespace:DiscordChatExporter.Gui.Views.Controls"
     xmlns:converters="clr-namespace:DiscordChatExporter.Gui.Converters"
-    xmlns:data="clr-namespace:DiscordChatExporter.Core.Discord.Data;assembly=DiscordChatExporter.Core"
     xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     xmlns:materialStyles="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
     x:Name="UserControl"
@@ -240,9 +239,9 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Panel
-                                    x:Name="GuildPanel"
+                                    x:Name="GuildListBoxItemPanel"
                                     Background="Transparent"
-                                    PointerReleased="GuildPanel_OnPointerReleased"
+                                    PointerReleased="GuildListBoxItemPanel_OnPointerReleased"
                                     ToolTip.Tip="{Binding Name}">
                                     <!--  Guild icon placeholder  -->
                                     <Ellipse
@@ -268,41 +267,53 @@
 
                 <!--  Channels  -->
                 <Border Grid.Column="1">
-                    <ListBox
+                    <TreeView
+                        x:Name="AvailableChannelsTreeView"
+                        AutoScrollToSelectedItem="False"
                         ItemsSource="{Binding AvailableChannels}"
                         SelectedItems="{Binding SelectedChannels}"
+                        SelectionChanged="AvailableChannelsTreeView_OnSelectionChanged"
                         SelectionMode="Multiple"
                         TextSearch.Text="Name">
-                        <ListBox.Styles>
-                            <Style Selector="ListBox">
-                                <Style Selector="^ ListBoxItem">
+                        <TreeView.Styles>
+                            <Style Selector="TreeView">
+                                <Style Selector="^ TreeViewItem">
                                     <Setter Property="Padding" Value="0" />
                                     <Setter Property="Cursor" Value="Hand" />
                                 </Style>
                             </Style>
-                        </ListBox.Styles>
-                        <ListBox.ItemTemplate>
-                            <DataTemplate DataType="{x:Type data:Channel}">
+                        </TreeView.Styles>
+                        <TreeView.ItemTemplate>
+                            <TreeDataTemplate ItemsSource="{Binding Children}">
                                 <Panel
-                                    x:Name="ChannelListBoxItemPanel"
+                                    x:Name="ChannelTreeViewItemPanel"
                                     Background="Transparent"
-                                    PointerPressed="ChannelListBoxItemPanel_OnPointerPressed">
-                                    <ToolTip.Tip>
-                                        <TextBlock>
-                                            <Run Text="Last message sent:" />
-                                            <Run FontWeight="SemiBold" Text="{Binding LastMessageId, Converter={x:Static converters:SnowflakeToDateTimeStringConverter.Instance}, TargetNullValue=never, Mode=OneWay}" />
-                                        </TextBlock>
-                                    </ToolTip.Tip>
-
+                                    Classes.category="{Binding Channel.IsCategory}"
+                                    PointerPressed="ChannelTreeViewItemPanel_OnPointerPressed">
+                                    <Panel.Styles>
+                                        <Style Selector="Panel">
+                                            <Style Selector="^:not(.category)">
+                                                <Setter Property="ToolTip.Tip">
+                                                    <Template>
+                                                        <TextBlock>
+                                                            <Run Text="Last message sent:" />
+                                                            <Run FontWeight="SemiBold" Text="{Binding Channel.LastMessageId, Converter={x:Static converters:SnowflakeToDateTimeStringConverter.Instance}, TargetNullValue=never, Mode=OneWay}" />
+                                                        </TextBlock>
+                                                    </Template>
+                                                </Setter>
+                                            </Style>
+                                        </Style>
+                                    </Panel.Styles>
                                     <Grid
-                                        Margin="16,8"
+                                        Margin="4,8"
                                         Background="Transparent"
                                         ColumnDefinitions="Auto,*,Auto">
                                         <!--  Channel icon  -->
                                         <materialIcons:MaterialIcon
                                             Grid.Column="0"
                                             VerticalAlignment="Center"
-                                            Classes.voice="{Binding IsVoice}">
+                                            Classes.voice="{Binding Channel.IsVoice}"
+                                            IsVisible="{Binding !Channel.IsCategory}">
                                             <materialIcons:MaterialIcon.Styles>
                                                 <Style Selector="materialIcons|MaterialIcon">
                                                     <Setter Property="Kind" Value="Pound" />
@@ -320,21 +331,22 @@
                                             Margin="4"
                                             VerticalAlignment="Center"
                                             FontSize="14"
-                                            Text="{Binding Name, Mode=OneWay}" />
+                                            Text="{Binding Channel.Name, Mode=OneWay}" />
 
-                                        <!--  Is selected checkmark  -->
+                                        <!--  Checkmark  -->
                                         <materialIcons:MaterialIcon
                                             Grid.Column="2"
                                             Width="24"
                                             Height="24"
+                                            Margin="12,0"
                                             VerticalAlignment="Center"
-                                            IsVisible="{Binding $parent[ListBoxItem].IsSelected, Mode=OneWay}"
+                                            IsVisible="{Binding $parent[TreeViewItem].IsSelected}"
                                             Kind="Check" />
                                     </Grid>
                                 </Panel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                            </TreeDataTemplate>
+                        </TreeView.ItemTemplate>
+                    </TreeView>
                 </Border>
             </Grid>
 

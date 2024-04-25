@@ -54,7 +54,7 @@ public partial class DashboardViewModel : ViewModelBase
     private Guild? _selectedGuild;
 
     [ObservableProperty]
-    private IReadOnlyList<Channel>? _availableChannels;
+    private IReadOnlyList<ChannelNode>? _availableChannels;
 
     public DashboardViewModel(
         ViewModelManager viewModelManager,
@@ -91,7 +91,7 @@ public partial class DashboardViewModel : ViewModelBase
 
     public bool AreGuildsAvailable => AvailableGuilds is not null && AvailableGuilds.Any();
 
-    public ObservableCollection<Channel> SelectedChannels { get; } = [];
+    public ObservableCollection<ChannelNode> SelectedChannels { get; } = [];
 
     [RelayCommand]
     private void Initialize()
@@ -176,12 +176,7 @@ public partial class DashboardViewModel : ViewModelBase
 
             // Regular channels
             await foreach (var channel in _discord.GetGuildChannelsAsync(SelectedGuild.Id))
-            {
-                if (channel.IsCategory)
-                    continue;
-
                 channels.Add(channel);
-            }
 
             // Threads
             if (_settingsService.ThreadInclusionMode != ThreadInclusionMode.None)
@@ -197,7 +192,7 @@ public partial class DashboardViewModel : ViewModelBase
                 }
             }
 
-            AvailableChannels = channels;
+            AvailableChannels = ChannelNode.BuildTree(channels);
             SelectedChannels.Clear();
         }
         catch (DiscordChatExporterException ex) when (!ex.IsFatal)
@@ -235,7 +230,7 @@ public partial class DashboardViewModel : ViewModelBase
 
             var dialog = _viewModelManager.CreateExportSetupViewModel(
                 SelectedGuild,
-                SelectedChannels
+                SelectedChannels.Select(c => c.Channel).ToArray()
             );
 
             if (await _dialogManager.ShowDialogAsync(dialog) != true)

@@ -304,10 +304,7 @@
                                             </Style>
                                         </Style>
                                     </Panel.Styles>
-                                    <Grid
-                                        Margin="4,8"
-                                        Background="Transparent"
-                                        ColumnDefinitions="Auto,*,Auto">
+                                    <Grid Margin="8" ColumnDefinitions="Auto,*,Auto">
                                         <!--  Channel icon  -->
                                         <materialIcons:MaterialIcon
                                             Grid.Column="0"

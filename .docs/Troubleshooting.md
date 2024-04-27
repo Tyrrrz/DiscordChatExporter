@@ -70,14 +70,7 @@ Check the following page: [Obtaining token](Token-and-IDs.md)
 
 ### When I open DCE a black window pops up quickly or nothing shows up
 
-If you have [.NET Core Runtime correctly installed](Dotnet.md), you might have downloaded the CLi flavor, try [downloading the GUI](Getting-started.md#gui-or-cli) instead.
-
-### How do I run DCE on macOS or Linux?
-
-Check the following pages:
-
-- [macOS usage instructions](MacOS.md)
-- [Linux usage instructions](Linux.md)
+If you have [.NET Runtime correctly installed](Dotnet.md), you might have downloaded the CLI flavor, try [downloading the GUI](Getting-started.md#gui-or-cli) instead.
 
 ### How can I set DCE to export automatically at certain times?
 

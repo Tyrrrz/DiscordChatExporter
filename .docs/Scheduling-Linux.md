@@ -1,6 +1,6 @@
 # Scheduling exports with Cron
 
-Make sure you already have **DiscordChatExporter.CLI** and **.NET Core** properly installed ([instructions here](Linux.md)).
+Make sure you already have **DiscordChatExporter.CLI** downloaded and **.NET Runtime** installed.
 
 ## Creating the script
 
@@ -45,7 +45,7 @@ fi
 cd $DLLFOLDER || exit 1
 
 # This will export your chat
-dotnet DiscordChatExporter.Cli.dll export -t $TOKEN -c $CHANNELID -f $EXPORTFORMAT -o $FILENAME.tmp
+./DiscordChatExporter.Cli export -t $TOKEN -c $CHANNELID -f $EXPORTFORMAT -o $FILENAME.tmp
 
 # This sets the current time to a variable
 CURRENTTIME=$(date +"%Y-%m-%d-%H-%M-%S")

@@ -18,7 +18,7 @@ env:
 
 jobs:
   format:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 10
 
     permissions:
@@ -43,7 +43,7 @@ jobs:
     # Tests need access to secrets, so we can't run them against PRs because of limited trust
     if: ${{ github.event_name != 'pull_request' }}
 
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 10
 
     permissions:
@@ -92,8 +92,14 @@ jobs:
           - linux-x64
           - osx-arm64
           - osx-x64
+        include:
+          - app: DiscordChatExporter.Cli
+            asset: DiscordChatExporter.Cli
+          - app: DiscordChatExporter.Gui
+            # GUI assets aren't suffixed, unlike the CLI assets
+            asset: DiscordChatExporter
 
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 10
 
     permissions:
@@ -121,7 +127,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@26f96dfa697d77e81fd5907df203aa23a56210a8 # v4.3.0
         with:
-          name: ${{ matrix.app }}.${{ matrix.rid }}
+          name: ${{ matrix.asset }}.${{ matrix.rid }}
           path: ${{ matrix.app }}/bin/publish/
           if-no-files-found: error
 
@@ -168,6 +174,12 @@ jobs:
           - linux-x64
           - osx-arm64
           - osx-x64
+        include:
+          - app: DiscordChatExporter.Cli
+            asset: DiscordChatExporter.Cli
+          - app: DiscordChatExporter.Gui
+            # GUI assets aren't suffixed, unlike the CLI assets
+            asset: DiscordChatExporter
 
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -180,13 +192,13 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
         with:
-          name: ${{ matrix.app }}.${{ matrix.rid }}
+          name: ${{ matrix.asset }}.${{ matrix.rid }}
           path: ${{ matrix.app }}/
           
       - name: Create package
         # Change into the artifacts directory to avoid including the directory itself in the zip archive
         working-directory: ${{ matrix.app }}/
-        run: zip -rX ../${{ matrix.asset }}.${{ matrix.rid }}.zip .
+        run: zip -r ../${{ matrix.asset }}.${{ matrix.rid }}.zip .
 
       - name: Upload release asset
         env:

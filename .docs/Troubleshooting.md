@@ -70,14 +70,7 @@ Check the following page: [Obtaining token](Token-and-IDs.md)
 
 ### When I open DCE a black window pops up quickly or nothing shows up
 
-If you have [.NET Core Runtime correctly installed](Dotnet.md), you might have downloaded the CLi flavor, try [downloading the GUI](Getting-started.md#gui-or-cli) instead.
-
-### How do I run DCE on macOS or Linux?
-
-Check the following pages:
-
-- [macOS usage instructions](MacOS.md)
-- [Linux usage instructions](Linux.md)
+If you have [.NET Runtime correctly installed](Dotnet.md), you might have downloaded the CLI flavor, try [downloading the GUI](Getting-started.md#gui-or-cli) instead.
 
 ### How can I set DCE to export automatically at certain times?
 
@@ -133,34 +126,26 @@ Make sure you're [copying the DM Channel ID](Token-and-IDs.md#how-to-get-a-direc
 
 ## Errors
 
-```console
+```yml
 DiscordChatExporter.Domain.Exceptions.DiscordChatExporterException: Authentication token is invalid.
-...
 ```
 
 ↳ Make sure the provided token is correct.
 
-```console
+```yml
 DiscordChatExporter.Domain.Exceptions.DiscordChatExporterException: Requested resource does not exist.
 ```
 
 ↳ Check your channel ID, it might be invalid. [Read this if you need help](Token-and-IDs.md).
 
-```console
+```yml
 DiscordChatExporter.Domain.Exceptions.DiscordChatExporterException: Access is forbidden.
 ```
 
 ↳ This means you don't have access to the channel.
 
-```console
-The application to execute does not exist:
-```
-
-↳ The `DiscordChatExporter.Cli.dll` file is missing. Keep the `.exe` and all the `.dll` files together. If you didn't move the files, try unzipping again.
-
-```console
+```yml
 System.Net.WebException: Error: TrustFailure ... Invalid certificate received from server.
-...
 ```
 
 ↳ Try running cert-sync.

@@ -4,16 +4,12 @@
     <OutputType>Exe</OutputType>
     <ApplicationIcon>..\favicon.ico</ApplicationIcon>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="DiscordChatExporter.Cli.sh" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="CliFx" Version="2.3.5" />
     <PackageReference Include="CSharpier.MsBuild" Version="0.28.0" PrivateAssets="all" />
     <PackageReference Include="Deorcify" Version="1.0.2" PrivateAssets="all" />
-    <PackageReference Include="DotnetRuntimeBootstrapper" Version="2.5.3" PrivateAssets="all" />
+    <PackageReference Include="DotnetRuntimeBootstrapper" Version="2.5.4" PrivateAssets="all" />
     <PackageReference Include="Gress" Version="2.1.1" />
     <PackageReference Include="Spectre.Console" Version="0.48.0" />
   </ItemGroup>

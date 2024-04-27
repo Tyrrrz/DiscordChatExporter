@@ -45,7 +45,6 @@ public partial class DashboardViewModel : ViewModelBase
     private string? _token;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(AreGuildsAvailable))]
     private IReadOnlyList<Guild>? _availableGuilds;
 
     [ObservableProperty]
@@ -88,8 +87,6 @@ public partial class DashboardViewModel : ViewModelBase
     public ProgressContainer<Percentage> Progress { get; } = new();
 
     public bool IsProgressIndeterminate => IsBusy && Progress.Current.Fraction is <= 0 or >= 1;
-
-    public bool AreGuildsAvailable => AvailableGuilds is not null && AvailableGuilds.Any();
 
     public ObservableCollection<ChannelNode> SelectedChannels { get; } = [];
 
@@ -192,7 +189,15 @@ public partial class DashboardViewModel : ViewModelBase
                 }
             }
 
-            AvailableChannels = ChannelNode.BuildTree(channels);
+            // Build a hierarchy of channels
+            var channelTree = ChannelNode.BuildTree(
+                channels
+                    .OrderByDescending(c => c.IsDirect ? c.LastMessageId : null)
+                    .ThenBy(c => c.Position)
+                    .ToArray()
+            );
+
+            AvailableChannels = channelTree;
             SelectedChannels.Clear();
         }
         catch (DiscordChatExporterException ex) when (!ex.IsFatal)

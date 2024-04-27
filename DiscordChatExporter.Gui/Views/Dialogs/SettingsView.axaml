@@ -62,13 +62,9 @@
                         Margin="16,8"
                         LastChildFill="False"
                         ToolTip.Tip="Which types of threads to show in the channel list">
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            DockPanel.Dock="Left"
-                            Text="Show threads" />
+                        <TextBlock DockPanel.Dock="Left" Text="Show threads" />
                         <ComboBox
                             Width="150"
-                            VerticalAlignment="Center"
                             DockPanel.Dock="Right"
                             ItemsSource="{Binding AvailableThreadInclusions}"
                             SelectedItem="{Binding ThreadInclusionMode}" />

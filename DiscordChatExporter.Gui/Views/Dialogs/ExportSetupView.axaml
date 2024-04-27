@@ -54,7 +54,7 @@
                 IsVisible="{Binding IsSingleChannel}"
                 TextTrimming="CharacterEllipsis"
                 ToolTip.Tip="{Binding Channels[0], Converter={x:Static converters:ChannelToHierarchicalNameStringConverter.Instance}}">
-                <TextBlock IsVisible="{Binding Channels[0].Parent}">
+                <TextBlock IsVisible="{Binding !!Channels[0].Parent}">
                     <Run Text="{Binding Channels[0].Parent.Name, Mode=OneWay}" />
                     <Run Text="/" />
                 </TextBlock>
@@ -195,6 +195,8 @@
                                     </Style>
                                 </DatePicker.Styles>
                             </DatePicker>
+
+                            <!--  Time limits  -->
                             <TimePicker
                                 Grid.Row="1"
                                 Grid.Column="0"
@@ -252,15 +254,8 @@
                             Margin="16,8"
                             LastChildFill="False"
                             ToolTip.Tip="Process markdown, mentions, and other special tokens">
-                            <TextBlock
-                                VerticalAlignment="Center"
-                                DockPanel.Dock="Left"
-                                Text="Format markdown" />
-                            <ToggleSwitch
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                DockPanel.Dock="Right"
-                                IsChecked="{Binding ShouldFormatMarkdown}" />
+                            <TextBlock DockPanel.Dock="Left" Text="Format markdown" />
+                            <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding ShouldFormatMarkdown}" />
                         </DockPanel>
 
                         <!--  Download assets  -->
@@ -268,15 +263,8 @@
                             Margin="16,8"
                             LastChildFill="False"
                             ToolTip.Tip="Download assets referenced by the export (user avatars, attached files, embedded images, etc.)">
-                            <TextBlock
-                                VerticalAlignment="Center"
-                                DockPanel.Dock="Left"
-                                Text="Download assets" />
-                            <ToggleSwitch
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                DockPanel.Dock="Right"
-                                IsChecked="{Binding ShouldDownloadAssets}" />
+                            <TextBlock DockPanel.Dock="Left" Text="Download assets" />
+                            <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding ShouldDownloadAssets}" />
                         </DockPanel>
 
                         <!--  Reuse assets  -->
@@ -285,15 +273,8 @@
                             IsEnabled="{Binding ShouldDownloadAssets}"
                             LastChildFill="False"
                             ToolTip.Tip="Reuse previously downloaded assets to avoid redundant requests">
-                            <TextBlock
-                                VerticalAlignment="Center"
-                                DockPanel.Dock="Left"
-                                Text="Reuse assets" />
-                            <ToggleSwitch
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                DockPanel.Dock="Right"
-                                IsChecked="{Binding ShouldReuseAssets}" />
+                            <TextBlock DockPanel.Dock="Left" Text="Reuse assets" />
+                            <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding ShouldReuseAssets}" />
                         </DockPanel>
 
                         <!--  Assets path  -->

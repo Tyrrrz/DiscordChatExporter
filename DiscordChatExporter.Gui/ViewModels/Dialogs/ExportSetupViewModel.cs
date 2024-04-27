@@ -143,6 +143,7 @@ public partial class ExportSetupViewModel(
                 ],
                 defaultFileName
             );
+
             if (!string.IsNullOrWhiteSpace(path))
                 OutputPath = path;
         }
@@ -165,7 +166,7 @@ public partial class ExportSetupViewModel(
     [RelayCommand]
     private async Task ConfirmAsync()
     {
-        // Prompt the output path if it's not set yet
+        // Prompt the output path if it hasn't been set yet
         if (string.IsNullOrWhiteSpace(OutputPath))
         {
             await ShowOutputPathPromptAsync();

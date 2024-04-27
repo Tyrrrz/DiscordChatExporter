@@ -19,9 +19,9 @@ public partial class DashboardView : UserControl<DashboardViewModel>
         TokenValueTextBox.Focus();
     }
 
-    private void GuildListBoxItemPanel_OnPointerReleased(
+    private void AvailableGuildsListBox_OnSelectionChanged(
         object? sender,
-        PointerReleasedEventArgs args
+        SelectionChangedEventArgs args
     ) => DataContext.PullChannelsCommand.Execute(null);
 
     private void AvailableChannelsTreeView_OnSelectionChanged(

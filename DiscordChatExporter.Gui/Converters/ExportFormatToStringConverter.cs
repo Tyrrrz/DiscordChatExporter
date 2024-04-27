@@ -14,7 +14,7 @@ public class ExportFormatToStringConverter : IValueConverter
         Type targetType,
         object? parameter,
         CultureInfo culture
-    ) => value is ExportFormat exportFormatValue ? exportFormatValue.GetDisplayName() : default;
+    ) => value is ExportFormat format ? format.GetDisplayName() : default;
 
     public object ConvertBack(
         object? value,

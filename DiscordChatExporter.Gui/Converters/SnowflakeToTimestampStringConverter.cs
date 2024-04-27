@@ -5,9 +5,9 @@ using DiscordChatExporter.Core.Discord;
 
 namespace DiscordChatExporter.Gui.Converters;
 
-public class SnowflakeToDateTimeStringConverter : IValueConverter
+public class SnowflakeToTimestampStringConverter : IValueConverter
 {
-    public static SnowflakeToDateTimeStringConverter Instance { get; } = new();
+    public static SnowflakeToTimestampStringConverter Instance { get; } = new();
 
     public object? Convert(
         object? value,

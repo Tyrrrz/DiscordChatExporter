@@ -37,7 +37,6 @@
                                 Width="24"
                                 Height="24"
                                 Margin="4,0,8,0"
-                                VerticalAlignment="Center"
                                 Foreground="{DynamicResource PrimaryHueMidBrush}"
                                 Kind="Key" />
                         </TextBox.InnerLeftContent>
@@ -97,7 +96,7 @@
                 </Style>
             </Panel.Styles>
             <!--  Placeholder / usage instructions  -->
-            <Panel IsVisible="{Binding !AreGuildsAvailable}">
+            <Panel IsVisible="{Binding !AvailableGuilds.Count}">
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                     <TextBlock
                         Margin="32,16"
@@ -217,16 +216,18 @@
             </Panel>
 
             <!--  Guilds and channels  -->
-            <Grid ColumnDefinitions="Auto,*" IsVisible="{Binding AreGuildsAvailable}">
+            <Grid ColumnDefinitions="Auto,*" IsVisible="{Binding !!AvailableGuilds.Count}">
                 <!--  Guilds  -->
                 <Border
                     Grid.Column="0"
                     BorderBrush="{DynamicResource MaterialDividerBrush}"
                     BorderThickness="0,0,1,0">
                     <ListBox
+                        x:Name="AvailableGuildsListBox"
                         ItemsSource="{Binding AvailableGuilds}"
                         ScrollViewer.VerticalScrollBarVisibility="Hidden"
                         SelectedItem="{Binding SelectedGuild}"
+                        SelectionChanged="AvailableGuildsListBox_OnSelectionChanged"
                         SelectionMode="Single">
                         <ListBox.Styles>
                             <Style Selector="ListBox">
@@ -238,11 +239,7 @@
                         </ListBox.Styles>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Panel
-                                    x:Name="GuildListBoxItemPanel"
-                                    Background="Transparent"
-                                    PointerReleased="GuildListBoxItemPanel_OnPointerReleased"
-                                    ToolTip.Tip="{Binding Name}">
+                                <Panel ToolTip.Tip="{Binding Name}">
                                     <!--  Guild icon placeholder  -->
                                     <Ellipse
                                         Width="48"
@@ -297,23 +294,27 @@
                                                     <Template>
                                                         <TextBlock>
                                                             <Run Text="Last message sent:" />
-                                                            <Run FontWeight="SemiBold" Text="{Binding Channel.LastMessageId, Converter={x:Static converters:SnowflakeToDateTimeStringConverter.Instance}, TargetNullValue=never, Mode=OneWay}" />
+                                                            <Run FontWeight="SemiBold" Text="{Binding Channel.LastMessageId, Converter={x:Static converters:SnowflakeToTimestampStringConverter.Instance}, TargetNullValue=never, Mode=OneWay}" />
                                                         </TextBlock>
                                                     </Template>
                                                 </Setter>
                                             </Style>
                                         </Style>
                                     </Panel.Styles>
-                                    <Grid Margin="8" ColumnDefinitions="Auto,*,Auto">
+                                    <Grid Margin="4,8" ColumnDefinitions="Auto,*,Auto">
                                         <!--  Channel icon  -->
                                         <materialIcons:MaterialIcon
                                             Grid.Column="0"
-                                            VerticalAlignment="Center"
+                                            Classes.direct="{Binding Channel.IsDirect}"
                                             Classes.voice="{Binding Channel.IsVoice}"
                                             IsVisible="{Binding !Channel.IsCategory}">
                                             <materialIcons:MaterialIcon.Styles>
                                                 <Style Selector="materialIcons|MaterialIcon">
                                                     <Setter Property="Kind" Value="Pound" />
+
+                                                    <Style Selector="^.direct">
+                                                        <Setter Property="Margin" Value="12,0,0,0" />
+                                                    </Style>
 
                                                     <Style Selector="^.voice">
                                                         <Setter Property="Kind" Value="VolumeHigh" />
@@ -326,7 +327,6 @@
                                         <TextBlock
                                             Grid.Column="1"
                                             Margin="4"
-                                            VerticalAlignment="Center"
                                             FontSize="14"
                                             Text="{Binding Channel.Name, Mode=OneWay}" />
 
@@ -336,7 +336,6 @@
                                             Width="24"
                                             Height="24"
                                             Margin="12,0"
-                                            VerticalAlignment="Center"
                                             IsVisible="{Binding $parent[TreeViewItem].IsSelected}"
                                             Kind="Check" />
                                     </Grid>

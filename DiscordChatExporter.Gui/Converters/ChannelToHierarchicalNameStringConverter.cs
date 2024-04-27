@@ -16,7 +16,7 @@ public class ChannelToHierarchicalNameStringConverter : IValueConverter
         CultureInfo culture
     ) => value is Channel channel ? channel.GetHierarchicalName() : null;
 
-    public object? ConvertBack(
+    public object ConvertBack(
         object? value,
         Type targetType,
         object? parameter,

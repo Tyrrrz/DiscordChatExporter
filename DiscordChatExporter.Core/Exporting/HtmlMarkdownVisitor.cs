@@ -155,7 +155,9 @@ internal partial class HtmlMarkdownVisitor(
         buffer.Append(
             // lang=html
             $"""
-            <code class="chatlog__markdown-pre chatlog__markdown-pre--inline">{HtmlEncode(inlineCodeBlock.Code)}</code>
+            <code class="chatlog__markdown-pre chatlog__markdown-pre--inline">{HtmlEncode(
+                inlineCodeBlock.Code
+            )}</code>
             """
         );
 
@@ -174,7 +176,9 @@ internal partial class HtmlMarkdownVisitor(
         buffer.Append(
             // lang=html
             $"""
-            <code class="chatlog__markdown-pre chatlog__markdown-pre--multiline {highlightClass}">{HtmlEncode(multiLineCodeBlock.Code)}</code>
+            <code class="chatlog__markdown-pre chatlog__markdown-pre--multiline {highlightClass}">{HtmlEncode(
+                multiLineCodeBlock.Code
+            )}</code>
             """
         );
 
@@ -267,7 +271,9 @@ internal partial class HtmlMarkdownVisitor(
             buffer.Append(
                 // lang=html
                 $"""
-                <span class="chatlog__markdown-mention" title="{HtmlEncode(fullName)}">@{HtmlEncode(displayName)}</span>
+                <span class="chatlog__markdown-mention" title="{HtmlEncode(fullName)}">@{HtmlEncode(
+                    displayName
+                )}</span>
                 """
             );
         }
@@ -292,8 +298,12 @@ internal partial class HtmlMarkdownVisitor(
 
             var style = color is not null
                 ? $"""
-                  color: rgb({color.Value.R}, {color.Value.G}, {color.Value.B}); background-color: rgba({color.Value.R}, {color.Value.G}, {color.Value.B}, 0.1);
-                  """
+                    color: rgb({color.Value.R}, {color.Value.G}, {color
+                        .Value
+                        .B}); background-color: rgba({color.Value.R}, {color.Value.G}, {color
+                        .Value
+                        .B}, 0.1);
+                    """
                 : null;
 
             buffer.Append(
@@ -321,7 +331,9 @@ internal partial class HtmlMarkdownVisitor(
         buffer.Append(
             // lang=html
             $"""
-            <span class="chatlog__markdown-timestamp" title="{HtmlEncode(formattedLong)}">{HtmlEncode(formatted)}</span>
+            <span class="chatlog__markdown-timestamp" title="{HtmlEncode(
+                formattedLong
+            )}">{HtmlEncode(formatted)}</span>
             """
         );
 
@@ -344,10 +356,8 @@ internal partial class HtmlMarkdownVisitor
 
         var isJumbo =
             isJumboAllowed
-            && nodes.All(
-                n =>
-                    n is EmojiNode
-                    || n is TextNode textNode && string.IsNullOrWhiteSpace(textNode.Text)
+            && nodes.All(n =>
+                n is EmojiNode || n is TextNode textNode && string.IsNullOrWhiteSpace(textNode.Text)
             );
 
         var buffer = new StringBuilder();

@@ -1,0 +1,19 @@
+﻿<UserControl
+    x:Class="DiscordChatExporter.Gui.Views.Controls.HyperLink"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <TextBlock
+        x:Name="TextBlock"
+        Cursor="Hand"
+        Foreground="{DynamicResource MaterialSecondaryDarkBrush}"
+        PointerReleased="TextBlock_OnPointerReleased"
+        Text="{Binding $parent[UserControl].Text, Mode=OneWay}">
+        <TextBlock.Styles>
+            <Style Selector="TextBlock">
+                <Style Selector="^:pointerover">
+                    <Setter Property="TextDecorations" Value="Underline" />
+                </Style>
+            </Style>
+        </TextBlock.Styles>
+    </TextBlock>
+</UserControl>

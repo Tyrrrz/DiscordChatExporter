@@ -1,48 +1,80 @@
 ﻿using System;
 using System.IO;
+using Avalonia;
+using Avalonia.Platform;
 using Cogwheel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Gui.Models;
 using Microsoft.Win32;
 
 namespace DiscordChatExporter.Gui.Services;
 
+[INotifyPropertyChanged]
 public partial class SettingsService()
     : SettingsBase(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.dat"))
 {
-    public bool IsUkraineSupportMessageEnabled { get; set; } = true;
+    [ObservableProperty]
+    private bool _isUkraineSupportMessageEnabled = true;
 
-    public bool IsAutoUpdateEnabled { get; set; } = true;
+    [ObservableProperty]
+    private bool _isAutoUpdateEnabled = true;
 
-    public bool IsDarkModeEnabled { get; set; } = IsDarkModeEnabledByDefault();
+    [ObservableProperty]
+    private bool _isDarkModeEnabled;
 
-    public bool IsTokenPersisted { get; set; } = true;
+    [ObservableProperty]
+    private bool _isTokenPersisted = true;
 
-    public ThreadInclusionMode ThreadInclusionMode { get; set; } = ThreadInclusionMode.None;
+    [ObservableProperty]
+    private ThreadInclusionMode _threadInclusionMode;
 
-    public string? Locale { get; set; }
+    [ObservableProperty]
+    private string? _locale;
 
-    public bool IsUtcNormalizationEnabled { get; set; }
+    [ObservableProperty]
+    private bool _isUtcNormalizationEnabled;
 
-    public int ParallelLimit { get; set; } = 1;
+    [ObservableProperty]
+    private int _parallelLimit = 1;
 
-    public Version? LastAppVersion { get; set; }
+    [ObservableProperty]
+    private Version? _lastAppVersion;
 
-    public string? LastToken { get; set; }
+    [ObservableProperty]
+    private string? _lastToken;
 
-    public ExportFormat LastExportFormat { get; set; } = ExportFormat.HtmlDark;
+    [ObservableProperty]
+    private ExportFormat _lastExportFormat = ExportFormat.HtmlDark;
 
-    public string? LastPartitionLimitValue { get; set; }
+    [ObservableProperty]
+    private string? _lastPartitionLimitValue;
 
-    public string? LastMessageFilterValue { get; set; }
+    [ObservableProperty]
+    private string? _lastMessageFilterValue;
 
-    public bool LastShouldFormatMarkdown { get; set; } = true;
+    [ObservableProperty]
+    private bool _lastShouldFormatMarkdown = true;
 
-    public bool LastShouldDownloadAssets { get; set; }
+    [ObservableProperty]
+    private bool _lastShouldDownloadAssets;
 
-    public bool LastShouldReuseAssets { get; set; }
+    [ObservableProperty]
+    private bool _lastShouldReuseAssets;
 
-    public string? LastAssetsDirPath { get; set; }
+    [ObservableProperty]
+    private string? _lastAssetsDirPath;
+
+    public override void Reset()
+    {
+        base.Reset();
+
+        // Reset the dark mode setting separately because its default value is evaluated dynamically
+        // and cannot be set by the field initializer.
+        IsDarkModeEnabled =
+            Application.Current?.PlatformSettings?.GetColorValues().ThemeVariant
+            == PlatformThemeVariant.Dark;
+    }
 
     public override void Save()
     {
@@ -54,26 +86,5 @@ public partial class SettingsService()
         base.Save();
 
         LastToken = lastToken;
-    }
-}
-
-public partial class SettingsService
-{
-    private static bool IsDarkModeEnabledByDefault()
-    {
-        try
-        {
-            return Registry
-                .CurrentUser.OpenSubKey(
-                    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
-                    false
-                )
-                ?.GetValue("AppsUseLightTheme")
-                is 0;
-        }
-        catch
-        {
-            return false;
-        }
     }
 }

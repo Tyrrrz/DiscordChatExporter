@@ -83,16 +83,15 @@ public partial record Message
                 // Find embeds with the same URL that only contain a single image and nothing else
                 var trailingEmbeds = embeds
                     .Skip(i + 1)
-                    .TakeWhile(
-                        e =>
-                            e.Url == embed.Url
-                            && e.Timestamp is null
-                            && e.Author is null
-                            && e.Color is null
-                            && string.IsNullOrWhiteSpace(e.Description)
-                            && !e.Fields.Any()
-                            && e.Images.Count == 1
-                            && e.Footer is null
+                    .TakeWhile(e =>
+                        e.Url == embed.Url
+                        && e.Timestamp is null
+                        && e.Author is null
+                        && e.Color is null
+                        && string.IsNullOrWhiteSpace(e.Description)
+                        && !e.Fields.Any()
+                        && e.Images.Count == 1
+                        && e.Footer is null
                     )
                     .ToArray();
 

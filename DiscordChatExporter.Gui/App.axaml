@@ -1,0 +1,135 @@
+﻿<Application
+    x:Class="DiscordChatExporter.Gui.App"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
+    xmlns:framework="clr-namespace:DiscordChatExporter.Gui.Framework"
+    xmlns:materialAssists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
+    xmlns:materialControls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
+    xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:materialStyles="clr-namespace:Material.Styles.Themes;assembly=Material.Styles">
+    <Application.DataTemplates>
+        <framework:ViewManager />
+    </Application.DataTemplates>
+
+    <Application.Styles>
+        <materialStyles:MaterialTheme />
+        <materialIcons:MaterialIconStyles />
+        <dialogHostAvalonia:DialogHostStyles />
+
+        <!--  Combo box  -->
+        <Style Selector="ComboBox">
+            <Setter Property="FontSize" Value="14" />
+
+            <Style Selector="^ /template/ Panel#PART_RootPanel">
+                <Setter Property="Height" Value="22" />
+            </Style>
+
+            <Style Selector="^ /template/ ToggleButton">
+                <Style Selector="^:checked, ^:unchecked">
+                    <Setter Property="Margin" Value="0" />
+                    <Setter Property="CornerRadius" Value="0" />
+
+                    <Style Selector="^ ContentPresenter#contentPresenter">
+                        <Setter Property="Margin" Value="12,8" />
+                    </Style>
+                </Style>
+            </Style>
+        </Style>
+
+        <!--  Dialog host  -->
+        <Style Selector="dialogHostAvalonia|DialogHost">
+            <Setter Property="DialogMargin" Value="0" />
+        </Style>
+
+        <Style Selector="dialogHostAvalonia|DialogOverlayPopupHost">
+            <Setter Property="Margin" Value="48" />
+        </Style>
+
+        <!--  Snack bar host  -->
+        <Style Selector="materialControls|SnackbarHost">
+            <Setter Property="SnackbarHorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+
+            <Style Selector="^ /template/ ItemsControl#PART_SnackbarHostItemsContainer materialControls|Card">
+                <Setter Property="Background" Value="{DynamicResource MaterialDarkBackgroundBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource MaterialDarkForegroundBrush}" />
+            </Style>
+
+            <Style Selector="^ /template/ ItemsControl#PART_SnackbarHostItemsContainer Button">
+                <Setter Property="Foreground" Value="{DynamicResource MaterialSecondaryMidBrush}" />
+            </Style>
+        </Style>
+
+        <!--  Progress bar  -->
+        <Style Selector="ProgressBar">
+            <Setter Property="Minimum" Value="0" />
+            <Setter Property="Maximum" Value="1" />
+            <Setter Property="Foreground" Value="{DynamicResource MaterialSecondaryMidBrush}" />
+            <Setter Property="materialAssists:TransitionAssist.DisableTransitions" Value="True" />
+
+            <Style Selector="^:horizontal">
+                <Setter Property="MinHeight" Value="0" />
+            </Style>
+        </Style>
+
+        <!--  Slider  -->
+        <Style Selector="Slider">
+            <Style Selector="^ /template/ ProgressBar#PART_ProgressLayer">
+                <Style Selector="^:horizontal">
+                    <Style Selector="^ Panel#PART_InnerPanel">
+                        <Setter Property="Height" Value="2" />
+
+                        <Style Selector="^ Border#PART_InactiveState">
+                            <Setter Property="Margin" Value="0" />
+                            <Setter Property="Height" Value="2" />
+                        </Style>
+
+                        <Style Selector="^ Border#PART_Indicator">
+                            <Setter Property="Margin" Value="0" />
+                        </Style>
+                    </Style>
+                </Style>
+            </Style>
+
+            <Style Selector="^ /template/ Track#PART_Track">
+                <Style Selector="^:horizontal">
+                    <Setter Property="Margin" Value="4,0" />
+                </Style>
+
+                <Style Selector="^ Border#PART_HoverEffect">
+                    <Setter Property="Width" Value="24" />
+                    <Setter Property="Height" Value="24" />
+                </Style>
+
+                <Style Selector="^ Border#PART_ThumbGrip">
+                    <Setter Property="Width" Value="12" />
+                    <Setter Property="Height" Value="12" />
+                </Style>
+            </Style>
+        </Style>
+
+        <!--  Text box  -->
+        <Style Selector="TextBox">
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+
+        <!--  Toggle button  -->
+        <Style Selector="ToggleButton">
+            <Setter Property="TextElement.FontWeight" Value="Medium" />
+        </Style>
+
+        <!--  Toggle switch  -->
+        <Style Selector="ToggleSwitch">
+            <Setter Property="materialAssists:ToggleSwitchAssist.SwitchThumbOffBackground" Value="{DynamicResource MaterialBackgroundBrush}" />
+        </Style>
+
+        <!--  Tooltip  -->
+        <Style Selector="ToolTip">
+            <Setter Property="TextElement.FontSize" Value="14" />
+            <Setter Property="TextElement.FontWeight" Value="Normal" />
+            <Setter Property="TextElement.FontStyle" Value="Normal" />
+            <Setter Property="TextElement.FontStretch" Value="Normal" />
+        </Style>
+    </Application.Styles>
+</Application>

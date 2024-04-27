@@ -1,0 +1,343 @@
+﻿<UserControl
+    x:Class="DiscordChatExporter.Gui.Views.Dialogs.ExportSetupView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+    xmlns:converters="clr-namespace:DiscordChatExporter.Gui.Converters"
+    xmlns:dialogs="clr-namespace:DiscordChatExporter.Gui.ViewModels.Dialogs"
+    xmlns:materialAssists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
+    xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:utils="clr-namespace:DiscordChatExporter.Gui.Utils"
+    x:Name="UserControl"
+    Width="380"
+    Loaded="UserControl_OnLoaded">
+    <Design.DataContext>
+        <dialogs:ExportSetupViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!--  Guild/channel info  -->
+        <Grid
+            Grid.Row="0"
+            Margin="16"
+            ColumnDefinitions="Auto,*">
+            <!--  Guild icon  -->
+            <Ellipse
+                Grid.Column="0"
+                Width="32"
+                Height="32">
+                <Ellipse.Fill>
+                    <ImageBrush asyncImageLoader:ImageBrushLoader.Source="{Binding Guild.IconUrl}" />
+                </Ellipse.Fill>
+            </Ellipse>
+
+            <!--  Channel count (for multiple channels)  -->
+            <TextBlock
+                Grid.Column="1"
+                Margin="8,0,0,0"
+                VerticalAlignment="Center"
+                FontSize="19"
+                FontWeight="Light"
+                IsVisible="{Binding !IsSingleChannel}"
+                TextTrimming="CharacterEllipsis">
+                <Run Text="{Binding Channels.Count, Mode=OneWay}" />
+                <Run Text="channels selected" />
+            </TextBlock>
+
+            <!--  Category and channel name (for single channel)  -->
+            <TextBlock
+                Grid.Column="1"
+                Margin="8,0,0,0"
+                VerticalAlignment="Center"
+                FontSize="19"
+                FontWeight="Light"
+                IsVisible="{Binding IsSingleChannel}"
+                TextTrimming="CharacterEllipsis"
+                ToolTip.Tip="{Binding Channels[0], Converter={x:Static converters:ChannelToHierarchicalNameStringConverter.Instance}}">
+                <TextBlock IsVisible="{Binding !!Channels[0].Parent}">
+                    <Run Text="{Binding Channels[0].Parent.Name, Mode=OneWay}" />
+                    <Run Text="/" />
+                </TextBlock>
+                <Run FontWeight="SemiBold" Text="{Binding Channels[0].Name, Mode=OneWay}" />
+            </TextBlock>
+        </Grid>
+
+        <Border
+            Grid.Row="1"
+            Padding="0,8"
+            BorderBrush="{DynamicResource MaterialDividerBrush}"
+            BorderThickness="0,1">
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <StackPanel Orientation="Vertical">
+                    <!--  Output path  -->
+                    <TextBox
+                        Margin="16,8"
+                        materialAssists:TextFieldAssist.Label="Output path"
+                        Text="{Binding OutputPath}"
+                        Theme="{DynamicResource FilledTextBox}">
+                        <ToolTip.Tip>
+                            <TextBlock>
+                                <Run Text="Output file or directory path." />
+                                <LineBreak />
+                                <Run Text="If a directory is specified, file names will be generated automatically based on the channel names and export parameters." />
+                                <LineBreak />
+                                <Run Text="Directory paths must end with a slash to avoid ambiguity." />
+                                <LineBreak />
+                                <LineBreak />
+                                <Run Text="Available template tokens:" />
+                                <LineBreak />
+                                <Run Text=" " />
+                                <Run FontWeight="SemiBold" Text="%g" />
+                                <Run Text="— server ID" />
+                                <LineBreak />
+                                <Run Text=" " />
+                                <Run FontWeight="SemiBold" Text="%G" />
+                                <Run Text="— server name" />
+                                <LineBreak />
+                                <Run Text=" " />
+                                <Run FontWeight="SemiBold" Text="%t" />
+                                <Run Text="— category ID" />
+                                <LineBreak />
+                                <Run Text=" " />
+                                <Run FontWeight="SemiBold" Text="%T" />
+                                <Run Text="— category name" />
+                                <LineBreak />
+                                <Run Text=" " />
+                                <Run FontWeight="SemiBold" Text="%c" />
+                                <Run Text="— channel ID" />
+                                <LineBreak />
+                                <Run Text=" " />
+                                <Run FontWeight="SemiBold" Text="%C" />
+                                <Run Text="— channel name" />
+                                <LineBreak />
+                                <Run Text=" " />
+                                <Run FontWeight="SemiBold" Text="%p" />
+                                <Run Text="— channel position" />
+                                <LineBreak />
+                                <Run Text=" " />
+                                <Run FontWeight="SemiBold" Text="%P" />
+                                <Run Text="— category position" />
+                                <LineBreak />
+                                <Run Text=" " />
+                                <Run FontWeight="SemiBold" Text="%a" />
+                                <Run Text="— after date" />
+                                <LineBreak />
+                                <Run Text=" " />
+                                <Run FontWeight="SemiBold" Text="%b" />
+                                <Run Text="— before date" />
+                                <LineBreak />
+                                <Run Text=" " />
+                                <Run FontWeight="SemiBold" Text="%d" />
+                                <Run Text="— current date" />
+                            </TextBlock>
+                        </ToolTip.Tip>
+                        <TextBox.InnerRightContent>
+                            <Button
+                                Margin="8,8,8,6"
+                                Padding="8"
+                                VerticalAlignment="Center"
+                                Command="{Binding ShowOutputPathPromptCommand}"
+                                Theme="{DynamicResource MaterialFlatButton}">
+                                <materialIcons:MaterialIcon
+                                    Width="20"
+                                    Height="20"
+                                    Kind="FolderOpen" />
+                            </Button>
+                        </TextBox.InnerRightContent>
+                    </TextBox>
+
+                    <!--  Format  -->
+                    <ComboBox
+                        Margin="16,8"
+                        materialAssists:ComboBoxAssist.Label="Format"
+                        ItemsSource="{Binding AvailableFormats}"
+                        SelectedItem="{Binding SelectedFormat}"
+                        Theme="{DynamicResource MaterialFilledComboBox}"
+                        ToolTip.Tip="Export format">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={x:Static converters:ExportFormatToStringConverter.Instance}}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <!--  Advanced section  -->
+                    <StackPanel IsVisible="{Binding IsAdvancedSectionDisplayed}" Orientation="Vertical">
+                        <!--  Date limits  -->
+                        <Grid ColumnDefinitions="*,*" RowDefinitions="*,*">
+                            <DatePicker
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="16,8,8,8"
+                                materialAssists:TextFieldAssist.Label="After (date)"
+                                SelectedDate="{Binding AfterDate}"
+                                ToolTip.Tip="Only include messages sent after this date">
+                                <DatePicker.Styles>
+                                    <Style Selector="DatePicker">
+                                        <Style Selector="^ /template/ TextBox#DisplayTextBox">
+                                            <Setter Property="Theme" Value="{DynamicResource FilledTextBox}" />
+                                        </Style>
+                                    </Style>
+                                </DatePicker.Styles>
+                            </DatePicker>
+                            <DatePicker
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Margin="8,8,16,8"
+                                materialAssists:TextFieldAssist.Label="Before (date)"
+                                SelectedDate="{Binding BeforeDate}"
+                                ToolTip.Tip="Only include messages sent before this date">
+                                <DatePicker.Styles>
+                                    <Style Selector="DatePicker">
+                                        <Style Selector="^ /template/ TextBox#DisplayTextBox">
+                                            <Setter Property="Theme" Value="{DynamicResource FilledTextBox}" />
+                                        </Style>
+                                    </Style>
+                                </DatePicker.Styles>
+                            </DatePicker>
+
+                            <!--  Time limits  -->
+                            <TimePicker
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Margin="16,8,8,8"
+                                materialAssists:TextFieldAssist.Label="After (time)"
+                                ClockIdentifier="{x:Static utils:Internationalization.AvaloniaClockIdentifier}"
+                                IsEnabled="{Binding IsAfterDateSet}"
+                                SelectedTime="{Binding AfterTime}"
+                                ToolTip.Tip="Only include messages sent after this time">
+                                <TimePicker.Styles>
+                                    <Style Selector="TimePicker">
+                                        <Style Selector="^ /template/ TextBox#PART_DisplayTextBox">
+                                            <Setter Property="Theme" Value="{DynamicResource FilledTextBox}" />
+                                        </Style>
+                                    </Style>
+                                </TimePicker.Styles>
+                            </TimePicker>
+                            <TimePicker
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Margin="8,8,16,8"
+                                materialAssists:TextFieldAssist.Label="Before (time)"
+                                ClockIdentifier="{x:Static utils:Internationalization.AvaloniaClockIdentifier}"
+                                IsEnabled="{Binding IsBeforeDateSet}"
+                                SelectedTime="{Binding BeforeTime}"
+                                ToolTip.Tip="Only include messages sent before this time">
+                                <TimePicker.Styles>
+                                    <Style Selector="TimePicker">
+                                        <Style Selector="^ /template/ TextBox#PART_DisplayTextBox">
+                                            <Setter Property="Theme" Value="{DynamicResource FilledTextBox}" />
+                                        </Style>
+                                    </Style>
+                                </TimePicker.Styles>
+                            </TimePicker>
+                        </Grid>
+
+                        <!--  Partitioning  -->
+                        <TextBox
+                            Margin="16,8"
+                            materialAssists:TextFieldAssist.Label="Partition limit"
+                            Text="{Binding PartitionLimitValue}"
+                            Theme="{DynamicResource FilledTextBox}"
+                            ToolTip.Tip="Split the output into partitions, each limited to the specified number of messages (e.g. '100') or file size (e.g. '10mb')" />
+
+                        <!--  Filtering  -->
+                        <TextBox
+                            Margin="16,8"
+                            materialAssists:TextFieldAssist.Label="Message filter"
+                            Text="{Binding MessageFilterValue}"
+                            Theme="{DynamicResource FilledTextBox}"
+                            ToolTip.Tip="Only include messages that satisfy this filter (e.g. 'from:foo#1234' or 'has:image'). See the documentation for more info." />
+
+                        <!--  Markdown formatting  -->
+                        <DockPanel
+                            Margin="16,8"
+                            LastChildFill="False"
+                            ToolTip.Tip="Process markdown, mentions, and other special tokens">
+                            <TextBlock DockPanel.Dock="Left" Text="Format markdown" />
+                            <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding ShouldFormatMarkdown}" />
+                        </DockPanel>
+
+                        <!--  Download assets  -->
+                        <DockPanel
+                            Margin="16,8"
+                            LastChildFill="False"
+                            ToolTip.Tip="Download assets referenced by the export (user avatars, attached files, embedded images, etc.)">
+                            <TextBlock DockPanel.Dock="Left" Text="Download assets" />
+                            <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding ShouldDownloadAssets}" />
+                        </DockPanel>
+
+                        <!--  Reuse assets  -->
+                        <DockPanel
+                            Margin="16,8"
+                            IsEnabled="{Binding ShouldDownloadAssets}"
+                            LastChildFill="False"
+                            ToolTip.Tip="Reuse previously downloaded assets to avoid redundant requests">
+                            <TextBlock DockPanel.Dock="Left" Text="Reuse assets" />
+                            <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding ShouldReuseAssets}" />
+                        </DockPanel>
+
+                        <!--  Assets path  -->
+                        <TextBox
+                            Margin="16,8"
+                            materialAssists:TextFieldAssist.Label="Assets directory path"
+                            IsEnabled="{Binding ShouldDownloadAssets}"
+                            Text="{Binding AssetsDirPath}"
+                            Theme="{DynamicResource FilledTextBox}"
+                            ToolTip.Tip="Download assets to this directory. If not specified, the asset directory path will be derived from the output path.">
+                            <TextBox.InnerRightContent>
+                                <Button
+                                    Margin="8,8,8,6"
+                                    Padding="8"
+                                    VerticalAlignment="Center"
+                                    Command="{Binding ShowAssetsDirPathPromptCommand}"
+                                    Theme="{DynamicResource MaterialFlatButton}">
+                                    <materialIcons:MaterialIcon
+                                        Width="20"
+                                        Height="20"
+                                        Kind="FolderOpen" />
+                                </Button>
+                            </TextBox.InnerRightContent>
+                        </TextBox>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!--  Buttons  -->
+        <Grid
+            Grid.Row="2"
+            Margin="16"
+            ColumnDefinitions="Auto,*,Auto,Auto">
+            <ToggleButton
+                Grid.Column="0"
+                IsChecked="{Binding IsAdvancedSectionDisplayed}"
+                Theme="{DynamicResource MaterialOutlineButton}"
+                ToolTip.Tip="Toggle advanced options">
+                <Button.Styles>
+                    <Style Selector="ToggleButton">
+                        <Setter Property="Content" Value="MORE" />
+
+                        <Style Selector="^:checked">
+                            <Setter Property="Content" Value="LESS" />
+                        </Style>
+                    </Style>
+                </Button.Styles>
+            </ToggleButton>
+
+            <Button
+                Grid.Column="2"
+                Command="{Binding ConfirmCommand}"
+                Content="EXPORT"
+                IsDefault="True"
+                Theme="{DynamicResource MaterialOutlineButton}" />
+            <Button
+                Grid.Column="3"
+                Margin="16,0,0,0"
+                Command="{Binding CloseCommand}"
+                Content="CANCEL"
+                IsCancel="True"
+                Theme="{DynamicResource MaterialOutlineButton}" />
+        </Grid>
+    </Grid>
+</UserControl>

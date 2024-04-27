@@ -1,0 +1,28 @@
+﻿<Window
+    x:Class="DiscordChatExporter.Gui.Views.MainView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
+    xmlns:materialStyles="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
+    xmlns:viewModels="clr-namespace:DiscordChatExporter.Gui.ViewModels"
+    Title="{Binding Title}"
+    Width="625"
+    Height="625"
+    MinWidth="600"
+    MinHeight="400"
+    Icon="/favicon.ico"
+    RenderOptions.BitmapInterpolationMode="HighQuality"
+    WindowStartupLocation="CenterScreen">
+    <Design.DataContext>
+        <viewModels:MainViewModel />
+    </Design.DataContext>
+
+    <dialogHostAvalonia:DialogHost
+        x:Name="DialogHost"
+        CloseOnClickAway="False"
+        Loaded="DialogHost_OnLoaded">
+        <materialStyles:SnackbarHost HostName="Root">
+            <ContentControl Content="{Binding Dashboard}" />
+        </materialStyles:SnackbarHost>
+    </dialogHostAvalonia:DialogHost>
+</Window>

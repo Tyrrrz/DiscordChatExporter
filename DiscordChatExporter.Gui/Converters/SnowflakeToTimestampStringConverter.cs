@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
-using DiscordChatExporter.Core.Exporting;
+using DiscordChatExporter.Core.Discord;
 
 namespace DiscordChatExporter.Gui.Converters;
 
-public class ExportFormatToStringConverter : IValueConverter
+public class SnowflakeToTimestampStringConverter : IValueConverter
 {
-    public static ExportFormatToStringConverter Instance { get; } = new();
+    public static SnowflakeToTimestampStringConverter Instance { get; } = new();
 
     public object? Convert(
         object? value,
         Type targetType,
         object? parameter,
         CultureInfo culture
-    ) => value is ExportFormat format ? format.GetDisplayName() : default;
+    ) => value is Snowflake snowflake ? snowflake.ToDate().ToString("g", culture) : null;
 
     public object ConvertBack(
         object? value,

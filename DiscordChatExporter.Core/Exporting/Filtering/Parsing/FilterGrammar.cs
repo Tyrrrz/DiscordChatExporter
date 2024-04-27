@@ -30,8 +30,8 @@ internal static class FilterGrammar
         .OneOf(QuotedString, UnquotedString)
         .Named("text string");
 
-    private static readonly TextParser<MessageFilter> ContainsFilter = String.Select(
-        v => (MessageFilter)new ContainsMessageFilter(v)
+    private static readonly TextParser<MessageFilter> ContainsFilter = String.Select(v =>
+        (MessageFilter)new ContainsMessageFilter(v)
     );
 
     private static readonly TextParser<MessageFilter> FromFilter = Span.EqualToIgnoreCase("from:")

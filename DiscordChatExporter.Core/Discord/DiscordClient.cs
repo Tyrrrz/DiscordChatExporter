@@ -66,12 +66,12 @@ public class DiscordClient(string token)
                 if (remainingRequestCount <= 0 && resetAfterDelay is not null)
                 {
                     var delay =
-                    // Adding a small buffer to the reset time reduces the chance of getting
-                    // rate limited again, because it allows for more requests to be released.
-                    (resetAfterDelay.Value + TimeSpan.FromSeconds(1))
-                    // Sometimes Discord returns an absurdly high value for the reset time, which
-                    // is not actually enforced by the server. So we cap it at a reasonable value.
-                    .Clamp(TimeSpan.Zero, TimeSpan.FromSeconds(60));
+                        // Adding a small buffer to the reset time reduces the chance of getting
+                        // rate limited again, because it allows for more requests to be released.
+                        (resetAfterDelay.Value + TimeSpan.FromSeconds(1))
+                        // Sometimes Discord returns an absurdly high value for the reset time, which
+                        // is not actually enforced by the server. So we cap it at a reasonable value.
+                        .Clamp(TimeSpan.Zero, TimeSpan.FromSeconds(60));
 
                     await Task.Delay(delay, innerCancellationToken);
                 }
@@ -152,8 +152,13 @@ public class DiscordClient(string token)
                 _
                     => throw new DiscordChatExporterException(
                         $"""
-                        Request to '{url}' failed: {response.StatusCode.ToString().ToSpaceSeparatedWords().ToLowerInvariant()}.
-                        Response content: {await response.Content.ReadAsStringAsync(cancellationToken)}
+                        Request to '{url}' failed: {response
+                            .StatusCode.ToString()
+                            .ToSpaceSeparatedWords()
+                            .ToLowerInvariant()}.
+                        Response content: {await response.Content.ReadAsStringAsync(
+                            cancellationToken
+                        )}
                         """,
                         true
                     )

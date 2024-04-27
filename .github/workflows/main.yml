@@ -99,7 +99,8 @@ jobs:
             # GUI assets aren't suffixed, unlike the CLI assets
             asset: DiscordChatExporter
 
-    runs-on: ubuntu-latest
+    # Need to run on Windows because of DotnetRuntimeBootstrapper's dependency on Ressy
+    runs-on: windows-latest
     timeout-minutes: 10
 
     permissions:

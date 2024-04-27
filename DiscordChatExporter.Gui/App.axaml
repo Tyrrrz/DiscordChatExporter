@@ -131,12 +131,5 @@
             <Setter Property="TextElement.FontStyle" Value="Normal" />
             <Setter Property="TextElement.FontStretch" Value="Normal" />
         </Style>
-
-        <!--  Tree view  -->
-        <Style Selector="TreeViewItem">
-            <Style Selector="^:empty /template/ ToggleButton#PART_ExpanderButton">
-                <Setter Property="IsVisible" Value="False" />
-            </Style>
-        </Style>
     </Application.Styles>
 </Application>

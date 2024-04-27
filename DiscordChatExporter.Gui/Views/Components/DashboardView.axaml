@@ -239,7 +239,7 @@
                         </ListBox.Styles>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Panel ToolTip.Tip="{Binding Name}">
+                                <Panel Background="Transparent" ToolTip.Tip="{Binding Name}">
                                     <!--  Guild icon placeholder  -->
                                     <Ellipse
                                         Width="48"
@@ -282,13 +282,12 @@
                         </TreeView.Styles>
                         <TreeView.ItemTemplate>
                             <TreeDataTemplate ItemsSource="{Binding Children}">
-                                <Panel
-                                    x:Name="ChannelTreeViewItemPanel"
+                                <Grid
                                     Background="Transparent"
                                     Classes.category="{Binding Channel.IsCategory}"
-                                    PointerPressed="ChannelTreeViewItemPanel_OnPointerPressed">
-                                    <Panel.Styles>
-                                        <Style Selector="Panel">
+                                    ColumnDefinitions="Auto,*,Auto">
+                                    <Grid.Styles>
+                                        <Style Selector="Grid">
                                             <Style Selector="^:not(.category)">
                                                 <Setter Property="ToolTip.Tip">
                                                     <Template>
@@ -300,46 +299,41 @@
                                                 </Setter>
                                             </Style>
                                         </Style>
-                                    </Panel.Styles>
-                                    <Grid Margin="4,8" ColumnDefinitions="Auto,*,Auto">
-                                        <!--  Channel icon  -->
-                                        <materialIcons:MaterialIcon
-                                            Grid.Column="0"
-                                            Classes.direct="{Binding Channel.IsDirect}"
-                                            Classes.voice="{Binding Channel.IsVoice}"
-                                            IsVisible="{Binding !Channel.IsCategory}">
-                                            <materialIcons:MaterialIcon.Styles>
-                                                <Style Selector="materialIcons|MaterialIcon">
-                                                    <Setter Property="Kind" Value="Pound" />
+                                    </Grid.Styles>
 
-                                                    <Style Selector="^.direct">
-                                                        <Setter Property="Margin" Value="12,0,0,0" />
-                                                    </Style>
+                                    <!--  Channel icon  -->
+                                    <materialIcons:MaterialIcon
+                                        Grid.Column="0"
+                                        Margin="0,0,4,0"
+                                        Classes.voice="{Binding Channel.IsVoice}"
+                                        IsVisible="{Binding !Channel.IsCategory}">
+                                        <materialIcons:MaterialIcon.Styles>
+                                            <Style Selector="materialIcons|MaterialIcon">
+                                                <Setter Property="Kind" Value="Pound" />
 
-                                                    <Style Selector="^.voice">
-                                                        <Setter Property="Kind" Value="VolumeHigh" />
-                                                    </Style>
+                                                <Style Selector="^.voice">
+                                                    <Setter Property="Kind" Value="VolumeHigh" />
                                                 </Style>
-                                            </materialIcons:MaterialIcon.Styles>
-                                        </materialIcons:MaterialIcon>
+                                            </Style>
+                                        </materialIcons:MaterialIcon.Styles>
+                                    </materialIcons:MaterialIcon>
 
-                                        <!--  Channel name  -->
-                                        <TextBlock
-                                            Grid.Column="1"
-                                            Margin="4"
-                                            FontSize="14"
-                                            Text="{Binding Channel.Name, Mode=OneWay}" />
+                                    <!--  Channel name  -->
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        Margin="0,12"
+                                        FontSize="14"
+                                        Text="{Binding Channel.Name, Mode=OneWay}" />
 
-                                        <!--  Checkmark  -->
-                                        <materialIcons:MaterialIcon
-                                            Grid.Column="2"
-                                            Width="24"
-                                            Height="24"
-                                            Margin="12,0"
-                                            IsVisible="{Binding $parent[TreeViewItem].IsSelected}"
-                                            Kind="Check" />
-                                    </Grid>
-                                </Panel>
+                                    <!--  Checkmark  -->
+                                    <materialIcons:MaterialIcon
+                                        Grid.Column="2"
+                                        Width="24"
+                                        Height="24"
+                                        Margin="16,0"
+                                        IsVisible="{Binding $parent[TreeViewItem].IsSelected}"
+                                        Kind="Check" />
+                                </Grid>
                             </TreeDataTemplate>
                         </TreeView.ItemTemplate>
                     </TreeView>

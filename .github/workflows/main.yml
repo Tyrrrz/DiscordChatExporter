@@ -82,6 +82,16 @@ jobs:
         app:
           - DiscordChatExporter.Cli
           - DiscordChatExporter.Gui
+        rid:
+          - win-arm64
+          - win-x86
+          - win-x64
+          - linux-arm
+          - linux-arm64
+          - linux-musl-x64
+          - linux-x64
+          - osx-arm64
+          - osx-x64
 
     runs-on: windows-latest
     timeout-minutes: 10
@@ -106,12 +116,12 @@ jobs:
           -p:CSharpier_Bypass=true
           --output ${{ matrix.app }}/bin/publish/
           --configuration Release
-          --use-current-runtime
+          --runtime ${{ matrix.rid }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@26f96dfa697d77e81fd5907df203aa23a56210a8 # v4.3.0
         with:
-          name: ${{ matrix.app }}
+          name: ${{ matrix.app }}.${{ matrix.rid }}
           path: ${{ matrix.app }}/bin/publish/
           if-no-files-found: error
 
@@ -148,12 +158,16 @@ jobs:
         app:
           - DiscordChatExporter.Cli
           - DiscordChatExporter.Gui
-        include:
-          - app: DiscordChatExporter.Cli
-            asset: DiscordChatExporter.Cli
-          - app: DiscordChatExporter.Gui
-            # GUI asset isn't suffixed, unlike the CLI asset
-            asset: DiscordChatExporter
+        rid:
+          - win-arm64
+          - win-x86
+          - win-x64
+          - linux-arm
+          - linux-arm64
+          - linux-musl-x64
+          - linux-x64
+          - osx-arm64
+          - osx-x64
 
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -166,25 +180,20 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
         with:
-          name: ${{ matrix.app }}
+          name: ${{ matrix.app }}.${{ matrix.rid }}
           path: ${{ matrix.app }}/
           
-      - name: Configure permissions
-        # Remove this when the GUI also becomes cross-platform
-        if: ${{ matrix.app == 'DiscordChatExporter.Cli' }}
-        run: chmod +x ${{ matrix.app }}/${{ matrix.app }}.sh
-
       - name: Create package
         # Change into the artifacts directory to avoid including the directory itself in the zip archive
         working-directory: ${{ matrix.app }}/
-        run: zip -rX ../${{ matrix.asset }}.zip .
+        run: zip -rX ../${{ matrix.asset }}.${{ matrix.rid }}.zip .
 
       - name: Upload release asset
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >
           gh release upload ${{ github.ref_name }}
-          ${{ matrix.asset }}.zip
+          ${{ matrix.asset }}.${{ matrix.rid }}.zip
           --repo ${{ github.event.repository.full_name }}
 
   notify:

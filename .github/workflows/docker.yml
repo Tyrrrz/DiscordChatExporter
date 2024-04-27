@@ -12,8 +12,7 @@ on:
       - master
 
 jobs:
-  # Outputs from this job aren't really used, but it's here to verify that
-  # the Dockerfile builds correctly on pull requests.
+  # Outputs from this job aren't really used, but it's here to verify that the Dockerfile builds correctly
   pack:
     runs-on: ubuntu-latest
     timeout-minutes: 10

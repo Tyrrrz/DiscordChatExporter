@@ -4,10 +4,6 @@
     <OutputType>Exe</OutputType>
     <ApplicationIcon>..\favicon.ico</ApplicationIcon>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="DiscordChatExporter.Cli.sh" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="CliFx" Version="2.3.5" />

@@ -41,53 +41,16 @@ To learn more about the war and how you can help, [click here](https://tyrrrz.me
 
 ## Download
 
-This application comes in two flavors: graphical user interface (**GUI**) and command-line interface (**CLI**).
-The following table lists all available download options:
+- **Graphical user interface**:
+  - 🟢 **[Stable release](https://github.com/Tyrrrz/DiscordChatExporter/releases/latest)**: look for `DiscordChatExporter.Gui.*.zip`
+  - 🟠 [CI build](https://github.com/Tyrrrz/DiscordChatExporter/actions/workflows/main.yml): look for `DiscordChatExporter.Gui.*.zip`
+- **Command-line interface**:
+  - 🟢 **[Stable release](https://github.com/Tyrrrz/DiscordChatExporter/releases/latest)**: look for `DiscordChatExporter.Cli.*.zip`
+  - 🟠 [CI build](https://github.com/Tyrrrz/DiscordChatExporter/actions/workflows/main.yml): look for `DiscordChatExporter.Cli.*.zip`
+  - 🐋 [Docker](https://hub.docker.com/r/tyrrrz/discordchatexporter): `docker pull tyrrrz/discordchatexporter`
+  - 📦 [AUR](https://aur.archlinux.org/packages/discord-chat-exporter-cli): `discord-chat-exporter-cli`
+  - 📦 [Nix](https://search.nixos.org/packages?query=discordchatexporter-cli): `discordchatexporter-cli`
 
-<table>
-  <thead>
-    <tr>
-      <th></th>
-      <th>Downloads</th>
-      <th>Supported OS</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><b>GUI</b></td>
-      <td>
-        <ul>
-          <li>🟢 <b><a href="https://github.com/Tyrrrz/DiscordChatExporter/releases/latest">Stable release</a></b> (<code>DiscordChatExporter.zip</code>)</li>
-          <li>🟠 <a href="https://github.com/Tyrrrz/DiscordChatExporter/actions/workflows/main.yml">CI build</a> (<code>DiscordChatExporter.Gui.zip</code>)</li>
-        </ul>
-      </td>
-      <td>
-        <ul>
-          <li>Windows <b>7</b> or higher</li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td><b>CLI</b></td>
-      <td>
-        <ul>
-          <li>🟢 <b><a href="https://github.com/Tyrrrz/DiscordChatExporter/releases/latest">Stable release</a></b> (<code>DiscordChatExporter.Cli.zip</code></li>
-          <li>🟠 <a href="https://github.com/Tyrrrz/DiscordChatExporter/actions/workflows/main.yml">CI build</a> (<code>DiscordChatExporter.Cli.zip</code>)</li>
-          <li>🐋 <a href="https://hub.docker.com/r/tyrrrz/discordchatexporter">Docker</a> (<code>tyrrrz/discordchatexporter</code>)</li>
-          <li>📦 <a href="https://aur.archlinux.org/packages/discord-chat-exporter-cli">AUR</a> (<code>discord-chat-exporter-cli</code>)</li>
-          <li>📦 <a href="https://search.nixos.org/packages?query=discordchatexporter-cli">Nix</a> (<code>discordchatexporter-cli</code>)</li>
-        </ul>
-      </td>
-      <td>
-        <ul>
-          <li>Windows <b>7</b> or higher</li>
-          <li>macOS <b>10.13 (High Sierra)</b> or higher</li>
-          <li>Linux (multiple distros)</li>
-        </ul>
-      </td>
-    </tr>
-  </tbody>
-</table>
 
 > **Important**:
 > To run **DiscordChatExporter**, you need to make sure that the **.NET 8.0 Runtime** is installed.
@@ -107,8 +70,8 @@ The following table lists all available download options:
 
 ## Features
 
-- Graphical user interface (Windows)
-- Command-line interface (Windows, Linux, macOS)
+- Graphical and command-line interfaces
+- Fully cross-platform
 - Authentication via either a user or a bot token
 - Multiple output formats: HTML (dark/light), TXT, CSV, JSON
 - Support for markdown, attachments, embeds, emoji, and other rich media features

@@ -145,12 +145,6 @@ DiscordChatExporter.Domain.Exceptions.DiscordChatExporterException: Access is fo
 ↳ This means you don't have access to the channel.
 
 ```yml
-The application to execute does not exist:
-```
-
-↳ The `DiscordChatExporter.Cli.dll` file is missing. Keep the `.exe` and all the `.dll` files together. If you didn't move the files, try unzipping again.
-
-```yml
 System.Net.WebException: Error: TrustFailure ... Invalid certificate received from server.
 ```
 

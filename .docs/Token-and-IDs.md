@@ -25,7 +25,7 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 
 3. Type
 
-    ```console
+    ```js
     (webpackChunkdiscord_app.push([[''],{},e=>{m=[];for(let c in e.c)m.push(e.c[c])}]),m).find(m=>m?.exports?.default?.getToken!==void 0).exports.default.getToken()
     ```
 
@@ -118,7 +118,7 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 
 1. Type
 
-    ```console
+    ```js
     (webpackChunkdiscord_app.push([[''],{},e=>{m=[];for(let c in e.c)m.push(e.c[c])}]),m).find(m=>m?.exports?.default?.getToken!==void 0).exports.default.getToken()
     ```
 

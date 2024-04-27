@@ -43,12 +43,8 @@ For other distros, please check the _'Install on Linux'_ menu on the left of [th
 You can check which version of **.NET Runtime** is installed by running the following command in a terminal:
 
 ```console
-dotnet --info
-```
+$ dotnet --info
 
-If the **.NET Runtime** is correctly installed, the command will output something similar to the following:
-
-```console
 .NET runtimes installed:
   Microsoft.NETCore.App 7.0.x [C:\path\to\dotnet\shared\Microsoft.NETCore.App]
   Microsoft.WindowsDesktop.App 7.0.x [C:\path\to\dotnet\shared\Microsoft.WindowsDesktop.App]

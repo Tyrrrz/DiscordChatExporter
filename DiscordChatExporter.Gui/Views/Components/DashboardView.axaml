@@ -266,7 +266,6 @@
                 <Border Grid.Column="1">
                     <TreeView
                         x:Name="AvailableChannelsTreeView"
-                        AutoScrollToSelectedItem="False"
                         ItemsSource="{Binding AvailableChannels}"
                         SelectedItems="{Binding SelectedChannels}"
                         SelectionChanged="AvailableChannelsTreeView_OnSelectionChanged"

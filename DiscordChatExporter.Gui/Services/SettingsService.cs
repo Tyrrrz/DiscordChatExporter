@@ -39,9 +39,6 @@ public partial class SettingsService()
     private int _parallelLimit = 1;
 
     [ObservableProperty]
-    private Version? _lastAppVersion;
-
-    [ObservableProperty]
     private string? _lastToken;
 
     [ObservableProperty]

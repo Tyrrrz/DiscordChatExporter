@@ -196,7 +196,11 @@ jobs:
         with:
           name: ${{ matrix.asset }}.${{ matrix.rid }}
           path: ${{ matrix.app }}/
-          
+
+      - name: Set permissions
+        if: ${{ !startsWith(matrix.rid, 'win') }}
+        run: chmod +x ${{ matrix.app }}/${{ matrix.asset }}
+
       - name: Create package
         # Change into the artifacts directory to avoid including the directory itself in the zip archive
         working-directory: ${{ matrix.app }}/

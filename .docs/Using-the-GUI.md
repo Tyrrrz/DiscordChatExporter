@@ -90,8 +90,9 @@ Customize how dates are formatted in the exported files in the settings menu ().
 The number of channels that will be exported at the same time.
 Default: 1
 
+  > **Note**:
+  > Try to keep this number low so that your account doesn't get flagged.
+
 - **Normalize to UTC**
 Convert all dates to UTC before exporting.
 
-  > **Note**:
-  > Try to keep this number low so that your account doesn't get flagged.

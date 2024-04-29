@@ -35,7 +35,7 @@ You can open `.html` files with a web browser, such as Google Chrome.
 
 > **Warning**:
 > If a picture is deleted, or if a user changes its avatar, the respective images will no longer be displayed.
-> Export using the "Download referenced assets" (`--media`) option to avoid this.
+> Export using the "Download assets" (`--media`) option to avoid this.
 
 ### Plain Text
 

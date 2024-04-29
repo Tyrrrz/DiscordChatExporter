@@ -10,7 +10,7 @@
 
 ### Step 1
 
-After extracting the `.zip`, open `DiscordChatExporter.exe`
+After extracting the `.zip`, run `DiscordChatExporter.exe` (Windows), or `DiscordChatExporter` (Mac OS and Linux).
 
 ### Step 2
 

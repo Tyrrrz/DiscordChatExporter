@@ -2,7 +2,6 @@
 
 ## Installation & Usage
 
-- [Get .NET Runtime](Dotnet.md)
 - Getting started:
   - [Using the GUI](Using-the-GUI.md)
   - [Using the CLI](Using-the-CLI.md)
@@ -28,6 +27,5 @@
 - [General questions](Troubleshooting.md#general)
 - [First steps help](Troubleshooting.md#first-steps)
 - [It's crashing/failing](Troubleshooting.md#DCE-is-crashingfailing)
-- [.NET Core Runtime is required](Troubleshooting.md#net-core-runtime-is-required)
 - [Errors](Troubleshooting.md#errors)
 - [**More help**](Troubleshooting.md)

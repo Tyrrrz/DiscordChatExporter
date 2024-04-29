@@ -1,11 +1,5 @@
 # Using the CLI
 
-## Guide
-
-> **Note**:
-> Make sure you have [.NET Core installed](Dotnet.md) before attempting to run the commands below.
-> **Docker** users, please refer to the [Docker usage instructions](Docker.md).
-
 ## Step 1
 
 After extracting the `.zip`, open Command Prompt, aka `cmd` (`Terminal` on **macOS** and **Linux**).

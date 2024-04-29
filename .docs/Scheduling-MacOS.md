@@ -1,7 +1,5 @@
 # Scheduling exports on macOS
 
-Make sure you already have **DiscordChatExporter.CLI** downloaded and **.NET Runtime** installed.
-
 ## Creating the script
 
 1. Open TextEdit.app and create a new file

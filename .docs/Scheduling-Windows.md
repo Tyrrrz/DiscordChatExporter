@@ -1,8 +1,5 @@
 # Scheduling exports on Windows
 
-We'll be using [DiscordChatExporter CLI](https://github.com/Tyrrrz/DiscordChatExporter/releases/latest), PowerShell, and Task Scheduler.
-Make sure you already have **DiscordChatExporter.CLI** downloaded and **.NET Runtime** installed.
-
 ## Creating the script
 
 1. Open a text editor such as Notepad and paste:

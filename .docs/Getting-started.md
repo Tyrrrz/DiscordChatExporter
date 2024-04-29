@@ -41,7 +41,7 @@ You can open `.html` files with a web browser, such as Google Chrome.
 
 <img src="https://i.imgur.com/PbUyRXD.png" height="400"/>
 
-The Plain Text format is the best option for archiving due to its small size.
+The Plain Text format formats messages as plain text, and has the smallest size.
 You can open `.txt` files with a text editor, such as Notepad.
 
 ### JSON

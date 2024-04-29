@@ -12,13 +12,12 @@ After extracting the `.zip`, open Command Prompt, aka `cmd` (`Terminal` on **mac
 
 ## Step 2
 
-Change the current directory to DCE's folder with `cd C:\path\to\directory`, then press ENTER to run the command.
+Change the current directory to DCE's folder with `cd C:\path\to\DiscordChatExporter` (`cd /path/to/DiscordChatExporter` on **MacOS** and **Linux**), then press ENTER to run the command.
 
-**Windows** users can quickly get the directory's path by clicking the address bar while inside the folder.
+**Windows** users can quickly get the folder's path by clicking the address bar while inside the folder.
 ![Copy path from Explorer](https://i.imgur.com/XncnhC2.gif)
 
-**macOS** users can select the `.exe`, hit Command+I (⌘I), and copy what's after `Where:` to get the directory
-![Mac info panel](https://camo.githubusercontent.com/3c51a904b0099c9f68a4797461d4a7914902fc04/68747470733a2f2f692e696d6775722e636f6d2f323975364e79782e706e67)
+**macOS** users can press Command+Option+C (⌘⌥C) while inside the folder (or selecting it) to copy its path to the clipboard.
 
 You can also drag and drop the folder on **every platform**.
 ![Drag and drop folder](https://i.imgur.com/sOpZQAb.gif)

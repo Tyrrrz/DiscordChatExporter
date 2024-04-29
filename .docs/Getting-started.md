@@ -35,13 +35,13 @@ You can open `.html` files with a web browser, such as Google Chrome.
 
 > **Warning**:
 > If a picture is deleted, or if a user changes its avatar, the respective images will no longer be displayed.
-> Export using the "Download referenced assets" (`--media`) option to avoid this.
+> Export using the "Download assets" (`--media`) option to avoid this.
 
 ### Plain Text
 
 <img src="https://i.imgur.com/PbUyRXD.png" height="400"/>
 
-The Plain Text format is the best option for archiving due to its small size.
+The Plain Text format formats messages as plain text, and has the smallest size.
 You can open `.txt` files with a text editor, such as Notepad.
 
 ### JSON

@@ -68,8 +68,7 @@ To learn more about the war and how you can help, [click here](https://tyrrrz.me
 
 ## Features
 
-- Graphical and command-line interfaces
-- Fully cross-platform
+- Cross-platform graphical and command-line interfaces
 - Authentication via either a user or a bot token
 - Multiple output formats: HTML (dark/light), TXT, CSV, JSON
 - Support for markdown, attachments, embeds, emoji, and other rich media features

@@ -50,6 +50,9 @@ To learn more about the war and how you can help, [click here](https://tyrrrz.me
   - 📦 [AUR](https://aur.archlinux.org/packages/discord-chat-exporter-cli): `discord-chat-exporter-cli`
   - 📦 [Nix](https://search.nixos.org/packages?query=discordchatexporter-cli): `discordchatexporter-cli`
 
+> **Note**:
+> If you're unsure which build is right for your system, consult with [this page](https://useragent.cc) to determine your OS and CPU architecture.
+
 > **Important**:
 > To run **DiscordChatExporter**, you need to make sure that the **.NET 8.0 Runtime** is installed.
 > You can download it here:

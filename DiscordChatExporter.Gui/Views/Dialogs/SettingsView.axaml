@@ -66,7 +66,7 @@
                         <ComboBox
                             Width="150"
                             DockPanel.Dock="Right"
-                            ItemsSource="{Binding AvailableThreadInclusions}"
+                            ItemsSource="{Binding AvailableThreadInclusionModes}"
                             SelectedItem="{Binding ThreadInclusionMode}" />
                     </DockPanel>
 

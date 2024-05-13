@@ -41,7 +41,7 @@ public class SettingsViewModel : DialogViewModelBase
         set => _settingsService.IsTokenPersisted = value;
     }
 
-    public IReadOnlyList<ThreadInclusionMode> AvailableThreadInclusions { get; } =
+    public IReadOnlyList<ThreadInclusionMode> AvailableThreadInclusionModes { get; } =
         Enum.GetValues<ThreadInclusionMode>();
 
     public ThreadInclusionMode ThreadInclusionMode

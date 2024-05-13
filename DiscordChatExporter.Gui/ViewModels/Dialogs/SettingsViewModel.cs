@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using DiscordChatExporter.Core.Utils.Extensions;
 using DiscordChatExporter.Gui.Framework;
 using DiscordChatExporter.Gui.Models;
@@ -23,16 +22,18 @@ public class SettingsViewModel : DialogViewModelBase
         _eventRoot.Add(_settingsService.WatchAllProperties(OnAllPropertiesChanged));
     }
 
+    public IReadOnlyList<ThemeVariant> AvailableThemes { get; } = Enum.GetValues<ThemeVariant>();
+
+    public ThemeVariant Theme
+    {
+        get => _settingsService.Theme;
+        set => _settingsService.Theme = value;
+    }
+
     public bool IsAutoUpdateEnabled
     {
         get => _settingsService.IsAutoUpdateEnabled;
         set => _settingsService.IsAutoUpdateEnabled = value;
-    }
-
-    public bool IsDarkModeEnabled
-    {
-        get => _settingsService.IsDarkModeEnabled;
-        set => _settingsService.IsDarkModeEnabled = value;
     }
 
     public bool IsTokenPersisted

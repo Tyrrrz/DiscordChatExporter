@@ -7,13 +7,18 @@
     xmlns:materialAssists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
     xmlns:materialControls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
     xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-    xmlns:materialStyles="clr-namespace:Material.Styles.Themes;assembly=Material.Styles">
+    xmlns:materialStyles="clr-namespace:Material.Styles.Themes;assembly=Material.Styles"
+    ActualThemeVariantChanged="Application_OnActualThemeVariantChanged">
     <Application.DataTemplates>
         <framework:ViewManager />
     </Application.DataTemplates>
 
     <Application.Styles>
-        <materialStyles:MaterialTheme />
+        <!--  This theme is used as a stub to pre-load default resources, the actual colors are set through code  -->
+        <materialStyles:MaterialTheme
+            BaseTheme="Light"
+            PrimaryColor="Grey"
+            SecondaryColor="DeepOrange" />
         <materialIcons:MaterialIconStyles />
         <dialogHostAvalonia:DialogHostStyles />
 

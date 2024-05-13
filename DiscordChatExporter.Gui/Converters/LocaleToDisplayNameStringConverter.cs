@@ -11,7 +11,7 @@ public class LocaleToDisplayNameStringConverter : IValueConverter
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
         value is string locale && !string.IsNullOrWhiteSpace(locale)
             ? CultureInfo.GetCultureInfo(locale).DisplayName
-            : "System default";
+            : "System";
 
     public object ConvertBack(
         object? value,

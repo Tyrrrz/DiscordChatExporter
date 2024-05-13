@@ -7,6 +7,8 @@ using Avalonia.Media;
 using Avalonia.Platform;
 using DiscordChatExporter.Gui.Framework;
 using DiscordChatExporter.Gui.Services;
+using DiscordChatExporter.Gui.Utils;
+using DiscordChatExporter.Gui.Utils.Extensions;
 using DiscordChatExporter.Gui.ViewModels;
 using DiscordChatExporter.Gui.ViewModels.Components;
 using DiscordChatExporter.Gui.ViewModels.Dialogs;
@@ -16,10 +18,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DiscordChatExporter.Gui;
 
-public partial class App : Application, IDisposable
+public class App : Application, IDisposable
 {
     private readonly ServiceProvider _services;
+    private readonly SettingsService _settingsService;
     private readonly MainViewModel _mainViewModel;
+
+    private readonly DisposableCollector _eventRoot = new();
 
     public App()
     {
@@ -43,15 +48,60 @@ public partial class App : Application, IDisposable
         services.AddTransient<SettingsViewModel>();
 
         _services = services.BuildServiceProvider(true);
+        _settingsService = _services.GetRequiredService<SettingsService>();
         _mainViewModel = _services.GetRequiredService<ViewModelManager>().CreateMainViewModel();
+
+        // Re-initialize the theme when the user changes it
+        _eventRoot.Add(
+            _settingsService.WatchProperty(
+                o => o.Theme,
+                () =>
+                {
+                    RequestedThemeVariant = _settingsService.Theme switch
+                    {
+                        ThemeVariant.System => Avalonia.Styling.ThemeVariant.Default,
+                        ThemeVariant.Light => Avalonia.Styling.ThemeVariant.Light,
+                        ThemeVariant.Dark => Avalonia.Styling.ThemeVariant.Dark,
+                        _
+                            => throw new InvalidOperationException(
+                                $"Unknown theme '{_settingsService.Theme}'."
+                            )
+                    };
+
+                    InitializeTheme();
+                },
+                false
+            )
+        );
     }
 
     public override void Initialize()
     {
+        base.Initialize();
+
         // Increase maximum concurrent connections
         ServicePointManager.DefaultConnectionLimit = 20;
 
         AvaloniaXamlLoader.Load(this);
+    }
+
+    private void InitializeTheme()
+    {
+        var actualTheme = RequestedThemeVariant?.Key switch
+        {
+            "Light" => PlatformThemeVariant.Light,
+            "Dark" => PlatformThemeVariant.Dark,
+            _ => PlatformSettings?.GetColorValues().ThemeVariant
+        };
+
+        this.LocateMaterialTheme<MaterialThemeBase>().CurrentTheme = actualTheme switch
+        {
+            PlatformThemeVariant.Light
+                => Theme.Create(Theme.Light, Color.Parse("#343838"), Color.Parse("#F9A825")),
+            PlatformThemeVariant.Dark
+                => Theme.Create(Theme.Dark, Color.Parse("#E8E8E8"), Color.Parse("#F9A825")),
+            _ => throw new InvalidOperationException($"Unknown theme '{actualTheme}'.")
+        };
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -61,50 +111,20 @@ public partial class App : Application, IDisposable
 
         base.OnFrameworkInitializationCompleted();
 
-        // Set custom theme colors
-        SetDefaultTheme();
+        // Set up custom theme colors
+        InitializeTheme();
+
+        // Load settings
+        _settingsService.Load();
     }
 
-    public void Dispose() => _services.Dispose();
-}
+    private void Application_OnActualThemeVariantChanged(object? sender, EventArgs args) =>
+        // Re-initialize the theme when the system theme changes
+        InitializeTheme();
 
-public partial class App
-{
-    public static void SetLightTheme()
+    public void Dispose()
     {
-        if (Current is null)
-            return;
-
-        Current.LocateMaterialTheme<MaterialThemeBase>().CurrentTheme = Theme.Create(
-            Theme.Light,
-            Color.Parse("#343838"),
-            Color.Parse("#F9A825")
-        );
-    }
-
-    public static void SetDarkTheme()
-    {
-        if (Current is null)
-            return;
-
-        Current.LocateMaterialTheme<MaterialThemeBase>().CurrentTheme = Theme.Create(
-            Theme.Dark,
-            Color.Parse("#E8E8E8"),
-            Color.Parse("#F9A825")
-        );
-    }
-
-    public static void SetDefaultTheme()
-    {
-        if (Current is null)
-            return;
-
-        var isDarkModeEnabledByDefault =
-            Current.PlatformSettings?.GetColorValues().ThemeVariant == PlatformThemeVariant.Dark;
-
-        if (isDarkModeEnabledByDefault)
-            SetDarkTheme();
-        else
-            SetLightTheme();
+        _eventRoot.Dispose();
+        _services.Dispose();
     }
 }

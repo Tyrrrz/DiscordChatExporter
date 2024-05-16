@@ -51,6 +51,9 @@ To learn more about the war and how you can help, [click here](https://tyrrrz.me
   - 📦 [Nix](https://search.nixos.org/packages?query=discordchatexporter-cli): `discordchatexporter-cli`
 
 > **Note**:
+> If you're unsure which build is right for your system, consult with [this page](https://useragent.cc) to determine your OS and CPU architecture.
+
+> **Note**:
 > AUR and Nix packages linked above are maintained by the community.
 > If you have any issues with them, please contact the corresponding maintainers.
 

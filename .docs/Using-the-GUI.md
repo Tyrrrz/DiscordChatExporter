@@ -10,7 +10,7 @@
 
 ### Step 1
 
-After extracting the `.zip`, open `DiscordChatExporter.exe`
+After extracting the `.zip`, run `DiscordChatExporter.exe` (Windows), or `DiscordChatExporter` (Mac OS and Linux).
 
 ### Step 2
 
@@ -61,37 +61,30 @@ In this screen you can customize the following:
 
 ## Settings
 
-- **Auto-update**
-Perform automatic updates on every launch.
+- **Auto-update** - Perform automatic updates on every launch.
 Default: Enabled
 
   > **Note**:
   > Keep this option enabled to receive the latest features and bug fixes!
 
-- **Dark mode**
-Use darker colors in the UI (User Interface).
+- **Dark mode** - Use darker colors in the UI (User Interface).
 Default: Disabled
 
-- **Persist token**
-Persist last used token between sessions.
+- **Persist token** - Persist last used token between sessions.
 Default: Enabled
 
-- **Show threads**
-Controls whether threads are shown in the channel list.
+- **Show threads** - Controls whether threads are shown in the channel list.
 Default: none
 
-- **Locale**
-Customize how dates are formatted in the exported files.
+- **Locale** - Customize how dates are formatted in the exported files.
 
-- **Date format**
-Customize how dates are formatted in the exported files in the settings menu ().
+- **Date format** - Customize how dates are formatted in the exported files in the settings menu ().
 
-- **Parallel limit**
-The number of channels that will be exported at the same time.
+- **Parallel limit** - The number of channels that will be exported at the same time.
 Default: 1
-
-- **Normalize to UTC**
-Convert all dates to UTC before exporting.
 
   > **Note**:
   > Try to keep this number low so that your account doesn't get flagged.
+
+- **Normalize to UTC** - Convert all dates to UTC before exporting.
+

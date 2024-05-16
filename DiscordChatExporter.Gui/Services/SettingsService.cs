@@ -1,12 +1,10 @@
 ﻿using System;
 using System.IO;
-using Avalonia;
-using Avalonia.Platform;
 using Cogwheel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DiscordChatExporter.Core.Exporting;
+using DiscordChatExporter.Gui.Framework;
 using DiscordChatExporter.Gui.Models;
-using Microsoft.Win32;
 
 namespace DiscordChatExporter.Gui.Services;
 
@@ -18,10 +16,10 @@ public partial class SettingsService()
     private bool _isUkraineSupportMessageEnabled = true;
 
     [ObservableProperty]
-    private bool _isAutoUpdateEnabled = true;
+    private ThemeVariant _theme;
 
     [ObservableProperty]
-    private bool _isDarkModeEnabled;
+    private bool _isAutoUpdateEnabled = true;
 
     [ObservableProperty]
     private bool _isTokenPersisted = true;
@@ -61,17 +59,6 @@ public partial class SettingsService()
 
     [ObservableProperty]
     private string? _lastAssetsDirPath;
-
-    public override void Reset()
-    {
-        base.Reset();
-
-        // Reset the dark mode setting separately because its default value is evaluated dynamically
-        // and cannot be set by the field initializer.
-        IsDarkModeEnabled =
-            Application.Current?.PlatformSettings?.GetColorValues().ThemeVariant
-            == PlatformThemeVariant.Dark;
-    }
 
     public override void Save()
     {

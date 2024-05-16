@@ -70,7 +70,7 @@ Check the following page: [Obtaining token](Token-and-IDs.md)
 
 ### When I open DCE a black window pops up quickly or nothing shows up
 
-If you have [.NET Runtime correctly installed](Dotnet.md), you might have downloaded the CLI flavor, try [downloading the GUI](Getting-started.md#gui-or-cli) instead.
+You might have downloaded the CLI flavor of the app, which is meant to be run in a terminal. Try [downloading the GUI](Getting-started.md#gui-or-cli) instead if that's what you want.
 
 ### How can I set DCE to export automatically at certain times?
 
@@ -83,16 +83,6 @@ Check the following pages to learn how to schedule **DiscordChatExporter.CLI** r
 ### The exported file is too large, I can't open it
 
 Try opening it with a different program, try partitioning or use a different file format, like `PlainText`.
-
-### DCE is crashing/failing
-
-Check the following page: [Installing .NET Core Runtime](Dotnet.md)
-
-If you already have .NET Core installed, please check if your problem is a [known issue](https://github.com/Tyrrrz/DiscordChatExporter/issues?q=is%3Aissue) before [opening a bug report](https://github.com/Tyrrrz/DiscordChatExporter/issues/new).
-
-### .NET Core Runtime is required
-
-Check the following page: [Installing .NET Core Runtime](Dotnet.md)
 
 ### I see messages in the export, but they have no content
 

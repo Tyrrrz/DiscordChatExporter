@@ -1,7 +1,5 @@
 # Scheduling exports with Cron
 
-Make sure you already have **DiscordChatExporter.CLI** downloaded and **.NET Runtime** installed.
-
 ## Creating the script
 
 1. Open Terminal and create a new text file with `nano /path/to/DiscordChatExporter/cron.sh`

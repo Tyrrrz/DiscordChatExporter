@@ -18,6 +18,8 @@
     <NoWarn>$(NoWarn);IL2104</NoWarn>
     <!-- Warnings about Material.Avalonia having peer dependencies that we don't use -->
     <NoWarn>$(NoWarn);IL2035</NoWarn>
+    <!-- Onova -->
+    <NoWarn>$(NoWarn);IL3000</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

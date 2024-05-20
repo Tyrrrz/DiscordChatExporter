@@ -43,8 +43,7 @@
   
   <!-- Cross-architecture compilation -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="8.0.5" PrivateAssets="all" />
-    <PackageReference Include="runtime.linux-arm64.Microsoft.DotNet.ILCompiler" Version="8.0.5" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="9.0.0-preview.1.24080.9" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

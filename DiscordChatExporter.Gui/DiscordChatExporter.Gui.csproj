@@ -5,6 +5,7 @@
     <AssemblyName>DiscordChatExporter</AssemblyName>
     <ApplicationIcon>..\favicon.ico</ApplicationIcon>
     <PublishTrimmed>true</PublishTrimmed>
+    <PublishAot Condition="$(RuntimeIdentifier.Contains('x64')) OR $(RuntimeIdentifier.Contains('arm64'))">true</PublishAot>
     <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
   </PropertyGroup>
   
@@ -38,6 +39,12 @@
     <PackageReference Include="Material.Icons.Avalonia" Version="2.1.9" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Onova" Version="2.6.11" />
+  </ItemGroup>
+  
+  <!-- Cross-architecture compilation -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="8.0.5" PrivateAssets="all" />
+    <PackageReference Include="runtime.linux-arm64.Microsoft.DotNet.ILCompiler" Version="8.0.5" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

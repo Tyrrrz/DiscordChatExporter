@@ -6,6 +6,7 @@
     <ApplicationIcon>..\favicon.ico</ApplicationIcon>
     <PublishTrimmed>true</PublishTrimmed>
     <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
+    <NoWarn>$(NoWarn);IL2104</NoWarn>
   </PropertyGroup>
   
   <!-- Avalonia-related settings -->
@@ -13,8 +14,6 @@
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <!-- Warnings not valid when using compiled bindings -->
     <NoWarn>$(NoWarn);IL2026</NoWarn>
-    <!-- Warnings about referenced assemblies not being fully trim-compatible -->
-    <NoWarn>$(NoWarn);IL2104</NoWarn>
     <!-- Warnings about Material.Avalonia having peer dependencies that we don't use -->
     <NoWarn>$(NoWarn);IL2035</NoWarn>
   </PropertyGroup>

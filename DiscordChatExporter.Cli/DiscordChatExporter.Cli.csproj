@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <ApplicationIcon>..\favicon.ico</ApplicationIcon>
     <PublishTrimmed>true</PublishTrimmed>
+    <NoWarn>$(NoWarn);IL2104</NoWarn>
   </PropertyGroup>
   
   <ItemGroup>

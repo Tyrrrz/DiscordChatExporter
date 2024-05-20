@@ -5,7 +5,6 @@
     <AssemblyName>DiscordChatExporter</AssemblyName>
     <ApplicationIcon>..\favicon.ico</ApplicationIcon>
     <PublishTrimmed>true</PublishTrimmed>
-    <PublishAot Condition="$(RuntimeIdentifier.Contains('x64')) OR $(RuntimeIdentifier.Contains('arm64'))">true</PublishAot>
     <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
   </PropertyGroup>
   
@@ -18,8 +17,6 @@
     <NoWarn>$(NoWarn);IL2104</NoWarn>
     <!-- Warnings about Material.Avalonia having peer dependencies that we don't use -->
     <NoWarn>$(NoWarn);IL2035</NoWarn>
-    <!-- Onova -->
-    <NoWarn>$(NoWarn);IL3000;IL3053</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -43,14 +40,6 @@
     <PackageReference Include="Onova" Version="2.6.11" />
   </ItemGroup>
   
-  <!-- Cross-architecture compilation -->
-  <ItemGroup>
-    <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="9.0.0-preview.1.24080.9" PrivateAssets="all" />
-    <PackageReference Include="runtime.win-x64.Microsoft.DotNet.ILCompiler" Version="9.0.0-preview.1.24080.9" PrivateAssets="all" />
-    <PackageReference Include="runtime.linux-x64.Microsoft.DotNet.ILCompiler" Version="9.0.0-preview.1.24080.9" PrivateAssets="all" />
-    <PackageReference Include="runtime.osx-arm64.Microsoft.DotNet.ILCompiler" Version="9.0.0-preview.1.24080.9" PrivateAssets="all" />
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\DiscordChatExporter.Core\DiscordChatExporter.Core.csproj" />
   </ItemGroup>

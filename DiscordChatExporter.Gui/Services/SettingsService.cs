@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Cogwheel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DiscordChatExporter.Core.Exporting;
@@ -10,7 +12,10 @@ namespace DiscordChatExporter.Gui.Services;
 
 [INotifyPropertyChanged]
 public partial class SettingsService()
-    : SettingsBase(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.dat"))
+    : SettingsBase(
+        Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.dat"),
+        new JsonSerializerOptions { TypeInfoResolver = SerializerContext.Default }
+    )
 {
     [ObservableProperty]
     private bool _isUkraineSupportMessageEnabled = true;
@@ -71,4 +76,10 @@ public partial class SettingsService()
 
         LastToken = lastToken;
     }
+}
+
+public partial class SettingsService
+{
+    [JsonSerializable(typeof(SettingsService))]
+    private partial class SerializerContext : JsonSerializerContext;
 }

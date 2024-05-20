@@ -5,8 +5,6 @@
     <AssemblyName>DiscordChatExporter</AssemblyName>
     <ApplicationIcon>..\favicon.ico</ApplicationIcon>
     <PublishTrimmed>true</PublishTrimmed>
-    <!-- AOT is supported only on x64 and arm64 -->
-    <PublishAot Condition="$(RuntimeIdentifier.Contains('x64')) OR $(RuntimeIdentifier.Contains('arm64'))">true</PublishAot>
   </PropertyGroup>
   
   <!-- Avalonia-related settings -->

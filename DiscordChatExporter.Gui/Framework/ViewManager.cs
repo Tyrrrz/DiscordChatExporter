@@ -14,11 +14,11 @@ public partial class ViewManager
     private Control? TryCreateView(ViewModelBase viewModel) =>
         viewModel switch
         {
+            MainViewModel => new MainView(),
             DashboardViewModel => new DashboardView(),
             ExportSetupViewModel => new ExportSetupView(),
             MessageBoxViewModel => new MessageBoxView(),
             SettingsViewModel => new SettingsView(),
-            MainViewModel => new MainView(),
             _ => null
         };
 

@@ -10,9 +10,7 @@ namespace DiscordChatExporter.Gui.Services;
 
 [INotifyPropertyChanged]
 public partial class SettingsService()
-    : SettingsBase(
-        Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.dat")
-    )
+    : SettingsBase(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.dat"))
 {
     [ObservableProperty]
     private bool _isUkraineSupportMessageEnabled = true;

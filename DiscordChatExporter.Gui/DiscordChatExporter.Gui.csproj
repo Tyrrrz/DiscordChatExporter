@@ -4,6 +4,7 @@
     <OutputType>WinExe</OutputType>
     <AssemblyName>DiscordChatExporter</AssemblyName>
     <ApplicationIcon>..\favicon.ico</ApplicationIcon>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 
   <ItemGroup>

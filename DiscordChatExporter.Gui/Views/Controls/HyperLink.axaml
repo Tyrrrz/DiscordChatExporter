@@ -1,13 +1,14 @@
 ﻿<UserControl
     x:Class="DiscordChatExporter.Gui.Views.Controls.HyperLink"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DiscordChatExporter.Gui.Views.Controls">
     <TextBlock
         x:Name="TextBlock"
         Cursor="Hand"
         Foreground="{DynamicResource MaterialSecondaryDarkBrush}"
         PointerReleased="TextBlock_OnPointerReleased"
-        Text="{Binding $parent[UserControl].Text, Mode=OneWay}">
+        Text="{Binding $parent[controls:HyperLink].Text, Mode=OneWay}">
         <TextBlock.Styles>
             <Style Selector="TextBlock">
                 <Style Selector="^:pointerover">

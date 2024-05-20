@@ -44,6 +44,9 @@
   <!-- Cross-architecture compilation -->
   <ItemGroup>
     <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="9.0.0-preview.1.24080.9" PrivateAssets="all" />
+    <PackageReference Include="runtime.win-x64.Microsoft.DotNet.ILCompiler" Version="9.0.0-preview.1.24080.9" PrivateAssets="all" />
+    <PackageReference Include="runtime.linux-x64.Microsoft.DotNet.ILCompiler" Version="9.0.0-preview.1.24080.9" PrivateAssets="all" />
+    <PackageReference Include="runtime.osx-arm64.Microsoft.DotNet.ILCompiler" Version="9.0.0-preview.1.24080.9" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

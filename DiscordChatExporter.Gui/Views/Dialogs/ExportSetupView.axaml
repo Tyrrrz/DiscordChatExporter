@@ -10,11 +10,8 @@
     xmlns:utils="clr-namespace:DiscordChatExporter.Gui.Utils"
     x:Name="UserControl"
     Width="380"
+    x:DataType="dialogs:ExportSetupViewModel"
     Loaded="UserControl_OnLoaded">
-    <Design.DataContext>
-        <dialogs:ExportSetupViewModel />
-    </Design.DataContext>
-
     <Grid RowDefinitions="Auto,*,Auto">
         <!--  Guild/channel info  -->
         <Grid
@@ -40,7 +37,7 @@
                 FontWeight="Light"
                 IsVisible="{Binding !IsSingleChannel}"
                 TextTrimming="CharacterEllipsis">
-                <Run Text="{Binding Channels.Count, Mode=OneWay}" />
+                <Run Text="{Binding Channels.Count, FallbackValue=0, Mode=OneWay}" />
                 <Run Text="channels selected" />
             </TextBlock>
 

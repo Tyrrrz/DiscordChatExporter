@@ -1,25 +1,31 @@
-﻿using System;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Controls.Templates;
+using DiscordChatExporter.Gui.ViewModels;
+using DiscordChatExporter.Gui.ViewModels.Components;
+using DiscordChatExporter.Gui.ViewModels.Dialogs;
+using DiscordChatExporter.Gui.Views;
+using DiscordChatExporter.Gui.Views.Components;
+using DiscordChatExporter.Gui.Views.Dialogs;
 
 namespace DiscordChatExporter.Gui.Framework;
 
 public partial class ViewManager
 {
+    private Control? TryCreateView(ViewModelBase viewModel) =>
+        viewModel switch
+        {
+            MainViewModel => new MainView(),
+            DashboardViewModel => new DashboardView(),
+            ExportSetupViewModel => new ExportSetupView(),
+            MessageBoxViewModel => new MessageBoxView(),
+            SettingsViewModel => new SettingsView(),
+            _ => null
+        };
+
     public Control? TryBindView(ViewModelBase viewModel)
     {
-        var name = viewModel
-            .GetType()
-            .FullName?.Replace("ViewModel", "View", StringComparison.Ordinal);
-
-        if (string.IsNullOrWhiteSpace(name))
-            return null;
-
-        var type = Type.GetType(name);
-        if (type is null)
-            return null;
-
-        if (Activator.CreateInstance(type) is not Control view)
+        var view = TryCreateView(viewModel);
+        if (view is null)
             return null;
 
         view.DataContext ??= viewModel;

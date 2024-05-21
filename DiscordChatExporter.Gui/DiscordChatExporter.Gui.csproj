@@ -8,7 +8,7 @@
     <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
     <NoWarn>$(NoWarn);IL2104</NoWarn>
   </PropertyGroup>
-  
+
   <!-- Avalonia-related settings -->
   <PropertyGroup>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
@@ -38,7 +38,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Onova" Version="2.6.11" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\DiscordChatExporter.Core\DiscordChatExporter.Core.csproj" />
   </ItemGroup>

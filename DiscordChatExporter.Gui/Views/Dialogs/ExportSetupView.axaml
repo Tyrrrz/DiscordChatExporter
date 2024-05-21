@@ -37,7 +37,7 @@
                 FontWeight="Light"
                 IsVisible="{Binding !IsSingleChannel}"
                 TextTrimming="CharacterEllipsis">
-                <Run Text="{Binding Channels.Count, Mode=OneWay, FallbackValue=0}" />
+                <Run Text="{Binding Channels.Count, FallbackValue=0, Mode=OneWay}" />
                 <Run Text="channels selected" />
             </TextBlock>
 

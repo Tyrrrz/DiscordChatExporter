@@ -4,9 +4,8 @@
     <OutputType>Exe</OutputType>
     <ApplicationIcon>..\favicon.ico</ApplicationIcon>
     <PublishTrimmed>true</PublishTrimmed>
-    <NoWarn>$(NoWarn);IL2104</NoWarn>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="CliFx" Version="2.3.5" />
     <PackageReference Include="CSharpier.MsBuild" Version="0.28.2" PrivateAssets="all" />

@@ -26,7 +26,7 @@
     <PackageReference Include="Material.Avalonia" Version="3.6.0" />
     <PackageReference Include="Material.Icons.Avalonia" Version="2.1.9" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-    <PackageReference Include="Onova" Version="2.6.11" />
+    <PackageReference Include="Onova" Version="2.6.12" />
   </ItemGroup>
 
   <ItemGroup>

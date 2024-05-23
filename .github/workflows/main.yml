@@ -197,7 +197,7 @@ jobs:
           path: ${{ matrix.app }}/
 
       - name: Set permissions
-        if: ${{ !startsWith(matrix.rid, 'win') }}
+        if: ${{ !startsWith(matrix.rid, 'win-') }}
         run: chmod +x ${{ matrix.app }}/${{ matrix.asset }}
 
       - name: Create package

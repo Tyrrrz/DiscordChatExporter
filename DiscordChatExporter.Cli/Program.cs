@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using CliFx;
 using DiscordChatExporter.Cli.Commands;
 using DiscordChatExporter.Cli.Commands.Converters;
+using DiscordChatExporter.Core.Exporting.Filtering;
+using DiscordChatExporter.Core.Exporting.Partitioning;
 
 namespace DiscordChatExporter.Cli;
 
@@ -22,6 +24,8 @@ public static class Program
         typeof(ThreadInclusionModeBindingConverter)
     )]
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(TruthyBooleanBindingConverter))]
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(PartitionLimit))]
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(MessageFilter))]
     public static async Task<int> Main(string[] args) =>
         await new CliApplicationBuilder()
             .AddCommand<ExportAllCommand>()

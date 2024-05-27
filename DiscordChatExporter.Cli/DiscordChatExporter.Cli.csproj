@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <ApplicationIcon>..\favicon.ico</ApplicationIcon>
     <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>full</TrimMode>
   </PropertyGroup>
 
   <ItemGroup>

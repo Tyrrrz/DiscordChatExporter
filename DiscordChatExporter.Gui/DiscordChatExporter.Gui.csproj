@@ -5,6 +5,7 @@
     <AssemblyName>DiscordChatExporter</AssemblyName>
     <ApplicationIcon>..\favicon.ico</ApplicationIcon>
     <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>full</TrimMode>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 

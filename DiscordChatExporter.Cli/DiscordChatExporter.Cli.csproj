@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <ApplicationIcon>..\favicon.ico</ApplicationIcon>
     <PublishTrimmed>true</PublishTrimmed>
-    <PublishAot>true</PublishAot>
+    <PublishAot Condition="$(RuntimeIdentifier.Contains('x64')) OR $(RuntimeIdentifier.Contains('arm64'))">true</PublishAot>
     <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
   </PropertyGroup>
 

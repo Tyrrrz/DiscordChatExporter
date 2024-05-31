@@ -15,9 +15,13 @@ public static class Program
 
     public static string VersionString { get; } = Version.ToString(3);
 
+    public static bool IsDevelopmentBuild { get; } = Version.Major is <= 0 or >= 999;
+
     public static string ProjectUrl { get; } = "https://github.com/Tyrrrz/DiscordChatExporter";
 
-    public static string DocumentationUrl { get; } = ProjectUrl + "/tree/master/.docs";
+    public static string ProjectReleasesUrl { get; } = $"{ProjectUrl}/releases";
+
+    public static string ProjectDocumentationUrl { get; } = ProjectUrl + "/tree/master/.docs";
 
     public static AppBuilder BuildAvaloniaApp() =>
         AppBuilder.Configure<App>().UsePlatformDetect().LogToTrace();

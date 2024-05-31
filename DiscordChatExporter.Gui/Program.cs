@@ -7,11 +7,11 @@ namespace DiscordChatExporter.Gui;
 
 public static class Program
 {
-    private static Assembly Assembly { get; } = typeof(App).Assembly;
+    private static Assembly Assembly { get; } = Assembly.GetExecutingAssembly();
 
-    public static string Name { get; } = Assembly.GetName().Name!;
+    public static string Name { get; } = Assembly.GetName().Name ?? "DiscordChatExporter";
 
-    public static Version Version { get; } = Assembly.GetName().Version!;
+    public static Version Version { get; } = Assembly.GetName().Version ?? new Version(0, 0, 0);
 
     public static string VersionString { get; } = Version.ToString(3);
 

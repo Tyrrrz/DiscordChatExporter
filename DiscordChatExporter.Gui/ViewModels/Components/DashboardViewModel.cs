@@ -18,6 +18,7 @@ using DiscordChatExporter.Gui.Utils;
 using DiscordChatExporter.Gui.Utils.Extensions;
 using Gress;
 using Gress.Completable;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DiscordChatExporter.Gui.ViewModels.Components;
 
@@ -42,7 +43,12 @@ public partial class DashboardViewModel : ViewModelBase
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PullGuildsCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ExportSingleChannelCommand))]
     private string? _token;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ExportSingleChannelCommand))]
+    private string? _channelId;
 
     [ObservableProperty]
     private IReadOnlyList<Guild>? _availableGuilds;
@@ -54,6 +60,9 @@ public partial class DashboardViewModel : ViewModelBase
 
     [ObservableProperty]
     private IReadOnlyList<ChannelNode>? _availableChannels;
+
+    [ObservableProperty]
+    private bool _showPullSingleChannel;
 
     public DashboardViewModel(
         ViewModelManager viewModelManager,
@@ -104,9 +113,9 @@ public partial class DashboardViewModel : ViewModelBase
     [RelayCommand]
     private void ShowHelp() => ProcessEx.StartShellExecute(Program.ProjectDocumentationUrl);
 
-    private bool CanPullGuilds() => !IsBusy && !string.IsNullOrWhiteSpace(Token);
+    private bool CanStartPulling() => !IsBusy && !string.IsNullOrWhiteSpace(Token);
 
-    [RelayCommand(CanExecute = nameof(CanPullGuilds))]
+    [RelayCommand(CanExecute = nameof(CanStartPulling))]
     private async Task PullGuildsAsync()
     {
         IsBusy = true;
@@ -151,6 +160,18 @@ public partial class DashboardViewModel : ViewModelBase
             progress.ReportCompletion();
             IsBusy = false;
         }
+    }
+
+    [RelayCommand]
+    private void TogglePullSingleChannel()
+    {
+        var token = Token?.Trim('"', ' ');
+        if (string.IsNullOrWhiteSpace(token))
+            return;
+
+        _discord = new DiscordClient(token);
+        _settingsService.LastToken = token;
+        ShowPullSingleChannel = !ShowPullSingleChannel;
     }
 
     private bool CanPullChannels() => !IsBusy && _discord is not null && SelectedGuild is not null;
@@ -222,6 +243,103 @@ public partial class DashboardViewModel : ViewModelBase
 
     private bool CanExport() =>
         !IsBusy && _discord is not null && SelectedGuild is not null && SelectedChannels.Any();
+
+    private bool CanExportSingleChannel() =>
+        !IsBusy && _discord is not null && ChannelId is not null;
+
+    [RelayCommand(CanExecute = nameof(CanExportSingleChannel))]
+    private async Task ExportSingleChannel()
+    {
+        IsBusy = true;
+
+        try
+        {
+            if (_discord is null || ChannelId is null)
+                return;
+
+            var channel = await _discord.GetChannelAsync(Snowflake.Parse(ChannelId));
+            var guild = await _discord.GetGuildAsync(channel.GuildId);
+
+            var dialog = _viewModelManager.CreateExportSetupViewModel(guild, [channel]);
+
+            if (await _dialogManager.ShowDialogAsync(dialog) != true)
+                return;
+
+            var exporter = new ChannelExporter(_discord);
+
+            var channelProgressPairs = dialog
+                .Channels!.Select(c => new { Channel = c, Progress = _progressMuxer.CreateInput() })
+                .ToArray();
+
+            var successfulExportCount = 0;
+
+            await Parallel.ForEachAsync(
+                channelProgressPairs,
+                new ParallelOptions
+                {
+                    MaxDegreeOfParallelism = Math.Max(1, _settingsService.ParallelLimit)
+                },
+                async (pair, cancellationToken) =>
+                {
+                    var channel = pair.Channel;
+                    var progress = pair.Progress;
+
+                    try
+                    {
+                        var request = new ExportRequest(
+                            dialog.Guild!,
+                            channel,
+                            dialog.OutputPath!,
+                            dialog.AssetsDirPath,
+                            dialog.SelectedFormat,
+                            dialog.After?.Pipe(Snowflake.FromDate),
+                            dialog.Before?.Pipe(Snowflake.FromDate),
+                            dialog.PartitionLimit,
+                            dialog.MessageFilter,
+                            dialog.ShouldFormatMarkdown,
+                            dialog.ShouldDownloadAssets,
+                            dialog.ShouldReuseAssets,
+                            _settingsService.Locale,
+                            _settingsService.IsUtcNormalizationEnabled
+                        );
+
+                        await exporter.ExportChannelAsync(request, progress, cancellationToken);
+
+                        Interlocked.Increment(ref successfulExportCount);
+                    }
+                    catch (DiscordChatExporterException ex) when (!ex.IsFatal)
+                    {
+                        _snackbarManager.Notify(ex.Message.TrimEnd('.'));
+                    }
+                    finally
+                    {
+                        progress.ReportCompletion();
+                    }
+                }
+            );
+
+            // Notify of the overall completion
+            if (successfulExportCount > 0)
+            {
+                _snackbarManager.Notify(
+                    $"Successfully exported {successfulExportCount} channel(s)"
+                );
+            }
+        }
+        catch (Exception ex)
+        {
+            var dialog = _viewModelManager.CreateMessageBoxViewModel(
+                "Error exporting channel(s)",
+                ex.ToString()
+            );
+
+            await _dialogManager.ShowDialogAsync(dialog);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
 
     [RelayCommand(CanExecute = nameof(CanExport))]
     private async Task ExportAsync()

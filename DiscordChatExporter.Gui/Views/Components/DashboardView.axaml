@@ -17,7 +17,7 @@
             Background="{DynamicResource MaterialDarkBackgroundBrush}"
             DockPanel.Dock="Top"
             Orientation="Vertical">
-            <Grid Margin="12,12,8,12" ColumnDefinitions="*,Auto">
+            <Grid Margin="12,12,8,12" ColumnDefinitions="*,Auto,Auto">
                 <materialStyles:Card Grid.Column="0">
                     <!--  Token  -->
                     <TextBox
@@ -38,27 +38,58 @@
                                 Kind="Key" />
                         </TextBox.InnerLeftContent>
                         <TextBox.InnerRightContent>
-                            <Button
-                                Grid.Column="2"
+							<Button
+                                Grid.Column="1"
                                 Margin="8,0,0,0"
                                 Padding="4"
                                 Command="{Binding PullGuildsCommand}"
                                 IsDefault="True"
                                 Theme="{DynamicResource MaterialFlatButton}"
                                 ToolTip.Tip="Pull available servers and channels (Enter)">
-                                <materialIcons:MaterialIcon
+								<materialIcons:MaterialIcon
                                     Width="24"
                                     Height="24"
                                     Kind="ArrowRight" />
-                            </Button>
+							</Button>
                         </TextBox.InnerRightContent>
                     </TextBox>
                 </materialStyles:Card>
 
+				<!-- Single Channel Button-->
+				<Button
+					Grid.Column="1"
+					Margin="4,0,0,0"
+					Padding="8"
+                    VerticalAlignment="Center"
+					Command="{Binding TogglePullSingleChannelCommand}"
+					IsDefault="True"
+					Theme="{DynamicResource MaterialFlatButton}"
+					IsVisible="{Binding !ShowPullSingleChannel}"
+					ToolTip.Tip="You already have the Channel Id and just want to quickly export it">
+					<materialIcons:MaterialIcon
+						Width="24"
+						Height="24"
+						Kind="LightningBoltOutline" />
+				</Button>
+				<Button
+					Grid.Column="1"
+					Margin="4,0,0,0"
+					Padding="8"
+                    VerticalAlignment="Center"
+					Command="{Binding TogglePullSingleChannelCommand}"
+					Theme="{DynamicResource MaterialFlatButton}"
+					IsVisible="{Binding ShowPullSingleChannel}"
+					ToolTip.Tip="You already have the Channel Id and just want to quickly export it">
+					<materialIcons:MaterialIcon
+						Width="24"
+						Height="24"
+						Kind="LightningBolt" />
+				</Button>
+				
                 <!--  Settings button  -->
                 <Button
-                    Grid.Column="1"
-                    Margin="8,0,0,0"
+                    Grid.Column="2"
+                    Margin="4,0,0,0"
                     Padding="8"
                     VerticalAlignment="Center"
                     Command="{Binding ShowSettingsCommand}"
@@ -70,11 +101,51 @@
                         Height="24"
                         Kind="Settings" />
                 </Button>
-            </Grid>
+            
+			
+			</Grid>
 
-            <!--  Progress  -->
+			<!-- Single Channel Input -->
+			<Grid 
+				Margin="12,12,8,12" 
+				ColumnDefinitions="*,Auto" 
+			    IsVisible="{Binding ShowPullSingleChannel}">
+				<materialStyles:Card Grid.Column="0">
+					<!--  Channel Id  -->
+					<TextBox
+                        FontSize="16"
+                        Text="{Binding ChannelId}"
+                        Theme="{DynamicResource SoloTextBox}"
+                        Watermark="Channel Id">
+						<TextBox.InnerLeftContent>
+							<materialIcons:MaterialIcon
+                                Grid.Column="0"
+                                Width="24"
+                                Height="24"
+                                Margin="4,0,8,0"
+                                Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                Kind="Forum" />
+						</TextBox.InnerLeftContent>
+						<TextBox.InnerRightContent>
+							<Button
+                                Grid.Column="1"
+                                Margin="8,0,0,0"
+                                Padding="4"
+                                Command="{Binding ExportSingleChannelCommand}"
+                                Theme="{DynamicResource MaterialFlatButton}"
+                                ToolTip.Tip="Export Channel by Id">
+								<materialIcons:MaterialIcon
+                                    Width="24"
+                                    Height="24"
+                                    Kind="ArrowRight" />
+							</Button>
+						</TextBox.InnerRightContent>
+					</TextBox>
+				</materialStyles:Card>
+			</Grid>
+				<!--  Progress  -->
             <ProgressBar
-                Height="2"
+                Height="4"
                 Background="Transparent"
                 IsIndeterminate="{Binding IsProgressIndeterminate}"
                 Value="{Binding Progress.Current.Fraction, Mode=OneWay}" />
@@ -84,6 +155,7 @@
         <Panel
             Background="{DynamicResource MaterialCardBackgroundBrush}"
             DockPanel.Dock="Bottom"
+			IsVisible="{Binding !ShowPullSingleChannel}"
             IsEnabled="{Binding !IsBusy}">
             <Panel.Styles>
                 <Style Selector="Panel">

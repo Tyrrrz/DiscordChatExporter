@@ -155,7 +155,6 @@
         <Panel
             Background="{DynamicResource MaterialCardBackgroundBrush}"
             DockPanel.Dock="Bottom"
-            IsVisible="{Binding !ShowPullSingleChannel}"
             IsEnabled="{Binding !IsBusy}">
             <Panel.Styles>
                 <Style Selector="Panel">

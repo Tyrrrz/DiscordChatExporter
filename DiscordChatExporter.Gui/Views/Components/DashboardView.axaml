@@ -65,7 +65,7 @@
                     IsDefault="True"
                     Theme="{DynamicResource MaterialFlatButton}"
                     IsVisible="{Binding !ShowPullSingleChannel}"
-                    ToolTip.Tip="You already have the Channel Id and just want to quickly export it">
+                    ToolTip.Tip="Quick-Export with a given Channel Id">
                     <materialIcons:MaterialIcon
                         Width="24"
                         Height="24"

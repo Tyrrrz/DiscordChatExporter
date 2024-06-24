@@ -145,7 +145,7 @@
             </Grid>
             <!--  Progress  -->
             <ProgressBar
-                Height="4"
+                Height="2"
                 Background="Transparent"
                 IsIndeterminate="{Binding IsProgressIndeterminate}"
                 Value="{Binding Progress.Current.Fraction, Mode=OneWay}" />

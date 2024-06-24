@@ -276,10 +276,7 @@ public partial class DashboardViewModel : ViewModelBase
             if (_discord is null)
                 return;
 
-            var dialog = _viewModelManager.CreateExportSetupViewModel(
-                guild,
-                channels
-            );
+            var dialog = _viewModelManager.CreateExportSetupViewModel(guild, channels);
 
             if (await _dialogManager.ShowDialogAsync(dialog) != true)
                 return;

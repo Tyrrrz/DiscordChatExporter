@@ -38,7 +38,7 @@
                                 Kind="Key" />
                         </TextBox.InnerLeftContent>
                         <TextBox.InnerRightContent>
-							<Button
+                            <Button
                                 Grid.Column="1"
                                 Margin="8,0,0,0"
                                 Padding="4"
@@ -46,17 +46,17 @@
                                 IsDefault="True"
                                 Theme="{DynamicResource MaterialFlatButton}"
                                 ToolTip.Tip="Pull available servers and channels (Enter)">
-								<materialIcons:MaterialIcon
+                                <materialIcons:MaterialIcon
                                     Width="24"
                                     Height="24"
                                     Kind="ArrowRight" />
-							</Button>
+                            </Button>
                         </TextBox.InnerRightContent>
                     </TextBox>
                 </materialStyles:Card>
 
-				<!-- Single Channel Button-->
-				<Button
+                <!-- Single Channel Button-->
+                <Button
 					Grid.Column="1"
 					Margin="4,0,0,0"
 					Padding="8"
@@ -66,12 +66,12 @@
 					Theme="{DynamicResource MaterialFlatButton}"
 					IsVisible="{Binding !ShowPullSingleChannel}"
 					ToolTip.Tip="You already have the Channel Id and just want to quickly export it">
-					<materialIcons:MaterialIcon
+                    <materialIcons:MaterialIcon
 						Width="24"
 						Height="24"
 						Kind="LightningBoltOutline" />
-				</Button>
-				<Button
+                </Button>
+                <Button
 					Grid.Column="1"
 					Margin="4,0,0,0"
 					Padding="8"
@@ -80,12 +80,12 @@
 					Theme="{DynamicResource MaterialFlatButton}"
 					IsVisible="{Binding ShowPullSingleChannel}"
 					ToolTip.Tip="You already have the Channel Id and just want to quickly export it">
-					<materialIcons:MaterialIcon
+                    <materialIcons:MaterialIcon
 						Width="24"
 						Height="24"
 						Kind="LightningBolt" />
-				</Button>
-				
+                </Button>
+
                 <!--  Settings button  -->
                 <Button
                     Grid.Column="2"
@@ -101,49 +101,49 @@
                         Height="24"
                         Kind="Settings" />
                 </Button>
-            
-			
-			</Grid>
 
-			<!-- Single Channel Input -->
-			<Grid 
-				Margin="12,12,8,12" 
-				ColumnDefinitions="*,Auto" 
+
+            </Grid>
+
+            <!-- Single Channel Input -->
+            <Grid
+				Margin="12,12,8,12"
+				ColumnDefinitions="*,Auto"
 			    IsVisible="{Binding ShowPullSingleChannel}">
-				<materialStyles:Card Grid.Column="0">
-					<!--  Channel Id  -->
-					<TextBox
+                <materialStyles:Card Grid.Column="0">
+                    <!--  Channel Id  -->
+                    <TextBox
                         FontSize="16"
                         Text="{Binding ChannelId}"
                         Theme="{DynamicResource SoloTextBox}"
                         Watermark="Channel Id">
-						<TextBox.InnerLeftContent>
-							<materialIcons:MaterialIcon
+                        <TextBox.InnerLeftContent>
+                            <materialIcons:MaterialIcon
                                 Grid.Column="0"
                                 Width="24"
                                 Height="24"
                                 Margin="4,0,8,0"
                                 Foreground="{DynamicResource PrimaryHueMidBrush}"
                                 Kind="Forum" />
-						</TextBox.InnerLeftContent>
-						<TextBox.InnerRightContent>
-							<Button
+                        </TextBox.InnerLeftContent>
+                        <TextBox.InnerRightContent>
+                            <Button
                                 Grid.Column="1"
                                 Margin="8,0,0,0"
                                 Padding="4"
                                 Command="{Binding ExportSingleChannelCommand}"
                                 Theme="{DynamicResource MaterialFlatButton}"
                                 ToolTip.Tip="Export Channel by Id">
-								<materialIcons:MaterialIcon
+                                <materialIcons:MaterialIcon
                                     Width="24"
                                     Height="24"
                                     Kind="ArrowRight" />
-							</Button>
-						</TextBox.InnerRightContent>
-					</TextBox>
-				</materialStyles:Card>
-			</Grid>
-				<!--  Progress  -->
+                            </Button>
+                        </TextBox.InnerRightContent>
+                    </TextBox>
+                </materialStyles:Card>
+            </Grid>
+            <!--  Progress  -->
             <ProgressBar
                 Height="4"
                 Background="Transparent"
@@ -313,7 +313,8 @@
                         <LineBreak />
 
                         <Run Text="*  Automating user accounts is technically against TOS —" />
-                        <Run FontWeight="SemiBold" Text="use at your own risk" /><Run Text="!" />
+                        <Run FontWeight="SemiBold" Text="use at your own risk" />
+                        <Run Text="!" />
                         <LineBreak />
 
                         <Run Text="1. Open Discord in your" />

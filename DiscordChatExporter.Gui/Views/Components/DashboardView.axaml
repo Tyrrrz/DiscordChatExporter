@@ -57,33 +57,33 @@
 
                 <!-- Single Channel Button-->
                 <Button
-					Grid.Column="1"
-					Margin="4,0,0,0"
-					Padding="8"
+                    Grid.Column="1"
+                    Margin="4,0,0,0"
+                    Padding="8"
                     VerticalAlignment="Center"
-					Command="{Binding TogglePullSingleChannelCommand}"
-					IsDefault="True"
-					Theme="{DynamicResource MaterialFlatButton}"
-					IsVisible="{Binding !ShowPullSingleChannel}"
-					ToolTip.Tip="You already have the Channel Id and just want to quickly export it">
+                    Command="{Binding TogglePullSingleChannelCommand}"
+                    IsDefault="True"
+                    Theme="{DynamicResource MaterialFlatButton}"
+                    IsVisible="{Binding !ShowPullSingleChannel}"
+                    ToolTip.Tip="You already have the Channel Id and just want to quickly export it">
                     <materialIcons:MaterialIcon
-						Width="24"
-						Height="24"
-						Kind="LightningBoltOutline" />
+                        Width="24"
+                        Height="24"
+                        Kind="LightningBoltOutline" />
                 </Button>
                 <Button
-					Grid.Column="1"
-					Margin="4,0,0,0"
-					Padding="8"
+                    Grid.Column="1"
+                    Margin="4,0,0,0"
+                    Padding="8"
                     VerticalAlignment="Center"
-					Command="{Binding TogglePullSingleChannelCommand}"
-					Theme="{DynamicResource MaterialFlatButton}"
-					IsVisible="{Binding ShowPullSingleChannel}"
-					ToolTip.Tip="You already have the Channel Id and just want to quickly export it">
+                    Command="{Binding TogglePullSingleChannelCommand}"
+                    Theme="{DynamicResource MaterialFlatButton}"
+                    IsVisible="{Binding ShowPullSingleChannel}"
+                    ToolTip.Tip="You already have the Channel Id and just want to quickly export it">
                     <materialIcons:MaterialIcon
-						Width="24"
-						Height="24"
-						Kind="LightningBolt" />
+                        Width="24"
+                        Height="24"
+                        Kind="LightningBolt" />
                 </Button>
 
                 <!--  Settings button  -->
@@ -107,9 +107,9 @@
 
             <!-- Single Channel Input -->
             <Grid
-				Margin="12,12,8,12"
-				ColumnDefinitions="*,Auto"
-			    IsVisible="{Binding ShowPullSingleChannel}">
+                Margin="12,12,8,12"
+                ColumnDefinitions="*,Auto"
+                IsVisible="{Binding ShowPullSingleChannel}">
                 <materialStyles:Card Grid.Column="0">
                     <!--  Channel Id  -->
                     <TextBox
@@ -155,7 +155,7 @@
         <Panel
             Background="{DynamicResource MaterialCardBackgroundBrush}"
             DockPanel.Dock="Bottom"
-			IsVisible="{Binding !ShowPullSingleChannel}"
+            IsVisible="{Binding !ShowPullSingleChannel}"
             IsEnabled="{Binding !IsBusy}">
             <Panel.Styles>
                 <Style Selector="Panel">

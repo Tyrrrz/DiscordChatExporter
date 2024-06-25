@@ -42,12 +42,7 @@ public partial class DashboardViewModel : ViewModelBase
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PullGuildsCommand))]
-    [NotifyCanExecuteChangedFor(nameof(ExportSingleChannelCommand))]
     private string? _token;
-
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(ExportSingleChannelCommand))]
-    private string? _channelId;
 
     [ObservableProperty]
     private IReadOnlyList<Guild>? _availableGuilds;
@@ -59,9 +54,6 @@ public partial class DashboardViewModel : ViewModelBase
 
     [ObservableProperty]
     private IReadOnlyList<ChannelNode>? _availableChannels;
-
-    [ObservableProperty]
-    private bool _showPullSingleChannel;
 
     public DashboardViewModel(
         ViewModelManager viewModelManager,
@@ -114,6 +106,10 @@ public partial class DashboardViewModel : ViewModelBase
 
     private bool CanStartPulling() => !IsBusy && !string.IsNullOrWhiteSpace(Token);
 
+    [RelayCommand]
+    private async Task ShowQuickExportAsync() =>
+        await _dialogManager.ShowDialogAsync(_viewModelManager.CreateQuickExportViewModel());
+
     [RelayCommand(CanExecute = nameof(CanStartPulling))]
     private async Task PullGuildsAsync()
     {
@@ -159,18 +155,6 @@ public partial class DashboardViewModel : ViewModelBase
             progress.ReportCompletion();
             IsBusy = false;
         }
-    }
-
-    [RelayCommand]
-    private void TogglePullSingleChannel()
-    {
-        var token = Token?.Trim('"', ' ');
-        if (string.IsNullOrWhiteSpace(token))
-            return;
-
-        _discord = new DiscordClient(token);
-        _settingsService.LastToken = token;
-        ShowPullSingleChannel = !ShowPullSingleChannel;
     }
 
     private bool CanPullChannels() => !IsBusy && _discord is not null && SelectedGuild is not null;
@@ -242,22 +226,6 @@ public partial class DashboardViewModel : ViewModelBase
 
     private bool CanExport() =>
         !IsBusy && _discord is not null && SelectedGuild is not null && SelectedChannels.Any();
-
-    private bool CanExportSingleChannel() =>
-        !IsBusy && _discord is not null && ChannelId is not null;
-
-    [RelayCommand(CanExecute = nameof(CanExportSingleChannel))]
-    private async Task ExportSingleChannel()
-    {
-        if (_discord is null || ChannelId is null)
-            return;
-        IsBusy = true;
-
-        var channel = await _discord.GetChannelAsync(Snowflake.Parse(ChannelId));
-        var guild = await _discord.GetGuildAsync(channel.GuildId);
-
-        await ExportInternalAsync(guild, [channel]);
-    }
 
     [RelayCommand(CanExecute = nameof(CanExport))]
     private async Task ExportAsync()

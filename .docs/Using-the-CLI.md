@@ -27,7 +27,7 @@ Type the following command in your terminal of choice, then press ENTER to run i
 ```
 
 > **Note**:
-> Command Prompt users must omit the `./` from the start of the command. The examples on this page use **Windows** file paths. **MacOS** and **Linux** users must use Unix file paths accordingly.
+> On Windows, if you're using the default Command Prompt (`cmd`), omit the leading `./` at the start of the command.
 
 
 > **Docker** users, please refer to the [Docker usage instructions](Docker.md).

@@ -2,7 +2,7 @@
 
 ## Step 1
 
-After extracting the `.zip`, open your terminal (Command Prompt or Powershell on **Windows**, and Terminal on **macOS** and **Linux**).
+After extracting the `.zip` archive, open your preferred terminal.
 
 ## Step 2
 

@@ -104,9 +104,13 @@ public partial class DashboardViewModel : ViewModelBase
     [RelayCommand]
     private void ShowHelp() => ProcessEx.StartShellExecute(Program.ProjectDocumentationUrl);
 
-    private bool CanPullGuilds() => !IsBusy && !string.IsNullOrWhiteSpace(Token);
+    private bool CanStartPulling() => !IsBusy && !string.IsNullOrWhiteSpace(Token);
 
-    [RelayCommand(CanExecute = nameof(CanPullGuilds))]
+    [RelayCommand]
+    private async Task ShowQuickExportAsync() =>
+        await _dialogManager.ShowDialogAsync(_viewModelManager.CreateQuickExportViewModel());
+
+    [RelayCommand(CanExecute = nameof(CanStartPulling))]
     private async Task PullGuildsAsync()
     {
         IsBusy = true;
@@ -226,17 +230,21 @@ public partial class DashboardViewModel : ViewModelBase
     [RelayCommand(CanExecute = nameof(CanExport))]
     private async Task ExportAsync()
     {
-        IsBusy = true;
+        if (SelectedGuild is null || !SelectedChannels.Any())
+            return;
 
+        IsBusy = true;
+        await ExportInternalAsync(SelectedGuild, SelectedChannels.Select(c => c.Channel).ToList());
+    }
+
+    private async Task ExportInternalAsync(Guild guild, IReadOnlyList<Channel> channels)
+    {
         try
         {
-            if (_discord is null || SelectedGuild is null || !SelectedChannels.Any())
+            if (_discord is null)
                 return;
 
-            var dialog = _viewModelManager.CreateExportSetupViewModel(
-                SelectedGuild,
-                SelectedChannels.Select(c => c.Channel).ToArray()
-            );
+            var dialog = _viewModelManager.CreateExportSetupViewModel(guild, channels);
 
             if (await _dialogManager.ShowDialogAsync(dialog) != true)
                 return;

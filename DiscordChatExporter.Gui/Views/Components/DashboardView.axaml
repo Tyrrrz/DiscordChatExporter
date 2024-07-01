@@ -17,7 +17,7 @@
             Background="{DynamicResource MaterialDarkBackgroundBrush}"
             DockPanel.Dock="Top"
             Orientation="Vertical">
-            <Grid Margin="12,12,8,12" ColumnDefinitions="*,Auto">
+            <Grid Margin="12,12,8,12" ColumnDefinitions="*,Auto,Auto">
                 <materialStyles:Card Grid.Column="0">
                     <!--  Token  -->
                     <TextBox
@@ -39,7 +39,7 @@
                         </TextBox.InnerLeftContent>
                         <TextBox.InnerRightContent>
                             <Button
-                                Grid.Column="2"
+                                Grid.Column="1"
                                 Margin="8,0,0,0"
                                 Padding="4"
                                 Command="{Binding PullGuildsCommand}"
@@ -55,10 +55,25 @@
                     </TextBox>
                 </materialStyles:Card>
 
-                <!--  Settings button  -->
+                <!-- Quick Export Button-->
                 <Button
                     Grid.Column="1"
-                    Margin="8,0,0,0"
+                    Margin="4,0,0,0"
+                    Padding="8"
+                    VerticalAlignment="Center"
+                    Command="{Binding ShowQuickExportCommand}"
+                    Theme="{DynamicResource MaterialFlatButton}"
+                    ToolTip.Tip="Quick-Export with given Channel Ids">
+                    <materialIcons:MaterialIcon
+                        Width="24"
+                        Height="24"
+                        Kind="PoundBoxOutline" />
+                </Button>
+
+                <!--  Settings button  -->
+                <Button
+                    Grid.Column="2"
+                    Margin="4,0,0,0"
                     Padding="8"
                     VerticalAlignment="Center"
                     Command="{Binding ShowSettingsCommand}"
@@ -241,7 +256,8 @@
                         <LineBreak />
 
                         <Run Text="*  Automating user accounts is technically against TOS —" />
-                        <Run FontWeight="SemiBold" Text="use at your own risk" /><Run Text="!" />
+                        <Run FontWeight="SemiBold" Text="use at your own risk" />
+                        <Run Text="!" />
                         <LineBreak />
 
                         <Run Text="1. Open Discord in your" />

@@ -46,6 +46,7 @@ public class App : Application, IDisposable
         services.AddTransient<ExportSetupViewModel>();
         services.AddTransient<MessageBoxViewModel>();
         services.AddTransient<SettingsViewModel>();
+        services.AddTransient<QuickExportViewModel>();
 
         _services = services.BuildServiceProvider(true);
         _settingsService = _services.GetRequiredService<SettingsService>();

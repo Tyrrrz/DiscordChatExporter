@@ -1,0 +1,56 @@
+<UserControl
+    x:Class="DiscordChatExporter.Gui.Views.Dialogs.QuickExportView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:DiscordChatExporter.Gui.Converters"
+    xmlns:dialogs="clr-namespace:DiscordChatExporter.Gui.ViewModels.Dialogs"
+    xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    Width="380"
+    x:DataType="dialogs:QuickExportViewModel">
+    <Grid RowDefinitions="Auto,*,Auto">
+        
+        <TextBox
+            x:Name="QueryTextBox"
+            AcceptsReturn="True"
+            FontSize="16"
+            MaxLines="4"
+            ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+            Text="{Binding Query}"
+            Theme="{DynamicResource SoloTextBox}"
+            Watermark="URL or search query">
+            <TextBox.InnerLeftContent>
+                <materialIcons:MaterialIcon
+                    Width="24"
+                    Height="24"
+                    Margin="4,0,8,0"
+                    Kind="Search" />
+            </TextBox.InnerLeftContent>
+            <TextBox.InnerRightContent>
+                <Button
+                    x:Name="ProcessQueryButton"
+                    Margin="8,0,0,0"
+                    Padding="4"
+                    Command="{Binding ProcessQueryCommand}"
+                    IsDefault="True"
+                    Theme="{DynamicResource MaterialFlatButton}"
+                    ToolTip.Tip="Process query (Enter)">
+                    <materialIcons:MaterialIcon
+                        Width="24"
+                        Height="24"
+                        Kind="ArrowRight" />
+                </Button>
+            </TextBox.InnerRightContent>
+        </TextBox>
+
+        <!--  Close button  -->
+        <Button
+            Grid.Row="2"
+            Margin="16"
+            HorizontalAlignment="Stretch"
+            Command="{Binding CloseCommand}"
+            Content="CLOSE"
+            IsCancel="True"
+            IsDefault="True"
+            Theme="{DynamicResource MaterialOutlineButton}" />
+    </Grid>
+</UserControl>

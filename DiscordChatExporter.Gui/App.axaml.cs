@@ -65,8 +65,7 @@ public class App : Application, IDisposable
                     };
 
                     InitializeTheme();
-                },
-                false
+                }
             )
         );
     }

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <PackageReference Include="AsyncKeyedLock" Version="6.4.2" />
+    <PackageReference Include="AsyncKeyedLock" Version="7.0.0" />
     <PackageReference Include="CSharpier.MsBuild" Version="0.28.2" PrivateAssets="all" />
     <PackageReference Include="Gress" Version="2.1.1" />
     <PackageReference Include="JsonExtensions" Version="1.2.0" />
@@ -9,7 +9,7 @@
     <PackageReference Include="RazorBlade" Version="0.6.0" />
     <PackageReference Include="Superpower" Version="3.0.0" />
     <PackageReference Include="WebMarkupMin.Core" Version="2.16.2" />
-    <PackageReference Include="YoutubeExplode" Version="6.3.16" />
+    <PackageReference Include="YoutubeExplode" Version="6.4.0" />
   </ItemGroup>
 
 </Project>

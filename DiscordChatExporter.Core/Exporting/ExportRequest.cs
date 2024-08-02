@@ -154,8 +154,23 @@ public partial class ExportRequest
         Channel channel,
         Snowflake? after,
         Snowflake? before
-    ) =>
-        Regex.Replace(
+    )
+    {
+        var recursivePattern = Regex.Match(path, "%r(%.*)%r");
+        if (
+            channel.Parent?.Parent != null
+            && recursivePattern.Success
+            && recursivePattern.Groups.Count > 1
+        )
+        {
+            var groupValue = recursivePattern.Groups[1].Value;
+            path = path.Replace(
+                recursivePattern.Value,
+                FormatPath(groupValue, guild, channel.Parent, after, before)
+            );
+        }
+
+        return Regex.Replace(
             path,
             "%.",
             m =>
@@ -189,10 +204,12 @@ public partial class ExportRequest
                             ),
 
                         "%%" => "%",
+                        "%r" => string.Empty,
                         _ => m.Value
                     }
                 )
         );
+    }
 
     private static string GetOutputBaseFilePath(
         Guild guild,

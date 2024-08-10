@@ -8,7 +8,9 @@ namespace DiscordChatExporter.Core.Utils;
 public static class PathEx
 {
     private static readonly HashSet<char> InvalidFileNameChars =
-        [..Path.GetInvalidFileNameChars()];
+    [
+        .. Path.GetInvalidFileNameChars()
+    ];
 
     public static string EscapeFileName(string path)
     {

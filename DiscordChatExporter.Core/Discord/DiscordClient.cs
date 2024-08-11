@@ -312,6 +312,28 @@ public class DiscordClient(string token)
             .Where(c => before is null || c.MayHaveMessagesBefore(before.Value))
             .ToArray();
 
+        foreach (
+            var channel in await GetChannelThreadsAsync(
+                channels,
+                includeArchived,
+                before,
+                after,
+                cancellationToken
+            )
+        )
+        {
+            yield return channel;
+        }
+    }
+
+    public async IAsyncEnumerable<Channel> GetChannelThreadsAsync(
+        Channel[] channels,
+        bool includeArchived = false,
+        Snowflake? before = null,
+        Snowflake? after = null,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default
+    )
+    {
         // User accounts can only fetch threads using the search endpoint
         if (await ResolveTokenKindAsync(cancellationToken) == TokenKind.User)
         {
@@ -415,7 +437,12 @@ public class DiscordClient(string token)
         // Bot accounts can only fetch threads using the threads endpoint
         else
         {
+            var guilds = new HashSet<Snowflake>();
+            foreach (var channel in channels)
+                guilds.Add(channel.GuildId);
+
             // Active threads
+            foreach (var guildId in guilds)
             {
                 var parentsById = channels.ToDictionary(c => c.Id);
 
@@ -432,7 +459,8 @@ public class DiscordClient(string token)
                         ?.Pipe(Snowflake.Parse)
                         .Pipe(parentsById.GetValueOrDefault);
 
-                    yield return Channel.Parse(threadJson, parent);
+                    if (channels.Contains(parent))
+                        yield return Channel.Parse(threadJson, parent);
                 }
             }
 

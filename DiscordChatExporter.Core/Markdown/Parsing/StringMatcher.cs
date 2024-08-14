@@ -2,16 +2,16 @@
 
 namespace DiscordChatExporter.Core.Markdown.Parsing;
 
-internal class StringMatcher<T>(
+internal class StringMatcher<TContext, TValue>(
     string needle,
     StringComparison comparison,
-    Func<StringSegment, T?> transform
-) : IMatcher<T>
+    Func<TContext, StringSegment, TValue?> transform
+) : IMatcher<TContext, TValue>
 {
-    public StringMatcher(string needle, Func<StringSegment, T> transform)
+    public StringMatcher(string needle, Func<TContext, StringSegment, TValue> transform)
         : this(needle, StringComparison.Ordinal, transform) { }
 
-    public ParsedMatch<T>? TryMatch(StringSegment segment)
+    public ParsedMatch<TValue>? TryMatch(TContext context, StringSegment segment)
     {
         var index = segment.Source.IndexOf(needle, segment.StartIndex, segment.Length, comparison);
 
@@ -19,8 +19,8 @@ internal class StringMatcher<T>(
             return null;
 
         var segmentMatch = segment.Relocate(index, needle.Length);
-        var value = transform(segmentMatch);
+        var value = transform(context, segmentMatch);
 
-        return value is not null ? new ParsedMatch<T>(segmentMatch, value) : null;
+        return value is not null ? new ParsedMatch<TValue>(segmentMatch, value) : null;
     }
 }

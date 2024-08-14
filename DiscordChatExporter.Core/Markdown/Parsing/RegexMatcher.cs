@@ -3,9 +3,12 @@ using System.Text.RegularExpressions;
 
 namespace DiscordChatExporter.Core.Markdown.Parsing;
 
-internal class RegexMatcher<T>(Regex regex, Func<StringSegment, Match, T?> transform) : IMatcher<T>
+internal class RegexMatcher<TContext, TValue>(
+    Regex regex,
+    Func<TContext, StringSegment, Match, TValue?> transform
+) : IMatcher<TContext, TValue>
 {
-    public ParsedMatch<T>? TryMatch(StringSegment segment)
+    public ParsedMatch<TValue>? TryMatch(TContext context, StringSegment segment)
     {
         var match = regex.Match(segment.Source, segment.StartIndex, segment.Length);
         if (!match.Success)
@@ -20,8 +23,8 @@ internal class RegexMatcher<T>(Regex regex, Func<StringSegment, Match, T?> trans
             return null;
 
         var segmentMatch = segment.Relocate(match);
-        var value = transform(segmentMatch, match);
+        var value = transform(context, segmentMatch, match);
 
-        return value is not null ? new ParsedMatch<T>(segmentMatch, value) : null;
+        return value is not null ? new ParsedMatch<TValue>(segmentMatch, value) : null;
     }
 }

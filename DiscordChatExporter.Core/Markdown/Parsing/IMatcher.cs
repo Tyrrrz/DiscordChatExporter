@@ -3,17 +3,18 @@ using System.Collections.Generic;
 
 namespace DiscordChatExporter.Core.Markdown.Parsing;
 
-internal interface IMatcher<T>
+internal interface IMatcher<in TContext, TValue>
 {
-    ParsedMatch<T>? TryMatch(StringSegment segment);
+    ParsedMatch<TValue>? TryMatch(TContext context, StringSegment segment);
 }
 
 internal static class MatcherExtensions
 {
-    public static IEnumerable<ParsedMatch<T>> MatchAll<T>(
-        this IMatcher<T> matcher,
+    public static IEnumerable<ParsedMatch<TValue>> MatchAll<TContext, TValue>(
+        this IMatcher<TContext, TValue> matcher,
+        TContext context,
         StringSegment segment,
-        Func<StringSegment, T> transformFallback
+        Func<TContext, StringSegment, TValue> transformFallback
     )
     {
         // Loop through segments divided by individual matches
@@ -22,6 +23,7 @@ internal static class MatcherExtensions
         {
             // Find a match within this segment
             var match = matcher.TryMatch(
+                context,
                 segment.Relocate(currentIndex, segment.EndIndex - currentIndex)
             );
 
@@ -36,9 +38,9 @@ internal static class MatcherExtensions
                     match.Segment.StartIndex - currentIndex
                 );
 
-                yield return new ParsedMatch<T>(
+                yield return new ParsedMatch<TValue>(
                     fallbackSegment,
-                    transformFallback(fallbackSegment)
+                    transformFallback(context, fallbackSegment)
                 );
             }
 
@@ -53,7 +55,10 @@ internal static class MatcherExtensions
         {
             var fallbackSegment = segment.Relocate(currentIndex, segment.EndIndex - currentIndex);
 
-            yield return new ParsedMatch<T>(fallbackSegment, transformFallback(fallbackSegment));
+            yield return new ParsedMatch<TValue>(
+                fallbackSegment,
+                transformFallback(context, fallbackSegment)
+            );
         }
     }
 }

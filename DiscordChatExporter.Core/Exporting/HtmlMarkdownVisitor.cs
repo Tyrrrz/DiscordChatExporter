@@ -279,8 +279,8 @@ internal partial class HtmlMarkdownVisitor(
         }
         else if (mention.Kind == MentionKind.Channel)
         {
-            await context.PopulateThreadsAsync(cancellationToken);
-            
+            await context.PopulateThreadsAsync(mention.TargetId, cancellationToken);
+
             var channel = mention.TargetId?.Pipe(context.TryGetChannel);
             var symbol = channel?.IsVoice == true ? "🔊" : "#";
             var name = channel?.Name ?? "deleted-channel";

@@ -279,6 +279,7 @@ internal partial class HtmlMarkdownVisitor(
         }
         else if (mention.Kind == MentionKind.Channel)
         {
+        if (mention.TargetId is not null)
             await context.PopulateThreadsAsync(mention.TargetId, cancellationToken);
 
             var channel = mention.TargetId?.Pipe(context.TryGetChannel);

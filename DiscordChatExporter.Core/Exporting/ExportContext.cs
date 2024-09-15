@@ -48,26 +48,17 @@ internal class ExportContext(DiscordClient discord, ExportRequest request)
         }
     }
 
-    public async ValueTask PopulateThreadsAsync(
-        Snowflake? id,
+    public async ValueTask PopulateThreadAsync(
+        Snowflake id,
         CancellationToken cancellationToken = default
     )
     {
-        if (id == null)
-        {
+        if (_channelsById.ContainsKey(id))
             return;
-        }
 
-        Snowflake sid = (Snowflake)id;
+        var channel = await Discord.GetChannelAsync(id, cancellationToken);
 
-        if (_channelsById.ContainsKey(sid))
-        {
-            return;
-        }
-
-        var channel = await Discord.GetChannelAsync(sid, cancellationToken);
-
-        _channelsById[sid] = channel;
+        _channelsById[id] = channel;
     }
 
     // Because members cannot be pulled in bulk, we need to populate them on demand

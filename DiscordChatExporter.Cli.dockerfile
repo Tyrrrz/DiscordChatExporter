@@ -45,6 +45,9 @@ ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 ENV LC_ALL=en_US.UTF-8
 ENV LANG=en_US.UTF-8
 
+# Alpine is missing tzdata, which we need to support timezones
+RUN apk add --no-cache tzdata
+
 # Use a non-root user to ensure that the files shared with the host are accessible by the host user
 # https://github.com/Tyrrrz/DiscordChatExporter/issues/851
 # https://github.com/Tyrrrz/DiscordChatExporter/issues/1174

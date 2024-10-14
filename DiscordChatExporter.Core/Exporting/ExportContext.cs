@@ -48,6 +48,19 @@ internal class ExportContext(DiscordClient discord, ExportRequest request)
         }
     }
 
+    public async ValueTask PopulateThreadAsync(
+        Snowflake id,
+        CancellationToken cancellationToken = default
+    )
+    {
+        if (_channelsById.ContainsKey(id))
+            return;
+
+        var channel = await Discord.GetChannelAsync(id, cancellationToken);
+
+        _channelsById[id] = channel;
+    }
+
     // Because members cannot be pulled in bulk, we need to populate them on demand
     private async ValueTask PopulateMemberAsync(
         Snowflake id,

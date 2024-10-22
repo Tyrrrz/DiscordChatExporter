@@ -214,6 +214,16 @@ Don't forget to quote (") the date if it has spaces!
 More info about .NET date
 formats [here](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings).
 
+#### Filtering messages
+
+Use `--filter` to filter what messages are included in the export.
+
+```console
+./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 --filter "from:Tyrrrz has:image"
+```
+
+Documentation on message filter syntax can be found [here](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Message-filters.md).
+
 ### Export channels from a specific server
 
 To export all channels in a specific server, use the `exportguild` command and provide the server ID through the `-g|--guild` option:

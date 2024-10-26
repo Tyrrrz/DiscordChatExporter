@@ -85,7 +85,7 @@ public class SettingsViewModel : DialogViewModelBase
             "zh-CN",
             "ja-JP",
             "zh-TW",
-            "ko-KR"
+            "ko-KR",
         ];
 
     // This has to be non-nullable because Avalonia ComboBox doesn't allow a null value to be selected

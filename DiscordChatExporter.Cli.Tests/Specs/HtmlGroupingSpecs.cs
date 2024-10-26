@@ -28,7 +28,7 @@ public class HtmlGroupingSpecs
             Token = Secrets.DiscordToken,
             ChannelIds = [ChannelIds.GroupingTestCases],
             ExportFormat = ExportFormat.HtmlDark,
-            OutputPath = file.Path
+            OutputPath = file.Path,
         }.ExecuteAsync(new FakeConsole());
 
         // Assert

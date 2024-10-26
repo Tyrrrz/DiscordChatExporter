@@ -4,5 +4,5 @@ public enum ThreadInclusionMode
 {
     None,
     Active,
-    All
+    All,
 }

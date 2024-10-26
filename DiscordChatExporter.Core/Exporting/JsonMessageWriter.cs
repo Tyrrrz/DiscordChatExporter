@@ -25,7 +25,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                 Indented = true,
                 // Validation errors may mask actual failures
                 // https://github.com/Tyrrrz/DiscordChatExporter/issues/413
-                SkipValidation = true
+                SkipValidation = true,
             }
         );
 

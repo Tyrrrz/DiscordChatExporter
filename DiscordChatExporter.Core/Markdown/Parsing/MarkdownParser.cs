@@ -377,10 +377,9 @@ internal static partial class MarkdownParser
                         null => null,
                         // Unknown format: throw an exception to consider this timestamp invalid
                         // https://github.com/Tyrrrz/DiscordChatExporter/issues/1156
-                        var f
-                            => throw new InvalidOperationException(
-                                $"Unknown timestamp format '{f}'."
-                            )
+                        var f => throw new InvalidOperationException(
+                            $"Unknown timestamp format '{f}'."
+                        ),
                     };
 
                     return new TimestampNode(instant, format);

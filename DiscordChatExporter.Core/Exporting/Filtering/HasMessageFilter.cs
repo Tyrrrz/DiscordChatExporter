@@ -17,15 +17,13 @@ internal class HasMessageFilter(MessageContentMatchKind kind) : MessageFilter
             MessageContentMatchKind.Image => message.Attachments.Any(file => file.IsImage),
             MessageContentMatchKind.Sound => message.Attachments.Any(file => file.IsAudio),
             MessageContentMatchKind.Pin => message.IsPinned,
-            MessageContentMatchKind.Invite
-                => MarkdownParser
-                    .ExtractLinks(message.Content)
-                    .Select(l => l.Url)
-                    .Select(Invite.TryGetCodeFromUrl)
-                    .Any(c => !string.IsNullOrWhiteSpace(c)),
-            _
-                => throw new InvalidOperationException(
-                    $"Unknown message content match kind '{kind}'."
-                )
+            MessageContentMatchKind.Invite => MarkdownParser
+                .ExtractLinks(message.Content)
+                .Select(l => l.Url)
+                .Select(Invite.TryGetCodeFromUrl)
+                .Any(c => !string.IsNullOrWhiteSpace(c)),
+            _ => throw new InvalidOperationException(
+                $"Unknown message content match kind '{kind}'."
+            ),
         };
 }

@@ -34,58 +34,51 @@ internal partial class HtmlMarkdownVisitor(
     {
         var (openingTag, closingTag) = formatting.Kind switch
         {
-            FormattingKind.Bold
-                => (
-                    // lang=html
-                    "<strong>",
-                    // lang=html
-                    "</strong>"
-                ),
+            FormattingKind.Bold => (
+                // lang=html
+                "<strong>",
+                // lang=html
+                "</strong>"
+            ),
 
-            FormattingKind.Italic
-                => (
-                    // lang=html
-                    "<em>",
-                    // lang=html
-                    "</em>"
-                ),
+            FormattingKind.Italic => (
+                // lang=html
+                "<em>",
+                // lang=html
+                "</em>"
+            ),
 
-            FormattingKind.Underline
-                => (
-                    // lang=html
-                    "<u>",
-                    // lang=html
-                    "</u>"
-                ),
+            FormattingKind.Underline => (
+                // lang=html
+                "<u>",
+                // lang=html
+                "</u>"
+            ),
 
-            FormattingKind.Strikethrough
-                => (
-                    // lang=html
-                    "<s>",
-                    // lang=html
-                    "</s>"
-                ),
+            FormattingKind.Strikethrough => (
+                // lang=html
+                "<s>",
+                // lang=html
+                "</s>"
+            ),
 
-            FormattingKind.Spoiler
-                => (
-                    // lang=html
-                    """<span class="chatlog__markdown-spoiler chatlog__markdown-spoiler--hidden" onclick="showSpoiler(event, this)">""",
-                    // lang=html
-                    """</span>"""
-                ),
+            FormattingKind.Spoiler => (
+                // lang=html
+                """<span class="chatlog__markdown-spoiler chatlog__markdown-spoiler--hidden" onclick="showSpoiler(event, this)">""",
+                // lang=html
+                """</span>"""
+            ),
 
-            FormattingKind.Quote
-                => (
-                    // lang=html
-                    """<div class="chatlog__markdown-quote"><div class="chatlog__markdown-quote-border"></div><div class="chatlog__markdown-quote-content">""",
-                    // lang=html
-                    """</div></div>"""
-                ),
+            FormattingKind.Quote => (
+                // lang=html
+                """<div class="chatlog__markdown-quote"><div class="chatlog__markdown-quote-border"></div><div class="chatlog__markdown-quote-content">""",
+                // lang=html
+                """</div></div>"""
+            ),
 
-            _
-                => throw new InvalidOperationException(
-                    $"Unknown formatting kind '{formatting.Kind}'."
-                )
+            _ => throw new InvalidOperationException(
+                $"Unknown formatting kind '{formatting.Kind}'."
+            ),
         };
 
         buffer.Append(openingTag);

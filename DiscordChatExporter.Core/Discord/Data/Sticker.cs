@@ -28,7 +28,7 @@ public partial record Sticker
                 StickerFormat.Apng => "png",
                 StickerFormat.Lottie => "json",
                 StickerFormat.Gif => "gif",
-                _ => throw new InvalidOperationException($"Unknown sticker format '{format}'.")
+                _ => throw new InvalidOperationException($"Unknown sticker format '{format}'."),
             }
         );
 

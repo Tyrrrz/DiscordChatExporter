@@ -100,13 +100,15 @@ internal partial class MessageExporter
             ExportFormat.PlainText => new PlainTextMessageWriter(File.Create(filePath), context),
             ExportFormat.Csv => new CsvMessageWriter(File.Create(filePath), context),
             ExportFormat.HtmlDark => new HtmlMessageWriter(File.Create(filePath), context, "Dark"),
-            ExportFormat.HtmlLight
-                => new HtmlMessageWriter(File.Create(filePath), context, "Light"),
+            ExportFormat.HtmlLight => new HtmlMessageWriter(
+                File.Create(filePath),
+                context,
+                "Light"
+            ),
             ExportFormat.Json => new JsonMessageWriter(File.Create(filePath), context),
-            _
-                => throw new ArgumentOutOfRangeException(
-                    nameof(format),
-                    $"Unknown export format '{format}'."
-                )
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(format),
+                $"Unknown export format '{format}'."
+            ),
         };
 }

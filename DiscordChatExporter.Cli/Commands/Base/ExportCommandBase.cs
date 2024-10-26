@@ -196,7 +196,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
                     new ParallelOptions
                     {
                         MaxDegreeOfParallelism = Math.Max(1, ParallelLimit),
-                        CancellationToken = cancellationToken
+                        CancellationToken = cancellationToken,
                     },
                     async (channel, innerCancellationToken) =>
                     {

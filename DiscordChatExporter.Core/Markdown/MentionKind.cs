@@ -6,5 +6,5 @@ internal enum MentionKind
     Here,
     User,
     Channel,
-    Role
+    Role,
 }

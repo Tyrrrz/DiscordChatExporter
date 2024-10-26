@@ -172,24 +172,21 @@ public partial class ExportRequest
                         "%C" => channel.Name,
 
                         "%p" => channel.Position?.ToString(CultureInfo.InvariantCulture) ?? "0",
-                        "%P"
-                            => channel.Parent?.Position?.ToString(CultureInfo.InvariantCulture)
-                                ?? "0",
+                        "%P" => channel.Parent?.Position?.ToString(CultureInfo.InvariantCulture)
+                            ?? "0",
 
-                        "%a"
-                            => after?.ToDate().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
-                                ?? "",
-                        "%b"
-                            => before?.ToDate().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
-                                ?? "",
-                        "%d"
-                            => DateTimeOffset.Now.ToString(
-                                "yyyy-MM-dd",
-                                CultureInfo.InvariantCulture
-                            ),
+                        "%a" => after?.ToDate().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+                            ?? "",
+                        "%b" => before
+                            ?.ToDate()
+                            .ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) ?? "",
+                        "%d" => DateTimeOffset.Now.ToString(
+                            "yyyy-MM-dd",
+                            CultureInfo.InvariantCulture
+                        ),
 
                         "%%" => "%",
-                        _ => m.Value
+                        _ => m.Value,
                     }
                 )
         );

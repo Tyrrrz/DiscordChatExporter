@@ -138,8 +138,8 @@ public partial class ExportSetupViewModel(
                 [
                     new FilePickerFileType($"{extension.ToUpperInvariant()} file")
                     {
-                        Patterns = [$"*.{extension}"]
-                    }
+                        Patterns = [$"*.{extension}"],
+                    },
                 ],
                 defaultFileName
             );

@@ -253,7 +253,7 @@ public partial class DashboardViewModel : ViewModelBase
                 channelProgressPairs,
                 new ParallelOptions
                 {
-                    MaxDegreeOfParallelism = Math.Max(1, _settingsService.ParallelLimit)
+                    MaxDegreeOfParallelism = Math.Max(1, _settingsService.ParallelLimit),
                 },
                 async (pair, cancellationToken) =>
                 {

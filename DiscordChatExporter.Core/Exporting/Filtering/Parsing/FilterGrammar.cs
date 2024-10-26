@@ -125,7 +125,7 @@ internal static class FilterGrammar
             op switch
             {
                 '|' => new BinaryExpressionMessageFilter(left, right, BinaryExpressionKind.Or),
-                _ => new BinaryExpressionMessageFilter(left, right, BinaryExpressionKind.And)
+                _ => new BinaryExpressionMessageFilter(left, right, BinaryExpressionKind.And),
             }
     );
 

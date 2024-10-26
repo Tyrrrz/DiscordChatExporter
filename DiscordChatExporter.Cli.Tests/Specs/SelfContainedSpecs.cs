@@ -27,7 +27,7 @@ public class SelfContainedSpecs
             ChannelIds = [ChannelIds.SelfContainedTestCases],
             ExportFormat = ExportFormat.HtmlDark,
             OutputPath = filePath,
-            ShouldDownloadAssets = true
+            ShouldDownloadAssets = true,
         }.ExecuteAsync(new FakeConsole());
 
         // Assert

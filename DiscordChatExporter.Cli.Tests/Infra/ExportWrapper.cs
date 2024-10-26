@@ -56,7 +56,7 @@ public static class ExportWrapper
                 ExportFormat = format,
                 OutputPath = filePath,
                 Locale = "en-US",
-                IsUtcNormalizationEnabled = true
+                IsUtcNormalizationEnabled = true,
             }.ExecuteAsync(console);
         }
 

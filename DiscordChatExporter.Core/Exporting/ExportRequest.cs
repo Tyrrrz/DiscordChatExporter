@@ -154,27 +154,39 @@ public partial class ExportRequest
         Channel channel,
         Snowflake? after,
         Snowflake? before
-    ) =>
-        Regex.Replace(
+    )
+    {
+        string preFormattedPath = Regex.Replace(
             path,
             "%.",
             m =>
                 PathEx.EscapeFileName(
                     m.Value switch
                     {
+                        // On %T and %P, we have to make sure that we still get name and position of the category if the channel is a thread
                         "%g" => guild.Id.ToString(),
                         "%G" => guild.Name,
 
                         "%t" => channel.Parent?.Id.ToString() ?? "",
-                        "%T" => channel.Parent?.Name ?? "",
+                        "%T"
+                            => channel.IsThread
+                                ? (channel.Parent?.Parent?.Name ?? "")
+                                : channel.Parent?.Name ?? "",
 
                         "%c" => channel.Id.ToString(),
                         "%C" => channel.Name,
 
                         "%p" => channel.Position?.ToString(CultureInfo.InvariantCulture) ?? "0",
                         "%P"
-                            => channel.Parent?.Position?.ToString(CultureInfo.InvariantCulture)
-                                ?? "0",
+                            => channel.IsThread
+                                ? (
+                                    channel
+                                        .Parent?.Parent
+                                        ?.Position
+                                        ?.ToString(CultureInfo.InvariantCulture) ?? ""
+                                )
+                                : channel.Parent?.Position?.ToString(CultureInfo.InvariantCulture)
+                                    ?? "0",
 
                         "%a"
                             => after?.ToDate().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
@@ -193,6 +205,32 @@ public partial class ExportRequest
                     }
                 )
         );
+
+        // We are looking for any structure in the path which contains either %y or %z. If the channel is a thread, we can resolve the placeholders, otherwise, that whole structure needs to be removed.
+        string formattedPath = Regex.Replace(
+            preFormattedPath,
+            @"\\[^\\]*%[xyz][^\\]*\\",
+            m =>
+                channel.IsThread
+                    ? Regex.Replace(
+                        m.Value,
+                        "%[xyz]",
+                        n =>
+                            n.Value switch
+                            {
+                                "%x" => channel.Parent?.Id.ToString() ?? "",
+                                "%y"
+                                    => channel
+                                        .Parent?.Position
+                                        ?.ToString(CultureInfo.InvariantCulture) ?? "",
+                                "%z" => channel.Parent?.Name ?? "",
+                                _ => n.Value
+                            }
+                    )
+                    : "\\"
+        );
+        return formattedPath;
+    }
 
     private static string GetOutputBaseFilePath(
         Guild guild,

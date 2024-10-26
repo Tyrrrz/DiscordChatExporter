@@ -3548,7 +3548,7 @@ internal static class EmojiIndex
             ["🇸🇯"] = "flag_sj",
             ["🇹🇦"] = "flag_ta",
             ["🇺🇲"] = "flag_um",
-            ["🇺🇳"] = "united_nations"
+            ["🇺🇳"] = "united_nations",
         };
 
     private static Dictionary<string, string> _fromCodes =
@@ -8880,7 +8880,7 @@ internal static class EmojiIndex
             ["flag_sj"] = "🇸🇯",
             ["flag_ta"] = "🇹🇦",
             ["flag_um"] = "🇺🇲",
-            ["united_nations"] = "🇺🇳"
+            ["united_nations"] = "🇺🇳",
         };
 
     public static string? TryGetCode(string name) => _toCodes.GetValueOrDefault(name);

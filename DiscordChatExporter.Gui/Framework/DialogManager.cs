@@ -56,7 +56,7 @@ public class DialogManager : IDisposable
             {
                 FileTypeChoices = fileTypes,
                 SuggestedFileName = defaultFilePath,
-                DefaultExtension = Path.GetExtension(defaultFilePath).TrimStart('.')
+                DefaultExtension = Path.GetExtension(defaultFilePath).TrimStart('.'),
             }
         );
 
@@ -77,7 +77,7 @@ public class DialogManager : IDisposable
             new FolderPickerOpenOptions
             {
                 AllowMultiple = false,
-                SuggestedStartLocation = startLocation
+                SuggestedStartLocation = startLocation,
             }
         );
 

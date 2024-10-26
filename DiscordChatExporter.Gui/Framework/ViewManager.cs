@@ -19,7 +19,7 @@ public partial class ViewManager
             ExportSetupViewModel => new ExportSetupView(),
             MessageBoxViewModel => new MessageBoxView(),
             SettingsViewModel => new SettingsView(),
-            _ => null
+            _ => null,
         };
 
     public Control? TryBindView(ViewModelBase viewModel)

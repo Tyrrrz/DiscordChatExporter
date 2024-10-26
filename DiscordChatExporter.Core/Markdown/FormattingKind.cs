@@ -7,5 +7,5 @@ internal enum FormattingKind
     Underline,
     Strikethrough,
     Spoiler,
-    Quote
+    Quote,
 }

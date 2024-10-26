@@ -377,10 +377,9 @@ internal static partial class MarkdownParser
                         null => null,
                         // Unknown format: throw an exception to consider this timestamp invalid
                         // https://github.com/Tyrrrz/DiscordChatExporter/issues/1156
-                        var f
-                            => throw new InvalidOperationException(
-                                $"Unknown timestamp format '{f}'."
-                            )
+                        var f => throw new InvalidOperationException(
+                            $"Unknown timestamp format '{f}'."
+                        ),
                     };
 
                     return new TimestampNode(instant, format);
@@ -485,6 +484,37 @@ internal static partial class MarkdownParser
 
 internal static partial class MarkdownParser
 {
+    private static void Extract<TNode>(
+        IEnumerable<MarkdownNode> nodes,
+        ICollection<TNode> extractedNodes
+    )
+        where TNode : MarkdownNode
+    {
+        foreach (var node in nodes)
+        {
+            if (node is TNode extractedNode)
+                extractedNodes.Add(extractedNode);
+
+            if (node is IContainerNode containerNode)
+                Extract(containerNode.Children, extractedNodes);
+        }
+    }
+
+    public static IReadOnlyList<TNode> Extract<TNode>(string markdown)
+        where TNode : MarkdownNode
+    {
+        var extractedNodes = new List<TNode>();
+        Extract(Parse(markdown), extractedNodes);
+
+        return extractedNodes;
+    }
+
+    public static IReadOnlyList<LinkNode> ExtractLinks(string markdown) =>
+        Extract<LinkNode>(markdown);
+
+    public static IReadOnlyList<EmojiNode> ExtractEmojis(string markdown) =>
+        Extract<EmojiNode>(markdown);
+
     private static IReadOnlyList<MarkdownNode> Parse(
         MarkdownContext context,
         StringSegment segment
@@ -500,24 +530,4 @@ internal static partial class MarkdownParser
 
     public static IReadOnlyList<MarkdownNode> ParseMinimal(string markdown) =>
         ParseMinimal(new MarkdownContext(), new StringSegment(markdown));
-
-    private static void ExtractLinks(IEnumerable<MarkdownNode> nodes, ICollection<LinkNode> links)
-    {
-        foreach (var node in nodes)
-        {
-            if (node is LinkNode linkNode)
-                links.Add(linkNode);
-
-            if (node is IContainerNode containerNode)
-                ExtractLinks(containerNode.Children, links);
-        }
-    }
-
-    public static IReadOnlyList<LinkNode> ExtractLinks(string markdown)
-    {
-        var links = new List<LinkNode>();
-        ExtractLinks(Parse(markdown), links);
-
-        return links;
-    }
 }

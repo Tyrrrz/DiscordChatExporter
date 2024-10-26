@@ -17,13 +17,18 @@ public partial record Emoji(
     string ImageUrl
 )
 {
+    public Emoji(Snowflake? id, string name, bool isAnimated)
+        : this(id, name, isAnimated, GetImageUrl(id, name, isAnimated)) { }
+
+    public bool IsCustomEmoji => Id is not null;
+
     // Name of a custom emoji (e.g. LUL) or name of a standard emoji (e.g. slight_smile)
-    public string Code => Id is not null ? Name : EmojiIndex.TryGetCode(Name) ?? Name;
+    public string Code => IsCustomEmoji ? Name : EmojiIndex.TryGetCode(Name) ?? Name;
 }
 
 public partial record Emoji
 {
-    public static string GetImageUrl(Snowflake? id, string? name, bool isAnimated)
+    private static string GetImageUrl(Snowflake? id, string? name, bool isAnimated)
     {
         // Custom emoji
         if (id is not null)
@@ -47,8 +52,7 @@ public partial record Emoji
             json.GetPropertyOrNull("name")?.GetNonWhiteSpaceStringOrNull() ?? "Unknown Emoji";
 
         var isAnimated = json.GetPropertyOrNull("animated")?.GetBooleanOrNull() ?? false;
-        var imageUrl = GetImageUrl(id, name, isAnimated);
 
-        return new Emoji(id, name, isAnimated, imageUrl);
+        return new Emoji(id, name, isAnimated);
     }
 }

@@ -55,8 +55,8 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
             Context.TryGetMember(user.Id)?.DisplayName ?? user.DisplayName
         );
 
-        _writer.WriteBoolean("isBot", user.IsBot);
         _writer.WriteString("color", Context.TryGetUserColor(user.Id)?.ToHex());
+        _writer.WriteBoolean("isBot", user.IsBot);
 
         if (includeRoles)
         {

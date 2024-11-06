@@ -22,25 +22,25 @@ public class JsonEmojiSpecs
         var inlineEmojis = message.GetProperty("inlineEmojis").EnumerateArray().ToArray();
         inlineEmojis.Should().HaveCount(4);
 
-        inlineEmojis[0].GetProperty("id").GetString().Should().BeNullOrWhiteSpace();
+        inlineEmojis[0].GetProperty("id").GetString().Should().BeNullOrEmpty();
         inlineEmojis[0].GetProperty("name").GetString().Should().Be("🙂");
         inlineEmojis[0].GetProperty("code").GetString().Should().Be("slight_smile");
         inlineEmojis[0].GetProperty("isAnimated").GetBoolean().Should().BeFalse();
         inlineEmojis[0].GetProperty("imageUrl").GetString().Should().NotBeNullOrWhiteSpace();
 
-        inlineEmojis[1].GetProperty("id").GetString().Should().BeNullOrWhiteSpace();
+        inlineEmojis[1].GetProperty("id").GetString().Should().BeNullOrEmpty();
         inlineEmojis[1].GetProperty("name").GetString().Should().Be("😦");
         inlineEmojis[1].GetProperty("code").GetString().Should().Be("frowning");
         inlineEmojis[1].GetProperty("isAnimated").GetBoolean().Should().BeFalse();
         inlineEmojis[1].GetProperty("imageUrl").GetString().Should().NotBeNullOrWhiteSpace();
 
-        inlineEmojis[2].GetProperty("id").GetString().Should().BeNullOrWhiteSpace();
+        inlineEmojis[2].GetProperty("id").GetString().Should().BeNullOrEmpty();
         inlineEmojis[2].GetProperty("name").GetString().Should().Be("😔");
         inlineEmojis[2].GetProperty("code").GetString().Should().Be("pensive");
         inlineEmojis[2].GetProperty("isAnimated").GetBoolean().Should().BeFalse();
         inlineEmojis[2].GetProperty("imageUrl").GetString().Should().NotBeNullOrWhiteSpace();
 
-        inlineEmojis[3].GetProperty("id").GetString().Should().BeNullOrWhiteSpace();
+        inlineEmojis[3].GetProperty("id").GetString().Should().BeNullOrEmpty();
         inlineEmojis[3].GetProperty("name").GetString().Should().Be("😂");
         inlineEmojis[3].GetProperty("code").GetString().Should().Be("joy");
         inlineEmojis[3].GetProperty("isAnimated").GetBoolean().Should().BeFalse();

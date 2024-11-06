@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading;
@@ -308,7 +309,11 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
 
         if (!string.IsNullOrWhiteSpace(embed.Description))
         {
-            foreach (var emoji in MarkdownParser.ExtractEmojis(embed.Description))
+            foreach (
+                var emoji in MarkdownParser
+                    .ExtractEmojis(embed.Description)
+                    .DistinctBy(e => e.Name, StringComparer.Ordinal)
+            )
             {
                 await WriteEmojiAsync(
                     new Emoji(emoji.Id, emoji.Name, emoji.IsAnimated),
@@ -484,6 +489,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
 
             // Reaction authors
             _writer.WriteStartArray("users");
+
             await foreach (
                 var user in Context.Discord.GetMessageReactionsAsync(
                     Context.Request.Channel.Id,
@@ -537,7 +543,11 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
         // Inline emoji
         _writer.WriteStartArray("inlineEmojis");
 
-        foreach (var emoji in MarkdownParser.ExtractEmojis(message.Content))
+        foreach (
+            var emoji in MarkdownParser
+                .ExtractEmojis(message.Content)
+                .DistinctBy(e => e.Name, StringComparer.Ordinal)
+        )
         {
             await WriteEmojiAsync(
                 new Emoji(emoji.Id, emoji.Name, emoji.IsAnimated),

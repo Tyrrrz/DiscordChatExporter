@@ -53,7 +53,7 @@ public partial class DashboardViewModel : ViewModelBase
     private Guild? _selectedGuild;
 
     [ObservableProperty]
-    private IReadOnlyList<ChannelNode>? _availableChannels;
+    private IReadOnlyList<ChannelConnection>? _availableChannels;
 
     public DashboardViewModel(
         ViewModelManager viewModelManager,
@@ -88,7 +88,7 @@ public partial class DashboardViewModel : ViewModelBase
 
     public bool IsProgressIndeterminate => IsBusy && Progress.Current.Fraction is <= 0 or >= 1;
 
-    public ObservableCollection<ChannelNode> SelectedChannels { get; } = [];
+    public ObservableCollection<ChannelConnection> SelectedChannels { get; } = [];
 
     [RelayCommand]
     private void Initialize()
@@ -190,7 +190,7 @@ public partial class DashboardViewModel : ViewModelBase
             }
 
             // Build a hierarchy of channels
-            var channelTree = ChannelNode.BuildTree(
+            var channelTree = ChannelConnection.BuildTree(
                 channels
                     .OrderByDescending(c => c.IsDirect ? c.LastMessageId : null)
                     .ThenBy(c => c.Position)

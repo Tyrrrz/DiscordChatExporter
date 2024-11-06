@@ -28,7 +28,9 @@ public partial class DashboardView : UserControl<DashboardViewModel>
     )
     {
         // Hack: unselect categories because they cannot be exported
-        foreach (var item in args.AddedItems.OfType<ChannelNode>().Where(x => x.Channel.IsCategory))
+        foreach (
+            var item in args.AddedItems.OfType<ChannelConnection>().Where(x => x.Channel.IsCategory)
+        )
         {
             if (AvailableChannelsTreeView.TreeContainerFromItem(item) is TreeViewItem container)
                 container.IsSelected = false;

@@ -21,21 +21,23 @@ public partial record Channel(
     Snowflake? LastMessageId
 ) : IHasId
 {
-    public bool IsDirect => Kind is ChannelKind.DirectTextChat or ChannelKind.DirectGroupTextChat;
+    public bool IsDirect { get; } =
+        Kind is ChannelKind.DirectTextChat or ChannelKind.DirectGroupTextChat;
 
     public bool IsGuild => !IsDirect;
 
-    public bool IsCategory => Kind == ChannelKind.GuildCategory;
+    public bool IsCategory { get; } = Kind == ChannelKind.GuildCategory;
 
-    public bool IsVoice => Kind is ChannelKind.GuildVoiceChat or ChannelKind.GuildStageVoice;
+    public bool IsVoice { get; } =
+        Kind is ChannelKind.GuildVoiceChat or ChannelKind.GuildStageVoice;
 
-    public bool IsThread =>
+    public bool IsThread { get; } =
         Kind
             is ChannelKind.GuildNewsThread
                 or ChannelKind.GuildPublicThread
                 or ChannelKind.GuildPrivateThread;
 
-    public bool IsEmpty => LastMessageId is null;
+    public bool IsEmpty { get; } = LastMessageId is null;
 
     public IEnumerable<Channel> GetParents()
     {

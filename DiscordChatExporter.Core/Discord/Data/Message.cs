@@ -30,15 +30,15 @@ public partial record Message(
     Interaction? Interaction
 ) : IHasId
 {
-    public bool IsSystemNotification =>
+    public bool IsSystemNotification { get; } =
         Kind is >= MessageKind.RecipientAdd and <= MessageKind.ThreadCreated;
 
-    public bool IsReply => Kind == MessageKind.Reply;
+    public bool IsReply { get; } = Kind == MessageKind.Reply;
 
     // App interactions are rendered as replies in the Discord client, but they are not actually replies
     public bool IsReplyLike => IsReply || Interaction is not null;
 
-    public bool IsEmpty =>
+    public bool IsEmpty { get; } =
         string.IsNullOrWhiteSpace(Content)
         && !Attachments.Any()
         && !Embeds.Any()

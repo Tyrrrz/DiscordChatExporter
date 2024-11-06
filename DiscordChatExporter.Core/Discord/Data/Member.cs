@@ -15,7 +15,7 @@ public partial record Member(
     IReadOnlyList<Snowflake> RoleIds
 ) : IHasId
 {
-    public Snowflake Id => User.Id;
+    public Snowflake Id { get; } = User.Id;
 }
 
 public partial record Member

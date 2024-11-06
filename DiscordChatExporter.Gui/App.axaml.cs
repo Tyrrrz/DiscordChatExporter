@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -73,9 +72,6 @@ public class App : Application, IDisposable
     public override void Initialize()
     {
         base.Initialize();
-
-        // Increase maximum concurrent connections
-        ServicePointManager.DefaultConnectionLimit = 20;
 
         AvaloniaXamlLoader.Load(this);
     }

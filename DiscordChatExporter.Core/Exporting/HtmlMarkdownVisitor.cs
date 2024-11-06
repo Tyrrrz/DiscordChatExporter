@@ -5,7 +5,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Markdown;
 using DiscordChatExporter.Core.Markdown.Parsing;
 using DiscordChatExporter.Core.Utils.Extensions;
@@ -210,7 +209,6 @@ internal partial class HtmlMarkdownVisitor(
         CancellationToken cancellationToken = default
     )
     {
-        var emojiImageUrl = Emoji.GetImageUrl(emoji.Id, emoji.Name, emoji.IsAnimated);
         var jumboClass = isJumbo ? "chatlog__emoji--large" : "";
 
         buffer.Append(
@@ -221,7 +219,7 @@ internal partial class HtmlMarkdownVisitor(
                 class="chatlog__emoji {jumboClass}"
                 alt="{emoji.Name}"
                 title="{emoji.Code}"
-                src="{await context.ResolveAssetUrlAsync(emojiImageUrl, cancellationToken)}">
+                src="{await context.ResolveAssetUrlAsync(emoji.ImageUrl, cancellationToken)}">
             """
         );
     }

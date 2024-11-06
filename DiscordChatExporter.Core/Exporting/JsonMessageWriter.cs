@@ -303,6 +303,22 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
 
         _writer.WriteEndArray();
 
+        // Inline emoji
+        _writer.WriteStartArray("inlineEmojis");
+
+        if (!string.IsNullOrWhiteSpace(embed.Description))
+        {
+            foreach (var emoji in MarkdownParser.ExtractEmojis(embed.Description))
+            {
+                await WriteEmojiAsync(
+                    new Emoji(emoji.Id, emoji.Name, emoji.IsAnimated),
+                    cancellationToken
+                );
+            }
+        }
+
+        _writer.WriteEndArray();
+
         _writer.WriteEndObject();
         await _writer.FlushAsync(cancellationToken);
     }
@@ -520,6 +536,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
 
         // Inline emoji
         _writer.WriteStartArray("inlineEmojis");
+
         foreach (var emoji in MarkdownParser.ExtractEmojis(message.Content))
         {
             await WriteEmojiAsync(

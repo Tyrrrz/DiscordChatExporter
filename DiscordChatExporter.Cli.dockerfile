@@ -1,7 +1,7 @@
 # -- Build
 # Specify the platform here so that we pull the SDK image matching the host platform,
 # instead of the target platform specified during build by the `--platform` option.
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
 
 # Expose the target architecture set by the `docker build --platform` option, so that
 # we can build the assembly for the correct platform.
@@ -30,7 +30,7 @@ RUN dotnet publish DiscordChatExporter.Cli \
 
 # -- Run
 # Use `runtime-deps` instead of `runtime` because we have a self-contained assembly
-FROM --platform=$TARGETPLATFORM mcr.microsoft.com/dotnet/runtime-deps:8.0-alpine AS run
+FROM --platform=$TARGETPLATFORM mcr.microsoft.com/dotnet/runtime-deps:9.0-alpine AS run
 
 LABEL org.opencontainers.image.title="DiscordChatExporter.Cli"
 LABEL org.opencontainers.image.description="DiscordChatExporter is an application that can be used to export message history from any Discord channel to a file."

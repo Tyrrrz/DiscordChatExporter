@@ -31,7 +31,7 @@ jobs:
       - name: Install .NET
         uses: actions/setup-dotnet@3e891b0cb619bf60e2c25674b222b8940e2c1c25 # v4.1.0
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 9.0.x
 
       - name: Verify formatting
         run: >
@@ -56,7 +56,7 @@ jobs:
       - name: Install .NET
         uses: actions/setup-dotnet@3e891b0cb619bf60e2c25674b222b8940e2c1c25 # v4.1.0
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 9.0.x
 
       - name: Run tests
         env:
@@ -113,7 +113,7 @@ jobs:
       - name: Install .NET
         uses: actions/setup-dotnet@3e891b0cb619bf60e2c25674b222b8940e2c1c25 # v4.1.0
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 9.0.x
 
       - name: Publish app
         run: >

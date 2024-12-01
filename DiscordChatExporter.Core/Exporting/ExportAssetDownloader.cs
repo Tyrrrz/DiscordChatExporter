@@ -23,7 +23,8 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
 
     public async ValueTask<string> DownloadAsync(
         string url,
-        CancellationToken cancellationToken = default
+        CancellationToken cancellationToken = default,
+        DateTimeOffset? timestamp = null
     )
     {
         var fileName = GetFileNameFromUrl(url);
@@ -51,24 +52,31 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
                 // Try to set the file date according to the last-modified header
                 try
                 {
-                    var lastModified = response
-                        .Content.Headers.TryGetValue("Last-Modified")
-                        ?.Pipe(s =>
-                            DateTimeOffset.TryParse(
-                                s,
-                                CultureInfo.InvariantCulture,
-                                DateTimeStyles.None,
-                                out var instant
-                            )
-                                ? instant
-                                : (DateTimeOffset?)null
-                        );
-
-                    if (lastModified is not null)
+                    if (timestamp is null)
                     {
-                        File.SetCreationTimeUtc(filePath, lastModified.Value.UtcDateTime);
-                        File.SetLastWriteTimeUtc(filePath, lastModified.Value.UtcDateTime);
-                        File.SetLastAccessTimeUtc(filePath, lastModified.Value.UtcDateTime);
+                        var lastModified = response
+                            .Content.Headers.TryGetValue("Last-Modified")
+                            ?.Pipe(s =>
+                                DateTimeOffset.TryParse(
+                                    s,
+                                    CultureInfo.InvariantCulture,
+                                    DateTimeStyles.None,
+                                    out var instant
+                                )
+                                    ? instant
+                                    : (DateTimeOffset?)null
+                            );
+                        if (lastModified is not null)
+                        {
+                            timestamp = lastModified;
+                        }
+                    }
+
+                    if (timestamp is not null)
+                    {
+                        File.SetCreationTimeUtc(filePath, timestamp.Value.UtcDateTime);
+                        File.SetLastWriteTimeUtc(filePath, timestamp.Value.UtcDateTime);
+                        File.SetLastAccessTimeUtc(filePath, timestamp.Value.UtcDateTime);
                     }
                 }
                 catch

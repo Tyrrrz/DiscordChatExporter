@@ -49,41 +49,12 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
                 await using (var output = File.Create(filePath))
                     await response.Content.CopyToAsync(output, innerCancellationToken);
 
-                // Try to set the file date according to the last-modified header
-                try
+                // Try to set the file date according to the message timestamp
+                if (timestamp is not null)
                 {
-                    if (timestamp is null)
-                    {
-                        var lastModified = response
-                            .Content.Headers.TryGetValue("Last-Modified")
-                            ?.Pipe(s =>
-                                DateTimeOffset.TryParse(
-                                    s,
-                                    CultureInfo.InvariantCulture,
-                                    DateTimeStyles.None,
-                                    out var instant
-                                )
-                                    ? instant
-                                    : (DateTimeOffset?)null
-                            );
-                        if (lastModified is not null)
-                        {
-                            timestamp = lastModified;
-                        }
-                    }
-
-                    if (timestamp is not null)
-                    {
-                        File.SetCreationTimeUtc(filePath, timestamp.Value.UtcDateTime);
-                        File.SetLastWriteTimeUtc(filePath, timestamp.Value.UtcDateTime);
-                        File.SetLastAccessTimeUtc(filePath, timestamp.Value.UtcDateTime);
-                    }
-                }
-                catch
-                {
-                    // This can apparently fail for some reason.
-                    // Updating the file date is not a critical task, so we'll just ignore exceptions thrown here.
-                    // https://github.com/Tyrrrz/DiscordChatExporter/issues/585
+                    File.SetCreationTimeUtc(filePath, timestamp.Value.UtcDateTime);
+                    File.SetLastWriteTimeUtc(filePath, timestamp.Value.UtcDateTime);
+                    File.SetLastAccessTimeUtc(filePath, timestamp.Value.UtcDateTime);
                 }
             },
             cancellationToken

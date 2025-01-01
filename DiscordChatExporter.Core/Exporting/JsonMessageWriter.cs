@@ -17,19 +17,18 @@ namespace DiscordChatExporter.Core.Exporting;
 internal class JsonMessageWriter(Stream stream, ExportContext context)
     : MessageWriter(stream, context)
 {
-    private readonly Utf8JsonWriter _writer =
-        new(
-            stream,
-            new JsonWriterOptions
-            {
-                // https://github.com/Tyrrrz/DiscordChatExporter/issues/450
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                Indented = true,
-                // Validation errors may mask actual failures
-                // https://github.com/Tyrrrz/DiscordChatExporter/issues/413
-                SkipValidation = true,
-            }
-        );
+    private readonly Utf8JsonWriter _writer = new(
+        stream,
+        new JsonWriterOptions
+        {
+            // https://github.com/Tyrrrz/DiscordChatExporter/issues/450
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            Indented = true,
+            // Validation errors may mask actual failures
+            // https://github.com/Tyrrrz/DiscordChatExporter/issues/413
+            SkipValidation = true,
+        }
+    );
 
     private async ValueTask<string> FormatMarkdownAsync(
         string markdown,
@@ -436,7 +435,11 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
             _writer.WriteString("id", attachment.Id.ToString());
             _writer.WriteString(
                 "url",
-                await Context.ResolveAssetUrlAsync(attachment.Url, cancellationToken, message.Timestamp)
+                await Context.ResolveAssetUrlAsync(
+                    attachment.Url,
+                    cancellationToken,
+                    message.Timestamp
+                )
             );
             _writer.WriteString("fileName", attachment.FileName);
             _writer.WriteNumber("fileSizeBytes", attachment.FileSize.TotalBytes);
@@ -466,7 +469,11 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
             _writer.WriteString("format", sticker.Format.ToString());
             _writer.WriteString(
                 "sourceUrl",
-                await Context.ResolveAssetUrlAsync(sticker.SourceUrl, cancellationToken, message.Timestamp)
+                await Context.ResolveAssetUrlAsync(
+                    sticker.SourceUrl,
+                    cancellationToken,
+                    message.Timestamp
+                )
             );
 
             _writer.WriteEndObject();

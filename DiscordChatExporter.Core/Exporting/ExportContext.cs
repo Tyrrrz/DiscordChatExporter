@@ -18,8 +18,10 @@ internal class ExportContext(DiscordClient discord, ExportRequest request)
     private readonly Dictionary<Snowflake, Channel> _channelsById = new();
     private readonly Dictionary<Snowflake, Role> _rolesById = new();
 
-    private readonly ExportAssetDownloader _assetDownloader =
-        new(request.AssetsDirPath, request.ShouldReuseAssets);
+    private readonly ExportAssetDownloader _assetDownloader = new(
+        request.AssetsDirPath,
+        request.ShouldReuseAssets
+    );
 
     public DiscordClient Discord { get; } = discord;
 

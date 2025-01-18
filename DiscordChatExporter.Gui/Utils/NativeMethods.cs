@@ -9,4 +9,10 @@ internal static class NativeMethods
         [DllImport("user32.dll", SetLastError = true)]
         public static extern int MessageBox(nint hWnd, string text, string caption, uint type);
     }
+
+    public static class MacOS
+    {
+        [DllImport("/System/Library/Frameworks/AppKit.framework/AppKit")]
+        public static extern void NSRunAlertPanel(string title, string message, string defaultButton, string alternateButton, string otherButton);
+    }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using Avalonia;
-using DiscordChatExporter.Gui.Utils;
 
 namespace DiscordChatExporter.Gui;
 
@@ -38,9 +37,7 @@ public static class Program
         }
         catch (Exception ex)
         {
-            if (OperatingSystem.IsWindows())
-                _ = NativeMethods.Windows.MessageBox(0, ex.ToString(), "Fatal Error", 0x10);
-
+            Console.Error.WriteLine("Fatal Error: " + ex);
             throw;
         }
         finally

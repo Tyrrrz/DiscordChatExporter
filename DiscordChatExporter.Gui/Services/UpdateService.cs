@@ -9,7 +9,7 @@ namespace DiscordChatExporter.Gui.Services;
 
 public class UpdateService(SettingsService settingsService) : IDisposable
 {
-    private readonly IUpdateManager? _updateManager = OperatingSystem.IsWindows()
+    private readonly IUpdateManager? _updateManager = OperatingSystem.IsWindows() || OperatingSystem.IsMacOS()
         ? new UpdateManager(
             new GithubPackageResolver(
                 "Tyrrrz",
@@ -18,6 +18,8 @@ public class UpdateService(SettingsService settingsService) : IDisposable
                 // DiscordChatExporter.win-arm64.zip
                 // DiscordChatExporter.win-x64.zip
                 // DiscordChatExporter.linux-x64.zip
+                // DiscordChatExporter.osx-arm64.zip
+                // DiscordChatExporter.osx-x64.zip
                 $"DiscordChatExporter.{RuntimeInformation.RuntimeIdentifier}.zip"
             ),
             new ZipPackageExtractor()

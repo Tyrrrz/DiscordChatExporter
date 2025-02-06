@@ -123,7 +123,7 @@ public partial class DashboardViewModel : ViewModelBase
             AvailableChannels = null;
             SelectedChannels.Clear();
 
-            _discord = new DiscordClient(token);
+            _discord = new DiscordClient(token, _settingsService.RateLimitPreference);
             _settingsService.LastToken = token;
 
             var guilds = await _discord.GetUserGuildsAsync();

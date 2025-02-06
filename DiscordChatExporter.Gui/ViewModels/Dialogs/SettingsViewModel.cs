@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Utils.Extensions;
 using DiscordChatExporter.Gui.Framework;
 using DiscordChatExporter.Gui.Models;
@@ -40,6 +41,15 @@ public class SettingsViewModel : DialogViewModelBase
     {
         get => _settingsService.IsTokenPersisted;
         set => _settingsService.IsTokenPersisted = value;
+    }
+
+    public IReadOnlyList<RateLimitPreference> AvailableRateLimitPreferences { get; } =
+        Enum.GetValues<RateLimitPreference>();
+
+    public RateLimitPreference RateLimitPreference
+    {
+        get => _settingsService.RateLimitPreference;
+        set => _settingsService.RateLimitPreference = value;
     }
 
     public IReadOnlyList<ThreadInclusionMode> AvailableThreadInclusionModes { get; } =

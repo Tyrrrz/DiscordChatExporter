@@ -18,7 +18,10 @@ using JsonExtensions.Reading;
 
 namespace DiscordChatExporter.Core.Discord;
 
-public class DiscordClient(string token)
+public class DiscordClient(
+    string token,
+    RateLimitPreference rateLimitPreference = RateLimitPreference.RespectAll
+)
 {
     private readonly Uri _baseUri = new("https://discord.com/api/v10/", UriKind.Absolute);
     private TokenKind? _resolvedTokenKind;
@@ -47,33 +50,43 @@ public class DiscordClient(string token)
                     innerCancellationToken
                 );
 
-                // If this was the last request available before hitting the rate limit,
-                // wait out the reset time so that future requests can succeed.
-                // This may add an unnecessary delay in case the user doesn't intend to
-                // make any more requests, but implementing a smarter solution would
-                // require properly keeping track of Discord's global/per-route/per-resource
-                // rate limits and that's just way too much effort.
-                // https://discord.com/developers/docs/topics/rate-limits
-                var remainingRequestCount = response
-                    .Headers.TryGetValue("X-RateLimit-Remaining")
-                    ?.Pipe(s => int.Parse(s, CultureInfo.InvariantCulture));
-
-                var resetAfterDelay = response
-                    .Headers.TryGetValue("X-RateLimit-Reset-After")
-                    ?.Pipe(s => double.Parse(s, CultureInfo.InvariantCulture))
-                    .Pipe(TimeSpan.FromSeconds);
-
-                if (remainingRequestCount <= 0 && resetAfterDelay is not null)
+                // Discord has advisory rate limits (communicated via response headers), but they are typically
+                // way stricter than the actual rate limits enforced by the server.
+                // The user may choose to ignore the advisory rate limits and only retry on hard rate limits,
+                // if they want to prioritize speed over compliance (and safety of their account).
+                // This is especially relevant for user accounts, as the advisory rate limits sometimes don't
+                // make any sense there.
+                // https://github.com/Tyrrrz/DiscordChatExporter/issues/1021
+                if (rateLimitPreference.ShouldRespect(tokenKind))
                 {
-                    var delay =
-                        // Adding a small buffer to the reset time reduces the chance of getting
-                        // rate limited again, because it allows for more requests to be released.
-                        (resetAfterDelay.Value + TimeSpan.FromSeconds(1))
-                        // Sometimes Discord returns an absurdly high value for the reset time, which
-                        // is not actually enforced by the server. So we cap it at a reasonable value.
-                        .Clamp(TimeSpan.Zero, TimeSpan.FromSeconds(60));
+                    var remainingRequestCount = response
+                        .Headers.TryGetValue("X-RateLimit-Remaining")
+                        ?.Pipe(s => int.Parse(s, CultureInfo.InvariantCulture));
 
-                    await Task.Delay(delay, innerCancellationToken);
+                    var resetAfterDelay = response
+                        .Headers.TryGetValue("X-RateLimit-Reset-After")
+                        ?.Pipe(s => double.Parse(s, CultureInfo.InvariantCulture))
+                        .Pipe(TimeSpan.FromSeconds);
+
+                    // If this was the last request available before hitting the rate limit,
+                    // wait out the reset time so that future requests can succeed.
+                    // This may add an unnecessary delay in case the user doesn't intend to
+                    // make any more requests, but implementing a smarter solution would
+                    // require properly keeping track of Discord's global/per-route/per-resource
+                    // rate limits and that's just way too much effort.
+                    // https://discord.com/developers/docs/topics/rate-limits
+                    if (remainingRequestCount <= 0 && resetAfterDelay is not null)
+                    {
+                        var delay =
+                            // Adding a small buffer to the reset time reduces the chance of getting
+                            // rate limited again, because it allows for more requests to be released.
+                            (resetAfterDelay.Value + TimeSpan.FromSeconds(1))
+                            // Sometimes Discord returns an absurdly high value for the reset time, which
+                            // is not actually enforced by the server. So we cap it at a reasonable value.
+                            .Clamp(TimeSpan.Zero, TimeSpan.FromSeconds(60));
+
+                        await Task.Delay(delay, innerCancellationToken);
+                    }
                 }
 
                 return response;

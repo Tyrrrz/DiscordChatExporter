@@ -23,15 +23,15 @@ internal static partial class MarkdownParser
 
     /* Formatting */
 
-    private static readonly IMatcher<MarkdownNode> BoldFormattingNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> BoldFormattingNodeMatcher =
+        new RegexMatcher<MarkdownContext, MarkdownNode>(
             // There must be exactly two closing asterisks.
             new Regex(@"\*\*(.+?)\*\*(?!\*)", DefaultRegexOptions | RegexOptions.Singleline),
-            (s, m) => new FormattingNode(FormattingKind.Bold, Parse(s.Relocate(m.Groups[1])))
+            (c, s, m) => new FormattingNode(FormattingKind.Bold, Parse(c, s.Relocate(m.Groups[1])))
         );
 
-    private static readonly IMatcher<MarkdownNode> ItalicFormattingNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> ItalicFormattingNodeMatcher =
+        new RegexMatcher<MarkdownContext, MarkdownNode>(
             // There must be exactly one closing asterisk.
             // Opening asterisk must not be followed by whitespace.
             // Closing asterisk must not be preceded by whitespace.
@@ -39,156 +39,174 @@ internal static partial class MarkdownParser
                 @"\*(?!\s)(.+?)(?<!\s|\*)\*(?!\*)",
                 DefaultRegexOptions | RegexOptions.Singleline
             ),
-            (s, m) => new FormattingNode(FormattingKind.Italic, Parse(s.Relocate(m.Groups[1])))
+            (c, s, m) =>
+                new FormattingNode(FormattingKind.Italic, Parse(c, s.Relocate(m.Groups[1])))
         );
 
-    private static readonly IMatcher<MarkdownNode> ItalicBoldFormattingNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
-            // There must be exactly three closing asterisks.
-            new Regex(@"\*(\*\*.+?\*\*)\*(?!\*)", DefaultRegexOptions | RegexOptions.Singleline),
-            (s, m) =>
-                new FormattingNode(
-                    FormattingKind.Italic,
-                    Parse(s.Relocate(m.Groups[1]), BoldFormattingNodeMatcher)
-                )
-        );
-
-    private static readonly IMatcher<MarkdownNode> ItalicAltFormattingNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
-            // Closing underscore must not be followed by a word character.
-            new Regex(@"_(.+?)_(?!\w)", DefaultRegexOptions | RegexOptions.Singleline),
-            (s, m) => new FormattingNode(FormattingKind.Italic, Parse(s.Relocate(m.Groups[1])))
-        );
-
-    private static readonly IMatcher<MarkdownNode> UnderlineFormattingNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
-            // There must be exactly two closing underscores.
-            new Regex(@"__(.+?)__(?!_)", DefaultRegexOptions | RegexOptions.Singleline),
-            (s, m) => new FormattingNode(FormattingKind.Underline, Parse(s.Relocate(m.Groups[1])))
-        );
-
-    private static readonly IMatcher<MarkdownNode> ItalicUnderlineFormattingNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
-            // There must be exactly three closing underscores.
-            new Regex(@"_(__.+?__)_(?!_)", DefaultRegexOptions | RegexOptions.Singleline),
-            (s, m) =>
-                new FormattingNode(
-                    FormattingKind.Italic,
-                    Parse(s.Relocate(m.Groups[1]), UnderlineFormattingNodeMatcher)
-                )
-        );
-
-    private static readonly IMatcher<MarkdownNode> StrikethroughFormattingNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
-            new Regex(@"~~(.+?)~~", DefaultRegexOptions | RegexOptions.Singleline),
-            (s, m) =>
-                new FormattingNode(FormattingKind.Strikethrough, Parse(s.Relocate(m.Groups[1])))
-        );
-
-    private static readonly IMatcher<MarkdownNode> SpoilerFormattingNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
-            new Regex(@"\|\|(.+?)\|\|", DefaultRegexOptions | RegexOptions.Singleline),
-            (s, m) => new FormattingNode(FormattingKind.Spoiler, Parse(s.Relocate(m.Groups[1])))
-        );
-
-    private static readonly IMatcher<MarkdownNode> SingleLineQuoteNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
-            // Include the linebreak in the content so that the lines are preserved in quotes.
-            new Regex(@"^>\s(.+\n?)", DefaultRegexOptions),
-            (s, m) => new FormattingNode(FormattingKind.Quote, Parse(s.Relocate(m.Groups[1])))
-        );
-
-    private static readonly IMatcher<MarkdownNode> RepeatedSingleLineQuoteNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
-            // Include the linebreaks in the content, so that the lines are preserved in quotes.
-            // Empty content is allowed within quotes.
-            // https://github.com/Tyrrrz/DiscordChatExporter/issues/1115
-            new Regex(@"(?:^>\s(.*\n?)){2,}", DefaultRegexOptions),
-            (s, m) =>
-                new FormattingNode(
-                    FormattingKind.Quote,
-                    m.Groups[1].Captures.SelectMany(c => Parse(s.Relocate(c))).ToArray()
-                )
-        );
-
-    private static readonly IMatcher<MarkdownNode> MultiLineQuoteNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
-            new Regex(@"^>>>\s(.+)", DefaultRegexOptions | RegexOptions.Singleline),
-            (s, m) => new FormattingNode(FormattingKind.Quote, Parse(s.Relocate(m.Groups[1])))
-        );
-
-    private static readonly IMatcher<MarkdownNode> HeadingNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
-            // Consume the linebreak so that it's not attached to following nodes.
-            new Regex(@"^(\#{1,3})\s(.+)\n", DefaultRegexOptions),
-            (s, m) => new HeadingNode(m.Groups[1].Length, Parse(s.Relocate(m.Groups[2])))
-        );
-
-    private static readonly IMatcher<MarkdownNode> ListNodeMatcher = new RegexMatcher<MarkdownNode>(
-        // Can be preceded by whitespace, which specifies the list's nesting level.
-        // Following lines that start with (level+1) whitespace are considered part of the list item.
-        // Consume the linebreak so that it's not attached to following nodes.
-        new Regex(@"^(\s*)(?:[\-\*]\s(.+(?:\n\s\1.*)*)?\n?)+", DefaultRegexOptions),
-        (s, m) =>
-            new ListNode(
-                m.Groups[2].Captures.Select(c => new ListItemNode(Parse(s.Relocate(c)))).ToArray()
+    private static readonly IMatcher<
+        MarkdownContext,
+        MarkdownNode
+    > ItalicBoldFormattingNodeMatcher = new RegexMatcher<MarkdownContext, MarkdownNode>(
+        // There must be exactly three closing asterisks.
+        new Regex(@"\*(\*\*.+?\*\*)\*(?!\*)", DefaultRegexOptions | RegexOptions.Singleline),
+        (c, s, m) =>
+            new FormattingNode(
+                FormattingKind.Italic,
+                Parse(c, s.Relocate(m.Groups[1]), BoldFormattingNodeMatcher)
             )
     );
 
-    /* Code blocks */
-
-    private static readonly IMatcher<MarkdownNode> InlineCodeBlockNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
-            // One or two backticks are allowed, but they must match on both sides.
-            new Regex(@"(`{1,2})([^`]+)\1", DefaultRegexOptions | RegexOptions.Singleline),
-            (_, m) => new InlineCodeBlockNode(m.Groups[2].Value)
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> ItalicAltFormattingNodeMatcher =
+        new RegexMatcher<MarkdownContext, MarkdownNode>(
+            // Closing underscore must not be followed by a word character.
+            new Regex(@"_(.+?)_(?!\w)", DefaultRegexOptions | RegexOptions.Singleline),
+            (c, s, m) =>
+                new FormattingNode(FormattingKind.Italic, Parse(c, s.Relocate(m.Groups[1])))
         );
 
-    private static readonly IMatcher<MarkdownNode> MultiLineCodeBlockNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> UnderlineFormattingNodeMatcher =
+        new RegexMatcher<MarkdownContext, MarkdownNode>(
+            // There must be exactly two closing underscores.
+            new Regex(@"__(.+?)__(?!_)", DefaultRegexOptions | RegexOptions.Singleline),
+            (c, s, m) =>
+                new FormattingNode(FormattingKind.Underline, Parse(c, s.Relocate(m.Groups[1])))
+        );
+
+    private static readonly IMatcher<
+        MarkdownContext,
+        MarkdownNode
+    > ItalicUnderlineFormattingNodeMatcher = new RegexMatcher<MarkdownContext, MarkdownNode>(
+        // There must be exactly three closing underscores.
+        new Regex(@"_(__.+?__)_(?!_)", DefaultRegexOptions | RegexOptions.Singleline),
+        (c, s, m) =>
+            new FormattingNode(
+                FormattingKind.Italic,
+                Parse(c, s.Relocate(m.Groups[1]), UnderlineFormattingNodeMatcher)
+            )
+    );
+
+    private static readonly IMatcher<
+        MarkdownContext,
+        MarkdownNode
+    > StrikethroughFormattingNodeMatcher = new RegexMatcher<MarkdownContext, MarkdownNode>(
+        new Regex(@"~~(.+?)~~", DefaultRegexOptions | RegexOptions.Singleline),
+        (c, s, m) =>
+            new FormattingNode(FormattingKind.Strikethrough, Parse(c, s.Relocate(m.Groups[1])))
+    );
+
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> SpoilerFormattingNodeMatcher =
+        new RegexMatcher<MarkdownContext, MarkdownNode>(
+            new Regex(@"\|\|(.+?)\|\|", DefaultRegexOptions | RegexOptions.Singleline),
+            (c, s, m) =>
+                new FormattingNode(FormattingKind.Spoiler, Parse(c, s.Relocate(m.Groups[1])))
+        );
+
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> SingleLineQuoteNodeMatcher =
+        new RegexMatcher<MarkdownContext, MarkdownNode>(
+            // Include the linebreak in the content so that the lines are preserved in quotes.
+            new Regex(@"^>\s(.+\n?)", DefaultRegexOptions),
+            (c, s, m) => new FormattingNode(FormattingKind.Quote, Parse(c, s.Relocate(m.Groups[1])))
+        );
+
+    private static readonly IMatcher<
+        MarkdownContext,
+        MarkdownNode
+    > RepeatedSingleLineQuoteNodeMatcher = new RegexMatcher<MarkdownContext, MarkdownNode>(
+        // Include the linebreaks in the content, so that the lines are preserved in quotes.
+        // Empty content is allowed within quotes.
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/1115
+        new Regex(@"(?:^>\s(.*\n?)){2,}", DefaultRegexOptions),
+        (c, s, m) =>
+            new FormattingNode(
+                FormattingKind.Quote,
+                m.Groups[1].Captures.SelectMany(r => Parse(c, s.Relocate(r))).ToArray()
+            )
+    );
+
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> MultiLineQuoteNodeMatcher =
+        new RegexMatcher<MarkdownContext, MarkdownNode>(
+            new Regex(@"^>>>\s(.+)", DefaultRegexOptions | RegexOptions.Singleline),
+            (c, s, m) => new FormattingNode(FormattingKind.Quote, Parse(c, s.Relocate(m.Groups[1])))
+        );
+
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> HeadingNodeMatcher =
+        new RegexMatcher<MarkdownContext, MarkdownNode>(
+            // Consume the linebreak so that it's not attached to following nodes.
+            new Regex(@"^(\#{1,3})\s(.+)\n", DefaultRegexOptions),
+            (c, s, m) => new HeadingNode(m.Groups[1].Length, Parse(c, s.Relocate(m.Groups[2])))
+        );
+
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> ListNodeMatcher =
+        new RegexMatcher<MarkdownContext, MarkdownNode>(
+            // Can be preceded by whitespace, which specifies the list's nesting level.
+            // Following lines that start with (level+1) whitespace are considered part of the list item.
+            // Consume the linebreak so that it's not attached to following nodes.
+            new Regex(@"^(\s*)(?:[\-\*]\s(.+(?:\n\s\1.*)*)?\n?)+", DefaultRegexOptions),
+            (c, s, m) =>
+                new ListNode(
+                    m.Groups[2]
+                        .Captures.Select(x => new ListItemNode(Parse(c, s.Relocate(x))))
+                        .ToArray()
+                )
+        );
+
+    /* Code blocks */
+
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> InlineCodeBlockNodeMatcher =
+        new RegexMatcher<MarkdownContext, MarkdownNode>(
+            // One or two backticks are allowed, but they must match on both sides.
+            new Regex(@"(`{1,2})([^`]+)\1", DefaultRegexOptions | RegexOptions.Singleline),
+            (_, _, m) => new InlineCodeBlockNode(m.Groups[2].Value)
+        );
+
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> MultiLineCodeBlockNodeMatcher =
+        new RegexMatcher<MarkdownContext, MarkdownNode>(
             // Language identifier is one word immediately after opening backticks, followed immediately by a linebreak.
             // Blank lines at the beginning and at the end of content are trimmed.
             new Regex(@"```(?:(\w*)\n)?(.+?)```", DefaultRegexOptions | RegexOptions.Singleline),
-            (_, m) =>
+            (_, _, m) =>
                 new MultiLineCodeBlockNode(m.Groups[1].Value, m.Groups[2].Value.Trim('\r', '\n'))
         );
 
     /* Mentions */
 
-    private static readonly IMatcher<MarkdownNode> EveryoneMentionNodeMatcher =
-        new StringMatcher<MarkdownNode>(
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> EveryoneMentionNodeMatcher =
+        new StringMatcher<MarkdownContext, MarkdownNode>(
             "@everyone",
-            _ => new MentionNode(null, MentionKind.Everyone)
+            (_, _) => new MentionNode(null, MentionKind.Everyone)
         );
 
-    private static readonly IMatcher<MarkdownNode> HereMentionNodeMatcher =
-        new StringMatcher<MarkdownNode>("@here", _ => new MentionNode(null, MentionKind.Here));
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> HereMentionNodeMatcher =
+        new StringMatcher<MarkdownContext, MarkdownNode>(
+            "@here",
+            (_, _) => new MentionNode(null, MentionKind.Here)
+        );
 
-    private static readonly IMatcher<MarkdownNode> UserMentionNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> UserMentionNodeMatcher =
+        new RegexMatcher<MarkdownContext, MarkdownNode>(
             // Capture <@123456> or <@!123456>
             new Regex(@"<@!?(\d+)>", DefaultRegexOptions),
-            (_, m) => new MentionNode(Snowflake.TryParse(m.Groups[1].Value), MentionKind.User)
+            (_, _, m) => new MentionNode(Snowflake.TryParse(m.Groups[1].Value), MentionKind.User)
         );
 
-    private static readonly IMatcher<MarkdownNode> ChannelMentionNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> ChannelMentionNodeMatcher =
+        new RegexMatcher<MarkdownContext, MarkdownNode>(
             // Capture <#123456>
             new Regex(@"<\#!?(\d+)>", DefaultRegexOptions),
-            (_, m) => new MentionNode(Snowflake.TryParse(m.Groups[1].Value), MentionKind.Channel)
+            (_, _, m) => new MentionNode(Snowflake.TryParse(m.Groups[1].Value), MentionKind.Channel)
         );
 
-    private static readonly IMatcher<MarkdownNode> RoleMentionNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> RoleMentionNodeMatcher =
+        new RegexMatcher<MarkdownContext, MarkdownNode>(
             // Capture <@&123456>
             new Regex(@"<@&(\d+)>", DefaultRegexOptions),
-            (_, m) => new MentionNode(Snowflake.TryParse(m.Groups[1].Value), MentionKind.Role)
+            (_, _, m) => new MentionNode(Snowflake.TryParse(m.Groups[1].Value), MentionKind.Role)
         );
 
     /* Emoji */
 
-    private static readonly IMatcher<MarkdownNode> StandardEmojiNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> StandardEmojiNodeMatcher =
+        new RegexMatcher<MarkdownContext, MarkdownNode>(
             new Regex(
                 @"("
                     +
@@ -239,21 +257,21 @@ internal static partial class MarkdownParser
                     + @")",
                 DefaultRegexOptions
             ),
-            (_, m) => new EmojiNode(m.Groups[1].Value)
+            (_, _, m) => new EmojiNode(m.Groups[1].Value)
         );
 
-    private static readonly IMatcher<MarkdownNode> CodedStandardEmojiNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> CodedStandardEmojiNodeMatcher =
+        new RegexMatcher<MarkdownContext, MarkdownNode>(
             // Capture :thinking:
             new Regex(@":([\w_]+):", DefaultRegexOptions),
-            (_, m) => EmojiIndex.TryGetName(m.Groups[1].Value)?.Pipe(n => new EmojiNode(n))
+            (_, _, m) => EmojiIndex.TryGetName(m.Groups[1].Value)?.Pipe(n => new EmojiNode(n))
         );
 
-    private static readonly IMatcher<MarkdownNode> CustomEmojiNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> CustomEmojiNodeMatcher =
+        new RegexMatcher<MarkdownContext, MarkdownNode>(
             // Capture <:lul:123456> or <a:lul:123456>
             new Regex(@"<(a)?:(.+?):(\d+?)>", DefaultRegexOptions),
-            (_, m) =>
+            (_, _, m) =>
                 new EmojiNode(
                     Snowflake.TryParse(m.Groups[3].Value),
                     m.Groups[2].Value,
@@ -263,70 +281,72 @@ internal static partial class MarkdownParser
 
     /* Links */
 
-    private static readonly IMatcher<MarkdownNode> AutoLinkNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> AutoLinkNodeMatcher =
+        new RegexMatcher<MarkdownContext, MarkdownNode>(
             // Any non-whitespace character after http:// or https://
             // until the last punctuation character or whitespace.
             new Regex(@"(https?://\S*[^\.,:;""'\s])", DefaultRegexOptions),
-            (_, m) => new LinkNode(m.Groups[1].Value)
+            (_, _, m) => new LinkNode(m.Groups[1].Value)
         );
 
-    private static readonly IMatcher<MarkdownNode> HiddenLinkNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> HiddenLinkNodeMatcher =
+        new RegexMatcher<MarkdownContext, MarkdownNode>(
             // Same as auto link but also surrounded by angular brackets
             new Regex(@"<(https?://\S*[^\.,:;""'\s])>", DefaultRegexOptions),
-            (_, m) => new LinkNode(m.Groups[1].Value)
+            (_, _, m) => new LinkNode(m.Groups[1].Value)
         );
 
-    private static readonly IMatcher<MarkdownNode> MaskedLinkNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> MaskedLinkNodeMatcher =
+        new RegexMatcher<MarkdownContext, MarkdownNode>(
             // Capture [title](link)
             new Regex(@"\[(.+?)\]\((.+?)\)", DefaultRegexOptions),
-            (s, m) => new LinkNode(m.Groups[2].Value, Parse(s.Relocate(m.Groups[1])))
+            (c, s, m) => new LinkNode(m.Groups[2].Value, Parse(c, s.Relocate(m.Groups[1])))
         );
 
     /* Text */
 
-    private static readonly IMatcher<MarkdownNode> ShrugTextNodeMatcher =
-        new StringMatcher<MarkdownNode>(
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> ShrugTextNodeMatcher =
+        new StringMatcher<MarkdownContext, MarkdownNode>(
             // Capture the shrug kaomoji.
             // This escapes it from matching for formatting.
             @"¯\_(ツ)_/¯",
-            s => new TextNode(s.ToString())
+            (s, _) => new TextNode(s.ToString())
         );
 
-    private static readonly IMatcher<MarkdownNode> IgnoredEmojiTextNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> IgnoredEmojiTextNodeMatcher =
+        new RegexMatcher<MarkdownContext, MarkdownNode>(
             // Capture some specific emoji that don't get rendered.
             // This escapes them from matching for emoji.
             new Regex(@"([\u26A7\u2640\u2642\u2695\u267E\u00A9\u00AE\u2122])", DefaultRegexOptions),
-            (_, m) => new TextNode(m.Groups[1].Value)
+            (_, _, m) => new TextNode(m.Groups[1].Value)
         );
 
-    private static readonly IMatcher<MarkdownNode> EscapedSymbolTextNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> EscapedSymbolTextNodeMatcher =
+        new RegexMatcher<MarkdownContext, MarkdownNode>(
             // Capture any "symbol/other" character or surrogate pair preceded by a backslash.
             // This escapes them from matching for emoji.
             // https://github.com/Tyrrrz/DiscordChatExporter/issues/230
             new Regex(@"\\(\p{So}|\p{Cs}{2})", DefaultRegexOptions),
-            (_, m) => new TextNode(m.Groups[1].Value)
+            (_, _, m) => new TextNode(m.Groups[1].Value)
         );
 
-    private static readonly IMatcher<MarkdownNode> EscapedCharacterTextNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
-            // Capture any non-whitespace, non latin alphanumeric character preceded by a backslash.
-            // This escapes them from matching for formatting or other tokens.
-            new Regex(@"\\([^a-zA-Z0-9\s])", DefaultRegexOptions),
-            (_, m) => new TextNode(m.Groups[1].Value)
-        );
+    private static readonly IMatcher<
+        MarkdownContext,
+        MarkdownNode
+    > EscapedCharacterTextNodeMatcher = new RegexMatcher<MarkdownContext, MarkdownNode>(
+        // Capture any non-whitespace, non latin alphanumeric character preceded by a backslash.
+        // This escapes them from matching for formatting or other tokens.
+        new Regex(@"\\([^a-zA-Z0-9\s])", DefaultRegexOptions),
+        (_, _, m) => new TextNode(m.Groups[1].Value)
+    );
 
     /* Misc */
 
-    private static readonly IMatcher<MarkdownNode> TimestampNodeMatcher =
-        new RegexMatcher<MarkdownNode>(
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> TimestampNodeMatcher =
+        new RegexMatcher<MarkdownContext, MarkdownNode>(
             // Capture <t:12345678> or <t:12345678:R>
             new Regex(@"<t:(-?\d+)(?::(\w))?>", DefaultRegexOptions),
-            (_, m) =>
+            (_, _, m) =>
             {
                 try
                 {
@@ -357,10 +377,9 @@ internal static partial class MarkdownParser
                         null => null,
                         // Unknown format: throw an exception to consider this timestamp invalid
                         // https://github.com/Tyrrrz/DiscordChatExporter/issues/1156
-                        var f
-                            => throw new InvalidOperationException(
-                                $"Unknown timestamp format '{f}'."
-                            )
+                        var f => throw new InvalidOperationException(
+                            $"Unknown timestamp format '{f}'."
+                        ),
                     };
 
                     return new TimestampNode(instant, format);
@@ -382,50 +401,51 @@ internal static partial class MarkdownParser
         );
 
     // Matchers that have similar patterns are ordered from most specific to least specific
-    private static readonly IMatcher<MarkdownNode> NodeMatcher = new AggregateMatcher<MarkdownNode>(
-        // Escaped text
-        ShrugTextNodeMatcher,
-        IgnoredEmojiTextNodeMatcher,
-        EscapedSymbolTextNodeMatcher,
-        EscapedCharacterTextNodeMatcher,
-        // Formatting
-        ItalicBoldFormattingNodeMatcher,
-        ItalicUnderlineFormattingNodeMatcher,
-        BoldFormattingNodeMatcher,
-        ItalicFormattingNodeMatcher,
-        UnderlineFormattingNodeMatcher,
-        ItalicAltFormattingNodeMatcher,
-        StrikethroughFormattingNodeMatcher,
-        SpoilerFormattingNodeMatcher,
-        MultiLineQuoteNodeMatcher,
-        RepeatedSingleLineQuoteNodeMatcher,
-        SingleLineQuoteNodeMatcher,
-        HeadingNodeMatcher,
-        ListNodeMatcher,
-        // Code blocks
-        MultiLineCodeBlockNodeMatcher,
-        InlineCodeBlockNodeMatcher,
-        // Mentions
-        EveryoneMentionNodeMatcher,
-        HereMentionNodeMatcher,
-        UserMentionNodeMatcher,
-        ChannelMentionNodeMatcher,
-        RoleMentionNodeMatcher,
-        // Links
-        MaskedLinkNodeMatcher,
-        AutoLinkNodeMatcher,
-        HiddenLinkNodeMatcher,
-        // Emoji
-        StandardEmojiNodeMatcher,
-        CustomEmojiNodeMatcher,
-        CodedStandardEmojiNodeMatcher,
-        // Misc
-        TimestampNodeMatcher
-    );
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> NodeMatcher =
+        new AggregateMatcher<MarkdownContext, MarkdownNode>(
+            // Escaped text
+            ShrugTextNodeMatcher,
+            IgnoredEmojiTextNodeMatcher,
+            EscapedSymbolTextNodeMatcher,
+            EscapedCharacterTextNodeMatcher,
+            // Formatting
+            ItalicBoldFormattingNodeMatcher,
+            ItalicUnderlineFormattingNodeMatcher,
+            BoldFormattingNodeMatcher,
+            ItalicFormattingNodeMatcher,
+            UnderlineFormattingNodeMatcher,
+            ItalicAltFormattingNodeMatcher,
+            StrikethroughFormattingNodeMatcher,
+            SpoilerFormattingNodeMatcher,
+            MultiLineQuoteNodeMatcher,
+            RepeatedSingleLineQuoteNodeMatcher,
+            SingleLineQuoteNodeMatcher,
+            HeadingNodeMatcher,
+            ListNodeMatcher,
+            // Code blocks
+            MultiLineCodeBlockNodeMatcher,
+            InlineCodeBlockNodeMatcher,
+            // Mentions
+            EveryoneMentionNodeMatcher,
+            HereMentionNodeMatcher,
+            UserMentionNodeMatcher,
+            ChannelMentionNodeMatcher,
+            RoleMentionNodeMatcher,
+            // Links
+            MaskedLinkNodeMatcher,
+            AutoLinkNodeMatcher,
+            HiddenLinkNodeMatcher,
+            // Emoji
+            StandardEmojiNodeMatcher,
+            CustomEmojiNodeMatcher,
+            CodedStandardEmojiNodeMatcher,
+            // Misc
+            TimestampNodeMatcher
+        );
 
     // Minimal set of matchers for non-multimedia formats (e.g. plain text)
-    private static readonly IMatcher<MarkdownNode> MinimalNodeMatcher =
-        new AggregateMatcher<MarkdownNode>(
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> MinimalNodeMatcher =
+        new AggregateMatcher<MarkdownContext, MarkdownNode>(
             // Mentions
             EveryoneMentionNodeMatcher,
             HereMentionNodeMatcher,
@@ -439,42 +459,75 @@ internal static partial class MarkdownParser
         );
 
     private static IReadOnlyList<MarkdownNode> Parse(
+        MarkdownContext context,
         StringSegment segment,
-        IMatcher<MarkdownNode> matcher
-    ) => matcher.MatchAll(segment, s => new TextNode(s.ToString())).Select(r => r.Value).ToArray();
+        IMatcher<MarkdownContext, MarkdownNode> matcher
+    )
+    {
+        // Limit recursion depth to a reasonable number to prevent
+        // stack overflow on messages with inadvertently deep nesting.
+        // Example: ********************************* (repeat ad nauseam)
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/1214
+        if (context.Depth >= 32)
+            return [new TextNode(segment.ToString())];
+
+        return matcher
+            .MatchAll(
+                new MarkdownContext(context.Depth + 1),
+                segment,
+                (_, s) => new TextNode(s.ToString())
+            )
+            .Select(r => r.Value)
+            .ToArray();
+    }
 }
 
 internal static partial class MarkdownParser
 {
-    private static IReadOnlyList<MarkdownNode> Parse(StringSegment segment) =>
-        Parse(segment, NodeMatcher);
-
-    public static IReadOnlyList<MarkdownNode> Parse(string markdown) =>
-        Parse(new StringSegment(markdown));
-
-    private static IReadOnlyList<MarkdownNode> ParseMinimal(StringSegment segment) =>
-        Parse(segment, MinimalNodeMatcher);
-
-    public static IReadOnlyList<MarkdownNode> ParseMinimal(string markdown) =>
-        ParseMinimal(new StringSegment(markdown));
-
-    private static void ExtractLinks(IEnumerable<MarkdownNode> nodes, ICollection<LinkNode> links)
+    private static void Extract<TNode>(
+        IEnumerable<MarkdownNode> nodes,
+        ICollection<TNode> extractedNodes
+    )
+        where TNode : MarkdownNode
     {
         foreach (var node in nodes)
         {
-            if (node is LinkNode linkNode)
-                links.Add(linkNode);
+            if (node is TNode extractedNode)
+                extractedNodes.Add(extractedNode);
 
             if (node is IContainerNode containerNode)
-                ExtractLinks(containerNode.Children, links);
+                Extract(containerNode.Children, extractedNodes);
         }
     }
 
-    public static IReadOnlyList<LinkNode> ExtractLinks(string markdown)
+    public static IReadOnlyList<TNode> Extract<TNode>(string markdown)
+        where TNode : MarkdownNode
     {
-        var links = new List<LinkNode>();
-        ExtractLinks(Parse(markdown), links);
+        var extractedNodes = new List<TNode>();
+        Extract(Parse(markdown), extractedNodes);
 
-        return links;
+        return extractedNodes;
     }
+
+    public static IReadOnlyList<LinkNode> ExtractLinks(string markdown) =>
+        Extract<LinkNode>(markdown);
+
+    public static IReadOnlyList<EmojiNode> ExtractEmojis(string markdown) =>
+        Extract<EmojiNode>(markdown);
+
+    private static IReadOnlyList<MarkdownNode> Parse(
+        MarkdownContext context,
+        StringSegment segment
+    ) => Parse(context, segment, NodeMatcher);
+
+    public static IReadOnlyList<MarkdownNode> Parse(string markdown) =>
+        Parse(new MarkdownContext(), new StringSegment(markdown));
+
+    private static IReadOnlyList<MarkdownNode> ParseMinimal(
+        MarkdownContext context,
+        StringSegment segment
+    ) => Parse(context, segment, MinimalNodeMatcher);
+
+    public static IReadOnlyList<MarkdownNode> ParseMinimal(string markdown) =>
+        ParseMinimal(new MarkdownContext(), new StringSegment(markdown));
 }

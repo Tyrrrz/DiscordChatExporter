@@ -5,7 +5,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Markdown;
 using DiscordChatExporter.Core.Markdown.Parsing;
 using DiscordChatExporter.Core.Utils.Extensions;
@@ -34,58 +33,51 @@ internal partial class HtmlMarkdownVisitor(
     {
         var (openingTag, closingTag) = formatting.Kind switch
         {
-            FormattingKind.Bold
-                => (
-                    // lang=html
-                    "<strong>",
-                    // lang=html
-                    "</strong>"
-                ),
+            FormattingKind.Bold => (
+                // lang=html
+                "<strong>",
+                // lang=html
+                "</strong>"
+            ),
 
-            FormattingKind.Italic
-                => (
-                    // lang=html
-                    "<em>",
-                    // lang=html
-                    "</em>"
-                ),
+            FormattingKind.Italic => (
+                // lang=html
+                "<em>",
+                // lang=html
+                "</em>"
+            ),
 
-            FormattingKind.Underline
-                => (
-                    // lang=html
-                    "<u>",
-                    // lang=html
-                    "</u>"
-                ),
+            FormattingKind.Underline => (
+                // lang=html
+                "<u>",
+                // lang=html
+                "</u>"
+            ),
 
-            FormattingKind.Strikethrough
-                => (
-                    // lang=html
-                    "<s>",
-                    // lang=html
-                    "</s>"
-                ),
+            FormattingKind.Strikethrough => (
+                // lang=html
+                "<s>",
+                // lang=html
+                "</s>"
+            ),
 
-            FormattingKind.Spoiler
-                => (
-                    // lang=html
-                    """<span class="chatlog__markdown-spoiler chatlog__markdown-spoiler--hidden" onclick="showSpoiler(event, this)">""",
-                    // lang=html
-                    """</span>"""
-                ),
+            FormattingKind.Spoiler => (
+                // lang=html
+                """<span class="chatlog__markdown-spoiler chatlog__markdown-spoiler--hidden" onclick="showSpoiler(event, this)">""",
+                // lang=html
+                """</span>"""
+            ),
 
-            FormattingKind.Quote
-                => (
-                    // lang=html
-                    """<div class="chatlog__markdown-quote"><div class="chatlog__markdown-quote-border"></div><div class="chatlog__markdown-quote-content">""",
-                    // lang=html
-                    """</div></div>"""
-                ),
+            FormattingKind.Quote => (
+                // lang=html
+                """<div class="chatlog__markdown-quote"><div class="chatlog__markdown-quote-border"></div><div class="chatlog__markdown-quote-content">""",
+                // lang=html
+                """</div></div>"""
+            ),
 
-            _
-                => throw new InvalidOperationException(
-                    $"Unknown formatting kind '{formatting.Kind}'."
-                )
+            _ => throw new InvalidOperationException(
+                $"Unknown formatting kind '{formatting.Kind}'."
+            ),
         };
 
         buffer.Append(openingTag);
@@ -217,7 +209,6 @@ internal partial class HtmlMarkdownVisitor(
         CancellationToken cancellationToken = default
     )
     {
-        var emojiImageUrl = Emoji.GetImageUrl(emoji.Id, emoji.Name, emoji.IsAnimated);
         var jumboClass = isJumbo ? "chatlog__emoji--large" : "";
 
         buffer.Append(
@@ -228,7 +219,7 @@ internal partial class HtmlMarkdownVisitor(
                 class="chatlog__emoji {jumboClass}"
                 alt="{emoji.Name}"
                 title="{emoji.Code}"
-                src="{await context.ResolveAssetUrlAsync(emojiImageUrl, cancellationToken)}">
+                src="{await context.ResolveAssetUrlAsync(emoji.ImageUrl, cancellationToken)}">
             """
         );
     }

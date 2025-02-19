@@ -233,60 +233,85 @@
                                 Foreground="{DynamicResource PrimaryHueMidBrush}"
                                 Kind="Account" />
                         </InlineUIContainer>
-                        <Run Text="" />
+                        <Run BaselineAlignment="Center" Text="" />
                         <Run
+                            BaselineAlignment="Center"
                             FontSize="16"
                             FontWeight="SemiBold"
                             Text="To get the token for your personal account:" />
                         <LineBreak />
 
-                        <Run Text="*  Automating user accounts is technically against TOS —" />
-                        <Run FontWeight="SemiBold" Text="use at your own risk" /><Run Text="!" />
+                        <Run BaselineAlignment="Center" Text="*  Automating user accounts is technically against TOS —" />
+                        <Run
+                            BaselineAlignment="Center"
+                            FontWeight="SemiBold"
+                            Text="use at your own risk" /><Run Text="!" />
                         <LineBreak />
 
-                        <Run Text="1. Open Discord in your" />
+                        <Run BaselineAlignment="Center" Text="1. Open Discord in your" />
                         <controls:HyperLink Command="{Binding OpenDiscordCommand}" Text="web browser" />
-                        <Run Text="and login" />
+                        <Run BaselineAlignment="Center" Text="and login" />
                         <LineBreak />
 
-                        <Run Text="2. Open any server or direct message channel" />
+                        <Run BaselineAlignment="Center" Text="2. Open any server or direct message channel" />
                         <LineBreak />
 
-                        <Run Text="3. Press" />
-                        <Run FontWeight="SemiBold" Text="Ctrl+Shift+I" />
-                        <Run Text="to show developer tools" />
+                        <Run BaselineAlignment="Center" Text="3. Press" />
+                        <Run
+                            BaselineAlignment="Center"
+                            FontWeight="SemiBold"
+                            Text="Ctrl+Shift+I" />
+                        <Run BaselineAlignment="Center" Text="to show developer tools" />
                         <LineBreak />
 
-                        <Run Text="4. Navigate to the" />
-                        <Run FontWeight="SemiBold" Text="Network" />
-                        <Run Text="tab" />
+                        <Run BaselineAlignment="Center" Text="4. Navigate to the" />
+                        <Run
+                            BaselineAlignment="Center"
+                            FontWeight="SemiBold"
+                            Text="Network" />
+                        <Run BaselineAlignment="Center" Text="tab" />
                         <LineBreak />
 
-                        <Run Text="5. Press" />
-                        <Run FontWeight="SemiBold" Text="Ctrl+R" />
-                        <Run Text="to reload" />
+                        <Run BaselineAlignment="Center" Text="5. Press" />
+                        <Run
+                            BaselineAlignment="Center"
+                            FontWeight="SemiBold"
+                            Text="Ctrl+R" />
+                        <Run BaselineAlignment="Center" Text="to reload" />
                         <LineBreak />
 
-                        <Run Text="6. Switch between random channels to trigger network requests" />
+                        <Run BaselineAlignment="Center" Text="6. Switch between random channels to trigger network requests" />
                         <LineBreak />
 
-                        <Run Text="7. Search for a request that starts with" />
-                        <Run FontWeight="SemiBold" Text="messages" />
+                        <Run BaselineAlignment="Center" Text="7. Search for a request that starts with" />
+                        <Run
+                            BaselineAlignment="Center"
+                            FontWeight="SemiBold"
+                            Text="messages" />
                         <LineBreak />
 
-                        <Run Text="8. Select the" />
-                        <Run FontWeight="SemiBold" Text="Headers" />
-                        <Run Text="tab on the right" />
+                        <Run BaselineAlignment="Center" Text="8. Select the" />
+                        <Run
+                            BaselineAlignment="Center"
+                            FontWeight="SemiBold"
+                            Text="Headers" />
+                        <Run BaselineAlignment="Center" Text="tab on the right" />
                         <LineBreak />
 
-                        <Run Text="9. Scroll down to the" />
-                        <Run FontWeight="SemiBold" Text="Request Headers" />
-                        <Run Text="section" />
+                        <Run BaselineAlignment="Center" Text="9. Scroll down to the" />
+                        <Run
+                            BaselineAlignment="Center"
+                            FontWeight="SemiBold"
+                            Text="Request Headers" />
+                        <Run BaselineAlignment="Center" Text="section" />
                         <LineBreak />
 
-                        <Run Text="10. Copy the value of the" />
-                        <Run FontWeight="SemiBold" Text="authorization" />
-                        <Run Text="header" />
+                        <Run BaselineAlignment="Center" Text="10. Copy the value of the" />
+                        <Run
+                            BaselineAlignment="Center"
+                            FontWeight="SemiBold"
+                            Text="authorization" />
+                        <Run BaselineAlignment="Center" Text="header" />
                         <LineBreak />
                         <LineBreak />
 
@@ -299,38 +324,51 @@
                                 Foreground="{DynamicResource PrimaryHueMidBrush}"
                                 Kind="Robot" />
                         </InlineUIContainer>
-                        <Run Text="" />
+                        <Run BaselineAlignment="Center" Text="" />
                         <Run
+                            BaselineAlignment="Center"
                             FontSize="16"
                             FontWeight="SemiBold"
                             Text="To get the token for your bot:" />
                         <LineBreak />
 
-                        <Run Text="1. Open Discord" />
+                        <Run BaselineAlignment="Center" Text="1. Open Discord" />
                         <controls:HyperLink Command="{Binding OpenDiscordDeveloperPortalCommand}" Text="developer portal" />
                         <LineBreak />
 
-                        <Run Text="2. Open your application's settings" />
+                        <Run BaselineAlignment="Center" Text="2. Open your application's settings" />
                         <LineBreak />
 
-                        <Run Text="3. Navigate to the" />
-                        <Run FontWeight="SemiBold" Text="Bot" />
-                        <Run Text="section on the left" />
+                        <Run BaselineAlignment="Center" Text="3. Navigate to the" />
+                        <Run
+                            BaselineAlignment="Center"
+                            FontWeight="SemiBold"
+                            Text="Bot" />
+                        <Run BaselineAlignment="Center" Text="section on the left" />
                         <LineBreak />
 
-                        <Run Text="4. Under" />
-                        <Run FontWeight="SemiBold" Text="Token" />
-                        <Run Text="click" />
-                        <Run FontWeight="SemiBold" Text="Copy" />
+                        <Run BaselineAlignment="Center" Text="4. Under" />
+                        <Run
+                            BaselineAlignment="Center"
+                            FontWeight="SemiBold"
+                            Text="Token" />
+                        <Run BaselineAlignment="Center" Text="click" />
+                        <Run
+                            BaselineAlignment="Center"
+                            FontWeight="SemiBold"
+                            Text="Copy" />
                         <LineBreak />
 
-                        <Run Text="*  Your bot needs to have the" />
-                        <Run FontWeight="SemiBold" Text="Message Content Intent" />
-                        <Run Text="enabled to read messages" />
+                        <Run BaselineAlignment="Center" Text="*  Your bot needs to have the" />
+                        <Run
+                            BaselineAlignment="Center"
+                            FontWeight="SemiBold"
+                            Text="Message Content Intent" />
+                        <Run BaselineAlignment="Center" Text="enabled to read messages" />
                         <LineBreak />
                         <LineBreak />
 
-                        <Run Text="If you have questions or issues, please refer to the" />
+                        <Run BaselineAlignment="Center" Text="If you have questions or issues, please refer to the" />
                         <controls:HyperLink Command="{Binding ShowHelpCommand}" Text="documentation" />
                     </TextBlock>
                 </ScrollViewer>

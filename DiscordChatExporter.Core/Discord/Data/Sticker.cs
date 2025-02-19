@@ -9,7 +9,7 @@ namespace DiscordChatExporter.Core.Discord.Data;
 // https://discord.com/developers/docs/resources/sticker#sticker-resource
 public partial record Sticker(Snowflake Id, string Name, StickerFormat Format, string SourceUrl)
 {
-    public bool IsImage => Format != StickerFormat.Lottie;
+    public bool IsImage { get; } = Format != StickerFormat.Lottie;
 }
 
 public partial record Sticker
@@ -28,7 +28,7 @@ public partial record Sticker
                 StickerFormat.Apng => "png",
                 StickerFormat.Lottie => "json",
                 StickerFormat.Gif => "gif",
-                _ => throw new InvalidOperationException($"Unknown sticker format '{format}'.")
+                _ => throw new InvalidOperationException($"Unknown sticker format '{format}'."),
             }
         );
 

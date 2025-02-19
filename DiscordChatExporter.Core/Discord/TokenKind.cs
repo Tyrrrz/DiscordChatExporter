@@ -3,5 +3,5 @@
 public enum TokenKind
 {
     User,
-    Bot
+    Bot,
 }

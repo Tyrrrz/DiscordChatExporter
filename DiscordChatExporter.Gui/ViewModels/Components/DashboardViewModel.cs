@@ -53,7 +53,7 @@ public partial class DashboardViewModel : ViewModelBase
     private Guild? _selectedGuild;
 
     [ObservableProperty]
-    private IReadOnlyList<ChannelNode>? _availableChannels;
+    private IReadOnlyList<ChannelConnection>? _availableChannels;
 
     public DashboardViewModel(
         ViewModelManager viewModelManager,
@@ -88,7 +88,7 @@ public partial class DashboardViewModel : ViewModelBase
 
     public bool IsProgressIndeterminate => IsBusy && Progress.Current.Fraction is <= 0 or >= 1;
 
-    public ObservableCollection<ChannelNode> SelectedChannels { get; } = [];
+    public ObservableCollection<ChannelConnection> SelectedChannels { get; } = [];
 
     [RelayCommand]
     private void Initialize()
@@ -102,7 +102,7 @@ public partial class DashboardViewModel : ViewModelBase
         await _dialogManager.ShowDialogAsync(_viewModelManager.CreateSettingsViewModel());
 
     [RelayCommand]
-    private void ShowHelp() => ProcessEx.StartShellExecute(Program.DocumentationUrl);
+    private void ShowHelp() => ProcessEx.StartShellExecute(Program.ProjectDocumentationUrl);
 
     private bool CanPullGuilds() => !IsBusy && !string.IsNullOrWhiteSpace(Token);
 
@@ -190,7 +190,7 @@ public partial class DashboardViewModel : ViewModelBase
             }
 
             // Build a hierarchy of channels
-            var channelTree = ChannelNode.BuildTree(
+            var channelTree = ChannelConnection.BuildTree(
                 channels
                     .OrderByDescending(c => c.IsDirect ? c.LastMessageId : null)
                     .ThenBy(c => c.Position)
@@ -253,7 +253,7 @@ public partial class DashboardViewModel : ViewModelBase
                 channelProgressPairs,
                 new ParallelOptions
                 {
-                    MaxDegreeOfParallelism = Math.Max(1, _settingsService.ParallelLimit)
+                    MaxDegreeOfParallelism = Math.Max(1, _settingsService.ParallelLimit),
                 },
                 async (pair, cancellationToken) =>
                 {

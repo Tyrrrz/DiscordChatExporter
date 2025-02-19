@@ -4,7 +4,7 @@ namespace DiscordChatExporter.Core.Discord.Data.Embeds;
 
 public partial record SpotifyTrackEmbedProjection(string TrackId)
 {
-    public string Url => $"https://open.spotify.com/embed/track/{TrackId}";
+    public string Url { get; } = $"https://open.spotify.com/embed/track/{TrackId}";
 }
 
 public partial record SpotifyTrackEmbedProjection

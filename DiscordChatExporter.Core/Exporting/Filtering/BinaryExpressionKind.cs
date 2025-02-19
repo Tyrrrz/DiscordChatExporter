@@ -3,5 +3,5 @@
 internal enum BinaryExpressionKind
 {
     Or,
-    And
+    And,
 }

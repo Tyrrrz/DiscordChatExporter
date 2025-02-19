@@ -16,5 +16,5 @@ public enum ApplicationFlags
     Embedded = 131072,
     GatewayMessageContent = 262144,
     GatewayMessageContentLimited = 524288,
-    ApplicationCommandBadge = 8388608
+    ApplicationCommandBadge = 8388608,
 }

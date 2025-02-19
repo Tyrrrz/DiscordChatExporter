@@ -15,7 +15,7 @@ internal class HtmlMessageWriter(Stream stream, ExportContext context, string th
     private readonly TextWriter _writer = new StreamWriter(stream);
 
     private readonly HtmlMinifier _minifier = new();
-    private readonly List<Message> _messageGroup = new();
+    private readonly List<Message> _messageGroup = [];
 
     private bool CanJoinGroup(Message message)
     {
@@ -90,7 +90,7 @@ internal class HtmlMessageWriter(Stream stream, ExportContext context, string th
                 await new MessageGroupTemplate
                 {
                     Context = Context,
-                    Messages = messages
+                    Messages = messages,
                 }.RenderAsync(cancellationToken)
             )
         );
@@ -131,7 +131,7 @@ internal class HtmlMessageWriter(Stream stream, ExportContext context, string th
                 await new PostambleTemplate
                 {
                     Context = Context,
-                    MessagesWritten = MessagesWritten
+                    MessagesWritten = MessagesWritten,
                 }.RenderAsync(cancellationToken)
             )
         );

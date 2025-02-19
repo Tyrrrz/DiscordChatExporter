@@ -12,5 +12,5 @@ public enum MessageKind
     ChannelPinnedMessage = 6,
     GuildMemberJoin = 7,
     ThreadCreated = 18,
-    Reply = 19
+    Reply = 19,
 }

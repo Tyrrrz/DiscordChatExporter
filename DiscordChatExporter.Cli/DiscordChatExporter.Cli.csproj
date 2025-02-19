@@ -4,11 +4,12 @@
     <OutputType>Exe</OutputType>
     <ApplicationIcon>..\favicon.ico</ApplicationIcon>
     <PublishTrimmed>true</PublishTrimmed>
+    <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="CliFx" Version="2.3.5" />
-    <PackageReference Include="CSharpier.MsBuild" Version="0.28.2" PrivateAssets="all" />
+    <PackageReference Include="CSharpier.MsBuild" Version="0.29.2" PrivateAssets="all" />
     <PackageReference Include="Deorcify" Version="1.0.2" PrivateAssets="all" />
     <PackageReference Include="Gress" Version="2.1.1" />
     <PackageReference Include="Spectre.Console" Version="0.49.1" />

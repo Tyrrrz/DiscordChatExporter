@@ -8,7 +8,7 @@ namespace DiscordChatExporter.Core.Discord.Data;
 // https://discord.com/developers/docs/resources/guild#guild-object
 public partial record Guild(Snowflake Id, string Name, string IconUrl) : IHasId
 {
-    public bool IsDirect => Id == DirectMessages.Id;
+    public bool IsDirect { get; } = Id == Snowflake.Zero;
 }
 
 public partial record Guild

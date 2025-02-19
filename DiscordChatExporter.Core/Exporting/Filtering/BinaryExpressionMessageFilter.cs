@@ -14,6 +14,6 @@ internal class BinaryExpressionMessageFilter(
         {
             BinaryExpressionKind.Or => first.IsMatch(message) || second.IsMatch(message),
             BinaryExpressionKind.And => first.IsMatch(message) && second.IsMatch(message),
-            _ => throw new InvalidOperationException($"Unknown binary expression kind '{kind}'.")
+            _ => throw new InvalidOperationException($"Unknown binary expression kind '{kind}'."),
         };
 }

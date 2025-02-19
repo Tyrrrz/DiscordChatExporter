@@ -9,5 +9,5 @@ internal enum MessageContentMatchKind
     Image,
     Sound,
     Pin,
-    Invite
+    Invite,
 }

@@ -14,5 +14,5 @@ public enum ChannelKind
     GuildPrivateThread = 12,
     GuildStageVoice = 13,
     GuildDirectory = 14,
-    GuildForum = 15
+    GuildForum = 15,
 }

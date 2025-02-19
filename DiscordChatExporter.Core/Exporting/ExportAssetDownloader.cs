@@ -16,12 +16,7 @@ namespace DiscordChatExporter.Core.Exporting;
 
 internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
 {
-    private static readonly AsyncKeyedLocker<string> Locker =
-        new(o =>
-        {
-            o.PoolSize = 20;
-            o.PoolInitialFill = 1;
-        });
+    private static readonly AsyncKeyedLocker<string> Locker = new();
 
     // File paths of the previously downloaded assets
     private readonly Dictionary<string, string> _previousPathsByUrl = new(StringComparer.Ordinal);

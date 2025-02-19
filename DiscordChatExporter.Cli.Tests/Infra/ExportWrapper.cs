@@ -19,12 +19,7 @@ namespace DiscordChatExporter.Cli.Tests.Infra;
 
 public static class ExportWrapper
 {
-    private static readonly AsyncKeyedLocker<string> Locker =
-        new(o =>
-        {
-            o.PoolSize = 20;
-            o.PoolInitialFill = 1;
-        });
+    private static readonly AsyncKeyedLocker<string> Locker = new();
 
     private static readonly string DirPath = Path.Combine(
         Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
@@ -61,7 +56,7 @@ public static class ExportWrapper
                 ExportFormat = format,
                 OutputPath = filePath,
                 Locale = "en-US",
-                IsUtcNormalizationEnabled = true
+                IsUtcNormalizationEnabled = true,
             }.ExecuteAsync(console);
         }
 

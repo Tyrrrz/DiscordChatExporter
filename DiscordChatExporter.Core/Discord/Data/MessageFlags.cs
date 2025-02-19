@@ -14,5 +14,5 @@ public enum MessageFlags
     Urgent = 16,
     HasThread = 32,
     Ephemeral = 64,
-    Loading = 128
+    Loading = 128,
 }

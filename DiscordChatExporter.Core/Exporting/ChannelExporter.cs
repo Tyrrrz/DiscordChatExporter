@@ -40,7 +40,7 @@ public class ChannelExporter(DiscordClient discord)
         // Check if the 'after' boundary is valid
         if (request.After is not null && !request.Channel.MayHaveMessagesAfter(request.After.Value))
         {
-            console.Error.WriteLine(
+            Console.Error.WriteLine(
                 $"NOTE: Channel '{request.Channel.Name}' "
                     + $"of guild '{request.Guild.Name}' "
                     + $"does not contain any messages within the specified period; an empty file will be created."

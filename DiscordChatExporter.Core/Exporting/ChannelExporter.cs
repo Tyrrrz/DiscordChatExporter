@@ -86,15 +86,5 @@ public class ChannelExporter(DiscordClient discord)
                 );
             }
         }
-
-        // Throw if no messages were exported
-        if (messageExporter.MessagesExported <= 0)
-        {
-            throw new DiscordChatExporterException(
-                $"Channel '{request.Channel.Name}' (#{request.Channel.Id}) "
-                    + $"of guild '{request.Guild.Name}' (#{request.Guild.Id}) "
-                    + $"does not contain any matching messages within the specified period."
-            );
-        }
     }
 }

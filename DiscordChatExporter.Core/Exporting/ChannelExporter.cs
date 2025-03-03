@@ -41,6 +41,8 @@ public class ChannelExporter(DiscordClient discord)
         if ((request.Before is not null && !request.Channel.MayHaveMessagesBefore(request.Before.Value)) ||
              (request.After is not null && !request.Channel.MayHaveMessagesAfter(request.After.Value)))
         {
+            // FIXME: this should be async like the rest of the error output in the project,
+            // but that would require a console reference which this method does not currently have; some refactoring might be needed
             Console.Error.WriteLine(
                 $"NOTE: Channel '{request.Channel.Name}' "
                     + $"of guild '{request.Guild.Name}' "
@@ -86,5 +88,8 @@ public class ChannelExporter(DiscordClient discord)
                 );
             }
         }
+
+        // FIXME: no file is written if no new messages due to --after/--before;
+        // need to still create a file with just boilerplate and empty message list
     }
 }

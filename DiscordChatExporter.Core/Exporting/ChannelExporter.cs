@@ -37,26 +37,16 @@ public class ChannelExporter(DiscordClient discord)
             );
         }
 
-        // Check if the 'after' boundary is valid
-        if (request.After is not null && !request.Channel.MayHaveMessagesAfter(request.After.Value))
+        // Check if the 'before' and 'after' boundaries are valid
+        if ((request.Before is not null && !request.Channel.MayHaveMessagesBefore(request.Before.Value)) ||
+             (request.After is not null && !request.Channel.MayHaveMessagesAfter(request.After.Value)))
         {
-            throw new DiscordChatExporterException(
-                $"Channel '{request.Channel.Name}' "
+            // FIXME: this should be async like the rest of the error output in the project,
+            // but that would require a console reference which this method does not currently have; some refactoring might be needed
+            Console.Error.WriteLine(
+                $"NOTE: Channel '{request.Channel.Name}' "
                     + $"of guild '{request.Guild.Name}' "
-                    + $"does not contain any messages within the specified period."
-            );
-        }
-
-        // Check if the 'before' boundary is valid
-        if (
-            request.Before is not null
-            && !request.Channel.MayHaveMessagesBefore(request.Before.Value)
-        )
-        {
-            throw new DiscordChatExporterException(
-                $"Channel '{request.Channel.Name}' "
-                    + $"of guild '{request.Guild.Name}' "
-                    + $"does not contain any messages within the specified period."
+                    + $"does not contain any messages within the specified period; an empty file will be created."
             );
         }
 
@@ -99,14 +89,7 @@ public class ChannelExporter(DiscordClient discord)
             }
         }
 
-        // Throw if no messages were exported
-        if (messageExporter.MessagesExported <= 0)
-        {
-            throw new DiscordChatExporterException(
-                $"Channel '{request.Channel.Name}' (#{request.Channel.Id}) "
-                    + $"of guild '{request.Guild.Name}' (#{request.Guild.Id}) "
-                    + $"does not contain any matching messages within the specified period."
-            );
-        }
+        // FIXME: no file is written if no new messages due to --after/--before;
+        // need to still create a file with just boilerplate and empty message list
     }
 }

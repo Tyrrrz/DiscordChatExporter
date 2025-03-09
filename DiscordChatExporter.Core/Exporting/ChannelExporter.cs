@@ -30,10 +30,12 @@ public class ChannelExporter(DiscordClient discord)
         // Check if the channel is empty
         if (request.Channel.IsEmpty)
         {
-            throw new DiscordChatExporterException(
+            // FIXME: need to ensure an empty export file is created right here
+
+            throw new ChannelNotExportedException(
                 $"Channel '{request.Channel.Name}' "
                     + $"of guild '{request.Guild.Name}' "
-                    + $"does not contain any messages."
+                    + $"does not contain any messages; an empty file will be created."
             );
         }
 

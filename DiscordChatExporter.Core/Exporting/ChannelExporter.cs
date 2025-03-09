@@ -27,11 +27,17 @@ public class ChannelExporter(DiscordClient discord)
             );
         }
 
+        // Build context
+        var context = new ExportContext(discord, request);
+        await context.PopulateChannelsAndRolesAsync(cancellationToken);
+
+        // Export messages
+        await using var messageExporter = new MessageExporter(context);
+        await messageExporter.EnsureFileIsCreated(cancellationToken);
+
         // Check if the channel is empty
         if (request.Channel.IsEmpty)
         {
-            // FIXME: need to ensure an empty export file is created right here
-
             throw new ChannelNotExportedException(
                 $"Channel '{request.Channel.Name}' "
                     + $"of guild '{request.Guild.Name}' "
@@ -43,8 +49,6 @@ public class ChannelExporter(DiscordClient discord)
         if ((request.Before is not null && !request.Channel.MayHaveMessagesBefore(request.Before.Value)) ||
              (request.After is not null && !request.Channel.MayHaveMessagesAfter(request.After.Value)))
         {
-            // FIXME: need to ensure an empty export file is created right here
-
             throw new ChannelNotExportedException(
                 $"Channel '{request.Channel.Name}' "
                     + $"of guild '{request.Guild.Name}' "
@@ -52,12 +56,6 @@ public class ChannelExporter(DiscordClient discord)
             );
         }
 
-        // Build context
-        var context = new ExportContext(discord, request);
-        await context.PopulateChannelsAndRolesAsync(cancellationToken);
-
-        // Export messages
-        await using var messageExporter = new MessageExporter(context);
         await foreach (
             var message in discord.GetMessagesAsync(
                 request.Channel.Id,

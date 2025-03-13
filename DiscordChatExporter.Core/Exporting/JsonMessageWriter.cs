@@ -435,11 +435,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
             _writer.WriteString("id", attachment.Id.ToString());
             _writer.WriteString(
                 "url",
-                await Context.ResolveAssetUrlAsync(
-                    attachment.Url,
-                    cancellationToken,
-                    message.Timestamp
-                )
+                await Context.ResolveAssetUrlAsync(attachment.Url, cancellationToken)
             );
             _writer.WriteString("fileName", attachment.FileName);
             _writer.WriteNumber("fileSizeBytes", attachment.FileSize.TotalBytes);
@@ -469,11 +465,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
             _writer.WriteString("format", sticker.Format.ToString());
             _writer.WriteString(
                 "sourceUrl",
-                await Context.ResolveAssetUrlAsync(
-                    sticker.SourceUrl,
-                    cancellationToken,
-                    message.Timestamp
-                )
+                await Context.ResolveAssetUrlAsync(sticker.SourceUrl, cancellationToken)
             );
 
             _writer.WriteEndObject();

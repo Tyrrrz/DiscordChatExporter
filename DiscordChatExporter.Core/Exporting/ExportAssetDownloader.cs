@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -23,8 +22,7 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
 
     public async ValueTask<string> DownloadAsync(
         string url,
-        CancellationToken cancellationToken = default,
-        DateTimeOffset? timestamp = null
+        CancellationToken cancellationToken = default
     )
     {
         var fileName = GetFileNameFromUrl(url);
@@ -46,16 +44,8 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
             {
                 // Download the file
                 using var response = await Http.Client.GetAsync(url, innerCancellationToken);
-                await using (var output = File.Create(filePath))
-                    await response.Content.CopyToAsync(output, innerCancellationToken);
-
-                // Try to set the file date according to the message timestamp
-                if (timestamp is not null)
-                {
-                    File.SetCreationTimeUtc(filePath, timestamp.Value.UtcDateTime);
-                    File.SetLastWriteTimeUtc(filePath, timestamp.Value.UtcDateTime);
-                    File.SetLastAccessTimeUtc(filePath, timestamp.Value.UtcDateTime);
-                }
+                await using var output = File.Create(filePath);
+                await response.Content.CopyToAsync(output, innerCancellationToken);
             },
             cancellationToken
         );

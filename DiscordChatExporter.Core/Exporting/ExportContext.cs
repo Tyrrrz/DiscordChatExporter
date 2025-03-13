@@ -106,8 +106,7 @@ internal class ExportContext(DiscordClient discord, ExportRequest request)
 
     public async ValueTask<string> ResolveAssetUrlAsync(
         string url,
-        CancellationToken cancellationToken = default,
-        DateTimeOffset? timestamp = null
+        CancellationToken cancellationToken = default
     )
     {
         if (!Request.ShouldDownloadAssets)
@@ -115,7 +114,7 @@ internal class ExportContext(DiscordClient discord, ExportRequest request)
 
         try
         {
-            var filePath = await _assetDownloader.DownloadAsync(url, cancellationToken, timestamp);
+            var filePath = await _assetDownloader.DownloadAsync(url, cancellationToken);
             var relativeFilePath = Path.GetRelativePath(Request.OutputDirPath, filePath);
 
             // Prefer the relative path so that the export package can be copied around without breaking references.

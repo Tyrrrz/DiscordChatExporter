@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Core.Utils;
 
@@ -25,7 +26,7 @@ public class UrlBuilder
             return this;
 
         var keyEncoded = Uri.EscapeDataString(key);
-        var valueEncoded = Uri.EscapeDataString(value);
+        var valueEncoded = value?.Pipe(Uri.EscapeDataString);
         _queryParameters[keyEncoded] = valueEncoded;
 
         return this;

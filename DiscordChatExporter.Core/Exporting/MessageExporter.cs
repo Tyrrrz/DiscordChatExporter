@@ -30,6 +30,11 @@ internal partial class MessageExporter(ExportContext context) : IAsyncDisposable
         }
     }
 
+    // Unless explicitly called, file will be created before writing first message
+    public async ValueTask EnsureFileIsCreated(CancellationToken cancellationToken = default) {
+        await GetWriterAsync(cancellationToken);
+    }
+
     private async ValueTask<MessageWriter> GetWriterAsync(
         CancellationToken cancellationToken = default
     )

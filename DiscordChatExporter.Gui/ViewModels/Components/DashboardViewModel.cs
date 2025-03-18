@@ -38,22 +38,22 @@ public partial class DashboardViewModel : ViewModelBase
     [NotifyCanExecuteChangedFor(nameof(PullGuildsCommand))]
     [NotifyCanExecuteChangedFor(nameof(PullChannelsCommand))]
     [NotifyCanExecuteChangedFor(nameof(ExportCommand))]
-    private bool _isBusy;
+    public partial bool IsBusy { get; set; }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PullGuildsCommand))]
-    private string? _token;
+    public partial string? Token { get; set; }
 
     [ObservableProperty]
-    private IReadOnlyList<Guild>? _availableGuilds;
+    public partial IReadOnlyList<Guild>? AvailableGuilds { get; set; }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PullChannelsCommand))]
     [NotifyCanExecuteChangedFor(nameof(ExportCommand))]
-    private Guild? _selectedGuild;
+    public partial Guild? SelectedGuild { get; set; }
 
     [ObservableProperty]
-    private IReadOnlyList<ChannelConnection>? _availableChannels;
+    public partial IReadOnlyList<ChannelConnection>? AvailableChannels { get; set; }
 
     public DashboardViewModel(
         ViewModelManager viewModelManager,

@@ -1,4 +1,4 @@
-﻿using System.Net;
+﻿using System;
 using System.Text;
 
 namespace DiscordChatExporter.Core.Utils;
@@ -18,12 +18,12 @@ public static class Url
             var separatorIndex = filePath.IndexOfAny([':', '/', '\\'], position);
             if (separatorIndex < 0)
             {
-                buffer.Append(WebUtility.UrlEncode(filePath[position..]));
+                buffer.Append(Uri.EscapeDataString(filePath[position..]));
                 break;
             }
 
             // Append the segment
-            buffer.Append(WebUtility.UrlEncode(filePath[position..separatorIndex]));
+            buffer.Append(Uri.EscapeDataString(filePath[position..separatorIndex]));
 
             // Append the separator
             buffer.Append(

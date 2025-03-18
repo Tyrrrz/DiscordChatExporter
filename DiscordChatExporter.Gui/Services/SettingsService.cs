@@ -3,6 +3,7 @@ using System.IO;
 using System.Text.Json.Serialization;
 using Cogwheel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Gui.Framework;
 using DiscordChatExporter.Gui.Models;
@@ -44,6 +45,13 @@ public partial class SettingsService()
     {
         get => _isTokenPersisted;
         set => SetProperty(ref _isTokenPersisted, value);
+    }
+
+    private RateLimitPreference _rateLimitPreference = RateLimitPreference.RespectAll;
+    public RateLimitPreference RateLimitPreference
+    {
+        get => _rateLimitPreference;
+        set => SetProperty(ref _rateLimitPreference, value);
     }
 
     private ThreadInclusionMode _threadInclusionMode;

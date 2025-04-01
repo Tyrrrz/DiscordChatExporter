@@ -256,33 +256,48 @@ public abstract class ExportCommandBase : DiscordCommandBase
             );
         }
 
-        // Print errors and warnings
-        if (errorsByChannel.Any() || warningsByChannel.Any())
+        // Print warnings
+        if (warningsByChannel.Any())
         {
-            var tuples = new List<(ConcurrentDictionary<Channel, string>, ConsoleColor, string)>
+            await console.Output.WriteLineAsync();
+
+            using (console.WithForegroundColor(ConsoleColor.Yellow))
             {
-                (errorsByChannel,   ConsoleColor.Red,    "Failed to export the following channels:"),
-                (warningsByChannel, ConsoleColor.Yellow, "No messages exported for the following channels:")
-            };
-
-            foreach (var (messages, color, title) in tuples) {
-                if (! messages.Any())
-                    continue;
-
-                await console.Output.WriteLineAsync();
-
-                using (console.WithForegroundColor(color))
-                    await console.Error.WriteLineAsync(title);
-
-                foreach (var (channel, message) in messages)
-                {
-                    await console.Error.WriteAsync($"{channel.GetHierarchicalName()}: ");
-                    using (console.WithForegroundColor(color))
-                        await console.Error.WriteLineAsync(message);
-                }
-
-                await console.Error.WriteLineAsync();
+                await console.Error.WriteLineAsync(
+                    $"Warnings reported for the following channel(s):"
+                );
             }
+
+            foreach (var (channel, message) in warningsByChannel)
+            {
+                await console.Error.WriteAsync($"{channel.GetHierarchicalName()}: ");
+                using (console.WithForegroundColor(ConsoleColor.Yellow))
+                    await console.Error.WriteLineAsync(message);
+            }
+
+            await console.Error.WriteLineAsync();
+        }
+
+        // Print errors
+        if (errorsByChannel.Any())
+        {
+            await console.Output.WriteLineAsync();
+
+            using (console.WithForegroundColor(ConsoleColor.Red))
+            {
+                await console.Error.WriteLineAsync(
+                    $"Failed to export the following channel(s):"
+                );
+            }
+
+            foreach (var (channel, message) in errorsByChannel)
+            {
+                await console.Error.WriteAsync($"{channel.GetHierarchicalName()}: ");
+                using (console.WithForegroundColor(ConsoleColor.Red))
+                    await console.Error.WriteLineAsync(message);
+            }
+
+            await console.Error.WriteLineAsync();
         }
 
         // Fail the command only if ALL channels failed to export.

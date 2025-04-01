@@ -265,7 +265,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
             using (console.WithForegroundColor(ConsoleColor.Yellow))
             {
                 await console.Error.WriteLineAsync(
-                    $"Warnings reported for the following channel(s):"
+                    "Warnings reported for the following channel(s):"
                 );
             }
 
@@ -286,7 +286,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
             using (console.WithForegroundColor(ConsoleColor.Red))
             {
-                await console.Error.WriteLineAsync($"Failed to export the following channel(s):");
+                await console.Error.WriteLineAsync("Failed to export the following channel(s):");
             }
 
             foreach (var (channel, message) in errorsByChannel)

@@ -148,12 +148,10 @@ public class DateRangeSpecs
     }
 
     [Fact]
-    public async Task Export_file_is_created_even_when_nothing_to_export()
+    public async Task I_can_filter_the_export_to_not_include_any_messages()
     {
-        var long_in_the_past = new DateTimeOffset(1921, 08, 01, 0, 0, 0, TimeSpan.Zero);
-
         // Arrange
-        var before = long_in_the_past;
+        var before = new DateTimeOffset(2020, 08, 01, 0, 0, 0, TimeSpan.Zero);
         using var file = TempFile.Create();
 
         // Act

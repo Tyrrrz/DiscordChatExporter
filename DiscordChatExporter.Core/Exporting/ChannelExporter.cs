@@ -31,7 +31,8 @@ public class ChannelExporter(DiscordClient discord)
         var context = new ExportContext(discord, request);
         await context.PopulateChannelsAndRolesAsync(cancellationToken);
 
-        // Export messages
+        // Initialize the exporter before further checks to ensure the file is created even if
+        // an exception is thrown after this point.
         await using var messageExporter = new MessageExporter(context);
 
         // Check if the channel is empty

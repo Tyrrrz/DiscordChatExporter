@@ -70,13 +70,9 @@ internal partial class MessageExporter(ExportContext context) : IAsyncDisposable
         MessagesExported++;
     }
 
-    protected async ValueTask EnsureFileIsCreated(CancellationToken cancellationToken = default) {
-        // causes the file to be created whether there were messages written or not
-        await GetWriterAsync(cancellationToken);
-    }
-
     public async ValueTask DisposeAsync() {
-        await EnsureFileIsCreated();
+        // causes the file to be created whether there were messages written or not
+        await GetWriterAsync();
         await ResetWriterAsync();
     }
 }

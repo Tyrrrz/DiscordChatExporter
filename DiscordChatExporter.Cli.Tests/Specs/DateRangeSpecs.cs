@@ -173,8 +173,6 @@ public class DateRangeSpecs
             .Select(j => j.GetProperty("timestamp").GetDateTimeOffset())
             .ToArray();
 
-        timestamps
-            .Should()
-            .BeEmpty();
+        timestamps.Should().BeEmpty();
     }
 }

@@ -283,7 +283,8 @@ public partial class DashboardViewModel : ViewModelBase
 
                         Interlocked.Increment(ref successfulExportCount);
                     }
-                    catch (ChannelEmptyException ex) {
+                    catch (ChannelEmptyException ex)
+                    {
                         _snackbarManager.Notify(ex.Message.TrimEnd('.'));
 
                         // FIXME: not exactly successful, but not a failure either. Not ideal to duplicate the line

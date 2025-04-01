@@ -237,7 +237,8 @@ public abstract class ExportCommandBase : DiscordCommandBase
                                 }
                             );
                         }
-                        catch (ChannelEmptyException ex) {
+                        catch (ChannelEmptyException ex)
+                        {
                             warningsByChannel[channel] = ex.Message;
                         }
                         catch (DiscordChatExporterException ex) when (!ex.IsFatal)
@@ -285,9 +286,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
             using (console.WithForegroundColor(ConsoleColor.Red))
             {
-                await console.Error.WriteLineAsync(
-                    $"Failed to export the following channel(s):"
-                );
+                await console.Error.WriteLineAsync($"Failed to export the following channel(s):");
             }
 
             foreach (var (channel, message) in errorsByChannel)

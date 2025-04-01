@@ -70,7 +70,12 @@ internal partial class MessageExporter(ExportContext context) : IAsyncDisposable
         MessagesExported++;
     }
 
-    public async ValueTask DisposeAsync() => await ResetWriterAsync();
+    public async ValueTask DisposeAsync()
+    {
+        // causes the file to be created whether there were messages written or not
+        await GetWriterAsync();
+        await ResetWriterAsync();
+    }
 }
 
 internal partial class MessageExporter

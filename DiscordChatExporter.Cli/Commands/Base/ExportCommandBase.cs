@@ -179,6 +179,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
         // Export
         var cancellationToken = console.RegisterCancellationHandler();
         var errorsByChannel = new ConcurrentDictionary<Channel, string>();
+        var warningsByChannel = new ConcurrentDictionary<Channel, string>();
 
         await console.Output.WriteLineAsync($"Exporting {channels.Count} channel(s)...");
         await console
@@ -236,6 +237,10 @@ public abstract class ExportCommandBase : DiscordCommandBase
                                 }
                             );
                         }
+                        catch (ChannelEmptyException ex)
+                        {
+                            warningsByChannel[channel] = ex.Message;
+                        }
                         catch (DiscordChatExporterException ex) when (!ex.IsFatal)
                         {
                             errorsByChannel[channel] = ex.Message;
@@ -252,6 +257,28 @@ public abstract class ExportCommandBase : DiscordCommandBase
             );
         }
 
+        // Print warnings
+        if (warningsByChannel.Any())
+        {
+            await console.Output.WriteLineAsync();
+
+            using (console.WithForegroundColor(ConsoleColor.Yellow))
+            {
+                await console.Error.WriteLineAsync(
+                    $"Warnings reported for the following channel(s):"
+                );
+            }
+
+            foreach (var (channel, message) in warningsByChannel)
+            {
+                await console.Error.WriteAsync($"{channel.GetHierarchicalName()}: ");
+                using (console.WithForegroundColor(ConsoleColor.Yellow))
+                    await console.Error.WriteLineAsync(message);
+            }
+
+            await console.Error.WriteLineAsync();
+        }
+
         // Print errors
         if (errorsByChannel.Any())
         {
@@ -259,16 +286,14 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
             using (console.WithForegroundColor(ConsoleColor.Red))
             {
-                await console.Error.WriteLineAsync(
-                    $"Failed to export {errorsByChannel.Count} the following channel(s):"
-                );
+                await console.Error.WriteLineAsync($"Failed to export the following channel(s):");
             }
 
-            foreach (var (channel, error) in errorsByChannel)
+            foreach (var (channel, message) in errorsByChannel)
             {
                 await console.Error.WriteAsync($"{channel.GetHierarchicalName()}: ");
                 using (console.WithForegroundColor(ConsoleColor.Red))
-                    await console.Error.WriteLineAsync(error);
+                    await console.Error.WriteLineAsync(message);
             }
 
             await console.Error.WriteLineAsync();

@@ -146,4 +146,33 @@ public class DateRangeSpecs
                         .WhenTypeIs<DateTimeOffset>()
             );
     }
+
+    [Fact]
+    public async Task Export_file_is_created_even_when_nothing_to_export()
+    {
+        var long_in_the_past = new DateTimeOffset(1921, 08, 01, 0, 0, 0, TimeSpan.Zero);
+
+        // Arrange
+        var before = long_in_the_past;
+        using var file = TempFile.Create();
+
+        // Act
+        await new ExportChannelsCommand
+        {
+            Token = Secrets.DiscordToken,
+            ChannelIds = [ChannelIds.DateRangeTestCases],
+            ExportFormat = ExportFormat.Json,
+            OutputPath = file.Path,
+            Before = Snowflake.FromDate(before),
+        }.ExecuteAsync(new FakeConsole());
+
+        // Assert
+        var timestamps = Json.Parse(await File.ReadAllTextAsync(file.Path))
+            .GetProperty("messages")
+            .EnumerateArray()
+            .Select(j => j.GetProperty("timestamp").GetDateTimeOffset())
+            .ToArray();
+
+        timestamps.Should().BeEmpty();
+    }
 }

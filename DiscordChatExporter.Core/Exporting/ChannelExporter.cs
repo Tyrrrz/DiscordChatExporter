@@ -33,7 +33,6 @@ public class ChannelExporter(DiscordClient discord)
 
         // Export messages
         await using var messageExporter = new MessageExporter(context);
-        await messageExporter.EnsureFileIsCreated(cancellationToken);
 
         // Check if the channel is empty
         if (request.Channel.IsEmpty)

@@ -237,7 +237,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
                                 }
                             );
                         }
-                        catch (ChannelNotExportedException ex) {
+                        catch (ChannelEmptyException ex) {
                             warningsByChannel[channel] = ex.Message;
                         }
                         catch (DiscordChatExporterException ex) when (!ex.IsFatal)

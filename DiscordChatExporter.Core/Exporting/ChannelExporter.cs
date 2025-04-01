@@ -38,7 +38,7 @@ public class ChannelExporter(DiscordClient discord)
         // Check if the channel is empty
         if (request.Channel.IsEmpty)
         {
-            throw new ChannelNotExportedException(
+            throw new ChannelEmptyException(
                 $"Channel '{request.Channel.Name}' "
                     + $"of guild '{request.Guild.Name}' "
                     + $"does not contain any messages; an empty file will be created."
@@ -49,7 +49,7 @@ public class ChannelExporter(DiscordClient discord)
         if ((request.Before is not null && !request.Channel.MayHaveMessagesBefore(request.Before.Value)) ||
              (request.After is not null && !request.Channel.MayHaveMessagesAfter(request.After.Value)))
         {
-            throw new ChannelNotExportedException(
+            throw new ChannelEmptyException(
                 $"Channel '{request.Channel.Name}' "
                     + $"of guild '{request.Guild.Name}' "
                     + $"does not contain any messages within the specified period; an empty file will be created."

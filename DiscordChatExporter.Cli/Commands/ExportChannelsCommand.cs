@@ -100,6 +100,9 @@ public class ExportChannelsCommand : ExportCommandBase
                     }
                 );
 
+            // Remove unneeded forums, as they cannot be crawled directly.
+            channels.RemoveAll(channel => channel.Kind == ChannelKind.GuildForum);
+
             await console.Output.WriteLineAsync($"Fetched {fetchedThreadsCount} thread(s).");
         }
 

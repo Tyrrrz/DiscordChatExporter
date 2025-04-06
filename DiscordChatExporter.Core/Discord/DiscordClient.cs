@@ -312,7 +312,6 @@ public class DiscordClient(string token)
             var channel in await GetChannelThreadsAsync(
                 channels,
                 includeArchived,
-                before,
                 after,
                 cancellationToken
             )
@@ -325,7 +324,6 @@ public class DiscordClient(string token)
     public async IAsyncEnumerable<Channel> GetChannelThreadsAsync(
         Channel[] channels,
         bool includeArchived = false,
-        Snowflake? before = null,
         Snowflake? after = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default
     )

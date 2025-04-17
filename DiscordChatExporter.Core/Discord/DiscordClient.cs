@@ -438,39 +438,59 @@ public class DiscordClient(string token)
                 foreach (var channel in channels)
                 {
                     // Public archived threads
-                    {
-                        // Can be null on certain channels
-                        var response = await TryGetJsonResponseAsync(
-                            $"channels/{channel.Id}/threads/archived/public",
-                            cancellationToken
-                        );
-
-                        if (response is null)
-                            continue;
-
-                        foreach (
-                            var threadJson in response.Value.GetProperty("threads").EnumerateArray()
-                        )
-                            yield return Channel.Parse(threadJson, channel);
-                    }
+                    await foreach (
+                        var th in GetAllArchivedThreadsAsync(channel, "public", cancellationToken)
+                    )
+                        yield return th;
 
                     // Private archived threads
-                    {
-                        // Can be null on certain channels
-                        var response = await TryGetJsonResponseAsync(
-                            $"channels/{channel.Id}/threads/archived/private",
-                            cancellationToken
-                        );
-
-                        if (response is null)
-                            continue;
-
-                        foreach (
-                            var threadJson in response.Value.GetProperty("threads").EnumerateArray()
-                        )
-                            yield return Channel.Parse(threadJson, channel);
-                    }
+                    await foreach (
+                        var th in GetAllArchivedThreadsAsync(channel, "private", cancellationToken)
+                    )
+                        yield return th;
                 }
+            }
+        }
+    }
+
+    private async IAsyncEnumerable<Channel> GetAllArchivedThreadsAsync(
+        Channel channel,
+        string archiveType,
+        [EnumeratorCancellation] CancellationToken cancellationToken
+    )
+    {
+        // Base endpoint: "public" or "private"
+        var endpointBase = $"channels/{channel.Id}/threads/archived/{archiveType}";
+        // Cursor parameter: ISO8601 timestamp string
+        string? beforeTimestamp = null;
+        bool hasMorePages = true;
+
+        while (hasMorePages && !cancellationToken.IsCancellationRequested)
+        {
+            // Build URL with optional before= parameter
+            var url = beforeTimestamp is null
+                ? endpointBase
+                : $"{endpointBase}?before={Uri.EscapeDataString(beforeTimestamp)}";
+
+            var response = await TryGetJsonResponseAsync(url, cancellationToken);
+            if (response is null)
+                yield break;
+
+            // Parse out the threads array
+            var threadsJson = response.Value.GetProperty("threads").EnumerateArray().ToList();
+            foreach (var threadJson in threadsJson)
+            {
+                yield return Channel.Parse(threadJson, channel);
+            }
+
+            // Check pagination flag
+            hasMorePages = response.Value.GetProperty("has_more").GetBoolean();
+
+            if (hasMorePages && threadsJson.Count > 0)
+            {
+                // Prepare next cursor: the archived timestamp of the last thread
+                var lastThreadMeta = threadsJson.Last().GetProperty("thread_metadata");
+                beforeTimestamp = lastThreadMeta.GetProperty("archive_timestamp").GetString();
             }
         }
     }

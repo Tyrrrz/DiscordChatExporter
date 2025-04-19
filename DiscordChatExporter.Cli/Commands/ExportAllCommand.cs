@@ -28,13 +28,6 @@ public class ExportAllCommand : ExportCommandBase
     public bool IncludeVoiceChannels { get; init; } = true;
 
     [CommandOption(
-        "include-threads",
-        Description = "Which types of threads should be included.",
-        Converter = typeof(ThreadInclusionModeBindingConverter)
-    )]
-    public ThreadInclusionMode ThreadInclusionMode { get; init; } = ThreadInclusionMode.None;
-
-    [CommandOption(
         "data-package",
         Description = "Path to the personal data package (ZIP file) requested from Discord. "
             + "If provided, only channels referenced in the dump will be exported."

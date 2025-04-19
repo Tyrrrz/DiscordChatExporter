@@ -26,13 +26,6 @@ public class ExportChannelsCommand : ExportCommandBase
     )]
     public required IReadOnlyList<Snowflake> ChannelIds { get; init; }
 
-    [CommandOption(
-        "include-threads",
-        Description = "Which types of threads should be included.",
-        Converter = typeof(ThreadInclusionModeBindingConverter)
-    )]
-    public ThreadInclusionMode ThreadInclusionMode { get; init; } = ThreadInclusionMode.None;
-
     public override async ValueTask ExecuteAsync(IConsole console)
     {
         await base.ExecuteAsync(console);

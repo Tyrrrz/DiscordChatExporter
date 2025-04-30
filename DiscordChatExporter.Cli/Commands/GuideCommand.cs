@@ -37,7 +37,8 @@ public class GuideCommand : ICommand
         console.Output.WriteLine(" 1. Go to Discord developer portal");
         console.Output.WriteLine(" 2. Open your application's settings");
         console.Output.WriteLine(" 3. Navigate to the Bot section on the left");
-        console.Output.WriteLine(" 4. Under Token click Copy");
+        console.Output.WriteLine(" 4. Under Token click Reset Token");
+        console.Output.WriteLine(" 5. Click Yes, do it! and authenticate to confirm");
         console.Output.WriteLine(
             " *  Your bot needs to have the Message Content Intent enabled to read messages"
         );

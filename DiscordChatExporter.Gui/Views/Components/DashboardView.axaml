@@ -356,7 +356,15 @@
                         <Run
                             BaselineAlignment="Center"
                             FontWeight="SemiBold"
-                            Text="Copy" />
+                            Text="Reset Token" />
+                        <LineBreak />
+
+                        <Run BaselineAlignment="Center" Text="5. Click" />
+                        <Run
+                            BaselineAlignment="Center"
+                            FontWeight="SemiBold"
+                            Text="Yes, do it!" />
+                        <Run BaselineAlignment="Center" Text="and authenticate to confirm" />
                         <LineBreak />
 
                         <Run BaselineAlignment="Center" Text="*  Your bot needs to have the" />

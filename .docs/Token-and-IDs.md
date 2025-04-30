@@ -2,7 +2,7 @@
 
 > **Warning**:
 > **Do not share your token!**
-> A token gives full access to an account. To reset a user token, change your account password. To reset a bot token, click on [Regenerate](#how-to-get-a-bot-token) in the bot settings.
+> A token gives full access to an account. To reset a user token, change your account password. To reset a bot token, click on [Reset Token](#how-to-get-a-bot-token) in the bot settings.
 
 ## How to get a User Token
 
@@ -259,12 +259,20 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 1. Go to [Discord developer portal](https://discord.com/developers/applications)
 2. Open your Application's settings
 3. Navigate to the **Bot** section on the left
-4. Under **Token** click **Copy**
+4. Under **Token** click **Reset Token**
+5. Click **Yes, do it!** and authenticate to confirm
+
+> **Tip**:
+> As the token is only shown once, make sure to copy it and store it in a safe place. If you lose it, you will have to reset the token again.
 
 > **Warning**:
+> <img width="500" align="right" src="https://i.imgur.com/PPm2KKn.png" />
 > Your bot needs to have **Message Content Intent** enabled for it to be able to read messages!
 
-![https://discord.com/developers/applications/](https://i.imgur.com/BdrrxlY.png)
+<br clear="right" />
+<br />
+
+![https://discord.com/developers/applications/](https://i.imgur.com/soiB8Qc.png)
 
 ---
 

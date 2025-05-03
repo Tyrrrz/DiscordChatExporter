@@ -13,7 +13,7 @@
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="1.3.0" />
     <PackageReference Include="coverlet.collector" Version="6.0.4" PrivateAssets="all" />
-    <PackageReference Include="CSharpier.MsBuild" Version="1.0.1" PrivateAssets="all" />
+    <PackageReference Include="CSharpier.MsBuild" Version="0.30.6" PrivateAssets="all" />
     <PackageReference Include="FluentAssertions" Version="8.2.0" />
     <PackageReference Include="GitHubActionsTestLogger" Version="2.4.1" PrivateAssets="all" />
     <PackageReference Include="JsonExtensions" Version="1.2.0" />

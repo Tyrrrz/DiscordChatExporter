@@ -36,7 +36,9 @@ public class GuideCommand : ICommand
         console.Output.WriteLine(
             " If the token wasn't saved during bot creation, generate a new one"
         );
-        console.Output.WriteLine(" *  Integrations using the previous token will stop working until updated");
+        console.Output.WriteLine(
+            " *  Integrations using the previous token will stop working until updated"
+        );
         console.Output.WriteLine(" 1. Go to Discord developer portal");
         console.Output.WriteLine(" 2. Open your application's settings");
         console.Output.WriteLine(" 3. Navigate to the Bot section on the left");

@@ -21,13 +21,6 @@ public class ExportGuildCommand : ExportCommandBase
     [CommandOption("include-vc", Description = "Include voice channels.")]
     public bool IncludeVoiceChannels { get; init; } = true;
 
-    [CommandOption(
-        "include-threads",
-        Description = "Which types of threads should be included.",
-        Converter = typeof(ThreadInclusionModeBindingConverter)
-    )]
-    public ThreadInclusionMode ThreadInclusionMode { get; init; } = ThreadInclusionMode.None;
-
     public override async ValueTask ExecuteAsync(IConsole console)
     {
         await base.ExecuteAsync(console);

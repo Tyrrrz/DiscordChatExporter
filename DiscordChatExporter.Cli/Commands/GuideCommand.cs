@@ -33,6 +33,7 @@ public class GuideCommand : ICommand
         // Bot token
         using (console.WithForegroundColor(ConsoleColor.White))
             console.Output.WriteLine("To get the token for your bot:");
+
         console.Output.WriteLine(
             " The token is generated during bot creation. If you lost it, generate a new one:"
         );

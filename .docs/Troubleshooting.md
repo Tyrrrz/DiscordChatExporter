@@ -24,7 +24,7 @@ Follow the [instructions here](Token-and-IDs.md).
 
 ### Will I get banned if I use this?
 
-Automating user accounts is technically against [TOS](https://discord.com/terms), use at your discretion. [Bot accounts](https://discord.com/developers/docs/topics/oauth2#bots) don't have this restriction.
+Automating user accounts is technically against [TOS](https://discord.com/terms), use at your discretion. [Bot accounts](https://discord.com/developers/docs/topics/oauth2#bot-users) don't have this restriction.
 
 ### Will the messages disappear from the exported file if I delete a message, delete my account or block a person?
 

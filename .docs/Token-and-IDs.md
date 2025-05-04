@@ -3,7 +3,7 @@
 > [!WARNING]  
 > **Do not share your token!** A token gives full access to an account.  
 > To reset a user token, change your account password.  
-> To reset a bot token, click on [Reset Token](#how-to-export-using-a-bot-token) in the bot settings.
+> To reset a bot token, click on [Reset Token](#how-to-export-with-a-bot-token) in the bot settings.
 
 ## How to get a user token
 

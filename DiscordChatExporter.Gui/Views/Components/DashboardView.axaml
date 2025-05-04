@@ -332,6 +332,12 @@
                             Text="To get the token for your bot:" />
                         <LineBreak />
 
+                        <Run BaselineAlignment="Center" Text="If the token was not saved during bot creation, generate a new one" />
+                        <LineBreak />
+
+                        <Run BaselineAlignment="Center" Text="*  Integrations using the previous token will stop working until updated" />
+                        <LineBreak />
+
                         <Run BaselineAlignment="Center" Text="1. Open Discord" />
                         <controls:HyperLink Command="{Binding OpenDiscordDeveloperPortalCommand}" Text="developer portal" />
                         <LineBreak />

@@ -259,7 +259,7 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 
 ### Step 1 - Create an application
 
-You can use an already existing application, or create a new one. If you'd like to create a new one:
+You can create a new application or use an existing one. If you want to create a new one:
 
 1. Go to [Discord developer portal](https://discord.com/developers/applications)
 2. Click on **New Application** in the top right corner

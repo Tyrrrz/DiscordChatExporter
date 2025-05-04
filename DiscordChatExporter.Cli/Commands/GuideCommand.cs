@@ -34,16 +34,16 @@ public class GuideCommand : ICommand
         using (console.WithForegroundColor(ConsoleColor.White))
             console.Output.WriteLine("To get the token for your bot:");
         console.Output.WriteLine(
-            " If the token wasn't saved during bot creation, generate a new one"
-        );
-        console.Output.WriteLine(
-            " *  Integrations using the previous token will stop working until updated"
+            " The token is generated during bot creation. If you lost it, generate a new one:"
         );
         console.Output.WriteLine(" 1. Go to Discord developer portal");
         console.Output.WriteLine(" 2. Open your application's settings");
         console.Output.WriteLine(" 3. Navigate to the Bot section on the left");
         console.Output.WriteLine(" 4. Under Token click Reset Token");
         console.Output.WriteLine(" 5. Click Yes, do it! and authenticate to confirm");
+        console.Output.WriteLine(
+            " *  Integrations using the previous token will stop working until updated"
+        );
         console.Output.WriteLine(
             " *  Your bot needs to have the Message Content Intent enabled to read messages"
         );

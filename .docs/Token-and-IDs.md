@@ -304,7 +304,7 @@ If you don't have a bot token yet or if you've lost it, follow these steps to re
 5. Click **Yes, do it!** and authenticate to confirm
 
 > **Tip**:
-> As the token is only shown once, make sure to store it in a safe place. If you lose it, you will have to reset the token again.
+> As the token is only shown once, make sure to store it in a safe place. If you lose the token, you will have to reset it again.
 
 > **Warning**:
 > Resetting the token will invalidate the old one. Any integrations relying on the old token will cease to function until they are updated.

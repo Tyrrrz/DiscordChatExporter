@@ -153,7 +153,7 @@ jobs:
           RESOURCES_DIR="$CONTENTS_DIR/Resources"
           PUBLISH_DIR="${{ matrix.app }}/bin/publish"
 
-          # Create directory structure for macOS app bundle
+          # Create directory structure for macOS app bundle in the staging directory
           mkdir -p "$MACOS_DIR" "$RESOURCES_DIR"
 
           # Move icon to the .app/Resources directory
@@ -189,7 +189,7 @@ jobs:
             </plist>
           EOF
 
-          # Move all remaining files to the MacOS directory
+          # Move all files from publish to the MacOS directory
           find "$PUBLISH_DIR" -maxdepth 1 -mindepth 1 -exec mv "{}" "$MACOS_DIR/" \;
 
           # Move final .app bundle to the publish directory

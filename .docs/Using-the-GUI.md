@@ -18,7 +18,7 @@ If you skip these steps, the "DiscordChatExporter is damaged and can’t be open
 1. Open Terminal.app. You can search for it in Spotlight (press <kbd>⌘</kbd> + <kbd>Space</kbd> and type "Terminal").
 2. Paste the following into the terminal window:
    ```bash
-   xattr -r -d com.apple.quarantine
+   xattr -rd com.apple.quarantine
    ```
 3. Hit <kbd>Space</kbd> once to add a space after the command
 4. Drag and drop DiscordChatExporter.app into the terminal window

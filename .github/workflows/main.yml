@@ -251,7 +251,7 @@ jobs:
         run: chmod +x ${{ matrix.app }}/${{ matrix.asset }}
 
       - name: Create macOS .app bundle
-        if: matrix.app == 'DiscordChatExporter.Gui'
+        if: matrix.app == 'DiscordChatExporter.Gui' && startsWith(matrix.rid, 'osx-')
         run: |
           STAGING_DIR="app-bundle-staging"
           APP_NAME="${{ matrix.asset }}.app"

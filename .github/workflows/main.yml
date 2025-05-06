@@ -153,13 +153,13 @@ jobs:
           RESOURCES_DIR="$CONTENTS_DIR/Resources"
           PUBLISH_DIR="${{ matrix.app }}/bin/publish"
 
-          # Create directory structure for macOS app bundle in the staging directory
+          # Create the macOS .app bundle directory structure
           mkdir -p "$MACOS_DIR" "$RESOURCES_DIR"
 
-          # Move icon to the .app/Resources directory
+          # Move icon into the Resources folder
           mv "favicon.icns" "$RESOURCES_DIR/AppIcon.icns"
 
-          # Create the Information Property List file
+          # Generate Info.plist metadata file with app information
           cat > $CONTENTS_DIR/Info.plist << EOF
             <?xml version="1.0" encoding="UTF-8"?>
             <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -193,10 +193,10 @@ jobs:
             </plist>
           EOF
 
-          # Move all files from publish to the MacOS directory
+          # Copy all built application files into the .app's MacOS directory
           find "$PUBLISH_DIR" -maxdepth 1 -mindepth 1 -exec mv "{}" "$MACOS_DIR/" \;
 
-          # Move final .app bundle to the publish directory
+          # Move the final .app bundle into the publish directory for upload
           mv "$APP_DIR" "$PUBLISH_DIR"
 
       - name: Upload artifacts

@@ -145,8 +145,8 @@ jobs:
       - name: Generate macOS .app bundle resources
         if: matrix.app == 'DiscordChatExporter.Gui' && startsWith(matrix.rid, 'osx-')
         run: |
-          STAGING_DIR="app-bundle-staging"
           APP_NAME="${{ matrix.asset }}.app"
+          STAGING_DIR="app-bundle-staging"
           APP_DIR="$STAGING_DIR/$APP_NAME"
           CONTENTS_DIR="$APP_DIR/Contents"
           MACOS_DIR="$CONTENTS_DIR/MacOS"
@@ -165,16 +165,16 @@ jobs:
             <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
             <plist version="1.0">
               <dict>
+                <key>CFBundleDisplayName</key>
+                <string>${{ matrix.asset }}</string>
+                <key>CFBundleName</key>
+                <string>${{ matrix.asset }}</string>
                 <key>CFBundleExecutable</key>
-                <string>DiscordChatExporter</string>
+                <string>${{ matrix.asset }}</string>
                 <key>NSHumanReadableCopyright</key>
                 <string>© Oleksii Holub</string>
                 <key>CFBundleIdentifier</key>
                 <string>com.Tyrrrz.${{ matrix.asset }}</string>
-                <key>CFBundleName</key>
-                <string>${{ matrix.asset }}</string>
-                <key>CFBundleDisplayName</key>
-                <string>${{ matrix.asset }}</string>
                 <key>CFBundleSpokenName</key>
                 <string>Discord Chat Exporter</string>
                 <key>CFBundleVersion</key>

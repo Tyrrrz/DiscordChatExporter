@@ -157,7 +157,7 @@ jobs:
           mkdir -p "$MACOS_DIR" "$RESOURCES_DIR"
 
           # Move icon to the .app/Resources directory
-          mv "favicon.icns" "$RESOURCES_DIR/${{ matrix.asset }}.icns"
+          mv "favicon.icns" "$RESOURCES_DIR/AppIcon.icns"
 
           # Create the Information Property List file
           cat > $CONTENTS_DIR/Info.plist << EOF
@@ -177,6 +177,10 @@ jobs:
                 <string>com.Tyrrrz.${{ matrix.asset }}</string>
                 <key>CFBundleSpokenName</key>
                 <string>Discord Chat Exporter</string>
+                <key>CFBundleIconFile</key>
+                <string>AppIcon</string>
+                <key>CFBundleIconName</key>
+                <string>AppIcon</string>
                 <key>CFBundleVersion</key>
                 <string>${{ github.sha }}</string>
                 <key>CFBundleShortVersionString</key>

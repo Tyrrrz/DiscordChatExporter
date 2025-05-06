@@ -156,7 +156,7 @@ jobs:
           # Create the macOS .app bundle directory structure
           mkdir -p "$MACOS_DIR" "$RESOURCES_DIR"
 
-          # Move icon into the Resources folder
+          # Move icon into the .app's Resources folder
           mv "favicon.icns" "$RESOURCES_DIR/AppIcon.icns"
 
           # Generate Info.plist metadata file with app information

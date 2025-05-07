@@ -91,4 +91,4 @@ Get-ChildItem -Path $publishDir | ForEach-Object {
 }
 
 # Move the final .app bundle into the publish directory for upload
-Move-Item -Path $appDir -Destination $publishDir -Force
+Move-Item -Path $appDir -Destination $PublishDir -Force

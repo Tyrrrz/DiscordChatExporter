@@ -138,12 +138,8 @@ jobs:
           --runtime ${{ matrix.rid }}
           --self-contained
 
-      - name: Set permissions
-        if: ${{ !startsWith(matrix.rid, 'win-') }}
-        run: chmod +x ${{ matrix.app }}/bin/publish/${{ matrix.asset }}
-
       - name: Generate macOS .app bundle resources
-        if: matrix.app == 'DiscordChatExporter.Gui' && startsWith(matrix.rid, 'osx-')
+        if: ${{ startsWith(matrix.rid, 'osx-') && matrix.app == 'DiscordChatExporter.Gui' }}
         shell: pwsh
         run: >
           ./bundle-macos-app.ps1
@@ -229,6 +225,14 @@ jobs:
         with:
           name: ${{ matrix.asset }}.${{ matrix.rid }}
           path: ${{ matrix.app }}/
+
+      - name: Set permissions
+        if: ${{ !startsWith(matrix.rid, 'win-') && !(startsWith(matrix.rid, 'osx-') && matrix.app == 'DiscordChatExporter.Gui') }}
+        run: chmod +x ${{ matrix.app }}/${{ matrix.asset }}
+
+      - name: Set permissions for macOS .app bundle
+        if: ${{ startsWith(matrix.rid, 'osx-') && matrix.app == 'DiscordChatExporter.Gui' }}
+        run: chmod +x ${{ matrix.app }}/${{ matrix.asset }}.app/Contents/MacOS/${{ matrix.asset }}
 
       - name: Create package
         # Change into the artifacts directory to avoid including the directory itself in the zip archive

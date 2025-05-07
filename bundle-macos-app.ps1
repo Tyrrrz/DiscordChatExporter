@@ -32,7 +32,7 @@ param(
     [Parameter(Mandatory=$true)]
     [string]$IconPath,
 
-    [string]$StagingDir = "app-bundle-staging"
+    [string]$StagingDir = "bundle-macos-app-staging"
 )
 
 # Setup paths

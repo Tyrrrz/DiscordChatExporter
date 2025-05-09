@@ -18,10 +18,7 @@ param(
     [string]$GitHubRefType,
     
     [Parameter(Mandatory=$true)]
-    [string]$GitHubRefName,
-
-    [Parameter(Mandatory=$true)]
-    [string]$BundleIdentifier
+    [string]$GitHubRefName
 )
 
 # Setup paths
@@ -53,7 +50,7 @@ $plistContent = @"
     <key>NSHumanReadableCopyright</key>
     <string>© Oleksii Holub</string>
     <key>CFBundleIdentifier</key>
-    <string>$BundleIdentifier</string>
+    <string>me.Tyrrrz.$MatrixAssetName</string>
     <key>CFBundleSpokenName</key>
     <string>Discord Chat Exporter</string>
     <key>CFBundleIconFile</key>

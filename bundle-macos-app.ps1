@@ -1,9 +1,6 @@
 param(
     [Parameter(Mandatory=$true)]
     [string]$MatrixAssetName,
-    
-    [Parameter(Mandatory=$true)]
-    [string]$MatrixAppPath,
 
     [Parameter(Mandatory=$true)]
     [string]$PublishDir,
@@ -12,13 +9,7 @@ param(
     [string]$Version,
     
     [Parameter(Mandatory=$true)]
-    [string]$GitHubSha,
-    
-    [Parameter(Mandatory=$true)]
-    [string]$GitHubRefType,
-    
-    [Parameter(Mandatory=$true)]
-    [string]$GitHubRefName
+    [string]$GitHubSha
 )
 
 # Setup paths

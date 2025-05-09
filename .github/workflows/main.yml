@@ -147,8 +147,6 @@ jobs:
           -PublishDir "${{ matrix.app }}/bin/publish/"
           -Version "${{ github.ref_type == 'tag' && github.ref_name || '999.9.9'}}"
           -GitHubSha "${{ github.sha }}"
-          -GitHubRefType "${{ github.ref_type }}"
-          -GitHubRefName "${{ github.ref_name }}"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2

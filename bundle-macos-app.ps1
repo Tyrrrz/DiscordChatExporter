@@ -63,7 +63,7 @@ $plistContent = @"
 Set-Content -Path (Join-Path $contentsDir "Info.plist") -Value $plistContent
 
 # Copy all built application files into the .app's MacOS directory
-Get-ChildItem -Path $publishDir | ForEach-Object {
+Get-ChildItem -Path $PublishDir | ForEach-Object {
     Move-Item -Path $_.FullName -Destination $macosDir -Force
 }
 

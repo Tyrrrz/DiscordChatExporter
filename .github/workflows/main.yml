@@ -150,9 +150,6 @@ jobs:
           -GitHubSha "${{ github.sha }}"
           -GitHubRefType "${{ github.ref_type }}"
           -GitHubRefName "${{ github.ref_name }}"
-          -SpokenName "Discord Chat Exporter"
-          -Copyright "© Oleksii Holub"
-          -IconPath "favicon.icns"
           -BundleIdentifier "me.Tyrrrz.${{ matrix.asset }}"
 
       - name: Upload artifacts

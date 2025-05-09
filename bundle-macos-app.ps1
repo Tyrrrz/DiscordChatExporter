@@ -21,23 +21,12 @@ param(
     [string]$GitHubRefName,
 
     [Parameter(Mandatory=$true)]
-    [string]$BundleIdentifier,
-
-    [Parameter(Mandatory=$true)]
-    [string]$SpokenName,
-
-    [Parameter(Mandatory=$true)]
-    [string]$Copyright,
-
-    [Parameter(Mandatory=$true)]
-    [string]$IconPath,
-
-    [string]$StagingDir = "bundle-macos-app-staging"
+    [string]$BundleIdentifier
 )
 
 # Setup paths
 $appName = "$MatrixAssetName.app"
-$appDir = Join-Path $StagingDir $appName
+$appDir = Join-Path "bundle-macos-app-staging" $appName
 $contentsDir = Join-Path $appDir "Contents"
 $macosDir = Join-Path $contentsDir "MacOS"
 $resourcesDir = Join-Path $contentsDir "Resources"
@@ -47,7 +36,7 @@ New-Item -ItemType Directory -Path $macosDir -Force
 New-Item -ItemType Directory -Path $resourcesDir -Force
 
 # Copy icon into the .app's Resources folder
-Copy-Item -Path $IconPath -Destination (Join-Path $resourcesDir "AppIcon.icns") -Force
+Copy-Item -Path "favicon.icns" -Destination (Join-Path $resourcesDir "AppIcon.icns") -Force
 
 # Generate Info.plist metadata file with app information
 $plistContent = @"
@@ -62,11 +51,11 @@ $plistContent = @"
     <key>CFBundleExecutable</key>
     <string>$MatrixAssetName</string>
     <key>NSHumanReadableCopyright</key>
-    <string>$Copyright</string>
+    <string>© Oleksii Holub</string>
     <key>CFBundleIdentifier</key>
     <string>$BundleIdentifier</string>
     <key>CFBundleSpokenName</key>
-    <string>$SpokenName</string>
+    <string>Discord Chat Exporter</string>
     <key>CFBundleIconFile</key>
     <string>AppIcon</string>
     <key>CFBundleIconName</key>

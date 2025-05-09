@@ -143,7 +143,7 @@ jobs:
         shell: pwsh
         run: >
           ./bundle-macos-app.ps1
-          -MatrixAssetName "${{ matrix.asset }}"
+          -BundleName "${{ matrix.asset }}"
           -MatrixAppPath "${{ matrix.app }}"
           -PublishDir "${{ matrix.app }}/bin/publish/"
           -Version "${{ github.ref_type == 'tag' && github.ref_name || '999.9.9'}}"

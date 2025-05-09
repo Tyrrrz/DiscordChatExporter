@@ -144,7 +144,6 @@ jobs:
         run: >
           ./bundle-macos-app.ps1
           -BundleName "${{ matrix.asset }}"
-          -MatrixAppPath "${{ matrix.app }}"
           -PublishDir "${{ matrix.app }}/bin/publish/"
           -Version "${{ github.ref_type == 'tag' && github.ref_name || '999.9.9'}}"
           -GitHubSha "${{ github.sha }}"

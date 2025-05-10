@@ -20,13 +20,13 @@ $contentsDirPath = Join-Path $bundleDirPath "Contents"
 $macosDirPath = Join-Path $contentsDirPath "MacOS"
 $resourcesDirPath = Join-Path $contentsDirPath "Resources"
 
-# Initialize the bundle's directory structure
-New-Item -Path $bundleDirPath -ItemType Directory -Force
-New-Item -Path $contentsDirPath -ItemType Directory -Force
-New-Item -Path $macosDirPath -ItemType Directory -Force
-New-Item -Path $resourcesDirPath -ItemType Directory -Force
-
 try {
+    # Initialize the bundle's directory structure
+    New-Item -Path $bundleDirPath -ItemType Directory -Force
+    New-Item -Path $contentsDirPath -ItemType Directory -Force
+    New-Item -Path $macosDirPath -ItemType Directory -Force
+    New-Item -Path $resourcesDirPath -ItemType Directory -Force
+
     # Copy icons into the .app's Resources folder
     Copy-Item -Path $IconsFilePath -Destination (Join-Path $resourcesDirPath "AppIcon.icns") -Force
 

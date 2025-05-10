@@ -57,7 +57,7 @@ try {
     <key>CFBundleShortVersionString</key>
     <string>$ShortVersion</string>
     <key>NSHighResolutionCapable</key>
-    <true/>
+    <true />
     <key>CFBundlePackageType</key>
     <string>APPL</string>
   </dict>

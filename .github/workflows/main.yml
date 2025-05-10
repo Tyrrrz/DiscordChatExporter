@@ -138,6 +138,16 @@ jobs:
           --runtime ${{ matrix.rid }}
           --self-contained
 
+      - name: Generate macOS .app bundle resources
+        if: ${{ startsWith(matrix.rid, 'osx-') && matrix.app == 'DiscordChatExporter.Gui' }}
+        shell: pwsh
+        run: >
+          ./bundle-macos-app.ps1
+          -BundleName "${{ matrix.asset }}"
+          -PublishDir "${{ matrix.app }}/bin/publish/"
+          -Version "${{ github.ref_type == 'tag' && github.ref_name || '999.9.9'}}"
+          -GitHubSha "${{ github.sha }}"
+
       - name: Upload artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -210,8 +220,12 @@ jobs:
           path: ${{ matrix.app }}/
 
       - name: Set permissions
-        if: ${{ !startsWith(matrix.rid, 'win-') }}
+        if: ${{ !startsWith(matrix.rid, 'win-') && !(startsWith(matrix.rid, 'osx-') && matrix.app == 'DiscordChatExporter.Gui') }}
         run: chmod +x ${{ matrix.app }}/${{ matrix.asset }}
+
+      - name: Set permissions for macOS .app bundle
+        if: ${{ startsWith(matrix.rid, 'osx-') && matrix.app == 'DiscordChatExporter.Gui' }}
+        run: chmod +x ${{ matrix.app }}/${{ matrix.asset }}.app/Contents/MacOS/${{ matrix.asset }}
 
       - name: Create package
         # Change into the artifacts directory to avoid including the directory itself in the zip archive

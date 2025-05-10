@@ -146,6 +146,12 @@ Red Hat: `cert-sync --user /etc/pki/tls/certs/ca-bundle.crt`
 
 If it still doesn't work, try mozroots: `mozroots --import --ask-remove`
 
+## macOS-specific
+
+### DiscordChatExporter is damaged and can’t be opened. You should move it to the Trash.
+
+Check the [Using the GUI page](Using-the-GUI.md#step-1) for instructions on how to run the app.
+
 ---
 
 > ❓ If you still have unanswered questions, feel free to [create a new discussion](https://github.com/Tyrrrz/DiscordChatExporter/discussions/new).

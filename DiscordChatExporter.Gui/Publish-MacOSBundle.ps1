@@ -12,6 +12,8 @@ param(
     [string]$ShortVersion
 )
 
+$ErrorActionPreference = "Stop"
+
 # Setup paths
 $tempDirPath = Join-Path $PublishDirPath "../publish-macos-app-temp"
 $bundleName = "DiscordChatExporter.app"

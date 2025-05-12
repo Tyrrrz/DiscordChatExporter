@@ -17,9 +17,13 @@ public static class RateLimitPreferenceExtensions
         this RateLimitPreference rateLimitPreference,
         TokenKind tokenKind
     ) =>
-        tokenKind == TokenKind.Bot
-            ? (rateLimitPreference & RateLimitPreference.RespectForBotRequests) != 0
-            : (rateLimitPreference & RateLimitPreference.RespectForUserRequests) != 0;
+        tokenKind switch
+        {
+            TokenKind.User => (rateLimitPreference & RateLimitPreference.RespectForUserRequests)
+                != 0,
+            TokenKind.Bot => (rateLimitPreference & RateLimitPreference.RespectForBotRequests) != 0,
+            _ => throw new ArgumentOutOfRangeException(nameof(tokenKind)),
+        };
 
     public static string GetDisplayName(this RateLimitPreference rateLimitPreference) =>
         rateLimitPreference switch

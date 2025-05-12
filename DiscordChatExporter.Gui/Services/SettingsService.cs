@@ -30,7 +30,8 @@ public partial class SettingsService()
     public partial bool IsTokenPersisted { get; set; } = true;
 
     [ObservableProperty]
-    public partial RateLimitPreference RateLimitPreference { get; set; } = RateLimitPreference.RespectAll;
+    public partial RateLimitPreference RateLimitPreference { get; set; } =
+        RateLimitPreference.RespectAll;
 
     [ObservableProperty]
     public partial ThreadInclusionMode ThreadInclusionMode { get; set; }

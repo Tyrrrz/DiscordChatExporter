@@ -33,28 +33,6 @@ public partial class DashboardViewModel : ViewModelBase
 
     private DiscordClient? _discord;
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsProgressIndeterminate))]
-    [NotifyCanExecuteChangedFor(nameof(PullGuildsCommand))]
-    [NotifyCanExecuteChangedFor(nameof(PullChannelsCommand))]
-    [NotifyCanExecuteChangedFor(nameof(ExportCommand))]
-    public partial bool IsBusy { get; set; }
-
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(PullGuildsCommand))]
-    public partial string? Token { get; set; }
-
-    [ObservableProperty]
-    public partial IReadOnlyList<Guild>? AvailableGuilds { get; set; }
-
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(PullChannelsCommand))]
-    [NotifyCanExecuteChangedFor(nameof(ExportCommand))]
-    public partial Guild? SelectedGuild { get; set; }
-
-    [ObservableProperty]
-    public partial IReadOnlyList<ChannelConnection>? AvailableChannels { get; set; }
-
     public DashboardViewModel(
         ViewModelManager viewModelManager,
         DialogManager dialogManager,
@@ -84,9 +62,31 @@ public partial class DashboardViewModel : ViewModelBase
         );
     }
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsProgressIndeterminate))]
+    [NotifyCanExecuteChangedFor(nameof(PullGuildsCommand))]
+    [NotifyCanExecuteChangedFor(nameof(PullChannelsCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ExportCommand))]
+    public partial bool IsBusy { get; set; }
+
     public ProgressContainer<Percentage> Progress { get; } = new();
 
     public bool IsProgressIndeterminate => IsBusy && Progress.Current.Fraction is <= 0 or >= 1;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PullGuildsCommand))]
+    public partial string? Token { get; set; }
+
+    [ObservableProperty]
+    public partial IReadOnlyList<Guild>? AvailableGuilds { get; set; }
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PullChannelsCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ExportCommand))]
+    public partial Guild? SelectedGuild { get; set; }
+
+    [ObservableProperty]
+    public partial IReadOnlyList<ChannelConnection>? AvailableChannels { get; set; }
 
     public ObservableCollection<ChannelConnection> SelectedChannels { get; } = [];
 

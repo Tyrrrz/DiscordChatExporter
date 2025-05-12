@@ -6,22 +6,21 @@ namespace DiscordChatExporter.Core.Discord;
 public enum RateLimitPreference
 {
     IgnoreAll = 0,
-    RespectForUserRequests = 0b1,
-    RespectForBotRequests = 0b10,
-    RespectAll = RespectForUserRequests | RespectForBotRequests,
+    RespectForUserTokens = 0b1,
+    RespectForBotTokens = 0b10,
+    RespectAll = RespectForUserTokens | RespectForBotTokens,
 }
 
 public static class RateLimitPreferenceExtensions
 {
-    internal static bool ShouldRespect(
+    internal static bool IsRespectedFor(
         this RateLimitPreference rateLimitPreference,
         TokenKind tokenKind
     ) =>
         tokenKind switch
         {
-            TokenKind.User => (rateLimitPreference & RateLimitPreference.RespectForUserRequests)
-                != 0,
-            TokenKind.Bot => (rateLimitPreference & RateLimitPreference.RespectForBotRequests) != 0,
+            TokenKind.User => (rateLimitPreference & RateLimitPreference.RespectForUserTokens) != 0,
+            TokenKind.Bot => (rateLimitPreference & RateLimitPreference.RespectForBotTokens) != 0,
             _ => throw new ArgumentOutOfRangeException(nameof(tokenKind)),
         };
 
@@ -29,8 +28,8 @@ public static class RateLimitPreferenceExtensions
         rateLimitPreference switch
         {
             RateLimitPreference.IgnoreAll => "Always ignore",
-            RateLimitPreference.RespectForUserRequests => "Respect for user requests",
-            RateLimitPreference.RespectForBotRequests => "Respect for bot requests",
+            RateLimitPreference.RespectForUserTokens => "Respect for user tokens",
+            RateLimitPreference.RespectForBotTokens => "Respect for bot tokens",
             RateLimitPreference.RespectAll => "Always respect",
             _ => throw new ArgumentOutOfRangeException(nameof(rateLimitPreference)),
         };

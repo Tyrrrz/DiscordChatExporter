@@ -53,11 +53,9 @@ public class DiscordClient(
                 // Discord has advisory rate limits (communicated via response headers), but they are typically
                 // way stricter than the actual rate limits enforced by the server.
                 // The user may choose to ignore the advisory rate limits and only retry on hard rate limits,
-                // if they want to prioritize speed over compliance (and safety of their account).
-                // This is especially relevant for user accounts, as the advisory rate limits sometimes don't
-                // make any sense there.
+                // if they want to prioritize speed over compliance (and safety of their account/bot).
                 // https://github.com/Tyrrrz/DiscordChatExporter/issues/1021
-                if (rateLimitPreference.ShouldRespect(tokenKind))
+                if (rateLimitPreference.IsRespectedFor(tokenKind))
                 {
                     var remainingRequestCount = response
                         .Headers.TryGetValue("X-RateLimit-Remaining")

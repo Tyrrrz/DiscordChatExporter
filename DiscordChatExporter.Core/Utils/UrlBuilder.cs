@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Text;
+using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Core.Utils;
 
@@ -25,8 +25,8 @@ public class UrlBuilder
         if (ignoreUnsetValue && string.IsNullOrWhiteSpace(value))
             return this;
 
-        var keyEncoded = WebUtility.UrlEncode(key);
-        var valueEncoded = WebUtility.UrlEncode(value);
+        var keyEncoded = Uri.EscapeDataString(key);
+        var valueEncoded = value?.Pipe(Uri.EscapeDataString);
         _queryParameters[keyEncoded] = valueEncoded;
 
         return this;
@@ -39,9 +39,11 @@ public class UrlBuilder
         buffer.Append(_path);
 
         if (_queryParameters.Any())
+        {
             buffer
                 .Append('?')
                 .AppendJoin('&', _queryParameters.Select(kvp => $"{kvp.Key}={kvp.Value}"));
+        }
 
         return buffer.ToString();
     }

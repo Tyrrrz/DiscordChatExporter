@@ -61,7 +61,9 @@ public partial class MainViewModel(
             $"""
             You're using a development build of {Program.Name}. These builds are not thoroughly tested and may contain bugs.
 
-            Auto-updates are disabled for development builds. If you want to switch to a stable release, please download it manually.
+            Auto-updates are disabled for development builds.
+
+            Click SEE RELEASES if you want to download a stable release instead.
             """,
             "SEE RELEASES",
             "CLOSE"

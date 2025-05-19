@@ -79,6 +79,7 @@ public class ExportChannelsCommand : ExportCommandBase
                             var thread in Discord.GetChannelThreadsAsync(
                                 channels.ToArray(),
                                 ThreadInclusionMode == ThreadInclusionMode.All,
+                                Before,
                                 After,
                                 cancellationToken
                             )

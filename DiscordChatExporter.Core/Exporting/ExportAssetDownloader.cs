@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -45,38 +44,8 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
             {
                 // Download the file
                 using var response = await Http.Client.GetAsync(url, innerCancellationToken);
-                await using (var output = File.Create(filePath))
-                    await response.Content.CopyToAsync(output, innerCancellationToken);
-
-                // Try to set the file date according to the last-modified header
-                try
-                {
-                    var lastModified = response
-                        .Content.Headers.TryGetValue("Last-Modified")
-                        ?.Pipe(s =>
-                            DateTimeOffset.TryParse(
-                                s,
-                                CultureInfo.InvariantCulture,
-                                DateTimeStyles.None,
-                                out var instant
-                            )
-                                ? instant
-                                : (DateTimeOffset?)null
-                        );
-
-                    if (lastModified is not null)
-                    {
-                        File.SetCreationTimeUtc(filePath, lastModified.Value.UtcDateTime);
-                        File.SetLastWriteTimeUtc(filePath, lastModified.Value.UtcDateTime);
-                        File.SetLastAccessTimeUtc(filePath, lastModified.Value.UtcDateTime);
-                    }
-                }
-                catch
-                {
-                    // This can apparently fail for some reason.
-                    // Updating the file date is not a critical task, so we'll just ignore exceptions thrown here.
-                    // https://github.com/Tyrrrz/DiscordChatExporter/issues/585
-                }
+                await using var output = File.Create(filePath);
+                await response.Content.CopyToAsync(output, innerCancellationToken);
             },
             cancellationToken
         );

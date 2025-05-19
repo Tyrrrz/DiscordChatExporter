@@ -3,132 +3,71 @@ using System.IO;
 using System.Text.Json.Serialization;
 using Cogwheel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Gui.Framework;
 using DiscordChatExporter.Gui.Models;
 
 namespace DiscordChatExporter.Gui.Services;
 
-// Can't use [ObservableProperty] here because System.Text.Json's source generator doesn't see
-// the generated properties.
-[INotifyPropertyChanged]
+[ObservableObject]
 public partial class SettingsService()
     : SettingsBase(
         Path.Combine(AppContext.BaseDirectory, "Settings.dat"),
         SerializerContext.Default
     )
 {
-    private bool _isUkraineSupportMessageEnabled = true;
-    public bool IsUkraineSupportMessageEnabled
-    {
-        get => _isUkraineSupportMessageEnabled;
-        set => SetProperty(ref _isUkraineSupportMessageEnabled, value);
-    }
+    [ObservableProperty]
+    public partial bool IsUkraineSupportMessageEnabled { get; set; } = true;
 
-    private ThemeVariant _theme;
-    public ThemeVariant Theme
-    {
-        get => _theme;
-        set => SetProperty(ref _theme, value);
-    }
+    [ObservableProperty]
+    public partial ThemeVariant Theme { get; set; }
 
-    private bool _isAutoUpdateEnabled = true;
-    public bool IsAutoUpdateEnabled
-    {
-        get => _isAutoUpdateEnabled;
-        set => SetProperty(ref _isAutoUpdateEnabled, value);
-    }
+    [ObservableProperty]
+    public partial bool IsAutoUpdateEnabled { get; set; } = true;
 
-    private bool _isTokenPersisted = true;
-    public bool IsTokenPersisted
-    {
-        get => _isTokenPersisted;
-        set => SetProperty(ref _isTokenPersisted, value);
-    }
+    [ObservableProperty]
+    public partial bool IsTokenPersisted { get; set; } = true;
 
-    private ThreadInclusionMode _threadInclusionMode;
-    public ThreadInclusionMode ThreadInclusionMode
-    {
-        get => _threadInclusionMode;
-        set => SetProperty(ref _threadInclusionMode, value);
-    }
+    [ObservableProperty]
+    public partial RateLimitPreference RateLimitPreference { get; set; } =
+        RateLimitPreference.RespectAll;
 
-    private string? _locale;
-    public string? Locale
-    {
-        get => _locale;
-        set => SetProperty(ref _locale, value);
-    }
+    [ObservableProperty]
+    public partial ThreadInclusionMode ThreadInclusionMode { get; set; }
 
-    private bool _isUtcNormalizationEnabled;
-    public bool IsUtcNormalizationEnabled
-    {
-        get => _isUtcNormalizationEnabled;
-        set => SetProperty(ref _isUtcNormalizationEnabled, value);
-    }
+    [ObservableProperty]
+    public partial string? Locale { get; set; }
 
-    private int _parallelLimit = 1;
-    public int ParallelLimit
-    {
-        get => _parallelLimit;
-        set => SetProperty(ref _parallelLimit, value);
-    }
+    [ObservableProperty]
+    public partial bool IsUtcNormalizationEnabled { get; set; }
 
-    private string? _lastToken;
-    public string? LastToken
-    {
-        get => _lastToken;
-        set => SetProperty(ref _lastToken, value);
-    }
+    [ObservableProperty]
+    public partial int ParallelLimit { get; set; } = 1;
 
-    private ExportFormat _lastExportFormat = ExportFormat.HtmlDark;
-    public ExportFormat LastExportFormat
-    {
-        get => _lastExportFormat;
-        set => SetProperty(ref _lastExportFormat, value);
-    }
+    [ObservableProperty]
+    public partial string? LastToken { get; set; }
 
-    private string? _lastPartitionLimitValue;
-    public string? LastPartitionLimitValue
-    {
-        get => _lastPartitionLimitValue;
-        set => SetProperty(ref _lastPartitionLimitValue, value);
-    }
+    [ObservableProperty]
+    public partial ExportFormat LastExportFormat { get; set; } = ExportFormat.HtmlDark;
 
-    private string? _lastMessageFilterValue;
-    public string? LastMessageFilterValue
-    {
-        get => _lastMessageFilterValue;
-        set => SetProperty(ref _lastMessageFilterValue, value);
-    }
+    [ObservableProperty]
+    public partial string? LastPartitionLimitValue { get; set; }
 
-    private bool _lastShouldFormatMarkdown = true;
-    public bool LastShouldFormatMarkdown
-    {
-        get => _lastShouldFormatMarkdown;
-        set => SetProperty(ref _lastShouldFormatMarkdown, value);
-    }
+    [ObservableProperty]
+    public partial string? LastMessageFilterValue { get; set; }
 
-    private bool _lastShouldDownloadAssets;
-    public bool LastShouldDownloadAssets
-    {
-        get => _lastShouldDownloadAssets;
-        set => SetProperty(ref _lastShouldDownloadAssets, value);
-    }
+    [ObservableProperty]
+    public partial bool LastShouldFormatMarkdown { get; set; } = true;
 
-    private bool _lastShouldReuseAssets;
-    public bool LastShouldReuseAssets
-    {
-        get => _lastShouldReuseAssets;
-        set => SetProperty(ref _lastShouldReuseAssets, value);
-    }
+    [ObservableProperty]
+    public partial bool LastShouldDownloadAssets { get; set; }
 
-    private string? _lastAssetsDirPath;
-    public string? LastAssetsDirPath
-    {
-        get => _lastAssetsDirPath;
-        set => SetProperty(ref _lastAssetsDirPath, value);
-    }
+    [ObservableProperty]
+    public partial bool LastShouldReuseAssets { get; set; }
+
+    [ObservableProperty]
+    public partial string? LastAssetsDirPath { get; set; }
 
     public override void Save()
     {

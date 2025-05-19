@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
+using DiscordChatExporter.Core.Utils;
 using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting;
@@ -18,8 +19,10 @@ internal class ExportContext(DiscordClient discord, ExportRequest request)
     private readonly Dictionary<Snowflake, Channel> _channelsById = new();
     private readonly Dictionary<Snowflake, Role> _rolesById = new();
 
-    private readonly ExportAssetDownloader _assetDownloader =
-        new(request.AssetsDirPath, request.ShouldReuseAssets);
+    private readonly ExportAssetDownloader _assetDownloader = new(
+        request.AssetsDirPath,
+        request.ShouldReuseAssets
+    );
 
     public DiscordClient Discord { get; } = discord;
 
@@ -115,7 +118,7 @@ internal class ExportContext(DiscordClient discord, ExportRequest request)
             var relativeFilePath = Path.GetRelativePath(Request.OutputDirPath, filePath);
 
             // Prefer the relative path so that the export package can be copied around without breaking references.
-            // However, if the assets directory lies outside of the export directory, use the absolute path instead.
+            // However, if the assets directory lies outside the export directory, use the absolute path instead.
             var shouldUseAbsoluteFilePath =
                 relativeFilePath.StartsWith(
                     ".." + Path.DirectorySeparatorChar,
@@ -130,14 +133,7 @@ internal class ExportContext(DiscordClient discord, ExportRequest request)
 
             // For HTML, the path needs to be properly formatted
             if (Request.Format is ExportFormat.HtmlDark or ExportFormat.HtmlLight)
-            {
-                // Format the path into a valid file URI
-                var href = new Uri(new Uri("file:///"), optimalFilePath).ToString();
-
-                // File schema does not support relative paths, so strip it if that's the case
-                // https://github.com/Tyrrrz/DiscordChatExporter/issues/1155
-                return shouldUseAbsoluteFilePath ? href : href[8..];
-            }
+                return Url.EncodeFilePath(optimalFilePath);
 
             return optimalFilePath;
         }

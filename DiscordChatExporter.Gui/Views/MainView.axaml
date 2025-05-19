@@ -7,7 +7,7 @@
     xmlns:viewModels="clr-namespace:DiscordChatExporter.Gui.ViewModels"
     Title="{Binding Title}"
     Width="625"
-    Height="625"
+    Height="665"
     MinWidth="600"
     MinHeight="400"
     x:DataType="viewModels:MainViewModel"
@@ -18,7 +18,7 @@
         x:Name="DialogHost"
         CloseOnClickAway="False"
         Loaded="DialogHost_OnLoaded">
-        <materialStyles:SnackbarHost HostName="Root">
+        <materialStyles:SnackbarHost HostName="Root" SnackbarMaxCounts="3">
             <ContentControl Content="{Binding Dashboard}" />
         </materialStyles:SnackbarHost>
     </dialogHostAvalonia:DialogHost>

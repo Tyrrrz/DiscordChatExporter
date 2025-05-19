@@ -22,56 +22,56 @@ public partial class ExportSetupViewModel(
 ) : DialogViewModelBase
 {
     [ObservableProperty]
-    private Guild? _guild;
+    public partial Guild? Guild { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsSingleChannel))]
-    private IReadOnlyList<Channel>? _channels;
+    public partial IReadOnlyList<Channel>? Channels { get; set; }
 
     [ObservableProperty]
-    private string? _outputPath;
+    public partial string? OutputPath { get; set; }
 
     [ObservableProperty]
-    private ExportFormat _selectedFormat;
+    public partial ExportFormat SelectedFormat { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsAfterDateSet))]
     [NotifyPropertyChangedFor(nameof(After))]
-    private DateTimeOffset? _afterDate;
+    public partial DateTimeOffset? AfterDate { get; set; }
 
     [ObservableProperty]
-    private TimeSpan? _afterTime;
+    public partial TimeSpan? AfterTime { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsBeforeDateSet))]
     [NotifyPropertyChangedFor(nameof(Before))]
-    private DateTimeOffset? _beforeDate;
+    public partial DateTimeOffset? BeforeDate { get; set; }
 
     [ObservableProperty]
-    private TimeSpan? _beforeTime;
+    public partial TimeSpan? BeforeTime { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(PartitionLimit))]
-    private string? _partitionLimitValue;
+    public partial string? PartitionLimitValue { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(MessageFilter))]
-    private string? _messageFilterValue;
+    public partial string? MessageFilterValue { get; set; }
 
     [ObservableProperty]
-    private bool _shouldFormatMarkdown;
+    public partial bool ShouldFormatMarkdown { get; set; }
 
     [ObservableProperty]
-    private bool _shouldDownloadAssets;
+    public partial bool ShouldDownloadAssets { get; set; }
 
     [ObservableProperty]
-    private bool _shouldReuseAssets;
+    public partial bool ShouldReuseAssets { get; set; }
 
     [ObservableProperty]
-    private string? _assetsDirPath;
+    public partial string? AssetsDirPath { get; set; }
 
     [ObservableProperty]
-    private bool _isAdvancedSectionDisplayed;
+    public partial bool IsAdvancedSectionDisplayed { get; set; }
 
     public bool IsSingleChannel => Channels?.Count == 1;
 

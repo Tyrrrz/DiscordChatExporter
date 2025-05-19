@@ -1,10 +1,11 @@
 # Obtaining Token and Channel IDs
 
-> **Warning**:
-> **Do not share your token!**
-> A token gives full access to an account. To reset a user token, change your account password. To reset a bot token, click on [Regenerate](#how-to-get-a-bot-token) in the bot settings.
+> [!WARNING]
+> **Do not share your token!** A token gives full access to an account.  
+> To reset a user token, change your account password.  
+> To reset a bot token, click on [Reset Token](#how-to-export-with-a-bot-token) in the bot settings.
 
-## How to get a User Token
+## How to get a user token
 
 **Caution:** [Automating user accounts violates Discord's terms of service](https://support.discord.com/hc/en-us/articles/115002192352-Automated-user-accounts-self-bots-) and may result in account termination. Use at your own risk.
 
@@ -254,17 +255,61 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 4. Press <kbd>Esc</kbd>. The settings page will close.
 5. To find your user token, continue [here](#in-chrome).
 
-## How to get a Bot Token
+## How to export with a bot token
+
+### Step 1 - Create an application
+
+You can create a new application or use an existing one. If you want to create a new one:
+
+1. Go to [Discord developer portal](https://discord.com/developers/applications)
+2. Click on **New Application** in the top right corner
+3. Enter a name for your application and click **Create**
+
+### Step 2 - Invite the bot to your server
+
+The bot needs to be invited to the server you'd like to export from.
+
+1. Go to [Discord developer portal](https://discord.com/developers/applications)
+2. Navigate to **General Information** on the left
+3. Copy the **Application ID**
+4. Open the following URL in your browser, replacing `YOUR_APP_ID` with the copied Client ID:
+
+<!-- Permission code 66560 corresponds to "View Channels" and "Read Message History" permissions.
+      User can uncheck these when adding the bot to their server. -->
+
+```
+https://discord.com/oauth2/authorize?scope=bot&permissions=66560&client_id=YOUR_APP_ID
+```
+
+### Step 3 - Ensure message content intent is enabled
+
+If this option is not enabled, the exported files will be empty.
 
 1. Go to [Discord developer portal](https://discord.com/developers/applications)
 2. Open your Application's settings
 3. Navigate to the **Bot** section on the left
-4. Under **Token** click **Copy**
+4. Scroll down to the **Privileged Gateway Intents** section
+5. Enable **Message Content Intent** by toggling the switch
+
+<img width="500" align="right" src="https://i.imgur.com/PPm2KKn.png" />
+
+### Step 4 - Copy the bot token
+
+If you don't have a bot token yet or if you've lost it, follow these steps to reset it:
+
+1. Go to [Discord developer portal](https://discord.com/developers/applications)
+2. Open your Application's settings
+3. Navigate to the **Bot** section on the left
+4. Under **Token** click **Reset Token**
+5. Click **Yes, do it!** and authenticate to confirm
+
+> **Tip**:
+> As the token is only shown once, make sure to store it in a safe place. If you lose the token, you will have to reset it again.
 
 > **Warning**:
-> Your bot needs to have **Message Content Intent** enabled for it to be able to read messages!
+> Resetting the token will invalidate the old one. Any integrations relying on the old token will cease to function until they are updated.
 
-![https://discord.com/developers/applications/](https://i.imgur.com/BdrrxlY.png)
+![https://discord.com/developers/applications/](https://i.imgur.com/soiB8Qc.png)
 
 ---
 

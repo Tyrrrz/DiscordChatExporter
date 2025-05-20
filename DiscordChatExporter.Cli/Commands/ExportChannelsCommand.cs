@@ -63,43 +63,6 @@ public class ExportChannelsCommand : ExportCommandBase
             }
         }
 
-        // Threads
-        if (ThreadInclusionMode != ThreadInclusionMode.None)
-        {
-            await console.Output.WriteLineAsync("Fetching threads...");
-
-            var fetchedThreadsCount = 0;
-            await console
-                .CreateStatusTicker()
-                .StartAsync(
-                    "...",
-                    async ctx =>
-                    {
-                        await foreach (
-                            var thread in Discord.GetChannelThreadsAsync(
-                                channels.ToArray(),
-                                ThreadInclusionMode == ThreadInclusionMode.All,
-                                Before,
-                                After,
-                                cancellationToken
-                            )
-                        )
-                        {
-                            channels.Add(thread);
-
-                            ctx.Status(Markup.Escape($"Fetched '{thread.GetHierarchicalName()}'."));
-
-                            fetchedThreadsCount++;
-                        }
-                    }
-                );
-
-            // Remove unneeded forums, as they cannot be crawled directly.
-            channels.RemoveAll(channel => channel.Kind == ChannelKind.GuildForum);
-
-            await console.Output.WriteLineAsync($"Fetched {fetchedThreadsCount} thread(s).");
-        }
-
         await ExportAsync(console, channels);
     }
 }

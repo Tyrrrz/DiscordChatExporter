@@ -305,19 +305,7 @@ public class DiscordClient(
         if (guildId == Guild.DirectMessages.Id)
             yield break;
 
-        var channels = (await GetGuildChannelsAsync(guildId, cancellationToken))
-            // Categories cannot have threads
-            .Where(c => !c.IsCategory)
-            // Voice channels cannot have threads
-            .Where(c => !c.IsVoice)
-            // Empty channels cannot have threads
-            .Where(c => !c.IsEmpty)
-            // If the 'before' boundary is specified, skip channels that don't have messages
-            // for that range, because thread-start event should always be accompanied by a message.
-            // Note that we don't perform a similar check for the 'after' boundary, because
-            // threads may have messages in range, even if the parent channel doesn't.
-            .Where(c => before is null || c.MayHaveMessagesBefore(before.Value))
-            .ToArray();
+        var channels = await GetGuildChannelsAsync(guildId, cancellationToken);
 
         foreach (
             var channel in await GetChannelThreadsAsync(
@@ -334,17 +322,31 @@ public class DiscordClient(
     }
 
     public async IAsyncEnumerable<Channel> GetChannelThreadsAsync(
-        Channel[] channels,
+        IEnumerable<Channel> channels,
         bool includeArchived = false,
         Snowflake? before = null,
         Snowflake? after = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default
     )
     {
+        Channel[] filteredChannels = channels
+            // Categories cannot have threads
+            .Where(c => !c.IsCategory)
+            // Voice channels cannot have threads
+            .Where(c => !c.IsVoice)
+            // Empty channels cannot have threads
+            .Where(c => !c.IsEmpty)
+            // If the 'before' boundary is specified, skip channels that don't have messages
+            // for that range, because thread-start event should always be accompanied by a message.
+            // Note that we don't perform a similar check for the 'after' boundary, because
+            // threads may have messages in range, even if the parent channel doesn't.
+            .Where(c => before is null || c.MayHaveMessagesBefore(before.Value))
+            .ToArray();
+
         // User accounts can only fetch threads using the search endpoint
         if (await ResolveTokenKindAsync(cancellationToken) == TokenKind.User)
         {
-            foreach (var channel in channels)
+            foreach (var channel in filteredChannels)
             {
                 // Either include both active and archived threads, or only active threads
                 foreach (
@@ -401,13 +403,13 @@ public class DiscordClient(
         else
         {
             var guilds = new HashSet<Snowflake>();
-            foreach (var channel in channels)
+            foreach (var channel in filteredChannels)
                 guilds.Add(channel.GuildId);
 
             // Active threads
             foreach (var guildId in guilds)
             {
-                var parentsById = channels.ToDictionary(c => c.Id);
+                var parentsById = filteredChannels.ToDictionary(c => c.Id);
 
                 var response = await GetJsonResponseAsync(
                     $"guilds/{guildId}/threads/active",
@@ -422,7 +424,7 @@ public class DiscordClient(
                         ?.Pipe(Snowflake.Parse)
                         .Pipe(parentsById.GetValueOrDefault);
 
-                    if (channels.Contains(parent))
+                    if (filteredChannels.Contains(parent))
                         yield return Channel.Parse(threadJson, parent);
                 }
             }
@@ -430,7 +432,7 @@ public class DiscordClient(
             // Archived threads
             if (includeArchived)
             {
-                foreach (var channel in channels)
+                foreach (var channel in filteredChannels)
                 {
                     foreach (var archiveType in new[] { "public", "private" })
                     {

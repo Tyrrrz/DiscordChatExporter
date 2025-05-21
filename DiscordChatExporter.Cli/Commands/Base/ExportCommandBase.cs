@@ -151,8 +151,9 @@ public abstract class ExportCommandBase : DiscordCommandBase
     {
         var cancellationToken = console.RegisterCancellationHandler();
 
-        // Threads
         var unwrappedChannels = new List<Channel>();
+        unwrappedChannels.AddRange(channels);
+        // Threads
         if (ThreadInclusionMode != ThreadInclusionMode.None)
         {
             await console.Output.WriteLineAsync("Fetching threads...");

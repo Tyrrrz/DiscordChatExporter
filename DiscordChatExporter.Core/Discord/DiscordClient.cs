@@ -305,7 +305,31 @@ public class DiscordClient(
         if (guildId == Guild.DirectMessages.Id)
             yield break;
 
-        var channels = (await GetGuildChannelsAsync(guildId, cancellationToken))
+        var channels = await GetGuildChannelsAsync(guildId, cancellationToken);
+
+        foreach (
+            var channel in await GetChannelThreadsAsync(
+                channels,
+                includeArchived,
+                before,
+                after,
+                cancellationToken
+            )
+        )
+        {
+            yield return channel;
+        }
+    }
+
+    public async IAsyncEnumerable<Channel> GetChannelThreadsAsync(
+        IEnumerable<Channel> channels,
+        bool includeArchived = false,
+        Snowflake? before = null,
+        Snowflake? after = null,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default
+    )
+    {
+        Channel[] filteredChannels = channels
             // Categories cannot have threads
             .Where(c => !c.IsCategory)
             // Voice channels cannot have threads
@@ -322,7 +346,7 @@ public class DiscordClient(
         // User accounts can only fetch threads using the search endpoint
         if (await ResolveTokenKindAsync(cancellationToken) == TokenKind.User)
         {
-            foreach (var channel in channels)
+            foreach (var channel in filteredChannels)
             {
                 // Either include both active and archived threads, or only active threads
                 foreach (
@@ -378,9 +402,14 @@ public class DiscordClient(
         // Bot accounts can only fetch threads using the threads endpoint
         else
         {
+            var guilds = new HashSet<Snowflake>();
+            foreach (var channel in filteredChannels)
+                guilds.Add(channel.GuildId);
+
             // Active threads
+            foreach (var guildId in guilds)
             {
-                var parentsById = channels.ToDictionary(c => c.Id);
+                var parentsById = filteredChannels.ToDictionary(c => c.Id);
 
                 var response = await GetJsonResponseAsync(
                     $"guilds/{guildId}/threads/active",
@@ -395,14 +424,15 @@ public class DiscordClient(
                         ?.Pipe(Snowflake.Parse)
                         .Pipe(parentsById.GetValueOrDefault);
 
-                    yield return Channel.Parse(threadJson, parent);
+                    if (filteredChannels.Contains(parent))
+                        yield return Channel.Parse(threadJson, parent);
                 }
             }
 
             // Archived threads
             if (includeArchived)
             {
-                foreach (var channel in channels)
+                foreach (var channel in filteredChannels)
                 {
                     foreach (var archiveType in new[] { "public", "private" })
                     {

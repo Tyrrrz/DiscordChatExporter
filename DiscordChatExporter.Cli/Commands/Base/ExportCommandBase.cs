@@ -8,6 +8,7 @@ using CliFx.Attributes;
 using CliFx.Exceptions;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands.Converters;
+using DiscordChatExporter.Cli.Commands.Shared;
 using DiscordChatExporter.Cli.Utils.Extensions;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
@@ -63,6 +64,13 @@ public abstract class ExportCommandBase : DiscordCommandBase
             + "number of messages (e.g. '100') or file size (e.g. '10mb')."
     )]
     public PartitionLimit PartitionLimit { get; init; } = PartitionLimit.Null;
+
+    [CommandOption(
+        "include-threads",
+        Description = "Which types of threads should be included.",
+        Converter = typeof(ThreadInclusionModeBindingConverter)
+    )]
+    public ThreadInclusionMode ThreadInclusionMode { get; init; } = ThreadInclusionMode.None;
 
     [CommandOption(
         "filter",
@@ -141,6 +149,47 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
     protected async ValueTask ExportAsync(IConsole console, IReadOnlyList<Channel> channels)
     {
+        var cancellationToken = console.RegisterCancellationHandler();
+
+        var unwrappedChannels = new List<Channel>();
+        unwrappedChannels.AddRange(channels);
+        // Threads
+        if (ThreadInclusionMode != ThreadInclusionMode.None)
+        {
+            await console.Output.WriteLineAsync("Fetching threads...");
+
+            var fetchedThreadsCount = 0;
+            await console
+                .CreateStatusTicker()
+                .StartAsync(
+                    "...",
+                    async ctx =>
+                    {
+                        await foreach (
+                            var thread in Discord.GetChannelThreadsAsync(
+                                unwrappedChannels,
+                                ThreadInclusionMode == ThreadInclusionMode.All,
+                                Before,
+                                After,
+                                cancellationToken
+                            )
+                        )
+                        {
+                            unwrappedChannels.Add(thread);
+
+                            ctx.Status(Markup.Escape($"Fetched '{thread.GetHierarchicalName()}'."));
+
+                            fetchedThreadsCount++;
+                        }
+                    }
+                );
+
+            // Remove unneeded forums, as they cannot be crawled directly.
+            unwrappedChannels.RemoveAll(channel => channel.Kind == ChannelKind.GuildForum);
+
+            await console.Output.WriteLineAsync($"Fetched {fetchedThreadsCount} thread(s).");
+        }
+
         // Asset reuse can only be enabled if the download assets option is set
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/425
         if (ShouldReuseAssets && !ShouldDownloadAssets)
@@ -160,7 +209,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/917
         var isValidOutputPath =
             // Anything is valid when exporting a single channel
-            channels.Count <= 1
+            unwrappedChannels.Count <= 1
             // When using template tokens, assume the user knows what they're doing
             || OutputPath.Contains('%')
             // Otherwise, require an existing directory or an unambiguous directory path
@@ -177,11 +226,10 @@ public abstract class ExportCommandBase : DiscordCommandBase
         }
 
         // Export
-        var cancellationToken = console.RegisterCancellationHandler();
         var errorsByChannel = new ConcurrentDictionary<Channel, string>();
         var warningsByChannel = new ConcurrentDictionary<Channel, string>();
 
-        await console.Output.WriteLineAsync($"Exporting {channels.Count} channel(s)...");
+        await console.Output.WriteLineAsync($"Exporting {unwrappedChannels.Count} channel(s)...");
         await console
             .CreateProgressTicker()
             .HideCompleted(
@@ -193,7 +241,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
             .StartAsync(async ctx =>
             {
                 await Parallel.ForEachAsync(
-                    channels,
+                    unwrappedChannels,
                     new ParallelOptions
                     {
                         MaxDegreeOfParallelism = Math.Max(1, ParallelLimit),
@@ -253,7 +301,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
         using (console.WithForegroundColor(ConsoleColor.White))
         {
             await console.Output.WriteLineAsync(
-                $"Successfully exported {channels.Count - errorsByChannel.Count} channel(s)."
+                $"Successfully exported {unwrappedChannels.Count - errorsByChannel.Count} channel(s)."
             );
         }
 
@@ -301,7 +349,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
         // Fail the command only if ALL channels failed to export.
         // If only some channels failed to export, it's okay.
-        if (errorsByChannel.Count >= channels.Count)
+        if (errorsByChannel.Count >= unwrappedChannels.Count)
             throw new CommandException("Export failed.");
     }
 

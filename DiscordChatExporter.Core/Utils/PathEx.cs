@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Frozen;
 using System.IO;
 using System.Text;
 
@@ -7,7 +7,7 @@ namespace DiscordChatExporter.Core.Utils;
 
 public static class PathEx
 {
-    private static readonly HashSet<char> InvalidFileNameChars =
+    private static readonly FrozenSet<char> InvalidFileNameChars =
     [
         .. Path.GetInvalidFileNameChars(),
     ];

@@ -147,9 +147,22 @@ public abstract class ExportCommandBase : DiscordCommandBase
     {
         var cancellationToken = console.RegisterCancellationHandler();
 
-        var unwrappedChannels = new List<Channel>();
-        unwrappedChannels.AddRange(channels);
-        // Threads
+        // Asset reuse can only be enabled if the download assets option is set
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/425
+        if (ShouldReuseAssets && !ShouldDownloadAssets)
+        {
+            throw new CommandException("Option --reuse-media cannot be used without --media.");
+        }
+
+        // Assets directory can only be specified if the download assets option is set
+        if (!string.IsNullOrWhiteSpace(AssetsDirPath) && !ShouldDownloadAssets)
+        {
+            throw new CommandException("Option --media-dir cannot be used without --media.");
+        }
+
+        var unwrappedChannels = new List<Channel>(channels);
+
+        // Unwrap threads
         if (ThreadInclusionMode != ThreadInclusionMode.None)
         {
             await console.Output.WriteLineAsync("Fetching threads...");
@@ -163,7 +176,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
                     {
                         await foreach (
                             var thread in Discord.GetChannelThreadsAsync(
-                                unwrappedChannels,
+                                channels,
                                 ThreadInclusionMode == ThreadInclusionMode.All,
                                 Before,
                                 After,
@@ -180,23 +193,11 @@ public abstract class ExportCommandBase : DiscordCommandBase
                     }
                 );
 
-            // Remove unneeded forums, as they cannot be crawled directly.
+            // Remove forums, as they cannot be exported directly and their constituent threads
+            // have already been fetched.
             unwrappedChannels.RemoveAll(channel => channel.Kind == ChannelKind.GuildForum);
 
             await console.Output.WriteLineAsync($"Fetched {fetchedThreadsCount} thread(s).");
-        }
-
-        // Asset reuse can only be enabled if the download assets option is set
-        // https://github.com/Tyrrrz/DiscordChatExporter/issues/425
-        if (ShouldReuseAssets && !ShouldDownloadAssets)
-        {
-            throw new CommandException("Option --reuse-media cannot be used without --media.");
-        }
-
-        // Assets directory can only be specified if the download assets option is set
-        if (!string.IsNullOrWhiteSpace(AssetsDirPath) && !ShouldDownloadAssets)
-        {
-            throw new CommandException("Option --media-dir cannot be used without --media.");
         }
 
         // Make sure the user does not try to export multiple channels into one file.

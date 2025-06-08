@@ -389,7 +389,7 @@ public class DiscordClient(
     }
 
     public async IAsyncEnumerable<Channel> GetChannelThreadsAsync(
-        IEnumerable<Channel> channels,
+        IReadOnlyList<Channel> channels,
         bool includeArchived = false,
         Snowflake? before = null,
         Snowflake? after = null,

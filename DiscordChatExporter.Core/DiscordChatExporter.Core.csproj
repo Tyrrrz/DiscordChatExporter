@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <ItemGroup>
     <PackageReference Include="AsyncKeyedLock" Version="7.1.6" />
     <PackageReference Include="CSharpier.MsBuild" Version="1.0.2" PrivateAssets="all" />
@@ -11,5 +10,4 @@
     <PackageReference Include="WebMarkupMin.Core" Version="2.19.0" />
     <PackageReference Include="YoutubeExplode" Version="6.5.4" />
   </ItemGroup>
-
 </Project>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using CliFx;
 using CliFx.Attributes;
@@ -34,9 +35,9 @@ public abstract class DiscordCommandBase : ICommand
     )]
     public bool ShouldRespectRateLimits { get; init; } = true;
 
-    private DiscordClient? _discordClient;
+    [field: AllowNull, MaybeNull]
     protected DiscordClient Discord =>
-        _discordClient ??= new DiscordClient(
+        field ??= new DiscordClient(
             Token,
             ShouldRespectRateLimits ? RateLimitPreference.RespectAll : RateLimitPreference.IgnoreAll
         );

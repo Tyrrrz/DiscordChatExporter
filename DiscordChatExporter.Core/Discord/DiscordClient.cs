@@ -321,6 +321,73 @@ public class DiscordClient(
         }
     }
 
+    public async IAsyncEnumerable<Role> GetGuildRolesAsync(
+        Snowflake guildId,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default
+    )
+    {
+        if (guildId == Guild.DirectMessages.Id)
+            yield break;
+
+        var response = await GetJsonResponseAsync($"guilds/{guildId}/roles", cancellationToken);
+        foreach (var roleJson in response.EnumerateArray())
+            yield return Role.Parse(roleJson);
+    }
+
+    public async ValueTask<Member?> TryGetGuildMemberAsync(
+        Snowflake guildId,
+        Snowflake memberId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        if (guildId == Guild.DirectMessages.Id)
+            return null;
+
+        var response = await TryGetJsonResponseAsync(
+            $"guilds/{guildId}/members/{memberId}",
+            cancellationToken
+        );
+        return response?.Pipe(j => Member.Parse(j, guildId));
+    }
+
+    public async ValueTask<Invite?> TryGetInviteAsync(
+        string code,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var response = await TryGetJsonResponseAsync($"invites/{code}", cancellationToken);
+        return response?.Pipe(Invite.Parse);
+    }
+
+    public async ValueTask<Channel> GetChannelAsync(
+        Snowflake channelId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var response = await GetJsonResponseAsync($"channels/{channelId}", cancellationToken);
+
+        var parentId = response
+            .GetPropertyOrNull("parent_id")
+            ?.GetNonWhiteSpaceStringOrNull()
+            ?.Pipe(Snowflake.Parse);
+
+        try
+        {
+            var parent = parentId is not null
+                ? await GetChannelAsync(parentId.Value, cancellationToken)
+                : null;
+
+            return Channel.Parse(response, parent);
+        }
+        // It's possible for the parent channel to be inaccessible, despite the
+        // child channel being accessible.
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/1108
+        catch (DiscordChatExporterException)
+        {
+            return Channel.Parse(response);
+        }
+    }
+
     public async IAsyncEnumerable<Channel> GetChannelThreadsAsync(
         IEnumerable<Channel> channels,
         bool includeArchived = false,
@@ -329,7 +396,7 @@ public class DiscordClient(
         [EnumeratorCancellation] CancellationToken cancellationToken = default
     )
     {
-        Channel[] filteredChannels = channels
+        var filteredChannels = channels
             // Categories cannot have threads
             .Where(c => !c.IsCategory)
             // Voice channels cannot have threads
@@ -475,73 +542,6 @@ public class DiscordClient(
                     }
                 }
             }
-        }
-    }
-
-    public async IAsyncEnumerable<Role> GetGuildRolesAsync(
-        Snowflake guildId,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default
-    )
-    {
-        if (guildId == Guild.DirectMessages.Id)
-            yield break;
-
-        var response = await GetJsonResponseAsync($"guilds/{guildId}/roles", cancellationToken);
-        foreach (var roleJson in response.EnumerateArray())
-            yield return Role.Parse(roleJson);
-    }
-
-    public async ValueTask<Member?> TryGetGuildMemberAsync(
-        Snowflake guildId,
-        Snowflake memberId,
-        CancellationToken cancellationToken = default
-    )
-    {
-        if (guildId == Guild.DirectMessages.Id)
-            return null;
-
-        var response = await TryGetJsonResponseAsync(
-            $"guilds/{guildId}/members/{memberId}",
-            cancellationToken
-        );
-        return response?.Pipe(j => Member.Parse(j, guildId));
-    }
-
-    public async ValueTask<Invite?> TryGetInviteAsync(
-        string code,
-        CancellationToken cancellationToken = default
-    )
-    {
-        var response = await TryGetJsonResponseAsync($"invites/{code}", cancellationToken);
-        return response?.Pipe(Invite.Parse);
-    }
-
-    public async ValueTask<Channel> GetChannelAsync(
-        Snowflake channelId,
-        CancellationToken cancellationToken = default
-    )
-    {
-        var response = await GetJsonResponseAsync($"channels/{channelId}", cancellationToken);
-
-        var parentId = response
-            .GetPropertyOrNull("parent_id")
-            ?.GetNonWhiteSpaceStringOrNull()
-            ?.Pipe(Snowflake.Parse);
-
-        try
-        {
-            var parent = parentId is not null
-                ? await GetChannelAsync(parentId.Value, cancellationToken)
-                : null;
-
-            return Channel.Parse(response, parent);
-        }
-        // It's possible for the parent channel to be inaccessible, despite the
-        // child channel being accessible.
-        // https://github.com/Tyrrrz/DiscordChatExporter/issues/1108
-        catch (DiscordChatExporterException)
-        {
-            return Channel.Parse(response);
         }
     }
 

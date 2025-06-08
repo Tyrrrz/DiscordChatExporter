@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 using CliFx.Attributes;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands.Base;
-using DiscordChatExporter.Cli.Commands.Converters;
-using DiscordChatExporter.Cli.Commands.Shared;
 using DiscordChatExporter.Cli.Utils.Extensions;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Discord.Dump;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -56,34 +57,46 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
 
 internal partial class ExportAssetDownloader
 {
-    private static string GetUrlHash(string url)
+    private const String CHARSET = "0123456789bcdfghjklmnpqrstvwxyz_";
+
+    private static String Base32(byte[] data)
     {
-        // Remove signature parameters from Discord CDN URLs to normalize them
-        static string NormalizeUrl(string url)
+        var newString = new StringBuilder();
+        uint accum = 0;
+        uint bits = 0;
+
+        foreach (byte b in data)
         {
-            var uri = new Uri(url);
-            if (!string.Equals(uri.Host, "cdn.discordapp.com", StringComparison.OrdinalIgnoreCase))
-                return url;
+            accum <<= 8;
+            accum |= b;
+            bits += 8;
 
-            var query = HttpUtility.ParseQueryString(uri.Query);
-            query.Remove("ex");
-            query.Remove("is");
-            query.Remove("hm");
-
-            return uri.GetLeftPart(UriPartial.Path) + query;
+            while (bits > 5)
+            {
+                char ch = CHARSET[(int)(accum & 0x1F)];
+                accum >>= 5;
+                bits -= 5;
+                newString.Append(ch);
+            }
+        }
+        if (bits != 0)
+        {
+            char ch = CHARSET[(int)(accum & 0x1F)];
+            newString.Append(ch);
         }
 
-        return SHA256
-            .HashData(Encoding.UTF8.GetBytes(NormalizeUrl(url)))
-            .ToHex()
-            // 5 chars ought to be enough for anybody
-            .Truncate(5);
+        return newString.ToString();
     }
 
-    private static string GetFileNameFromUrl(string url)
+    private static string GetUrlHash(string url)
     {
-        var urlHash = GetUrlHash(url);
+        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(url));
+        // 12 characters of base32 contains about as much entropy as a Discord snowflake
+        return Base32(hash).Truncate(12);
+    }
 
+    private static string AddHashToUrl(string url, string urlHash)
+    {
         // Try to extract the file name from URL
         var fileName = Regex.Match(url, @".+/([^?]*)").Groups[1].Value;
 
@@ -106,5 +119,57 @@ internal partial class ExportAssetDownloader
         return PathEx.EscapeFileName(
             fileNameWithoutExtension.Truncate(42) + '-' + urlHash + fileExtension
         );
+    }
+
+    private static string GetFileNameFromUrl(string url)
+    {
+        var uri = new Uri(url);
+
+        if (string.Equals(uri.Host, "cdn.discordapp.com"))
+        {
+            string[] split = uri.AbsolutePath.Split("/");
+
+            // Attachments
+            if (uri.AbsolutePath.StartsWith("/attachments/") && split.Length == 5)
+            {
+                // use the attachment snowflake for attachments
+                if (ulong.TryParse(split[3], out var snowflake))
+                    return AddHashToUrl(url, snowflake.ToString());
+            }
+
+            // Emojis
+            if (
+                uri.AbsolutePath.StartsWith("/emojis/")
+                && split.Length == 3
+                && split[2].Contains(".")
+            )
+            {
+                var nameSplit = split[2].Split(".", 2);
+                if (ulong.TryParse(nameSplit[0], out var snowflake))
+                    return $"emoji-discord-{snowflake}.{nameSplit[1]}";
+            }
+
+            // Avatars
+            if (uri.AbsolutePath.StartsWith("/avatars/") && split.Length == 4)
+            {
+                return $"avatar-{split[2]}-{GetUrlHash(url)}.{split[3].Split(".").Last()}";
+            }
+        }
+
+        if (string.Equals(uri.Host, "cdn.jsdelivr.net"))
+        {
+            string[] split = uri.AbsolutePath.Split("/");
+
+            // twemoji
+            if (
+                uri.AbsolutePath.StartsWith("/gh/twitter/twemoji@latest/assets/svg/")
+                && split.Length == 7
+            )
+            {
+                return $"emoji-twemoji-{split[6]}";
+            }
+        }
+
+        return AddHashToUrl(url, GetUrlHash(url));
     }
 }

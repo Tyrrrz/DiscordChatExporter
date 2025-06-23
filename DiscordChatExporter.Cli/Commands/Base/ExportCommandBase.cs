@@ -131,15 +131,6 @@ public abstract class ExportCommandBase : DiscordCommandBase
     [CommandOption("utc", Description = "Normalize all timestamps to UTC+0.")]
     public bool IsUtcNormalizationEnabled { get; init; } = false;
 
-    [CommandOption(
-        "fuck-russia",
-        EnvironmentVariable = "FUCK_RUSSIA",
-        Description = "Don't print the Support Ukraine message to the console.",
-        // Use a converter to accept '1' as 'true' to reuse the existing environment variable
-        Converter = typeof(TruthyBooleanBindingConverter)
-    )]
-    public bool IsUkraineSupportMessageDisabled { get; init; } = false;
-
     [field: AllowNull, MaybeNull]
     protected ChannelExporter Exporter => field ??= new ChannelExporter(Discord);
 
@@ -352,39 +343,6 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
     public override async ValueTask ExecuteAsync(IConsole console)
     {
-        // Support Ukraine callout
-        if (!IsUkraineSupportMessageDisabled)
-        {
-            console.Output.WriteLine(
-                "┌────────────────────────────────────────────────────────────────────┐"
-            );
-            console.Output.WriteLine(
-                "│   Thank you for supporting Ukraine <3                              │"
-            );
-            console.Output.WriteLine(
-                "│                                                                    │"
-            );
-            console.Output.WriteLine(
-                "│   As Russia wages a genocidal war against my country,              │"
-            );
-            console.Output.WriteLine(
-                "│   I'm grateful to everyone who continues to                        │"
-            );
-            console.Output.WriteLine(
-                "│   stand with Ukraine in our fight for freedom.                     │"
-            );
-            console.Output.WriteLine(
-                "│                                                                    │"
-            );
-            console.Output.WriteLine(
-                "│   Learn more: https://tyrrrz.me/ukraine                            │"
-            );
-            console.Output.WriteLine(
-                "└────────────────────────────────────────────────────────────────────┘"
-            );
-            console.Output.WriteLine("");
-        }
-
         await base.ExecuteAsync(console);
     }
 }

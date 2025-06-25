@@ -213,13 +213,10 @@ jobs:
       - name: Set permissions
         if: ${{ !startsWith(matrix.rid, 'win-') }}
         run: |
-          if [ -f ${{ matrix.app }}/${{ matrix.asset }} ]; then
-              chmod +x ${{ matrix.app }}/${{ matrix.asset }}
-          fi
+          [ -f ${{ matrix.app }}/${{ matrix.asset }} ] && chmod +x ${{ matrix.app }}/${{ matrix.asset }}
           
-          if [ -f ${{ matrix.app }}/${{ matrix.asset }}.app/Contents/MacOS/${{ matrix.asset }} ]; then
-              chmod +x ${{ matrix.app }}/${{ matrix.asset }}.app/Contents/MacOS/${{ matrix.asset }}
-          fi
+          # macOS bundle
+          [ -f ${{ matrix.app }}/${{ matrix.asset }}.app/Contents/MacOS/${{ matrix.asset }} ] && chmod +x ${{ matrix.app }}/${{ matrix.asset }}.app/Contents/MacOS/${{ matrix.asset }}
 
       - name: Create package
         # Change into the artifacts directory to avoid including the directory itself in the zip archive

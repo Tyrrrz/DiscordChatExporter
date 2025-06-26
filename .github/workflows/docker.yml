@@ -36,7 +36,7 @@ jobs:
           --build-arg VERSION=${{ github.ref_type == 'tag' && github.ref_name || format('999.9.9-ci-{0}', github.sha) }}
           --output type=tar,dest=DiscordChatExporter.Cli.Docker.tar
 
-      - name: Upload artifacts
+      - name: Upload image
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: DiscordChatExporter.Cli.Docker

@@ -27,7 +27,7 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 3. Type
 
     ```js
-    (webpackChunkdiscord_app.push([[''],{},e=>{m=[];for(let c in e.c)m.push(e.c[c])}]),m).find(m=>m?.exports?.default?.getToken!==void 0).exports.default.getToken()
+    let m;webpackChunkdiscord_app.push([[Math.random()],{},e=>{for(let i in e.c){let x=e.c[i];if(x?.exports?.$8&&x.exports.LP&&x.exports.gK){m=x;break}}}]);m&&console.log("Token:",m.exports.LP());
     ```
 
     into the console and press <kbd>Enter</kbd>. The console will display your user token.
@@ -120,7 +120,7 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 1. Type
 
     ```js
-    (webpackChunkdiscord_app.push([[''],{},e=>{m=[];for(let c in e.c)m.push(e.c[c])}]),m).find(m=>m?.exports?.default?.getToken!==void 0).exports.default.getToken()
+    let m;webpackChunkdiscord_app.push([[Math.random()],{},e=>{for(let i in e.c){let x=e.c[i];if(x?.exports?.$8&&x.exports.LP&&x.exports.gK){m=x;break}}}]);m&&console.log("Token:",m.exports.LP());
     ```
 
     into the console and press <kbd>Enter</kbd>. The console will display your user token.

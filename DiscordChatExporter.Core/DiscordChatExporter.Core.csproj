@@ -4,7 +4,7 @@
     <PackageReference Include="CSharpier.MsBuild" Version="1.0.3" PrivateAssets="all" />
     <PackageReference Include="Gress" Version="2.1.1" />
     <PackageReference Include="JsonExtensions" Version="1.2.0" />
-    <PackageReference Include="Polly" Version="8.6.1" />
+    <PackageReference Include="Polly" Version="8.6.2" />
     <PackageReference Include="RazorBlade" Version="0.10.0" />
     <PackageReference Include="Superpower" Version="3.1.0" />
     <PackageReference Include="WebMarkupMin.Core" Version="2.19.0" />

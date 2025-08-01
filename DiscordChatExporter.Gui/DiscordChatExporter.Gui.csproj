@@ -27,7 +27,7 @@
     <PackageReference Include="Gress" Version="2.1.1" />
     <PackageReference Include="Material.Avalonia" Version="3.9.2" />
     <PackageReference Include="Material.Icons.Avalonia" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
     <PackageReference Include="Onova" Version="2.6.13" />
   </ItemGroup>
   <ItemGroup>

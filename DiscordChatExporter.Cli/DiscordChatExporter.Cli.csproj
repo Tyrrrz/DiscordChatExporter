@@ -10,10 +10,10 @@
     <PackageReference Include="CSharpier.MsBuild" Version="1.1.2" PrivateAssets="all" />
     <PackageReference Include="Deorcify" Version="1.1.0" PrivateAssets="all" />
     <PackageReference Include="Gress" Version="2.1.1" />
-    <PackageReference Include="Spectre.Console" Version="0.50.0" />
+    <PackageReference Include="Spectre.Console" Version="0.51.1" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="9.0.8" />
+    <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="9.0.9" />
     <ProjectReference Include="..\DiscordChatExporter.Core\DiscordChatExporter.Core.csproj" />
   </ItemGroup>
 </Project>

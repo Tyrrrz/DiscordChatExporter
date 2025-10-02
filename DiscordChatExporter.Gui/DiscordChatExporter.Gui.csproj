@@ -11,12 +11,12 @@
     <AvaloniaResource Include="..\favicon.ico" Link="favicon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AsyncImageLoader.Avalonia" Version="3.3.0" />
-    <PackageReference Include="Avalonia" Version="11.3.4" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.3.4" />
+    <PackageReference Include="AsyncImageLoader.Avalonia" Version="3.4.3" />
+    <PackageReference Include="Avalonia" Version="11.3.6" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.6" />
     <PackageReference
       Include="Avalonia.Diagnostics"
-      Version="11.3.4"
+      Version="11.3.6"
       Condition="'$(Configuration)' == 'Debug'"
     />
     <PackageReference Include="Cogwheel" Version="2.1.0" />
@@ -27,11 +27,11 @@
     <PackageReference Include="Gress" Version="2.1.1" />
     <PackageReference Include="Material.Avalonia" Version="3.9.2" />
     <PackageReference Include="Material.Icons.Avalonia" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
     <PackageReference Include="Onova" Version="2.6.13" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="9.0.8" />
+    <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="9.0.9" />
     <ProjectReference Include="..\DiscordChatExporter.Core\DiscordChatExporter.Core.csproj" />
   </ItemGroup>
   <Target Name="PublishMacOSBundle" AfterTargets="Publish" Condition="$(PublishMacOSBundle)">

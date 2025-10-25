@@ -6,6 +6,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Discord.Data.Embeds;
 using DiscordChatExporter.Core.Markdown.Parsing;
@@ -578,5 +579,54 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
     {
         await _writer.DisposeAsync();
         await base.DisposeAsync();
+    }
+
+    /// <summary>
+    /// Retrieves and returns the Snowflake of the last written message in the Discord channel that has been
+    /// exported with the JsonMessageWriter to the given file path.
+    /// This Snowflake contains the message timestamp with millisecond-level precision and the message index.
+    /// </summary>
+    /// <param name="filePath">
+    /// The path of the Discord channel JSON export whose last message's timestamp should be returned.
+    /// </param>
+    /// <returns>
+    /// The Snowflake of the last written message in the Discord channel JSON export under the given path.
+    /// Null, if the Discord channel JSON export doesn't include any message.
+    /// </returns>
+    /// <exception cref="FormatException">
+    /// Thrown if the file at the given path isn't a correctly formatted Discord channel JSON export.
+    /// </exception>
+    public static Snowflake? GetLastMessageSnowflake(string filePath)
+    {
+        try
+        {
+            var fileContent = File.ReadAllText(filePath);
+            using var fileJson = JsonDocument.Parse(fileContent);
+            var messagesJson = fileJson
+                .RootElement.GetProperty("messages")
+                .EnumerateArray()
+                .ToArray();
+
+            if (messagesJson.Length == 0)
+                return null;
+
+            var lastMessage = messagesJson[^1];
+            var snowflakeInt = ulong.Parse(lastMessage.GetProperty("id").GetString()!);
+            var snowflake = new Snowflake(snowflakeInt);
+            return snowflake;
+        }
+        catch (Exception ex)
+            when (ex
+                    is JsonException
+                        or KeyNotFoundException
+                        or InvalidOperationException
+                        or FormatException
+                        or NullReferenceException
+            )
+        {
+            throw new FormatException(
+                "The JSON file is not correctly formatted; the last message timestamp could not be retrieved."
+            );
+        }
     }
 }

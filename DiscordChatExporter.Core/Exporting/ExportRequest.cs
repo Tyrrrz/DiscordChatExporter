@@ -30,6 +30,8 @@ public partial class ExportRequest
 
     public Snowflake? Before { get; }
 
+    public Snowflake? LastPriorMessage { get; set; }
+
     public PartitionLimit PartitionLimit { get; }
 
     public MessageFilter MessageFilter { get; }

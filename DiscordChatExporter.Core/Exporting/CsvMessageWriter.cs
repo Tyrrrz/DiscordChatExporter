@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Utils.Extensions;
 
@@ -12,6 +15,8 @@ namespace DiscordChatExporter.Core.Exporting;
 internal partial class CsvMessageWriter(Stream stream, ExportContext context)
     : MessageWriter(stream, context)
 {
+    private const int HeaderSize = 1;
+
     private readonly TextWriter _writer = new StreamWriter(stream);
 
     private async ValueTask<string> FormatMarkdownAsync(
@@ -116,6 +121,51 @@ internal partial class CsvMessageWriter(Stream stream, ExportContext context)
     {
         await _writer.DisposeAsync();
         await base.DisposeAsync();
+    }
+
+    /// <summary>
+    /// Retrieves and returns the timestamp of the last written message in the Discord channel that has been exported
+    /// with the CsvMessageWriter to the given file path as a Snowflake.
+    /// This timestamp has millisecond-level precision.
+    /// </summary>
+    /// <param name="filePath">
+    /// The path of the Discord channel CSV export whose last message's timestamp should be returned.
+    /// </param>
+    /// <returns>
+    /// The timestamp of the last written message in the Discord channel CSV export under the given path as a Snowflake.
+    /// Null, if the Discord channel CSV export doesn't include any message.
+    /// </returns>
+    /// <exception cref="FormatException">
+    /// Thrown if the file at the given path isn't a correctly formatted Discord channel CSV export.
+    /// </exception>
+    public static Snowflake? GetLastMessageDate(string filePath)
+    {
+        try
+        {
+            var fileLines = File.ReadAllLines(filePath)
+                .SkipWhile(string.IsNullOrWhiteSpace)
+                .ToArray();
+            if (fileLines.Length <= HeaderSize)
+                return null;
+
+            const string columnPattern = "(?:[^\"]?(?:\"\")?)*";
+            var messageDatePattern = string.Format(
+                "^\"{0}\",\"{0}\",\"({0})\",\"{0}\",\"{0}\",\"{0}\"$",
+                columnPattern
+            );
+            var messageDateRegex = new Regex(messageDatePattern);
+
+            var timestampMatch = messageDateRegex.Match(fileLines[^1]);
+            var timestampString = timestampMatch.Groups[1].Value;
+            var timestamp = DateTimeOffset.Parse(timestampString);
+            return Snowflake.FromDate(timestamp, true);
+        }
+        catch (Exception ex) when (ex is IndexOutOfRangeException or FormatException)
+        {
+            throw new FormatException(
+                "The CSV file is not correctly formatted; the last message timestamp could not be retrieved."
+            );
+        }
     }
 }
 

@@ -128,8 +128,8 @@ public partial class ExportSetupViewModel(
                 Guild!,
                 Channels!.Single(),
                 SelectedFormat,
-                After?.Pipe(Snowflake.FromDate),
-                Before?.Pipe(Snowflake.FromDate)
+                After?.Pipe(timestamp => Snowflake.FromDate(timestamp, true)),
+                Before?.Pipe(timestamp => Snowflake.FromDate(timestamp))
             );
 
             var extension = SelectedFormat.GetFileExtension();

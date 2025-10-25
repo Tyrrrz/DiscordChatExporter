@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord;
@@ -27,13 +28,59 @@ public class ChannelExporter(DiscordClient discord)
             );
         }
 
+        var currentPartitionIndex = 0;
+        // TODO: Maybe add a way to search for old files after a username change
+        if (File.Exists(request.OutputFilePath))
+        {
+            // TODO: Add a way for the user to choose the setting
+            var choice = FileExistsHandling.Abort;
+
+            switch (choice)
+            {
+                case FileExistsHandling.Abort:
+                    Console.WriteLine("Channel aborted");
+                    return;
+                case FileExistsHandling.Overwrite:
+                    Console.WriteLine("Removing old files");
+                    MessageExporter.RemoveExistingFiles(request.OutputFilePath);
+                    break;
+                case FileExistsHandling.Append:
+                    var lastMessageSnowflake = MessageExporter.GetLastMessageSnowflake(
+                        request.OutputFilePath,
+                        request.Format
+                    );
+                    if (lastMessageSnowflake != null)
+                    {
+                        request.LastPriorMessage = lastMessageSnowflake.Value;
+
+                        if (!request.Channel.MayHaveMessagesAfter(request.LastPriorMessage.Value))
+                        {
+                            Console.WriteLine("Download already up to date");
+                            return;
+                        }
+
+                        Console.WriteLine(
+                            "Downloading data after " + lastMessageSnowflake.Value.ToDate()
+                        );
+                        currentPartitionIndex = MessageExporter.GetPartitionCount(
+                            request.OutputFilePath
+                        );
+                    }
+                    break;
+                default:
+                    throw new InvalidOperationException(
+                        $"Unknown FileExistsHandling value '{choice}'."
+                    );
+            }
+        }
+
         // Build context
         var context = new ExportContext(discord, request);
         await context.PopulateChannelsAndRolesAsync(cancellationToken);
 
         // Initialize the exporter before further checks to ensure the file is created even if
         // an exception is thrown after this point.
-        await using var messageExporter = new MessageExporter(context);
+        await using var messageExporter = new MessageExporter(context, currentPartitionIndex);
 
         // Check if the channel is empty
         if (request.Channel.IsEmpty)
@@ -67,7 +114,7 @@ public class ChannelExporter(DiscordClient discord)
         await foreach (
             var message in discord.GetMessagesAsync(
                 request.Channel.Id,
-                request.After,
+                request.LastPriorMessage ?? request.After,
                 request.Before,
                 progress,
                 cancellationToken

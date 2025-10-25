@@ -1,17 +1,22 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Discord.Data.Embeds;
 using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting;
 
-internal class PlainTextMessageWriter(Stream stream, ExportContext context)
+internal partial class PlainTextMessageWriter(Stream stream, ExportContext context)
     : MessageWriter(stream, context)
 {
+    private const int HeaderSize = 4;
+
     private readonly TextWriter _writer = new StreamWriter(stream);
 
     private async ValueTask<string> FormatMarkdownAsync(
@@ -270,5 +275,61 @@ internal class PlainTextMessageWriter(Stream stream, ExportContext context)
     {
         await _writer.DisposeAsync();
         await base.DisposeAsync();
+    }
+
+    /// <summary>
+    /// Returns the statically created regex that detects and captures the timestamp of a message in a channel TXT
+    /// export.
+    /// </summary>
+    /// <returns>
+    /// The regex that detects and captures the timestamp of a message in a Discord channel TXT export.
+    /// </returns>
+    [GeneratedRegex(@"^\[(.*)\] .*")]
+    private static partial Regex MessageDateRegex();
+
+    /// <summary>
+    /// Retrieves and returns the approximate timestamp of the last written message in the Discord channel that has
+    /// been exported with the PlainTextMessageWriter to the given file path as a Snowflake.
+    /// This timestamp only has minute-level precision.
+    /// </summary>
+    /// <param name="filePath">
+    /// The path of the Discord channel TXT export whose last message's timestamp should be returned.
+    /// </param>
+    /// <returns>
+    /// The approximate timestamp of the last written message in the Discord channel TXT export under the given path
+    /// as a Snowflake.
+    /// Null, if the Discord channel TXT export doesn't include any message.
+    /// </returns>
+    /// <exception cref="FormatException">
+    /// Thrown if the file at the given path isn't a correctly formatted Discord channel TXT export.
+    /// </exception>
+    public static Snowflake? GetLastMessageDate(string filePath)
+    {
+        var fileLines = File.ReadAllLines(filePath);
+        if (fileLines.SkipWhile(string.IsNullOrWhiteSpace).ToArray().Length <= HeaderSize)
+            return null;
+
+        var messageDateRegex = MessageDateRegex();
+
+        // Find the last line with a message timestamp
+        for (var i = fileLines.Length - 1; i >= HeaderSize; i--)
+        {
+            var timestampMatch = messageDateRegex.Match(fileLines[i]);
+            if (!timestampMatch.Success)
+                continue;
+
+            var timestampString = timestampMatch.Groups[1].Value;
+            if (
+                DateTimeOffset.TryParse(timestampString, out var timestamp)
+                && fileLines[i - 1] == ""
+            )
+            {
+                return Snowflake.FromDate(timestamp, true);
+            }
+        }
+
+        throw new FormatException(
+            "The TXT file is not correctly formatted; the last message timestamp could not be retrieved."
+        );
     }
 }

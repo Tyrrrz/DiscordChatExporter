@@ -19,8 +19,24 @@ public partial record struct Snowflake
 {
     public static Snowflake Zero { get; } = new(0);
 
-    public static Snowflake FromDate(DateTimeOffset instant) =>
-        new(((ulong)instant.ToUnixTimeMilliseconds() - 1420070400000UL) << 22);
+    /// <summary>
+    /// Creates and returns a Snowflake representing the given timestamp.
+    /// </summary>
+    /// <param name="timestamp">
+    /// The timestamp that should be returned as a Snowflake.
+    /// </param>
+    /// <param name="startTimestamp">
+    /// Whether the Snowflake will be used to determine the messages starting at the given timestamp.
+    /// If true, the Snowflake doesn't precisely represent the given timestamp. Instead, it then is the latest possible
+    /// Snowflake just before that timestamp.
+    /// This is necessary to prevent the first Discord message in that specific millisecond from being excluded.
+    /// </param>
+    /// <returns>A Snowflake representing the given timestamp.</returns>
+    public static Snowflake FromDate(DateTimeOffset timestamp, bool startTimestamp = false) =>
+        new(
+            (((ulong)timestamp.ToUnixTimeMilliseconds() - 1420070400000UL) << 22)
+                - (startTimestamp ? 1UL : 0UL)
+        );
 
     public static Snowflake? TryParse(string? value, IFormatProvider? formatProvider = null)
     {

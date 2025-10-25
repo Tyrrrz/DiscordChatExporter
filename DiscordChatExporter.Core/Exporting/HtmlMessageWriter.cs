@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using WebMarkupMin.Core;
 
 namespace DiscordChatExporter.Core.Exporting;
 
-internal class HtmlMessageWriter(Stream stream, ExportContext context, string themeName)
+internal partial class HtmlMessageWriter(Stream stream, ExportContext context, string themeName)
     : MessageWriter(stream, context)
 {
     private readonly TextWriter _writer = new StreamWriter(stream);
@@ -141,5 +143,51 @@ internal class HtmlMessageWriter(Stream stream, ExportContext context, string th
     {
         await _writer.DisposeAsync();
         await base.DisposeAsync();
+    }
+
+    /// <summary>
+    /// Returns the statically created regex that detects and captures the timestamp of a message in a channel HTML
+    /// export.
+    /// </summary>
+    /// <returns>
+    /// The regex that detects and captures the timestamp of a message in a Discord channel HTML export.
+    /// </returns>
+    [GeneratedRegex("<span class=chatlog__timestamp title=\"([^\"]*)\">")]
+    private static partial Regex MessageDateRegex();
+
+    /// <summary>
+    /// Retrieves and returns the approximate timestamp of the last written message in the Discord channel that has
+    /// been exported with the HtmlMessageWriter to the given file path as a Snowflake.
+    /// This timestamp only has minute-level precision.
+    /// </summary>
+    /// <param name="filePath">
+    /// The path of the Discord channel HTML export whose last message's timestamp should be returned.
+    /// </param>
+    /// <returns>
+    /// The approximate timestamp of the last written message in the Discord channel HTML export under the given path
+    /// as a Snowflake.
+    /// Null, if the Discord channel HTML export doesn't include any message.
+    /// </returns>
+    /// <exception cref="FormatException">
+    /// Thrown if the file at the given path isn't a correctly formatted Discord channel HTML export.
+    /// </exception>
+    public static Snowflake? GetLastMessageDate(string filePath)
+    {
+        try
+        {
+            var fileContent = File.ReadAllText(filePath);
+            var messageDateRegex = MessageDateRegex();
+
+            var timestampMatches = messageDateRegex.Matches(fileContent);
+            var timestampString = timestampMatches[^1].Groups[1].Value;
+            var timestamp = DateTimeOffset.Parse(timestampString);
+            return Snowflake.FromDate(timestamp, true);
+        }
+        catch (Exception ex) when (ex is IndexOutOfRangeException or FormatException)
+        {
+            throw new FormatException(
+                "The HTML file is not correctly formatted; the last message timestamp could not be retrieved."
+            );
+        }
     }
 }

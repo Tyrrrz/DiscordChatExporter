@@ -114,6 +114,12 @@ public abstract class ExportCommandBase : DiscordCommandBase
         init => field = value is not null ? Path.GetFullPath(value) : null;
     }
 
+    [CommandOption(
+        "prev-export",
+        Description = "What the exporter should do if the channel had already been exported."
+    )]
+    public FileExistsHandling FileExistsHandling { get; init; } = FileExistsHandling.Abort;
+
     [Obsolete("This option doesn't do anything. Kept for backwards compatibility.")]
     [CommandOption(
         "dateformat",
@@ -265,6 +271,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
                                         ExportFormat,
                                         After,
                                         Before,
+                                        FileExistsHandling,
                                         PartitionLimit,
                                         MessageFilter,
                                         ShouldFormatMarkdown,

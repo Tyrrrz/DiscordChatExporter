@@ -131,6 +131,19 @@
                                 Value="{Binding ParallelLimit}" />
                         </StackPanel>
                     </DockPanel>
+
+                    <!--  File Exists Handling  -->
+                    <DockPanel
+                        Margin="16,8"
+                        LastChildFill="False"
+                        ToolTip.Tip="What the exporter should do if the channel had already been exported">
+                        <TextBlock DockPanel.Dock="Left" Text="Previous Export" />
+                        <ComboBox
+                            Width="150"
+                            DockPanel.Dock="Right"
+                            ItemsSource="{Binding AvailableFileExistHandlingOptions}"
+                            SelectedItem="{Binding FileExistsHandling}" />
+                    </DockPanel>
                 </StackPanel>
             </ScrollViewer>
         </Border>

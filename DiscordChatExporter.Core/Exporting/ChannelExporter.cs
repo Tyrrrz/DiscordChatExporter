@@ -32,10 +32,8 @@ public class ChannelExporter(DiscordClient discord)
         // TODO: Maybe add a way to search for old files after a username change
         if (File.Exists(request.OutputFilePath))
         {
-            // TODO: Add a way for the user to choose the setting
-            var choice = FileExistsHandling.Abort;
-
-            switch (choice)
+            // TODO: Maybe add an "Ask" option in the future
+            switch (request.FileExistsHandling)
             {
                 case FileExistsHandling.Abort:
                     Console.WriteLine("Channel aborted");
@@ -69,7 +67,7 @@ public class ChannelExporter(DiscordClient discord)
                     break;
                 default:
                     throw new InvalidOperationException(
-                        $"Unknown FileExistsHandling value '{choice}'."
+                        $"Unknown FileExistsHandling value '{request.FileExistsHandling}'."
                     );
             }
         }

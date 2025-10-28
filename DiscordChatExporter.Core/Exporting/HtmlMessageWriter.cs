@@ -179,6 +179,8 @@ internal partial class HtmlMessageWriter(Stream stream, ExportContext context, s
             var messageDateRegex = MessageDateRegex();
 
             var timestampMatches = messageDateRegex.Matches(fileContent);
+            if (timestampMatches.Count == 0)
+                return null;
             var timestampString = timestampMatches[^1].Groups[1].Value;
             var timestamp = DateTimeOffset.Parse(timestampString);
             return Snowflake.FromDate(timestamp, true);

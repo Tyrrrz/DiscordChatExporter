@@ -55,24 +55,32 @@ public class ChannelExporter(DiscordClient discord)
                     );
                     if (lastMessageSnowflake != null)
                     {
-                        request.LastPriorMessage = lastMessageSnowflake.Value;
-
-                        if (!request.Channel.MayHaveMessagesAfter(request.LastPriorMessage.Value))
+                        if (!request.Channel.MayHaveMessagesAfter(lastMessageSnowflake.Value))
                         {
                             logger.IncrementCounter(ExportResult.UpdateExportSkip);
                             logger.LogInfo(request, "Existing export already up to date");
                             return;
                         }
-
+                        request.LastPriorMessage = lastMessageSnowflake.Value;
                         logger.LogInfo(
                             request,
                             "Appending existing export starting at "
                                 + lastMessageSnowflake.Value.ToDate()
                         );
-                        currentPartitionIndex = MessageExporter.GetPartitionCount(
-                            request.OutputFilePath
-                        );
                     }
+                    else
+                    {
+                        if (request.Channel.IsEmpty)
+                        {
+                            logger.IncrementCounter(ExportResult.UpdateExportSkip);
+                            logger.LogInfo(request, "Existing empty export already up to date");
+                            return;
+                        }
+                        logger.LogInfo(request, "Appending existing empty export.");
+                    }
+                    currentPartitionIndex = MessageExporter.GetPartitionCount(
+                        request.OutputFilePath
+                    );
                     break;
                 default:
                     throw new InvalidOperationException(

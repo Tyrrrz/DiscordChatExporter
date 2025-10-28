@@ -142,10 +142,12 @@ internal partial class CsvMessageWriter(Stream stream, ExportContext context)
     {
         try
         {
-            var fileLines = File.ReadAllLines(filePath)
-                .SkipWhile(string.IsNullOrWhiteSpace)
-                .ToArray();
-            if (fileLines.Length <= HeaderSize)
+            var fileLines = File.ReadAllLines(filePath);
+            var fileContainsMessages = fileLines
+                .Where(line => !string.IsNullOrWhiteSpace(line))
+                .Skip(HeaderSize)
+                .Any();
+            if (!fileContainsMessages)
                 return null;
 
             const string columnPattern = "(?:[^\"]?(?:\"\")?)*";
@@ -155,7 +157,9 @@ internal partial class CsvMessageWriter(Stream stream, ExportContext context)
             );
             var messageDateRegex = new Regex(messageDatePattern);
 
-            var timestampMatch = messageDateRegex.Match(fileLines[^1]);
+            var timestampMatch = messageDateRegex.Match(
+                fileLines.Last(line => !string.IsNullOrWhiteSpace(line))
+            );
             var timestampString = timestampMatch.Groups[1].Value;
             var timestamp = DateTimeOffset.Parse(timestampString);
             return Snowflake.FromDate(timestamp, true);

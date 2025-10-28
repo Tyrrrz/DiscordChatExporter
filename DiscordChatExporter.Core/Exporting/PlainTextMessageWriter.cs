@@ -16,6 +16,7 @@ internal partial class PlainTextMessageWriter(Stream stream, ExportContext conte
     : MessageWriter(stream, context)
 {
     private const int HeaderSize = 4;
+    private const int FooterSize = 3;
 
     private readonly TextWriter _writer = new StreamWriter(stream);
 
@@ -306,13 +307,17 @@ internal partial class PlainTextMessageWriter(Stream stream, ExportContext conte
     public static Snowflake? GetLastMessageDate(string filePath)
     {
         var fileLines = File.ReadAllLines(filePath);
-        if (fileLines.SkipWhile(string.IsNullOrWhiteSpace).ToArray().Length <= HeaderSize)
+        var fileContainsMessages = fileLines
+            .Where(line => !string.IsNullOrWhiteSpace(line))
+            .Skip(HeaderSize + FooterSize)
+            .Any();
+        if (!fileContainsMessages)
             return null;
 
         var messageDateRegex = MessageDateRegex();
 
         // Find the last line with a message timestamp
-        for (var i = fileLines.Length - 1; i >= HeaderSize; i--)
+        for (var i = fileLines.Length - 1 - FooterSize; i >= HeaderSize; i--)
         {
             var timestampMatch = messageDateRegex.Match(fileLines[i]);
             if (!timestampMatch.Success)

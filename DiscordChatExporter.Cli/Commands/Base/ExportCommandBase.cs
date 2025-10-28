@@ -229,16 +229,15 @@ public abstract class ExportCommandBase : DiscordCommandBase
         }
 
         // Export
-        var errorsByChannel = new ConcurrentDictionary<Channel, string>();
-        var warningsByChannel = new ConcurrentDictionary<Channel, string>();
-
         await console.Output.WriteLineAsync($"Exporting {unwrappedChannels.Count} channel(s)...");
-        await console
-            .CreateProgressTicker()
+        var (progressTicker, logger) = console.CreateProgressTicker();
+        await progressTicker
             .HideCompleted(
                 // When exporting multiple channels in parallel, hide the completed tasks
                 // because it gets hard to visually parse them as they complete out of order.
                 // https://github.com/Tyrrrz/DiscordChatExporter/issues/1124
+                // They are logged above the active tasks instead, so that the user can still
+                // see the entire progress.
                 ParallelLimit > 1
             )
             .StartAsync(async ctx =>
@@ -282,6 +281,8 @@ public abstract class ExportCommandBase : DiscordCommandBase
                                     );
 
                                     await Exporter.ExportChannelAsync(
+                                        logger,
+                                        ParallelLimit > 1,
                                         request,
                                         progress.ToPercentageBased(),
                                         innerCancellationToken
@@ -289,71 +290,19 @@ public abstract class ExportCommandBase : DiscordCommandBase
                                 }
                             );
                         }
-                        catch (ChannelEmptyException ex)
-                        {
-                            warningsByChannel[channel] = ex.Message;
-                        }
                         catch (DiscordChatExporterException ex) when (!ex.IsFatal)
                         {
-                            errorsByChannel[channel] = ex.Message;
+                            logger.LogError(null, ex.Message);
                         }
                     }
                 );
             });
 
-        // Print the result
-        using (console.WithForegroundColor(ConsoleColor.White))
-        {
-            await console.Output.WriteLineAsync(
-                $"Successfully exported {unwrappedChannels.Count - errorsByChannel.Count} channel(s)."
-            );
-        }
-
-        // Print warnings
-        if (warningsByChannel.Any())
-        {
-            await console.Output.WriteLineAsync();
-
-            using (console.WithForegroundColor(ConsoleColor.Yellow))
-            {
-                await console.Error.WriteLineAsync(
-                    "Warnings reported for the following channel(s):"
-                );
-            }
-
-            foreach (var (channel, message) in warningsByChannel)
-            {
-                await console.Error.WriteAsync($"{channel.GetHierarchicalName()}: ");
-                using (console.WithForegroundColor(ConsoleColor.Yellow))
-                    await console.Error.WriteLineAsync(message);
-            }
-
-            await console.Error.WriteLineAsync();
-        }
-
-        // Print errors
-        if (errorsByChannel.Any())
-        {
-            await console.Output.WriteLineAsync();
-
-            using (console.WithForegroundColor(ConsoleColor.Red))
-            {
-                await console.Error.WriteLineAsync("Failed to export the following channel(s):");
-            }
-
-            foreach (var (channel, message) in errorsByChannel)
-            {
-                await console.Error.WriteAsync($"{channel.GetHierarchicalName()}: ");
-                using (console.WithForegroundColor(ConsoleColor.Red))
-                    await console.Error.WriteLineAsync(message);
-            }
-
-            await console.Error.WriteLineAsync();
-        }
+        logger.PrintExportSummary(FileExistsHandling);
 
         // Fail the command only if ALL channels failed to export.
         // If only some channels failed to export, it's okay.
-        if (errorsByChannel.Count >= unwrappedChannels.Count)
+        if (logger.AllFailed())
             throw new CommandException("Export failed.");
     }
 

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exceptions;
+using DiscordChatExporter.Core.Exporting.Logging;
 using Gress;
 
 namespace DiscordChatExporter.Core.Exporting;
@@ -12,6 +13,8 @@ namespace DiscordChatExporter.Core.Exporting;
 public class ChannelExporter(DiscordClient discord)
 {
     public async ValueTask ExportChannelAsync(
+        ProgressLogger logger,
+        bool logSuccess,
         ExportRequest request,
         IProgress<Percentage>? progress = null,
         CancellationToken cancellationToken = default
@@ -20,26 +23,29 @@ public class ChannelExporter(DiscordClient discord)
         // Forum channels don't have messages, they are just a list of threads
         if (request.Channel.Kind == ChannelKind.GuildForum)
         {
-            throw new DiscordChatExporterException(
-                $"Channel '{request.Channel.Name}' "
-                    + $"of guild '{request.Guild.Name}' "
-                    + $"is a forum and cannot be exported directly. "
-                    + "You need to pull its threads and export them individually."
+            // TODO: The GUI apparently has no thread inclusion setting
+            logger.LogError(
+                request,
+                "This channel is a forum and cannot be exported. "
+                    + "Did you forget to turn on thread inclusion?"
             );
+            return;
         }
 
         var currentPartitionIndex = 0;
+        var exportExists = false;
         // TODO: Maybe add a way to search for old files after a username change
         if (File.Exists(request.OutputFilePath))
         {
+            exportExists = true;
             // TODO: Maybe add an "Ask" option in the future
             switch (request.FileExistsHandling)
             {
                 case FileExistsHandling.Abort:
-                    Console.WriteLine("Channel aborted");
+                    logger.LogError(request, "Aborted export due to existing export files");
                     return;
                 case FileExistsHandling.Overwrite:
-                    Console.WriteLine("Removing old files");
+                    logger.LogWarning(request, "Removing existing export files");
                     MessageExporter.RemoveExistingFiles(request.OutputFilePath);
                     break;
                 case FileExistsHandling.Append:
@@ -53,12 +59,15 @@ public class ChannelExporter(DiscordClient discord)
 
                         if (!request.Channel.MayHaveMessagesAfter(request.LastPriorMessage.Value))
                         {
-                            Console.WriteLine("Download already up to date");
+                            logger.IncrementCounter(ExportResult.UpdateExportSkip);
+                            logger.LogInfo(request, "Existing export already up to date");
                             return;
                         }
 
-                        Console.WriteLine(
-                            "Downloading data after " + lastMessageSnowflake.Value.ToDate()
+                        logger.LogInfo(
+                            request,
+                            "Appending existing export starting at "
+                                + lastMessageSnowflake.Value.ToDate()
                         );
                         currentPartitionIndex = MessageExporter.GetPartitionCount(
                             request.OutputFilePath
@@ -83,11 +92,10 @@ public class ChannelExporter(DiscordClient discord)
         // Check if the channel is empty
         if (request.Channel.IsEmpty)
         {
-            throw new ChannelEmptyException(
-                $"Channel '{request.Channel.Name}' "
-                    + $"of guild '{request.Guild.Name}' "
-                    + $"does not contain any messages; an empty file will be created."
-            );
+            logger.IncrementCounter(ExportResult.NewExportSuccess);
+            logger.IncrementCounter(ExportResult.NewExportSuccessEmpty);
+            logger.LogInfo(request, "The channel does not contain any messages");
+            return;
         }
 
         // Check if the 'before' and 'after' boundaries are valid
@@ -102,11 +110,13 @@ public class ChannelExporter(DiscordClient discord)
             )
         )
         {
-            throw new ChannelEmptyException(
-                $"Channel '{request.Channel.Name}' "
-                    + $"of guild '{request.Guild.Name}' "
-                    + $"does not contain any messages within the specified period; an empty file will be created."
+            logger.IncrementCounter(ExportResult.NewExportSuccess);
+            logger.IncrementCounter(ExportResult.NewExportSuccessEmpty);
+            logger.LogWarning(
+                request,
+                "The channel does not contain any messages within the specified period"
             );
+            return;
         }
 
         await foreach (
@@ -140,6 +150,25 @@ public class ChannelExporter(DiscordClient discord)
                     ex
                 );
             }
+        }
+
+        if (!exportExists)
+        {
+            logger.IncrementCounter(ExportResult.NewExportSuccess);
+            if (logSuccess)
+                logger.LogSuccess(request, "Successfully exported the channel");
+        }
+        else if (request.FileExistsHandling == FileExistsHandling.Append)
+        {
+            logger.IncrementCounter(ExportResult.UpdateExportSuccess);
+            if (logSuccess)
+                logger.LogSuccess(request, "Successfully appended the channel export");
+        }
+        else
+        {
+            logger.IncrementCounter(ExportResult.UpdateExportSuccess);
+            if (logSuccess)
+                logger.LogSuccess(request, "Successfully overwrote the channel export");
         }
     }
 }

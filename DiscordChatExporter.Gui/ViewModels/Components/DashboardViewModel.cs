@@ -242,12 +242,11 @@ public partial class DashboardViewModel : ViewModelBase
                 return;
 
             var exporter = new ChannelExporter(_discord);
+            var logger = new SnackbarProgressLogger(_snackbarManager);
 
             var channelProgressPairs = dialog
                 .Channels!.Select(c => new { Channel = c, Progress = _progressMuxer.CreateInput() })
                 .ToArray();
-
-            var successfulExportCount = 0;
 
             await Parallel.ForEachAsync(
                 channelProgressPairs,
@@ -280,17 +279,17 @@ public partial class DashboardViewModel : ViewModelBase
                             _settingsService.IsUtcNormalizationEnabled
                         );
 
-                        await exporter.ExportChannelAsync(request, progress, cancellationToken);
-
-                        Interlocked.Increment(ref successfulExportCount);
-                    }
-                    catch (ChannelEmptyException ex)
-                    {
-                        _snackbarManager.Notify(ex.Message.TrimEnd('.'));
+                        await exporter.ExportChannelAsync(
+                            logger,
+                            true,
+                            request,
+                            progress,
+                            cancellationToken
+                        );
                     }
                     catch (DiscordChatExporterException ex) when (!ex.IsFatal)
                     {
-                        _snackbarManager.Notify(ex.Message.TrimEnd('.'));
+                        logger.LogError(null, ex.Message.TrimEnd('.'));
                     }
                     finally
                     {
@@ -299,13 +298,7 @@ public partial class DashboardViewModel : ViewModelBase
                 }
             );
 
-            // Notify of the overall completion
-            if (successfulExportCount > 0)
-            {
-                _snackbarManager.Notify(
-                    $"Successfully exported {successfulExportCount} channel(s)"
-                );
-            }
+            logger.PrintExportSummary(_settingsService.FileExistsHandling);
         }
         catch (Exception ex)
         {

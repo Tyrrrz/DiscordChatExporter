@@ -109,7 +109,7 @@ internal partial class MessageExporter
         if (File.Exists(filePath))
         {
             throw new InvalidOperationException(
-                "Error: An exported file already exists. This should never happen."
+                "Error: The target export file already exists. This should never happen."
             );
         }
 
@@ -184,10 +184,9 @@ internal partial class MessageExporter
     /// <param name="baseFilePath">
     /// The path of the first partition of the Discord channel export that should be removed.
     /// </param>
-    public static void RemoveExistingFiles(string baseFilePath)
+    public static void RemoveExistingExport(string baseFilePath)
     {
-        var currentPartition = 0;
-        while (true)
+        for (var currentPartition = 0; ; currentPartition++)
         {
             var currentFilePath = GetPartitionFilePath(baseFilePath, currentPartition);
             if (File.Exists(currentFilePath))
@@ -198,7 +197,33 @@ internal partial class MessageExporter
             {
                 return;
             }
-            currentPartition++;
+        }
+    }
+
+    /// <summary>
+    /// Moves all partitions of the previously exported Discord channel with the given old base file path to the given
+    /// new base file path.
+    /// </summary>
+    /// <param name="oldBaseFilePath">
+    /// The old path of the first partition of the Discord channel export that should be moved.
+    /// </param>
+    /// <param name="newBaseFilePath">
+    /// The new path to which the first partition of the Discord channel export should be moved.
+    /// </param>
+    public static void MoveExistingExport(string oldBaseFilePath, string newBaseFilePath)
+    {
+        for (var currentPartition = 0; ; currentPartition++)
+        {
+            var currentOldFilePath = GetPartitionFilePath(oldBaseFilePath, currentPartition);
+            if (File.Exists(currentOldFilePath))
+            {
+                var currentNewFilePath = GetPartitionFilePath(newBaseFilePath, currentPartition);
+                File.Move(currentOldFilePath, currentNewFilePath);
+            }
+            else
+            {
+                return;
+            }
         }
     }
 

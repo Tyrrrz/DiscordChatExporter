@@ -118,7 +118,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
         "prev-export",
         Description = "What the exporter should do if the channel had already been exported."
     )]
-    public FileExistsHandling FileExistsHandling { get; init; } = FileExistsHandling.Abort;
+    public ExportExistsHandling ExportExistsHandling { get; init; } = ExportExistsHandling.Abort;
 
     [Obsolete("This option doesn't do anything. Kept for backwards compatibility.")]
     [CommandOption(
@@ -230,6 +230,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
         // Export
         await console.Output.WriteLineAsync($"Exporting {unwrappedChannels.Count} channel(s)...");
+        var outputDirFilesDict = new ConcurrentDictionary<string, string[]>();
         var (progressTicker, logger) = console.CreateProgressTicker();
         await progressTicker
             .HideCompleted(
@@ -270,7 +271,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
                                         ExportFormat,
                                         After,
                                         Before,
-                                        FileExistsHandling,
+                                        ExportExistsHandling,
                                         PartitionLimit,
                                         MessageFilter,
                                         ShouldFormatMarkdown,
@@ -284,6 +285,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
                                         logger,
                                         ParallelLimit > 1,
                                         request,
+                                        outputDirFilesDict,
                                         progress.ToPercentageBased(),
                                         innerCancellationToken
                                     );
@@ -298,7 +300,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
                 );
             });
 
-        logger.PrintExportSummary(FileExistsHandling);
+        logger.PrintExportSummary(ExportExistsHandling);
 
         // Fail the command only if ALL channels failed to export.
         // If only some channels failed to export, it's okay.

@@ -3,7 +3,7 @@ namespace DiscordChatExporter.Core.Exporting;
 /// <summary>
 /// Represents the setting on how to handle the export of a channel that has already been exported.
 /// </summary>
-public enum FileExistsHandling
+public enum ExportExistsHandling
 {
     /// <summary>
     /// If a channel had previously been exported, its export will be aborted.

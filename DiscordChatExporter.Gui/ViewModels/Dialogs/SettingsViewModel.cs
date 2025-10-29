@@ -62,13 +62,13 @@ public class SettingsViewModel : DialogViewModelBase
         set => _settingsService.ThreadInclusionMode = value;
     }
 
-    public IReadOnlyList<FileExistsHandling> AvailableFileExistHandlingOptions { get; } =
-        Enum.GetValues<FileExistsHandling>();
+    public IReadOnlyList<ExportExistsHandling> AvailableExportExistsHandlingOptions { get; } =
+        Enum.GetValues<ExportExistsHandling>();
 
-    public FileExistsHandling FileExistsHandling
+    public ExportExistsHandling ExportExistsHandling
     {
-        get => _settingsService.FileExistsHandling;
-        set => _settingsService.FileExistsHandling = value;
+        get => _settingsService.ExportExistsHandling;
+        set => _settingsService.ExportExistsHandling = value;
     }
 
     // These items have to be non-nullable because Avalonia ComboBox doesn't allow a null value to be selected

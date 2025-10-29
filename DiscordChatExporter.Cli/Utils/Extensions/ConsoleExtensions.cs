@@ -128,7 +128,7 @@ public class ConsoleProgressLogger(IAnsiConsole console) : ProgressLogger
     /// Prints a summary on all previously logged exports and their respective results to the console.
     /// </summary>
     /// <param name="updateType">The file exists handling of the export whose summary should be printed.</param>
-    public void PrintExportSummary(FileExistsHandling updateType)
+    public void PrintExportSummary(ExportExistsHandling updateType)
     {
         var exportSummary = GetExportSummary(updateType);
         exportSummary.TryGetValue(ExportResult.NewExportSuccess, out var newExportSuccessMessage);

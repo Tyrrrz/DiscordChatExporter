@@ -27,7 +27,7 @@ public abstract class ProgressLogger
     /// </summary>
     /// <param name="updateType">The file exists handling of the export whose summary should be returned.</param>
     /// <returns>A summary on all previously logged exports and their respective results.</returns>
-    protected Dictionary<ExportResult, string> GetExportSummary(FileExistsHandling updateType)
+    protected Dictionary<ExportResult, string> GetExportSummary(ExportExistsHandling updateType)
     {
         _counters.TryGetValue(ExportResult.NewExportSuccess, out var newExportSuccessCount);
         _counters.TryGetValue(
@@ -48,7 +48,7 @@ public abstract class ProgressLogger
         if (updateExportSuccessCount > 0)
             exportSummary[ExportResult.UpdateExportSuccess] =
                 "Successfully "
-                + (updateType == FileExistsHandling.Append ? "appended" : "overrode")
+                + (updateType == ExportExistsHandling.Append ? "appended" : "overrode")
                 + $" {updateExportSuccessCount} existing channel export(s).";
         if (updateExportSkipCount > 0)
             exportSummary[ExportResult.UpdateExportSkip] =

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -243,6 +244,7 @@ public partial class DashboardViewModel : ViewModelBase
 
             var exporter = new ChannelExporter(_discord);
             var logger = new SnackbarProgressLogger(_snackbarManager);
+            var outputDirFilesDict = new ConcurrentDictionary<string, string[]>();
 
             var channelProgressPairs = dialog
                 .Channels!.Select(c => new { Channel = c, Progress = _progressMuxer.CreateInput() })
@@ -269,7 +271,7 @@ public partial class DashboardViewModel : ViewModelBase
                             dialog.SelectedFormat,
                             dialog.After?.Pipe(timestamp => Snowflake.FromDate(timestamp, true)),
                             dialog.Before?.Pipe(timestamp => Snowflake.FromDate(timestamp)),
-                            _settingsService.FileExistsHandling,
+                            _settingsService.ExportExistsHandling,
                             dialog.PartitionLimit,
                             dialog.MessageFilter,
                             dialog.ShouldFormatMarkdown,
@@ -283,6 +285,7 @@ public partial class DashboardViewModel : ViewModelBase
                             logger,
                             true,
                             request,
+                            outputDirFilesDict,
                             progress,
                             cancellationToken
                         );
@@ -298,7 +301,7 @@ public partial class DashboardViewModel : ViewModelBase
                 }
             );
 
-            logger.PrintExportSummary(_settingsService.FileExistsHandling);
+            logger.PrintExportSummary(_settingsService.ExportExistsHandling);
         }
         catch (Exception ex)
         {

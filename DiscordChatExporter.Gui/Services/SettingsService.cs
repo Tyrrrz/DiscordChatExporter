@@ -37,7 +37,7 @@ public partial class SettingsService()
     public partial ThreadInclusionMode ThreadInclusionMode { get; set; }
 
     [ObservableProperty]
-    public partial FileExistsHandling FileExistsHandling { get; set; }
+    public partial ExportExistsHandling ExportExistsHandling { get; set; }
 
     [ObservableProperty]
     public partial string? Locale { get; set; }

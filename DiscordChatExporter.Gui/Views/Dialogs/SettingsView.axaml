@@ -132,7 +132,7 @@
                         </StackPanel>
                     </DockPanel>
 
-                    <!--  File Exists Handling  -->
+                    <!--  Export Exists Handling  -->
                     <DockPanel
                         Margin="16,8"
                         LastChildFill="False"
@@ -141,8 +141,8 @@
                         <ComboBox
                             Width="150"
                             DockPanel.Dock="Right"
-                            ItemsSource="{Binding AvailableFileExistHandlingOptions}"
-                            SelectedItem="{Binding FileExistsHandling}" />
+                            ItemsSource="{Binding AvailableExportExistsHandlingOptions}"
+                            SelectedItem="{Binding ExportExistsHandling}" />
                     </DockPanel>
                 </StackPanel>
             </ScrollViewer>

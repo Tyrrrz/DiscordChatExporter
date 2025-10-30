@@ -115,10 +115,17 @@ public abstract class ExportCommandBase : DiscordCommandBase
     }
 
     [CommandOption(
-        "prev-export",
-        Description = "What the exporter should do if the channel had already been exported."
+        "export-exists",
+        Description = "What the exporter should do if a channel had already been exported."
     )]
     public ExportExistsHandling ExportExistsHandling { get; init; } = ExportExistsHandling.Abort;
+
+    [CommandOption(
+        "search-existing-exports",
+        Description = "Whether the target directory should be searched for existing export(s) of the channel(s). "
+            + "This is required to find an existing export if the channel, channel parent or guild name has changed."
+    )]
+    public bool SearchForExistingExports { get; init; }
 
     [Obsolete("This option doesn't do anything. Kept for backwards compatibility.")]
     [CommandOption(
@@ -272,6 +279,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
                                         After,
                                         Before,
                                         ExportExistsHandling,
+                                        SearchForExistingExports,
                                         PartitionLimit,
                                         MessageFilter,
                                         ShouldFormatMarkdown,

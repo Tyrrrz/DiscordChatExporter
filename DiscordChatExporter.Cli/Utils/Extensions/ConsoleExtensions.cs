@@ -78,21 +78,21 @@ public class ConsoleProgressLogger(IAnsiConsole console) : ProgressLogger
     /// <remarks>The ConsoleProgressLogger logs the success message to the console.</remarks>
     public override void LogSuccess(ExportRequest request, string message)
     {
-        LogMessage("SUCCESS", "[green]", request, message);
+        LogMessage("SUCCESS", "green", request, message);
     }
 
     /// <inheritdoc/>
     /// <remarks>The ConsoleProgressLogger logs the informational message to the console.</remarks>
     public override void LogInfo(ExportRequest request, string message)
     {
-        LogMessage("INFO", "[default]", request, message);
+        LogMessage("INFO", "default", request, message);
     }
 
     /// <inheritdoc/>
     /// <remarks>The ConsoleProgressLogger logs the warning message to the console.</remarks>
     public override void LogWarning(ExportRequest request, string message)
     {
-        LogMessage("WARNING", "[yellow]", request, message);
+        LogMessage("WARNING", "yellow", request, message);
     }
 
     /// <inheritdoc/>
@@ -100,7 +100,7 @@ public class ConsoleProgressLogger(IAnsiConsole console) : ProgressLogger
     public override void LogError(ExportRequest? request, string message)
     {
         IncrementCounter(ExportResult.ExportError);
-        LogMessage("ERROR", "[red]", request, message);
+        LogMessage("ERROR", "red", request, message);
     }
 
     /// <summary>
@@ -120,8 +120,8 @@ public class ConsoleProgressLogger(IAnsiConsole console) : ProgressLogger
             channelInfo =
                 request.Guild.Name + " / " + request.Channel.GetHierarchicalName() + " | ";
 
-        var logMessage = $"{color}{paddedCategory}{channelInfo}{message}[/]";
-        console.MarkupLine(logMessage);
+        FormattableString logMessage = $"[{color}]{paddedCategory}{channelInfo}{message}[/]";
+        console.MarkupLineInterpolated(logMessage);
     }
 
     /// <summary>

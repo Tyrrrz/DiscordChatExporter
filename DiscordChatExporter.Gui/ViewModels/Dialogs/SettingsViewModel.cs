@@ -71,6 +71,12 @@ public class SettingsViewModel : DialogViewModelBase
         set => _settingsService.ExportExistsHandling = value;
     }
 
+    public bool SearchForExistingExports
+    {
+        get => _settingsService.SearchForExistingExports;
+        set => _settingsService.SearchForExistingExports = value;
+    }
+
     // These items have to be non-nullable because Avalonia ComboBox doesn't allow a null value to be selected
     public IReadOnlyList<string> AvailableLocales { get; } =
     [

@@ -136,13 +136,22 @@
                     <DockPanel
                         Margin="16,8"
                         LastChildFill="False"
-                        ToolTip.Tip="What the exporter should do if the channel had already been exported">
-                        <TextBlock DockPanel.Dock="Left" Text="Previous Export" />
+                        ToolTip.Tip="What the exporter should do if a channel had already been exported">
+                        <TextBlock DockPanel.Dock="Left" Text="Export exists" />
                         <ComboBox
                             Width="150"
                             DockPanel.Dock="Right"
                             ItemsSource="{Binding AvailableExportExistsHandlingOptions}"
                             SelectedItem="{Binding ExportExistsHandling}" />
+                    </DockPanel>
+
+                    <!--  Search for existing exports  -->
+                    <DockPanel
+                        Margin="16,8"
+                        LastChildFill="False"
+                        ToolTip.Tip="Whether the target directory should be searched for existing export(s) of the channel(s).&#xA;This is required to find an existing export if the channel, channel parent or guild name has changed.">
+                        <TextBlock DockPanel.Dock="Left" Text="Search for existing exports" />
+                        <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding SearchForExistingExports}" />
                     </DockPanel>
                 </StackPanel>
             </ScrollViewer>

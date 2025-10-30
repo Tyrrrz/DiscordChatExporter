@@ -35,13 +35,11 @@ public class ChannelExporter(DiscordClient discord)
             return;
         }
 
-        // TODO: Add a way for the user to choose the setting
-        var searchForExistingExport = true;
         if (
             !DetectExistingExport(
                 request,
                 logger,
-                searchForExistingExport,
+                request.SearchForExistingExports,
                 outputDirFilesDict,
                 out var existingExportFile
             )
@@ -215,7 +213,7 @@ public class ChannelExporter(DiscordClient discord)
             logger.LogError(
                 request,
                 "Found multiple existing channel exports under different file names: "
-                    + string.Join(", ", regexFiles)
+                    + string.Join(", ", regexFiles.Select(fileName => $"\"{fileName}\""))
                     + "."
             );
             return false;
@@ -223,7 +221,7 @@ public class ChannelExporter(DiscordClient discord)
 
         logger.LogInfo(
             request,
-            "Found existing channel export under file name " + regexFiles[0] + "."
+            $"Found existing channel export under file name \"{regexFiles[0]}\"."
         );
         existingExportFile = Path.Combine(request.OutputDirPath, regexFiles[0]);
         return true;

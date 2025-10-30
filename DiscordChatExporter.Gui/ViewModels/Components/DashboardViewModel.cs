@@ -272,6 +272,7 @@ public partial class DashboardViewModel : ViewModelBase
                             dialog.After?.Pipe(timestamp => Snowflake.FromDate(timestamp, true)),
                             dialog.Before?.Pipe(timestamp => Snowflake.FromDate(timestamp)),
                             _settingsService.ExportExistsHandling,
+                            _settingsService.SearchForExistingExports,
                             dialog.PartitionLimit,
                             dialog.MessageFilter,
                             dialog.ShouldFormatMarkdown,

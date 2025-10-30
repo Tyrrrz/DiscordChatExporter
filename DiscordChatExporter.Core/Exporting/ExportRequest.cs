@@ -32,6 +32,8 @@ public partial class ExportRequest
 
     public ExportExistsHandling ExportExistsHandling { get; }
 
+    public bool SearchForExistingExports { get; }
+
     public Snowflake? LastPriorMessage { get; set; }
 
     public PartitionLimit PartitionLimit { get; }
@@ -59,6 +61,7 @@ public partial class ExportRequest
         Snowflake? after,
         Snowflake? before,
         ExportExistsHandling exportExistsHandling,
+        bool searchForExistingExports,
         PartitionLimit partitionLimit,
         MessageFilter messageFilter,
         bool shouldFormatMarkdown,
@@ -74,6 +77,7 @@ public partial class ExportRequest
         After = after;
         Before = before;
         ExportExistsHandling = exportExistsHandling;
+        SearchForExistingExports = searchForExistingExports;
         PartitionLimit = partitionLimit;
         MessageFilter = messageFilter;
         ShouldFormatMarkdown = shouldFormatMarkdown;

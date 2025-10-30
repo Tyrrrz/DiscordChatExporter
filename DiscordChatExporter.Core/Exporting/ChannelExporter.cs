@@ -228,7 +228,7 @@ public class ChannelExporter(DiscordClient discord)
     }
 
     /// <summary>
-    /// Handles the existing export files of the current request according to the set file exists handling.
+    /// Handles the existing export files of the current request according to the set export exists handling.
     /// </summary>
     /// <param name="request">The request specifying the current channel export.</param>
     /// <param name="logger">The logger that's used to log progress updates about the export.</param>
@@ -268,6 +268,12 @@ public class ChannelExporter(DiscordClient discord)
             case ExportExistsHandling.Overwrite:
                 logger.LogWarning(request, "Removing existing export files");
                 MessageExporter.RemoveExistingExport(existingExportFile);
+                var possibleExistingExportDir = $"{existingExportFile}_Files{Path.DirectorySeparatorChar}";
+                if (Directory.Exists(possibleExistingExportDir))
+                {
+                    logger.LogWarning(request, "Removing existing export asset files");
+                    Directory.Delete(possibleExistingExportDir, true);
+                }
                 currentPartitionIndex = 0;
                 return true;
             case ExportExistsHandling.Append:
@@ -275,6 +281,7 @@ public class ChannelExporter(DiscordClient discord)
                 {
                     logger.LogInfo(request, "Moving existing export files to the new file names");
                     MessageExporter.MoveExistingExport(existingExportFile, request.OutputFilePath);
+                    // The asset directory isn't renamed as the file contents still point to the old name
                 }
 
                 var lastMessageSnowflake = MessageExporter.GetLastMessageSnowflake(

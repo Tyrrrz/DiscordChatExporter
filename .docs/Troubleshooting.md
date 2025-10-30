@@ -60,7 +60,9 @@ No, DCE is an exporter.
 
 ### Can DCE add new messages to an existing export?
 
-No.
+Yes, existing exports can be appended.
+In this case, the existing export file won't be changed, but a new partition file will be created, which will contain
+all newer messages.
 
 ## First steps
 
@@ -82,7 +84,10 @@ Check the following pages to learn how to schedule **DiscordChatExporter.CLI** r
 
 ### The exported file is too large, I can't open it
 
-Try opening it with a different program, try partitioning or use a different file format, like `PlainText`.
+Re-export the channel using a partition size; this will cause the exporter to split up the export into multiple smaller
+files you can open.
+
+Alternatively, you could also try to open it with a different program or use a different file format, like `PlainText`.
 
 ### I see messages in the export, but they have no content
 
@@ -145,6 +150,18 @@ Debian/Ubuntu: `cert-sync /etc/ssl/certs/ca-certificates.crt`
 Red Hat: `cert-sync --user /etc/pki/tls/certs/ca-bundle.crt`
 
 If it still doesn't work, try mozroots: `mozroots --import --ask-remove`
+
+```yml
+System.InvalidOperationException: Error: The target export file already exists. This should never happen.
+```
+
+↳ This means that a file with the export target path somehow exists despite not having been detected.
+It's a failsafe implemented to prevent unintentionally overwriting a file.
+
+It might occur if you try to export the same channel multiple times in parallel, or if you've manually deleted some
+partition files.
+
+In that case, double-check the command, manually delete the respective export files and try again.
 
 ## macOS-specific
 

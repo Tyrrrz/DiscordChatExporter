@@ -68,6 +68,7 @@ To learn more about the war and how you can help, [click here](https://tyrrrz.me
 - Multiple output formats: HTML (dark/light), TXT, CSV, JSON
 - Support for markdown, attachments, embeds, emoji, and other rich media features
 - File partitioning, date ranges, message filtering, and other export options
+- Automatic detection and appending of existing exports
 - Self-contained exports that can be viewed offline
 
 ## Screenshots

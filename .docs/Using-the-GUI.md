@@ -103,3 +103,12 @@ Default: 1
 
 - **Normalize to UTC** - Convert all dates to UTC before exporting.
 
+- **Export exists** Controls what the exporter should do if the current channel had previously been exported.
+Default: Abort
+
+- **Search for existing export** Whether the exporter should search in the entire target directory to determine whether 
+one of the current channels had previously been exported.
+This is necessary to detect an existing export if the name of the channel, the channel parent or the guild has changed
+or if the default file formatting has changed.
+Default: Disabled
+

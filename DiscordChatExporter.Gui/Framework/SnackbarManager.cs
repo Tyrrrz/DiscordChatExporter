@@ -103,7 +103,7 @@ public class SnackbarProgressLogger(SnackbarManager snackbarManager) : ProgressL
     /// <summary>
     /// Prints a summary on all previously logged exports and their respective results in the GUI snackbar.
     /// </summary>
-    /// <param name="updateType">The file exists handling of the export whose summary should be printed.</param>
+    /// <param name="updateType">The export exists handling of the export whose summary should be printed.</param>
     public void PrintExportSummary(ExportExistsHandling updateType)
     {
         var exportSummary = GetExportSummary(updateType);

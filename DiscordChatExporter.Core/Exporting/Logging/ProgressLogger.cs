@@ -25,7 +25,7 @@ public abstract class ProgressLogger
     /// Generates and returns a summary on all previously logged exports and their respective results.
     /// The summary is returned as one string for each export result that occurred at least once.
     /// </summary>
-    /// <param name="updateType">The file exists handling of the export whose summary should be returned.</param>
+    /// <param name="updateType">The export exists handling of the export whose summary should be returned.</param>
     /// <returns>A summary on all previously logged exports and their respective results.</returns>
     protected Dictionary<ExportResult, string> GetExportSummary(ExportExistsHandling updateType)
     {

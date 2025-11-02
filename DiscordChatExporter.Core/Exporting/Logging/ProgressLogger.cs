@@ -52,7 +52,7 @@ public abstract class ProgressLogger
                 + $" {updateExportSuccessCount} existing channel export(s).";
         if (updateExportSkipCount > 0)
             exportSummary[ExportResult.UpdateExportSkip] =
-                $"Skipped {updateExportSkipCount} existing up-to-date channel export(s)";
+                $"Skipped {updateExportSkipCount} existing up-to-date channel export(s).";
         if (exportErrorCount > 0)
             exportSummary[ExportResult.ExportError] =
                 $"Failed to export {exportErrorCount} channel(s) (see prior error message(s)).";
@@ -99,7 +99,7 @@ public abstract class ProgressLogger
     /// Logs an error message about the current channel export.
     /// If this is called, the count of channels that failed is automatically increased.
     /// </summary>
-    /// <param name="request">The request specifying the current channel export.</param>
+    /// <param name="request">The request specifying the current channel export, if it can be accessed.</param>
     /// <param name="message">The error message about the current channel export that should be logged.</param>
-    public abstract void LogError(ExportRequest request, string message);
+    public abstract void LogError(ExportRequest? request, string message);
 }

@@ -103,7 +103,7 @@ Default: 1
 
 - **Normalize to UTC** - Convert all dates to UTC before exporting.
 
-- **Export exists** Controls what the exporter should do if the current channel had previously been exported.
+- **Export exists** - Controls what the exporter should do if the current channel had previously been exported.
 Default: Abort
 
 - **Search for existing export** Whether the exporter should search in the entire target directory to determine whether 

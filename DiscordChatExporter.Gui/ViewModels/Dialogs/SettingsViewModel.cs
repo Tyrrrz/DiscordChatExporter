@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using DiscordChatExporter.Core.Discord;
+using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Core.Utils.Extensions;
 using DiscordChatExporter.Gui.Framework;
 using DiscordChatExporter.Gui.Models;
@@ -59,6 +60,21 @@ public class SettingsViewModel : DialogViewModelBase
     {
         get => _settingsService.ThreadInclusionMode;
         set => _settingsService.ThreadInclusionMode = value;
+    }
+
+    public IReadOnlyList<ExportExistsHandling> AvailableExportExistsHandlingOptions { get; } =
+        Enum.GetValues<ExportExistsHandling>();
+
+    public ExportExistsHandling ExportExistsHandling
+    {
+        get => _settingsService.ExportExistsHandling;
+        set => _settingsService.ExportExistsHandling = value;
+    }
+
+    public bool SearchForExistingExports
+    {
+        get => _settingsService.SearchForExistingExports;
+        set => _settingsService.SearchForExistingExports = value;
     }
 
     // These items have to be non-nullable because Avalonia ComboBox doesn't allow a null value to be selected

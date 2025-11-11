@@ -175,6 +175,32 @@ providing a path that ends with a slash. All of the exported media will be store
 ./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 --media --media-dir "C:\Discord Media"
 ```
 
+#### Handling existing exports
+
+By default, the exporter aborts the current channel export if it had previously been exported to prevent accidental
+overwrites.
+But it also has the options to either overwrite or append the existing export.
+You can specify the desired behaviour by using `--export-exists` with one of the possible values `abort`, `append`
+and `overwrite`.
+
+```console
+./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 --export-exists append
+```
+
+#### Search for existing exports
+
+By default, the exporter only tests whether there is an existing export at the target file path.
+But the exporter can also search in the entire target directory to determine whether one of the current channels had
+previously been exported.
+This is necessary to detect an existing export if the name of the channel, the channel parent or the guild has changed
+or if the default file formatting has changed.
+The `--search-existing-exports` option enables this.
+
+```console
+./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 --search-existing-exports
+```
+
+
 #### Changing the date format
 
 You can customize how dates are formatted in the exported files by using `--locale` and inserting one of Discord's

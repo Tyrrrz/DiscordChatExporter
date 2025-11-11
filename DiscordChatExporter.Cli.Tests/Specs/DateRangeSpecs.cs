@@ -30,7 +30,7 @@ public class DateRangeSpecs
             ChannelIds = [ChannelIds.DateRangeTestCases],
             ExportFormat = ExportFormat.Json,
             OutputPath = file.Path,
-            After = Snowflake.FromDate(after),
+            After = Snowflake.FromDate(after, true),
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
@@ -118,7 +118,7 @@ public class DateRangeSpecs
             ExportFormat = ExportFormat.Json,
             OutputPath = file.Path,
             Before = Snowflake.FromDate(before),
-            After = Snowflake.FromDate(after),
+            After = Snowflake.FromDate(after, true),
         }.ExecuteAsync(new FakeConsole());
 
         // Assert

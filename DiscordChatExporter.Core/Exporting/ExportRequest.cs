@@ -30,6 +30,12 @@ public partial class ExportRequest
 
     public Snowflake? Before { get; }
 
+    public ExportExistsHandling ExportExistsHandling { get; }
+
+    public bool SearchForExistingExports { get; }
+
+    public Snowflake? LastPriorMessage { get; set; }
+
     public PartitionLimit PartitionLimit { get; }
 
     public MessageFilter MessageFilter { get; }
@@ -54,6 +60,8 @@ public partial class ExportRequest
         ExportFormat format,
         Snowflake? after,
         Snowflake? before,
+        ExportExistsHandling exportExistsHandling,
+        bool searchForExistingExports,
         PartitionLimit partitionLimit,
         MessageFilter messageFilter,
         bool shouldFormatMarkdown,
@@ -68,6 +76,8 @@ public partial class ExportRequest
         Format = format;
         After = after;
         Before = before;
+        ExportExistsHandling = exportExistsHandling;
+        SearchForExistingExports = searchForExistingExports;
         PartitionLimit = partitionLimit;
         MessageFilter = messageFilter;
         ShouldFormatMarkdown = shouldFormatMarkdown;
@@ -98,6 +108,7 @@ public partial class ExportRequest
         Snowflake? before = null
     )
     {
+        // Do not change this without adding the new version to the corresponding regex below
         var buffer = new StringBuilder();
 
         // Guild name
@@ -146,6 +157,63 @@ public partial class ExportRequest
         buffer.Append('.').Append(format.GetFileExtension());
 
         return PathEx.EscapeFileName(buffer.ToString());
+    }
+
+    /// <summary>
+    /// Returns a regex that matches any default file name this channel export might have had in the past.
+    /// This can be used to detect existing exports of this channel with a different guild, parent and / or channel
+    /// name.
+    /// This only matches existing exports with the same date range as the current export.
+    /// </summary>
+    /// <returns>A regex that matches any default file name this channel might have had in the past.</returns>
+    public Regex GetDefaultOutputFileNameRegex()
+    {
+        // While this code looks similar to GetDefaultOutputFileName, the two functions are intentionally independent
+        // Even if the default output file name gets changed, the previous default file names should still be matched
+        // by this; the new version should just be added additionally to this regex
+        var buffer = new StringBuilder();
+
+        // Guild name
+        buffer.Append(".*?");
+
+        // Parent name
+        if (Channel.Parent is not null)
+            buffer.Append(" - ").Append(".*?");
+
+        // Channel name and ID
+        buffer
+            .Append(" - ")
+            .Append(".*?")
+            .Append(' ')
+            .Append("\\[")
+            .Append(Channel.Id)
+            .Append("\\]");
+
+        // Date range
+        if (After is not null || Before is not null)
+        {
+            buffer.Append(' ').Append("\\(");
+            if (After is not null && Before is not null)
+            {
+                buffer.Append(
+                    $"{After.Value.ToDate():yyyy-MM-dd} to {Before.Value.ToDate():yyyy-MM-dd}"
+                );
+            }
+            else if (After is not null)
+            {
+                buffer.Append($"after {After.Value.ToDate():yyyy-MM-dd}");
+            }
+            else if (Before is not null)
+            {
+                buffer.Append($"before {Before.Value.ToDate():yyyy-MM-dd}");
+            }
+            buffer.Append("\\)");
+        }
+
+        // File extension
+        buffer.Append("\\.").Append(Format.GetFileExtension());
+
+        return new Regex(buffer.ToString());
     }
 
     private static string FormatPath(

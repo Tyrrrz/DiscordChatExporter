@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -242,12 +243,12 @@ public partial class DashboardViewModel : ViewModelBase
                 return;
 
             var exporter = new ChannelExporter(_discord);
+            var logger = new SnackbarProgressLogger(_snackbarManager);
+            var outputDirFilesDict = new ConcurrentDictionary<string, string[]>();
 
             var channelProgressPairs = dialog
                 .Channels!.Select(c => new { Channel = c, Progress = _progressMuxer.CreateInput() })
                 .ToArray();
-
-            var successfulExportCount = 0;
 
             await Parallel.ForEachAsync(
                 channelProgressPairs,
@@ -268,8 +269,10 @@ public partial class DashboardViewModel : ViewModelBase
                             dialog.OutputPath!,
                             dialog.AssetsDirPath,
                             dialog.SelectedFormat,
-                            dialog.After?.Pipe(Snowflake.FromDate),
-                            dialog.Before?.Pipe(Snowflake.FromDate),
+                            dialog.After?.Pipe(timestamp => Snowflake.FromDate(timestamp, true)),
+                            dialog.Before?.Pipe(timestamp => Snowflake.FromDate(timestamp)),
+                            _settingsService.ExportExistsHandling,
+                            _settingsService.SearchForExistingExports,
                             dialog.PartitionLimit,
                             dialog.MessageFilter,
                             dialog.ShouldFormatMarkdown,
@@ -279,17 +282,18 @@ public partial class DashboardViewModel : ViewModelBase
                             _settingsService.IsUtcNormalizationEnabled
                         );
 
-                        await exporter.ExportChannelAsync(request, progress, cancellationToken);
-
-                        Interlocked.Increment(ref successfulExportCount);
-                    }
-                    catch (ChannelEmptyException ex)
-                    {
-                        _snackbarManager.Notify(ex.Message.TrimEnd('.'));
+                        await exporter.ExportChannelAsync(
+                            logger,
+                            true,
+                            request,
+                            outputDirFilesDict,
+                            progress,
+                            cancellationToken
+                        );
                     }
                     catch (DiscordChatExporterException ex) when (!ex.IsFatal)
                     {
-                        _snackbarManager.Notify(ex.Message.TrimEnd('.'));
+                        logger.LogError(null, ex.Message.TrimEnd('.'));
                     }
                     finally
                     {
@@ -298,13 +302,7 @@ public partial class DashboardViewModel : ViewModelBase
                 }
             );
 
-            // Notify of the overall completion
-            if (successfulExportCount > 0)
-            {
-                _snackbarManager.Notify(
-                    $"Successfully exported {successfulExportCount} channel(s)"
-                );
-            }
+            logger.PrintExportSummary(_settingsService.ExportExistsHandling);
         }
         catch (Exception ex)
         {

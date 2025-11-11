@@ -240,6 +240,7 @@
                             }
 
                             @* Timestamp *@
+                            @* Don't change this without changing the corresponding detection in the HtmlMessageWriter *@
                             <span class="chatlog__timestamp" title="@FormatDate(message.Timestamp, "f")"><a href="#chatlog__message-container-@message.Id">@FormatDate(message.Timestamp)</a></span>
                         </div>
                     }

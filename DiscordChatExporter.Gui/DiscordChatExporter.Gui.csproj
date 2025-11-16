@@ -10,6 +10,10 @@
   <PropertyGroup>
     <PublishMacOSBundle>false</PublishMacOSBundle>
   </PropertyGroup>
+  <PropertyGroup>
+    <!-- HACK: Disable trim warnings because they seem to break when the code contains C# 14 extension blocks -->
+    <NoWarn>$(NoWarn);AD0001</NoWarn>
+  </PropertyGroup>
   <ItemGroup>
     <AvaloniaResource Include="..\favicon.ico" Link="favicon.ico" />
   </ItemGroup>

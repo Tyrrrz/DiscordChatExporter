@@ -5,6 +5,10 @@
     <PublishTrimmed>true</PublishTrimmed>
     <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
   </PropertyGroup>
+  <PropertyGroup>
+    <!-- HACK: Disable trim warnings because they seem to break when the code contains C# 14 extension blocks -->
+    <NoWarn>$(NoWarn);AD0001</NoWarn>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CliFx" Version="2.3.6" />
     <PackageReference Include="CSharpier.MsBuild" Version="1.1.2" PrivateAssets="all" />
@@ -13,7 +17,6 @@
     <PackageReference Include="Spectre.Console" Version="0.53.0" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="9.0.10" />
     <ProjectReference Include="..\DiscordChatExporter.Core\DiscordChatExporter.Core.csproj" />
   </ItemGroup>
 </Project>

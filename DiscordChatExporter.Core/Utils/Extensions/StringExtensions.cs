@@ -5,30 +5,35 @@ namespace DiscordChatExporter.Core.Utils.Extensions;
 
 public static class StringExtensions
 {
-    public static string? NullIfWhiteSpace(this string str) =>
-        !string.IsNullOrWhiteSpace(str) ? str : null;
-
-    public static string Truncate(this string str, int charCount) =>
-        str.Length > charCount ? str[..charCount] : str;
-
-    public static string ToSpaceSeparatedWords(this string str)
+    extension(string str)
     {
-        var builder = new StringBuilder(str.Length * 2);
+        public string? NullIfWhiteSpace() => !string.IsNullOrWhiteSpace(str) ? str : null;
 
-        foreach (var c in str)
+        public string Truncate(int charCount) => str.Length > charCount ? str[..charCount] : str;
+
+        public string ToSpaceSeparatedWords()
         {
-            if (char.IsUpper(c) && builder.Length > 0)
-                builder.Append(' ');
+            var builder = new StringBuilder(str.Length * 2);
 
-            builder.Append(c);
+            foreach (var c in str)
+            {
+                if (char.IsUpper(c) && builder.Length > 0)
+                    builder.Append(' ');
+
+                builder.Append(c);
+            }
+
+            return builder.ToString();
         }
 
-        return builder.ToString();
+        public T? ParseEnumOrNull<T>(bool ignoreCase = true)
+            where T : struct, Enum =>
+            Enum.TryParse<T>(str, ignoreCase, out var result) ? result : null;
     }
 
-    public static T? ParseEnumOrNull<T>(this string str, bool ignoreCase = true)
-        where T : struct, Enum => Enum.TryParse<T>(str, ignoreCase, out var result) ? result : null;
-
-    public static StringBuilder AppendIfNotEmpty(this StringBuilder builder, char value) =>
-        builder.Length > 0 ? builder.Append(value) : builder;
+    extension(StringBuilder builder)
+    {
+        public StringBuilder AppendIfNotEmpty(char value) =>
+            builder.Length > 0 ? builder.Append(value) : builder;
+    }
 }

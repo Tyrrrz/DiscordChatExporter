@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -102,7 +103,7 @@ public partial class DashboardViewModel : ViewModelBase
         await _dialogManager.ShowDialogAsync(_viewModelManager.CreateSettingsViewModel());
 
     [RelayCommand]
-    private void ShowHelp() => ProcessEx.StartShellExecute(Program.ProjectDocumentationUrl);
+    private void ShowHelp() => Process.StartShellExecute(Program.ProjectDocumentationUrl);
 
     private bool CanPullGuilds() => !IsBusy && !string.IsNullOrWhiteSpace(Token);
 
@@ -322,11 +323,11 @@ public partial class DashboardViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void OpenDiscord() => ProcessEx.StartShellExecute("https://discord.com/app");
+    private void OpenDiscord() => Process.StartShellExecute("https://discord.com/app");
 
     [RelayCommand]
     private void OpenDiscordDeveloperPortal() =>
-        ProcessEx.StartShellExecute("https://discord.com/developers/applications");
+        Process.StartShellExecute("https://discord.com/developers/applications");
 
     protected override void Dispose(bool disposing)
     {

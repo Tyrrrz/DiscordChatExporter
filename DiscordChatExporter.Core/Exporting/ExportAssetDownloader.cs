@@ -103,7 +103,7 @@ internal partial class ExportAssetDownloader
             fileExtension = "";
         }
 
-        return PathEx.EscapeFileName(
+        return Path.EscapeFileName(
             fileNameWithoutExtension.Truncate(42) + '-' + urlHash + fileExtension
         );
     }

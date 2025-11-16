@@ -5,7 +5,6 @@ using Avalonia;
 using CommunityToolkit.Mvvm.Input;
 using DiscordChatExporter.Gui.Framework;
 using DiscordChatExporter.Gui.Services;
-using DiscordChatExporter.Gui.Utils;
 using DiscordChatExporter.Gui.Utils.Extensions;
 using DiscordChatExporter.Gui.ViewModels.Components;
 
@@ -44,7 +43,7 @@ public partial class MainViewModel(
         settingsService.Save();
 
         if (await dialogManager.ShowDialogAsync(dialog) == true)
-            ProcessEx.StartShellExecute("https://tyrrrz.me/ukraine?source=discordchatexporter");
+            Process.StartShellExecute("https://tyrrrz.me/ukraine?source=discordchatexporter");
     }
 
     private async Task ShowDevelopmentBuildMessageAsync()
@@ -70,7 +69,7 @@ public partial class MainViewModel(
         );
 
         if (await dialogManager.ShowDialogAsync(dialog) == true)
-            ProcessEx.StartShellExecute(Program.ProjectReleasesUrl);
+            Process.StartShellExecute(Program.ProjectReleasesUrl);
     }
 
     private async Task CheckForUpdatesAsync()

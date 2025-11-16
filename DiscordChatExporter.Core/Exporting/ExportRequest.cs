@@ -7,7 +7,6 @@ using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exporting.Filtering;
 using DiscordChatExporter.Core.Exporting.Partitioning;
-using DiscordChatExporter.Core.Utils;
 using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting;
@@ -145,7 +144,7 @@ public partial class ExportRequest
         // File extension
         buffer.Append('.').Append(format.GetFileExtension());
 
-        return PathEx.EscapeFileName(buffer.ToString());
+        return Path.EscapeFileName(buffer.ToString());
     }
 
     private static string FormatPath(
@@ -159,7 +158,7 @@ public partial class ExportRequest
             path,
             "%.",
             m =>
-                PathEx.EscapeFileName(
+                Path.EscapeFileName(
                     m.Value switch
                     {
                         "%g" => guild.Id.ToString(),

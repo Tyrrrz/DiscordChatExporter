@@ -5,15 +5,18 @@ namespace DiscordChatExporter.Core.Utils.Extensions;
 
 public static class BinaryExtensions
 {
-    public static string ToHex(this byte[] data, bool isUpperCase = true)
+    extension(byte[] data)
     {
-        var buffer = new StringBuilder(2 * data.Length);
-
-        foreach (var b in data)
+        public string ToHex(bool isUpperCase = true)
         {
-            buffer.Append(b.ToString(isUpperCase ? "X2" : "x2", CultureInfo.InvariantCulture));
-        }
+            var buffer = new StringBuilder(2 * data.Length);
 
-        return buffer.ToString();
+            foreach (var b in data)
+            {
+                buffer.Append(b.ToString(isUpperCase ? "X2" : "x2", CultureInfo.InvariantCulture));
+            }
+
+            return buffer.ToString();
+        }
     }
 }

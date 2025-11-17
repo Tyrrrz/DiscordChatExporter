@@ -5,9 +5,10 @@
     <PublishTrimmed>true</PublishTrimmed>
     <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
   </PropertyGroup>
+  <!-- HACK: Disable trim warnings because they seem to break when the code contains C# 14 extension blocks -->
   <PropertyGroup>
-    <!-- HACK: Disable trim warnings because they seem to break when the code contains C# 14 extension blocks -->
-    <NoWarn>$(NoWarn);AD0001</NoWarn>
+    <EnableTrimAnalyzer>false</EnableTrimAnalyzer>
+    <EnableAotAnalyzer>false</EnableAotAnalyzer>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CliFx" Version="2.3.6" />

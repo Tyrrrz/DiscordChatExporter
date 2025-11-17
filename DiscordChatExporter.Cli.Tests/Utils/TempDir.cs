@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using PathEx = System.IO.Path;
 
 namespace DiscordChatExporter.Cli.Tests.Utils;
 
@@ -23,9 +22,9 @@ internal partial class TempDir
 {
     public static TempDir Create()
     {
-        var dirPath = PathEx.Combine(
-            PathEx.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
-                ?? Directory.GetCurrentDirectory(),
+        var dirPath = System.IO.Path.Combine(
+            System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
+            ?? Directory.GetCurrentDirectory(),
             "Temp",
             Guid.NewGuid().ToString()
         );

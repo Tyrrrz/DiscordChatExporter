@@ -64,13 +64,11 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
             await WriteRolesAsync(Context.GetUserRoles(user.Id), cancellationToken);
         }
 
-        _writer.WriteString(
-            "avatarUrl",
-            await Context.ResolveAssetUrlAsync(
-                Context.TryGetMember(user.Id)?.AvatarUrl ?? user.AvatarUrl,
-                cancellationToken
-            )
-        );
+        var avatarUrl = Context.TryGetMember(user.Id)?.AvatarUrl ?? user.AvatarUrl;
+        var resolvedAvatarUrl = await Context.ResolveAssetUrlAsync(avatarUrl, cancellationToken);
+        _writer.WriteString("avatarUrl", resolvedAvatarUrl);
+        if (resolvedAvatarUrl != avatarUrl)
+            _writer.WriteString("originalAvatarUrl", avatarUrl);
 
         _writer.WriteEndObject();
         await _writer.FlushAsync(cancellationToken);
@@ -87,10 +85,10 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
         _writer.WriteString("name", emoji.Name);
         _writer.WriteString("code", emoji.Code);
         _writer.WriteBoolean("isAnimated", emoji.IsAnimated);
-        _writer.WriteString(
-            "imageUrl",
-            await Context.ResolveAssetUrlAsync(emoji.ImageUrl, cancellationToken)
-        );
+        var resolvedImageUrl = await Context.ResolveAssetUrlAsync(emoji.ImageUrl, cancellationToken);
+        _writer.WriteString("imageUrl", resolvedImageUrl);
+        if (resolvedImageUrl != emoji.ImageUrl)
+            _writer.WriteString("originalImageUrl", emoji.ImageUrl);
 
         _writer.WriteEndObject();
         await _writer.FlushAsync(cancellationToken);
@@ -131,13 +129,12 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
 
         if (!string.IsNullOrWhiteSpace(embedAuthor.IconUrl))
         {
-            _writer.WriteString(
-                "iconUrl",
-                await Context.ResolveAssetUrlAsync(
-                    embedAuthor.IconProxyUrl ?? embedAuthor.IconUrl,
-                    cancellationToken
-                )
-            );
+            var iconUrl = embedAuthor.IconProxyUrl ?? embedAuthor.IconUrl;
+            var originalIconUrl = embedAuthor.IconUrl ?? embedAuthor.IconProxyUrl;
+            var resolvedIconUrl = await Context.ResolveAssetUrlAsync(iconUrl, cancellationToken);
+            _writer.WriteString("iconUrl", resolvedIconUrl);
+            if (resolvedIconUrl != originalIconUrl)
+                _writer.WriteString("originalIconUrl", originalIconUrl);
         }
 
         _writer.WriteEndObject();
@@ -153,13 +150,12 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
 
         if (!string.IsNullOrWhiteSpace(embedImage.Url))
         {
-            _writer.WriteString(
-                "url",
-                await Context.ResolveAssetUrlAsync(
-                    embedImage.ProxyUrl ?? embedImage.Url,
-                    cancellationToken
-                )
-            );
+            var imageUrl = embedImage.ProxyUrl ?? embedImage.Url;
+            var originalUrl = embedImage.Url ?? embedImage.ProxyUrl;
+            var resolvedUrl = await Context.ResolveAssetUrlAsync(imageUrl, cancellationToken);
+            _writer.WriteString("url", resolvedUrl);
+            if (resolvedUrl != originalUrl)
+                _writer.WriteString("originalUrl", originalUrl);
         }
 
         _writer.WriteNumber("width", embedImage.Width);
@@ -178,13 +174,12 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
 
         if (!string.IsNullOrWhiteSpace(embedVideo.Url))
         {
-            _writer.WriteString(
-                "url",
-                await Context.ResolveAssetUrlAsync(
-                    embedVideo.ProxyUrl ?? embedVideo.Url,
-                    cancellationToken
-                )
-            );
+            var videoUrl = embedVideo.ProxyUrl ?? embedVideo.Url;
+            var originalUrl = embedVideo.Url ?? embedVideo.ProxyUrl;
+            var resolvedUrl = await Context.ResolveAssetUrlAsync(videoUrl, cancellationToken);
+            _writer.WriteString("url", resolvedUrl);
+            if (resolvedUrl != originalUrl)
+                _writer.WriteString("originalUrl", originalUrl);
         }
 
         _writer.WriteNumber("width", embedVideo.Width);
@@ -205,13 +200,12 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
 
         if (!string.IsNullOrWhiteSpace(embedFooter.IconUrl))
         {
-            _writer.WriteString(
-                "iconUrl",
-                await Context.ResolveAssetUrlAsync(
-                    embedFooter.IconProxyUrl ?? embedFooter.IconUrl,
-                    cancellationToken
-                )
-            );
+            var iconUrl = embedFooter.IconProxyUrl ?? embedFooter.IconUrl;
+            var originalIconUrl = embedFooter.IconUrl ?? embedFooter.IconProxyUrl;
+            var resolvedIconUrl = await Context.ResolveAssetUrlAsync(iconUrl, cancellationToken);
+            _writer.WriteString("iconUrl", resolvedIconUrl);
+            if (resolvedIconUrl != originalIconUrl)
+                _writer.WriteString("originalIconUrl", originalIconUrl);
         }
 
         _writer.WriteEndObject();
@@ -339,10 +333,11 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
         _writer.WriteString("id", Context.Request.Guild.Id.ToString());
         _writer.WriteString("name", Context.Request.Guild.Name);
 
-        _writer.WriteString(
-            "iconUrl",
-            await Context.ResolveAssetUrlAsync(Context.Request.Guild.IconUrl, cancellationToken)
-        );
+        var guildIconUrl = Context.Request.Guild.IconUrl;
+        var resolvedGuildIconUrl = await Context.ResolveAssetUrlAsync(guildIconUrl, cancellationToken);
+        _writer.WriteString("iconUrl", resolvedGuildIconUrl);
+        if (resolvedGuildIconUrl != guildIconUrl)
+            _writer.WriteString("originalIconUrl", guildIconUrl);
 
         _writer.WriteEndObject();
 
@@ -360,13 +355,11 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
 
         if (!string.IsNullOrWhiteSpace(Context.Request.Channel.IconUrl))
         {
-            _writer.WriteString(
-                "iconUrl",
-                await Context.ResolveAssetUrlAsync(
-                    Context.Request.Channel.IconUrl,
-                    cancellationToken
-                )
-            );
+            var channelIconUrl = Context.Request.Channel.IconUrl;
+            var resolvedChannelIconUrl = await Context.ResolveAssetUrlAsync(channelIconUrl, cancellationToken);
+            _writer.WriteString("iconUrl", resolvedChannelIconUrl);
+            if (resolvedChannelIconUrl != channelIconUrl)
+                _writer.WriteString("originalIconUrl", channelIconUrl);
         }
 
         _writer.WriteEndObject();
@@ -433,10 +426,10 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
             _writer.WriteStartObject();
 
             _writer.WriteString("id", attachment.Id.ToString());
-            _writer.WriteString(
-                "url",
-                await Context.ResolveAssetUrlAsync(attachment.Url, cancellationToken)
-            );
+            var resolvedUrl = await Context.ResolveAssetUrlAsync(attachment.Url, cancellationToken);
+            _writer.WriteString("url", resolvedUrl);
+            if (resolvedUrl != attachment.Url)
+                _writer.WriteString("originalUrl", attachment.Url);
             _writer.WriteString("fileName", attachment.FileName);
             _writer.WriteNumber("fileSizeBytes", attachment.FileSize.TotalBytes);
 
@@ -463,10 +456,10 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
             _writer.WriteString("id", sticker.Id.ToString());
             _writer.WriteString("name", sticker.Name);
             _writer.WriteString("format", sticker.Format.ToString());
-            _writer.WriteString(
-                "sourceUrl",
-                await Context.ResolveAssetUrlAsync(sticker.SourceUrl, cancellationToken)
-            );
+            var resolvedSourceUrl = await Context.ResolveAssetUrlAsync(sticker.SourceUrl, cancellationToken);
+            _writer.WriteString("sourceUrl", resolvedSourceUrl);
+            if (resolvedSourceUrl != sticker.SourceUrl)
+                _writer.WriteString("originalSourceUrl", sticker.SourceUrl);
 
             _writer.WriteEndObject();
         }

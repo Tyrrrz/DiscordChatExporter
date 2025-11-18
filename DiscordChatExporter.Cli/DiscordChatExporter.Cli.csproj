@@ -5,18 +5,21 @@
     <PublishTrimmed>true</PublishTrimmed>
     <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
   </PropertyGroup>
+
   <!-- HACK: Disable trim warnings because they seem to break when the code contains C# 14 extension blocks -->
   <PropertyGroup>
     <EnableTrimAnalyzer>false</EnableTrimAnalyzer>
     <EnableAotAnalyzer>false</EnableAotAnalyzer>
   </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="CliFx" Version="2.3.6" />
-    <PackageReference Include="CSharpier.MsBuild" Version="1.1.2" PrivateAssets="all" />
+    <PackageReference Include="CSharpier.MsBuild" Version="1.2.1" PrivateAssets="all" />
     <PackageReference Include="Deorcify" Version="1.1.0" PrivateAssets="all" />
     <PackageReference Include="Gress" Version="2.1.1" />
     <PackageReference Include="Spectre.Console" Version="0.53.0" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\DiscordChatExporter.Core\DiscordChatExporter.Core.csproj" />
   </ItemGroup>

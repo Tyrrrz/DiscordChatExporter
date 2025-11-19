@@ -149,7 +149,11 @@
                         }
 
                         // Avatar
-                        <img class="chatlog__avatar" src="@await ResolveAssetUrlAsync(authorMember?.AvatarUrl ?? message.Author.AvatarUrl)" alt="Avatar" loading="lazy">
+                        {
+                            var avatarUrl = authorMember?.AvatarUrl ?? message.Author.AvatarUrl;
+                            var resolvedAvatarUrl = await ResolveAssetUrlAsync(avatarUrl);
+                            <img class="chatlog__avatar" src="@resolvedAvatarUrl" @(resolvedAvatarUrl != avatarUrl ? $"data-original-url=\"{avatarUrl}\"" : null) alt="Avatar" loading="lazy">
+                        }
                     }
                     else
                     {
@@ -172,7 +176,9 @@
                                         ? message.ReferencedMessage.Author.DisplayName
                                         : referencedUserMember?.DisplayName ?? message.ReferencedMessage.Author.DisplayName;
 
-                                    <img class="chatlog__reply-avatar" src="@await ResolveAssetUrlAsync(referencedUserMember?.AvatarUrl ?? message.ReferencedMessage.Author.AvatarUrl)" alt="Avatar" loading="lazy">
+                                    var replyAvatarUrl = referencedUserMember?.AvatarUrl ?? message.ReferencedMessage.Author.AvatarUrl;
+                                    var resolvedReplyAvatarUrl = await ResolveAssetUrlAsync(replyAvatarUrl);
+                                    <img class="chatlog__reply-avatar" src="@resolvedReplyAvatarUrl" @(resolvedReplyAvatarUrl != replyAvatarUrl ? $"data-original-url=\"{replyAvatarUrl}\"" : null) alt="Avatar" loading="lazy">
                                     <div class="chatlog__reply-author" style="@(referencedUserColor is not null ? $"color: rgb({referencedUserColor.Value.R}, {referencedUserColor.Value.G}, {referencedUserColor.Value.B})" : null)" title="@message.ReferencedMessage.Author.FullName">@referencedUserDisplayName</div>
                                     <div class="chatlog__reply-content">
                                         <span class="chatlog__reply-link" onclick="scrollToMessage(event, '@message.ReferencedMessage.Id')">
@@ -205,7 +211,9 @@
                                         ? message.Interaction.User.DisplayName
                                         : interactionUserMember?.DisplayName ?? message.Interaction.User.DisplayName;
 
-                                    <img class="chatlog__reply-avatar" src="@await ResolveAssetUrlAsync(interactionUserMember?.AvatarUrl ?? message.Interaction.User.AvatarUrl)" alt="Avatar" loading="lazy">
+                                    var interactionAvatarUrl = interactionUserMember?.AvatarUrl ?? message.Interaction.User.AvatarUrl;
+                                    var resolvedInteractionAvatarUrl = await ResolveAssetUrlAsync(interactionAvatarUrl);
+                                    <img class="chatlog__reply-avatar" src="@resolvedInteractionAvatarUrl" @(resolvedInteractionAvatarUrl != interactionAvatarUrl ? $"data-original-url=\"{interactionAvatarUrl}\"" : null) alt="Avatar" loading="lazy">
                                     <div class="chatlog__reply-author" style="@(interactionUserColor is not null ? $"color: rgb({interactionUserColor.Value.R}, {interactionUserColor.Value.G}, {interactionUserColor.Value.B})" : null)" title="@message.Interaction.User.FullName">@interactionUserDisplayName</div>
                                     <div class="chatlog__reply-content">
                                         used /@message.Interaction.Name
@@ -275,20 +283,23 @@
                             @* Attachment preview *@
                             @if (attachment.IsImage)
                             {
-                                <a href="@await ResolveAssetUrlAsync(attachment.Url)">
-                                    <img class="chatlog__attachment-media" src="@await ResolveAssetUrlAsync(attachment.Url)" alt="@(attachment.Description ?? "Image attachment")" title="Image: @attachment.FileName (@attachment.FileSize)" loading="lazy">
+                                var resolvedUrl = await ResolveAssetUrlAsync(attachment.Url);
+                                <a href="@resolvedUrl">
+                                    <img class="chatlog__attachment-media" src="@resolvedUrl" @(resolvedUrl != attachment.Url ? $"data-original-url=\"{attachment.Url}\"" : null) alt="@(attachment.Description ?? "Image attachment")" title="Image: @attachment.FileName (@attachment.FileSize)" loading="lazy">
                                 </a>
                             }
                             else if (attachment.IsVideo)
                             {
-                                <video class="chatlog__attachment-media" controls>
-                                    <source src="@await ResolveAssetUrlAsync(attachment.Url)" alt="@(attachment.Description ?? "Video attachment")" title="Video: @attachment.FileName (@attachment.FileSize)">
+                                var resolvedUrl = await ResolveAssetUrlAsync(attachment.Url);
+                                <video class="chatlog__attachment-media" controls @(resolvedUrl != attachment.Url ? $"data-original-url=\"{attachment.Url}\"" : null)>
+                                    <source src="@resolvedUrl" alt="@(attachment.Description ?? "Video attachment")" title="Video: @attachment.FileName (@attachment.FileSize)">
                                 </video>
                             }
                             else if (attachment.IsAudio)
                             {
-                                <audio class="chatlog__attachment-media" controls>
-                                    <source src="@await ResolveAssetUrlAsync(attachment.Url)" alt="@(attachment.Description ?? "Audio attachment")" title="Audio: @attachment.FileName (@attachment.FileSize)">
+                                var resolvedUrl = await ResolveAssetUrlAsync(attachment.Url);
+                                <audio class="chatlog__attachment-media" controls @(resolvedUrl != attachment.Url ? $"data-original-url=\"{attachment.Url}\"" : null)>
+                                    <source src="@resolvedUrl" alt="@(attachment.Description ?? "Audio attachment")" title="Audio: @attachment.FileName (@attachment.FileSize)">
                                 </audio>
                             }
                             else
@@ -330,9 +341,13 @@
                             <div class="chatlog__embed">
                                 <div class="chatlog__embed-invite-container">
                                     <div class="chatlog__embed-invite-title">@(invite.Channel?.IsDirect == true ? "Invite to join a group DM" : "Invite to join a server")</div>
+                                    @{
+                                        var inviteIconUrl = invite.Channel?.IconUrl ?? invite.Guild.IconUrl;
+                                        var resolvedInviteIconUrl = await ResolveAssetUrlAsync(inviteIconUrl);
+                                    }
                                     <div class="chatlog__embed-invite">
                                         <div class="chatlog__embed-invite-guild-icon-container">
-                                            <img class="chatlog__embed-invite-guild-icon" src="@await ResolveAssetUrlAsync(invite.Channel?.IconUrl ?? invite.Guild.IconUrl)" alt="Guild icon" loading="lazy">
+                                            <img class="chatlog__embed-invite-guild-icon" src="@resolvedInviteIconUrl" @(resolvedInviteIconUrl != inviteIconUrl ? $"data-original-url=\"{inviteIconUrl}\"" : null) alt="Guild icon" loading="lazy">
                                         </div>
                                         <div class="chatlog__embed-invite-info">
                                             <div class="chatlog__embed-invite-guild-name">
@@ -388,7 +403,10 @@
                                                 <div class="chatlog__embed-author-container">
                                                     @if (!string.IsNullOrWhiteSpace(embed.Author.IconUrl))
                                                     {
-                                                        <img class="chatlog__embed-author-icon" src="@await ResolveAssetUrlAsync(embed.Author.IconProxyUrl ?? embed.Author.IconUrl)" alt="Author icon" loading="lazy" onerror="this.style.visibility='hidden'">
+                                                        var authorIconUrl = embed.Author.IconProxyUrl ?? embed.Author.IconUrl;
+                                                        var originalAuthorIconUrl = embed.Author.IconUrl ?? embed.Author.IconProxyUrl;
+                                                        var resolvedAuthorIconUrl = await ResolveAssetUrlAsync(authorIconUrl);
+                                                        <img class="chatlog__embed-author-icon" src="@resolvedAuthorIconUrl" @(resolvedAuthorIconUrl != originalAuthorIconUrl ? $"data-original-url=\"{originalAuthorIconUrl}\"" : null) alt="Author icon" loading="lazy" onerror="this.style.visibility='hidden'">
                                                     }
 
                                                     @if (!string.IsNullOrWhiteSpace(embed.Author.Name))
@@ -441,14 +459,21 @@
                                 embed.Thumbnail?.ProxyUrl ?? embed.Thumbnail?.Url ??
                                 embed.Url;
 
+                            var embedImageOriginalUrl =
+                                embed.Image?.Url ?? embed.Image?.ProxyUrl ??
+                                embed.Thumbnail?.Url ?? embed.Thumbnail?.ProxyUrl ??
+                                embed.Url;
+
+                            var resolvedEmbedImageUrl = await ResolveAssetUrlAsync(embedImageUrl);
+
                             <div class="chatlog__embed">
-                                <a href="@await ResolveAssetUrlAsync(embedImageUrl)">
-                                    <img class="chatlog__embed-generic-image" src="@await ResolveAssetUrlAsync(embedImageUrl)" alt="Embedded image" loading="lazy">
+                                <a href="@resolvedEmbedImageUrl">
+                                    <img class="chatlog__embed-generic-image" src="@resolvedEmbedImageUrl" @(resolvedEmbedImageUrl != embedImageOriginalUrl ? $"data-original-url=\"{embedImageOriginalUrl}\"" : null) alt="Embedded image" loading="lazy">
                                 </a>
                             </div>
                         }
                         // Generic video embed
-                        else if (embed.Kind == EmbedKind.Video 
+                        else if (embed.Kind == EmbedKind.Video
                                  && !string.IsNullOrWhiteSpace(embed.Url)
                                  // Twitch clips cannot be embedded in local HTML files
                                  && embed.TryGetTwitchClip() is null)
@@ -457,9 +482,15 @@
                                 embed.Video?.ProxyUrl ?? embed.Video?.Url ??
                                 embed.Url;
 
+                            var embedVideoOriginalUrl =
+                                embed.Video?.Url ?? embed.Video?.ProxyUrl ??
+                                embed.Url;
+
+                            var resolvedEmbedVideoUrl = await ResolveAssetUrlAsync(embedVideoUrl);
+
                             <div class="chatlog__embed">
-                                <video class="chatlog__embed-generic-video" width="@embed.Video?.Width" height="@embed.Video?.Height" controls>
-                                    <source src="@await ResolveAssetUrlAsync(embedVideoUrl)" alt="Embedded video">
+                                <video class="chatlog__embed-generic-video" width="@embed.Video?.Width" height="@embed.Video?.Height" controls @(resolvedEmbedVideoUrl != embedVideoOriginalUrl ? $"data-original-url=\"{embedVideoOriginalUrl}\"" : null)>
+                                    <source src="@resolvedEmbedVideoUrl" alt="Embedded video">
                                 </video>
                             </div>
                         }
@@ -470,9 +501,15 @@
                                 embed.Video?.ProxyUrl ?? embed.Video?.Url ??
                                 embed.Url;
 
+                            var embedVideoOriginalUrl =
+                                embed.Video?.Url ?? embed.Video?.ProxyUrl ??
+                                embed.Url;
+
+                            var resolvedEmbedVideoUrl = await ResolveAssetUrlAsync(embedVideoUrl);
+
                             <div class="chatlog__embed">
-                                <video class="chatlog__embed-generic-gifv" width="@embed.Video?.Width" height="@embed.Video?.Height" loop onmouseover="this.play()" onmouseout="this.pause()">
-                                    <source src="@await ResolveAssetUrlAsync(embedVideoUrl)" alt="Embedded gifv">
+                                <video class="chatlog__embed-generic-gifv" width="@embed.Video?.Width" height="@embed.Video?.Height" loop onmouseover="this.play()" onmouseout="this.pause()" @(resolvedEmbedVideoUrl != embedVideoOriginalUrl ? $"data-original-url=\"{embedVideoOriginalUrl}\"" : null)>
+                                    <source src="@resolvedEmbedVideoUrl" alt="Embedded gifv">
                                 </video>
                             </div>
                         }
@@ -499,7 +536,10 @@
                                                 <div class="chatlog__embed-author-container">
                                                     @if (!string.IsNullOrWhiteSpace(embed.Author.IconUrl))
                                                     {
-                                                        <img class="chatlog__embed-author-icon" src="@await ResolveAssetUrlAsync(embed.Author.IconProxyUrl ?? embed.Author.IconUrl)" alt="Author icon" loading="lazy" onerror="this.style.visibility='hidden'">
+                                                        var authorIconUrl = embed.Author.IconProxyUrl ?? embed.Author.IconUrl;
+                                                        var originalAuthorIconUrl = embed.Author.IconUrl ?? embed.Author.IconProxyUrl;
+                                                        var resolvedAuthorIconUrl = await ResolveAssetUrlAsync(authorIconUrl);
+                                                        <img class="chatlog__embed-author-icon" src="@resolvedAuthorIconUrl" @(resolvedAuthorIconUrl != originalAuthorIconUrl ? $"data-original-url=\"{originalAuthorIconUrl}\"" : null) alt="Author icon" loading="lazy" onerror="this.style.visibility='hidden'">
                                                     }
 
                                                     @if (!string.IsNullOrWhiteSpace(embed.Author.Name))
@@ -572,9 +612,12 @@
                                         @* Embed content *@
                                         @if (embed.Thumbnail is not null && !string.IsNullOrWhiteSpace(embed.Thumbnail.Url))
                                         {
+                                            var thumbnailUrl = embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url;
+                                            var originalThumbnailUrl = embed.Thumbnail.Url ?? embed.Thumbnail.ProxyUrl;
+                                            var resolvedThumbnailUrl = await ResolveAssetUrlAsync(thumbnailUrl);
                                             <div class="chatlog__embed-thumbnail-container">
-                                                <a class="chatlog__embed-thumbnail-link" href="@await ResolveAssetUrlAsync(embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url)">
-                                                    <img class="chatlog__embed-thumbnail" src="@await ResolveAssetUrlAsync(embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url)" alt="Thumbnail" loading="lazy">
+                                                <a class="chatlog__embed-thumbnail-link" href="@resolvedThumbnailUrl">
+                                                    <img class="chatlog__embed-thumbnail" src="@resolvedThumbnailUrl" @(resolvedThumbnailUrl != originalThumbnailUrl ? $"data-original-url=\"{originalThumbnailUrl}\"" : null) alt="Thumbnail" loading="lazy">
                                                 </a>
                                             </div>
                                         }
@@ -588,9 +631,12 @@
                                             {
                                                 if (!string.IsNullOrWhiteSpace(image.Url))
                                                 {
+                                                    var imageUrl = image.ProxyUrl ?? image.Url;
+                                                    var originalImageUrl = image.Url ?? image.ProxyUrl;
+                                                    var resolvedImageUrl = await ResolveAssetUrlAsync(imageUrl);
                                                     <div class="chatlog__embed-image-container">
-                                                        <a class="chatlog__embed-image-link" href="@await ResolveAssetUrlAsync(image.ProxyUrl ?? image.Url)">
-                                                            <img class="chatlog__embed-image" src="@await ResolveAssetUrlAsync(image.ProxyUrl ?? image.Url)" alt="Image" loading="lazy">
+                                                        <a class="chatlog__embed-image-link" href="@resolvedImageUrl">
+                                                            <img class="chatlog__embed-image" src="@resolvedImageUrl" @(resolvedImageUrl != originalImageUrl ? $"data-original-url=\"{originalImageUrl}\"" : null) alt="Image" loading="lazy">
                                                         </a>
                                                     </div>
                                                 }
@@ -605,7 +651,10 @@
                                             @* Footer icon *@
                                             @if (!string.IsNullOrWhiteSpace(embed.Footer?.IconUrl))
                                             {
-                                                <img class="chatlog__embed-footer-icon" src="@await ResolveAssetUrlAsync(embed.Footer.IconProxyUrl ?? embed.Footer.IconUrl)" alt="Footer icon" loading="lazy">
+                                                var footerIconUrl = embed.Footer.IconProxyUrl ?? embed.Footer.IconUrl;
+                                                var originalFooterIconUrl = embed.Footer.IconUrl ?? embed.Footer.IconProxyUrl;
+                                                var resolvedFooterIconUrl = await ResolveAssetUrlAsync(footerIconUrl);
+                                                <img class="chatlog__embed-footer-icon" src="@resolvedFooterIconUrl" @(resolvedFooterIconUrl != originalFooterIconUrl ? $"data-original-url=\"{originalFooterIconUrl}\"" : null) alt="Footer icon" loading="lazy">
                                             }
 
                                             <span class="chatlog__embed-footer-text">
@@ -636,14 +685,15 @@
                     @* Stickers *@
                     @foreach (var sticker in message.Stickers)
                     {
+                        var resolvedStickerUrl = await ResolveAssetUrlAsync(sticker.SourceUrl);
                         <div class="chatlog__sticker" title="@sticker.Name">
                             @if (sticker.IsImage)
                             {
-                                <img class="chatlog__sticker--media" src="@await ResolveAssetUrlAsync(sticker.SourceUrl)" alt="Sticker">
+                                <img class="chatlog__sticker--media" src="@resolvedStickerUrl" @(resolvedStickerUrl != sticker.SourceUrl ? $"data-original-url=\"{sticker.SourceUrl}\"" : null) alt="Sticker">
                             }
                             else if (sticker.Format == StickerFormat.Lottie)
                             {
-                                <div class="chatlog__sticker--media" data-source="@await ResolveAssetUrlAsync(sticker.SourceUrl)"></div>
+                                <div class="chatlog__sticker--media" data-source="@resolvedStickerUrl" @(resolvedStickerUrl != sticker.SourceUrl ? $"data-original-url=\"{sticker.SourceUrl}\"" : null)></div>
                             }
                         </div>
                     }
@@ -654,8 +704,9 @@
                         <div class="chatlog__reactions">
                             @foreach (var reaction in message.Reactions)
                             {
+                                var resolvedEmojiUrl = await ResolveAssetUrlAsync(reaction.Emoji.ImageUrl);
                                 <div class="chatlog__reaction" title="@reaction.Emoji.Code">
-                                    <img class="chatlog__emoji chatlog__emoji--small" alt="@reaction.Emoji.Name" src="@await ResolveAssetUrlAsync(reaction.Emoji.ImageUrl)" loading="lazy">
+                                    <img class="chatlog__emoji chatlog__emoji--small" alt="@reaction.Emoji.Name" src="@resolvedEmojiUrl" @(resolvedEmojiUrl != reaction.Emoji.ImageUrl ? $"data-original-url=\"{reaction.Emoji.ImageUrl}\"" : null) loading="lazy">
                                     <span class="chatlog__reaction-count">@reaction.Count</span>
                                 </div>
                             }

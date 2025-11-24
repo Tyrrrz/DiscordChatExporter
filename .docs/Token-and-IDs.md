@@ -306,7 +306,7 @@ If you don't have a bot token yet or if you've lost it, follow these steps to re
 > **Tip**:
 > As the token is only shown once, make sure to store it in a safe place. If you lose the token, you will have to reset it again.
 
-> **Warning**:
+> [!WARNING]
 > Resetting the token will invalidate the old one. Any integrations relying on the old token will cease to function until they are updated.
 
 ![https://discord.com/developers/applications/](https://i.imgur.com/soiB8Qc.png)

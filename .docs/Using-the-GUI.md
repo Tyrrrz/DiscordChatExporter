@@ -31,7 +31,7 @@ If you skip these steps, the "DiscordChatExporter is damaged and can’t be open
 
 Please refer to the on-screen instructions to get your token, then paste your token in the upper text box and hit ENTER or click the arrow (→).
 
-> **Warning**:
+> [!WARNING]
 > **Never share your token!**
 > A token gives full access to an account, treat it like a password.
 

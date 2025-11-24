@@ -33,7 +33,7 @@ The HTML format replicates Discord's interface, making it the most user-friendly
 It's the best format for attachment preview and sharing.
 You can open `.html` files with a web browser, such as Google Chrome.
 
-> **Warning**:
+> [!WARNING]
 > If a picture is deleted, or if a user changes its avatar, the respective images will no longer be displayed.
 > Export using the "Download assets" (`--media`) option to avoid this.
 

@@ -50,14 +50,14 @@ To learn more about the war and how you can help, [click here](https://tyrrrz.me
   - 📦 [AUR](https://aur.archlinux.org/packages/discord-chat-exporter-cli): `discord-chat-exporter-cli`
   - 📦 [Nix](https://search.nixos.org/packages?query=discordchatexporter-cli): `discordchatexporter-cli`
 
-> **Important**:
+> [!IMPORTANT]
 > To launch the GUI version of the app on MacOS, you need to first remove the downloaded file from quarantine.
 > You can do that by running the following command in the terminal: `xattr -rd com.apple.quarantine DiscordChatExporter.app`.
 
-> **Note**:
+> [!NOTE]
 > If you're unsure which build is right for your system, consult with [this page](https://useragent.cc) to determine your OS and CPU architecture.
 
-> **Note**:
+> [!NOTE]
 > AUR and Nix packages linked above are maintained by the community.
 > If you have any issues with them, please contact the corresponding maintainers.
 

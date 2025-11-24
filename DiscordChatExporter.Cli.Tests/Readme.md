@@ -8,5 +8,5 @@ In order to run these tests locally, you need to join the test server and config
 3. Add your token to user secrets: `dotnet user-secrets set DISCORD_TOKEN <token>`
 4. Run the tests: `dotnet test`
 
-> **Note**:
+> [!NOTE]
 > If you want to add a new test case, please let me know and I will give you the required permissions on the server.

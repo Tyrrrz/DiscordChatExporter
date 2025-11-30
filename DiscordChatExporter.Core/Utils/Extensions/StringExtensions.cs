@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 
 namespace DiscordChatExporter.Core.Utils.Extensions;
 
@@ -25,10 +24,6 @@ public static class StringExtensions
 
             return builder.ToString();
         }
-
-        public T? ParseEnumOrNull<T>(bool ignoreCase = true)
-            where T : struct, Enum =>
-            Enum.TryParse<T>(str, ignoreCase, out var result) ? result : null;
     }
 
     extension(StringBuilder builder)

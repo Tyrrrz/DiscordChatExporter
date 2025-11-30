@@ -75,7 +75,7 @@ internal partial class ExportAssetDownloader
 
         return SHA256
             .HashData(Encoding.UTF8.GetBytes(NormalizeUrl(url)))
-            .ToHex()
+            .Pipe(Convert.ToHexStringLower)
             // 5 chars ought to be enough for anybody
             .Truncate(5);
     }

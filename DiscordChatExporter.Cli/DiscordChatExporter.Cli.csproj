@@ -17,7 +17,7 @@
     <PackageReference Include="CSharpier.MsBuild" Version="1.2.1" PrivateAssets="all" />
     <PackageReference Include="Deorcify" Version="1.1.0" PrivateAssets="all" />
     <PackageReference Include="Gress" Version="2.1.1" />
-    <PackageReference Include="Spectre.Console" Version="0.53.0" />
+    <PackageReference Include="Spectre.Console" Version="0.54.0" />
   </ItemGroup>
 
   <ItemGroup>

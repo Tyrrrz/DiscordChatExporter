@@ -8,14 +8,20 @@ internal static class HtmlMessageExtensions
 {
     // Message content is hidden if it's a link to an embedded media
     // https://github.com/Tyrrrz/DiscordChatExporter/issues/682
-    public static bool IsContentHidden(this Message message)
+    extension(Message message)
     {
-        if (message.Embeds.Count != 1)
-            return false;
+        public bool IsContentHidden()
+        {
+            if (message.Embeds.Count != 1)
+                return false;
 
-        var embed = message.Embeds[0];
+            var embed = message.Embeds[0];
 
-        return string.Equals(message.Content.Trim(), embed.Url, StringComparison.OrdinalIgnoreCase)
-            && embed.Kind is EmbedKind.Image or EmbedKind.Gifv;
+            return string.Equals(
+                    message.Content.Trim(),
+                    embed.Url,
+                    StringComparison.OrdinalIgnoreCase
+                ) && embed.Kind is EmbedKind.Image or EmbedKind.Gifv;
+        }
     }
 }

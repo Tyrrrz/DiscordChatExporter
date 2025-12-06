@@ -199,6 +199,10 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
             await console.Output.WriteLineAsync($"Fetched {fetchedThreadsCount} thread(s).");
         }
+        
+        // De-duplicate channels to avoid exporting the same channel multiple times
+        //https://github.com/Tyrrrz/DiscordChatExporter/issues/1433
+        unwrappedChannels = unwrappedChannels.DistinctBy(c => c.Id).ToList();
 
         // Make sure the user does not try to export multiple channels into one file.
         // Output path must either be a directory or contain template tokens for this to work.

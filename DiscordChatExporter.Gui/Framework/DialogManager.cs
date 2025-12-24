@@ -38,6 +38,10 @@ public class DialogManager : IDisposable
                 }
             );
 
+            // Small delay to allow DialogHost to fully reset its state
+            // before another dialog can be shown
+            await Task.Delay(100);
+
             return dialog.DialogResult;
         }
     }

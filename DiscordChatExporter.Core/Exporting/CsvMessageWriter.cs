@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -92,6 +93,14 @@ internal partial class CsvMessageWriter(Stream stream, ExportContext context)
         {
             await _writer.WriteAsync(CsvEncode(message.GetFallbackContent()));
         }
+        else if (message.ForwardedMessage is not null)
+        {
+            // For forwarded messages, include the forwarded content
+            var forwardedContent = $"[Forwarded] {message.ForwardedMessage.Content}";
+            await _writer.WriteAsync(
+                CsvEncode(await FormatMarkdownAsync(forwardedContent, cancellationToken))
+            );
+        }
         else
         {
             await _writer.WriteAsync(
@@ -101,8 +110,11 @@ internal partial class CsvMessageWriter(Stream stream, ExportContext context)
 
         await _writer.WriteAsync(',');
 
-        // Attachments
-        await WriteAttachmentsAsync(message.Attachments, cancellationToken);
+        // Attachments (include forwarded attachments if present)
+        var allAttachments = message.ForwardedMessage is not null
+            ? message.Attachments.Concat(message.ForwardedMessage.Attachments).ToList()
+            : message.Attachments;
+        await WriteAttachmentsAsync(allAttachments, cancellationToken);
         await _writer.WriteAsync(',');
 
         // Reactions

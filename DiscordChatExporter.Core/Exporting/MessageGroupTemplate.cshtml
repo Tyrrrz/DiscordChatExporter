@@ -262,6 +262,99 @@
                         </div>
                     }
 
+                    @* Forwarded message content *@
+                    @if (message.IsForward && message.ForwardedMessage is not null)
+                    {
+                        var fwd = message.ForwardedMessage;
+                        <div class="chatlog__forwarded">
+                            <div class="chatlog__forwarded-header">
+                                <svg class="chatlog__forwarded-icon">
+                                    <use href="#forward-icon"></use>
+                                </svg>
+                                <em>Forwarded</em>
+                            </div>
+
+                            @* Forwarded text content *@
+                            @if (!string.IsNullOrWhiteSpace(fwd.Content))
+                            {
+                                <div class="chatlog__forwarded-content chatlog__markdown">
+                                    <span class="chatlog__markdown-preserve"><!--wmm:ignore-->@Html.Raw(await FormatMarkdownAsync(fwd.Content))<!--/wmm:ignore--></span>
+                                </div>
+                            }
+
+                            @* Forwarded attachments *@
+                            @if (fwd.Attachments.Any())
+                            {
+                                <div class="chatlog__forwarded-attachments">
+                                    @foreach (var attachment in fwd.Attachments)
+                                    {
+                                        @if (attachment.IsImage)
+                                        {
+                                            <a href="@await ResolveAssetUrlAsync(attachment.Url)">
+                                                <img class="chatlog__forwarded-attachment" src="@await ResolveAssetUrlAsync(attachment.Url)" alt="@(attachment.Description ?? "Image attachment")" title="Image: @attachment.FileName (@attachment.FileSize)" loading="lazy">
+                                            </a>
+                                        }
+                                        else if (attachment.IsVideo)
+                                        {
+                                            <video class="chatlog__forwarded-attachment" controls>
+                                                <source src="@await ResolveAssetUrlAsync(attachment.Url)" alt="@(attachment.Description ?? "Video attachment")" title="Video: @attachment.FileName (@attachment.FileSize)">
+                                            </video>
+                                        }
+                                        else if (attachment.IsAudio)
+                                        {
+                                            <audio class="chatlog__attachment-media" controls>
+                                                <source src="@await ResolveAssetUrlAsync(attachment.Url)" alt="@(attachment.Description ?? "Audio attachment")" title="Audio: @attachment.FileName (@attachment.FileSize)">
+                                            </audio>
+                                        }
+                                        else
+                                        {
+                                            <div class="chatlog__attachment-generic">
+                                                <svg class="chatlog__attachment-generic-icon">
+                                                    <use href="#attachment-icon"/>
+                                                </svg>
+                                                <div class="chatlog__attachment-generic-name">
+                                                    <a href="@await ResolveAssetUrlAsync(attachment.Url)">
+                                                        @attachment.FileName
+                                                    </a>
+                                                </div>
+                                                <div class="chatlog__attachment-generic-size">
+                                                    @attachment.FileSize
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            }
+
+                            @* Forwarded stickers *@
+                            @foreach (var sticker in fwd.Stickers)
+                            {
+                                <div class="chatlog__sticker" title="@sticker.Name">
+                                    @if (sticker.IsImage)
+                                    {
+                                        <img class="chatlog__sticker--media" src="@await ResolveAssetUrlAsync(sticker.SourceUrl)" alt="Sticker">
+                                    }
+                                    else if (sticker.Format == StickerFormat.Lottie)
+                                    {
+                                        <div class="chatlog__sticker--media" data-source="@await ResolveAssetUrlAsync(sticker.SourceUrl)"></div>
+                                    }
+                                </div>
+                            }
+
+                            @* Forwarded timestamp *@
+                            @if (fwd.Timestamp != DateTimeOffset.MinValue)
+                            {
+                                <div class="chatlog__forwarded-timestamp">
+                                    <span title="@FormatDate(fwd.Timestamp, "f")">Originally sent: @FormatDate(fwd.Timestamp)</span>
+                                    @if (fwd.EditedTimestamp is not null)
+                                    {
+                                        <span title="@FormatDate(fwd.EditedTimestamp.Value, "f")"> (edited)</span>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+
                     @* Attachments *@
                     @foreach (var attachment in message.Attachments)
                     {

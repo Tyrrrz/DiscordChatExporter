@@ -40,7 +40,7 @@ public partial record Message(
     public bool IsReplyLike => IsReply || Interaction is not null;
 
     // A message is a forward if its reference type is Forward
-    public bool IsForward { get; } = Reference?.Kind == MessageReferenceKind.Forward;
+    public bool IsForwarded { get; } = Reference?.Kind == MessageReferenceKind.Forward;
 
     public bool IsEmpty { get; } =
         string.IsNullOrWhiteSpace(Content)

@@ -92,6 +92,7 @@ internal partial class CsvMessageWriter(Stream stream, ExportContext context)
         {
             await _writer.WriteAsync(CsvEncode(message.GetFallbackContent()));
         }
+        else
         {
             await _writer.WriteAsync(
                 CsvEncode(await FormatMarkdownAsync(message.Content, cancellationToken))

@@ -263,7 +263,7 @@
                     }
 
                     @* Forwarded message content *@
-                    @if (message.IsForward && message.ForwardedMessage is not null)
+                    @if (message.IsForwarded && message.ForwardedMessage is not null)
                     {
                         var fwd = message.ForwardedMessage;
                         <div class="chatlog__forwarded">

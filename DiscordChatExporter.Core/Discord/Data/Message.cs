@@ -36,11 +36,11 @@ public partial record Message(
 
     public bool IsReply { get; } = Kind == MessageKind.Reply;
 
-    // A message is a forward if its reference type is Forward
-    public bool IsForward { get; } = Reference?.Kind == MessageReferenceKind.Forward;
-
     // App interactions are rendered as replies in the Discord client, but they are not actually replies
     public bool IsReplyLike => IsReply || Interaction is not null;
+
+    // A message is a forward if its reference type is Forward
+    public bool IsForward { get; } = Reference?.Kind == MessageReferenceKind.Forward;
 
     public bool IsEmpty { get; } =
         string.IsNullOrWhiteSpace(Content)

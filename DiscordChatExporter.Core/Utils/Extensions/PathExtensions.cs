@@ -10,7 +10,8 @@ public static class PathExtensions
     // Characters that are invalid on common filesystems.
     // This is a union of invalid characters from Windows (NTFS/FAT32), Linux (ext4/XFS), and macOS (HFS+/APFS).
     // We use this instead of Path.GetInvalidFileNameChars() because that only returns OS-specific characters,
-    // not filesystem-specific characters. For example, on Linux, '?' is valid in filenames, but not on NTFS.
+    // not filesystem-specific characters. This means that it's possible to use, for example, an NTFS drive on
+    // Linux, which would allow the OS to create filenames with '?' but result in errors when writing to the filesystem.
     // https://github.com/Tyrrrz/DiscordChatExporter/issues/1417
     private static readonly char[] InvalidFileNameChars =
     [

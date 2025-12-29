@@ -12,7 +12,7 @@ public static class PathExtensions
     // We use this instead of Path.GetInvalidFileNameChars() because that only returns OS-specific characters,
     // not filesystem-specific characters. This means that it's possible to use, for example, an NTFS drive on
     // Linux, which would allow the OS to create filenames with '?' but result in errors when writing to the filesystem.
-    // https://github.com/Tyrrrz/DiscordChatExporter/issues/1417
+    // https://github.com/Tyrrrz/DiscordChatExporter/issues/1452
     private static readonly char[] InvalidFileNameChars =
     [
         '\0', // Null character - invalid on all filesystems

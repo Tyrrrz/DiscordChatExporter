@@ -139,11 +139,8 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                 )
             );
 
-            // Include canonical URL if a proxy URL is being used
-            if (
-                !string.IsNullOrWhiteSpace(embedAuthor.IconProxyUrl)
-                && !string.IsNullOrWhiteSpace(embedAuthor.IconUrl)
-            )
+            // Include canonical URL if present
+            if (!string.IsNullOrWhiteSpace(embedAuthor.IconUrl))
             {
                 _writer.WriteString("iconCanonicalUrl", embedAuthor.IconUrl);
             }
@@ -170,11 +167,8 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                 )
             );
 
-            // Include canonical URL if a proxy URL is being used
-            if (
-                !string.IsNullOrWhiteSpace(embedImage.ProxyUrl)
-                && !string.IsNullOrWhiteSpace(embedImage.Url)
-            )
+            // Include canonical URL if present
+            if (!string.IsNullOrWhiteSpace(embedImage.Url))
             {
                 _writer.WriteString("canonicalUrl", embedImage.Url);
             }
@@ -204,11 +198,8 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                 )
             );
 
-            // Include canonical URL if a proxy URL is being used
-            if (
-                !string.IsNullOrWhiteSpace(embedVideo.ProxyUrl)
-                && !string.IsNullOrWhiteSpace(embedVideo.Url)
-            )
+            // Include canonical URL if present
+            if (!string.IsNullOrWhiteSpace(embedVideo.Url))
             {
                 _writer.WriteString("canonicalUrl", embedVideo.Url);
             }
@@ -240,11 +231,8 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                 )
             );
 
-            // Include canonical URL if a proxy URL is being used
-            if (
-                !string.IsNullOrWhiteSpace(embedFooter.IconProxyUrl)
-                && !string.IsNullOrWhiteSpace(embedFooter.IconUrl)
-            )
+            // Include canonical URL if present
+            if (!string.IsNullOrWhiteSpace(embedFooter.IconUrl))
             {
                 _writer.WriteString("iconCanonicalUrl", embedFooter.IconUrl);
             }

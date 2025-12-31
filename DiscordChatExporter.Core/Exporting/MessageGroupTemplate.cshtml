@@ -302,7 +302,7 @@
                                         }
                                         else if (attachment.IsAudio)
                                         {
-                                            <audio class="chatlog__attachment-media" controls>
+                                            <audio class="chatlog__forwarded-attachment" controls>
                                                 <source src="@await ResolveAssetUrlAsync(attachment.Url)" alt="@(attachment.Description ?? "Audio attachment")" title="Audio: @attachment.FileName (@attachment.FileSize)">
                                             </audio>
                                         }

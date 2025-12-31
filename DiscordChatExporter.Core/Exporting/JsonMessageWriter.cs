@@ -138,6 +138,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                     cancellationToken
                 )
             );
+
             _writer.WriteString("iconCanonicalUrl", embedAuthor.IconUrl);
         }
 
@@ -161,6 +162,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                     cancellationToken
                 )
             );
+
             _writer.WriteString("canonicalUrl", embedImage.Url);
         }
 
@@ -187,6 +189,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                     cancellationToken
                 )
             );
+
             _writer.WriteString("canonicalUrl", embedVideo.Url);
         }
 
@@ -215,6 +218,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                     cancellationToken
                 )
             );
+
             _writer.WriteString("iconCanonicalUrl", embedFooter.IconUrl);
         }
 

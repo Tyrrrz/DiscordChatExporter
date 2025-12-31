@@ -138,6 +138,12 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                     cancellationToken
                 )
             );
+
+            // Include canonical URL if a proxy URL is being used
+            if (!string.IsNullOrWhiteSpace(embedAuthor.IconProxyUrl))
+            {
+                _writer.WriteString("iconCanonicalUrl", embedAuthor.IconUrl);
+            }
         }
 
         _writer.WriteEndObject();
@@ -160,6 +166,12 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                     cancellationToken
                 )
             );
+
+            // Include canonical URL if a proxy URL is being used
+            if (!string.IsNullOrWhiteSpace(embedImage.ProxyUrl))
+            {
+                _writer.WriteString("canonicalUrl", embedImage.Url);
+            }
         }
 
         _writer.WriteNumber("width", embedImage.Width);
@@ -185,6 +197,12 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                     cancellationToken
                 )
             );
+
+            // Include canonical URL if a proxy URL is being used
+            if (!string.IsNullOrWhiteSpace(embedVideo.ProxyUrl))
+            {
+                _writer.WriteString("canonicalUrl", embedVideo.Url);
+            }
         }
 
         _writer.WriteNumber("width", embedVideo.Width);
@@ -212,6 +230,12 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                     cancellationToken
                 )
             );
+
+            // Include canonical URL if a proxy URL is being used
+            if (!string.IsNullOrWhiteSpace(embedFooter.IconProxyUrl))
+            {
+                _writer.WriteString("iconCanonicalUrl", embedFooter.IconUrl);
+            }
         }
 
         _writer.WriteEndObject();

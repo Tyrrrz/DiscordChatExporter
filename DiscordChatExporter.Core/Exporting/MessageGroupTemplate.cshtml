@@ -388,7 +388,7 @@
                                                 <div class="chatlog__embed-author-container">
                                                     @if (!string.IsNullOrWhiteSpace(embed.Author.IconUrl))
                                                     {
-                                                        <img class="chatlog__embed-author-icon" src="@await ResolveAssetUrlAsync(embed.Author.IconProxyUrl ?? embed.Author.IconUrl)" alt="Author icon" loading="lazy" onerror="this.style.visibility='hidden'">
+                                                        <img class="chatlog__embed-author-icon" src="@await ResolveAssetUrlAsync(embed.Author.IconProxyUrl ?? embed.Author.IconUrl)" alt="Author icon" loading="lazy" onerror="this.style.visibility='hidden'" @(embed.Author.IconProxyUrl is not null && embed.Author.IconUrl is not null ? $"data-canonical-url=\"{embed.Author.IconUrl}\"" : null)>
                                                     }
 
                                                     @if (!string.IsNullOrWhiteSpace(embed.Author.Name))
@@ -441,9 +441,14 @@
                                 embed.Thumbnail?.ProxyUrl ?? embed.Thumbnail?.Url ??
                                 embed.Url;
 
+                            var embedImageCanonicalUrl =
+                                (embed.Image?.ProxyUrl is not null && embed.Image?.Url is not null) ? embed.Image?.Url :
+                                (embed.Thumbnail?.ProxyUrl is not null && embed.Thumbnail?.Url is not null) ? embed.Thumbnail?.Url :
+                                null;
+
                             <div class="chatlog__embed">
                                 <a href="@await ResolveAssetUrlAsync(embedImageUrl)">
-                                    <img class="chatlog__embed-generic-image" src="@await ResolveAssetUrlAsync(embedImageUrl)" alt="Embedded image" loading="lazy">
+                                    <img class="chatlog__embed-generic-image" src="@await ResolveAssetUrlAsync(embedImageUrl)" alt="Embedded image" loading="lazy" @(embedImageCanonicalUrl is not null ? $"data-canonical-url=\"{embedImageCanonicalUrl}\"" : null)>
                                 </a>
                             </div>
                         }
@@ -457,8 +462,11 @@
                                 embed.Video?.ProxyUrl ?? embed.Video?.Url ??
                                 embed.Url;
 
+                            var embedVideoCanonicalUrl =
+                                embed.Video?.ProxyUrl is not null && embed.Video?.Url is not null ? embed.Video?.Url : null;
+
                             <div class="chatlog__embed">
-                                <video class="chatlog__embed-generic-video" width="@embed.Video?.Width" height="@embed.Video?.Height" controls>
+                                <video class="chatlog__embed-generic-video" width="@embed.Video?.Width" height="@embed.Video?.Height" controls @(embedVideoCanonicalUrl is not null ? $"data-canonical-url=\"{embedVideoCanonicalUrl}\"" : null)>
                                     <source src="@await ResolveAssetUrlAsync(embedVideoUrl)" alt="Embedded video">
                                 </video>
                             </div>
@@ -470,8 +478,11 @@
                                 embed.Video?.ProxyUrl ?? embed.Video?.Url ??
                                 embed.Url;
 
+                            var embedVideoCanonicalUrl =
+                                embed.Video?.ProxyUrl is not null && embed.Video?.Url is not null ? embed.Video?.Url : null;
+
                             <div class="chatlog__embed">
-                                <video class="chatlog__embed-generic-gifv" width="@embed.Video?.Width" height="@embed.Video?.Height" loop onmouseover="this.play()" onmouseout="this.pause()">
+                                <video class="chatlog__embed-generic-gifv" width="@embed.Video?.Width" height="@embed.Video?.Height" loop onmouseover="this.play()" onmouseout="this.pause()" @(embedVideoCanonicalUrl is not null ? $"data-canonical-url=\"{embedVideoCanonicalUrl}\"" : null)>
                                     <source src="@await ResolveAssetUrlAsync(embedVideoUrl)" alt="Embedded gifv">
                                 </video>
                             </div>
@@ -499,7 +510,7 @@
                                                 <div class="chatlog__embed-author-container">
                                                     @if (!string.IsNullOrWhiteSpace(embed.Author.IconUrl))
                                                     {
-                                                        <img class="chatlog__embed-author-icon" src="@await ResolveAssetUrlAsync(embed.Author.IconProxyUrl ?? embed.Author.IconUrl)" alt="Author icon" loading="lazy" onerror="this.style.visibility='hidden'">
+                                                        <img class="chatlog__embed-author-icon" src="@await ResolveAssetUrlAsync(embed.Author.IconProxyUrl ?? embed.Author.IconUrl)" alt="Author icon" loading="lazy" onerror="this.style.visibility='hidden'" @(embed.Author.IconProxyUrl is not null && embed.Author.IconUrl is not null ? $"data-canonical-url=\"{embed.Author.IconUrl}\"" : null)>
                                                     }
 
                                                     @if (!string.IsNullOrWhiteSpace(embed.Author.Name))
@@ -574,7 +585,7 @@
                                         {
                                             <div class="chatlog__embed-thumbnail-container">
                                                 <a class="chatlog__embed-thumbnail-link" href="@await ResolveAssetUrlAsync(embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url)">
-                                                    <img class="chatlog__embed-thumbnail" src="@await ResolveAssetUrlAsync(embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url)" alt="Thumbnail" loading="lazy">
+                                                    <img class="chatlog__embed-thumbnail" src="@await ResolveAssetUrlAsync(embed.Thumbnail.ProxyUrl ?? embed.Thumbnail.Url)" alt="Thumbnail" loading="lazy" @(embed.Thumbnail.ProxyUrl is not null && embed.Thumbnail.Url is not null ? $"data-canonical-url=\"{embed.Thumbnail.Url}\"" : null)>
                                                 </a>
                                             </div>
                                         }
@@ -590,7 +601,7 @@
                                                 {
                                                     <div class="chatlog__embed-image-container">
                                                         <a class="chatlog__embed-image-link" href="@await ResolveAssetUrlAsync(image.ProxyUrl ?? image.Url)">
-                                                            <img class="chatlog__embed-image" src="@await ResolveAssetUrlAsync(image.ProxyUrl ?? image.Url)" alt="Image" loading="lazy">
+                                                            <img class="chatlog__embed-image" src="@await ResolveAssetUrlAsync(image.ProxyUrl ?? image.Url)" alt="Image" loading="lazy" @(image.ProxyUrl is not null && image.Url is not null ? $"data-canonical-url=\"{image.Url}\"" : null)>
                                                         </a>
                                                     </div>
                                                 }
@@ -605,7 +616,7 @@
                                             @* Footer icon *@
                                             @if (!string.IsNullOrWhiteSpace(embed.Footer?.IconUrl))
                                             {
-                                                <img class="chatlog__embed-footer-icon" src="@await ResolveAssetUrlAsync(embed.Footer.IconProxyUrl ?? embed.Footer.IconUrl)" alt="Footer icon" loading="lazy">
+                                                <img class="chatlog__embed-footer-icon" src="@await ResolveAssetUrlAsync(embed.Footer.IconProxyUrl ?? embed.Footer.IconUrl)" alt="Footer icon" loading="lazy" @(embed.Footer.IconProxyUrl is not null && embed.Footer.IconUrl is not null ? $"data-canonical-url=\"{embed.Footer.IconUrl}\"" : null)>
                                             }
 
                                             <span class="chatlog__embed-footer-text">

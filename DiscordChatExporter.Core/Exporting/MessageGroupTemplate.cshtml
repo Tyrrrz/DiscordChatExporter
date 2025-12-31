@@ -342,16 +342,13 @@
                             }
 
                             @* Forwarded timestamp *@
-                            @if (fwd.Timestamp != DateTimeOffset.MinValue)
-                            {
-                                <div class="chatlog__forwarded-timestamp">
-                                    <span title="@FormatDate(fwd.Timestamp, "f")">Originally sent: @FormatDate(fwd.Timestamp)</span>
-                                    @if (fwd.EditedTimestamp is not null)
-                                    {
-                                        <span title="@FormatDate(fwd.EditedTimestamp.Value, "f")"> (edited)</span>
-                                    }
-                                </div>
-                            }
+                            <div class="chatlog__forwarded-timestamp">
+                                <span title="@FormatDate(fwd.Timestamp, "f")">Originally sent: @FormatDate(fwd.Timestamp)</span>
+                                @if (fwd.EditedTimestamp is not null)
+                                {
+                                    <span title="@FormatDate(fwd.EditedTimestamp.Value, "f")"> (edited)</span>
+                                }
+                            </div>
                         </div>
                     }
 

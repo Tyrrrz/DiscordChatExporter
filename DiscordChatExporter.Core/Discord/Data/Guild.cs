@@ -25,7 +25,8 @@ public partial record Guild
         var iconUrl =
             json.GetPropertyOrNull("icon")
                 ?.GetNonWhiteSpaceStringOrNull()
-                ?.Pipe(h => ImageCdn.GetGuildIconUrl(id, h)) ?? ImageCdn.GetFallbackUserAvatarUrl();
+                ?.Pipe(h => ImageCdn.GetGuildIconUrl(id, h))
+            ?? ImageCdn.GetFallbackUserAvatarUrl();
 
         return new Guild(id, name, iconUrl);
     }

@@ -32,7 +32,8 @@ public partial record Member
                 ?.EnumerateArray()
                 .Select(j => j.GetNonWhiteSpaceString())
                 .Select(Snowflake.Parse)
-                .ToArray() ?? [];
+                .ToArray()
+            ?? [];
 
         var avatarUrl = guildId is not null
             ? json.GetPropertyOrNull("avatar")

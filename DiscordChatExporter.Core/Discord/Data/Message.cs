@@ -143,7 +143,8 @@ public partial record Message
             json.GetPropertyOrNull("attachments")
                 ?.EnumerateArrayOrNull()
                 ?.Select(Attachment.Parse)
-                .ToArray() ?? [];
+                .ToArray()
+            ?? [];
 
         var embeds = NormalizeEmbeds(
             json.GetPropertyOrNull("embeds")?.EnumerateArrayOrNull()?.Select(Embed.Parse).ToArray()
@@ -154,13 +155,15 @@ public partial record Message
             json.GetPropertyOrNull("sticker_items")
                 ?.EnumerateArrayOrNull()
                 ?.Select(Sticker.Parse)
-                .ToArray() ?? [];
+                .ToArray()
+            ?? [];
 
         var reactions =
             json.GetPropertyOrNull("reactions")
                 ?.EnumerateArrayOrNull()
                 ?.Select(Reaction.Parse)
-                .ToArray() ?? [];
+                .ToArray()
+            ?? [];
 
         var mentionedUsers =
             json.GetPropertyOrNull("mentions")?.EnumerateArrayOrNull()?.Select(User.Parse).ToArray()

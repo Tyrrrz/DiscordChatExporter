@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO.Compression;
+using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -42,7 +43,12 @@ public partial class DataDump
     {
         using var archive = ZipFile.OpenRead(zipFilePath);
 
-        var entry = archive.GetEntry("messages/index.json");
+        // Try to find the index file with case-insensitive search
+        // Discord changed the structure from "messages/index.json" to "Messages/index.json"
+        var entry = archive.Entries.FirstOrDefault(e =>
+            e.FullName.Equals("messages/index.json", StringComparison.OrdinalIgnoreCase)
+        );
+
         if (entry is null)
         {
             throw new InvalidOperationException(

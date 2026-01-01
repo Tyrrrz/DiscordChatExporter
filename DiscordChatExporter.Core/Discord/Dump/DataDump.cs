@@ -45,7 +45,7 @@ public partial class DataDump
 
         // Try to find the index file with case-insensitive search
         // Discord changed the structure from "messages/index.json" to "Messages/index.json"
-        // https://github.com/Tyrrrz/DiscordChatExporter/issues/1458
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/1459
         var entry = archive.Entries.FirstOrDefault(e =>
             e.FullName.Equals("messages/index.json", StringComparison.OrdinalIgnoreCase)
         );

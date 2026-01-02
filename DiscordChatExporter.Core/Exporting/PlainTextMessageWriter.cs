@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -224,6 +225,34 @@ internal class PlainTextMessageWriter(Stream stream, ExportContext context)
         await _writer.WriteLineAsync();
     }
 
+    private async ValueTask WriteForwardedMessageAsync(
+        MessageSnapshot forwardedMessage,
+        CancellationToken cancellationToken = default
+    )
+    {
+        await _writer.WriteLineAsync("{Forwarded Message}");
+
+        if (!string.IsNullOrWhiteSpace(forwardedMessage.Content))
+        {
+            await _writer.WriteLineAsync(
+                await FormatMarkdownAsync(forwardedMessage.Content, cancellationToken)
+            );
+        }
+
+        if (forwardedMessage.Timestamp != DateTimeOffset.MinValue)
+        {
+            await _writer.WriteLineAsync(
+                $"Originally sent: {Context.FormatDate(forwardedMessage.Timestamp)}"
+            );
+        }
+
+        await WriteAttachmentsAsync(forwardedMessage.Attachments, cancellationToken);
+        await WriteEmbedsAsync(forwardedMessage.Embeds, cancellationToken);
+        await WriteStickersAsync(forwardedMessage.Stickers, cancellationToken);
+
+        await _writer.WriteLineAsync();
+    }
+
     public override async ValueTask WriteMessageAsync(
         Message message,
         CancellationToken cancellationToken = default
@@ -247,6 +276,12 @@ internal class PlainTextMessageWriter(Stream stream, ExportContext context)
         }
 
         await _writer.WriteLineAsync();
+
+        // Forwarded message content
+        if (message.ForwardedMessage is not null)
+        {
+            await WriteForwardedMessageAsync(message.ForwardedMessage, cancellationToken);
+        }
 
         // Attachments, embeds, reactions, etc.
         await WriteAttachmentsAsync(message.Attachments, cancellationToken);

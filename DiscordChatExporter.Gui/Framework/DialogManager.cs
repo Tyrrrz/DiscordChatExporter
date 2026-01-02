@@ -38,6 +38,10 @@ public class DialogManager : IDisposable
                 }
             );
 
+            // Yield to allow DialogHost to reset its state
+            // before another dialog can be shown
+            await Task.Yield();
+
             return dialog.DialogResult;
         }
     }

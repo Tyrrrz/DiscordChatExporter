@@ -21,7 +21,8 @@ internal class ExportContext(DiscordClient discord, ExportRequest request)
 
     private readonly ExportAssetDownloader _assetDownloader = new(
         request.AssetsDirPath,
-        request.ShouldReuseAssets
+        request.ShouldReuseAssets,
+        request.ShouldUseNewMediaFilePaths
     );
 
     public DiscordClient Discord { get; } = discord;

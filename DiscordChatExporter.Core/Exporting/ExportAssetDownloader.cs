@@ -13,7 +13,11 @@ using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting;
 
-internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
+internal partial class ExportAssetDownloader(
+    string workingDirPath,
+    bool reuse,
+    bool useNewMediaFilePaths
+)
 {
     private static readonly AsyncKeyedLocker<string> Locker = new();
 
@@ -25,8 +29,10 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
         CancellationToken cancellationToken = default
     )
     {
-        var fileName = GetFileNameFromUrl(url);
-        var filePath = Path.Combine(workingDirPath, fileName);
+        var localFilePath = useNewMediaFilePaths
+            ? GetFilePathFromUrl(url)
+            : GetFileNameFromUrlLegacy(url);
+        var filePath = Path.Combine(workingDirPath, localFilePath);
 
         using var _ = await Locker.LockAsync(filePath, cancellationToken);
 
@@ -44,6 +50,9 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
             {
                 // Download the file
                 using var response = await Http.Client.GetAsync(url, innerCancellationToken);
+                var directory = Path.GetDirectoryName(filePath);
+                if (directory != null)
+                    Directory.CreateDirectory(directory);
                 await using var output = File.Create(filePath);
                 await response.Content.CopyToAsync(output, innerCancellationToken);
             },
@@ -51,6 +60,37 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
         );
 
         return _previousPathsByUrl[url] = filePath;
+    }
+}
+
+internal partial class ExportAssetDownloader
+{
+    private static string GetFilePathFromUrl(string url)
+    {
+        var uri = new Uri(url);
+
+        // Try to extract the file name from URL
+        var pathAndFileName = Regex.Match(uri.AbsolutePath, @"/(.+)/([^?]*)");
+        var path = pathAndFileName.Groups[1].Value;
+        var fileName = pathAndFileName.Groups[2].Value;
+
+        // If this isn't a Discord CDN URL, save the file to the `media/external` folder.
+        if (!string.Equals(uri.Host, "cdn.discordapp.com", StringComparison.OrdinalIgnoreCase))
+        {
+            File.AppendAllTextAsync("external_urls.txt", $"{url}\n");
+            return $"external/{uri.Host}{uri.AbsolutePath}";
+        }
+
+        // If it is a Discord URL, we're guaranteed to have matches for these groups. <see cref="ImageCdn"/>
+        if (string.IsNullOrWhiteSpace(path) || string.IsNullOrWhiteSpace(fileName))
+            throw new Exception("Invalid Discord URL shape");
+
+        // If there is a size parameter, add it as the final folder in the path.
+        // This prevents multiple sizes of an avatar, for example, from overwriting each other.
+        var sizeParam = HttpUtility.ParseQueryString(uri.Query)["size"];
+        var sizePathSegment = sizeParam != null ? $"{sizeParam}px/" : "";
+
+        return $"{path}/{sizePathSegment}{Path.EscapeFileName(fileName)}";
     }
 }
 
@@ -80,7 +120,7 @@ internal partial class ExportAssetDownloader
             .Truncate(5);
     }
 
-    private static string GetFileNameFromUrl(string url)
+    private static string GetFileNameFromUrlLegacy(string url)
     {
         var urlHash = GetUrlHash(url);
 

@@ -39,6 +39,8 @@ public partial class ExportRequest
 
     public bool ShouldReuseAssets { get; }
 
+    public bool ShouldUseNewMediaFilePaths { get; }
+
     public string? Locale { get; }
 
     public CultureInfo? CultureInfo { get; }
@@ -58,6 +60,7 @@ public partial class ExportRequest
         bool shouldFormatMarkdown,
         bool shouldDownloadAssets,
         bool shouldReuseAssets,
+        bool shouldUseNewMediaFilePaths,
         string? locale,
         bool isUtcNormalizationEnabled
     )
@@ -72,6 +75,7 @@ public partial class ExportRequest
         ShouldFormatMarkdown = shouldFormatMarkdown;
         ShouldDownloadAssets = shouldDownloadAssets;
         ShouldReuseAssets = shouldReuseAssets;
+        ShouldUseNewMediaFilePaths = shouldUseNewMediaFilePaths;
         Locale = locale;
         IsUtcNormalizationEnabled = isUtcNormalizationEnabled;
 

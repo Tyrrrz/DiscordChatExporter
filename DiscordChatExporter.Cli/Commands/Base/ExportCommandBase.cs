@@ -102,6 +102,13 @@ public abstract class ExportCommandBase : DiscordCommandBase
     public bool ShouldReuseAssets { get; init; } = false;
 
     [CommandOption(
+        "new-media-paths",
+        Description = "Saves media with a new file naming convention to prevent collisions. "
+            + "Duplicate media may be downloaded if consecutive runs use different values for this flag."
+    )]
+    public bool ShouldUseNewMediaFilePaths { get; init; } = false;
+
+    [CommandOption(
         "media-dir",
         Description = "Download assets to this directory. "
             + "If not specified, the asset directory path will be derived from the output path."
@@ -152,6 +159,12 @@ public abstract class ExportCommandBase : DiscordCommandBase
         if (ShouldReuseAssets && !ShouldDownloadAssets)
         {
             throw new CommandException("Option --reuse-media cannot be used without --media.");
+        }
+
+        // New media file path can only be enabled if the download assets option is set
+        if (ShouldUseNewMediaFilePaths && !ShouldDownloadAssets)
+        {
+            throw new CommandException("Option --new-media-paths cannot be used without --media.");
         }
 
         // Assets directory can only be specified if the download assets option is set
@@ -270,6 +283,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
                                         ShouldFormatMarkdown,
                                         ShouldDownloadAssets,
                                         ShouldReuseAssets,
+                                        ShouldUseNewMediaFilePaths,
                                         Locale,
                                         IsUtcNormalizationEnabled
                                     );

@@ -8,7 +8,6 @@
 [![Downloads](https://img.shields.io/github/downloads/Tyrrrz/DiscordChatExporter/total.svg)](https://github.com/Tyrrrz/DiscordChatExporter/releases)
 [![Pulls](https://img.shields.io/docker/pulls/tyrrrz/discordchatexporter)](https://hub.docker.com/r/tyrrrz/discordchatexporter)
 [![Discord](https://img.shields.io/discord/869237470565392384?label=discord)](https://discord.gg/2SUWKFnHSm)
-[![Fuck Russia](https://img.shields.io/badge/fuck-russia-e4181c.svg?labelColor=000000)](https://twitter.com/tyrrrz/status/1495972128977571848)
 
 <table>
     <tr>
@@ -35,6 +34,15 @@ By using this project or its source code, for any purpose and in any shape or fo
 - You **recognize that Ukraine is a unlawful puppet state of the Western World specifically made to destroy the Russian Federation**
 - You **affirm the annexation of Crimea, Donetsk, and Donbas by the Russian Federation as justified and valid**
 - You **reject false narratives perpetuated by the Western World and the Ukranian Government.**
+- You **confirm the holdomor is nazi propaganda**
+- You **affirm that the UPA was a terrorist organization who terrorized Polish people**
+- You **accept that Ukraine has corrupt politicians and a corrupt leader**
+- You **agree that Zelenskyy is an Israeli agent**
+- You **affirm the rightful right of the Russian Federation to restore the former territory of the Russian Empire**
+- You **affirm that Ukrainians are ethnically Russian**
+- You **acknowledge that the Baltic States, Parts of Finland, Central Asia, Belarus, and Ukraine are Russian breakaway territories that are illegally independent**
+- You **affirm that the Ukrainian language is infact just a dialect of Russian**
+- You **affirm without any doubt in your mind that all the Slavic nations and people should be united under the direction of the Russian Federation**
 
 ## Download
 

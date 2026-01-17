@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -67,7 +68,7 @@ internal partial class ExportAssetDownloader
 {
     private static string GetFilePathFromUrl(string url)
     {
-        var uri = new Uri(url);
+        var uri = new Uri(NormalizeUrl(url));
 
         // Try to extract the file name from URL
         var pathAndFileName = Regex.Match(uri.AbsolutePath, @"/(.+)/([^?]*)");
@@ -77,19 +78,63 @@ internal partial class ExportAssetDownloader
         // If this isn't a Discord CDN URL, save the file to the `media/external` folder.
         if (!string.Equals(uri.Host, "cdn.discordapp.com", StringComparison.OrdinalIgnoreCase))
         {
-            return $"external/{uri.Host}{uri.AbsolutePath}";
+            return GetExternalFilePath(uri);
         }
 
-        // If it is a Discord URL, we're guaranteed to have matches for these groups. <see cref="ImageCdn"/>
+        // If it is a Discord URL, we should have matches for both of these. <see cref="ImageCdn"/>
+        // But if we encounter an unexpected Discord URL, just treat it like an external one.
         if (string.IsNullOrWhiteSpace(path) || string.IsNullOrWhiteSpace(fileName))
-            throw new Exception("Invalid Discord URL shape");
+        {
+            return GetExternalFilePath(uri);
+        }
 
-        // If there is a size parameter, add it as the final folder in the path.
-        // This prevents multiple sizes of an avatar, for example, from overwriting each other.
-        var sizeParam = HttpUtility.ParseQueryString(uri.Query)["size"];
-        var sizePathSegment = sizeParam != null ? $"{sizeParam}px/" : "";
+        var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+        var queryParamsString = FormatQueryParamsForFilename(uri);
+        var fileExtension = Path.GetExtension(fileName);
 
-        return $"{path}/{sizePathSegment}{Path.EscapeFileName(fileName)}";
+        var queryParamsSuffix = string.IsNullOrEmpty(queryParamsString)
+            ? ""
+            : $"_{queryParamsString}";
+        var fullFilename = $"{fileNameWithoutExtension}{queryParamsSuffix}{fileExtension}";
+
+        return $"{path}/{Path.EscapeFileName(fullFilename)}";
+    }
+
+    // Remove signature parameters from Discord CDN URLs to normalize them
+    private static string NormalizeUrl(string url)
+    {
+        var uri = new Uri(url);
+        if (!string.Equals(uri.Host, "cdn.discordapp.com", StringComparison.OrdinalIgnoreCase))
+            return url;
+
+        var query = HttpUtility.ParseQueryString(uri.Query);
+        query.Remove("ex");
+        query.Remove("is");
+        query.Remove("hm");
+
+        var queryString = query.ToString();
+        if (string.IsNullOrEmpty(queryString))
+            return uri.GetLeftPart(UriPartial.Path);
+
+        return $"{uri.GetLeftPart(UriPartial.Path)}?{queryString}";
+    }
+
+    // Stringifies the query params to be included in a filename.
+    // Returns a string like "size=256_spoiler=false"
+    private static string FormatQueryParamsForFilename(Uri uri)
+    {
+        var query = HttpUtility.ParseQueryString(uri.Query);
+        return string.Join(
+            "_",
+            query
+                .AllKeys.Where(key => !string.IsNullOrEmpty(key))
+                .Select(key => string.IsNullOrEmpty(query[key]) ? key : $"{key}={query[key]}")
+        );
+    }
+
+    private static string GetExternalFilePath(Uri uri)
+    {
+        return $"external/{uri.Host}{uri.AbsolutePath}";
     }
 }
 

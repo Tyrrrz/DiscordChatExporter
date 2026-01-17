@@ -128,7 +128,7 @@ internal partial class ExportAssetDownloader
             "_",
             query
                 .AllKeys.Where(key => !string.IsNullOrEmpty(key))
-                .Select(key => string.IsNullOrEmpty(query[key]) ? key : $"{key}={query[key]}")
+                .Select(key => string.IsNullOrEmpty(query[key]) ? key : $"{key}-{query[key]}")
         );
     }
 

@@ -67,7 +67,7 @@ public partial class SettingsService()
     public partial bool LastShouldReuseAssets { get; set; }
 
     [ObservableProperty]
-    public partial bool LastShouldUseNewMediaFilePaths { get; set; }
+    public partial bool LastShouldUseNestedMediaFilePaths { get; set; }
 
     [ObservableProperty]
     public partial string? LastAssetsDirPath { get; set; }

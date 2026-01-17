@@ -68,7 +68,7 @@ public partial class ExportSetupViewModel(
     public partial bool ShouldReuseAssets { get; set; }
 
     [ObservableProperty]
-    public partial bool ShouldUseNewMediaFilePaths { get; set; }
+    public partial bool ShouldUseNestedMediaFilePaths { get; set; }
 
     [ObservableProperty]
     public partial string? AssetsDirPath { get; set; }
@@ -108,7 +108,7 @@ public partial class ExportSetupViewModel(
         ShouldFormatMarkdown = settingsService.LastShouldFormatMarkdown;
         ShouldDownloadAssets = settingsService.LastShouldDownloadAssets;
         ShouldReuseAssets = settingsService.LastShouldReuseAssets;
-        ShouldUseNewMediaFilePaths = settingsService.LastShouldUseNewMediaFilePaths;
+        ShouldUseNestedMediaFilePaths = settingsService.LastShouldUseNestedMediaFilePaths;
         AssetsDirPath = settingsService.LastAssetsDirPath;
 
         // Show the "advanced options" section by default if any
@@ -187,7 +187,7 @@ public partial class ExportSetupViewModel(
         settingsService.LastShouldFormatMarkdown = ShouldFormatMarkdown;
         settingsService.LastShouldDownloadAssets = ShouldDownloadAssets;
         settingsService.LastShouldReuseAssets = ShouldReuseAssets;
-        settingsService.LastShouldUseNewMediaFilePaths = ShouldUseNewMediaFilePaths;
+        settingsService.LastShouldUseNestedMediaFilePaths = ShouldUseNestedMediaFilePaths;
         settingsService.LastAssetsDirPath = AssetsDirPath;
 
         Close(true);

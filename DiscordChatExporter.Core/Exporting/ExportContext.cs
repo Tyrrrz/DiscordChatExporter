@@ -22,7 +22,7 @@ internal class ExportContext(DiscordClient discord, ExportRequest request)
     private readonly ExportAssetDownloader _assetDownloader = new(
         request.AssetsDirPath,
         request.ShouldReuseAssets,
-        request.ShouldUseNewMediaFilePaths
+        request.ShouldUseNestedMediaFilePaths
     );
 
     public DiscordClient Discord { get; } = discord;

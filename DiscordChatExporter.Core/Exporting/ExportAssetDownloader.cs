@@ -16,7 +16,7 @@ namespace DiscordChatExporter.Core.Exporting;
 internal partial class ExportAssetDownloader(
     string workingDirPath,
     bool reuse,
-    bool useNewMediaFilePaths
+    bool useNestedMediaFilePaths
 )
 {
     private static readonly AsyncKeyedLocker<string> Locker = new();
@@ -29,7 +29,7 @@ internal partial class ExportAssetDownloader(
         CancellationToken cancellationToken = default
     )
     {
-        var localFilePath = useNewMediaFilePaths
+        var localFilePath = useNestedMediaFilePaths
             ? GetFilePathFromUrl(url)
             : GetFileNameFromUrlLegacy(url);
         var filePath = Path.Combine(workingDirPath, localFilePath);
@@ -77,7 +77,6 @@ internal partial class ExportAssetDownloader
         // If this isn't a Discord CDN URL, save the file to the `media/external` folder.
         if (!string.Equals(uri.Host, "cdn.discordapp.com", StringComparison.OrdinalIgnoreCase))
         {
-            File.AppendAllTextAsync("external_urls.txt", $"{url}\n");
             return $"external/{uri.Host}{uri.AbsolutePath}";
         }
 

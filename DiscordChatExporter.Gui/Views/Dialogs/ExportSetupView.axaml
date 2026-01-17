@@ -280,8 +280,8 @@
                             IsEnabled="{Binding ShouldDownloadAssets}"
                             LastChildFill="False"
                             ToolTip.Tip="Uses a new organization to save media files to avoid data loss. If you change this setting from run to run, duplicate media may be downloaded.">
-                            <TextBlock DockPanel.Dock="Left" Text="Use new media file paths" />
-                            <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding ShouldUseNewMediaFilePaths}" />
+                            <TextBlock DockPanel.Dock="Left" Text="Use nested media file paths" />
+                            <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding ShouldUseNestedMediaFilePaths}" />
                         </DockPanel>
 
                         <!--  Assets path  -->

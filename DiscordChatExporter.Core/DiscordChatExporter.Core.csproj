@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="1.4.0" />
-    <PackageReference Include="AsyncKeyedLock" Version="7.1.8" />
+    <PackageReference Include="AsyncKeyedLock" Version="8.0.1" />
     <PackageReference Include="CSharpier.MsBuild" Version="1.2.5" PrivateAssets="all" />
     <PackageReference Include="Gress" Version="2.1.1" />
     <PackageReference Include="JsonExtensions" Version="1.2.0" />

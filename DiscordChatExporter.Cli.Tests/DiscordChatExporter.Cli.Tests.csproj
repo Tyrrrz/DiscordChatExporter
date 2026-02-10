@@ -16,12 +16,12 @@
     <PackageReference Include="FluentAssertions" Version="8.8.0" />
     <PackageReference Include="GitHubActionsTestLogger" Version="3.0.1" PrivateAssets="all" />
     <PackageReference Include="JsonExtensions" Version="1.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.2" />
     <PackageReference
       Include="Microsoft.Extensions.Configuration.EnvironmentVariables"
-      Version="10.0.1"
+      Version="10.0.2"
     />
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" PrivateAssets="all" />

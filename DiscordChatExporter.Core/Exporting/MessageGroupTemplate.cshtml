@@ -424,9 +424,11 @@
                                                 </div>
                                             }
 
-                                            @* Video player *@
+                                            @* Video thumbnail *@
                                             <div class="chatlog__embed-youtube-container">
-                                                <iframe class="chatlog__embed-youtube" src="@youTubeVideoEmbed.Url" width="400" height="225"></iframe>
+                                                <a href="@youTubeVideoEmbed.Url">
+                                                    <img class="chatlog__embed-youtube-thumbnail" src="@await ResolveAssetUrlAsync(embed.Thumbnail?.ProxyUrl ?? embed.Thumbnail?.Url ?? youTubeVideoEmbed.ThumbnailUrl)" alt="YouTube video thumbnail" loading="lazy" onerror="this.style.visibility='hidden'" data-canonical-url="@(embed.Thumbnail?.Url ?? youTubeVideoEmbed.ThumbnailUrl)">
+                                                </a>
                                             </div>
                                         </div>
                                     </div>

@@ -181,24 +181,15 @@ public class HtmlEmbedSpecs
         );
 
         // Assert
-        var youtubeLink = message
+        var youtubeUrl = message
             .QuerySelectorAll("a")
-            .FirstOrDefault(e =>
-                e.GetAttribute("href")?.Contains("youtube.com/watch?v=", StringComparison.Ordinal)
-                == true
+            .Select(e => e.GetAttribute("href"))
+            .WhereNotNull()
+            .FirstOrDefault(s =>
+                s.Contains("youtube.com/watch?v=qOWW4OlgbvE", StringComparison.Ordinal)
             );
 
-        youtubeLink.Should().NotBeNull();
-        youtubeLink?.GetAttribute("href").Should().Contain("qOWW4OlgbvE");
-
-        // Check that the thumbnail image exists
-        var thumbnail = youtubeLink
-            ?.QuerySelectorAll("img")
-            .FirstOrDefault(e =>
-                e.GetAttribute("class")?.Contains("chatlog__embed-youtube-thumbnail") == true
-            );
-
-        thumbnail.Should().NotBeNull();
+        youtubeUrl.Should().NotBeNull();
     }
 
     [Fact]

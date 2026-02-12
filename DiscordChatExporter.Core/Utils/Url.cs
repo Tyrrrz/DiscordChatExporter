@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Text;
 
 namespace DiscordChatExporter.Core.Utils;

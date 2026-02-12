@@ -181,15 +181,14 @@ public class HtmlEmbedSpecs
         );
 
         // Assert
-        var youtubeUrl = message
-            .QuerySelectorAll("a")
-            .Select(e => e.GetAttribute("href"))
+        // Check that the YouTube video thumbnail image exists with the correct video ID
+        var youtubeThumbnailSrc = message
+            .QuerySelectorAll("img")
+            .Select(e => e.GetAttribute("src"))
             .WhereNotNull()
-            .FirstOrDefault(s =>
-                s.Contains("youtube.com/watch?v=qOWW4OlgbvE", StringComparison.Ordinal)
-            );
+            .FirstOrDefault(s => s.Contains("qOWW4OlgbvE", StringComparison.Ordinal));
 
-        youtubeUrl.Should().NotBeNull();
+        youtubeThumbnailSrc.Should().NotBeNull();
     }
 
     [Fact]

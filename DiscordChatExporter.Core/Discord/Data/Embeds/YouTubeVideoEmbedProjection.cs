@@ -6,9 +6,6 @@ public partial record YouTubeVideoEmbedProjection(string VideoId)
 
     // Using hqdefault.jpg which is guaranteed to exist for all YouTube videos
     public string ThumbnailUrl { get; } = $"https://i.ytimg.com/vi/{VideoId}/hqdefault.jpg";
-
-    public string GetThumbnailUrl(Embed embed) =>
-        embed.Thumbnail?.ProxyUrl ?? embed.Thumbnail?.Url ?? ThumbnailUrl;
 }
 
 public partial record YouTubeVideoEmbedProjection

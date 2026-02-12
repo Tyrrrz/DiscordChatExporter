@@ -427,11 +427,7 @@
                                             @* Video thumbnail *@
                                             <div class="chatlog__embed-youtube-container">
                                                 <a href="@youTubeVideoEmbed.Url">
-                                                    @{
-                                                        var thumbnailUrl = youTubeVideoEmbed.GetThumbnailUrl(embed);
-                                                        var thumbnailCanonicalUrl = embed.Thumbnail?.Url ?? youTubeVideoEmbed.ThumbnailUrl;
-                                                    }
-                                                    <img class="chatlog__embed-youtube-thumbnail" src="@await ResolveAssetUrlAsync(thumbnailUrl)" alt="YouTube video thumbnail" loading="lazy" onerror="this.style.visibility='hidden'" data-canonical-url="@thumbnailCanonicalUrl">
+                                                    <img class="chatlog__embed-youtube-thumbnail" src="@await ResolveAssetUrlAsync(embed.Thumbnail?.ProxyUrl ?? embed.Thumbnail?.Url ?? youTubeVideoEmbed.ThumbnailUrl)" alt="YouTube video thumbnail" loading="lazy" onerror="this.style.visibility='hidden'" data-canonical-url="@(embed.Thumbnail?.Url ?? youTubeVideoEmbed.ThumbnailUrl)">
                                                 </a>
                                             </div>
                                         </div>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 
 namespace DiscordChatExporter.Core.Utils;
@@ -10,22 +11,14 @@ public static class Url
         var buffer = new StringBuilder();
         var position = 0;
 
-        // Check if the path is absolute (either Unix-style or Windows-style)
-        // Unix: starts with /
-        // Windows: starts with drive letter followed by colon (e.g., C:)
-        var isUnixAbsolute = filePath.StartsWith('/') || filePath.StartsWith('\\');
-        var isWindowsAbsolute =
-            filePath.Length >= 2 && char.IsLetter(filePath[0]) && filePath[1] == ':';
-        var isAbsolute = isUnixAbsolute || isWindowsAbsolute;
-
         // For absolute paths, prepend file:// protocol for proper browser handling
-        if (isAbsolute)
+        if (Path.IsPathFullyQualified(filePath))
         {
             buffer.Append("file://");
 
             // On Windows, we need to add an extra slash before the drive letter
             // e.g., file:///C:/path instead of file://C:/path
-            if (isWindowsAbsolute)
+            if (!filePath.StartsWith('/') && !filePath.StartsWith('\\'))
             {
                 buffer.Append('/');
             }

@@ -181,8 +181,24 @@ public class HtmlEmbedSpecs
         );
 
         // Assert
-        var iframeUrl = message.QuerySelector("iframe")?.GetAttribute("src");
-        iframeUrl.Should().StartWith("https://www.youtube.com/embed/qOWW4OlgbvE");
+        var youtubeLink = message
+            .QuerySelectorAll("a")
+            .FirstOrDefault(e =>
+                e.GetAttribute("href")?.Contains("youtube.com/watch?v=", StringComparison.Ordinal)
+                == true
+            );
+
+        youtubeLink.Should().NotBeNull();
+        youtubeLink?.GetAttribute("href").Should().Contain("qOWW4OlgbvE");
+
+        // Check that the thumbnail image exists
+        var thumbnail = youtubeLink
+            ?.QuerySelectorAll("img")
+            .FirstOrDefault(e =>
+                e.GetAttribute("class")?.Contains("chatlog__embed-youtube-thumbnail") == true
+            );
+
+        thumbnail.Should().NotBeNull();
     }
 
     [Fact]

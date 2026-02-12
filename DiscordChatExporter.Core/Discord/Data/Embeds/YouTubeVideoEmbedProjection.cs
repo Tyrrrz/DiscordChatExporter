@@ -2,7 +2,9 @@
 
 public partial record YouTubeVideoEmbedProjection(string VideoId)
 {
-    public string Url { get; } = $"https://www.youtube.com/embed/{VideoId}";
+    public string Url { get; } = $"https://www.youtube.com/watch?v={VideoId}";
+
+    public string ThumbnailUrl { get; } = $"https://i.ytimg.com/vi/{VideoId}/maxresdefault.jpg";
 }
 
 public partial record YouTubeVideoEmbedProjection

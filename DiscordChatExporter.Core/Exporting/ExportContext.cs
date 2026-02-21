@@ -16,7 +16,7 @@ namespace DiscordChatExporter.Core.Exporting;
 internal class ExportContext(DiscordClient discord, ExportRequest request)
 {
     private readonly Dictionary<Snowflake, Member?> _membersById = new();
-    private readonly Dictionary<Snowflake, Channel> _channelsById = new();
+    private readonly Dictionary<Snowflake, Channel?> _channelsById = new();
     private readonly Dictionary<Snowflake, Role> _rolesById = new();
 
     private readonly ExportAssetDownloader _assetDownloader = new(
@@ -49,6 +49,21 @@ internal class ExportContext(DiscordClient discord, ExportRequest request)
         {
             _rolesById[role.Id] = role;
         }
+    }
+
+    // Threads are not preloaded, so we resolve them on demand
+    public async ValueTask PopulateChannelAsync(
+        Snowflake id,
+        CancellationToken cancellationToken = default
+    )
+    {
+        if (_channelsById.ContainsKey(id))
+            return;
+
+        var channel = await Discord.TryGetChannelAsync(id, cancellationToken);
+
+        // Store the result even if it's null, to avoid re-fetching non-existing channels
+        _channelsById[id] = channel;
     }
 
     // Because members cannot be pulled in bulk, we need to populate them on demand

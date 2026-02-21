@@ -388,6 +388,32 @@ public class DiscordClient(
         }
     }
 
+    public async ValueTask<Channel?> TryGetChannelAsync(
+        Snowflake channelId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var response = await TryGetJsonResponseAsync($"channels/{channelId}", cancellationToken);
+        if (response is null)
+            return null;
+
+        var parentId = response
+            .Value.GetPropertyOrNull("parent_id")
+            ?.GetNonWhiteSpaceStringOrNull()
+            ?.Pipe(Snowflake.Parse);
+
+        Channel? parent = null;
+        if (parentId is not null)
+        {
+            // It's possible for the parent channel to be inaccessible, despite the
+            // child channel being accessible.
+            // https://github.com/Tyrrrz/DiscordChatExporter/issues/1108
+            parent = await TryGetChannelAsync(parentId.Value, cancellationToken);
+        }
+
+        return Channel.Parse(response.Value, parent);
+    }
+
     public async IAsyncEnumerable<Channel> GetChannelThreadsAsync(
         IReadOnlyList<Channel> channels,
         bool includeArchived = false,

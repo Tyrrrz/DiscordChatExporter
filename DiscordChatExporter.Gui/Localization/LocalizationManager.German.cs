@@ -18,9 +18,8 @@ public partial class LocalizationManager
         [nameof(TokenPersonalHeader)] = "Token für Ihr persönliches Konto abrufen:",
         [nameof(TokenPersonalTosWarning)] =
             "*  Das Automatisieren von Benutzerkonten verstößt technisch gegen die AGB — **auf eigene Gefahr**!",
-        [nameof(TokenPersonalStep1Before)] = "1. Öffnen Sie Discord in Ihrem",
-        [nameof(TokenPersonalStep1After)] = "und melden Sie sich an",
         [nameof(TokenPersonalInstructions)] = """
+            1. Öffnen Sie Discord in Ihrem Webbrowser und melden Sie sich an
             2. Öffnen Sie einen Server oder einen direkten Nachrichtenkanal
             3. Drücken Sie **Ctrl+Shift+I**, um die Entwicklertools anzuzeigen
             4. Navigieren Sie zum Reiter **Network**
@@ -31,7 +30,6 @@ public partial class LocalizationManager
             9. Scrollen Sie nach unten zum Abschnitt **Request Headers**
             10. Kopieren Sie den Wert des Headers **authorization**
             """,
-        [nameof(TokenWebBrowserLinkText)] = "Webbrowser",
         // Token instructions (bot)
         [nameof(TokenBotHeader)] = "Token für Ihren Bot abrufen:",
         [nameof(TokenBotIntro)] =

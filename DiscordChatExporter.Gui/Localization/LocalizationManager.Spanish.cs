@@ -16,9 +16,8 @@ public partial class LocalizationManager
             [nameof(TokenPersonalHeader)] = "Cómo obtener el token para tu cuenta personal:",
             [nameof(TokenPersonalTosWarning)] =
                 "*  Automatizar cuentas de usuario técnicamente va en contra de los ToS — **bajo tu propio riesgo**!",
-            [nameof(TokenPersonalStep1Before)] = "1. Abre Discord en tu",
-            [nameof(TokenPersonalStep1After)] = "e inicia sesión",
             [nameof(TokenPersonalInstructions)] = """
+                1. Abre Discord en tu navegador web e inicia sesión
                 2. Abre cualquier servidor o canal de mensaje directo
                 3. Presiona **Ctrl+Shift+I** para mostrar las herramientas de desarrollo
                 4. Navega a la pestaña **Network**
@@ -29,7 +28,6 @@ public partial class LocalizationManager
                 9. Desplázate hasta la sección **Request Headers**
                 10. Copia el valor del encabezado **authorization**
                 """,
-            [nameof(TokenWebBrowserLinkText)] = "navegador web",
             // Token instructions (bot)
             [nameof(TokenBotHeader)] = "Cómo obtener el token para tu bot:",
             [nameof(TokenBotIntro)] =

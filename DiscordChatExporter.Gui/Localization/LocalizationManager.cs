@@ -87,10 +87,7 @@ public partial class LocalizationManager
     // Token instructions (personal account)
     public string TokenPersonalHeader => Get();
     public string TokenPersonalTosWarning => Get();
-    public string TokenPersonalStep1Before => Get();
-    public string TokenPersonalStep1After => Get();
     public string TokenPersonalInstructions => Get();
-    public string TokenWebBrowserLinkText => Get();
 
     // Token instructions (bot)
     public string TokenBotHeader => Get();

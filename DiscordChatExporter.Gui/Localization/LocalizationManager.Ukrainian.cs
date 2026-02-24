@@ -16,9 +16,8 @@ public partial class LocalizationManager
             [nameof(TokenPersonalHeader)] = "Як отримати токен для персонального акаунту:",
             [nameof(TokenPersonalTosWarning)] =
                 "*  Автоматизація облікових записів технічно порушує Умови обслуговування — **на власний ризик**!",
-            [nameof(TokenPersonalStep1Before)] = "1. Відкрийте Discord у вашому",
-            [nameof(TokenPersonalStep1After)] = "та увійдіть",
             [nameof(TokenPersonalInstructions)] = """
+                1. Відкрийте Discord у вашому веб-браузері та увійдіть
                 2. Відкрийте будь-який сервер або канал особистих повідомлень
                 3. Натисніть **Ctrl+Shift+I**, щоб відкрити інструменти розробника
                 4. Перейдіть на вкладку **Network**
@@ -29,7 +28,6 @@ public partial class LocalizationManager
                 9. Прокрутіть до розділу **Request Headers**
                 10. Скопіюйте значення заголовка **authorization**
                 """,
-            [nameof(TokenWebBrowserLinkText)] = "веб-браузер",
             // Token instructions (bot)
             [nameof(TokenBotHeader)] = "Як отримати токен для бота:",
             [nameof(TokenBotIntro)] =

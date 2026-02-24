@@ -248,12 +248,6 @@
 
                         <TextBlock Inlines="{Binding LocalizationManager.TokenPersonalTosWarning, Converter={x:Static converters:MarkdownToInlinesConverter.Instance}}" />
 
-                        <TextBlock>
-                            <Run Text="{Binding LocalizationManager.TokenPersonalStep1Before}" />
-                            <controls:HyperLink Command="{Binding OpenDiscordCommand}" Text="{Binding LocalizationManager.TokenWebBrowserLinkText}" />
-                            <Run Text="{Binding LocalizationManager.TokenPersonalStep1After}" />
-                        </TextBlock>
-
                         <TextBlock Inlines="{Binding LocalizationManager.TokenPersonalInstructions, Converter={x:Static converters:MarkdownToInlinesConverter.Instance}}" />
 
                         <!--  Bot token  -->

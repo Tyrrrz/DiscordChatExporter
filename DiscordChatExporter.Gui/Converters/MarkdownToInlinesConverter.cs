@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using Avalonia.Controls.Documents;
 using Avalonia.Data.Converters;
+using Avalonia.Layout;
 using Avalonia.Media;
 using DiscordChatExporter.Gui.Views.Controls;
 using Markdig;
@@ -91,7 +92,12 @@ public class MarkdownToInlinesConverter : IValueConverter
             {
                 inlines.Add(
                     new InlineUIContainer(
-                        new HyperLink { Text = GetPlainText(link), Url = link.Url }
+                        new HyperLink
+                        {
+                            Text = GetPlainText(link),
+                            Url = link.Url,
+                            VerticalAlignment = VerticalAlignment.Bottom,
+                        }
                     )
                 );
 

@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
     xmlns:components="clr-namespace:DiscordChatExporter.Gui.ViewModels.Components"
-    xmlns:controls="clr-namespace:DiscordChatExporter.Gui.Views.Controls"
     xmlns:converters="clr-namespace:DiscordChatExporter.Gui.Converters"
     xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     xmlns:materialStyles="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
@@ -27,7 +26,7 @@
                         RevealPassword="{Binding $self.IsFocused}"
                         Text="{Binding Token}"
                         Theme="{DynamicResource SoloTextBox}"
-                        Watermark="Token">
+                        Watermark="{Binding LocalizationManager.TokenWatermark}">
                         <TextBox.InnerLeftContent>
                             <materialIcons:MaterialIcon
                                 Grid.Column="0"
@@ -45,7 +44,7 @@
                                 Command="{Binding PullGuildsCommand}"
                                 IsDefault="True"
                                 Theme="{DynamicResource MaterialFlatButton}"
-                                ToolTip.Tip="Pull available servers and channels (Enter)">
+                                ToolTip.Tip="{Binding LocalizationManager.PullGuildsTooltip}">
                                 <materialIcons:MaterialIcon
                                     Width="24"
                                     Height="24"
@@ -64,7 +63,7 @@
                     Command="{Binding ShowSettingsCommand}"
                     Foreground="{DynamicResource MaterialDarkForegroundBrush}"
                     Theme="{DynamicResource MaterialFlatButton}"
-                    ToolTip.Tip="Settings">
+                    ToolTip.Tip="{Binding LocalizationManager.SettingsTooltip}">
                     <materialIcons:MaterialIcon
                         Width="24"
                         Height="24"
@@ -168,7 +167,7 @@
                                                 <Setter Property="ToolTip.Tip">
                                                     <Template>
                                                         <TextBlock>
-                                                            <Run Text="Last message sent:" />
+                                                            <Run Text="{Binding #UserControl.DataContext.LocalizationManager.LastMessageSentTooltip}" />
                                                             <Run FontWeight="SemiBold" Text="{Binding Channel.LastMessageId, Converter={x:Static converters:SnowflakeToTimestampStringConverter.Instance}, TargetNullValue=never, Mode=OneWay}" />
                                                         </TextBlock>
                                                     </Template>
@@ -219,172 +218,67 @@
             <!--  Placeholder / usage instructions  -->
             <Panel IsVisible="{Binding !AvailableGuilds.Count}">
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                    <TextBlock
-                        Margin="32,16"
-                        FontSize="14"
-                        FontWeight="Light"
-                        LineHeight="23">
+                    <StackPanel Margin="32,16" Spacing="0">
+
                         <!--  User token  -->
-                        <InlineUIContainer>
-                            <materialIcons:MaterialIcon
-                                Width="18"
-                                Height="18"
-                                Margin="0,-2,0,0"
-                                Foreground="{DynamicResource PrimaryHueMidBrush}"
-                                Kind="Account" />
-                        </InlineUIContainer>
-                        <Run BaselineAlignment="Center" Text="" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontSize="16"
-                            FontWeight="SemiBold"
-                            Text="To get the token for your personal account:" />
-                        <LineBreak />
+                        <TextBlock>
+                            <InlineUIContainer>
+                                <materialIcons:MaterialIcon
+                                    Width="18"
+                                    Height="18"
+                                    Margin="0,-2,0,0"
+                                    Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                    Kind="Account" />
+                            </InlineUIContainer>
+                            <Run Text=" " />
+                            <Run
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Text="{Binding LocalizationManager.TokenPersonalHeader}" />
+                        </TextBlock>
 
-                        <Run BaselineAlignment="Center" Text="*  Automating user accounts is technically against TOS —" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="use at your own risk" /><Run Text="!" />
-                        <LineBreak />
+                        <TextBlock Inlines="{Binding LocalizationManager.TokenPersonalTosWarning, Converter={x:Static converters:MarkdownToInlinesConverter.Instance}}"
+                                   FontSize="14"
+                                   FontWeight="Light"
+                                   LineHeight="23"
+                                   TextWrapping="Wrap" />
 
-                        <Run BaselineAlignment="Center" Text="1. Open Discord in your" />
-                        <controls:HyperLink Command="{Binding OpenDiscordCommand}" Text="web browser" />
-                        <Run BaselineAlignment="Center" Text="and login" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="2. Open any server or direct message channel" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="3. Press" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="Ctrl+Shift+I" />
-                        <Run BaselineAlignment="Center" Text="to show developer tools" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="4. Navigate to the" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="Network" />
-                        <Run BaselineAlignment="Center" Text="tab" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="5. Press" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="Ctrl+R" />
-                        <Run BaselineAlignment="Center" Text="to reload" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="6. Switch between random channels to trigger network requests" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="7. Search for a request that starts with" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="messages" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="8. Select the" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="Headers" />
-                        <Run BaselineAlignment="Center" Text="tab on the right" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="9. Scroll down to the" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="Request Headers" />
-                        <Run BaselineAlignment="Center" Text="section" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="10. Copy the value of the" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="authorization" />
-                        <Run BaselineAlignment="Center" Text="header" />
-                        <LineBreak />
-                        <LineBreak />
+                        <TextBlock Inlines="{Binding LocalizationManager.TokenPersonalInstructions, Converter={x:Static converters:MarkdownToInlinesConverter.Instance}}"
+                                   FontSize="14"
+                                   FontWeight="Light"
+                                   LineHeight="23"
+                                   TextWrapping="Wrap" />
 
                         <!--  Bot token  -->
-                        <InlineUIContainer>
-                            <materialIcons:MaterialIcon
-                                Width="18"
-                                Height="18"
-                                Margin="0,-2,0,0"
-                                Foreground="{DynamicResource PrimaryHueMidBrush}"
-                                Kind="Robot" />
-                        </InlineUIContainer>
-                        <Run BaselineAlignment="Center" Text="" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontSize="16"
-                            FontWeight="SemiBold"
-                            Text="To get the token for your bot:" />
-                        <LineBreak />
+                        <TextBlock Margin="0,12,0,0">
+                            <InlineUIContainer>
+                                <materialIcons:MaterialIcon
+                                    Width="18"
+                                    Height="18"
+                                    Margin="0,-2,0,0"
+                                    Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                    Kind="Robot" />
+                            </InlineUIContainer>
+                            <Run Text=" " />
+                            <Run
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Text="{Binding LocalizationManager.TokenBotHeader}" />
+                        </TextBlock>
 
-                        <Run BaselineAlignment="Center" Text="The token is generated during bot creation. If you lost it, generate a new one:" />
-                        <LineBreak />
+                        <TextBlock Inlines="{Binding LocalizationManager.TokenBotInstructions, Converter={x:Static converters:MarkdownToInlinesConverter.Instance}}"
+                                   FontSize="14"
+                                   FontWeight="Light"
+                                   LineHeight="23"
+                                   TextWrapping="Wrap" />
 
-                        <Run BaselineAlignment="Center" Text="1. Open Discord" />
-                        <controls:HyperLink Command="{Binding OpenDiscordDeveloperPortalCommand}" Text="developer portal" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="2. Open your application's settings" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="3. Navigate to the" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="Bot" />
-                        <Run BaselineAlignment="Center" Text="section on the left" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="4. Under" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="Token" />
-                        <Run BaselineAlignment="Center" Text="click" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="Reset Token" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="5. Click" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="Yes, do it!" />
-                        <Run BaselineAlignment="Center" Text="and authenticate to confirm" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="*  Integrations using the previous token will stop working until updated" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="*  Your bot needs to have the" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="Message Content Intent" />
-                        <Run BaselineAlignment="Center" Text="enabled to read messages" />
-                        <LineBreak />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="If you have questions or issues, please refer to the" />
-                        <controls:HyperLink Command="{Binding ShowHelpCommand}" Text="documentation" />
-                    </TextBlock>
+                        <TextBlock Margin="0,12,0,0"
+                                   FontSize="14"
+                                   FontWeight="Light"
+                                   LineHeight="23"
+                                   TextWrapping="Wrap"
+                                   Inlines="{Binding LocalizationManager.TokenHelpText, Converter={x:Static converters:MarkdownToInlinesConverter.Instance}}" />
+                    </StackPanel>
                 </ScrollViewer>
             </Panel>
 

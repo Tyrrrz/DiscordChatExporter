@@ -1,7 +1,9 @@
-﻿using System.Windows.Input;
+﻿using System.Diagnostics;
+using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using DiscordChatExporter.Gui.Utils.Extensions;
 
 namespace DiscordChatExporter.Gui.Views.Controls;
 
@@ -15,6 +17,12 @@ public partial class HyperLink : UserControl
 
     public static readonly StyledProperty<object?> CommandParameterProperty =
         Button.CommandParameterProperty.AddOwner<HyperLink>();
+
+    // If Url is set and Command is not set, clicking will open this URL in the default browser.
+    public static readonly StyledProperty<string?> UrlProperty = AvaloniaProperty.Register<
+        HyperLink,
+        string?
+    >(nameof(Url));
 
     public HyperLink() => InitializeComponent();
 
@@ -36,14 +44,22 @@ public partial class HyperLink : UserControl
         set => SetValue(CommandParameterProperty, value);
     }
 
+    public string? Url
+    {
+        get => GetValue(UrlProperty);
+        set => SetValue(UrlProperty, value);
+    }
+
     private void TextBlock_OnPointerReleased(object? sender, PointerReleasedEventArgs args)
     {
-        if (Command is null)
-            return;
-
-        if (!Command.CanExecute(CommandParameter))
-            return;
-
-        Command.Execute(CommandParameter);
+        if (Command is not null)
+        {
+            if (Command.CanExecute(CommandParameter))
+                Command.Execute(CommandParameter);
+        }
+        else if (!string.IsNullOrWhiteSpace(Url))
+        {
+            Process.StartShellExecute(Url);
+        }
     }
 }

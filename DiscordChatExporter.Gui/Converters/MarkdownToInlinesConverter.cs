@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Linq;
 using Avalonia.Controls.Documents;
 using Avalonia.Data.Converters;
-using Avalonia.Layout;
 using Avalonia.Media;
 using DiscordChatExporter.Gui.Utils.Extensions;
 using DiscordChatExporter.Gui.Views.Controls;
@@ -34,7 +33,10 @@ public class MarkdownToInlinesConverter : IValueConverter
         {
             case LiteralInline literal:
             {
-                var run = new Run(literal.Content.ToString());
+                var run = new Run(literal.Content.ToString())
+                {
+                    BaselineAlignment = BaselineAlignment.Center,
+                };
 
                 if (fontWeight is not null)
                     run.FontWeight = fontWeight.Value;
@@ -83,17 +85,7 @@ public class MarkdownToInlinesConverter : IValueConverter
 
             case LinkInline link:
             {
-                inlines.Add(
-                    new InlineUIContainer(
-                        new HyperLink
-                        {
-                            Text = link.GetInnerText(),
-                            Url = link.Url,
-                            VerticalAlignment = VerticalAlignment.Bottom,
-                        }
-                    )
-                );
-
+                inlines.Add(new HyperLink { Text = link.GetInnerText(), Url = link.Url });
                 break;
             }
 
@@ -149,13 +141,18 @@ public class MarkdownToInlinesConverter : IValueConverter
                         isFirst = false;
 
                         var prefix = list.IsOrdered ? $"{itemOrder++}. " : $"{list.BulletType}  ";
-                        inlines.Add(new Run(prefix));
+
+                        inlines.Add(
+                            new Run(prefix) { BaselineAlignment = BaselineAlignment.Center }
+                        );
 
                         foreach (var subBlock in listItem.OfType<ParagraphBlock>())
                         {
-                            if (subBlock is { Inline: not null } p)
-                                foreach (var markdownInline in p.Inline)
+                            if (subBlock is { Inline: not null })
+                            {
+                                foreach (var markdownInline in subBlock.Inline)
                                     ProcessInline(inlines, markdownInline);
+                            }
                         }
                     }
 

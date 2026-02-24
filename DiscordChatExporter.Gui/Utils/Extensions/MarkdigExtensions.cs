@@ -1,12 +1,11 @@
 using System.Linq;
 using Markdig.Syntax.Inlines;
-using MarkdownInline = Markdig.Syntax.Inlines.Inline;
 
 namespace DiscordChatExporter.Gui.Utils.Extensions;
 
 internal static class MarkdigExtensions
 {
-    extension(MarkdownInline inline)
+    extension(Inline inline)
     {
         public string GetInnerText() =>
             inline switch

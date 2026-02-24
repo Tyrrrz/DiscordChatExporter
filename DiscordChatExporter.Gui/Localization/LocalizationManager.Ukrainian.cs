@@ -31,11 +31,11 @@ public partial class LocalizationManager
             [nameof(LocaleTooltip)] = "Локаль для форматування дат та чисел",
             [nameof(NormalizeToUtcLabel)] = "Нормалізувати до UTC",
             [nameof(NormalizeToUtcTooltip)] = "Нормалізувати всі часові мітки до UTC+0",
-            [nameof(ParallelLimitLabel)] = "Паралельний ліміт",
+            [nameof(ParallelLimitLabel)] = "Ліміт паралелізації",
             [nameof(ParallelLimitTooltip)] = "Скільки каналів може експортуватись одночасно",
             // Export Setup
             [nameof(ChannelsSelectedText)] = "каналів вибрано",
-            [nameof(OutputPathLabel)] = "Шлях виведення",
+            [nameof(OutputPathLabel)] = "Шлях збереження",
             [nameof(FormatLabel)] = "Формат",
             [nameof(FormatTooltip)] = "Формат експорту",
             [nameof(AfterDateLabel)] = "Після (дата)",
@@ -46,7 +46,7 @@ public partial class LocalizationManager
             [nameof(AfterTimeTooltip)] = "Включати лише повідомлення, надіслані після цього часу",
             [nameof(BeforeTimeLabel)] = "До (час)",
             [nameof(BeforeTimeTooltip)] = "Включати лише повідомлення, надіслані до цього часу",
-            [nameof(PartitionLimitLabel)] = "Ліміт розподілу",
+            [nameof(PartitionLimitLabel)] = "Розділяти експорт",
             [nameof(PartitionLimitTooltip)] =
                 "Розділити вивід на частини, кожна обмежена вказаною кількістю повідомлень (напр. '100') або розміром файлу (напр. '10mb')",
             [nameof(MessageFilterLabel)] = "Фільтр повідомлень",
@@ -63,7 +63,7 @@ public partial class LocalizationManager
                 "Повторно використовувати раніше завантажені ресурси, щоб уникнути зайвих запитів",
             [nameof(AssetsDirPathLabel)] = "Шлях до директорії ресурсів",
             [nameof(AssetsDirPathTooltip)] =
-                "Завантажувати ресурси до цієї директорії. Якщо не вказано, шлях до директорії ресурсів буде визначено з шляху виведення.",
+                "Завантажувати ресурси до цієї директорії. Якщо не вказано, шлях до директорії ресурсів буде визначено з шляху збереження.",
             [nameof(AdvancedOptionsTooltip)] = "Перемкнути розширені параметри",
             [nameof(ExportButton)] = "ЕКСПОРТУВАТИ",
             // Common buttons

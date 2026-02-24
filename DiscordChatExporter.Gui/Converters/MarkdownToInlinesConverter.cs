@@ -5,6 +5,7 @@ using Avalonia.Controls.Documents;
 using Avalonia.Data.Converters;
 using Avalonia.Layout;
 using Avalonia.Media;
+using DiscordChatExporter.Gui.Utils.Extensions;
 using DiscordChatExporter.Gui.Views.Controls;
 using Markdig;
 using Markdig.Syntax;
@@ -20,14 +21,6 @@ public class MarkdownToInlinesConverter : IValueConverter
     private static readonly MarkdownPipeline MarkdownPipeline = new MarkdownPipelineBuilder()
         .UseEmphasisExtras()
         .Build();
-
-    private static string GetPlainText(MarkdownInline inline) =>
-        inline switch
-        {
-            LiteralInline literal => literal.Content.ToString(),
-            ContainerInline container => string.Concat(container.Select(GetPlainText)),
-            _ => string.Empty,
-        };
 
     private static void ProcessInline(
         InlineCollection inlines,
@@ -94,7 +87,7 @@ public class MarkdownToInlinesConverter : IValueConverter
                     new InlineUIContainer(
                         new HyperLink
                         {
-                            Text = GetPlainText(link),
+                            Text = link.GetInnerText(),
                             Url = link.Url,
                             VerticalAlignment = VerticalAlignment.Bottom,
                         }

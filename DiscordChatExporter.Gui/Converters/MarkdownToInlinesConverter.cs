@@ -147,7 +147,15 @@ public class MarkdownToInlinesConverter : IValueConverter
                             inlines.Add(new LineBreak());
                         isFirst = false;
 
-                        var prefix = list.IsOrdered ? $"{itemOrder++}. " : $"{list.BulletType}  ";
+                        var bulletChar = list.BulletType switch
+                        {
+                            BulletType.Dash => '-',
+                            BulletType.Plus => '+',
+                            BulletType.Asterisk => '*',
+                            _ => '-'
+                        };
+
+                        var prefix = list.IsOrdered ? $"{itemOrder++}. " : $"{bulletChar}  ";
                         inlines.Add(new Run(prefix));
 
                         foreach (var subBlock in listItem.OfType<ParagraphBlock>())

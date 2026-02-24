@@ -75,8 +75,8 @@
                         <ToolTip.Tip>
                             <TextBlock
                                 MaxWidth="400"
-                                TextWrapping="Wrap"
-                                Inlines="{Binding LocalizationManager.OutputPathTooltip, Converter={x:Static converters:MarkdownToInlinesConverter.Instance}}" />
+                                Inlines="{Binding LocalizationManager.OutputPathTooltip, Converter={x:Static converters:MarkdownToInlinesConverter.Instance}}"
+                                TextWrapping="Wrap" />
                         </ToolTip.Tip>
                         <TextBox.InnerRightContent>
                             <Button

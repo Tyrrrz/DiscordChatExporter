@@ -219,119 +219,74 @@
             <!--  Placeholder / usage instructions  -->
             <Panel IsVisible="{Binding !AvailableGuilds.Count}">
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                    <TextBlock
-                        Margin="32,16"
-                        FontSize="14"
-                        FontWeight="Light"
-                        LineHeight="23">
+                    <StackPanel Margin="32,16" Spacing="0">
+                        <StackPanel.Styles>
+                            <Style Selector="TextBlock">
+                                <Setter Property="FontSize" Value="14" />
+                                <Setter Property="FontWeight" Value="Light" />
+                                <Setter Property="LineHeight" Value="23" />
+                                <Setter Property="TextWrapping" Value="Wrap" />
+                            </Style>
+                        </StackPanel.Styles>
+
                         <!--  User token  -->
-                        <InlineUIContainer>
-                            <materialIcons:MaterialIcon
-                                Width="18"
-                                Height="18"
-                                Margin="0,-2,0,0"
-                                Foreground="{DynamicResource PrimaryHueMidBrush}"
-                                Kind="Account" />
-                        </InlineUIContainer>
-                        <Run BaselineAlignment="Center" Text="" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontSize="16"
-                            FontWeight="SemiBold"
-                            Text="{Binding LocalizationManager.TokenPersonalHeader}" />
-                        <LineBreak />
+                        <TextBlock>
+                            <InlineUIContainer>
+                                <materialIcons:MaterialIcon
+                                    Width="18"
+                                    Height="18"
+                                    Margin="0,-2,0,0"
+                                    Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                    Kind="Account" />
+                            </InlineUIContainer>
+                            <Run Text=" " />
+                            <Run
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Text="{Binding LocalizationManager.TokenPersonalHeader}" />
+                        </TextBlock>
 
-                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenPersonalTosWarning}" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="{Binding LocalizationManager.TokenPersonalTosRisk}" /><Run Text="!" />
-                        <LineBreak />
+                        <TextBlock Inlines="{Binding LocalizationManager.TokenPersonalTosWarning, Converter={x:Static converters:MarkdownToInlinesConverter.Instance}}" />
 
-                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenPersonalStep1Before}" />
-                        <controls:HyperLink Command="{Binding OpenDiscordCommand}" Text="{Binding LocalizationManager.TokenWebBrowserLinkText}" />
-                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenPersonalStep1After}" />
-                        <LineBreak />
+                        <TextBlock>
+                            <Run Text="{Binding LocalizationManager.TokenPersonalStep1Before}" />
+                            <controls:HyperLink Command="{Binding OpenDiscordCommand}" Text="{Binding LocalizationManager.TokenWebBrowserLinkText}" />
+                            <Run Text="{Binding LocalizationManager.TokenPersonalStep1After}" />
+                        </TextBlock>
 
-                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenPersonalStep2}" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenPersonalStep3}" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenPersonalStep4}" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenPersonalStep5}" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenPersonalStep6}" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenPersonalStep7}" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenPersonalStep8}" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenPersonalStep9}" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenPersonalStep10}" />
-                        <LineBreak />
-                        <LineBreak />
+                        <TextBlock Inlines="{Binding LocalizationManager.TokenPersonalInstructions, Converter={x:Static converters:MarkdownToInlinesConverter.Instance}}" />
 
                         <!--  Bot token  -->
-                        <InlineUIContainer>
-                            <materialIcons:MaterialIcon
-                                Width="18"
-                                Height="18"
-                                Margin="0,-2,0,0"
-                                Foreground="{DynamicResource PrimaryHueMidBrush}"
-                                Kind="Robot" />
-                        </InlineUIContainer>
-                        <Run BaselineAlignment="Center" Text="" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontSize="16"
-                            FontWeight="SemiBold"
-                            Text="{Binding LocalizationManager.TokenBotHeader}" />
-                        <LineBreak />
+                        <TextBlock Margin="0,12,0,0">
+                            <InlineUIContainer>
+                                <materialIcons:MaterialIcon
+                                    Width="18"
+                                    Height="18"
+                                    Margin="0,-2,0,0"
+                                    Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                    Kind="Robot" />
+                            </InlineUIContainer>
+                            <Run Text=" " />
+                            <Run
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Text="{Binding LocalizationManager.TokenBotHeader}" />
+                        </TextBlock>
 
-                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenBotIntro}" />
-                        <LineBreak />
+                        <TextBlock Text="{Binding LocalizationManager.TokenBotIntro}" />
 
-                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenBotStep1}" />
-                        <controls:HyperLink Command="{Binding OpenDiscordDeveloperPortalCommand}" Text="{Binding LocalizationManager.TokenDeveloperPortalLinkText}" />
-                        <LineBreak />
+                        <TextBlock>
+                            <Run Text="{Binding LocalizationManager.TokenBotStep1}" />
+                            <controls:HyperLink Command="{Binding OpenDiscordDeveloperPortalCommand}" Text="{Binding LocalizationManager.TokenDeveloperPortalLinkText}" />
+                        </TextBlock>
 
-                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenBotStep2}" />
-                        <LineBreak />
+                        <TextBlock Inlines="{Binding LocalizationManager.TokenBotInstructions, Converter={x:Static converters:MarkdownToInlinesConverter.Instance}}" />
 
-                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenBotStep3}" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenBotStep4}" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenBotStep5}" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenBotStep6}" />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenBotStep7Before}" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="Message Content Intent" />
-                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenBotStep7After}" />
-                        <LineBreak />
-                        <LineBreak />
-
-                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenHelpText}" />
-                        <controls:HyperLink Command="{Binding ShowHelpCommand}" Text="{Binding LocalizationManager.TokenDocumentationLinkText}" />
-                    </TextBlock>
+                        <TextBlock Margin="0,12,0,0">
+                            <Run Text="{Binding LocalizationManager.TokenHelpText}" />
+                            <controls:HyperLink Command="{Binding ShowHelpCommand}" Text="{Binding LocalizationManager.TokenDocumentationLinkText}" />
+                        </TextBlock>
+                    </StackPanel>
                 </ScrollViewer>
             </Panel>
 

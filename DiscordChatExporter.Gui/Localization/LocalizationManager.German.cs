@@ -17,36 +17,34 @@ public partial class LocalizationManager
         // Token instructions (personal account)
         [nameof(TokenPersonalHeader)] = "Token für Ihr persönliches Konto abrufen:",
         [nameof(TokenPersonalTosWarning)] =
-            "*  Das Automatisieren von Benutzerkonten verstößt technisch gegen die AGB —",
-        [nameof(TokenPersonalTosRisk)] = "auf eigene Gefahr",
+            "*  Das Automatisieren von Benutzerkonten verstößt technisch gegen die AGB — **auf eigene Gefahr**!",
         [nameof(TokenPersonalStep1Before)] = "1. Öffnen Sie Discord in Ihrem",
         [nameof(TokenPersonalStep1After)] = "und melden Sie sich an",
-        [nameof(TokenPersonalStep2)] =
-            "2. Öffnen Sie einen Server oder einen direkten Nachrichtenkanal",
-        [nameof(TokenPersonalStep3)] =
-            "3. Drücken Sie Ctrl+Shift+I, um die Entwicklertools anzuzeigen",
-        [nameof(TokenPersonalStep4)] = "4. Navigieren Sie zum Reiter Network",
-        [nameof(TokenPersonalStep5)] = "5. Drücken Sie Ctrl+R zum Neuladen",
-        [nameof(TokenPersonalStep6)] =
-            "6. Wechseln Sie zwischen Kanälen, um Netzwerkanfragen auszulösen",
-        [nameof(TokenPersonalStep7)] = "7. Suchen Sie nach einer Anfrage, die mit messages beginnt",
-        [nameof(TokenPersonalStep8)] = "8. Wählen Sie den Reiter Headers auf der rechten Seite",
-        [nameof(TokenPersonalStep9)] = "9. Scrollen Sie nach unten zum Abschnitt Request Headers",
-        [nameof(TokenPersonalStep10)] = "10. Kopieren Sie den Wert des Headers authorization",
+        [nameof(TokenPersonalInstructions)] = """
+            2. Öffnen Sie einen Server oder einen direkten Nachrichtenkanal
+            3. Drücken Sie **Ctrl+Shift+I**, um die Entwicklertools anzuzeigen
+            4. Navigieren Sie zum Reiter **Network**
+            5. Drücken Sie **Ctrl+R** zum Neuladen
+            6. Wechseln Sie zwischen Kanälen, um Netzwerkanfragen auszulösen
+            7. Suchen Sie nach einer Anfrage, die mit **messages** beginnt
+            8. Wählen Sie den Reiter **Headers** auf der rechten Seite
+            9. Scrollen Sie nach unten zum Abschnitt **Request Headers**
+            10. Kopieren Sie den Wert des Headers **authorization**
+            """,
         [nameof(TokenWebBrowserLinkText)] = "Webbrowser",
         // Token instructions (bot)
         [nameof(TokenBotHeader)] = "Token für Ihren Bot abrufen:",
         [nameof(TokenBotIntro)] =
             "Der Token wird bei der Bot-Erstellung generiert. Falls er verloren gegangen ist, generieren Sie einen neuen:",
         [nameof(TokenBotStep1)] = "1. Öffnen Sie Discord",
-        [nameof(TokenBotStep2)] = "2. Öffnen Sie die Einstellungen Ihrer Anwendung",
-        [nameof(TokenBotStep3)] = "3. Navigieren Sie zum Abschnitt Bot auf der linken Seite",
-        [nameof(TokenBotStep4)] = "4. Klicken Sie unter Token auf Reset Token",
-        [nameof(TokenBotStep5)] = "5. Klicken Sie auf Yes, do it! und bestätigen Sie",
-        [nameof(TokenBotStep6)] =
-            "*  Integrationen, die den alten Token verwenden, hören auf zu funktionieren, bis sie aktualisiert werden",
-        [nameof(TokenBotStep7Before)] = "*  Ihr Bot benötigt die aktivierte",
-        [nameof(TokenBotStep7After)] = "um Nachrichten zu lesen",
+        [nameof(TokenBotInstructions)] = """
+            2. Öffnen Sie die Einstellungen Ihrer Anwendung
+            3. Navigieren Sie zum Abschnitt **Bot** auf der linken Seite
+            4. Klicken Sie unter **Token** auf **Reset Token**
+            5. Klicken Sie auf **Yes, do it!** und bestätigen Sie
+            *  Integrationen, die den alten Token verwenden, hören auf zu funktionieren, bis sie aktualisiert werden
+            *  Ihr Bot benötigt die aktivierte **Message Content Intent**, um Nachrichten zu lesen
+            """,
         [nameof(TokenDeveloperPortalLinkText)] = "Entwicklerportal",
         [nameof(TokenDocumentationLinkText)] = "Dokumentation",
         [nameof(TokenHelpText)] = "Bei Fragen oder Problemen lesen Sie die",

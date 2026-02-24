@@ -20,6 +20,14 @@ public class MarkdownToInlinesConverter : IValueConverter
         .UseEmphasisExtras()
         .Build();
 
+    private static string GetPlainText(MarkdownInline inline) =>
+        inline switch
+        {
+            LiteralInline literal => literal.Content.ToString(),
+            ContainerInline container => string.Concat(container.Select(GetPlainText)),
+            _ => string.Empty,
+        };
+
     private static void ProcessInline(
         InlineCollection inlines,
         MarkdownInline markdownInline,
@@ -83,13 +91,7 @@ public class MarkdownToInlinesConverter : IValueConverter
             {
                 inlines.Add(
                     new InlineUIContainer(
-                        new HyperLink
-                        {
-                            Text = string.Concat(
-                                link.OfType<LiteralInline>().Select(l => l.Content.ToString())
-                            ),
-                            Url = link.Url,
-                        }
+                        new HyperLink { Text = GetPlainText(link), Url = link.Url }
                     )
                 );
 
@@ -147,15 +149,7 @@ public class MarkdownToInlinesConverter : IValueConverter
                             inlines.Add(new LineBreak());
                         isFirst = false;
 
-                        var bulletChar = list.BulletType switch
-                        {
-                            BulletType.Dash => '-',
-                            BulletType.Plus => '+',
-                            BulletType.Asterisk => '*',
-                            _ => '-'
-                        };
-
-                        var prefix = list.IsOrdered ? $"{itemOrder++}. " : $"{bulletChar}  ";
+                        var prefix = list.IsOrdered ? $"{itemOrder++}. " : $"{list.BulletType}  ";
                         inlines.Add(new Run(prefix));
 
                         foreach (var subBlock in listItem.OfType<ParagraphBlock>())

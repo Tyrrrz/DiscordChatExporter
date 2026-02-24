@@ -12,15 +12,19 @@ using DiscordChatExporter.Core.Exporting.Filtering;
 using DiscordChatExporter.Core.Exporting.Partitioning;
 using DiscordChatExporter.Core.Utils.Extensions;
 using DiscordChatExporter.Gui.Framework;
+using DiscordChatExporter.Gui.Localization;
 using DiscordChatExporter.Gui.Services;
 
 namespace DiscordChatExporter.Gui.ViewModels.Dialogs;
 
 public partial class ExportSetupViewModel(
     DialogManager dialogManager,
-    SettingsService settingsService
+    SettingsService settingsService,
+    LocalizationManager localizationManager
 ) : DialogViewModelBase
 {
+    public LocalizationManager LocalizationManager { get; } = localizationManager;
+
     [ObservableProperty]
     public partial Guild? Guild { get; set; }
 

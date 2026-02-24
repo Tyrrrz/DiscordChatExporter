@@ -45,7 +45,7 @@
                                 Command="{Binding PullGuildsCommand}"
                                 IsDefault="True"
                                 Theme="{DynamicResource MaterialFlatButton}"
-                                ToolTip.Tip="Pull available servers and channels (Enter)">
+                                ToolTip.Tip="{Binding LocalizationManager.PullGuildsTooltip}">
                                 <materialIcons:MaterialIcon
                                     Width="24"
                                     Height="24"
@@ -64,7 +64,7 @@
                     Command="{Binding ShowSettingsCommand}"
                     Foreground="{DynamicResource MaterialDarkForegroundBrush}"
                     Theme="{DynamicResource MaterialFlatButton}"
-                    ToolTip.Tip="Settings">
+                    ToolTip.Tip="{Binding LocalizationManager.SettingsTooltip}">
                     <materialIcons:MaterialIcon
                         Width="24"
                         Height="24"

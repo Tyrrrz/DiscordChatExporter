@@ -13,6 +13,7 @@ using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Core.Utils.Extensions;
 using DiscordChatExporter.Gui.Framework;
+using DiscordChatExporter.Gui.Localization;
 using DiscordChatExporter.Gui.Models;
 using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.Utils;
@@ -38,13 +39,15 @@ public partial class DashboardViewModel : ViewModelBase
         ViewModelManager viewModelManager,
         DialogManager dialogManager,
         SnackbarManager snackbarManager,
-        SettingsService settingsService
+        SettingsService settingsService,
+        LocalizationManager localizationManager
     )
     {
         _viewModelManager = viewModelManager;
         _dialogManager = dialogManager;
         _snackbarManager = snackbarManager;
         _settingsService = settingsService;
+        LocalizationManager = localizationManager;
 
         _progressMuxer = Progress.CreateMuxer().WithAutoReset();
 
@@ -69,6 +72,8 @@ public partial class DashboardViewModel : ViewModelBase
     [NotifyCanExecuteChangedFor(nameof(PullChannelsCommand))]
     [NotifyCanExecuteChangedFor(nameof(ExportCommand))]
     public partial bool IsBusy { get; set; }
+
+    public LocalizationManager LocalizationManager { get; }
 
     public ProgressContainer<Percentage> Progress { get; } = new();
 
@@ -141,7 +146,7 @@ public partial class DashboardViewModel : ViewModelBase
         catch (Exception ex)
         {
             var dialog = _viewModelManager.CreateMessageBoxViewModel(
-                "Error pulling servers",
+                LocalizationManager.ErrorPullingServersTitle,
                 ex.ToString()
             );
 
@@ -208,7 +213,7 @@ public partial class DashboardViewModel : ViewModelBase
         catch (Exception ex)
         {
             var dialog = _viewModelManager.CreateMessageBoxViewModel(
-                "Error pulling channels",
+                LocalizationManager.ErrorPullingChannelsTitle,
                 ex.ToString()
             );
 
@@ -303,14 +308,17 @@ public partial class DashboardViewModel : ViewModelBase
             if (successfulExportCount > 0)
             {
                 _snackbarManager.Notify(
-                    $"Successfully exported {successfulExportCount} channel(s)"
+                    string.Format(
+                        LocalizationManager.SuccessfulExportMessage,
+                        successfulExportCount
+                    )
                 );
             }
         }
         catch (Exception ex)
         {
             var dialog = _viewModelManager.CreateMessageBoxViewModel(
-                "Error exporting channel(s)",
+                LocalizationManager.ErrorExportingTitle,
                 ex.ToString()
             );
 

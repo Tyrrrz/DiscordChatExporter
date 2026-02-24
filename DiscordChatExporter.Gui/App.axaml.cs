@@ -5,6 +5,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Platform;
 using DiscordChatExporter.Gui.Framework;
+using DiscordChatExporter.Gui.Localization;
 using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.Utils;
 using DiscordChatExporter.Gui.Utils.Extensions;
@@ -38,6 +39,9 @@ public class App : Application, IDisposable
         // Services
         services.AddSingleton<SettingsService>();
         services.AddSingleton<UpdateService>();
+
+        // Localization
+        services.AddSingleton<LocalizationManager>();
 
         // View models
         services.AddTransient<MainViewModel>();

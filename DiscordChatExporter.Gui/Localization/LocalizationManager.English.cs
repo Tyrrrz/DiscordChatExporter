@@ -11,6 +11,41 @@ public partial class LocalizationManager
             [nameof(PullGuildsTooltip)] = "Pull available servers and channels (Enter)",
             [nameof(SettingsTooltip)] = "Settings",
             [nameof(LastMessageSentTooltip)] = "Last message sent:",
+            [nameof(TokenWatermark)] = "Token",
+            // Token instructions (personal account)
+            [nameof(TokenPersonalHeader)] = "To get the token for your personal account:",
+            [nameof(TokenPersonalTosWarning)] =
+                "*  Automating user accounts is technically against TOS —",
+            [nameof(TokenPersonalTosRisk)] = "use at your own risk",
+            [nameof(TokenPersonalStep1Before)] = "1. Open Discord in your",
+            [nameof(TokenPersonalStep1After)] = "and login",
+            [nameof(TokenPersonalStep2)] = "2. Open any server or direct message channel",
+            [nameof(TokenPersonalStep3)] = "3. Press Ctrl+Shift+I to show developer tools",
+            [nameof(TokenPersonalStep4)] = "4. Navigate to the Network tab",
+            [nameof(TokenPersonalStep5)] = "5. Press Ctrl+R to reload",
+            [nameof(TokenPersonalStep6)] =
+                "6. Switch between random channels to trigger network requests",
+            [nameof(TokenPersonalStep7)] = "7. Search for a request that starts with messages",
+            [nameof(TokenPersonalStep8)] = "8. Select the Headers tab on the right",
+            [nameof(TokenPersonalStep9)] = "9. Scroll down to the Request Headers section",
+            [nameof(TokenPersonalStep10)] = "10. Copy the value of the authorization header",
+            [nameof(TokenWebBrowserLinkText)] = "web browser",
+            // Token instructions (bot)
+            [nameof(TokenBotHeader)] = "To get the token for your bot:",
+            [nameof(TokenBotIntro)] =
+                "The token is generated during bot creation. If you lost it, generate a new one:",
+            [nameof(TokenBotStep1)] = "1. Open Discord",
+            [nameof(TokenBotStep2)] = "2. Open your application's settings",
+            [nameof(TokenBotStep3)] = "3. Navigate to the Bot section on the left",
+            [nameof(TokenBotStep4)] = "4. Under Token click Reset Token",
+            [nameof(TokenBotStep5)] = "5. Click Yes, do it! and authenticate to confirm",
+            [nameof(TokenBotStep6)] =
+                "*  Integrations using the previous token will stop working until updated",
+            [nameof(TokenBotStep7Before)] = "*  Your bot needs to have the",
+            [nameof(TokenBotStep7After)] = "enabled to read messages",
+            [nameof(TokenDeveloperPortalLinkText)] = "developer portal",
+            [nameof(TokenDocumentationLinkText)] = "documentation",
+            [nameof(TokenHelpText)] = "If you have questions or issues, please refer to the",
             // Settings
             [nameof(SettingsTitle)] = "Settings",
             [nameof(ThemeLabel)] = "Theme",

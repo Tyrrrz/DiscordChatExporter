@@ -11,6 +11,42 @@ public partial class LocalizationManager
             [nameof(PullGuildsTooltip)] = "Cargar servidores y canales disponibles (Enter)",
             [nameof(SettingsTooltip)] = "Ajustes",
             [nameof(LastMessageSentTooltip)] = "Último mensaje enviado:",
+            [nameof(TokenWatermark)] = "Token",
+            // Token instructions (personal account)
+            [nameof(TokenPersonalHeader)] = "Cómo obtener el token para tu cuenta personal:",
+            [nameof(TokenPersonalTosWarning)] =
+                "*  Automatizar cuentas de usuario técnicamente va en contra de los ToS —",
+            [nameof(TokenPersonalTosRisk)] = "bajo tu propio riesgo",
+            [nameof(TokenPersonalStep1Before)] = "1. Abre Discord en tu",
+            [nameof(TokenPersonalStep1After)] = "e inicia sesión",
+            [nameof(TokenPersonalStep2)] = "2. Abre cualquier servidor o canal de mensaje directo",
+            [nameof(TokenPersonalStep3)] =
+                "3. Presiona Ctrl+Shift+I para mostrar las herramientas de desarrollo",
+            [nameof(TokenPersonalStep4)] = "4. Navega a la pestaña Network",
+            [nameof(TokenPersonalStep5)] = "5. Presiona Ctrl+R para recargar",
+            [nameof(TokenPersonalStep6)] =
+                "6. Cambia entre canales para activar solicitudes de red",
+            [nameof(TokenPersonalStep7)] = "7. Busca una solicitud que comience con messages",
+            [nameof(TokenPersonalStep8)] = "8. Selecciona la pestaña Headers a la derecha",
+            [nameof(TokenPersonalStep9)] = "9. Desplázate hasta la sección Request Headers",
+            [nameof(TokenPersonalStep10)] = "10. Copia el valor del encabezado authorization",
+            [nameof(TokenWebBrowserLinkText)] = "navegador web",
+            // Token instructions (bot)
+            [nameof(TokenBotHeader)] = "Cómo obtener el token para tu bot:",
+            [nameof(TokenBotIntro)] =
+                "El token se genera al crear el bot. Si lo perdiste, genera uno nuevo:",
+            [nameof(TokenBotStep1)] = "1. Abre Discord",
+            [nameof(TokenBotStep2)] = "2. Abre la configuración de tu aplicación",
+            [nameof(TokenBotStep3)] = "3. Navega a la sección Bot en el lado izquierdo",
+            [nameof(TokenBotStep4)] = "4. En Token, haz clic en Reset Token",
+            [nameof(TokenBotStep5)] = "5. Haz clic en Yes, do it! y autentica para confirmar",
+            [nameof(TokenBotStep6)] =
+                "*  Las integraciones que usen el token anterior dejarán de funcionar hasta que se actualicen",
+            [nameof(TokenBotStep7Before)] = "*  Tu bot necesita tener habilitado",
+            [nameof(TokenBotStep7After)] = "para leer mensajes",
+            [nameof(TokenDeveloperPortalLinkText)] = "portal de desarrolladores",
+            [nameof(TokenDocumentationLinkText)] = "documentación",
+            [nameof(TokenHelpText)] = "Si tienes preguntas o problemas, consulta la",
             // Settings
             [nameof(SettingsTitle)] = "Ajustes",
             [nameof(ThemeLabel)] = "Tema",

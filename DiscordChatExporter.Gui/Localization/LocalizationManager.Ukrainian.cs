@@ -11,6 +11,43 @@ public partial class LocalizationManager
             [nameof(PullGuildsTooltip)] = "Завантажити доступні сервери та канали (Enter)",
             [nameof(SettingsTooltip)] = "Налаштування",
             [nameof(LastMessageSentTooltip)] = "Останнє повідомлення:",
+            [nameof(TokenWatermark)] = "Токен",
+            // Token instructions (personal account)
+            [nameof(TokenPersonalHeader)] = "Як отримати токен для персонального акаунту:",
+            [nameof(TokenPersonalTosWarning)] =
+                "*  Автоматизація облікових записів технічно порушує Умови обслуговування —",
+            [nameof(TokenPersonalTosRisk)] = "на власний ризик",
+            [nameof(TokenPersonalStep1Before)] = "1. Відкрийте Discord у вашому",
+            [nameof(TokenPersonalStep1After)] = "та увійдіть",
+            [nameof(TokenPersonalStep2)] =
+                "2. Відкрийте будь-який сервер або канал особистих повідомлень",
+            [nameof(TokenPersonalStep3)] =
+                "3. Натисніть Ctrl+Shift+I, щоб відкрити інструменти розробника",
+            [nameof(TokenPersonalStep4)] = "4. Перейдіть на вкладку Network",
+            [nameof(TokenPersonalStep5)] = "5. Натисніть Ctrl+R для перезавантаження",
+            [nameof(TokenPersonalStep6)] =
+                "6. Перемикайтеся між каналами, щоб викликати мережеві запити",
+            [nameof(TokenPersonalStep7)] = "7. Знайдіть запит, що починається з messages",
+            [nameof(TokenPersonalStep8)] = "8. Виберіть вкладку Headers праворуч",
+            [nameof(TokenPersonalStep9)] = "9. Прокрутіть до розділу Request Headers",
+            [nameof(TokenPersonalStep10)] = "10. Скопіюйте значення заголовка authorization",
+            [nameof(TokenWebBrowserLinkText)] = "веб-браузер",
+            // Token instructions (bot)
+            [nameof(TokenBotHeader)] = "Як отримати токен для бота:",
+            [nameof(TokenBotIntro)] =
+                "Токен генерується під час створення бота. Якщо ви його втратили, згенеруйте новий:",
+            [nameof(TokenBotStep1)] = "1. Відкрийте Discord",
+            [nameof(TokenBotStep2)] = "2. Відкрийте налаштування вашого застосунку",
+            [nameof(TokenBotStep3)] = "3. Перейдіть до розділу Bot ліворуч",
+            [nameof(TokenBotStep4)] = "4. В розділі Token натисніть Reset Token",
+            [nameof(TokenBotStep5)] = "5. Натисніть Yes, do it! та підтвердьте",
+            [nameof(TokenBotStep6)] =
+                "*  Інтеграції, що використовують попередній токен, перестануть працювати",
+            [nameof(TokenBotStep7Before)] = "*  Ваш бот повинен мати включений",
+            [nameof(TokenBotStep7After)] = "для читання повідомлень",
+            [nameof(TokenDeveloperPortalLinkText)] = "портал розробника",
+            [nameof(TokenDocumentationLinkText)] = "документацію",
+            [nameof(TokenHelpText)] = "Якщо у вас є запитання або проблеми, зверніться до",
             // Settings
             [nameof(SettingsTitle)] = "Налаштування",
             [nameof(ThemeLabel)] = "Тема",

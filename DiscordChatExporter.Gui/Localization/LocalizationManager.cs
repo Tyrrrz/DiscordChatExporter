@@ -82,6 +82,39 @@ public partial class LocalizationManager
     public string PullGuildsTooltip => Get();
     public string SettingsTooltip => Get();
     public string LastMessageSentTooltip => Get();
+    public string TokenWatermark => Get();
+
+    // Token instructions (personal account)
+    public string TokenPersonalHeader => Get();
+    public string TokenPersonalTosWarning => Get();
+    public string TokenPersonalTosRisk => Get();
+    public string TokenPersonalStep1Before => Get();
+    public string TokenPersonalStep1After => Get();
+    public string TokenPersonalStep2 => Get();
+    public string TokenPersonalStep3 => Get();
+    public string TokenPersonalStep4 => Get();
+    public string TokenPersonalStep5 => Get();
+    public string TokenPersonalStep6 => Get();
+    public string TokenPersonalStep7 => Get();
+    public string TokenPersonalStep8 => Get();
+    public string TokenPersonalStep9 => Get();
+    public string TokenPersonalStep10 => Get();
+    public string TokenWebBrowserLinkText => Get();
+
+    // Token instructions (bot)
+    public string TokenBotHeader => Get();
+    public string TokenBotIntro => Get();
+    public string TokenBotStep1 => Get();
+    public string TokenBotStep2 => Get();
+    public string TokenBotStep3 => Get();
+    public string TokenBotStep4 => Get();
+    public string TokenBotStep5 => Get();
+    public string TokenBotStep6 => Get();
+    public string TokenBotStep7Before => Get();
+    public string TokenBotStep7After => Get();
+    public string TokenDeveloperPortalLinkText => Get();
+    public string TokenDocumentationLinkText => Get();
+    public string TokenHelpText => Get();
 
     // ---- Settings ----
 

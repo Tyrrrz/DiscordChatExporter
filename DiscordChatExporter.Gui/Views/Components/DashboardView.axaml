@@ -27,7 +27,7 @@
                         RevealPassword="{Binding $self.IsFocused}"
                         Text="{Binding Token}"
                         Theme="{DynamicResource SoloTextBox}"
-                        Watermark="Token">
+                        Watermark="{Binding LocalizationManager.TokenWatermark}">
                         <TextBox.InnerLeftContent>
                             <materialIcons:MaterialIcon
                                 Grid.Column="0"
@@ -168,7 +168,7 @@
                                                 <Setter Property="ToolTip.Tip">
                                                     <Template>
                                                         <TextBlock>
-                                                            <Run Text="Last message sent:" />
+                                                            <Run Text="{Binding #UserControl.DataContext.LocalizationManager.LastMessageSentTooltip}" />
                                                             <Run FontWeight="SemiBold" Text="{Binding Channel.LastMessageId, Converter={x:Static converters:SnowflakeToTimestampStringConverter.Instance}, TargetNullValue=never, Mode=OneWay}" />
                                                         </TextBlock>
                                                     </Template>
@@ -238,80 +238,46 @@
                             BaselineAlignment="Center"
                             FontSize="16"
                             FontWeight="SemiBold"
-                            Text="To get the token for your personal account:" />
+                            Text="{Binding LocalizationManager.TokenPersonalHeader}" />
                         <LineBreak />
 
-                        <Run BaselineAlignment="Center" Text="*  Automating user accounts is technically against TOS —" />
+                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenPersonalTosWarning}" />
                         <Run
                             BaselineAlignment="Center"
                             FontWeight="SemiBold"
-                            Text="use at your own risk" /><Run Text="!" />
+                            Text="{Binding LocalizationManager.TokenPersonalTosRisk}" /><Run Text="!" />
                         <LineBreak />
 
-                        <Run BaselineAlignment="Center" Text="1. Open Discord in your" />
-                        <controls:HyperLink Command="{Binding OpenDiscordCommand}" Text="web browser" />
-                        <Run BaselineAlignment="Center" Text="and login" />
+                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenPersonalStep1Before}" />
+                        <controls:HyperLink Command="{Binding OpenDiscordCommand}" Text="{Binding LocalizationManager.TokenWebBrowserLinkText}" />
+                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenPersonalStep1After}" />
                         <LineBreak />
 
-                        <Run BaselineAlignment="Center" Text="2. Open any server or direct message channel" />
+                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenPersonalStep2}" />
                         <LineBreak />
 
-                        <Run BaselineAlignment="Center" Text="3. Press" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="Ctrl+Shift+I" />
-                        <Run BaselineAlignment="Center" Text="to show developer tools" />
+                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenPersonalStep3}" />
                         <LineBreak />
 
-                        <Run BaselineAlignment="Center" Text="4. Navigate to the" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="Network" />
-                        <Run BaselineAlignment="Center" Text="tab" />
+                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenPersonalStep4}" />
                         <LineBreak />
 
-                        <Run BaselineAlignment="Center" Text="5. Press" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="Ctrl+R" />
-                        <Run BaselineAlignment="Center" Text="to reload" />
+                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenPersonalStep5}" />
                         <LineBreak />
 
-                        <Run BaselineAlignment="Center" Text="6. Switch between random channels to trigger network requests" />
+                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenPersonalStep6}" />
                         <LineBreak />
 
-                        <Run BaselineAlignment="Center" Text="7. Search for a request that starts with" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="messages" />
+                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenPersonalStep7}" />
                         <LineBreak />
 
-                        <Run BaselineAlignment="Center" Text="8. Select the" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="Headers" />
-                        <Run BaselineAlignment="Center" Text="tab on the right" />
+                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenPersonalStep8}" />
                         <LineBreak />
 
-                        <Run BaselineAlignment="Center" Text="9. Scroll down to the" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="Request Headers" />
-                        <Run BaselineAlignment="Center" Text="section" />
+                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenPersonalStep9}" />
                         <LineBreak />
 
-                        <Run BaselineAlignment="Center" Text="10. Copy the value of the" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="authorization" />
-                        <Run BaselineAlignment="Center" Text="header" />
+                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenPersonalStep10}" />
                         <LineBreak />
                         <LineBreak />
 
@@ -329,61 +295,42 @@
                             BaselineAlignment="Center"
                             FontSize="16"
                             FontWeight="SemiBold"
-                            Text="To get the token for your bot:" />
+                            Text="{Binding LocalizationManager.TokenBotHeader}" />
                         <LineBreak />
 
-                        <Run BaselineAlignment="Center" Text="The token is generated during bot creation. If you lost it, generate a new one:" />
+                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenBotIntro}" />
                         <LineBreak />
 
-                        <Run BaselineAlignment="Center" Text="1. Open Discord" />
-                        <controls:HyperLink Command="{Binding OpenDiscordDeveloperPortalCommand}" Text="developer portal" />
+                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenBotStep1}" />
+                        <controls:HyperLink Command="{Binding OpenDiscordDeveloperPortalCommand}" Text="{Binding LocalizationManager.TokenDeveloperPortalLinkText}" />
                         <LineBreak />
 
-                        <Run BaselineAlignment="Center" Text="2. Open your application's settings" />
+                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenBotStep2}" />
                         <LineBreak />
 
-                        <Run BaselineAlignment="Center" Text="3. Navigate to the" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="Bot" />
-                        <Run BaselineAlignment="Center" Text="section on the left" />
+                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenBotStep3}" />
                         <LineBreak />
 
-                        <Run BaselineAlignment="Center" Text="4. Under" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="Token" />
-                        <Run BaselineAlignment="Center" Text="click" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="Reset Token" />
+                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenBotStep4}" />
                         <LineBreak />
 
-                        <Run BaselineAlignment="Center" Text="5. Click" />
-                        <Run
-                            BaselineAlignment="Center"
-                            FontWeight="SemiBold"
-                            Text="Yes, do it!" />
-                        <Run BaselineAlignment="Center" Text="and authenticate to confirm" />
+                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenBotStep5}" />
                         <LineBreak />
 
-                        <Run BaselineAlignment="Center" Text="*  Integrations using the previous token will stop working until updated" />
+                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenBotStep6}" />
                         <LineBreak />
 
-                        <Run BaselineAlignment="Center" Text="*  Your bot needs to have the" />
+                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenBotStep7Before}" />
                         <Run
                             BaselineAlignment="Center"
                             FontWeight="SemiBold"
                             Text="Message Content Intent" />
-                        <Run BaselineAlignment="Center" Text="enabled to read messages" />
+                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenBotStep7After}" />
                         <LineBreak />
                         <LineBreak />
 
-                        <Run BaselineAlignment="Center" Text="If you have questions or issues, please refer to the" />
-                        <controls:HyperLink Command="{Binding ShowHelpCommand}" Text="documentation" />
+                        <Run BaselineAlignment="Center" Text="{Binding LocalizationManager.TokenHelpText}" />
+                        <controls:HyperLink Command="{Binding ShowHelpCommand}" Text="{Binding LocalizationManager.TokenDocumentationLinkText}" />
                     </TextBlock>
                 </ScrollViewer>
             </Panel>

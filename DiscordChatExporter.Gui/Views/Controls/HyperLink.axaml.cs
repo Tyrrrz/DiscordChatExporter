@@ -58,6 +58,8 @@ public partial class HyperLink : UserControl
                 Command.Execute(CommandParameter);
         }
         else if (!string.IsNullOrWhiteSpace(Url))
+        {
             Process.StartShellExecute(Url);
+        }
     }
 }

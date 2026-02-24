@@ -76,17 +76,17 @@ public partial class LocalizationManager
                 Las rutas de directorio deben terminar con una barra diagonal para evitar ambigüedades.
 
                 Tokens de plantilla disponibles:
-                * **%g** — ID del servidor
-                * **%G** — nombre del servidor
-                * **%t** — ID de categoría
-                * **%T** — nombre de categoría
-                * **%c** — ID del canal
-                * **%C** — nombre del canal
-                * **%p** — posición del canal
-                * **%P** — posición de la categoría
-                * **%a** — fecha desde
-                * **%b** — fecha hasta
-                * **%d** — fecha actual
+                - **%g** — ID del servidor
+                - **%G** — nombre del servidor
+                - **%t** — ID de categoría
+                - **%T** — nombre de categoría
+                - **%c** — ID del canal
+                - **%C** — nombre del canal
+                - **%p** — posición del canal
+                - **%P** — posición de la categoría
+                - **%a** — fecha desde
+                - **%b** — fecha hasta
+                - **%d** — fecha actual
                 """,
             [nameof(FormatLabel)] = "Formato",
             [nameof(FormatTooltip)] = "Formato de exportación",

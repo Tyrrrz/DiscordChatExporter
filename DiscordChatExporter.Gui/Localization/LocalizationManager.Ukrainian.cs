@@ -25,8 +25,8 @@ public partial class LocalizationManager
             [nameof(RateLimitPreferenceLabel)] = "Ліміт запитів",
             [nameof(RateLimitPreferenceTooltip)] =
                 "Чи дотримуватись рекомендованих лімітів запитів. Якщо вимкнено, будуть дотримуватись лише жорсткі ліміти (тобто відповіді 429).",
-            [nameof(ShowThreadsLabel)] = "Показувати теми",
-            [nameof(ShowThreadsTooltip)] = "Які типи тем показувати у списку каналів",
+            [nameof(ShowThreadsLabel)] = "Показувати гілки",
+            [nameof(ShowThreadsTooltip)] = "Які типи гілок показувати у списку каналів",
             [nameof(LocaleLabel)] = "Локаль",
             [nameof(LocaleTooltip)] = "Локаль для форматування дат та чисел",
             [nameof(NormalizeToUtcLabel)] = "Нормалізувати до UTC",

@@ -92,6 +92,7 @@ public class MarkdownToInlinesConverter : IValueConverter
                         }
                     )
                 );
+
                 break;
             }
 

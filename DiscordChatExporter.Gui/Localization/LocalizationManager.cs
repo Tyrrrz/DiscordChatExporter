@@ -91,11 +91,7 @@ public partial class LocalizationManager
 
     // Token instructions (bot)
     public string TokenBotHeader => Get();
-    public string TokenBotIntro => Get();
-    public string TokenBotStep1 => Get();
     public string TokenBotInstructions => Get();
-    public string TokenDeveloperPortalLinkText => Get();
-    public string TokenDocumentationLinkText => Get();
     public string TokenHelpText => Get();
 
     // ---- Settings ----

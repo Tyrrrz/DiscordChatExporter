@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
     xmlns:components="clr-namespace:DiscordChatExporter.Gui.ViewModels.Components"
-    xmlns:controls="clr-namespace:DiscordChatExporter.Gui.Views.Controls"
     xmlns:converters="clr-namespace:DiscordChatExporter.Gui.Converters"
     xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     xmlns:materialStyles="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
@@ -220,14 +219,6 @@
             <Panel IsVisible="{Binding !AvailableGuilds.Count}">
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                     <StackPanel Margin="32,16" Spacing="0">
-                        <StackPanel.Styles>
-                            <Style Selector="TextBlock">
-                                <Setter Property="FontSize" Value="14" />
-                                <Setter Property="FontWeight" Value="Light" />
-                                <Setter Property="LineHeight" Value="23" />
-                                <Setter Property="TextWrapping" Value="Wrap" />
-                            </Style>
-                        </StackPanel.Styles>
 
                         <!--  User token  -->
                         <TextBlock>
@@ -246,9 +237,17 @@
                                 Text="{Binding LocalizationManager.TokenPersonalHeader}" />
                         </TextBlock>
 
-                        <TextBlock Inlines="{Binding LocalizationManager.TokenPersonalTosWarning, Converter={x:Static converters:MarkdownToInlinesConverter.Instance}}" />
+                        <TextBlock Inlines="{Binding LocalizationManager.TokenPersonalTosWarning, Converter={x:Static converters:MarkdownToInlinesConverter.Instance}}"
+                                   FontSize="14"
+                                   FontWeight="Light"
+                                   LineHeight="23"
+                                   TextWrapping="Wrap" />
 
-                        <TextBlock Inlines="{Binding LocalizationManager.TokenPersonalInstructions, Converter={x:Static converters:MarkdownToInlinesConverter.Instance}}" />
+                        <TextBlock Inlines="{Binding LocalizationManager.TokenPersonalInstructions, Converter={x:Static converters:MarkdownToInlinesConverter.Instance}}"
+                                   FontSize="14"
+                                   FontWeight="Light"
+                                   LineHeight="23"
+                                   TextWrapping="Wrap" />
 
                         <!--  Bot token  -->
                         <TextBlock Margin="0,12,0,0">
@@ -267,19 +266,18 @@
                                 Text="{Binding LocalizationManager.TokenBotHeader}" />
                         </TextBlock>
 
-                        <TextBlock Text="{Binding LocalizationManager.TokenBotIntro}" />
+                        <TextBlock Inlines="{Binding LocalizationManager.TokenBotInstructions, Converter={x:Static converters:MarkdownToInlinesConverter.Instance}}"
+                                   FontSize="14"
+                                   FontWeight="Light"
+                                   LineHeight="23"
+                                   TextWrapping="Wrap" />
 
-                        <TextBlock>
-                            <Run Text="{Binding LocalizationManager.TokenBotStep1}" />
-                            <controls:HyperLink Command="{Binding OpenDiscordDeveloperPortalCommand}" Text="{Binding LocalizationManager.TokenDeveloperPortalLinkText}" />
-                        </TextBlock>
-
-                        <TextBlock Inlines="{Binding LocalizationManager.TokenBotInstructions, Converter={x:Static converters:MarkdownToInlinesConverter.Instance}}" />
-
-                        <TextBlock Margin="0,12,0,0">
-                            <Run Text="{Binding LocalizationManager.TokenHelpText}" />
-                            <controls:HyperLink Command="{Binding ShowHelpCommand}" Text="{Binding LocalizationManager.TokenDocumentationLinkText}" />
-                        </TextBlock>
+                        <TextBlock Margin="0,12,0,0"
+                                   FontSize="14"
+                                   FontWeight="Light"
+                                   LineHeight="23"
+                                   TextWrapping="Wrap"
+                                   Inlines="{Binding LocalizationManager.TokenHelpText, Converter={x:Static converters:MarkdownToInlinesConverter.Instance}}" />
                     </StackPanel>
                 </ScrollViewer>
             </Panel>

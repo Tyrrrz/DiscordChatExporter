@@ -30,10 +30,10 @@ public partial class LocalizationManager
                 """,
             // Token instructions (bot)
             [nameof(TokenBotHeader)] = "To get the token for your bot:",
-            [nameof(TokenBotIntro)] =
-                "The token is generated during bot creation. If you lost it, generate a new one:",
-            [nameof(TokenBotStep1)] = "1. Open Discord",
             [nameof(TokenBotInstructions)] = """
+                The token is generated during bot creation. If you lost it, generate a new one:
+
+                1. Open Discord [developer portal](https://discord.com/developers/applications)
                 2. Open your application's settings
                 3. Navigate to the **Bot** section on the left
                 4. Under **Token** click **Reset Token**
@@ -41,9 +41,8 @@ public partial class LocalizationManager
                 *  Integrations using the previous token will stop working until updated
                 *  Your bot needs to have the **Message Content Intent** enabled to read messages
                 """,
-            [nameof(TokenDeveloperPortalLinkText)] = "developer portal",
-            [nameof(TokenDocumentationLinkText)] = "documentation",
-            [nameof(TokenHelpText)] = "If you have questions or issues, please refer to the",
+            [nameof(TokenHelpText)] =
+                "If you have questions or issues, please refer to the [documentation](https://github.com/Tyrrrz/DiscordChatExporter/tree/master/.docs)",
             // Settings
             [nameof(SettingsTitle)] = "Settings",
             [nameof(ThemeLabel)] = "Theme",

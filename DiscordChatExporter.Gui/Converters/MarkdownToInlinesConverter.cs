@@ -1,9 +1,13 @@
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using Avalonia.Controls.Documents;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
+using CommunityToolkit.Mvvm.Input;
+using DiscordChatExporter.Gui.Utils.Extensions;
+using DiscordChatExporter.Gui.Views.Controls;
 using Markdig;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
@@ -75,6 +79,24 @@ public class MarkdownToInlinesConverter : IValueConverter
                 foreach (var child in emphasis)
                     ProcessInline(inlines, child, newWeight, newStyle, newDecorations);
 
+                break;
+            }
+
+            case LinkInline link when link.Url is not null:
+            {
+                var text = string.Concat(
+                    link.OfType<LiteralInline>().Select(l => l.Content.ToString())
+                );
+                var url = link.Url;
+                inlines.Add(
+                    new InlineUIContainer(
+                        new HyperLink
+                        {
+                            Text = text,
+                            Command = new RelayCommand(() => Process.StartShellExecute(url)),
+                        }
+                    )
+                );
                 break;
             }
 

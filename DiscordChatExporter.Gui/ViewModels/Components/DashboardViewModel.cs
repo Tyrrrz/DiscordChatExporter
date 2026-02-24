@@ -107,9 +107,6 @@ public partial class DashboardViewModel : ViewModelBase
     private async Task ShowSettingsAsync() =>
         await _dialogManager.ShowDialogAsync(_viewModelManager.CreateSettingsViewModel());
 
-    [RelayCommand]
-    private void ShowHelp() => Process.StartShellExecute(Program.ProjectDocumentationUrl);
-
     private bool CanPullGuilds() => !IsBusy && !string.IsNullOrWhiteSpace(Token);
 
     [RelayCommand(CanExecute = nameof(CanPullGuilds))]
@@ -329,13 +326,6 @@ public partial class DashboardViewModel : ViewModelBase
             IsBusy = false;
         }
     }
-
-    [RelayCommand]
-    private void OpenDiscord() => Process.StartShellExecute("https://discord.com/app");
-
-    [RelayCommand]
-    private void OpenDiscordDeveloperPortal() =>
-        Process.StartShellExecute("https://discord.com/developers/applications");
 
     protected override void Dispose(bool disposing)
     {

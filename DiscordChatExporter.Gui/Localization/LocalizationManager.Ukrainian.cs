@@ -30,10 +30,10 @@ public partial class LocalizationManager
                 """,
             // Token instructions (bot)
             [nameof(TokenBotHeader)] = "Як отримати токен для бота:",
-            [nameof(TokenBotIntro)] =
-                "Токен генерується під час створення бота. Якщо ви його втратили, згенеруйте новий:",
-            [nameof(TokenBotStep1)] = "1. Відкрийте Discord",
             [nameof(TokenBotInstructions)] = """
+                Токен генерується під час створення бота. Якщо ви його втратили, згенеруйте новий:
+
+                1. Відкрийте Discord [портал розробника](https://discord.com/developers/applications)
                 2. Відкрийте налаштування вашого застосунку
                 3. Перейдіть до розділу **Bot** ліворуч
                 4. В розділі **Token** натисніть **Reset Token**
@@ -41,9 +41,8 @@ public partial class LocalizationManager
                 *  Інтеграції, що використовують попередній токен, перестануть працювати
                 *  Ваш бот повинен мати включений **Message Content Intent** для читання повідомлень
                 """,
-            [nameof(TokenDeveloperPortalLinkText)] = "портал розробника",
-            [nameof(TokenDocumentationLinkText)] = "документацію",
-            [nameof(TokenHelpText)] = "Якщо у вас є запитання або проблеми, зверніться до",
+            [nameof(TokenHelpText)] =
+                "Якщо у вас є запитання або проблеми, зверніться до [документації](https://github.com/Tyrrrz/DiscordChatExporter/tree/master/.docs)",
             // Settings
             [nameof(SettingsTitle)] = "Налаштування",
             [nameof(ThemeLabel)] = "Тема",

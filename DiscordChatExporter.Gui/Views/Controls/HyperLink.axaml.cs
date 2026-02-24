@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
@@ -58,11 +57,7 @@ public partial class HyperLink : UserControl
             if (Command.CanExecute(CommandParameter))
                 Command.Execute(CommandParameter);
         }
-        else if (
-            !string.IsNullOrWhiteSpace(Url) && Uri.TryCreate(Url, UriKind.Absolute, out var uri)
-        )
-        {
-            Process.StartShellExecute(uri.AbsoluteUri);
-        }
+        else if (!string.IsNullOrWhiteSpace(Url))
+            Process.StartShellExecute(Url);
     }
 }

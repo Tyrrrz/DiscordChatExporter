@@ -70,6 +70,26 @@ public partial class LocalizationManager
         // Export Setup
         [nameof(ChannelsSelectedText)] = "canaux sélectionnés",
         [nameof(OutputPathLabel)] = "Chemin de sortie",
+        [nameof(OutputPathTooltip)] = """
+            Chemin du fichier ou répertoire de sortie.
+
+            Si un répertoire est spécifié, les noms de fichiers seront générés automatiquement en fonction des noms de canaux et des paramètres d'exportation.
+
+            Les chemins de répertoire doivent se terminer par un slash pour éviter toute ambiguïté.
+
+            Jetons de modèle disponibles :
+            * **%g** — ID du serveur
+            * **%G** — nom du serveur
+            * **%t** — ID de la catégorie
+            * **%T** — nom de la catégorie
+            * **%c** — ID du canal
+            * **%C** — nom du canal
+            * **%p** — position du canal
+            * **%P** — position de la catégorie
+            * **%a** — date après
+            * **%b** — date avant
+            * **%d** — date actuelle
+            """,
         [nameof(FormatLabel)] = "Format",
         [nameof(FormatTooltip)] = "Format d'exportation",
         [nameof(AfterDateLabel)] = "Après (date)",

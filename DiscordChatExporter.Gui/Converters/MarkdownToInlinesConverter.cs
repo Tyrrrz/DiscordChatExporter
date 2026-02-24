@@ -114,55 +114,52 @@ public class MarkdownToInlinesConverter : IValueConverter
 
         var isFirst = true;
 
-        void RenderParagraph(ParagraphBlock paragraph)
-        {
-            if (!isFirst)
-            {
-                // Insert a blank line between paragraphs
-                inlines.Add(new LineBreak());
-                inlines.Add(new LineBreak());
-            }
-
-            isFirst = false;
-
-            foreach (var markdownInline in paragraph.Inline!)
-                ProcessInline(inlines, markdownInline);
-        }
-
-        void RenderListBlock(ListBlock list)
-        {
-            var itemOrder = 1;
-            if (list.IsOrdered && int.TryParse(list.OrderedStart, out var startNum))
-                itemOrder = startNum;
-
-            foreach (var listItem in list.OfType<ListItemBlock>())
-            {
-                if (!isFirst)
-                    inlines.Add(new LineBreak());
-                isFirst = false;
-
-                var prefix = list.IsOrdered ? $"{itemOrder++}. " : $"{list.BulletType}  ";
-                inlines.Add(new Run(prefix));
-
-                foreach (var subBlock in listItem.OfType<ParagraphBlock>())
-                {
-                    if (subBlock is { Inline: not null } p)
-                        foreach (var markdownInline in p.Inline)
-                            ProcessInline(inlines, markdownInline);
-                }
-            }
-        }
-
         foreach (var block in Markdown.Parse(text, MarkdownPipeline))
         {
             switch (block)
             {
                 case ParagraphBlock { Inline: not null } paragraph:
-                    RenderParagraph(paragraph);
+                {
+                    if (!isFirst)
+                    {
+                        // Insert a blank line between paragraphs
+                        inlines.Add(new LineBreak());
+                        inlines.Add(new LineBreak());
+                    }
+
+                    isFirst = false;
+
+                    foreach (var markdownInline in paragraph.Inline!)
+                        ProcessInline(inlines, markdownInline);
+
                     break;
+                }
+
                 case ListBlock list:
-                    RenderListBlock(list);
+                {
+                    var itemOrder = 1;
+                    if (list.IsOrdered && int.TryParse(list.OrderedStart, out var startNum))
+                        itemOrder = startNum;
+
+                    foreach (var listItem in list.OfType<ListItemBlock>())
+                    {
+                        if (!isFirst)
+                            inlines.Add(new LineBreak());
+                        isFirst = false;
+
+                        var prefix = list.IsOrdered ? $"{itemOrder++}. " : $"{list.BulletType}  ";
+                        inlines.Add(new Run(prefix));
+
+                        foreach (var subBlock in listItem.OfType<ParagraphBlock>())
+                        {
+                            if (subBlock is { Inline: not null } p)
+                                foreach (var markdownInline in p.Inline)
+                                    ProcessInline(inlines, markdownInline);
+                        }
+                    }
+
                     break;
+                }
             }
         }
 

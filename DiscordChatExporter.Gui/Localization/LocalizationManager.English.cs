@@ -68,6 +68,26 @@ public partial class LocalizationManager
             // Export Setup
             [nameof(ChannelsSelectedText)] = "channels selected",
             [nameof(OutputPathLabel)] = "Output path",
+            [nameof(OutputPathTooltip)] = """
+                Output file or directory path.
+
+                If a directory is specified, file names will be generated automatically based on the channel names and export parameters.
+
+                Directory paths must end with a slash to avoid ambiguity.
+
+                Available template tokens:
+                * **%g** — server ID
+                * **%G** — server name
+                * **%t** — category ID
+                * **%T** — category name
+                * **%c** — channel ID
+                * **%C** — channel name
+                * **%p** — channel position
+                * **%P** — category position
+                * **%a** — after date
+                * **%b** — before date
+                * **%d** — current date
+                """,
             [nameof(FormatLabel)] = "Format",
             [nameof(FormatTooltip)] = "Export format",
             [nameof(AfterDateLabel)] = "After (date)",

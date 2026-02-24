@@ -68,6 +68,26 @@ public partial class LocalizationManager
             // Export Setup
             [nameof(ChannelsSelectedText)] = "canales seleccionados",
             [nameof(OutputPathLabel)] = "Ruta de salida",
+            [nameof(OutputPathTooltip)] = """
+                Ruta del archivo o directorio de salida.
+
+                Si se especifica un directorio, los nombres de archivo se generarán automáticamente según los nombres de los canales y los parámetros de exportación.
+
+                Las rutas de directorio deben terminar con una barra diagonal para evitar ambigüedades.
+
+                Tokens de plantilla disponibles:
+                * **%g** — ID del servidor
+                * **%G** — nombre del servidor
+                * **%t** — ID de categoría
+                * **%T** — nombre de categoría
+                * **%c** — ID del canal
+                * **%C** — nombre del canal
+                * **%p** — posición del canal
+                * **%P** — posición de la categoría
+                * **%a** — fecha desde
+                * **%b** — fecha hasta
+                * **%d** — fecha actual
+                """,
             [nameof(FormatLabel)] = "Formato",
             [nameof(FormatTooltip)] = "Formato de exportación",
             [nameof(AfterDateLabel)] = "Después (fecha)",

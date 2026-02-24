@@ -73,60 +73,10 @@
                         Text="{Binding OutputPath}"
                         Theme="{DynamicResource FilledTextBox}">
                         <ToolTip.Tip>
-                            <TextBlock>
-                                <Run Text="Output file or directory path." />
-                                <LineBreak />
-                                <Run Text="If a directory is specified, file names will be generated automatically based on the channel names and export parameters." />
-                                <LineBreak />
-                                <Run Text="Directory paths must end with a slash to avoid ambiguity." />
-                                <LineBreak />
-                                <LineBreak />
-                                <Run Text="Available template tokens:" />
-                                <LineBreak />
-                                <Run Text=" " />
-                                <Run FontWeight="SemiBold" Text="%g" />
-                                <Run Text="— server ID" />
-                                <LineBreak />
-                                <Run Text=" " />
-                                <Run FontWeight="SemiBold" Text="%G" />
-                                <Run Text="— server name" />
-                                <LineBreak />
-                                <Run Text=" " />
-                                <Run FontWeight="SemiBold" Text="%t" />
-                                <Run Text="— category ID" />
-                                <LineBreak />
-                                <Run Text=" " />
-                                <Run FontWeight="SemiBold" Text="%T" />
-                                <Run Text="— category name" />
-                                <LineBreak />
-                                <Run Text=" " />
-                                <Run FontWeight="SemiBold" Text="%c" />
-                                <Run Text="— channel ID" />
-                                <LineBreak />
-                                <Run Text=" " />
-                                <Run FontWeight="SemiBold" Text="%C" />
-                                <Run Text="— channel name" />
-                                <LineBreak />
-                                <Run Text=" " />
-                                <Run FontWeight="SemiBold" Text="%p" />
-                                <Run Text="— channel position" />
-                                <LineBreak />
-                                <Run Text=" " />
-                                <Run FontWeight="SemiBold" Text="%P" />
-                                <Run Text="— category position" />
-                                <LineBreak />
-                                <Run Text=" " />
-                                <Run FontWeight="SemiBold" Text="%a" />
-                                <Run Text="— after date" />
-                                <LineBreak />
-                                <Run Text=" " />
-                                <Run FontWeight="SemiBold" Text="%b" />
-                                <Run Text="— before date" />
-                                <LineBreak />
-                                <Run Text=" " />
-                                <Run FontWeight="SemiBold" Text="%d" />
-                                <Run Text="— current date" />
-                            </TextBlock>
+                            <TextBlock
+                                MaxWidth="400"
+                                TextWrapping="Wrap"
+                                Inlines="{Binding LocalizationManager.OutputPathTooltip, Converter={x:Static converters:MarkdownToInlinesConverter.Instance}}" />
                         </ToolTip.Tip>
                         <TextBox.InnerRightContent>
                             <Button

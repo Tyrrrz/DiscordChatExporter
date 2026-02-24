@@ -120,6 +120,7 @@ public partial class LocalizationManager
 
     public string ChannelsSelectedText => Get();
     public string OutputPathLabel => Get();
+    public string OutputPathTooltip => Get();
     public string FormatLabel => Get();
     public string FormatTooltip => Get();
     public string AfterDateLabel => Get();

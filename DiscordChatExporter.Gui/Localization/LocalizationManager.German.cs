@@ -70,6 +70,26 @@ public partial class LocalizationManager
         // Export Setup
         [nameof(ChannelsSelectedText)] = "Kanäle ausgewählt",
         [nameof(OutputPathLabel)] = "Ausgabepfad",
+        [nameof(OutputPathTooltip)] = """
+            Ausgabedatei- oder Verzeichnispfad.
+
+            Wenn ein Verzeichnis angegeben wird, werden Dateinamen automatisch basierend auf den Kanalnamen und Exportparametern generiert.
+
+            Verzeichnispfade müssen mit einem Schrägstrich enden, um Mehrdeutigkeiten zu vermeiden.
+
+            Verfügbare Vorlagen-Token:
+            * **%g** — Server-ID
+            * **%G** — Servername
+            * **%t** — Kategorie-ID
+            * **%T** — Kategoriename
+            * **%c** — Kanal-ID
+            * **%C** — Kanalname
+            * **%p** — Kanalposition
+            * **%P** — Kategorieposition
+            * **%a** — Datum ab
+            * **%b** — Datum bis
+            * **%d** — aktuelles Datum
+            """,
         [nameof(FormatLabel)] = "Format",
         [nameof(FormatTooltip)] = "Exportformat",
         [nameof(AfterDateLabel)] = "Nach (Datum)",

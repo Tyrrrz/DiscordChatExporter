@@ -59,9 +59,7 @@ public partial class HyperLink : UserControl
                 Command.Execute(CommandParameter);
         }
         else if (
-            !string.IsNullOrWhiteSpace(Url)
-            && Uri.TryCreate(Url, UriKind.Absolute, out var uri)
-            && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)
+            !string.IsNullOrWhiteSpace(Url) && Uri.TryCreate(Url, UriKind.Absolute, out var uri)
         )
         {
             Process.StartShellExecute(uri.AbsoluteUri);

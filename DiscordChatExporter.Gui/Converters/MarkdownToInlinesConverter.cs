@@ -79,7 +79,7 @@ public class MarkdownToInlinesConverter : IValueConverter
                 break;
             }
 
-            case LinkInline link when !string.IsNullOrWhiteSpace(link.Url):
+            case LinkInline link:
             {
                 inlines.Add(
                     new InlineUIContainer(

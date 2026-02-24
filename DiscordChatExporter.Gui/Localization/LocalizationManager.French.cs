@@ -145,7 +145,7 @@ public partial class LocalizationManager
             "La mise à jour a été téléchargée et sera installée à la fermeture",
         [nameof(UpdateInstallNowButton)] = "INSTALLER MAINTENANT",
         [nameof(UpdateFailedMessage)] = "Échec de la mise à jour de l'application",
-        [nameof(ErrorPullingServersTitle)] = "Erreur lors du chargement des serveurs",
+        [nameof(ErrorPullingGuildsTitle)] = "Erreur lors du chargement des serveurs",
         [nameof(ErrorPullingChannelsTitle)] = "Erreur lors du chargement des canaux",
         [nameof(ErrorExportingTitle)] = "Erreur lors de l'exportation des canaux",
         [nameof(SuccessfulExportMessage)] = "{0} canal(-aux) exporté(s) avec succès",

@@ -143,7 +143,7 @@ public partial class LocalizationManager
                 "Update has been downloaded and will be installed when you exit",
             [nameof(UpdateInstallNowButton)] = "INSTALL NOW",
             [nameof(UpdateFailedMessage)] = "Failed to perform application update",
-            [nameof(ErrorPullingServersTitle)] = "Error pulling servers",
+            [nameof(ErrorPullingGuildsTitle)] = "Error pulling servers",
             [nameof(ErrorPullingChannelsTitle)] = "Error pulling channels",
             [nameof(ErrorExportingTitle)] = "Error exporting channel(s)",
             [nameof(SuccessfulExportMessage)] = "Successfully exported {0} channel(s)",

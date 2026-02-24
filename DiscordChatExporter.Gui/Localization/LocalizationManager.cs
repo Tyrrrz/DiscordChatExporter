@@ -163,7 +163,7 @@ public partial class LocalizationManager
     public string UpdateReadyMessage => Get();
     public string UpdateInstallNowButton => Get();
     public string UpdateFailedMessage => Get();
-    public string ErrorPullingServersTitle => Get();
+    public string ErrorPullingGuildsTitle => Get();
     public string ErrorPullingChannelsTitle => Get();
     public string ErrorExportingTitle => Get();
     public string SuccessfulExportMessage => Get();

@@ -149,7 +149,7 @@ public partial class LocalizationManager
             "Update wurde heruntergeladen und wird beim Beenden installiert",
         [nameof(UpdateInstallNowButton)] = "JETZT INSTALLIEREN",
         [nameof(UpdateFailedMessage)] = "Anwendungsupdate konnte nicht durchgeführt werden",
-        [nameof(ErrorPullingServersTitle)] = "Fehler beim Laden der Server",
+        [nameof(ErrorPullingGuildsTitle)] = "Fehler beim Laden der Server",
         [nameof(ErrorPullingChannelsTitle)] = "Fehler beim Laden der Kanäle",
         [nameof(ErrorExportingTitle)] = "Fehler beim Exportieren der Kanäle",
         [nameof(SuccessfulExportMessage)] = "{0} Kanal/-äle erfolgreich exportiert",

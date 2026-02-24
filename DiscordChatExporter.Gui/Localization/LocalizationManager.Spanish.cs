@@ -143,7 +143,7 @@ public partial class LocalizationManager
                 "La actualización se ha descargado y se instalará al salir",
             [nameof(UpdateInstallNowButton)] = "INSTALAR AHORA",
             [nameof(UpdateFailedMessage)] = "Error al realizar la actualización de la aplicación",
-            [nameof(ErrorPullingServersTitle)] = "Error al cargar servidores",
+            [nameof(ErrorPullingGuildsTitle)] = "Error al cargar servidores",
             [nameof(ErrorPullingChannelsTitle)] = "Error al cargar canales",
             [nameof(ErrorExportingTitle)] = "Error al exportar canal(es)",
             [nameof(SuccessfulExportMessage)] = "{0} canal(es) exportado(s) con éxito",

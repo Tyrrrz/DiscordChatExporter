@@ -143,7 +143,7 @@ public partial class DashboardViewModel : ViewModelBase
         catch (Exception ex)
         {
             var dialog = _viewModelManager.CreateMessageBoxViewModel(
-                LocalizationManager.ErrorPullingServersTitle,
+                LocalizationManager.ErrorPullingGuildsTitle,
                 ex.ToString()
             );
 

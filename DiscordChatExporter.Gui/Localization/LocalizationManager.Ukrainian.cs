@@ -142,7 +142,7 @@ public partial class LocalizationManager
             [nameof(UpdateReadyMessage)] = "Оновлення завантажено та буде встановлено після виходу",
             [nameof(UpdateInstallNowButton)] = "ВСТАНОВИТИ ЗАРАЗ",
             [nameof(UpdateFailedMessage)] = "Не вдалося виконати оновлення програми",
-            [nameof(ErrorPullingServersTitle)] = "Помилка завантаження серверів",
+            [nameof(ErrorPullingGuildsTitle)] = "Помилка завантаження серверів",
             [nameof(ErrorPullingChannelsTitle)] = "Помилка завантаження каналів",
             [nameof(ErrorExportingTitle)] = "Помилка експорту каналу(-ів)",
             [nameof(SuccessfulExportMessage)] = "Успішно експортовано {0} канал(-ів)",

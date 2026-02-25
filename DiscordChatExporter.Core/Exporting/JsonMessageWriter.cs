@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
+using DiscordChatExporter.Core.Discord.Data.Components;
 using DiscordChatExporter.Core.Discord.Data.Embeds;
 using DiscordChatExporter.Core.Markdown.Parsing;
 using DiscordChatExporter.Core.Utils.Extensions;
@@ -335,6 +336,49 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
         await _writer.FlushAsync(cancellationToken);
     }
 
+    private async ValueTask WriteButtonComponentAsync(
+        ButtonComponent button,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _writer.WriteStartObject();
+
+        _writer.WriteString("type", "Button");
+        _writer.WriteString("style", button.Style.ToString());
+        _writer.WriteString("label", button.Label);
+        _writer.WriteString("url", button.Url);
+        _writer.WriteString("customId", button.CustomId);
+        _writer.WriteString("skuId", button.SkuId?.ToString());
+        _writer.WriteBoolean("isDisabled", button.IsDisabled);
+
+        if (button.Emoji is not null)
+        {
+            _writer.WritePropertyName("emoji");
+            await WriteEmojiAsync(button.Emoji, cancellationToken);
+        }
+
+        _writer.WriteEndObject();
+        await _writer.FlushAsync(cancellationToken);
+    }
+
+    private async ValueTask WriteActionRowComponentAsync(
+        ActionRowComponent actionRow,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _writer.WriteStartObject();
+
+        _writer.WriteString("type", "ActionRow");
+
+        _writer.WriteStartArray("components");
+        foreach (var button in actionRow.Components)
+            await WriteButtonComponentAsync(button, cancellationToken);
+        _writer.WriteEndArray();
+
+        _writer.WriteEndObject();
+        await _writer.FlushAsync(cancellationToken);
+    }
+
     public override async ValueTask WritePreambleAsync(
         CancellationToken cancellationToken = default
     )
@@ -450,6 +494,14 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
 
             _writer.WriteEndObject();
         }
+
+        _writer.WriteEndArray();
+
+        // Components
+        _writer.WriteStartArray("components");
+
+        foreach (var component in message.Components)
+            await WriteActionRowComponentAsync(component, cancellationToken);
 
         _writer.WriteEndArray();
 

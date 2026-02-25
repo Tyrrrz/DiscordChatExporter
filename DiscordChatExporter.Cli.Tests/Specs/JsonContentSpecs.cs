@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using DiscordChatExporter.Cli.Tests.Infra;
 using FluentAssertions;
@@ -42,5 +43,10 @@ public class JsonContentSpecs
                 "Three",
                 "Yeet"
             );
+
+        messages
+            .Select(j => j.GetProperty("components").ValueKind)
+            .Should()
+            .OnlyContain(kind => kind == JsonValueKind.Array);
     }
 }

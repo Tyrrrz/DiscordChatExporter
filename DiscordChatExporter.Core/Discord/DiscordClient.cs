@@ -750,10 +750,6 @@ public class DiscordClient(
 
             foreach (var message in messages)
             {
-                // Stop if we've reached the 'after' boundary
-                if (after is not null && (message.Id < after.Value || message.Id == after.Value))
-                    yield break;
-
                 lastMessage ??= message;
 
                 // Report progress based on timestamps

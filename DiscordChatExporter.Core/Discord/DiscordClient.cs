@@ -194,6 +194,23 @@ public class DiscordClient(
         return Application.Parse(response);
     }
 
+    private async ValueTask EnsureMessageContentIntentAsync(
+        CancellationToken cancellationToken = default
+    )
+    {
+        if (await ResolveTokenKindAsync(cancellationToken) != TokenKind.Bot)
+            return;
+
+        var application = await GetApplicationAsync(cancellationToken);
+        if (application.IsMessageContentIntentEnabled)
+            return;
+
+        throw new DiscordChatExporterException(
+            "Provided bot account is missing the MESSAGE_CONTENT privileged intent.",
+            true
+        );
+    }
+
     public async ValueTask<User?> TryGetUserAsync(
         Snowflake userId,
         CancellationToken cancellationToken = default
@@ -581,7 +598,6 @@ public class DiscordClient(
     private async ValueTask<Message?> TryGetFirstMessageAsync(
         Snowflake channelId,
         Snowflake? after = null,
-        Snowflake? before = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -593,9 +609,6 @@ public class DiscordClient(
 
         var response = await GetJsonResponseAsync(url, cancellationToken);
         var message = response.EnumerateArray().Select(Message.Parse).FirstOrDefault();
-
-        if (message is null || before is not null && message.Timestamp > before.Value.ToDate())
-            return null;
 
         return message;
     }
@@ -658,22 +671,10 @@ public class DiscordClient(
                 yield break;
 
             // If all messages are empty, make sure that it's not because the bot account doesn't
-            // have the Message Content Intent enabled.
+            // have the MESSAGE_CONTENT intent enabled.
             // https://github.com/Tyrrrz/DiscordChatExporter/issues/1106#issuecomment-1741548959
-            if (
-                messages.All(m => m.IsEmpty)
-                && await ResolveTokenKindAsync(cancellationToken) == TokenKind.Bot
-            )
-            {
-                var application = await GetApplicationAsync(cancellationToken);
-                if (!application.IsMessageContentIntentEnabled)
-                {
-                    throw new DiscordChatExporterException(
-                        "Provided bot account does not have the Message Content Intent enabled.",
-                        true
-                    );
-                }
-            }
+            if (messages.All(m => m.IsEmpty))
+                await EnsureMessageContentIntentAsync(cancellationToken);
 
             foreach (var message in messages)
             {
@@ -714,19 +715,16 @@ public class DiscordClient(
         [EnumeratorCancellation] CancellationToken cancellationToken = default
     )
     {
-        // Get the first message (oldest) in the range to use as the lower bound for
-        // progress calculation.
-        var firstMessage = await TryGetFirstMessageAsync(
-            channelId,
-            after,
-            before,
-            cancellationToken
-        );
-        if (firstMessage is null)
+        // Get the first message in the specified range, so we can later calculate the
+        // progress based on the difference between message timestamps.
+        // Snapshotting is not necessary here because new messages can't appear in the past.
+        var firstMessage = await TryGetFirstMessageAsync(channelId, after, cancellationToken);
+        if (firstMessage is null || firstMessage.Timestamp > before?.ToDate())
             yield break;
 
         // Keep track of the last message in range in order to calculate the progress
         var lastMessage = default(Message);
+
         var currentBefore = before;
         while (true)
         {
@@ -745,22 +743,10 @@ public class DiscordClient(
                 yield break;
 
             // If all messages are empty, make sure that it's not because the bot account doesn't
-            // have the Message Content Intent enabled.
+            // have the MESSAGE_CONTENT intent enabled.
             // https://github.com/Tyrrrz/DiscordChatExporter/issues/1106#issuecomment-1741548959
-            if (
-                messages.All(m => m.IsEmpty)
-                && await ResolveTokenKindAsync(cancellationToken) == TokenKind.Bot
-            )
-            {
-                var application = await GetApplicationAsync(cancellationToken);
-                if (!application.IsMessageContentIntentEnabled)
-                {
-                    throw new DiscordChatExporterException(
-                        "Provided bot account does not have the Message Content Intent enabled.",
-                        true
-                    );
-                }
-            }
+            if (messages.All(m => m.IsEmpty))
+                await EnsureMessageContentIntentAsync(cancellationToken);
 
             foreach (var message in messages)
             {
@@ -774,7 +760,11 @@ public class DiscordClient(
 
                     progress.Report(
                         Percentage.FromFraction(
-                            totalDuration > TimeSpan.Zero ? exportedDuration / totalDuration : 1
+                            // Avoid division by zero if all messages have the exact same timestamp
+                            // (which happens when there's only one message in the channel)
+                            totalDuration > TimeSpan.Zero
+                                ? exportedDuration / totalDuration
+                                : 1
                         )
                     );
                 }

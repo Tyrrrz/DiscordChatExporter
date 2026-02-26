@@ -580,6 +580,20 @@ public class DiscordClient(
         return response.EnumerateArray().Select(Message.Parse).LastOrDefault();
     }
 
+    private async ValueTask<Message?> TryGetFirstMessageAsync(
+        Snowflake channelId,
+        Snowflake? after = null,
+        Snowflake? before = null,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var message = await TryGetLastMessageAsync(channelId, before, cancellationToken);
+        if (message is null || message.Timestamp < after?.ToDate())
+            return null;
+
+        return message;
+    }
+
     public async IAsyncEnumerable<Message> GetMessagesAsync(
         Snowflake channelId,
         Snowflake? after = null,
@@ -678,11 +692,16 @@ public class DiscordClient(
         [EnumeratorCancellation] CancellationToken cancellationToken = default
     )
     {
-        // Get the newest message in the specified range to use as the starting point.
-        // This also snapshots the upper boundary, which means that messages posted after
-        // the export started will not appear in the output.
-        var firstMessage = await TryGetLastMessageAsync(channelId, before, cancellationToken);
-        if (firstMessage is null || firstMessage.Timestamp < after?.ToDate())
+        // Get the first message in the specified range (i.e. the newest one) to use as the
+        // starting point. This also snapshots the upper boundary, which means that messages
+        // posted after the export started will not appear in the output.
+        var firstMessage = await TryGetFirstMessageAsync(
+            channelId,
+            after,
+            before,
+            cancellationToken
+        );
+        if (firstMessage is null)
             yield break;
 
         // Use the same 'before' boundary as the initial cursor so that 'firstMessage' is

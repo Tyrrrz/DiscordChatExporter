@@ -23,25 +23,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AsyncImageLoader.Avalonia" Version="3.5.0" />
-    <PackageReference Include="Avalonia" Version="11.3.11" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.3.11" />
-    <PackageReference
-      Include="Avalonia.Diagnostics"
-      Version="11.3.11"
-      Condition="'$(Configuration)' == 'Debug'"
-    />
-    <PackageReference Include="Cogwheel" Version="2.1.0" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="CSharpier.MsBuild" Version="1.2.5" PrivateAssets="all" />
-    <PackageReference Include="Deorcify" Version="1.1.0" PrivateAssets="all" />
-    <PackageReference Include="DialogHost.Avalonia" Version="0.10.4" />
-    <PackageReference Include="Gress" Version="2.1.1" />
-    <PackageReference Include="Markdig" Version="1.0.0" />
-    <PackageReference Include="Material.Avalonia" Version="3.9.2" />
-    <PackageReference Include="Material.Icons.Avalonia" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.2" />
-    <PackageReference Include="Onova" Version="2.6.13" />
+    <PackageReference Include="AsyncImageLoader.Avalonia" />
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Avalonia.Diagnostics" Condition="'$(Configuration)' == 'Debug'" />
+    <PackageReference Include="Cogwheel" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="CSharpier.MsBuild" PrivateAssets="all" />
+    <PackageReference Include="Deorcify" PrivateAssets="all" />
+    <PackageReference Include="DialogHost.Avalonia" />
+    <PackageReference Include="Gress" />
+    <PackageReference Include="Markdig" />
+    <PackageReference Include="Material.Avalonia" />
+    <PackageReference Include="Material.Icons.Avalonia" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Onova" />
   </ItemGroup>
 
   <ItemGroup>

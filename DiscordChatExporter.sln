@@ -8,6 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Misc", "Misc", "{EA305DD5-1
 		License.txt = License.txt
 		Readme.md = Readme.md
 		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
 		DiscordChatExporter.Cli.dockerfile = DiscordChatExporter.Cli.dockerfile
 		global.json = global.json
 		NuGet.config = NuGet.config

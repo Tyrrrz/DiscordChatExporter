@@ -37,6 +37,18 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
         if (reuse && File.Exists(filePath))
             return _previousPathsByUrl[url] = filePath;
 
+        // Check for a file cached by the legacy naming scheme (5-char hash) and rename it
+        // to the new naming scheme to preserve backwards compatibility with existing exports
+        if (reuse)
+        {
+            var legacyFilePath = Path.Combine(workingDirPath, GetLegacyFileNameFromUrl(url));
+            if (File.Exists(legacyFilePath))
+            {
+                File.Move(legacyFilePath, filePath);
+                return _previousPathsByUrl[url] = filePath;
+            }
+        }
+
         Directory.CreateDirectory(workingDirPath);
 
         await Http.ResiliencePipeline.ExecuteAsync(
@@ -56,23 +68,23 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
 
 internal partial class ExportAssetDownloader
 {
-    private static string GetUrlHash(string url)
+    private static string NormalizeUrl(string url)
     {
         // Remove signature parameters from Discord CDN URLs to normalize them
-        static string NormalizeUrl(string url)
-        {
-            var uri = new Uri(url);
-            if (!string.Equals(uri.Host, "cdn.discordapp.com", StringComparison.OrdinalIgnoreCase))
-                return url;
+        var uri = new Uri(url);
+        if (!string.Equals(uri.Host, "cdn.discordapp.com", StringComparison.OrdinalIgnoreCase))
+            return url;
 
-            var query = HttpUtility.ParseQueryString(uri.Query);
-            query.Remove("ex");
-            query.Remove("is");
-            query.Remove("hm");
+        var query = HttpUtility.ParseQueryString(uri.Query);
+        query.Remove("ex");
+        query.Remove("is");
+        query.Remove("hm");
 
-            return uri.GetLeftPart(UriPartial.Path) + query;
-        }
+        return uri.GetLeftPart(UriPartial.Path) + query;
+    }
 
+    private static string GetUrlHash(string url)
+    {
         return SHA256
             .HashData(Encoding.UTF8.GetBytes(NormalizeUrl(url)))
             .Pipe(Convert.ToHexStringLower)
@@ -80,10 +92,21 @@ internal partial class ExportAssetDownloader
             .Truncate(16);
     }
 
-    private static string GetFileNameFromUrl(string url)
-    {
-        var urlHash = GetUrlHash(url);
+    private static string GetFileNameFromUrl(string url) =>
+        GetFileNameFromUrl(url, GetUrlHash(url));
 
+    // Legacy naming used a 5-char hash, kept for backwards compatibility with existing exports
+    private static string GetLegacyFileNameFromUrl(string url) =>
+        GetFileNameFromUrl(
+            url,
+            SHA256
+                .HashData(Encoding.UTF8.GetBytes(NormalizeUrl(url)))
+                .Pipe(Convert.ToHexStringLower)
+                .Truncate(5)
+        );
+
+    private static string GetFileNameFromUrl(string url, string urlHash)
+    {
         // Try to extract the file name from URL
         var fileName = Regex.Match(url, @".+/([^?]*)").Groups[1].Value;
 

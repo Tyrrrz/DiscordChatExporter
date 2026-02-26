@@ -571,8 +571,16 @@ public class DiscordClient(
         CancellationToken cancellationToken = default
     )
     {
-        var message = await TryGetLastMessageAsync(channelId, before, cancellationToken);
-        if (message is null || message.Timestamp < after?.ToDate())
+        var url = new UrlBuilder()
+            .SetPath($"channels/{channelId}/messages")
+            .SetQueryParameter("limit", "1")
+            .SetQueryParameter("after", (after ?? Snowflake.Zero).ToString())
+            .Build();
+
+        var response = await GetJsonResponseAsync(url, cancellationToken);
+        var message = response.EnumerateArray().Select(Message.Parse).FirstOrDefault();
+
+        if (message is null || before is not null && message.Timestamp > before.Value.ToDate())
             return null;
 
         return message;
@@ -692,19 +700,14 @@ public class DiscordClient(
         [EnumeratorCancellation] CancellationToken cancellationToken = default
     )
     {
-        // Get the first message in the specified range (i.e. the newest one) to use as the
+        // Get the last message in the specified range (i.e. the newest one) to use as the
         // starting point. This also snapshots the upper boundary, which means that messages
         // posted after the export started will not appear in the output.
-        var firstMessage = await TryGetFirstMessageAsync(
-            channelId,
-            after,
-            before,
-            cancellationToken
-        );
-        if (firstMessage is null)
+        var lastMessage = await TryGetLastMessageAsync(channelId, before, cancellationToken);
+        if (lastMessage is null || lastMessage.Timestamp < after?.ToDate())
             yield break;
 
-        // Use the same 'before' boundary as the initial cursor so that 'firstMessage' is
+        // Use the same 'before' boundary as the initial cursor so that 'lastMessage' is
         // included in the first batch (the API returns messages with ID < 'before').
         var currentBefore = before;
         while (true)
@@ -755,9 +758,9 @@ public class DiscordClient(
                 // Report progress based on timestamps (from newest towards oldest)
                 if (progress is not null)
                 {
-                    var exportedDuration = (firstMessage.Timestamp - message.Timestamp).Duration();
+                    var exportedDuration = (lastMessage.Timestamp - message.Timestamp).Duration();
                     var totalDuration = after is not null
-                        ? (firstMessage.Timestamp - after.Value.ToDate()).Duration()
+                        ? (lastMessage.Timestamp - after.Value.ToDate()).Duration()
                         : exportedDuration;
 
                     progress.Report(

@@ -760,9 +760,7 @@ public class DiscordClient(
 
                     progress.Report(
                         Percentage.FromFraction(
-                            totalDuration > TimeSpan.Zero
-                                ? Math.Min(1.0, exportedDuration / totalDuration)
-                                : 1
+                            totalDuration > TimeSpan.Zero ? exportedDuration / totalDuration : 1
                         )
                     );
                 }

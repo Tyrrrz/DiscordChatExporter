@@ -44,7 +44,9 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
             var legacyFilePath = Path.Combine(workingDirPath, GetLegacyFileNameFromUrl(url));
             if (File.Exists(legacyFilePath))
             {
-                File.Move(legacyFilePath, filePath);
+                // Overwrite in case the destination file was created concurrently between our
+                // earlier existence check and this move operation
+                File.Move(legacyFilePath, filePath, overwrite: true);
                 return _previousPathsByUrl[url] = filePath;
             }
         }
@@ -92,19 +94,6 @@ internal partial class ExportAssetDownloader
             .Truncate(16);
     }
 
-    private static string GetFileNameFromUrl(string url) =>
-        GetFileNameFromUrl(url, GetUrlHash(url));
-
-    // Legacy naming used a 5-char hash, kept for backwards compatibility with existing exports
-    private static string GetLegacyFileNameFromUrl(string url) =>
-        GetFileNameFromUrl(
-            url,
-            SHA256
-                .HashData(Encoding.UTF8.GetBytes(NormalizeUrl(url)))
-                .Pipe(Convert.ToHexStringLower)
-                .Truncate(5)
-        );
-
     private static string GetFileNameFromUrl(string url, string urlHash)
     {
         // Try to extract the file name from URL
@@ -130,4 +119,17 @@ internal partial class ExportAssetDownloader
             fileNameWithoutExtension.Truncate(42) + '-' + urlHash + fileExtension
         );
     }
+
+    private static string GetFileNameFromUrl(string url) =>
+        GetFileNameFromUrl(url, GetUrlHash(url));
+
+    // Legacy naming used a 5-char hash, kept for backwards compatibility with existing exports
+    private static string GetLegacyFileNameFromUrl(string url) =>
+        GetFileNameFromUrl(
+            url,
+            SHA256
+                .HashData(Encoding.UTF8.GetBytes(NormalizeUrl(url)))
+                .Pipe(Convert.ToHexStringLower)
+                .Truncate(5)
+        );
 }

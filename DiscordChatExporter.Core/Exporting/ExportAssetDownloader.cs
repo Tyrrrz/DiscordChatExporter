@@ -46,8 +46,16 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
             {
                 // Overwrite in case the destination file was created concurrently between our
                 // earlier existence check and this move operation
-                File.Move(legacyFilePath, filePath, overwrite: true);
-                return _previousPathsByUrl[url] = filePath;
+                try
+                {
+                    File.Move(legacyFilePath, filePath, overwrite: true);
+                    return _previousPathsByUrl[url] = filePath;
+                }
+                catch (IOException)
+                {
+                    // The legacy file was moved or deleted concurrently or something else happened.
+                    // Upgrading old files is not crucial, so we can just move on.
+                }
             }
         }
 

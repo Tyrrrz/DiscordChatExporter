@@ -578,6 +578,28 @@ public class DiscordClient(
         }
     }
 
+    private async ValueTask<Message?> TryGetFirstMessageAsync(
+        Snowflake channelId,
+        Snowflake? after = null,
+        Snowflake? before = null,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var url = new UrlBuilder()
+            .SetPath($"channels/{channelId}/messages")
+            .SetQueryParameter("limit", "1")
+            .SetQueryParameter("after", (after ?? Snowflake.Zero).ToString())
+            .Build();
+
+        var response = await GetJsonResponseAsync(url, cancellationToken);
+        var message = response.EnumerateArray().Select(Message.Parse).FirstOrDefault();
+
+        if (message is null || before is not null && message.Timestamp > before.Value.ToDate())
+            return null;
+
+        return message;
+    }
+
     private async ValueTask<Message?> TryGetLastMessageAsync(
         Snowflake channelId,
         Snowflake? before = null,
@@ -681,6 +703,86 @@ public class DiscordClient(
                 yield return message;
                 currentAfter = message.Id;
             }
+        }
+    }
+
+    public async IAsyncEnumerable<Message> GetMessagesInReverseAsync(
+        Snowflake channelId,
+        Snowflake? after = null,
+        Snowflake? before = null,
+        IProgress<Percentage>? progress = null,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default
+    )
+    {
+        // Get the first message (oldest) in the range to use as the lower bound for
+        // progress calculation.
+        var firstMessage = await TryGetFirstMessageAsync(
+            channelId,
+            after,
+            before,
+            cancellationToken
+        );
+        if (firstMessage is null)
+            yield break;
+
+        // Keep track of the last message in range in order to calculate the progress
+        var lastMessage = default(Message);
+        var currentBefore = before;
+        while (true)
+        {
+            var url = new UrlBuilder()
+                .SetPath($"channels/{channelId}/messages")
+                .SetQueryParameter("limit", "100")
+                .SetQueryParameter("before", currentBefore?.ToString())
+                .Build();
+
+            var response = await GetJsonResponseAsync(url, cancellationToken);
+
+            var messages = response.EnumerateArray().Select(Message.Parse).ToArray();
+
+            // Break if there are no messages (can happen if messages are deleted during execution)
+            if (!messages.Any())
+                yield break;
+
+            // If all messages are empty, make sure that it's not because the bot account doesn't
+            // have the Message Content Intent enabled.
+            // https://github.com/Tyrrrz/DiscordChatExporter/issues/1106#issuecomment-1741548959
+            if (
+                messages.All(m => m.IsEmpty)
+                && await ResolveTokenKindAsync(cancellationToken) == TokenKind.Bot
+            )
+            {
+                var application = await GetApplicationAsync(cancellationToken);
+                if (!application.IsMessageContentIntentEnabled)
+                {
+                    throw new DiscordChatExporterException(
+                        "Provided bot account does not have the Message Content Intent enabled.",
+                        true
+                    );
+                }
+            }
+
+            foreach (var message in messages)
+            {
+                lastMessage ??= message;
+
+                // Report progress based on timestamps
+                if (progress is not null)
+                {
+                    var exportedDuration = (lastMessage.Timestamp - message.Timestamp).Duration();
+                    var totalDuration = (lastMessage.Timestamp - firstMessage.Timestamp).Duration();
+
+                    progress.Report(
+                        Percentage.FromFraction(
+                            totalDuration > TimeSpan.Zero ? exportedDuration / totalDuration : 1
+                        )
+                    );
+                }
+
+                yield return message;
+            }
+
+            currentBefore = messages.Last().Id;
         }
     }
 

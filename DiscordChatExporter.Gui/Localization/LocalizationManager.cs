@@ -135,6 +135,8 @@ public partial class LocalizationManager
     public string PartitionLimitTooltip => Get();
     public string MessageFilterLabel => Get();
     public string MessageFilterTooltip => Get();
+    public string ReverseMessageOrderLabel => Get();
+    public string ReverseMessageOrderTooltip => Get();
     public string FormatMarkdownLabel => Get();
     public string FormatMarkdownTooltip => Get();
     public string DownloadAssetsLabel => Get();

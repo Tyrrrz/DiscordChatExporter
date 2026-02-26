@@ -110,6 +110,9 @@ public partial class LocalizationManager
         [nameof(MessageFilterLabel)] = "Nachrichtenfilter",
         [nameof(MessageFilterTooltip)] =
             "Nur Nachrichten einschließen, die diesem Filter entsprechen (z. B. 'from:foo#1234' oder 'has:image'). Weitere Informationen finden Sie in der Dokumentation.",
+        [nameof(ReverseMessageOrderLabel)] = "Nachrichtenreihenfolge umkehren",
+        [nameof(ReverseMessageOrderTooltip)] =
+            "Nachrichten in umgekehrter chronologischer Reihenfolge exportieren (neueste zuerst)",
         [nameof(FormatMarkdownLabel)] = "Markdown formatieren",
         [nameof(FormatMarkdownTooltip)] =
             "Markdown, Erwähnungen und andere spezielle Token verarbeiten",

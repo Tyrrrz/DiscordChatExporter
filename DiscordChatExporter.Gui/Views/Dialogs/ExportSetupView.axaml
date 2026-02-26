@@ -196,6 +196,15 @@
                             Theme="{DynamicResource FilledTextBox}"
                             ToolTip.Tip="{Binding LocalizationManager.MessageFilterTooltip}" />
 
+                        <!--  Reverse message order  -->
+                        <DockPanel
+                            Margin="16,8"
+                            LastChildFill="False"
+                            ToolTip.Tip="{Binding LocalizationManager.ReverseMessageOrderTooltip}">
+                            <TextBlock DockPanel.Dock="Left" Text="{Binding LocalizationManager.ReverseMessageOrderLabel}" />
+                            <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding IsReverseMessageOrder}" />
+                        </DockPanel>
+
                         <!--  Markdown formatting  -->
                         <DockPanel
                             Margin="16,8"

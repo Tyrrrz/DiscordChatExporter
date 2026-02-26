@@ -62,6 +62,9 @@ public partial class SettingsService()
     public partial string? LastMessageFilterValue { get; set; }
 
     [ObservableProperty]
+    public partial bool LastIsReverseMessageOrder { get; set; }
+
+    [ObservableProperty]
     public partial bool LastShouldFormatMarkdown { get; set; } = true;
 
     [ObservableProperty]

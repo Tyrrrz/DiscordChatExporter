@@ -63,6 +63,9 @@ public partial class ExportSetupViewModel(
     public partial string? MessageFilterValue { get; set; }
 
     [ObservableProperty]
+    public partial bool IsReverseMessageOrder { get; set; }
+
+    [ObservableProperty]
     public partial bool ShouldFormatMarkdown { get; set; }
 
     [ObservableProperty]
@@ -106,6 +109,7 @@ public partial class ExportSetupViewModel(
         SelectedFormat = settingsService.LastExportFormat;
         PartitionLimitValue = settingsService.LastPartitionLimitValue;
         MessageFilterValue = settingsService.LastMessageFilterValue;
+        IsReverseMessageOrder = settingsService.LastIsReverseMessageOrder;
         ShouldFormatMarkdown = settingsService.LastShouldFormatMarkdown;
         ShouldDownloadAssets = settingsService.LastShouldDownloadAssets;
         ShouldReuseAssets = settingsService.LastShouldReuseAssets;
@@ -120,7 +124,8 @@ public partial class ExportSetupViewModel(
             || !string.IsNullOrWhiteSpace(MessageFilterValue)
             || ShouldDownloadAssets
             || ShouldReuseAssets
-            || !string.IsNullOrWhiteSpace(AssetsDirPath);
+            || !string.IsNullOrWhiteSpace(AssetsDirPath)
+            || IsReverseMessageOrder;
     }
 
     [RelayCommand]
@@ -184,6 +189,7 @@ public partial class ExportSetupViewModel(
         settingsService.LastExportFormat = SelectedFormat;
         settingsService.LastPartitionLimitValue = PartitionLimitValue;
         settingsService.LastMessageFilterValue = MessageFilterValue;
+        settingsService.LastIsReverseMessageOrder = IsReverseMessageOrder;
         settingsService.LastShouldFormatMarkdown = ShouldFormatMarkdown;
         settingsService.LastShouldDownloadAssets = ShouldDownloadAssets;
         settingsService.LastShouldReuseAssets = ShouldReuseAssets;

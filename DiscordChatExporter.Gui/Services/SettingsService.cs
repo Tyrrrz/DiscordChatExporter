@@ -62,6 +62,9 @@ public partial class SettingsService()
     public partial string? LastMessageFilterValue { get; set; }
 
     [ObservableProperty]
+    public partial bool LastIsReverseMessageOrder { get; set; }
+
+    [ObservableProperty]
     public partial bool LastShouldFormatMarkdown { get; set; } = true;
 
     [ObservableProperty]
@@ -72,9 +75,6 @@ public partial class SettingsService()
 
     [ObservableProperty]
     public partial string? LastAssetsDirPath { get; set; }
-
-    [ObservableProperty]
-    public partial bool LastIsReverseMessageOrder { get; set; }
 
     public override void Save()
     {

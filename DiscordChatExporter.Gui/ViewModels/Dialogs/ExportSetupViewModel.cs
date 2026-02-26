@@ -63,6 +63,9 @@ public partial class ExportSetupViewModel(
     public partial string? MessageFilterValue { get; set; }
 
     [ObservableProperty]
+    public partial bool IsReverseMessageOrder { get; set; }
+
+    [ObservableProperty]
     public partial bool ShouldFormatMarkdown { get; set; }
 
     [ObservableProperty]
@@ -73,9 +76,6 @@ public partial class ExportSetupViewModel(
 
     [ObservableProperty]
     public partial string? AssetsDirPath { get; set; }
-
-    [ObservableProperty]
-    public partial bool ShouldReverseMessageOrder { get; set; }
 
     [ObservableProperty]
     public partial bool IsAdvancedSectionDisplayed { get; set; }
@@ -109,11 +109,11 @@ public partial class ExportSetupViewModel(
         SelectedFormat = settingsService.LastExportFormat;
         PartitionLimitValue = settingsService.LastPartitionLimitValue;
         MessageFilterValue = settingsService.LastMessageFilterValue;
+        IsReverseMessageOrder = settingsService.LastIsReverseMessageOrder;
         ShouldFormatMarkdown = settingsService.LastShouldFormatMarkdown;
         ShouldDownloadAssets = settingsService.LastShouldDownloadAssets;
         ShouldReuseAssets = settingsService.LastShouldReuseAssets;
         AssetsDirPath = settingsService.LastAssetsDirPath;
-        ShouldReverseMessageOrder = settingsService.LastIsReverseMessageOrder;
 
         // Show the "advanced options" section by default if any
         // of the advanced options are set to non-default values.
@@ -125,7 +125,7 @@ public partial class ExportSetupViewModel(
             || ShouldDownloadAssets
             || ShouldReuseAssets
             || !string.IsNullOrWhiteSpace(AssetsDirPath)
-            || ShouldReverseMessageOrder;
+            || IsReverseMessageOrder;
     }
 
     [RelayCommand]
@@ -189,11 +189,11 @@ public partial class ExportSetupViewModel(
         settingsService.LastExportFormat = SelectedFormat;
         settingsService.LastPartitionLimitValue = PartitionLimitValue;
         settingsService.LastMessageFilterValue = MessageFilterValue;
+        settingsService.LastIsReverseMessageOrder = IsReverseMessageOrder;
         settingsService.LastShouldFormatMarkdown = ShouldFormatMarkdown;
         settingsService.LastShouldDownloadAssets = ShouldDownloadAssets;
         settingsService.LastShouldReuseAssets = ShouldReuseAssets;
         settingsService.LastAssetsDirPath = AssetsDirPath;
-        settingsService.LastIsReverseMessageOrder = ShouldReverseMessageOrder;
 
         Close(true);
     }

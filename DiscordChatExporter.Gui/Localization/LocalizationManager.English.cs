@@ -104,6 +104,9 @@ public partial class LocalizationManager
             [nameof(MessageFilterLabel)] = "Message filter",
             [nameof(MessageFilterTooltip)] =
                 "Only include messages that satisfy this filter (e.g. 'from:foo#1234' or 'has:image'). See the documentation for more info.",
+            [nameof(ReverseMessageOrderLabel)] = "Reverse message order",
+            [nameof(ReverseMessageOrderTooltip)] =
+                "Export messages in reverse chronological order (newest first)",
             [nameof(FormatMarkdownLabel)] = "Format markdown",
             [nameof(FormatMarkdownTooltip)] =
                 "Process markdown, mentions, and other special tokens",
@@ -116,9 +119,6 @@ public partial class LocalizationManager
             [nameof(AssetsDirPathLabel)] = "Assets directory path",
             [nameof(AssetsDirPathTooltip)] =
                 "Download assets to this directory. If not specified, the asset directory path will be derived from the output path.",
-            [nameof(ReverseMessageOrderLabel)] = "Reverse message order",
-            [nameof(ReverseMessageOrderTooltip)] =
-                "Export messages in reverse chronological order (newest first)",
             [nameof(AdvancedOptionsTooltip)] = "Toggle advanced options",
             [nameof(ExportButton)] = "EXPORT",
             // Common buttons

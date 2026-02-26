@@ -564,6 +564,20 @@ public class DiscordClient(
         }
     }
 
+    private async ValueTask<Message?> TryGetFirstMessageAsync(
+        Snowflake channelId,
+        Snowflake? after = null,
+        Snowflake? before = null,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var message = await TryGetLastMessageAsync(channelId, before, cancellationToken);
+        if (message is null || message.Timestamp < after?.ToDate())
+            return null;
+
+        return message;
+    }
+
     private async ValueTask<Message?> TryGetLastMessageAsync(
         Snowflake channelId,
         Snowflake? before = null,
@@ -578,20 +592,6 @@ public class DiscordClient(
 
         var response = await GetJsonResponseAsync(url, cancellationToken);
         return response.EnumerateArray().Select(Message.Parse).LastOrDefault();
-    }
-
-    private async ValueTask<Message?> TryGetFirstMessageAsync(
-        Snowflake channelId,
-        Snowflake? after = null,
-        Snowflake? before = null,
-        CancellationToken cancellationToken = default
-    )
-    {
-        var message = await TryGetLastMessageAsync(channelId, before, cancellationToken);
-        if (message is null || message.Timestamp < after?.ToDate())
-            return null;
-
-        return message;
     }
 
     public async IAsyncEnumerable<Message> GetMessagesAsync(

@@ -135,6 +135,8 @@ public partial class LocalizationManager
     public string PartitionLimitTooltip => Get();
     public string MessageFilterLabel => Get();
     public string MessageFilterTooltip => Get();
+    public string ReverseMessageOrderLabel => Get();
+    public string ReverseMessageOrderTooltip => Get();
     public string FormatMarkdownLabel => Get();
     public string FormatMarkdownTooltip => Get();
     public string DownloadAssetsLabel => Get();
@@ -143,8 +145,6 @@ public partial class LocalizationManager
     public string ReuseAssetsTooltip => Get();
     public string AssetsDirPathLabel => Get();
     public string AssetsDirPathTooltip => Get();
-    public string ReverseMessageOrderLabel => Get();
-    public string ReverseMessageOrderTooltip => Get();
     public string AdvancedOptionsTooltip => Get();
     public string ExportButton => Get();
 

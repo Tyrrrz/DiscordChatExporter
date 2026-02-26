@@ -83,6 +83,9 @@ public abstract class ExportCommandBase : DiscordCommandBase
     )]
     public int ParallelLimit { get; init; } = 1;
 
+    [CommandOption("reverse", Description = "How the messages should be ordered.")]
+    public bool IsReverseMessageOrder { get; init; } = false;
+
     [CommandOption(
         "markdown",
         Description = "Process markdown, mentions, and other special tokens."
@@ -130,9 +133,6 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
     [CommandOption("utc", Description = "Normalize all timestamps to UTC+0.")]
     public bool IsUtcNormalizationEnabled { get; init; } = false;
-
-    [CommandOption("reverse", Description = "How the messages should be ordered.")]
-    public bool IsReverseMessageOrder { get; init; } = false;
 
     [CommandOption(
         "fuck-russia",
@@ -270,10 +270,10 @@ public abstract class ExportCommandBase : DiscordCommandBase
                                         Before,
                                         PartitionLimit,
                                         MessageFilter,
+                                        IsReverseMessageOrder,
                                         ShouldFormatMarkdown,
                                         ShouldDownloadAssets,
                                         ShouldReuseAssets,
-                                        IsReverseMessageOrder,
                                         Locale,
                                         IsUtcNormalizationEnabled
                                     );

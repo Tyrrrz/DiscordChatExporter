@@ -33,13 +33,13 @@ public partial class ExportRequest
 
     public MessageFilter MessageFilter { get; }
 
+    public bool IsReverseMessageOrder { get; }
+
     public bool ShouldFormatMarkdown { get; }
 
     public bool ShouldDownloadAssets { get; }
 
     public bool ShouldReuseAssets { get; }
-
-    public bool IsReverseMessageOrder { get; }
 
     public string? Locale { get; }
 
@@ -57,10 +57,10 @@ public partial class ExportRequest
         Snowflake? before,
         PartitionLimit partitionLimit,
         MessageFilter messageFilter,
+        bool isReverseMessageOrder,
         bool shouldFormatMarkdown,
         bool shouldDownloadAssets,
         bool shouldReuseAssets,
-        bool isReverseMessageOrder,
         string? locale,
         bool isUtcNormalizationEnabled
     )
@@ -72,10 +72,10 @@ public partial class ExportRequest
         Before = before;
         PartitionLimit = partitionLimit;
         MessageFilter = messageFilter;
+        IsReverseMessageOrder = isReverseMessageOrder;
         ShouldFormatMarkdown = shouldFormatMarkdown;
         ShouldDownloadAssets = shouldDownloadAssets;
         ShouldReuseAssets = shouldReuseAssets;
-        IsReverseMessageOrder = isReverseMessageOrder;
         Locale = locale;
         IsUtcNormalizationEnabled = isUtcNormalizationEnabled;
 

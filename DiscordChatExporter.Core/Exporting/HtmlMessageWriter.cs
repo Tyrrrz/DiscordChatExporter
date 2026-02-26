@@ -27,6 +27,12 @@ internal class HtmlMessageWriter(Stream stream, ExportContext context, string th
         if (message.IsReplyLike)
             return false;
 
+        // In reverse mode, non-reply messages cannot join a group started by a reply-like
+        // message — in chronological order they would precede the reply and belong to a
+        // separate group.
+        if (Context.Request.IsReverseMessageOrder && _messageGroup[0].IsReplyLike)
+            return false;
+
         // Grouping for system notifications
         if (message.IsSystemNotification)
         {

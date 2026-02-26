@@ -113,7 +113,7 @@ public partial class ExportSetupViewModel(
         ShouldDownloadAssets = settingsService.LastShouldDownloadAssets;
         ShouldReuseAssets = settingsService.LastShouldReuseAssets;
         AssetsDirPath = settingsService.LastAssetsDirPath;
-        ShouldReverseMessageOrder = settingsService.LastIsMessageOrderReversed;
+        ShouldReverseMessageOrder = settingsService.LastIsReverseMessageOrder;
 
         // Show the "advanced options" section by default if any
         // of the advanced options are set to non-default values.
@@ -193,7 +193,7 @@ public partial class ExportSetupViewModel(
         settingsService.LastShouldDownloadAssets = ShouldDownloadAssets;
         settingsService.LastShouldReuseAssets = ShouldReuseAssets;
         settingsService.LastAssetsDirPath = AssetsDirPath;
-        settingsService.LastIsMessageOrderReversed = ShouldReverseMessageOrder;
+        settingsService.LastIsReverseMessageOrder = ShouldReverseMessageOrder;
 
         Close(true);
     }

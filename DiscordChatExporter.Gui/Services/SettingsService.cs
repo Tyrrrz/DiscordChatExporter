@@ -74,7 +74,7 @@ public partial class SettingsService()
     public partial string? LastAssetsDirPath { get; set; }
 
     [ObservableProperty]
-    public partial bool LastIsMessageOrderReversed { get; set; }
+    public partial bool LastIsReverseMessageOrder { get; set; }
 
     public override void Save()
     {

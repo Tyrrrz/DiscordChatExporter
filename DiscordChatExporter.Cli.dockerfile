@@ -15,6 +15,7 @@ WORKDIR /tmp/app
 COPY favicon.ico .
 COPY NuGet.config .
 COPY Directory.Build.props .
+COPY Directory.Packages.props .
 COPY DiscordChatExporter.Core DiscordChatExporter.Core
 COPY DiscordChatExporter.Cli DiscordChatExporter.Cli
 

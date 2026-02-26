@@ -197,11 +197,6 @@ public abstract class ExportCommandBase : DiscordCommandBase
             // have already been fetched.
             unwrappedChannels.RemoveAll(channel => channel.Kind == ChannelKind.GuildForum);
 
-            // Remove duplicate channels that may occur when a thread transitions from
-            // active to archived between the two API calls used to fetch threads.
-            // https://github.com/Tyrrrz/DiscordChatExporter/issues/1205
-            unwrappedChannels = unwrappedChannels.DistinctBy(c => c.Id).ToList();
-
             await console.Output.WriteLineAsync($"Fetched {fetchedThreadsCount} thread(s).");
         }
 

@@ -429,6 +429,11 @@ public class DiscordClient(
             .Where(c => before is null || c.MayHaveMessagesBefore(before.Value))
             .ToArray();
 
+        // Track yielded thread IDs to avoid duplicates that can occur when a thread transitions
+        // from active to archived between the two separate API calls used to fetch threads.
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/1205
+        var seenThreadIds = new HashSet<Snowflake>();
+
         // User accounts can only fetch threads using the search endpoint
         if (await ResolveTokenKindAsync(cancellationToken) == TokenKind.User)
         {
@@ -472,7 +477,8 @@ public class DiscordClient(
                                 break;
                             }
 
-                            yield return thread;
+                            if (seenThreadIds.Add(thread.Id))
+                                yield return thread;
                             currentOffset++;
                         }
 
@@ -511,7 +517,11 @@ public class DiscordClient(
                         .Pipe(parentsById.GetValueOrDefault);
 
                     if (filteredChannels.Contains(parent))
-                        yield return Channel.Parse(threadJson, parent);
+                    {
+                        var thread = Channel.Parse(threadJson, parent);
+                        if (seenThreadIds.Add(thread.Id))
+                            yield return thread;
+                    }
                 }
             }
 
@@ -547,12 +557,14 @@ public class DiscordClient(
                             )
                             {
                                 var thread = Channel.Parse(threadJson, channel);
-                                yield return thread;
 
                                 currentBefore = threadJson
                                     .GetProperty("thread_metadata")
                                     .GetProperty("archive_timestamp")
                                     .GetString();
+
+                                if (seenThreadIds.Add(thread.Id))
+                                    yield return thread;
                             }
 
                             if (!response.Value.GetProperty("has_more").GetBoolean())

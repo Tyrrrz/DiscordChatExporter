@@ -17,6 +17,7 @@ internal class HtmlMessageWriter(Stream stream, ExportContext context, string th
     private readonly HtmlMinifier _minifier = new();
     private readonly List<Message> _messageGroup = [];
 
+    // Note: in reverse order, last message is earlier than first message
     private bool CanJoinGroup(Message message)
     {
         // If the group is empty, any message can join it
@@ -25,12 +26,6 @@ internal class HtmlMessageWriter(Stream stream, ExportContext context, string th
 
         // Reply-like messages cannot join existing groups because they need to appear first
         if (message.IsReplyLike)
-            return false;
-
-        // In reverse mode, non-reply messages cannot join a group started by a reply-like
-        // message — in chronological order they would precede the reply and belong to a
-        // separate group.
-        if (Context.Request.IsReverseMessageOrder && _messageGroup[0].IsReplyLike)
             return false;
 
         // Grouping for system notifications

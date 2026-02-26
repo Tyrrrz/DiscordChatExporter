@@ -711,7 +711,8 @@ public class DiscordClient(
         if (firstMessage is null)
             yield break;
 
-        var newestMessage = default(Message);
+        // Keep track of the last message in range in order to calculate the progress
+        var lastMessage = default(Message);
         var currentBefore = before;
         while (true)
         {
@@ -723,12 +724,7 @@ public class DiscordClient(
 
             var response = await GetJsonResponseAsync(url, cancellationToken);
 
-            var messages = response
-                .EnumerateArray()
-                .Select(Message.Parse)
-                // Messages are returned from newest to oldest by the API, which is exactly
-                // the order we want for a reverse export — no reversal needed.
-                .ToArray();
+            var messages = response.EnumerateArray().Select(Message.Parse).ToArray();
 
             // Break if there are no messages (can happen if messages are deleted during execution)
             if (!messages.Any())
@@ -754,20 +750,17 @@ public class DiscordClient(
 
             foreach (var message in messages)
             {
-                // Stop if we've reached the 'after' boundary (exclusive, matching the 'after' API convention)
+                // Stop if we've reached the 'after' boundary
                 if (after is not null && (message.Id < after.Value || message.Id == after.Value))
                     yield break;
 
-                // Track the first (newest) message yielded as the upper bound for progress
-                newestMessage ??= message;
+                lastMessage ??= message;
 
-                // Report progress based on timestamps (from newest towards oldest)
+                // Report progress based on timestamps
                 if (progress is not null)
                 {
-                    var exportedDuration = (newestMessage.Timestamp - message.Timestamp).Duration();
-                    var totalDuration = (
-                        newestMessage.Timestamp - firstMessage.Timestamp
-                    ).Duration();
+                    var exportedDuration = (lastMessage.Timestamp - message.Timestamp).Duration();
+                    var totalDuration = (lastMessage.Timestamp - firstMessage.Timestamp).Duration();
 
                     progress.Report(
                         Percentage.FromFraction(
@@ -781,7 +774,6 @@ public class DiscordClient(
                 yield return message;
             }
 
-            // Advance the cursor to before the oldest message in this batch
             currentBefore = messages.Last().Id;
         }
     }

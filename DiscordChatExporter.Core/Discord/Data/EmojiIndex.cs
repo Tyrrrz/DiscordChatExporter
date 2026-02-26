@@ -8855,7 +8855,7 @@ internal static class EmojiIndex
         ["united_nations"] = "🇺🇳",
     };
 
-    public static IReadOnlyCollection<string> GetAllEmoji() => _toCodes.Keys;
+    public static IReadOnlyCollection<string> GetAllNames() => _toCodes.Keys;
 
     public static string? TryGetCode(string name) => _toCodes.GetValueOrDefault(name);
 

@@ -215,7 +215,7 @@ internal static partial class MarkdownParser
                     + string.Join(
                         "|",
                         EmojiIndex
-                            .GetAllEmoji()
+                            .GetAllNames()
                             .OrderByDescending(e => e.Length)
                             .Select(Regex.Escape)
                     )

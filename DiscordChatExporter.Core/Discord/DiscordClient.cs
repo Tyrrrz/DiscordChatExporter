@@ -520,6 +520,7 @@ public class DiscordClient(
                     if (filteredChannels.Contains(parent))
                     {
                         var thread = Channel.Parse(threadJson, parent);
+
                         if (seenThreadIds.Add(thread.Id))
                             yield return thread;
                     }

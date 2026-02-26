@@ -431,7 +431,7 @@ public class DiscordClient(
 
         // Track yielded thread IDs to avoid duplicates that can occur when a thread transitions
         // from active to archived between the two separate API calls used to fetch threads.
-        // https://github.com/Tyrrrz/DiscordChatExporter/issues/1205
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/1433
         var seenThreadIds = new HashSet<Snowflake>();
 
         // User accounts can only fetch threads using the search endpoint

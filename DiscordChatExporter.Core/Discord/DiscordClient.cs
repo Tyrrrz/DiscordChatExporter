@@ -670,6 +670,94 @@ public class DiscordClient(
         }
     }
 
+    public async IAsyncEnumerable<Message> GetMessagesInReverseAsync(
+        Snowflake channelId,
+        Snowflake? after = null,
+        Snowflake? before = null,
+        IProgress<Percentage>? progress = null,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default
+    )
+    {
+        // Get the newest message in the specified range to use as the starting point.
+        // This also snapshots the upper boundary, which means that messages posted after
+        // the export started will not appear in the output.
+        var firstMessage = await TryGetLastMessageAsync(channelId, before, cancellationToken);
+        if (firstMessage is null || firstMessage.Timestamp < after?.ToDate())
+            yield break;
+
+        // Use the same 'before' boundary as the initial cursor so that 'firstMessage' is
+        // included in the first batch (the API returns messages with ID < 'before').
+        var currentBefore = before;
+        while (true)
+        {
+            var url = new UrlBuilder()
+                .SetPath($"channels/{channelId}/messages")
+                .SetQueryParameter("limit", "100")
+                .SetQueryParameter("before", currentBefore?.ToString())
+                .Build();
+
+            var response = await GetJsonResponseAsync(url, cancellationToken);
+
+            var messages = response
+                .EnumerateArray()
+                .Select(Message.Parse)
+                // Messages are returned from newest to oldest by the API, which is exactly
+                // the order we want for a reverse export — no reversal needed.
+                .ToArray();
+
+            // Break if there are no messages (can happen if messages are deleted during execution)
+            if (!messages.Any())
+                yield break;
+
+            // If all messages are empty, make sure that it's not because the bot account doesn't
+            // have the Message Content Intent enabled.
+            // https://github.com/Tyrrrz/DiscordChatExporter/issues/1106#issuecomment-1741548959
+            if (
+                messages.All(m => m.IsEmpty)
+                && await ResolveTokenKindAsync(cancellationToken) == TokenKind.Bot
+            )
+            {
+                var application = await GetApplicationAsync(cancellationToken);
+                if (!application.IsMessageContentIntentEnabled)
+                {
+                    throw new DiscordChatExporterException(
+                        "Provided bot account does not have the Message Content Intent enabled.",
+                        true
+                    );
+                }
+            }
+
+            foreach (var message in messages)
+            {
+                // Stop if we've reached the 'after' boundary (exclusive, matching the 'after' API convention)
+                if (after is not null && (message.Id < after.Value || message.Id == after.Value))
+                    yield break;
+
+                // Report progress based on timestamps (from newest towards oldest)
+                if (progress is not null)
+                {
+                    var exportedDuration = (firstMessage.Timestamp - message.Timestamp).Duration();
+                    var totalDuration = after is not null
+                        ? (firstMessage.Timestamp - after.Value.ToDate()).Duration()
+                        : exportedDuration;
+
+                    progress.Report(
+                        Percentage.FromFraction(
+                            totalDuration > TimeSpan.Zero
+                                ? Math.Min(1.0, exportedDuration / totalDuration)
+                                : 1
+                        )
+                    );
+                }
+
+                yield return message;
+            }
+
+            // Advance the cursor to before the oldest message in this batch
+            currentBefore = messages.Last().Id;
+        }
+    }
+
     public async IAsyncEnumerable<User> GetMessageReactionsAsync(
         Snowflake channelId,
         Snowflake messageId,

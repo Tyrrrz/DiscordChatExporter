@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord;
@@ -65,17 +64,27 @@ public class ChannelExporter(DiscordClient discord)
             );
         }
 
-        var fetchedMessages = new List<Message>();
+        // Choose the message stream based on the requested order.
+        // For reverse order, the Discord API's natural response order (newest first) is used
+        // directly, so no in-memory buffering or additional reversal is required.
+        var messageStream =
+            request.MessageOrder == MessageOrder.Reverse
+                ? discord.GetMessagesInReverseAsync(
+                    request.Channel.Id,
+                    request.After,
+                    request.Before,
+                    progress,
+                    cancellationToken
+                )
+                : discord.GetMessagesAsync(
+                    request.Channel.Id,
+                    request.After,
+                    request.Before,
+                    progress,
+                    cancellationToken
+                );
 
-        await foreach (
-            var message in discord.GetMessagesAsync(
-                request.Channel.Id,
-                request.After,
-                request.Before,
-                progress,
-                cancellationToken
-            )
-        )
+        await foreach (var message in messageStream)
         {
             try
             {
@@ -83,8 +92,9 @@ public class ChannelExporter(DiscordClient discord)
                 foreach (var user in message.GetReferencedUsers())
                     await context.PopulateMemberAsync(user, cancellationToken);
 
+                // Export the message
                 if (request.MessageFilter.IsMatch(message))
-                    fetchedMessages.Add(message);
+                    await messageExporter.ExportMessageAsync(message, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -98,12 +108,5 @@ public class ChannelExporter(DiscordClient discord)
                 );
             }
         }
-
-        // Reverse messages if requested
-        if (request.MessageOrder == MessageOrder.Reverse)
-            fetchedMessages.Reverse();
-
-        foreach (var message in fetchedMessages)
-            await messageExporter.ExportMessageAsync(message, cancellationToken);
     }
 }

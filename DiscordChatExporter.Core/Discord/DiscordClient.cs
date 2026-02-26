@@ -479,6 +479,7 @@ public class DiscordClient(
 
                             if (seenThreadIds.Add(thread.Id))
                                 yield return thread;
+
                             currentOffset++;
                         }
 

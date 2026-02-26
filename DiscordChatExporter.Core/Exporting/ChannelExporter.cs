@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord;
@@ -64,6 +65,8 @@ public class ChannelExporter(DiscordClient discord)
             );
         }
 
+        var fetchedMessages = new List<Message>();
+
         await foreach (
             var message in discord.GetMessagesAsync(
                 request.Channel.Id,
@@ -80,9 +83,8 @@ public class ChannelExporter(DiscordClient discord)
                 foreach (var user in message.GetReferencedUsers())
                     await context.PopulateMemberAsync(user, cancellationToken);
 
-                // Export the message
                 if (request.MessageFilter.IsMatch(message))
-                    await messageExporter.ExportMessageAsync(message, cancellationToken);
+                    fetchedMessages.Add(message);
             }
             catch (Exception ex)
             {
@@ -96,5 +98,12 @@ public class ChannelExporter(DiscordClient discord)
                 );
             }
         }
+
+        // Reverse messages if requested
+        if (request.MessageOrder == MessageOrder.Reverse)
+            fetchedMessages.Reverse();
+
+        foreach (var message in fetchedMessages)
+            await messageExporter.ExportMessageAsync(message, cancellationToken);
     }
 }

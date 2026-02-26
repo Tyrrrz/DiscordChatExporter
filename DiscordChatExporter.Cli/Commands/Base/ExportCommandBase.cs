@@ -132,6 +132,14 @@ public abstract class ExportCommandBase : DiscordCommandBase
     public bool IsUtcNormalizationEnabled { get; init; } = false;
 
     [CommandOption(
+        "order",
+        Description = "Chronological order of messages. "
+            + "Use 'chronological' for oldest-first (default) or 'reverse' for newest-first.",
+        Converter = typeof(MessageOrderBindingConverter)
+    )]
+    public MessageOrder MessageOrder { get; init; } = MessageOrder.Chronological;
+
+    [CommandOption(
         "fuck-russia",
         EnvironmentVariable = "FUCK_RUSSIA",
         Description = "Don't print the Support Ukraine message to the console.",
@@ -271,7 +279,8 @@ public abstract class ExportCommandBase : DiscordCommandBase
                                         ShouldDownloadAssets,
                                         ShouldReuseAssets,
                                         Locale,
-                                        IsUtcNormalizationEnabled
+                                        IsUtcNormalizationEnabled,
+                                        MessageOrder
                                     );
 
                                     await Exporter.ExportChannelAsync(

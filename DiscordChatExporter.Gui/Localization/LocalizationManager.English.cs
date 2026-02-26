@@ -116,6 +116,9 @@ public partial class LocalizationManager
             [nameof(AssetsDirPathLabel)] = "Assets directory path",
             [nameof(AssetsDirPathTooltip)] =
                 "Download assets to this directory. If not specified, the asset directory path will be derived from the output path.",
+            [nameof(ReverseMessageOrderLabel)] = "Reverse message order",
+            [nameof(ReverseMessageOrderTooltip)] =
+                "Export messages in reverse chronological order (newest first)",
             [nameof(AdvancedOptionsTooltip)] = "Toggle advanced options",
             [nameof(ExportButton)] = "EXPORT",
             // Common buttons

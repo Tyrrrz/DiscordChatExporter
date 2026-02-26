@@ -143,6 +143,8 @@ public partial class LocalizationManager
     public string ReuseAssetsTooltip => Get();
     public string AssetsDirPathLabel => Get();
     public string AssetsDirPathTooltip => Get();
+    public string ReverseMessageOrderLabel => Get();
+    public string ReverseMessageOrderTooltip => Get();
     public string AdvancedOptionsTooltip => Get();
     public string ExportButton => Get();
 

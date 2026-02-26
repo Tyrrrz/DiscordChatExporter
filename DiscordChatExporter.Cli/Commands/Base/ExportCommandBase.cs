@@ -84,7 +84,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
     public int ParallelLimit { get; init; } = 1;
 
     [CommandOption("reverse", Description = "How the messages should be ordered.")]
-    public bool IsReverseMessageOrder { get; init; } = false;
+    public bool IsReverseMessageOrder { get; init; }
 
     [CommandOption(
         "markdown",

@@ -17,9 +17,7 @@
     <PackageReference Include="GitHubActionsTestLogger" PrivateAssets="all" />
     <PackageReference Include="JsonExtensions" />
     <PackageReference Include="Microsoft.Extensions.Configuration" />
-    <PackageReference
-      Include="Microsoft.Extensions.Configuration.EnvironmentVariables"
-    />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit" />

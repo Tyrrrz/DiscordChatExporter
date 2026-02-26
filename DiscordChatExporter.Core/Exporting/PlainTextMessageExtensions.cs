@@ -23,13 +23,11 @@ internal static class PlainTextMessageExtensions
                     : "Removed a recipient.",
 
                 MessageKind.Call =>
-                    $"Started a call that lasted {
-                        message
+                    $"Started a call that lasted {message
                             .CallEndedTimestamp?
                             .Pipe(t => t - message.Timestamp)
                             .Pipe(t => t.TotalMinutes)
-                            .ToString("n0", CultureInfo.InvariantCulture) ?? "0"
-                    } minutes.",
+                            .ToString("n0", CultureInfo.InvariantCulture) ?? "0"} minutes.",
 
                 MessageKind.ChannelNameChange => !string.IsNullOrWhiteSpace(message.Content)
                     ? $"Changed the channel name: {message.Content}"

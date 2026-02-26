@@ -700,15 +700,18 @@ public class DiscordClient(
         [EnumeratorCancellation] CancellationToken cancellationToken = default
     )
     {
-        // Get the last message in the specified range (i.e. the newest one) to use as the
-        // starting point. This also snapshots the upper boundary, which means that messages
-        // posted after the export started will not appear in the output.
-        var lastMessage = await TryGetLastMessageAsync(channelId, before, cancellationToken);
-        if (lastMessage is null || lastMessage.Timestamp < after?.ToDate())
+        // Get the first message (oldest) in the range to use as the lower bound for
+        // progress calculation.
+        var firstMessage = await TryGetFirstMessageAsync(
+            channelId,
+            after,
+            before,
+            cancellationToken
+        );
+        if (firstMessage is null)
             yield break;
 
-        // Use the same 'before' boundary as the initial cursor so that 'lastMessage' is
-        // included in the first batch (the API returns messages with ID < 'before').
+        var newestMessage = default(Message);
         var currentBefore = before;
         while (true)
         {
@@ -755,13 +758,16 @@ public class DiscordClient(
                 if (after is not null && (message.Id < after.Value || message.Id == after.Value))
                     yield break;
 
+                // Track the first (newest) message yielded as the upper bound for progress
+                newestMessage ??= message;
+
                 // Report progress based on timestamps (from newest towards oldest)
                 if (progress is not null)
                 {
-                    var exportedDuration = (lastMessage.Timestamp - message.Timestamp).Duration();
-                    var totalDuration = after is not null
-                        ? (lastMessage.Timestamp - after.Value.ToDate()).Duration()
-                        : exportedDuration;
+                    var exportedDuration = (newestMessage.Timestamp - message.Timestamp).Duration();
+                    var totalDuration = (
+                        newestMessage.Timestamp - firstMessage.Timestamp
+                    ).Duration();
 
                     progress.Report(
                         Percentage.FromFraction(

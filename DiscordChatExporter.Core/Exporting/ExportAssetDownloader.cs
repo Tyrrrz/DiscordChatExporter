@@ -114,7 +114,7 @@ internal partial class ExportAssetDownloader
     private static string GetFileNameFromUrl(string url) =>
         GetFileNameFromUrl(
             url,
-            // 16 chars = 64 bits, negligible collision probability even with millions of files
+            // 16 chars = 64 bits, reaches 1% collision probability at ~609 million files
             SHA256
                 .HashData(Encoding.UTF8.GetBytes(NormalizeUrl(url)))
                 .Pipe(Convert.ToHexStringLower)

@@ -104,7 +104,7 @@ public partial class LocalizationManager
             [nameof(MessageFilterLabel)] = "Message filter",
             [nameof(MessageFilterTooltip)] =
                 "Only include messages that satisfy this filter (e.g. 'from:foo#1234' or 'has:image'). See the documentation for more info.",
-            [nameof(ReverseMessageOrderLabel)] = "Reverse message order",
+            [nameof(ReverseMessageOrderLabel)] = "Reverse messages",
             [nameof(ReverseMessageOrderTooltip)] =
                 "Export messages in reverse chronological order (newest first)",
             [nameof(FormatMarkdownLabel)] = "Format markdown",

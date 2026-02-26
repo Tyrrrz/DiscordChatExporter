@@ -104,7 +104,7 @@ public partial class LocalizationManager
             [nameof(MessageFilterLabel)] = "Фільтр повідомлень",
             [nameof(MessageFilterTooltip)] =
                 "Включати лише повідомлення, що відповідають цьому фільтру (напр. 'from:foo#1234' або 'has:image'). Дивіться документацію для більш детальної інформації.",
-            [nameof(ReverseMessageOrderLabel)] = "Змінити порядок повідомлень",
+            [nameof(ReverseMessageOrderLabel)] = "Зворотній порядок повідомлень",
             [nameof(ReverseMessageOrderTooltip)] =
                 "Експортувати повідомлення у зворотному хронологічному порядку (найновіші спочатку)",
             [nameof(FormatMarkdownLabel)] = "Форматувати markdown",

@@ -76,8 +76,8 @@ internal partial class ExportAssetDownloader
         return SHA256
             .HashData(Encoding.UTF8.GetBytes(NormalizeUrl(url)))
             .Pipe(Convert.ToHexStringLower)
-            // 5 chars ought to be enough for anybody
-            .Truncate(5);
+            // 16 chars = 64 bits, negligible collision probability even with millions of files
+            .Truncate(16);
     }
 
     private static string GetFileNameFromUrl(string url)

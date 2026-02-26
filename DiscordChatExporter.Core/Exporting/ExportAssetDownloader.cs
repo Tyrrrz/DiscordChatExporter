@@ -128,6 +128,7 @@ internal partial class ExportAssetDownloader
             SHA256
                 .HashData(Encoding.UTF8.GetBytes(NormalizeUrl(url)))
                 .Pipe(Convert.ToHexStringLower)
+                // 5 chars = 20 bits, reaches 1% collision probability at ~145 files
                 .Truncate(5)
         );
 }

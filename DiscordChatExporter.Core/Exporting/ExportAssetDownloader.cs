@@ -85,15 +85,6 @@ internal partial class ExportAssetDownloader
         return uri.GetLeftPart(UriPartial.Path) + query;
     }
 
-    private static string GetUrlHash(string url)
-    {
-        return SHA256
-            .HashData(Encoding.UTF8.GetBytes(NormalizeUrl(url)))
-            .Pipe(Convert.ToHexStringLower)
-            // 16 chars = 64 bits, negligible collision probability even with millions of files
-            .Truncate(16);
-    }
-
     private static string GetFileNameFromUrl(string url, string urlHash)
     {
         // Try to extract the file name from URL
@@ -121,7 +112,14 @@ internal partial class ExportAssetDownloader
     }
 
     private static string GetFileNameFromUrl(string url) =>
-        GetFileNameFromUrl(url, GetUrlHash(url));
+        GetFileNameFromUrl(
+            url,
+            // 16 chars = 64 bits, negligible collision probability even with millions of files
+            SHA256
+                .HashData(Encoding.UTF8.GetBytes(NormalizeUrl(url)))
+                .Pipe(Convert.ToHexStringLower)
+                .Truncate(16)
+        );
 
     // Legacy naming used a 5-char hash, kept for backwards compatibility with existing exports
     private static string GetLegacyFileNameFromUrl(string url) =>

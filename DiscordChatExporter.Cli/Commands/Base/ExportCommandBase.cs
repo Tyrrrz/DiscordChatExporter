@@ -131,13 +131,8 @@ public abstract class ExportCommandBase : DiscordCommandBase
     [CommandOption("utc", Description = "Normalize all timestamps to UTC+0.")]
     public bool IsUtcNormalizationEnabled { get; init; } = false;
 
-    [CommandOption(
-        "order",
-        Description = "Chronological order of messages. "
-            + "Use 'chronological' for oldest-first (default) or 'reverse' for newest-first.",
-        Converter = typeof(MessageOrderBindingConverter)
-    )]
-    public MessageOrder MessageOrder { get; init; } = MessageOrder.Chronological;
+    [CommandOption("reverse", Description = "How the messages should be ordered.")]
+    public bool IsReverseMessageOrder { get; init; } = false;
 
     [CommandOption(
         "fuck-russia",
@@ -278,9 +273,9 @@ public abstract class ExportCommandBase : DiscordCommandBase
                                         ShouldFormatMarkdown,
                                         ShouldDownloadAssets,
                                         ShouldReuseAssets,
+                                        IsReverseMessageOrder,
                                         Locale,
-                                        IsUtcNormalizationEnabled,
-                                        MessageOrder
+                                        IsUtcNormalizationEnabled
                                     );
 
                                     await Exporter.ExportChannelAsync(

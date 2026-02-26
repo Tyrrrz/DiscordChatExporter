@@ -51,7 +51,7 @@ public class HtmlContentSpecs
     }
 
     [Fact]
-    public async Task I_can_export_a_channel_in_the_HTML_format_with_messages_in_reverse_order()
+    public async Task I_can_export_a_channel_in_the_HTML_format_in_the_reverse_order()
     {
         // Arrange
         using var file = TempFile.Create();
@@ -65,13 +65,13 @@ public class HtmlContentSpecs
             OutputPath = file.Path,
             Locale = "en-US",
             IsUtcNormalizationEnabled = true,
-            MessageOrder = MessageOrder.Reverse,
+            IsReverseMessageOrder = true,
         }.ExecuteAsync(new FakeConsole());
 
         var document = Html.Parse(await File.ReadAllTextAsync(file.Path));
         var messages = document.QuerySelectorAll("[data-message-id]").ToArray();
 
-        // Assert: messages should be in reverse chronological order
+        // Assert
         messages
             .Select(e => e.GetAttribute("data-message-id"))
             .Should()

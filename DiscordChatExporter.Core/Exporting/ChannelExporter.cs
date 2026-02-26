@@ -64,27 +64,23 @@ public class ChannelExporter(DiscordClient discord)
             );
         }
 
-        // Choose the message stream based on the requested order.
-        // For reverse order, the Discord API's natural response order (newest first) is used
-        // directly, so no in-memory buffering or additional reversal is required.
-        var messageStream =
-            request.MessageOrder != MessageOrder.Reverse
-                ? discord.GetMessagesAsync(
-                    request.Channel.Id,
-                    request.After,
-                    request.Before,
-                    progress,
-                    cancellationToken
-                )
-                : discord.GetMessagesInReverseAsync(
-                    request.Channel.Id,
-                    request.After,
-                    request.Before,
-                    progress,
-                    cancellationToken
-                );
+        var messages = !request.IsReverseMessageOrder
+            ? discord.GetMessagesAsync(
+                request.Channel.Id,
+                request.After,
+                request.Before,
+                progress,
+                cancellationToken
+            )
+            : discord.GetMessagesInReverseAsync(
+                request.Channel.Id,
+                request.After,
+                request.Before,
+                progress,
+                cancellationToken
+            );
 
-        await foreach (var message in messageStream)
+        await foreach (var message in messages)
         {
             try
             {

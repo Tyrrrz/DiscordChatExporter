@@ -51,7 +51,7 @@ public class JsonContentSpecs
     }
 
     [Fact]
-    public async Task I_can_export_a_channel_in_the_JSON_format_with_messages_in_reverse_order()
+    public async Task I_can_export_a_channel_in_the_JSON_format_in_the_reverse_order()
     {
         // Arrange
         using var file = TempFile.Create();
@@ -65,7 +65,7 @@ public class JsonContentSpecs
             OutputPath = file.Path,
             Locale = "en-US",
             IsUtcNormalizationEnabled = true,
-            MessageOrder = MessageOrder.Reverse,
+            IsReverseMessageOrder = true,
         }.ExecuteAsync(new FakeConsole());
 
         var messages = Json.Parse(await File.ReadAllTextAsync(file.Path))
@@ -73,7 +73,7 @@ public class JsonContentSpecs
             .EnumerateArray()
             .ToArray();
 
-        // Assert: messages should be in reverse chronological order
+        // Assert
         messages
             .Select(j => j.GetProperty("id").GetString())
             .Should()

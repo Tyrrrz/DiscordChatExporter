@@ -39,13 +39,13 @@ public partial class ExportRequest
 
     public bool ShouldReuseAssets { get; }
 
+    public bool IsReverseMessageOrder { get; }
+
     public string? Locale { get; }
 
     public CultureInfo? CultureInfo { get; }
 
     public bool IsUtcNormalizationEnabled { get; }
-
-    public MessageOrder MessageOrder { get; }
 
     public ExportRequest(
         Guild guild,
@@ -60,9 +60,9 @@ public partial class ExportRequest
         bool shouldFormatMarkdown,
         bool shouldDownloadAssets,
         bool shouldReuseAssets,
+        bool isReverseMessageOrder,
         string? locale,
-        bool isUtcNormalizationEnabled,
-        MessageOrder messageOrder = MessageOrder.Chronological
+        bool isUtcNormalizationEnabled
     )
     {
         Guild = guild;
@@ -75,9 +75,9 @@ public partial class ExportRequest
         ShouldFormatMarkdown = shouldFormatMarkdown;
         ShouldDownloadAssets = shouldDownloadAssets;
         ShouldReuseAssets = shouldReuseAssets;
+        IsReverseMessageOrder = isReverseMessageOrder;
         Locale = locale;
         IsUtcNormalizationEnabled = isUtcNormalizationEnabled;
-        MessageOrder = messageOrder;
 
         OutputFilePath = GetOutputBaseFilePath(Guild, Channel, outputPath, Format, After, Before);
 

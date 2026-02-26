@@ -278,11 +278,9 @@ public partial class DashboardViewModel : ViewModelBase
                             dialog.ShouldFormatMarkdown,
                             dialog.ShouldDownloadAssets,
                             dialog.ShouldReuseAssets,
+                            dialog.ShouldReverseMessageOrder,
                             _settingsService.Locale,
-                            _settingsService.IsUtcNormalizationEnabled,
-                            dialog.ShouldReverseMessageOrder
-                                ? MessageOrder.Reverse
-                                : MessageOrder.Chronological
+                            _settingsService.IsUtcNormalizationEnabled
                         );
 
                         await exporter.ExportChannelAsync(request, progress, cancellationToken);

@@ -223,54 +223,6 @@ public partial class DashboardViewModel : ViewModelBase
         }
     }
 
-    [RelayCommand]
-    private async Task ShowSetupIfSingleChannelAsync()
-    {
-        // Wait for any in-progress channel loading to complete
-        if (IsBusy)
-        {
-            var tcs = new TaskCompletionSource();
-
-            void Handler(object? _, System.ComponentModel.PropertyChangedEventArgs e)
-            {
-                if (e.PropertyName == nameof(IsBusy) && !IsBusy)
-                    tcs.TrySetResult();
-            }
-
-            PropertyChanged += Handler;
-
-            // Re-check after subscribing to avoid missing the transition
-            if (!IsBusy)
-            {
-                PropertyChanged -= Handler;
-            }
-            else
-            {
-                try
-                {
-                    await tcs.Task;
-                }
-                finally
-                {
-                    PropertyChanged -= Handler;
-                }
-            }
-        }
-
-        // Only auto-export when there is exactly one child-less (non-category) channel
-        if (
-            AvailableChannels is not { Count: 1 }
-            || AvailableChannels[0].Children.Count != 0
-            || AvailableChannels[0].Channel.IsCategory
-        )
-            return;
-
-        SelectedChannels.Clear();
-        SelectedChannels.Add(AvailableChannels[0]);
-
-        await ExportAsync();
-    }
-
     private bool CanExport() =>
         !IsBusy && _discord is not null && SelectedGuild is not null && SelectedChannels.Any();
 

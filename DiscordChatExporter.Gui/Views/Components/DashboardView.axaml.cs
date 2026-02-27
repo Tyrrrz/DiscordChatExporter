@@ -23,8 +23,20 @@ public partial class DashboardView : UserControl<DashboardViewModel>
         SelectionChangedEventArgs args
     ) => DataContext.PullChannelsCommand.Execute(null);
 
-    private void AvailableGuildsListBox_OnDoubleTapped(object? sender, TappedEventArgs args) =>
-        DataContext.ShowSetupIfSingleChannelCommand.Execute(null);
+    private void AvailableGuildsListBox_OnDoubleTapped(object? sender, TappedEventArgs args)
+    {
+        // Only works when there is exactly one non-category, child-less channel
+        if (
+            DataContext.AvailableChannels is not { Count: 1 }
+            || DataContext.AvailableChannels[0].Channel.IsCategory
+            || DataContext.AvailableChannels[0].Children.Count != 0
+        )
+            return;
+
+        DataContext.SelectedChannels.Clear();
+        DataContext.SelectedChannels.Add(DataContext.AvailableChannels[0]);
+        DataContext.ExportCommand.Execute(null);
+    }
 
     private void AvailableChannelsTreeView_OnSelectionChanged(
         object? sender,

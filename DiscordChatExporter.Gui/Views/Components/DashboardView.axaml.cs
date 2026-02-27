@@ -23,10 +23,9 @@ public partial class DashboardView : UserControl<DashboardViewModel>
         SelectionChangedEventArgs args
     ) => DataContext.PullChannelsCommand.Execute(null);
 
-    private void AvailableChannelsTreeView_OnDoubleTapped(object? sender, TappedEventArgs args)
+    private void ChannelGrid_OnDoubleTapped(object? sender, TappedEventArgs args)
     {
-        // Ensure the tap was on an actual channel item, not empty space in the tree
-        if (args.Source is not Control { DataContext: ChannelConnection channelConnection })
+        if (sender is not Control { DataContext: ChannelConnection channelConnection })
         {
             return;
         }

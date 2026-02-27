@@ -142,7 +142,6 @@
                 <Border Grid.Column="1">
                     <TreeView
                         x:Name="AvailableChannelsTreeView"
-                        DoubleTapped="AvailableChannelsTreeView_OnDoubleTapped"
                         ItemsSource="{Binding AvailableChannels}"
                         SelectedItems="{Binding SelectedChannels}"
                         SelectionChanged="AvailableChannelsTreeView_OnSelectionChanged"
@@ -161,7 +160,8 @@
                                 <Grid
                                     Background="Transparent"
                                     Classes.category="{Binding Channel.IsCategory}"
-                                    ColumnDefinitions="Auto,*,Auto">
+                                    ColumnDefinitions="Auto,*,Auto"
+                                    DoubleTapped="ChannelGrid_OnDoubleTapped">
                                     <Grid.Styles>
                                         <Style Selector="Grid">
                                             <Style Selector="^:not(.category)">

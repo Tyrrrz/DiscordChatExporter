@@ -127,6 +127,7 @@ jobs:
           dotnet publish ${{ matrix.app }}
           -p:Version=${{ github.ref_type == 'tag' && github.ref_name || format('999.9.9-ci-{0}', github.sha) }}
           -p:CSharpier_Bypass=true
+          -p:EncryptionSalt=${{ secrets.ENCRYPTION_SALT || 'HimalayanPinkSalt' }}
           -p:PublishMacOSBundle=${{ startsWith(matrix.rid, 'osx-') }}
           --output ${{ matrix.app }}/bin/publish/
           --configuration Release

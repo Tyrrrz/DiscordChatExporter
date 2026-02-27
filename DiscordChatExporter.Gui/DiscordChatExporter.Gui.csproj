@@ -9,6 +9,15 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <EncryptionSalt>HimalayanPinkSalt</EncryptionSalt>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Expose this property in code -->
+    <ProjectProperty Include="EncryptionSalt" />
+  </ItemGroup>
+
+  <PropertyGroup>
     <PublishMacOSBundle>false</PublishMacOSBundle>
   </PropertyGroup>
 
@@ -38,6 +47,7 @@
     <PackageReference Include="Material.Icons.Avalonia" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Onova" />
+    <PackageReference Include="ThisAssembly.Project" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

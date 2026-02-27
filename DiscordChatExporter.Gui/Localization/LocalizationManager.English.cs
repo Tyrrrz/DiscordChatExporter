@@ -52,8 +52,10 @@ public partial class LocalizationManager
             [nameof(AutoUpdateLabel)] = "Auto-update",
             [nameof(AutoUpdateTooltip)] = "Perform automatic updates on every launch",
             [nameof(PersistTokenLabel)] = "Persist token",
-            [nameof(PersistTokenTooltip)] =
-                "Save the last used token to a file so that it can be persisted between sessions",
+            [nameof(PersistTokenTooltip)] = """
+                Save the last used token to a file so that it can be persisted between sessions.
+                **Warning**: although the token is stored with encryption, it may still be recovered by an attacker who has access to your system.
+                """,
             [nameof(RateLimitPreferenceLabel)] = "Rate limit preference",
             [nameof(RateLimitPreferenceTooltip)] =
                 "Whether to respect advisory rate limits. If disabled, only hard rate limits (i.e. 429 responses) will be respected.",

@@ -50,6 +50,7 @@ public partial class SettingsService()
     public partial int ParallelLimit { get; set; } = 1;
 
     [ObservableProperty]
+    [JsonConverter(typeof(TokenEncryptionConverter))]
     public partial string? LastToken { get; set; }
 
     [ObservableProperty]

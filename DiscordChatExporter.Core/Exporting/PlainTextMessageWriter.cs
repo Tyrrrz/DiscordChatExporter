@@ -239,12 +239,9 @@ internal class PlainTextMessageWriter(Stream stream, ExportContext context)
             );
         }
 
-        if (forwardedMessage.Timestamp != DateTimeOffset.MinValue)
-        {
             await _writer.WriteLineAsync(
                 $"Originally sent: {Context.FormatDate(forwardedMessage.Timestamp)}"
             );
-        }
 
         await WriteAttachmentsAsync(forwardedMessage.Attachments, cancellationToken);
         await WriteEmbedsAsync(forwardedMessage.Embeds, cancellationToken);

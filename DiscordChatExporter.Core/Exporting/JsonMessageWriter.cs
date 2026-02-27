@@ -540,20 +540,18 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
             _writer.WriteStartObject("forwardedMessage");
 
             _writer.WriteString(
-                "content",
-                await FormatMarkdownAsync(message.ForwardedMessage.Content, cancellationToken)
-            );
-
-            _writer.WriteString(
                 "timestamp",
-                message.ForwardedMessage.Timestamp != DateTimeOffset.MinValue
-                    ? Context.NormalizeDate(message.ForwardedMessage.Timestamp)
-                    : null
+                    Context.NormalizeDate(message.ForwardedMessage.Timestamp)
             );
 
             _writer.WriteString(
                 "timestampEdited",
                 message.ForwardedMessage.EditedTimestamp?.Pipe(Context.NormalizeDate)
+            );
+            
+            _writer.WriteString(
+                "content",
+                await FormatMarkdownAsync(message.ForwardedMessage.Content, cancellationToken)
             );
 
             // Forwarded attachments

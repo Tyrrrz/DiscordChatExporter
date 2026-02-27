@@ -6,14 +6,17 @@ namespace DiscordChatExporter.Core.Discord.Data;
 
 // https://discord.com/developers/docs/resources/channel#message-object-message-reference-structure
 public record MessageReference(
+    MessageReferenceKind Kind,
     Snowflake? MessageId,
     Snowflake? ChannelId,
-    Snowflake? GuildId,
-    MessageReferenceKind Kind
-)
+    Snowflake? GuildId)
 {
     public static MessageReference Parse(JsonElement json)
     {
+        var kind =
+            json.GetPropertyOrNull("type")?.GetInt32OrNull()?.Pipe(t => (MessageReferenceKind)t)
+            ?? MessageReferenceKind.Default;
+        
         var messageId = json.GetPropertyOrNull("message_id")
             ?.GetNonWhiteSpaceStringOrNull()
             ?.Pipe(Snowflake.Parse);
@@ -26,10 +29,6 @@ public record MessageReference(
             ?.GetNonWhiteSpaceStringOrNull()
             ?.Pipe(Snowflake.Parse);
 
-        var kind =
-            json.GetPropertyOrNull("type")?.GetInt32OrNull()?.Pipe(t => (MessageReferenceKind)t)
-            ?? MessageReferenceKind.Default;
-
-        return new MessageReference(messageId, channelId, guildId, kind);
+        return new MessageReference(kind, messageId, channelId, guildId);
     }
 }

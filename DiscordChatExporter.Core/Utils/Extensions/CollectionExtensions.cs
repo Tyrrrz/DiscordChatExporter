@@ -24,4 +24,17 @@ public static class CollectionExtensions
             }
         }
     }
+    
+    extension<T>(IEnumerable<T?> source)
+        where T : struct
+    {
+        public IEnumerable<T> WhereNotNull()
+        {
+            foreach (var o in source)
+            {
+                if (o is not null)
+                    yield return o.Value;
+            }
+        }
+    }
 }

@@ -263,9 +263,8 @@
                     }
 
                     @* Forwarded message content *@
-                    @if (message.IsForwarded && message.ForwardedMessage is not null)
+                    @if (message is { IsForwarded: true, ForwardedMessage: not null })
                     {
-                        var fwd = message.ForwardedMessage;
                         <div class="chatlog__forwarded">
                             <div class="chatlog__forwarded-header">
                                 <svg class="chatlog__forwarded-icon">
@@ -275,18 +274,18 @@
                             </div>
 
                             @* Forwarded text content *@
-                            @if (!string.IsNullOrWhiteSpace(fwd.Content))
+                            @if (!string.IsNullOrWhiteSpace(message.ForwardedMessage.Content))
                             {
                                 <div class="chatlog__forwarded-content chatlog__markdown">
-                                    <span class="chatlog__markdown-preserve"><!--wmm:ignore-->@Html.Raw(await FormatMarkdownAsync(fwd.Content))<!--/wmm:ignore--></span>
+                                    <span class="chatlog__markdown-preserve"><!--wmm:ignore-->@Html.Raw(await FormatMarkdownAsync(message.ForwardedMessage.Content))<!--/wmm:ignore--></span>
                                 </div>
                             }
 
                             @* Forwarded attachments *@
-                            @if (fwd.Attachments.Any())
+                            @if (message.ForwardedMessage.Attachments.Any())
                             {
                                 <div class="chatlog__forwarded-attachments">
-                                    @foreach (var attachment in fwd.Attachments)
+                                    @foreach (var attachment in message.ForwardedMessage.Attachments)
                                     {
                                         @if (attachment.IsImage)
                                         {
@@ -327,7 +326,7 @@
                             }
 
                             @* Forwarded stickers *@
-                            @foreach (var sticker in fwd.Stickers)
+                            @foreach (var sticker in message.ForwardedMessage.Stickers)
                             {
                                 <div class="chatlog__sticker" title="@sticker.Name">
                                     @if (sticker.IsImage)
@@ -343,10 +342,10 @@
 
                             @* Forwarded timestamp *@
                             <div class="chatlog__forwarded-timestamp">
-                                <span title="@FormatDate(fwd.Timestamp, "f")">Originally sent: @FormatDate(fwd.Timestamp)</span>
-                                @if (fwd.EditedTimestamp is not null)
+                                <span title="@FormatDate(message.ForwardedMessage.Timestamp, "f")">Originally sent: @FormatDate(message.ForwardedMessage.Timestamp)</span>
+                                @if (message.ForwardedMessage.EditedTimestamp is not null)
                                 {
-                                    <span title="@FormatDate(fwd.EditedTimestamp.Value, "f")"> (edited)</span>
+                                    <span title="@FormatDate(message.ForwardedMessage.EditedTimestamp.Value, "f")"> (edited)</span>
                                 }
                             </div>
                         </div>

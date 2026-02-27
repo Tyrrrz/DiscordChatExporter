@@ -384,6 +384,72 @@
             font-weight: 500;
         }
 
+        .chatlog__components {
+            margin-top: 0.3rem;
+        }
+
+        .chatlog__action-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.3rem;
+        }
+
+        .chatlog__component-button {
+            display: inline-flex;
+            gap: 0.35rem;
+            align-items: center;
+            justify-content: center;
+            min-height: 2rem;
+            min-width: 3.75rem;
+            padding: 0 1rem;
+            border: 0;
+            border-radius: 3px;
+            font-family: inherit;
+            font-size: 0.875rem;
+            font-weight: 500;
+            line-height: 1.2;
+            text-decoration: none;
+            white-space: nowrap;
+            cursor: default;
+            box-sizing: border-box;
+        }
+
+        a.chatlog__component-button:hover {
+            text-decoration: none;
+            filter: brightness(0.95);
+        }
+
+        .chatlog__component-button--primary {
+            background-color: #5865f2;
+            color: #ffffff;
+        }
+
+        .chatlog__component-button--secondary {
+            background-color: @Themed("#4e5058", "#e3e5e8");
+            color: @Themed("#ffffff", "#313338");
+        }
+
+        .chatlog__component-button--success {
+            background-color: #248046;
+            color: #ffffff;
+        }
+
+        .chatlog__component-button--danger {
+            background-color: #da373c;
+            color: #ffffff;
+        }
+
+        .chatlog__component-button--link {
+            background-color: @Themed("#4e5058", "#97979f");
+            color: @Themed("#ffffff", "#2F3035");
+        }
+
+        .chatlog__component-button--premium {
+            background-color: #5865f2;
+            color: #ffffff;
+        }
+
         .chatlog__attachment {
             position: relative;
             width: fit-content;

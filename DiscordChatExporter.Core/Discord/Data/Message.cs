@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
+using DiscordChatExporter.Core.Discord.Data.Components;
 using DiscordChatExporter.Core.Discord.Data.Embeds;
 using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Reading;
@@ -21,6 +22,7 @@ public partial record Message(
     bool IsPinned,
     string Content,
     IReadOnlyList<Attachment> Attachments,
+    IReadOnlyList<ActionRowComponent> Components,
     IReadOnlyList<Embed> Embeds,
     IReadOnlyList<Sticker> Stickers,
     IReadOnlyList<Reaction> Reactions,
@@ -41,6 +43,7 @@ public partial record Message(
     public bool IsEmpty { get; } =
         string.IsNullOrWhiteSpace(Content)
         && !Attachments.Any()
+        && !Components.Any()
         && !Embeds.Any()
         && !Stickers.Any();
 
@@ -146,6 +149,14 @@ public partial record Message
                 .ToArray()
             ?? [];
 
+        var components =
+            json.GetPropertyOrNull("components")
+                ?.EnumerateArrayOrNull()
+                ?.Select(ActionRowComponent.Parse)
+                .WhereNotNull()
+                .ToArray()
+            ?? [];
+
         var embeds = NormalizeEmbeds(
             json.GetPropertyOrNull("embeds")?.EnumerateArrayOrNull()?.Select(Embed.Parse).ToArray()
                 ?? []
@@ -185,6 +196,7 @@ public partial record Message
             isPinned,
             content,
             attachments,
+            components,
             embeds,
             stickers,
             reactions,

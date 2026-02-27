@@ -3,6 +3,7 @@
 @using System.Linq
 @using System.Threading.Tasks
 @using DiscordChatExporter.Core.Discord.Data
+@using DiscordChatExporter.Core.Discord.Data.Components
 @using DiscordChatExporter.Core.Discord.Data.Embeds
 @using DiscordChatExporter.Core.Markdown.Parsing
 @using DiscordChatExporter.Core.Utils.Extensions
@@ -640,6 +641,61 @@
                                 </div>
                             </div>
                         }
+                    }
+
+                    @* Components *@
+                    @if (message.Components.Any(c => c.HasButtons))
+                    {
+                        <div class="chatlog__components">
+                            @foreach (var actionRow in message.Components.Where(c => c.HasButtons))
+                            {
+                                <div class="chatlog__action-row">
+                                    @foreach (var button in actionRow.Components)
+                                    {
+                                        var styleClass = button.Style switch {
+                                            ButtonStyle.Primary => "chatlog__component-button--primary",
+                                            ButtonStyle.Secondary => "chatlog__component-button--secondary",
+                                            ButtonStyle.Success => "chatlog__component-button--success",
+                                            ButtonStyle.Danger => "chatlog__component-button--danger",
+                                            ButtonStyle.Link => "chatlog__component-button--link",
+                                            ButtonStyle.Premium => "chatlog__component-button--premium",
+                                            _ => "chatlog__component-button--secondary"
+                                        };
+
+                                        var isUrlButton = button.IsUrlButton;
+
+                                        if (isUrlButton)
+                                        {
+                                            <a class="chatlog__component-button @styleClass" href="@button.Url" target="_blank" rel="noreferrer noopener">
+                                                @if (button.Emoji is not null)
+                                                {
+                                                    <img class="chatlog__emoji chatlog__emoji--small" alt="@button.Emoji.Name" src="@await ResolveAssetUrlAsync(button.Emoji.ImageUrl)" loading="lazy">
+                                                }
+
+                                                @if (!string.IsNullOrWhiteSpace(button.Label))
+                                                {
+                                                    <span>@button.Label</span>
+                                                }
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <button class="chatlog__component-button @styleClass" type="button" disabled>
+                                                @if (button.Emoji is not null)
+                                                {
+                                                    <img class="chatlog__emoji chatlog__emoji--small" alt="@button.Emoji.Name" src="@await ResolveAssetUrlAsync(button.Emoji.ImageUrl)" loading="lazy">
+                                                }
+
+                                                @if (!string.IsNullOrWhiteSpace(button.Label))
+                                                {
+                                                    <span>@button.Label</span>
+                                                }
+                                            </button>
+                                        }
+                                    }
+                                </div>
+                            }
+                        </div>
                     }
 
                     @* Stickers *@

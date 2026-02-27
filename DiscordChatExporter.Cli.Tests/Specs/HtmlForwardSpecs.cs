@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using AngleSharp.Dom;
 using DiscordChatExporter.Cli.Tests.Infra;
+using DiscordChatExporter.Cli.Tests.Utils.Extensions;
 using DiscordChatExporter.Core.Discord;
 using FluentAssertions;
 using Xunit;
@@ -19,6 +20,10 @@ public class HtmlForwardSpecs
         );
 
         // Assert
-        message.Text().Should().ContainAll("Forwarded", @"¯\_(ツ)_/¯", "December 29, 2025");
+        message
+            .Text()
+            .ReplaceWhiteSpace()
+            .Should()
+            .ContainAll("Forwarded", @"¯\_(ツ)_/¯", "12/29/2025 2:14 PM");
     }
 }

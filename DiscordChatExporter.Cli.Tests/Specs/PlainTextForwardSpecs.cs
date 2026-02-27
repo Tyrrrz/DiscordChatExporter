@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using DiscordChatExporter.Cli.Tests.Infra;
+using DiscordChatExporter.Cli.Tests.Utils.Extensions;
 using FluentAssertions;
 using Xunit;
 
@@ -14,6 +15,9 @@ public class PlainTextForwardSpecs
         var document = await ExportWrapper.ExportAsPlainTextAsync(ChannelIds.ForwardTestCases);
 
         // Assert
-        document.Should().ContainAll("{Forwarded Message}", @"¯\_(ツ)_/¯", "12/28/2025 10:52 PM");
+        document
+            .ReplaceWhiteSpace()
+            .Should()
+            .ContainAll("{Forwarded Message}", @"¯\_(ツ)_/¯", "12/28/2025 10:52 PM");
     }
 }

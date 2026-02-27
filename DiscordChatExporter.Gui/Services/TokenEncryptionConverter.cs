@@ -11,7 +11,6 @@ internal class TokenEncryptionConverter : JsonConverter<string?>
     private const string Prefix = "enc:";
     private const int MaxPaddingLength = 16;
 
-    // Hardcoded key — sufficient to avoid plain-text storage; not a strong security guarantee
     private static readonly byte[] Key = "DCE-Token-Key-v1"u8.ToArray();
 
     public override string? Read(

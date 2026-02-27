@@ -13,6 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Expose this property in code -->
     <ProjectProperty Include="EncryptionSalt" />
   </ItemGroup>
 

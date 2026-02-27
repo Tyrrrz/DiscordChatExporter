@@ -160,7 +160,8 @@
                                 <Grid
                                     Background="Transparent"
                                     Classes.category="{Binding Channel.IsCategory}"
-                                    ColumnDefinitions="Auto,*,Auto">
+                                    ColumnDefinitions="Auto,*,Auto"
+                                    DoubleTapped="ChannelGrid_OnDoubleTapped">
                                     <Grid.Styles>
                                         <Style Selector="Grid">
                                             <Style Selector="^:not(.category)">

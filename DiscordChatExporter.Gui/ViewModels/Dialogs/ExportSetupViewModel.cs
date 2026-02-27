@@ -12,15 +12,19 @@ using DiscordChatExporter.Core.Exporting.Filtering;
 using DiscordChatExporter.Core.Exporting.Partitioning;
 using DiscordChatExporter.Core.Utils.Extensions;
 using DiscordChatExporter.Gui.Framework;
+using DiscordChatExporter.Gui.Localization;
 using DiscordChatExporter.Gui.Services;
 
 namespace DiscordChatExporter.Gui.ViewModels.Dialogs;
 
 public partial class ExportSetupViewModel(
     DialogManager dialogManager,
-    SettingsService settingsService
+    SettingsService settingsService,
+    LocalizationManager localizationManager
 ) : DialogViewModelBase
 {
+    public LocalizationManager LocalizationManager { get; } = localizationManager;
+
     [ObservableProperty]
     public partial Guild? Guild { get; set; }
 
@@ -57,6 +61,9 @@ public partial class ExportSetupViewModel(
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(MessageFilter))]
     public partial string? MessageFilterValue { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsReverseMessageOrder { get; set; }
 
     [ObservableProperty]
     public partial bool ShouldFormatMarkdown { get; set; }
@@ -102,6 +109,7 @@ public partial class ExportSetupViewModel(
         SelectedFormat = settingsService.LastExportFormat;
         PartitionLimitValue = settingsService.LastPartitionLimitValue;
         MessageFilterValue = settingsService.LastMessageFilterValue;
+        IsReverseMessageOrder = settingsService.LastIsReverseMessageOrder;
         ShouldFormatMarkdown = settingsService.LastShouldFormatMarkdown;
         ShouldDownloadAssets = settingsService.LastShouldDownloadAssets;
         ShouldReuseAssets = settingsService.LastShouldReuseAssets;
@@ -116,7 +124,8 @@ public partial class ExportSetupViewModel(
             || !string.IsNullOrWhiteSpace(MessageFilterValue)
             || ShouldDownloadAssets
             || ShouldReuseAssets
-            || !string.IsNullOrWhiteSpace(AssetsDirPath);
+            || !string.IsNullOrWhiteSpace(AssetsDirPath)
+            || IsReverseMessageOrder;
     }
 
     [RelayCommand]
@@ -180,6 +189,7 @@ public partial class ExportSetupViewModel(
         settingsService.LastExportFormat = SelectedFormat;
         settingsService.LastPartitionLimitValue = PartitionLimitValue;
         settingsService.LastMessageFilterValue = MessageFilterValue;
+        settingsService.LastIsReverseMessageOrder = IsReverseMessageOrder;
         settingsService.LastShouldFormatMarkdown = ShouldFormatMarkdown;
         settingsService.LastShouldDownloadAssets = ShouldDownloadAssets;
         settingsService.LastShouldReuseAssets = ShouldReuseAssets;

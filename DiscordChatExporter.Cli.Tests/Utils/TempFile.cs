@@ -24,7 +24,7 @@ internal partial class TempFile
     {
         var dirPath = System.IO.Path.Combine(
             System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
-            ?? Directory.GetCurrentDirectory(),
+                ?? Directory.GetCurrentDirectory(),
             "Temp"
         );
 

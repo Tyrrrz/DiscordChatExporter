@@ -1,0 +1,43 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageVersion Include="AngleSharp" Version="1.4.0" />
+    <PackageVersion Include="AsyncImageLoader.Avalonia" Version="3.5.0" />
+    <PackageVersion Include="AsyncKeyedLock" Version="8.0.1" />
+    <PackageVersion Include="Avalonia" Version="11.3.11" />
+    <PackageVersion Include="Avalonia.Desktop" Version="11.3.11" />
+    <PackageVersion Include="Avalonia.Diagnostics" Version="11.3.11" />
+    <PackageVersion Include="CliFx" Version="2.3.6" />
+    <PackageVersion Include="Cogwheel" Version="2.1.0" />
+    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
+    <PackageVersion Include="CSharpier.MsBuild" Version="1.2.5" />
+    <PackageVersion Include="Deorcify" Version="1.1.0" />
+    <PackageVersion Include="ThisAssembly.Project" Version="2.1.2" />
+    <PackageVersion Include="DialogHost.Avalonia" Version="0.10.4" />
+    <PackageVersion Include="FluentAssertions" Version="8.8.0" />
+    <PackageVersion Include="GitHubActionsTestLogger" Version="3.0.1" />
+    <PackageVersion Include="Gress" Version="2.1.1" />
+    <PackageVersion Include="JsonExtensions" Version="1.2.0" />
+    <PackageVersion Include="Markdig" Version="1.0.0" />
+    <PackageVersion Include="Material.Avalonia" Version="3.9.2" />
+    <PackageVersion Include="Material.Icons.Avalonia" Version="2.2.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.2" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.2" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.2" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.2" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageVersion Include="Onova" Version="2.6.13" />
+    <PackageVersion Include="Polly" Version="8.6.5" />
+    <PackageVersion Include="RazorBlade" Version="0.11.0" />
+    <PackageVersion Include="Spectre.Console" Version="0.54.0" />
+    <PackageVersion Include="Superpower" Version="3.1.0" />
+    <PackageVersion Include="WebMarkupMin.Core" Version="2.20.1" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+    <PackageVersion Include="YoutubeExplode" Version="6.5.6" />
+  </ItemGroup>
+</Project>

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using CommunityToolkit.Mvvm.Input;
 using DiscordChatExporter.Gui.Framework;
+using DiscordChatExporter.Gui.Localization;
 using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.Utils.Extensions;
 using DiscordChatExporter.Gui.ViewModels.Components;
@@ -15,7 +16,8 @@ public partial class MainViewModel(
     DialogManager dialogManager,
     SnackbarManager snackbarManager,
     SettingsService settingsService,
-    UpdateService updateService
+    UpdateService updateService,
+    LocalizationManager localizationManager
 ) : ViewModelBase
 {
     public string Title { get; } = $"{Program.Name} v{Program.VersionString}";
@@ -28,14 +30,10 @@ public partial class MainViewModel(
             return;
 
         var dialog = viewModelManager.CreateMessageBoxViewModel(
-            "Thank you for supporting Ukraine!",
-            """
-            As Russia wages a genocidal war against my country, I'm grateful to everyone who continues to stand with Ukraine in our fight for freedom.
-
-            Click LEARN MORE to find ways that you can help.
-            """,
-            "LEARN MORE",
-            "CLOSE"
+            localizationManager.UkraineSupportTitle,
+            localizationManager.UkraineSupportMessage,
+            localizationManager.LearnMoreButton,
+            localizationManager.CloseButton
         );
 
         // Disable this message in the future
@@ -56,16 +54,10 @@ public partial class MainViewModel(
             return;
 
         var dialog = viewModelManager.CreateMessageBoxViewModel(
-            "Unstable build warning",
-            $"""
-            You're using a development build of {Program.Name}. These builds are not thoroughly tested and may contain bugs.
-
-            Auto-updates are disabled for development builds.
-
-            Click SEE RELEASES if you want to download a stable release instead.
-            """,
-            "SEE RELEASES",
-            "CLOSE"
+            localizationManager.UnstableBuildTitle,
+            string.Format(localizationManager.UnstableBuildMessage, Program.Name),
+            localizationManager.SeeReleasesButton,
+            localizationManager.CloseButton
         );
 
         if (await dialogManager.ShowDialogAsync(dialog) == true)
@@ -80,12 +72,18 @@ public partial class MainViewModel(
             if (updateVersion is null)
                 return;
 
-            snackbarManager.Notify($"Downloading update to {Program.Name} v{updateVersion}...");
+            snackbarManager.Notify(
+                string.Format(
+                    localizationManager.UpdateDownloadingMessage,
+                    Program.Name,
+                    updateVersion
+                )
+            );
             await updateService.PrepareUpdateAsync(updateVersion);
 
             snackbarManager.Notify(
-                "Update has been downloaded and will be installed when you exit",
-                "INSTALL NOW",
+                localizationManager.UpdateReadyMessage,
+                localizationManager.UpdateInstallNowButton,
                 () =>
                 {
                     updateService.FinalizeUpdate(true);
@@ -98,7 +96,7 @@ public partial class MainViewModel(
         catch
         {
             // Failure to update shouldn't crash the application
-            snackbarManager.Notify("Failed to perform application update");
+            snackbarManager.Notify(localizationManager.UpdateFailedMessage);
         }
     }
 

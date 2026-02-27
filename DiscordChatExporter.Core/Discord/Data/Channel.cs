@@ -69,7 +69,8 @@ public partial record Channel
         var guildId =
             json.GetPropertyOrNull("guild_id")
                 ?.GetNonWhiteSpaceStringOrNull()
-                ?.Pipe(Snowflake.Parse) ?? Guild.DirectMessages.Id;
+                ?.Pipe(Snowflake.Parse)
+            ?? Guild.DirectMessages.Id;
 
         var name =
             // Guild channel
@@ -96,7 +97,8 @@ public partial record Channel
         var isArchived =
             json.GetPropertyOrNull("thread_metadata")
                 ?.GetPropertyOrNull("archived")
-                ?.GetBooleanOrNull() ?? false;
+                ?.GetBooleanOrNull()
+            ?? false;
 
         var lastMessageId = json.GetPropertyOrNull("last_message_id")
             ?.GetNonWhiteSpaceStringOrNull()

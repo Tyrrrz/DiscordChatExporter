@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Utils.Extensions;
 using DiscordChatExporter.Gui.Framework;
+using DiscordChatExporter.Gui.Localization;
 using DiscordChatExporter.Gui.Models;
 using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.Utils;
@@ -16,12 +17,18 @@ public class SettingsViewModel : DialogViewModelBase
 
     private readonly DisposableCollector _eventRoot = new();
 
-    public SettingsViewModel(SettingsService settingsService)
+    public SettingsViewModel(
+        SettingsService settingsService,
+        LocalizationManager localizationManager
+    )
     {
         _settingsService = settingsService;
+        LocalizationManager = localizationManager;
 
         _eventRoot.Add(_settingsService.WatchAllProperties(OnAllPropertiesChanged));
     }
+
+    public LocalizationManager LocalizationManager { get; }
 
     public IReadOnlyList<ThemeVariant> AvailableThemes { get; } = Enum.GetValues<ThemeVariant>();
 
@@ -29,6 +36,14 @@ public class SettingsViewModel : DialogViewModelBase
     {
         get => _settingsService.Theme;
         set => _settingsService.Theme = value;
+    }
+
+    public IReadOnlyList<Language> AvailableLanguages { get; } = Enum.GetValues<Language>();
+
+    public Language Language
+    {
+        get => _settingsService.Language;
+        set => _settingsService.Language = value;
     }
 
     public bool IsAutoUpdateEnabled

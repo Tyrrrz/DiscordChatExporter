@@ -17,6 +17,7 @@ internal class HtmlMessageWriter(Stream stream, ExportContext context, string th
     private readonly HtmlMinifier _minifier = new();
     private readonly List<Message> _messageGroup = [];
 
+    // Note: in reverse order, last message appears earlier than the first message
     private bool CanJoinGroup(Message message)
     {
         // If the group is empty, any message can join it

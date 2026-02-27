@@ -9,7 +9,7 @@ internal static class ProcessExtensions
         public static void StartShellExecute(string path)
         {
             using var process = new Process();
-            process.StartInfo = new ProcessStartInfo { FileName = path, UseShellExecute = true };
+            process.StartInfo = new ProcessStartInfo(path) { UseShellExecute = true };
 
             process.Start();
         }

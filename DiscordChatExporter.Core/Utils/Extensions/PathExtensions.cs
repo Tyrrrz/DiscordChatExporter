@@ -6,6 +6,25 @@ namespace DiscordChatExporter.Core.Utils.Extensions;
 
 public static class PathExtensions
 {
+    // This is a union of invalid characters from Windows (NTFS/FAT32), Linux (ext4/XFS), and macOS (HFS+/APFS).
+    // We use this instead of Path.GetInvalidFileNameChars() because that only returns OS-specific characters,
+    // not filesystem-specific characters. It's possible to use, for example, an NTFS drive on Linux,
+    // which would make some additional characters invalid that are otherwise valid on Linux.
+    // https://github.com/Tyrrrz/DiscordChatExporter/issues/1452
+    private static readonly char[] InvalidFileNameChars =
+    [
+        '\0', // Null character - invalid on all filesystems
+        '/', // Path separator on Unix and Windows
+        '\\', // Path separator on Windows
+        ':', // Reserved on Windows (drive letters, NTFS streams)
+        '*', // Wildcard on Windows
+        '?', // Wildcard on Windows
+        '"', // Reserved on Windows
+        '<', // Redirection on Windows
+        '>', // Redirection on Windows
+        '|', // Pipe on Windows
+    ];
+
     extension(Path)
     {
         public static string EscapeFileName(string path)
@@ -13,7 +32,7 @@ public static class PathExtensions
             var buffer = new StringBuilder(path.Length);
 
             foreach (var c in path)
-                buffer.Append(!Path.GetInvalidFileNameChars().Contains(c) ? c : '_');
+                buffer.Append(!InvalidFileNameChars.Contains(c) ? c : '_');
 
             // File names cannot end with a dot on Windows
             // https://github.com/Tyrrrz/DiscordChatExporter/issues/977

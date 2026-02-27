@@ -138,6 +138,8 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                     cancellationToken
                 )
             );
+
+            _writer.WriteString("iconCanonicalUrl", embedAuthor.IconUrl);
         }
 
         _writer.WriteEndObject();
@@ -160,6 +162,8 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                     cancellationToken
                 )
             );
+
+            _writer.WriteString("canonicalUrl", embedImage.Url);
         }
 
         _writer.WriteNumber("width", embedImage.Width);
@@ -185,6 +189,8 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                     cancellationToken
                 )
             );
+
+            _writer.WriteString("canonicalUrl", embedVideo.Url);
         }
 
         _writer.WriteNumber("width", embedVideo.Width);
@@ -212,6 +218,8 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                     cancellationToken
                 )
             );
+
+            _writer.WriteString("iconCanonicalUrl", embedFooter.IconUrl);
         }
 
         _writer.WriteEndObject();

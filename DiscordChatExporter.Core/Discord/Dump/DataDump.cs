@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO.Compression;
+using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,17 +41,19 @@ public partial class DataDump
         CancellationToken cancellationToken = default
     )
     {
-        using var archive = ZipFile.OpenRead(zipFilePath);
+        await using var archive = await ZipFile.OpenReadAsync(zipFilePath, cancellationToken);
 
-        var entry = archive.GetEntry("messages/index.json");
-        if (entry is null)
-        {
-            throw new InvalidOperationException(
+        // Use case-insensitive search to accommodate for different data dump versions
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/1459
+        var entry =
+            archive.Entries.FirstOrDefault(e =>
+                e.FullName.Equals("messages/index.json", StringComparison.OrdinalIgnoreCase)
+            )
+            ?? throw new InvalidOperationException(
                 "Failed to locate the channel index inside the data package."
             );
-        }
 
-        await using var stream = entry.Open();
+        await using var stream = await entry.OpenAsync(cancellationToken);
         using var document = await JsonDocument.ParseAsync(stream, default, cancellationToken);
 
         return Parse(document.RootElement);

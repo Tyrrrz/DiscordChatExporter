@@ -33,6 +33,8 @@ public partial class ExportRequest
 
     public MessageFilter MessageFilter { get; }
 
+    public bool IsReverseMessageOrder { get; }
+
     public bool ShouldFormatMarkdown { get; }
 
     public bool ShouldDownloadAssets { get; }
@@ -55,6 +57,7 @@ public partial class ExportRequest
         Snowflake? before,
         PartitionLimit partitionLimit,
         MessageFilter messageFilter,
+        bool isReverseMessageOrder,
         bool shouldFormatMarkdown,
         bool shouldDownloadAssets,
         bool shouldReuseAssets,
@@ -69,6 +72,7 @@ public partial class ExportRequest
         Before = before;
         PartitionLimit = partitionLimit;
         MessageFilter = messageFilter;
+        IsReverseMessageOrder = isReverseMessageOrder;
         ShouldFormatMarkdown = shouldFormatMarkdown;
         ShouldDownloadAssets = shouldDownloadAssets;
         ShouldReuseAssets = shouldReuseAssets;
@@ -178,7 +182,8 @@ public partial class ExportRequest
                             ?? "",
                         "%b" => before
                             ?.ToDate()
-                            .ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) ?? "",
+                            .ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+                            ?? "",
                         "%d" => DateTimeOffset.Now.ToString(
                             "yyyy-MM-dd",
                             CultureInfo.InvariantCulture

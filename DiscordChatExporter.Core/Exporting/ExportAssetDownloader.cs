@@ -37,6 +37,28 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
         if (reuse && File.Exists(filePath))
             return _previousPathsByUrl[url] = filePath;
 
+        // Check for a file cached by the legacy naming scheme (5-char hash) and rename it
+        // to the new naming scheme to preserve backwards compatibility with existing exports
+        if (reuse)
+        {
+            var legacyFilePath = Path.Combine(workingDirPath, GetLegacyFileNameFromUrl(url));
+            if (File.Exists(legacyFilePath))
+            {
+                // Overwrite in case the destination file was created concurrently between our
+                // earlier existence check and this move operation
+                try
+                {
+                    File.Move(legacyFilePath, filePath, overwrite: true);
+                    return _previousPathsByUrl[url] = filePath;
+                }
+                catch (IOException)
+                {
+                    // The legacy file was moved or deleted concurrently or something else happened.
+                    // Upgrading old files is not crucial, so we can just move on.
+                }
+            }
+        }
+
         Directory.CreateDirectory(workingDirPath);
 
         await Http.ResiliencePipeline.ExecuteAsync(
@@ -56,34 +78,23 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
 
 internal partial class ExportAssetDownloader
 {
-    private static string GetUrlHash(string url)
+    private static string NormalizeUrl(string url)
     {
         // Remove signature parameters from Discord CDN URLs to normalize them
-        static string NormalizeUrl(string url)
-        {
-            var uri = new Uri(url);
-            if (!string.Equals(uri.Host, "cdn.discordapp.com", StringComparison.OrdinalIgnoreCase))
-                return url;
+        var uri = new Uri(url);
+        if (!string.Equals(uri.Host, "cdn.discordapp.com", StringComparison.OrdinalIgnoreCase))
+            return url;
 
-            var query = HttpUtility.ParseQueryString(uri.Query);
-            query.Remove("ex");
-            query.Remove("is");
-            query.Remove("hm");
+        var query = HttpUtility.ParseQueryString(uri.Query);
+        query.Remove("ex");
+        query.Remove("is");
+        query.Remove("hm");
 
-            return uri.GetLeftPart(UriPartial.Path) + query;
-        }
-
-        return SHA256
-            .HashData(Encoding.UTF8.GetBytes(NormalizeUrl(url)))
-            .Pipe(Convert.ToHexStringLower)
-            // 5 chars ought to be enough for anybody
-            .Truncate(5);
+        return uri.GetLeftPart(UriPartial.Path) + query;
     }
 
-    private static string GetFileNameFromUrl(string url)
+    private static string GetFileNameFromUrl(string url, string urlHash)
     {
-        var urlHash = GetUrlHash(url);
-
         // Try to extract the file name from URL
         var fileName = Regex.Match(url, @".+/([^?]*)").Groups[1].Value;
 
@@ -107,4 +118,25 @@ internal partial class ExportAssetDownloader
             fileNameWithoutExtension.Truncate(42) + '-' + urlHash + fileExtension
         );
     }
+
+    private static string GetFileNameFromUrl(string url) =>
+        GetFileNameFromUrl(
+            url,
+            // 16 chars = 64 bits, reaches 1% collision probability at ~609 million files
+            SHA256
+                .HashData(Encoding.UTF8.GetBytes(NormalizeUrl(url)))
+                .Pipe(Convert.ToHexStringLower)
+                .Truncate(16)
+        );
+
+    // Legacy naming used a 5-char hash, kept for backwards compatibility with existing exports
+    private static string GetLegacyFileNameFromUrl(string url) =>
+        GetFileNameFromUrl(
+            url,
+            SHA256
+                .HashData(Encoding.UTF8.GetBytes(NormalizeUrl(url)))
+                .Pipe(Convert.ToHexStringLower)
+                // 5 chars = 20 bits, reaches 1% collision probability at ~145 files
+                .Truncate(5)
+        );
 }

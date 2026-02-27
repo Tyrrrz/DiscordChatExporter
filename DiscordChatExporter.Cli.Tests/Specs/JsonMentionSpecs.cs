@@ -75,4 +75,21 @@ public class JsonMentionSpecs
         // Assert
         message.GetProperty("content").GetString().Should().Be("Role mention: @Role 1");
     }
+
+    [Fact]
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_thread_mention()
+    {
+        // Act
+        var message = await ExportWrapper.GetMessageAsJsonAsync(
+            ChannelIds.MentionTestCases,
+            Snowflake.Parse("1474874276828938290")
+        );
+
+        // Assert
+        message
+            .GetProperty("content")
+            .GetString()
+            .Should()
+            .Be("Thread mention: #Thread starting message");
+    }
 }

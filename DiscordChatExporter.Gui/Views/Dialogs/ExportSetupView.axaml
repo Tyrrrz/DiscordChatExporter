@@ -38,7 +38,7 @@
                 IsVisible="{Binding !IsSingleChannel}"
                 TextTrimming="CharacterEllipsis">
                 <Run Text="{Binding Channels.Count, FallbackValue=0, Mode=OneWay}" />
-                <Run Text="channels selected" />
+                <Run Text="{Binding LocalizationManager.ChannelsSelectedText}" />
             </TextBlock>
 
             <!--  Category and channel name (for single channel)  -->
@@ -69,64 +69,14 @@
                     <!--  Output path  -->
                     <TextBox
                         Margin="16,8"
-                        materialAssists:TextFieldAssist.Label="Output path"
+                        materialAssists:TextFieldAssist.Label="{Binding LocalizationManager.OutputPathLabel}"
                         Text="{Binding OutputPath}"
                         Theme="{DynamicResource FilledTextBox}">
                         <ToolTip.Tip>
-                            <TextBlock>
-                                <Run Text="Output file or directory path." />
-                                <LineBreak />
-                                <Run Text="If a directory is specified, file names will be generated automatically based on the channel names and export parameters." />
-                                <LineBreak />
-                                <Run Text="Directory paths must end with a slash to avoid ambiguity." />
-                                <LineBreak />
-                                <LineBreak />
-                                <Run Text="Available template tokens:" />
-                                <LineBreak />
-                                <Run Text=" " />
-                                <Run FontWeight="SemiBold" Text="%g" />
-                                <Run Text="— server ID" />
-                                <LineBreak />
-                                <Run Text=" " />
-                                <Run FontWeight="SemiBold" Text="%G" />
-                                <Run Text="— server name" />
-                                <LineBreak />
-                                <Run Text=" " />
-                                <Run FontWeight="SemiBold" Text="%t" />
-                                <Run Text="— category ID" />
-                                <LineBreak />
-                                <Run Text=" " />
-                                <Run FontWeight="SemiBold" Text="%T" />
-                                <Run Text="— category name" />
-                                <LineBreak />
-                                <Run Text=" " />
-                                <Run FontWeight="SemiBold" Text="%c" />
-                                <Run Text="— channel ID" />
-                                <LineBreak />
-                                <Run Text=" " />
-                                <Run FontWeight="SemiBold" Text="%C" />
-                                <Run Text="— channel name" />
-                                <LineBreak />
-                                <Run Text=" " />
-                                <Run FontWeight="SemiBold" Text="%p" />
-                                <Run Text="— channel position" />
-                                <LineBreak />
-                                <Run Text=" " />
-                                <Run FontWeight="SemiBold" Text="%P" />
-                                <Run Text="— category position" />
-                                <LineBreak />
-                                <Run Text=" " />
-                                <Run FontWeight="SemiBold" Text="%a" />
-                                <Run Text="— after date" />
-                                <LineBreak />
-                                <Run Text=" " />
-                                <Run FontWeight="SemiBold" Text="%b" />
-                                <Run Text="— before date" />
-                                <LineBreak />
-                                <Run Text=" " />
-                                <Run FontWeight="SemiBold" Text="%d" />
-                                <Run Text="— current date" />
-                            </TextBlock>
+                            <TextBlock
+                                MaxWidth="400"
+                                Inlines="{Binding LocalizationManager.OutputPathTooltip, Converter={x:Static converters:MarkdownToInlinesConverter.Instance}}"
+                                TextWrapping="Wrap" />
                         </ToolTip.Tip>
                         <TextBox.InnerRightContent>
                             <Button
@@ -146,11 +96,11 @@
                     <!--  Format  -->
                     <ComboBox
                         Margin="16,8"
-                        materialAssists:ComboBoxAssist.Label="Format"
+                        materialAssists:ComboBoxAssist.Label="{Binding LocalizationManager.FormatLabel}"
                         ItemsSource="{Binding AvailableFormats}"
                         SelectedItem="{Binding SelectedFormat}"
                         Theme="{DynamicResource MaterialFilledComboBox}"
-                        ToolTip.Tip="Export format">
+                        ToolTip.Tip="{Binding LocalizationManager.FormatTooltip}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Converter={x:Static converters:ExportFormatToStringConverter.Instance}}" />
@@ -166,9 +116,9 @@
                                 Grid.Row="0"
                                 Grid.Column="0"
                                 Margin="16,8,8,8"
-                                materialAssists:TextFieldAssist.Label="After (date)"
+                                materialAssists:TextFieldAssist.Label="{Binding LocalizationManager.AfterDateLabel}"
                                 SelectedDate="{Binding AfterDate}"
-                                ToolTip.Tip="Only include messages sent after this date">
+                                ToolTip.Tip="{Binding LocalizationManager.AfterDateTooltip}">
                                 <DatePicker.Styles>
                                     <Style Selector="DatePicker">
                                         <Style Selector="^ /template/ TextBox#DisplayTextBox">
@@ -181,9 +131,9 @@
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 Margin="8,8,16,8"
-                                materialAssists:TextFieldAssist.Label="Before (date)"
+                                materialAssists:TextFieldAssist.Label="{Binding LocalizationManager.BeforeDateLabel}"
                                 SelectedDate="{Binding BeforeDate}"
-                                ToolTip.Tip="Only include messages sent before this date">
+                                ToolTip.Tip="{Binding LocalizationManager.BeforeDateTooltip}">
                                 <DatePicker.Styles>
                                     <Style Selector="DatePicker">
                                         <Style Selector="^ /template/ TextBox#DisplayTextBox">
@@ -198,11 +148,11 @@
                                 Grid.Row="1"
                                 Grid.Column="0"
                                 Margin="16,8,8,8"
-                                materialAssists:TextFieldAssist.Label="After (time)"
+                                materialAssists:TextFieldAssist.Label="{Binding LocalizationManager.AfterTimeLabel}"
                                 ClockIdentifier="{x:Static utils:Internationalization.AvaloniaClockIdentifier}"
                                 IsEnabled="{Binding IsAfterDateSet}"
                                 SelectedTime="{Binding AfterTime}"
-                                ToolTip.Tip="Only include messages sent after this time">
+                                ToolTip.Tip="{Binding LocalizationManager.AfterTimeTooltip}">
                                 <TimePicker.Styles>
                                     <Style Selector="TimePicker">
                                         <Style Selector="^ /template/ TextBox#PART_DisplayTextBox">
@@ -215,11 +165,11 @@
                                 Grid.Row="1"
                                 Grid.Column="1"
                                 Margin="8,8,16,8"
-                                materialAssists:TextFieldAssist.Label="Before (time)"
+                                materialAssists:TextFieldAssist.Label="{Binding LocalizationManager.BeforeTimeLabel}"
                                 ClockIdentifier="{x:Static utils:Internationalization.AvaloniaClockIdentifier}"
                                 IsEnabled="{Binding IsBeforeDateSet}"
                                 SelectedTime="{Binding BeforeTime}"
-                                ToolTip.Tip="Only include messages sent before this time">
+                                ToolTip.Tip="{Binding LocalizationManager.BeforeTimeTooltip}">
                                 <TimePicker.Styles>
                                     <Style Selector="TimePicker">
                                         <Style Selector="^ /template/ TextBox#PART_DisplayTextBox">
@@ -233,25 +183,34 @@
                         <!--  Partitioning  -->
                         <TextBox
                             Margin="16,8"
-                            materialAssists:TextFieldAssist.Label="Partition limit"
+                            materialAssists:TextFieldAssist.Label="{Binding LocalizationManager.PartitionLimitLabel}"
                             Text="{Binding PartitionLimitValue}"
                             Theme="{DynamicResource FilledTextBox}"
-                            ToolTip.Tip="Split the output into partitions, each limited to the specified number of messages (e.g. '100') or file size (e.g. '10mb')" />
+                            ToolTip.Tip="{Binding LocalizationManager.PartitionLimitTooltip}" />
 
                         <!--  Filtering  -->
                         <TextBox
                             Margin="16,8"
-                            materialAssists:TextFieldAssist.Label="Message filter"
+                            materialAssists:TextFieldAssist.Label="{Binding LocalizationManager.MessageFilterLabel}"
                             Text="{Binding MessageFilterValue}"
                             Theme="{DynamicResource FilledTextBox}"
-                            ToolTip.Tip="Only include messages that satisfy this filter (e.g. 'from:foo#1234' or 'has:image'). See the documentation for more info." />
+                            ToolTip.Tip="{Binding LocalizationManager.MessageFilterTooltip}" />
+
+                        <!--  Reverse message order  -->
+                        <DockPanel
+                            Margin="16,8"
+                            LastChildFill="False"
+                            ToolTip.Tip="{Binding LocalizationManager.ReverseMessageOrderTooltip}">
+                            <TextBlock DockPanel.Dock="Left" Text="{Binding LocalizationManager.ReverseMessageOrderLabel}" />
+                            <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding IsReverseMessageOrder}" />
+                        </DockPanel>
 
                         <!--  Markdown formatting  -->
                         <DockPanel
                             Margin="16,8"
                             LastChildFill="False"
-                            ToolTip.Tip="Process markdown, mentions, and other special tokens">
-                            <TextBlock DockPanel.Dock="Left" Text="Format markdown" />
+                            ToolTip.Tip="{Binding LocalizationManager.FormatMarkdownTooltip}">
+                            <TextBlock DockPanel.Dock="Left" Text="{Binding LocalizationManager.FormatMarkdownLabel}" />
                             <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding ShouldFormatMarkdown}" />
                         </DockPanel>
 
@@ -259,8 +218,8 @@
                         <DockPanel
                             Margin="16,8"
                             LastChildFill="False"
-                            ToolTip.Tip="Download assets referenced by the export (user avatars, attached files, embedded images, etc.)">
-                            <TextBlock DockPanel.Dock="Left" Text="Download assets" />
+                            ToolTip.Tip="{Binding LocalizationManager.DownloadAssetsTooltip}">
+                            <TextBlock DockPanel.Dock="Left" Text="{Binding LocalizationManager.DownloadAssetsLabel}" />
                             <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding ShouldDownloadAssets}" />
                         </DockPanel>
 
@@ -269,19 +228,19 @@
                             Margin="16,8"
                             IsEnabled="{Binding ShouldDownloadAssets}"
                             LastChildFill="False"
-                            ToolTip.Tip="Reuse previously downloaded assets to avoid redundant requests">
-                            <TextBlock DockPanel.Dock="Left" Text="Reuse assets" />
+                            ToolTip.Tip="{Binding LocalizationManager.ReuseAssetsTooltip}">
+                            <TextBlock DockPanel.Dock="Left" Text="{Binding LocalizationManager.ReuseAssetsLabel}" />
                             <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding ShouldReuseAssets}" />
                         </DockPanel>
 
                         <!--  Assets path  -->
                         <TextBox
                             Margin="16,8"
-                            materialAssists:TextFieldAssist.Label="Assets directory path"
+                            materialAssists:TextFieldAssist.Label="{Binding LocalizationManager.AssetsDirPathLabel}"
                             IsEnabled="{Binding ShouldDownloadAssets}"
                             Text="{Binding AssetsDirPath}"
                             Theme="{DynamicResource FilledTextBox}"
-                            ToolTip.Tip="Download assets to this directory. If not specified, the asset directory path will be derived from the output path.">
+                            ToolTip.Tip="{Binding LocalizationManager.AssetsDirPathTooltip}">
                             <TextBox.InnerRightContent>
                                 <Button
                                     Margin="8,8,8,6"
@@ -310,7 +269,7 @@
                 Grid.Column="0"
                 IsChecked="{Binding IsAdvancedSectionDisplayed}"
                 Theme="{DynamicResource MaterialOutlineButton}"
-                ToolTip.Tip="Toggle advanced options">
+                ToolTip.Tip="{Binding LocalizationManager.AdvancedOptionsTooltip}">
                 <Button.Styles>
                     <Style Selector="ToggleButton">
                         <Setter Property="Content" Value="MORE" />
@@ -325,14 +284,14 @@
             <Button
                 Grid.Column="2"
                 Command="{Binding ConfirmCommand}"
-                Content="EXPORT"
+                Content="{Binding LocalizationManager.ExportButton}"
                 IsDefault="True"
                 Theme="{DynamicResource MaterialOutlineButton}" />
             <Button
                 Grid.Column="3"
                 Margin="16,0,0,0"
                 Command="{Binding CloseCommand}"
-                Content="CANCEL"
+                Content="{Binding LocalizationManager.CancelButton}"
                 IsCancel="True"
                 Theme="{DynamicResource MaterialOutlineButton}" />
         </Grid>

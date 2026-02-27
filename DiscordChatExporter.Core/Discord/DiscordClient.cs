@@ -194,6 +194,23 @@ public class DiscordClient(
         return Application.Parse(response);
     }
 
+    private async ValueTask EnsureMessageContentIntentAsync(
+        CancellationToken cancellationToken = default
+    )
+    {
+        if (await ResolveTokenKindAsync(cancellationToken) != TokenKind.Bot)
+            return;
+
+        var application = await GetApplicationAsync(cancellationToken);
+        if (application.IsMessageContentIntentEnabled)
+            return;
+
+        throw new DiscordChatExporterException(
+            "Provided bot account is missing the MESSAGE_CONTENT privileged intent.",
+            true
+        );
+    }
+
     public async ValueTask<User?> TryGetUserAsync(
         Snowflake userId,
         CancellationToken cancellationToken = default
@@ -371,21 +388,40 @@ public class DiscordClient(
             ?.GetNonWhiteSpaceStringOrNull()
             ?.Pipe(Snowflake.Parse);
 
-        try
-        {
-            var parent = parentId is not null
-                ? await GetChannelAsync(parentId.Value, cancellationToken)
-                : null;
-
-            return Channel.Parse(response, parent);
-        }
         // It's possible for the parent channel to be inaccessible, despite the
         // child channel being accessible.
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/1108
-        catch (DiscordChatExporterException)
+        var parent = parentId is not null
+            ? await TryGetChannelAsync(parentId.Value, cancellationToken)
+            : null;
+
+        return Channel.Parse(response, parent);
+    }
+
+    public async ValueTask<Channel?> TryGetChannelAsync(
+        Snowflake channelId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var response = await TryGetJsonResponseAsync($"channels/{channelId}", cancellationToken);
+        if (response is null)
+            return null;
+
+        var parentId = response
+            .Value.GetPropertyOrNull("parent_id")
+            ?.GetNonWhiteSpaceStringOrNull()
+            ?.Pipe(Snowflake.Parse);
+
+        Channel? parent = null;
+        if (parentId is not null)
         {
-            return Channel.Parse(response);
+            // It's possible for the parent channel to be inaccessible, despite the
+            // child channel being accessible.
+            // https://github.com/Tyrrrz/DiscordChatExporter/issues/1108
+            parent = await TryGetChannelAsync(parentId.Value, cancellationToken);
         }
+
+        return Channel.Parse(response.Value, parent);
     }
 
     public async IAsyncEnumerable<Channel> GetChannelThreadsAsync(
@@ -409,6 +445,11 @@ public class DiscordClient(
             // threads may have messages in range, even if the parent channel doesn't.
             .Where(c => before is null || c.MayHaveMessagesBefore(before.Value))
             .ToArray();
+
+        // Track yielded thread IDs to avoid duplicates that can occur when a thread transitions
+        // from active to archived between the two separate API calls used to fetch threads.
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/1433
+        var seenThreadIds = new HashSet<Snowflake>();
 
         // User accounts can only fetch threads using the search endpoint
         if (await ResolveTokenKindAsync(cancellationToken) == TokenKind.User)
@@ -453,7 +494,9 @@ public class DiscordClient(
                                 break;
                             }
 
-                            yield return thread;
+                            if (seenThreadIds.Add(thread.Id))
+                                yield return thread;
+
                             currentOffset++;
                         }
 
@@ -492,7 +535,12 @@ public class DiscordClient(
                         .Pipe(parentsById.GetValueOrDefault);
 
                     if (filteredChannels.Contains(parent))
-                        yield return Channel.Parse(threadJson, parent);
+                    {
+                        var thread = Channel.Parse(threadJson, parent);
+
+                        if (seenThreadIds.Add(thread.Id))
+                            yield return thread;
+                    }
                 }
             }
 
@@ -528,12 +576,14 @@ public class DiscordClient(
                             )
                             {
                                 var thread = Channel.Parse(threadJson, channel);
-                                yield return thread;
 
                                 currentBefore = threadJson
                                     .GetProperty("thread_metadata")
                                     .GetProperty("archive_timestamp")
                                     .GetString();
+
+                                if (seenThreadIds.Add(thread.Id))
+                                    yield return thread;
                             }
 
                             if (!response.Value.GetProperty("has_more").GetBoolean())
@@ -543,6 +593,24 @@ public class DiscordClient(
                 }
             }
         }
+    }
+
+    private async ValueTask<Message?> TryGetFirstMessageAsync(
+        Snowflake channelId,
+        Snowflake? after = null,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var url = new UrlBuilder()
+            .SetPath($"channels/{channelId}/messages")
+            .SetQueryParameter("limit", "1")
+            .SetQueryParameter("after", (after ?? Snowflake.Zero).ToString())
+            .Build();
+
+        var response = await GetJsonResponseAsync(url, cancellationToken);
+        var message = response.EnumerateArray().Select(Message.Parse).FirstOrDefault();
+
+        return message;
     }
 
     private async ValueTask<Message?> TryGetLastMessageAsync(
@@ -603,22 +671,10 @@ public class DiscordClient(
                 yield break;
 
             // If all messages are empty, make sure that it's not because the bot account doesn't
-            // have the Message Content Intent enabled.
+            // have the MESSAGE_CONTENT intent enabled.
             // https://github.com/Tyrrrz/DiscordChatExporter/issues/1106#issuecomment-1741548959
-            if (
-                messages.All(m => m.IsEmpty)
-                && await ResolveTokenKindAsync(cancellationToken) == TokenKind.Bot
-            )
-            {
-                var application = await GetApplicationAsync(cancellationToken);
-                if (!application.IsMessageContentIntentEnabled)
-                {
-                    throw new DiscordChatExporterException(
-                        "Provided bot account does not have the Message Content Intent enabled.",
-                        true
-                    );
-                }
-            }
+            if (messages.All(m => m.IsEmpty))
+                await EnsureMessageContentIntentAsync(cancellationToken);
 
             foreach (var message in messages)
             {
@@ -648,6 +704,75 @@ public class DiscordClient(
                 yield return message;
                 currentAfter = message.Id;
             }
+        }
+    }
+
+    public async IAsyncEnumerable<Message> GetMessagesInReverseAsync(
+        Snowflake channelId,
+        Snowflake? after = null,
+        Snowflake? before = null,
+        IProgress<Percentage>? progress = null,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default
+    )
+    {
+        // Get the first message in the specified range, so we can later calculate the
+        // progress based on the difference between message timestamps.
+        // Snapshotting is not necessary here because new messages can't appear in the past.
+        var firstMessage = await TryGetFirstMessageAsync(channelId, after, cancellationToken);
+        if (firstMessage is null || firstMessage.Timestamp > before?.ToDate())
+            yield break;
+
+        // Keep track of the last message in range in order to calculate the progress
+        var lastMessage = default(Message);
+
+        var currentBefore = before;
+        while (true)
+        {
+            var url = new UrlBuilder()
+                .SetPath($"channels/{channelId}/messages")
+                .SetQueryParameter("limit", "100")
+                .SetQueryParameter("before", currentBefore?.ToString())
+                .Build();
+
+            var response = await GetJsonResponseAsync(url, cancellationToken);
+
+            var messages = response.EnumerateArray().Select(Message.Parse).ToArray();
+
+            // Break if there are no messages (can happen if messages are deleted during execution)
+            if (!messages.Any())
+                yield break;
+
+            // If all messages are empty, make sure that it's not because the bot account doesn't
+            // have the MESSAGE_CONTENT intent enabled.
+            // https://github.com/Tyrrrz/DiscordChatExporter/issues/1106#issuecomment-1741548959
+            if (messages.All(m => m.IsEmpty))
+                await EnsureMessageContentIntentAsync(cancellationToken);
+
+            foreach (var message in messages)
+            {
+                lastMessage ??= message;
+
+                // Report progress based on timestamps
+                if (progress is not null)
+                {
+                    var exportedDuration = (lastMessage.Timestamp - message.Timestamp).Duration();
+                    var totalDuration = (lastMessage.Timestamp - firstMessage.Timestamp).Duration();
+
+                    progress.Report(
+                        Percentage.FromFraction(
+                            // Avoid division by zero if all messages have the exact same timestamp
+                            // (which happens when there's only one message in the channel)
+                            totalDuration > TimeSpan.Zero
+                                ? exportedDuration / totalDuration
+                                : 1
+                        )
+                    );
+                }
+
+                yield return message;
+            }
+
+            currentBefore = messages.Last().Id;
         }
     }
 

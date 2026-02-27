@@ -174,7 +174,7 @@ internal class PlainTextMessageWriter(Stream stream, ExportContext context)
 
         await _writer.WriteLineAsync("{Reactions}");
 
-        foreach (var (reaction, i) in reactions.WithIndex())
+        foreach (var (i, reaction) in reactions.Index())
         {
             cancellationToken.ThrowIfCancellationRequested();
 

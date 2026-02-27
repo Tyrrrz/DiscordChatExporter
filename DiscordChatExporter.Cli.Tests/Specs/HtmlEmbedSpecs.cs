@@ -181,8 +181,14 @@ public class HtmlEmbedSpecs
         );
 
         // Assert
-        var iframeUrl = message.QuerySelector("iframe")?.GetAttribute("src");
-        iframeUrl.Should().StartWith("https://www.youtube.com/embed/qOWW4OlgbvE");
+        // Check that the YouTube video thumbnail image exists with the correct video ID
+        var youtubeThumbnailSrc = message
+            .QuerySelectorAll("img")
+            .Select(e => e.GetAttribute("src"))
+            .WhereNotNull()
+            .FirstOrDefault(s => s.Contains("qOWW4OlgbvE", StringComparison.Ordinal));
+
+        youtubeThumbnailSrc.Should().NotBeNull();
     }
 
     [Fact]

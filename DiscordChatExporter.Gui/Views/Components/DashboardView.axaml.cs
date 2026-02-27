@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Gui.Framework;
@@ -21,6 +22,9 @@ public partial class DashboardView : UserControl<DashboardViewModel>
         object? sender,
         SelectionChangedEventArgs args
     ) => DataContext.PullChannelsCommand.Execute(null);
+
+    private void AvailableGuildsListBox_OnDoubleTapped(object? sender, TappedEventArgs args) =>
+        DataContext.ShowSetupIfSingleChannelCommand.Execute(null);
 
     private void AvailableChannelsTreeView_OnSelectionChanged(
         object? sender,

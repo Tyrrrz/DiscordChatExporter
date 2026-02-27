@@ -24,7 +24,7 @@ public static class CollectionExtensions
             }
         }
     }
-    
+
     extension<T>(IEnumerable<T?> source)
         where T : struct
     {

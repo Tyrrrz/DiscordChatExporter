@@ -352,7 +352,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
         _writer.WriteEndObject();
         await _writer.FlushAsync(cancellationToken);
     }
-    
+
     private async ValueTask WriteStickerAsync(
         Sticker sticker,
         CancellationToken cancellationToken = default
@@ -553,14 +553,14 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
 
             _writer.WriteString(
                 "timestamp",
-                    Context.NormalizeDate(message.ForwardedMessage.Timestamp)
+                Context.NormalizeDate(message.ForwardedMessage.Timestamp)
             );
 
             _writer.WriteString(
                 "timestampEdited",
                 message.ForwardedMessage.EditedTimestamp?.Pipe(Context.NormalizeDate)
             );
-            
+
             _writer.WriteString(
                 "content",
                 await FormatMarkdownAsync(message.ForwardedMessage.Content, cancellationToken)

@@ -14,8 +14,6 @@ public class PlainTextForwardSpecs
         var document = await ExportWrapper.ExportAsPlainTextAsync(ChannelIds.ForwardTestCases);
 
         // Assert
-        document
-            .Should()
-            .ContainAll("{Forwarded Message}", @"¯\_(ツ)_/¯", "December 29, 2025");
+        document.Should().ContainAll("{Forwarded Message}", @"¯\_(ツ)_/¯", "December 29, 2025");
     }
 }

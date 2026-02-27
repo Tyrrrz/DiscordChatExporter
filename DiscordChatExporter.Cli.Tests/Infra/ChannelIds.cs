@@ -1,4 +1,4 @@
-﻿﻿using DiscordChatExporter.Core.Discord;
+﻿using DiscordChatExporter.Core.Discord;
 
 namespace DiscordChatExporter.Cli.Tests.Infra;
 
@@ -15,7 +15,7 @@ public static class ChannelIds
     public static Snowflake GroupingTestCases { get; } = Snowflake.Parse("992092091545034842");
 
     public static Snowflake FilterTestCases { get; } = Snowflake.Parse("866744075033641020");
-    
+
     public static Snowflake ForwardTestCases { get; } = Snowflake.Parse("1455202357204877477");
 
     public static Snowflake MarkdownTestCases { get; } = Snowflake.Parse("866459526819348521");

@@ -27,4 +27,3 @@ public class JsonForwardSpecs
         forwardedMessage.GetProperty("timestamp").GetString().Should().StartWith("2025-12-29");
     }
 }
-

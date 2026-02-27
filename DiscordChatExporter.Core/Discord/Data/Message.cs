@@ -180,7 +180,7 @@ public partial record Message
         // Currently Discord only supports 1 snapshot per forward
         var forwardedMessage = json.GetPropertyOrNull("message_snapshots")
             ?.EnumerateArrayOrNull()
-            ?.Select(j => j.GetPropertyOrNull("message")) 
+            ?.Select(j => j.GetPropertyOrNull("message"))
             .WhereNotNull()
             .Select(MessageSnapshot.Parse)
             .FirstOrDefault();

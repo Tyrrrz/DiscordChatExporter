@@ -9,14 +9,15 @@ public record MessageReference(
     MessageReferenceKind Kind,
     Snowflake? MessageId,
     Snowflake? ChannelId,
-    Snowflake? GuildId)
+    Snowflake? GuildId
+)
 {
     public static MessageReference Parse(JsonElement json)
     {
         var kind =
             json.GetPropertyOrNull("type")?.GetInt32OrNull()?.Pipe(t => (MessageReferenceKind)t)
             ?? MessageReferenceKind.Default;
-        
+
         var messageId = json.GetPropertyOrNull("message_id")
             ?.GetNonWhiteSpaceStringOrNull()
             ?.Pipe(Snowflake.Parse);

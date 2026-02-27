@@ -19,9 +19,6 @@ public class HtmlForwardSpecs
         );
 
         // Assert
-        message
-            .Text()
-            .Should()
-            .ContainAll("Forwarded", @"¯\_(ツ)_/¯", "December 29, 2025");
+        message.Text().Should().ContainAll("Forwarded", @"¯\_(ツ)_/¯", "December 29, 2025");
     }
 }

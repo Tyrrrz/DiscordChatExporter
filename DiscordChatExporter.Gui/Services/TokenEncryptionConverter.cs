@@ -11,8 +11,6 @@ internal class TokenEncryptionConverter : JsonConverter<string?>
 {
     private const string Prefix = "enc:";
 
-    // Key is derived from a machine-specific identifier so that a stolen settings file
-    // cannot be easily decrypted on a different machine.
     private static readonly Lazy<byte[]> Key = new(() =>
         Rfc2898DeriveBytes.Pbkdf2(
             Encoding.UTF8.GetBytes(Environment.GetMachineId()),
@@ -41,15 +39,15 @@ internal class TokenEncryptionConverter : JsonConverter<string?>
         {
             var data = Convert.FromHexString(value[Prefix.Length..]);
 
-            // Layout: Nonce (12 bytes) | paddingLength (1 byte) | Tag (16 bytes) | Ciphertext
-            var paddingLength = data[12];
+            // Layout: nonce (12 bytes) | paddingLength (1 byte) | tag (16 bytes) | cipherSource
             var nonce = data.AsSpan(0, 12);
+            var paddingLength = data[12];
             var tag = data.AsSpan(13, 16);
-            var cipher = data.AsSpan(29);
+            var cipherSource = data.AsSpan(29);
 
-            var decrypted = new byte[cipher.Length];
+            var decrypted = new byte[cipherSource.Length];
             using var aes = new AesGcm(Key.Value, 16);
-            aes.Decrypt(nonce, cipher, tag, decrypted);
+            aes.Decrypt(nonce, cipherSource, tag, decrypted);
 
             return Encoding.UTF8.GetString(decrypted.AsSpan(paddingLength));
         }
@@ -83,7 +81,7 @@ internal class TokenEncryptionConverter : JsonConverter<string?>
         padding.CopyTo(plaintextBytes.AsSpan());
         tokenBytes.CopyTo(plaintextBytes.AsSpan(padding.Length));
 
-        // Layout: Nonce (12 bytes) | paddingLength (1 byte) | Tag (16 bytes) | Ciphertext
+        // Layout: nonce (12 bytes) | paddingLength (1 byte) | tag (16 bytes) | ciphertext
         var data = new byte[29 + plaintextBytes.Length];
         nonce.CopyTo(data.AsSpan(0, 12));
         data[12] = (byte)padding.Length;

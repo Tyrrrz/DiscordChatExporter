@@ -1,10 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- Set EncryptionSalt as a project property. CI injects the real salt via
-       -p:EncryptionSalt=... and local/dev builds fall back to the default. -->
-  <PropertyGroup>
-    <EncryptionSalt Condition="'$(EncryptionSalt)' == ''">HimalayanPinkSalt</EncryptionSalt>
-  </PropertyGroup>
-
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <AssemblyName>DiscordChatExporter</AssemblyName>
@@ -13,6 +7,14 @@
     <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <EncryptionSalt Condition="'$(EncryptionSalt)' == ''">HimalayanPinkSalt</EncryptionSalt>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectProperty Include="EncryptionSalt" />
+  </ItemGroup>
 
   <PropertyGroup>
     <PublishMacOSBundle>false</PublishMacOSBundle>
@@ -45,10 +47,6 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Onova" />
     <PackageReference Include="ThisAssembly.Project" PrivateAssets="all" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectProperty Include="EncryptionSalt" />
   </ItemGroup>
 
   <ItemGroup>

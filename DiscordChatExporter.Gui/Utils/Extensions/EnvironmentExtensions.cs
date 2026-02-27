@@ -7,8 +7,6 @@ internal static class EnvironmentExtensions
 {
     extension(Environment)
     {
-        // Returns a stable machine-specific identifier for key derivation.
-        // This makes a stolen settings file non-trivially decryptable on a different machine.
         public static string GetMachineId()
         {
             // Windows: stable GUID written during OS installation
@@ -27,21 +25,30 @@ internal static class EnvironmentExtensions
                 }
                 catch { }
             }
-
-            // Linux: /etc/machine-id (set once by systemd at first boot)
-            foreach (var path in new[] { "/etc/machine-id", "/var/lib/dbus/machine-id" })
+            else
             {
-                try
+                // Unix: /etc/machine-id (set once by systemd at first boot)
+                foreach (var path in new[] { "/etc/machine-id", "/var/lib/dbus/machine-id" })
                 {
-                    var id = File.ReadAllText(path).Trim();
-                    if (!string.IsNullOrWhiteSpace(id))
-                        return id;
+                    try
+                    {
+                        var id = File.ReadAllText(path).Trim();
+                        if (!string.IsNullOrWhiteSpace(id))
+                            return id;
+                    }
+                    catch { }
                 }
-                catch { }
             }
 
-            // Last-resort fallback (e.g. macOS without /etc/machine-id)
-            return Environment.MachineName;
+            // Last-resort fallback
+            try
+            {
+                return Environment.MachineName;
+            }
+            catch
+            {
+                return string.Empty;
+            }
         }
     }
 }

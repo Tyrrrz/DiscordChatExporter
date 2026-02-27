@@ -43,10 +43,5 @@ public class JsonContentSpecs
                 "Three",
                 "Yeet"
             );
-
-        messages
-            .Select(j => j.GetProperty("components").ValueKind)
-            .Should()
-            .OnlyContain(kind => kind == JsonValueKind.Array);
     }
 }

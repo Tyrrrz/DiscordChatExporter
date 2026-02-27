@@ -119,6 +119,24 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
         await _writer.FlushAsync(cancellationToken);
     }
 
+    private async ValueTask WriteAttachmentAsync(
+        Attachment attachment,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _writer.WriteStartObject();
+
+        _writer.WriteString("id", attachment.Id.ToString());
+        _writer.WriteString(
+            "url",
+            await Context.ResolveAssetUrlAsync(attachment.Url, cancellationToken)
+        );
+        _writer.WriteString("fileName", attachment.FileName);
+        _writer.WriteNumber("fileSizeBytes", attachment.FileSize.TotalBytes);
+
+        _writer.WriteEndObject();
+    }
+
     private async ValueTask WriteEmbedAuthorAsync(
         EmbedAuthor embedAuthor,
         CancellationToken cancellationToken = default
@@ -334,6 +352,24 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
         _writer.WriteEndObject();
         await _writer.FlushAsync(cancellationToken);
     }
+    
+    private async ValueTask WriteStickerAsync(
+        Sticker sticker,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _writer.WriteStartObject();
+
+        _writer.WriteString("id", sticker.Id.ToString());
+        _writer.WriteString("name", sticker.Name);
+        _writer.WriteString("format", sticker.Format.ToString());
+        _writer.WriteString(
+            "sourceUrl",
+            await Context.ResolveAssetUrlAsync(sticker.SourceUrl, cancellationToken)
+        );
+
+        _writer.WriteEndObject();
+    }
 
     public override async ValueTask WritePreambleAsync(
         CancellationToken cancellationToken = default
@@ -437,19 +473,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
         _writer.WriteStartArray("attachments");
 
         foreach (var attachment in message.Attachments)
-        {
-            _writer.WriteStartObject();
-
-            _writer.WriteString("id", attachment.Id.ToString());
-            _writer.WriteString(
-                "url",
-                await Context.ResolveAssetUrlAsync(attachment.Url, cancellationToken)
-            );
-            _writer.WriteString("fileName", attachment.FileName);
-            _writer.WriteNumber("fileSizeBytes", attachment.FileSize.TotalBytes);
-
-            _writer.WriteEndObject();
-        }
+            await WriteAttachmentAsync(attachment, cancellationToken);
 
         _writer.WriteEndArray();
 
@@ -465,19 +489,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
         _writer.WriteStartArray("stickers");
 
         foreach (var sticker in message.Stickers)
-        {
-            _writer.WriteStartObject();
-
-            _writer.WriteString("id", sticker.Id.ToString());
-            _writer.WriteString("name", sticker.Name);
-            _writer.WriteString("format", sticker.Format.ToString());
-            _writer.WriteString(
-                "sourceUrl",
-                await Context.ResolveAssetUrlAsync(sticker.SourceUrl, cancellationToken)
-            );
-
-            _writer.WriteEndObject();
-        }
+            await WriteStickerAsync(sticker, cancellationToken);
 
         _writer.WriteEndArray();
 
@@ -527,10 +539,10 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
         if (message.Reference is not null)
         {
             _writer.WriteStartObject("reference");
+            _writer.WriteString("type", message.Reference.Kind.ToString());
             _writer.WriteString("messageId", message.Reference.MessageId?.ToString());
             _writer.WriteString("channelId", message.Reference.ChannelId?.ToString());
             _writer.WriteString("guildId", message.Reference.GuildId?.ToString());
-            _writer.WriteString("type", message.Reference.Kind.ToString());
             _writer.WriteEndObject();
         }
 
@@ -556,18 +568,10 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
 
             // Forwarded attachments
             _writer.WriteStartArray("attachments");
+
             foreach (var attachment in message.ForwardedMessage.Attachments)
-            {
-                _writer.WriteStartObject();
-                _writer.WriteString("id", attachment.Id.ToString());
-                _writer.WriteString(
-                    "url",
-                    await Context.ResolveAssetUrlAsync(attachment.Url, cancellationToken)
-                );
-                _writer.WriteString("fileName", attachment.FileName);
-                _writer.WriteNumber("fileSizeBytes", attachment.FileSize.TotalBytes);
-                _writer.WriteEndObject();
-            }
+                await WriteAttachmentAsync(attachment, cancellationToken);
+
             _writer.WriteEndArray();
 
             // Forwarded embeds
@@ -578,18 +582,10 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
 
             // Forwarded stickers
             _writer.WriteStartArray("stickers");
+
             foreach (var sticker in message.ForwardedMessage.Stickers)
-            {
-                _writer.WriteStartObject();
-                _writer.WriteString("id", sticker.Id.ToString());
-                _writer.WriteString("name", sticker.Name);
-                _writer.WriteString("format", sticker.Format.ToString());
-                _writer.WriteString(
-                    "sourceUrl",
-                    await Context.ResolveAssetUrlAsync(sticker.SourceUrl, cancellationToken)
-                );
-                _writer.WriteEndObject();
-            }
+                await WriteStickerAsync(sticker, cancellationToken);
+
             _writer.WriteEndArray();
 
             _writer.WriteEndObject();

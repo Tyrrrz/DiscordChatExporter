@@ -24,7 +24,6 @@ public class JsonForwardSpecs
 
         var forwardedMessage = message.GetProperty("forwardedMessage");
         forwardedMessage.GetProperty("content").GetString().Should().Contain(@"¯\_(ツ)_/¯");
-        forwardedMessage.GetProperty("timestamp").GetString().Should().StartWith("2025-12-29");
+        forwardedMessage.GetProperty("timestamp").GetString().Should().StartWith("2025-12-28T22:52:42.175+00:00");
     }
 }
-

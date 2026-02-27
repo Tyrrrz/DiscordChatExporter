@@ -33,10 +33,7 @@ public class MarkdownToInlinesConverter : IValueConverter
         {
             case LiteralInline literal:
             {
-                var run = new Run(literal.Content.ToString())
-                {
-                    BaselineAlignment = BaselineAlignment.Center,
-                };
+                var run = new Run(literal.Content.ToString());
 
                 if (fontWeight is not null)
                     run.FontWeight = fontWeight.Value;
@@ -142,9 +139,7 @@ public class MarkdownToInlinesConverter : IValueConverter
 
                         var prefix = list.IsOrdered ? $"{itemOrder++}. " : $"{list.BulletType}  ";
 
-                        inlines.Add(
-                            new Run(prefix) { BaselineAlignment = BaselineAlignment.Center }
-                        );
+                        inlines.Add(new Run(prefix));
 
                         foreach (var subBlock in listItem.OfType<ParagraphBlock>())
                         {

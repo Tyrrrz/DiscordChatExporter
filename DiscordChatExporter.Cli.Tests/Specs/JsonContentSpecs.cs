@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using DiscordChatExporter.Cli.Tests.Infra;
 using FluentAssertions;

@@ -59,10 +59,13 @@
                     </DockPanel>
 
                     <!--  Persist token  -->
-                    <DockPanel
-                        Margin="16,8"
-                        LastChildFill="False"
-                        ToolTip.Tip="{Binding LocalizationManager.PersistTokenTooltip}">
+                    <DockPanel Margin="16,8" LastChildFill="False">
+                        <ToolTip.Tip>
+                            <TextBlock
+                                MaxWidth="400"
+                                Inlines="{Binding LocalizationManager.PersistTokenTooltip, Converter={x:Static converters:MarkdownToInlinesConverter.Instance}}"
+                                TextWrapping="Wrap" />
+                        </ToolTip.Tip>
                         <TextBlock DockPanel.Dock="Left" Text="{Binding LocalizationManager.PersistTokenLabel}" />
                         <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding IsTokenPersisted}" />
                     </DockPanel>

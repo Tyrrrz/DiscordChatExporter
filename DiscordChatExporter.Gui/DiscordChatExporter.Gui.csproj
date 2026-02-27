@@ -18,6 +18,31 @@
     <EnableAotAnalyzer>false</EnableAotAnalyzer>
   </PropertyGroup>
 
+  <!-- Set ENCRYPTION_SALT env var in CI to use a build-specific salt.
+       Local/dev builds fall back to a stable default. -->
+  <PropertyGroup>
+    <EncryptionSalt Condition="'$(ENCRYPTION_SALT)' != ''">$(ENCRYPTION_SALT)</EncryptionSalt>
+    <EncryptionSalt Condition="'$(EncryptionSalt)' == ''">DCE-Token-Salt</EncryptionSalt>
+  </PropertyGroup>
+
+  <Target Name="GenerateEncryptionSaltSource" BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <_SaltLines Include="namespace DiscordChatExporter.Gui.Services%3B" />
+      <_SaltLines Include="internal partial class TokenEncryptionConverter" />
+      <_SaltLines Include="{" />
+      <_SaltLines Include="    private const string EncryptionSalt = &quot;$(EncryptionSalt)&quot;%3B" />
+      <_SaltLines Include="}" />
+    </ItemGroup>
+    <WriteLinesToFile
+      File="$(IntermediateOutputPath)TokenEncryptionConverter.EncryptionSalt.g.cs"
+      Lines="@(_SaltLines)"
+      Overwrite="true"
+      Encoding="UTF-8" />
+    <ItemGroup>
+      <Compile Include="$(IntermediateOutputPath)TokenEncryptionConverter.EncryptionSalt.g.cs" />
+    </ItemGroup>
+  </Target>
+
   <ItemGroup>
     <AvaloniaResource Include="..\favicon.ico" Link="favicon.ico" />
   </ItemGroup>

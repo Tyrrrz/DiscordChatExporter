@@ -39,15 +39,15 @@ internal class TokenEncryptionConverter : JsonConverter<string?>
         {
             var data = Convert.FromHexString(value[Prefix.Length..]);
 
-            // Layout: nonce (12 bytes) | paddingLength (1 byte) | tag (16 bytes) | cipherSource
+            // Layout: nonce (12 bytes) | paddingLength (1 byte) | tag (16 bytes) | cipher
             var nonce = data.AsSpan(0, 12);
             var paddingLength = data[12];
             var tag = data.AsSpan(13, 16);
-            var cipherSource = data.AsSpan(29);
+            var cipher = data.AsSpan(29);
 
-            var decrypted = new byte[cipherSource.Length];
+            var decrypted = new byte[cipher.Length];
             using var aes = new AesGcm(Key.Value, 16);
-            aes.Decrypt(nonce, cipherSource, tag, decrypted);
+            aes.Decrypt(nonce, cipher, tag, decrypted);
 
             return Encoding.UTF8.GetString(decrypted.AsSpan(paddingLength));
         }
@@ -73,14 +73,14 @@ internal class TokenEncryptionConverter : JsonConverter<string?>
         }
 
         var paddingLength = RandomNumberGenerator.GetInt32(1, 17);
-        var tokenBytes = Encoding.UTF8.GetBytes(value);
+        var tokenData = Encoding.UTF8.GetBytes(value);
 
-        // Layout: nonce (12 bytes) | paddingLength (1 byte) | tag (16 bytes) | ciphertext (paddingLength + tokenBytes.Length)
-        var data = new byte[29 + paddingLength + tokenBytes.Length];
+        // Layout: nonce (12 bytes) | paddingLength (1 byte) | tag (16 bytes) | cipher
+        var data = new byte[29 + paddingLength + tokenData.Length];
         RandomNumberGenerator.Fill(data.AsSpan(0, 12)); // nonce
         data[12] = (byte)paddingLength;
         RandomNumberGenerator.Fill(data.AsSpan(29, paddingLength)); // random padding
-        tokenBytes.CopyTo(data.AsSpan(29 + paddingLength)); // token
+        tokenData.CopyTo(data.AsSpan(29 + paddingLength)); // token
 
         using var aes = new AesGcm(Key.Value, 16);
         aes.Encrypt(data.AsSpan(0, 12), data.AsSpan(29), data.AsSpan(29), data.AsSpan(13, 16));

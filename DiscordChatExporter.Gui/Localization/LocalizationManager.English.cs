@@ -55,7 +55,7 @@ public partial class LocalizationManager
             [nameof(PersistTokenTooltip)] =
                 """
                 Save the last used token to a file so that it can be persisted between sessions.
-                **Warning**: although the token is stored encrypted, it may still be recovered by an attacker who has access to your system.
+                **Warning**: although the token is stored with encryption, it may still be recovered by an attacker who has access to your system.
                 """,
             [nameof(RateLimitPreferenceLabel)] = "Rate limit preference",
             [nameof(RateLimitPreferenceTooltip)] =

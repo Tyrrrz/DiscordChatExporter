@@ -57,7 +57,7 @@ public partial class LocalizationManager
         [nameof(PersistTokenTooltip)] =
             """
             Den zuletzt verwendeten Token in einer Datei speichern, damit er zwischen Sitzungen erhalten bleibt.
-            **Warnung**: Der Token wird verschlüsselt gespeichert, kann aber dennoch von einem Angreifer mit Zugriff auf Ihr System wiederhergestellt werden.
+            **Warnung**: Der Token wird mit Verschlüsselung gespeichert, kann aber dennoch von einem Angreifer mit Zugriff auf Ihr System wiederhergestellt werden.
             """,
         [nameof(RateLimitPreferenceLabel)] = "Ratenlimit-Einstellung",
         [nameof(RateLimitPreferenceTooltip)] =

@@ -55,7 +55,7 @@ public partial class LocalizationManager
             [nameof(PersistTokenTooltip)] =
                 """
                 Guardar el último token utilizado en un archivo para conservarlo entre sesiones.
-                **Advertencia**: aunque el token se almacena cifrado, aún puede ser recuperado por un atacante con acceso a tu sistema.
+                **Advertencia**: aunque el token se almacena con cifrado, aún puede ser recuperado por un atacante con acceso a tu sistema.
                 """,
             [nameof(RateLimitPreferenceLabel)] = "Preferencia de límite de velocidad",
             [nameof(RateLimitPreferenceTooltip)] =

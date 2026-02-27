@@ -1,54 +1,54 @@
 ﻿<UserControl
-    Loaded="UserControl_OnLoaded"
     x:Class="DiscordChatExporter.Gui.Views.Components.DashboardView"
-    x:DataType="components:DashboardViewModel"
-    x:Name="UserControl"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
     xmlns:components="clr-namespace:DiscordChatExporter.Gui.ViewModels.Components"
     xmlns:converters="clr-namespace:DiscordChatExporter.Gui.Converters"
     xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     xmlns:materialStyles="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    x:Name="UserControl"
+    x:DataType="components:DashboardViewModel"
+    Loaded="UserControl_OnLoaded">
     <DockPanel>
         <!--  Header  -->
         <StackPanel
             Background="{DynamicResource MaterialDarkBackgroundBrush}"
             DockPanel.Dock="Top"
             Orientation="Vertical">
-            <Grid ColumnDefinitions="*,Auto" Margin="12,12,8,12">
+            <Grid Margin="12,12,8,12" ColumnDefinitions="*,Auto">
                 <materialStyles:Card Grid.Column="0">
                     <!--  Token  -->
                     <TextBox
+                        x:Name="TokenValueTextBox"
                         FontSize="16"
                         PasswordChar="*"
                         RevealPassword="{Binding $self.IsFocused}"
                         Text="{Binding Token}"
                         Theme="{DynamicResource SoloTextBox}"
-                        Watermark="{Binding LocalizationManager.TokenWatermark}"
-                        x:Name="TokenValueTextBox">
+                        Watermark="{Binding LocalizationManager.TokenWatermark}">
                         <TextBox.InnerLeftContent>
                             <materialIcons:MaterialIcon
-                                Foreground="{DynamicResource PrimaryHueMidBrush}"
                                 Grid.Column="0"
+                                Width="24"
                                 Height="24"
-                                Kind="Key"
                                 Margin="4,0,8,0"
-                                Width="24" />
+                                Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                Kind="Key" />
                         </TextBox.InnerLeftContent>
                         <TextBox.InnerRightContent>
                             <Button
-                                Command="{Binding PullGuildsCommand}"
                                 Grid.Column="2"
-                                IsDefault="True"
                                 Margin="8,0,0,0"
                                 Padding="4"
+                                Command="{Binding PullGuildsCommand}"
+                                IsDefault="True"
                                 Theme="{DynamicResource MaterialFlatButton}"
                                 ToolTip.Tip="{Binding LocalizationManager.PullGuildsTooltip}">
                                 <materialIcons:MaterialIcon
+                                    Width="24"
                                     Height="24"
-                                    Kind="ArrowRight"
-                                    Width="24" />
+                                    Kind="ArrowRight" />
                             </Button>
                         </TextBox.InnerRightContent>
                     </TextBox>
@@ -56,25 +56,25 @@
 
                 <!--  Settings button  -->
                 <Button
-                    Command="{Binding ShowSettingsCommand}"
-                    Foreground="{DynamicResource MaterialDarkForegroundBrush}"
                     Grid.Column="1"
                     Margin="8,0,0,0"
                     Padding="8"
+                    VerticalAlignment="Center"
+                    Command="{Binding ShowSettingsCommand}"
+                    Foreground="{DynamicResource MaterialDarkForegroundBrush}"
                     Theme="{DynamicResource MaterialFlatButton}"
-                    ToolTip.Tip="{Binding LocalizationManager.SettingsTooltip}"
-                    VerticalAlignment="Center">
+                    ToolTip.Tip="{Binding LocalizationManager.SettingsTooltip}">
                     <materialIcons:MaterialIcon
+                        Width="24"
                         Height="24"
-                        Kind="Settings"
-                        Width="24" />
+                        Kind="Settings" />
                 </Button>
             </Grid>
 
             <!--  Progress  -->
             <ProgressBar
-                Background="Transparent"
                 Height="2"
+                Background="Transparent"
                 IsIndeterminate="{Binding IsProgressIndeterminate}"
                 Value="{Binding Progress.Current.Fraction, Mode=OneWay}" />
         </StackPanel>
@@ -95,16 +95,16 @@
             <Grid ColumnDefinitions="Auto,*" IsVisible="{Binding !!AvailableGuilds.Count}">
                 <!--  Guilds  -->
                 <Border
+                    Grid.Column="0"
                     BorderBrush="{DynamicResource MaterialDividerBrush}"
-                    BorderThickness="0,0,1,0"
-                    Grid.Column="0">
+                    BorderThickness="0,0,1,0">
                     <ListBox
+                        x:Name="AvailableGuildsListBox"
                         ItemsSource="{Binding AvailableGuilds}"
                         ScrollViewer.VerticalScrollBarVisibility="Hidden"
                         SelectedItem="{Binding SelectedGuild}"
                         SelectionChanged="AvailableGuildsListBox_OnSelectionChanged"
-                        SelectionMode="Single"
-                        x:Name="AvailableGuildsListBox">
+                        SelectionMode="Single">
                         <ListBox.Styles>
                             <Style Selector="ListBox">
                                 <Style Selector="^ ListBoxItem">
@@ -118,16 +118,16 @@
                                 <Panel Background="Transparent" ToolTip.Tip="{Binding Name}">
                                     <!--  Guild icon placeholder  -->
                                     <Ellipse
-                                        Fill="{DynamicResource MaterialDividerBrush}"
+                                        Width="48"
                                         Height="48"
                                         Margin="12"
-                                        Width="48" />
+                                        Fill="{DynamicResource MaterialDividerBrush}" />
 
                                     <!--  Guild icon  -->
                                     <Ellipse
+                                        Width="48"
                                         Height="48"
-                                        Margin="12"
-                                        Width="48">
+                                        Margin="12">
                                         <Ellipse.Fill>
                                             <ImageBrush asyncImageLoader:ImageBrushLoader.Source="{Binding IconUrl}" />
                                         </Ellipse.Fill>
@@ -141,12 +141,12 @@
                 <!--  Channels  -->
                 <Border Grid.Column="1">
                     <TreeView
+                        x:Name="AvailableChannelsTreeView"
                         ItemsSource="{Binding AvailableChannels}"
                         SelectedItems="{Binding SelectedChannels}"
                         SelectionChanged="AvailableChannelsTreeView_OnSelectionChanged"
                         SelectionMode="Multiple"
-                        TextSearch.Text="Name"
-                        x:Name="AvailableChannelsTreeView">
+                        TextSearch.Text="Name">
                         <TreeView.Styles>
                             <Style Selector="TreeView">
                                 <Style Selector="^ TreeViewItem">
@@ -178,10 +178,10 @@
 
                                     <!--  Channel icon  -->
                                     <materialIcons:MaterialIcon
-                                        Classes.voice="{Binding Channel.IsVoice}"
                                         Grid.Column="0"
-                                        IsVisible="{Binding !Channel.IsCategory}"
-                                        Margin="0,0,4,0">
+                                        Margin="0,0,4,0"
+                                        Classes.voice="{Binding Channel.IsVoice}"
+                                        IsVisible="{Binding !Channel.IsCategory}">
                                         <materialIcons:MaterialIcon.Styles>
                                             <Style Selector="materialIcons|MaterialIcon">
                                                 <Setter Property="Kind" Value="Pound" />
@@ -195,19 +195,19 @@
 
                                     <!--  Channel name  -->
                                     <TextBlock
-                                        FontSize="14"
                                         Grid.Column="1"
                                         Margin="0,12"
+                                        FontSize="14"
                                         Text="{Binding Channel.Name, Mode=OneWay}" />
 
                                     <!--  Checkmark  -->
                                     <materialIcons:MaterialIcon
                                         Grid.Column="2"
+                                        Width="24"
                                         Height="24"
-                                        IsVisible="{Binding $parent[TreeViewItem].IsSelected}"
-                                        Kind="Check"
                                         Margin="16,0"
-                                        Width="24" />
+                                        IsVisible="{Binding $parent[TreeViewItem].IsSelected}"
+                                        Kind="Check" />
                                 </Grid>
                             </TreeDataTemplate>
                         </TreeView.ItemTemplate>
@@ -223,14 +223,13 @@
                         <TextBlock>
                             <InlineUIContainer>
                                 <materialIcons:MaterialIcon
-                                    Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                    Width="18"
                                     Height="18"
-                                    Kind="Account"
-                                    Width="18" />
+                                    Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                    Kind="Account" />
                             </InlineUIContainer>
-                            <Run BaselineAlignment="Center" Text="" />
+                            <Run Text="" />
                             <Run
-                                BaselineAlignment="Center"
                                 FontSize="16"
                                 FontWeight="SemiBold"
                                 Text="{Binding LocalizationManager.TokenPersonalHeader}" />
@@ -254,14 +253,13 @@
                         <TextBlock Margin="0,12,0,0">
                             <InlineUIContainer>
                                 <materialIcons:MaterialIcon
-                                    Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                    Width="18"
                                     Height="18"
-                                    Kind="Robot"
-                                    Width="18" />
+                                    Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                    Kind="Robot" />
                             </InlineUIContainer>
-                            <Run BaselineAlignment="Center" Text="" />
+                            <Run Text="" />
                             <Run
-                                BaselineAlignment="Center"
                                 FontSize="16"
                                 FontWeight="SemiBold"
                                 Text="{Binding LocalizationManager.TokenBotHeader}" />
@@ -275,11 +273,11 @@
                             TextWrapping="Wrap" />
 
                         <TextBlock
+                            Margin="0,12,0,0"
                             FontSize="14"
                             FontWeight="Light"
                             Inlines="{Binding LocalizationManager.TokenHelpText, Converter={x:Static converters:MarkdownToInlinesConverter.Instance}}"
                             LineHeight="23"
-                            Margin="0,12,0,0"
                             TextWrapping="Wrap" />
                     </StackPanel>
                 </ScrollViewer>
@@ -287,21 +285,21 @@
 
             <!--  Export button  -->
             <Button
+                Width="56"
+                Height="56"
+                Margin="32,24"
+                Padding="0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
                 Background="{DynamicResource MaterialSecondaryMidBrush}"
                 Command="{Binding ExportCommand}"
                 Foreground="{DynamicResource MaterialSecondaryMidForegroundBrush}"
-                Height="56"
-                HorizontalAlignment="Right"
                 IsVisible="{Binding $self.IsEffectivelyEnabled}"
-                Margin="32,24"
-                Padding="0"
-                Theme="{DynamicResource MaterialIconButton}"
-                VerticalAlignment="Bottom"
-                Width="56">
+                Theme="{DynamicResource MaterialIconButton}">
                 <materialIcons:MaterialIcon
+                    Width="32"
                     Height="32"
-                    Kind="Download"
-                    Width="32" />
+                    Kind="Download" />
             </Button>
         </Panel>
     </DockPanel>

@@ -22,7 +22,7 @@ public partial record ActionRowComponent
         var components =
             json.GetPropertyOrNull("components")
                 ?.EnumerateArrayOrNull()
-                ?.Where(c => c.GetPropertyOrNull("type")?.GetInt32OrNull() == 2)
+                ?.Where(c => c.GetPropertyOrNull("type")?.GetInt32OrNull() == 2) // TODO: support other component types (selects)
                 ?.Select(ButtonComponent.Parse)
                 .ToArray()
             ?? [];

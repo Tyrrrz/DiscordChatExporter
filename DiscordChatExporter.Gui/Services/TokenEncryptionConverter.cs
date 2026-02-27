@@ -22,7 +22,7 @@ internal class TokenEncryptionConverter : JsonConverter<string?>
         var value = reader.GetString();
 
         // No prefix means the token is stored as plain text (backward compatibility)
-        if (value is null || !value.StartsWith(Prefix, StringComparison.Ordinal))
+        if (string.IsNullOrWhiteSpace(value) || !value.StartsWith(Prefix, StringComparison.Ordinal))
             return value;
 
         try

@@ -53,7 +53,7 @@ public partial class LocalizationManager
             [nameof(AutoUpdateTooltip)] = "Realizar actualizaciones automáticas en cada inicio",
             [nameof(PersistTokenLabel)] = "Guardar token",
             [nameof(PersistTokenTooltip)] =
-                "Guardar el último token utilizado en un archivo para conservarlo entre sesiones",
+                "Guardar el último token utilizado en un archivo para conservarlo entre sesiones. El token se almacena cifrado, pero aún puede ser recuperado por un atacante con acceso a tu sistema de archivos.",
             [nameof(RateLimitPreferenceLabel)] = "Preferencia de límite de velocidad",
             [nameof(RateLimitPreferenceTooltip)] =
                 "Si se deben respetar los límites de velocidad recomendados. Si está desactivado, solo se respetarán los límites estrictos (respuestas 429).",

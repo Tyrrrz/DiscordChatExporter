@@ -55,7 +55,7 @@ public partial class LocalizationManager
         [nameof(AutoUpdateTooltip)] = "Automatische Updates bei jedem Start durchführen",
         [nameof(PersistTokenLabel)] = "Token speichern",
         [nameof(PersistTokenTooltip)] =
-            "Den zuletzt verwendeten Token in einer Datei speichern, damit er zwischen Sitzungen erhalten bleibt",
+            "Den zuletzt verwendeten Token in einer Datei speichern, damit er zwischen Sitzungen erhalten bleibt. Der Token wird verschlüsselt gespeichert, kann aber dennoch von einem Angreifer mit Zugriff auf Ihr Dateisystem wiederhergestellt werden.",
         [nameof(RateLimitPreferenceLabel)] = "Ratenlimit-Einstellung",
         [nameof(RateLimitPreferenceTooltip)] =
             "Ob empfohlene Ratenlimits eingehalten werden sollen. Wenn deaktiviert, werden nur harte Ratenlimits (d. h. 429-Antworten) eingehalten.",

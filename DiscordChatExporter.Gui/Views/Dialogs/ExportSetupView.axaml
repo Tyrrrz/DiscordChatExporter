@@ -51,11 +51,7 @@
                 IsVisible="{Binding IsSingleChannel}"
                 TextTrimming="CharacterEllipsis"
                 ToolTip.Tip="{Binding Channels[0], Converter={x:Static converters:ChannelToHierarchicalNameStringConverter.Instance}}">
-                <TextBlock IsVisible="{Binding !!Channels[0].Parent}">
-                    <Run Text="{Binding Channels[0].Parent.Name, Mode=OneWay}" />
-                    <Run Text="/" />
-                </TextBlock>
-                <Run FontWeight="SemiBold" Text="{Binding Channels[0].Name, Mode=OneWay}" />
+                <Run Text="{Binding Channels[0].Parent.Name, StringFormat='{}{0} / ', FallbackValue='', TargetNullValue='', Mode=OneWay}" /><Run FontWeight="SemiBold" Text="{Binding Channels[0].Name, Mode=OneWay}" />
             </TextBlock>
         </Grid>
 

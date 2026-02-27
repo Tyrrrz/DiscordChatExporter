@@ -275,7 +275,7 @@ internal static partial class MarkdownParser
             // Capture the shrug kaomoji.
             // This escapes it from matching for formatting.
             @"¯\_(ツ)_/¯",
-            (s, _) => new TextNode(s.ToString())
+            (_, s) => new TextNode(s.ToString())
         );
 
     private static readonly IMatcher<MarkdownContext, MarkdownNode> IgnoredEmojiTextNodeMatcher =

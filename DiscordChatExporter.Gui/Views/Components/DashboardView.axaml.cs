@@ -23,21 +23,6 @@ public partial class DashboardView : UserControl<DashboardViewModel>
         SelectionChangedEventArgs args
     ) => DataContext.PullChannelsCommand.Execute(null);
 
-    private void ChannelGrid_OnDoubleTapped(object? sender, TappedEventArgs args)
-    {
-        if (sender is not Control { DataContext: ChannelConnection channelConnection })
-        {
-            return;
-        }
-
-        if (channelConnection.Channel.IsCategory)
-        {
-            return;
-        }
-
-        DataContext.ExportCommand.Execute(null);
-    }
-
     private void AvailableChannelsTreeView_OnSelectionChanged(
         object? sender,
         SelectionChangedEventArgs args
@@ -51,5 +36,13 @@ public partial class DashboardView : UserControl<DashboardViewModel>
             if (AvailableChannelsTreeView.TreeContainerFromItem(item) is TreeViewItem container)
                 container.IsSelected = false;
         }
+    }
+
+    private void ChannelGrid_OnDoubleTapped(object? sender, TappedEventArgs args)
+    {
+        if (DataContext.SelectedChannels.Count != 1)
+            return;
+
+        DataContext.ExportCommand.Execute(null);
     }
 }

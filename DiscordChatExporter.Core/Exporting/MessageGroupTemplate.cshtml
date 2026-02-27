@@ -262,7 +262,7 @@
                         </div>
                     }
 
-                    @* Forwarded message content *@
+                    @* Forwarded message *@
                     @if (message is { IsForwarded: true, ForwardedMessage: not null })
                     {
                         <div class="chatlog__forwarded">
@@ -273,7 +273,7 @@
                                 <em>Forwarded</em>
                             </div>
 
-                            @* Forwarded text content *@
+                            @* Forwarded content *@
                             @if (!string.IsNullOrWhiteSpace(message.ForwardedMessage.Content))
                             {
                                 <div class="chatlog__forwarded-content chatlog__markdown">

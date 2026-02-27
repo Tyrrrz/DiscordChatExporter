@@ -8,7 +8,6 @@ using JsonExtensions.Reading;
 namespace DiscordChatExporter.Core.Discord.Data;
 
 // https://docs.discord.com/developers/resources/message#message-snapshot-object
-// Message snapshots contain a subset of message fields for forwarded messages
 public record MessageSnapshot(
     DateTimeOffset Timestamp,
     DateTimeOffset? EditedTimestamp,

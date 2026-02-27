@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <EncryptionSalt Condition="'$(EncryptionSalt)' == ''">HimalayanPinkSalt</EncryptionSalt>
+    <EncryptionSalt>HimalayanPinkSalt</EncryptionSalt>
   </PropertyGroup>
 
   <ItemGroup>

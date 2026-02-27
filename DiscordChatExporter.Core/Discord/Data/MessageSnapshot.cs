@@ -31,21 +31,24 @@ public record MessageSnapshot(
                 .GetPropertyOrNull("attachments")
                 ?.EnumerateArrayOrNull()
                 ?.Select(Attachment.Parse)
-                .ToArray() ?? [];
+                .ToArray()
+            ?? [];
 
         var embeds =
             messageJson
                 .GetPropertyOrNull("embeds")
                 ?.EnumerateArrayOrNull()
                 ?.Select(Embed.Parse)
-                .ToArray() ?? [];
+                .ToArray()
+            ?? [];
 
         var stickers =
             messageJson
                 .GetPropertyOrNull("sticker_items")
                 ?.EnumerateArrayOrNull()
                 ?.Select(Sticker.Parse)
-                .ToArray() ?? [];
+                .ToArray()
+            ?? [];
 
         var timestamp =
             messageJson.GetPropertyOrNull("timestamp")?.GetDateTimeOffsetOrNull()

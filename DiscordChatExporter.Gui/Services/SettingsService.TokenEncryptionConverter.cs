@@ -17,9 +17,9 @@ public partial class SettingsService
             Rfc2898DeriveBytes.Pbkdf2(
                 Encoding.UTF8.GetBytes(Environment.TryGetMachineId() ?? string.Empty),
                 Encoding.UTF8.GetBytes(ThisAssembly.Project.EncryptionSalt),
-                iterations: 10_000,
+                600_000,
                 HashAlgorithmName.SHA256,
-                outputLength: 16
+                16
             )
         );
 
@@ -31,30 +31,31 @@ public partial class SettingsService
         {
             var value = reader.GetString();
 
-            // No prefix means the token is stored as plain text, which was
-            // the case for older versions of the application.
-            // Load it as is and encrypt it on next save.
+            // No prefix means the token is stored as plain text, which was the case for older
+            // versions of the application. Load it as is and encrypt it on next save.
             if (
                 string.IsNullOrWhiteSpace(value)
                 || !value.StartsWith(Prefix, StringComparison.Ordinal)
             )
+            {
                 return value;
+            }
 
             try
             {
-                var data = Convert.FromHexString(value[Prefix.Length..]);
+                var encryptedData = Convert.FromHexString(value[Prefix.Length..]);
+                var tokenData = new byte[encryptedData.AsSpan(28).Length];
 
-                // Layout: nonce (12 bytes) | paddingLength (1 byte) | tag (16 bytes) | cipher
-                var nonce = data.AsSpan(0, 12);
-                var paddingLength = data[12];
-                var tag = data.AsSpan(13, 16);
-                var cipher = data.AsSpan(29);
-
-                var decrypted = new byte[cipher.Length];
+                // Layout: nonce (12 bytes) | tag (16 bytes) | cipher
                 using var aes = new AesGcm(Key.Value, 16);
-                aes.Decrypt(nonce, cipher, tag, decrypted);
+                aes.Decrypt(
+                    encryptedData.AsSpan(0, 12),
+                    encryptedData.AsSpan(28),
+                    encryptedData.AsSpan(12, 16),
+                    tokenData
+                );
 
-                return Encoding.UTF8.GetString(decrypted.AsSpan(paddingLength));
+                return Encoding.UTF8.GetString(tokenData);
             }
             catch (Exception ex)
                 when (ex
@@ -80,28 +81,22 @@ public partial class SettingsService
                 return;
             }
 
-            var paddingLength = RandomNumberGenerator.GetInt32(1, 17);
             var tokenData = Encoding.UTF8.GetBytes(value);
-
-            // Layout: nonce (12 bytes) | paddingLength (1 byte) | tag (16 bytes) | cipher (paddingLength + tokenData.Length)
-            var data = new byte[29 + paddingLength + tokenData.Length];
+            var encryptedData = new byte[28 + tokenData.Length];
 
             // Nonce
-            RandomNumberGenerator.Fill(data.AsSpan(0, 12));
+            RandomNumberGenerator.Fill(encryptedData.AsSpan(0, 12));
 
-            // Padding length
-            data[12] = (byte)paddingLength;
-
-            // Padding
-            RandomNumberGenerator.Fill(data.AsSpan(29, paddingLength));
-
-            // Token data
-            tokenData.CopyTo(data.AsSpan(29 + paddingLength));
-
+            // Layout: nonce (12 bytes) | tag (16 bytes) | cipher
             using var aes = new AesGcm(Key.Value, 16);
-            aes.Encrypt(data.AsSpan(0, 12), data.AsSpan(29), data.AsSpan(29), data.AsSpan(13, 16));
+            aes.Encrypt(
+                encryptedData.AsSpan(0, 12),
+                tokenData,
+                encryptedData.AsSpan(28),
+                encryptedData.AsSpan(12, 16)
+            );
 
-            writer.WriteStringValue(Prefix + Convert.ToHexStringLower(data));
+            writer.WriteStringValue(Prefix + Convert.ToHexStringLower(encryptedData));
         }
     }
 }

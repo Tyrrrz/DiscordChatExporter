@@ -7,7 +7,7 @@ internal static class EnvironmentExtensions
 {
     extension(Environment)
     {
-        public static string GetMachineId()
+        public static string? TryGetMachineId()
         {
             // Windows: stable GUID written during OS installation
             if (OperatingSystem.IsWindows())
@@ -47,7 +47,7 @@ internal static class EnvironmentExtensions
             }
             catch
             {
-                return string.Empty;
+                return null;
             }
         }
     }

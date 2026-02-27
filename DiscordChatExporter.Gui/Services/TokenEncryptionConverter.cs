@@ -13,7 +13,7 @@ internal class TokenEncryptionConverter : JsonConverter<string?>
 
     private static readonly Lazy<byte[]> Key = new(() =>
         Rfc2898DeriveBytes.Pbkdf2(
-            Encoding.UTF8.GetBytes(Environment.GetMachineId()),
+            Encoding.UTF8.GetBytes(Environment.TryGetMachineId() ?? string.Empty),
             Encoding.UTF8.GetBytes(ThisAssembly.Project.EncryptionSalt),
             iterations: 10_000,
             HashAlgorithmName.SHA256,
@@ -72,22 +72,18 @@ internal class TokenEncryptionConverter : JsonConverter<string?>
             return;
         }
 
-        var nonce = RandomNumberGenerator.GetBytes(12);
-        var padding = RandomNumberGenerator.GetBytes(RandomNumberGenerator.GetInt32(1, 17));
+        var paddingLength = RandomNumberGenerator.GetInt32(1, 17);
         var tokenBytes = Encoding.UTF8.GetBytes(value);
 
-        // Assemble plaintext bytes: padding + token
-        var plaintextBytes = new byte[padding.Length + tokenBytes.Length];
-        padding.CopyTo(plaintextBytes.AsSpan());
-        tokenBytes.CopyTo(plaintextBytes.AsSpan(padding.Length));
-
-        // Layout: nonce (12 bytes) | paddingLength (1 byte) | tag (16 bytes) | ciphertext
-        var data = new byte[29 + plaintextBytes.Length];
-        nonce.CopyTo(data.AsSpan(0, 12));
-        data[12] = (byte)padding.Length;
+        // Layout: nonce (12 bytes) | paddingLength (1 byte) | tag (16 bytes) | ciphertext (paddingLength + tokenBytes.Length)
+        var data = new byte[29 + paddingLength + tokenBytes.Length];
+        RandomNumberGenerator.Fill(data.AsSpan(0, 12)); // nonce
+        data[12] = (byte)paddingLength;
+        RandomNumberGenerator.Fill(data.AsSpan(29, paddingLength)); // random padding
+        tokenBytes.CopyTo(data.AsSpan(29 + paddingLength)); // token
 
         using var aes = new AesGcm(Key.Value, 16);
-        aes.Encrypt(nonce, plaintextBytes, data.AsSpan(29), data.AsSpan(13, 16));
+        aes.Encrypt(data.AsSpan(0, 12), data.AsSpan(29), data.AsSpan(29), data.AsSpan(13, 16));
 
         writer.WriteStringValue(Prefix + Convert.ToHexStringLower(data));
     }

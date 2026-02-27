@@ -72,20 +72,43 @@ internal class TokenEncryptionConverter : JsonConverter<string?>
         if (string.IsNullOrWhiteSpace(value) || !value.StartsWith(Prefix, StringComparison.Ordinal))
             return value;
 
+        byte[] data;
         try
         {
-            var data = Convert.FromBase64String(value[Prefix.Length..]);
-            using var aes = Aes.Create();
-            aes.Key = Key.Value;
-
-            // Layout: IV (16 bytes) | padLen (1 byte) | ciphertext
-            var decrypted = aes.DecryptCbc(data[17..], data[..16]);
-            return Encoding.UTF8.GetString(decrypted[data[16]..]);
+            data = Convert.FromHexString(value[Prefix.Length..]);
         }
-        catch
+        catch (FormatException)
         {
             return null;
         }
+
+        // Layout: Nonce (12 bytes) | padLen (1 byte) | Tag (16 bytes) | Ciphertext
+        if (data.Length < 29)
+            return null;
+
+        var padLen = data[12];
+        if (padLen < 1 || padLen > MaxPaddingLength)
+            return null;
+
+        var nonce = data.AsSpan(0, 12);
+        var tag = data.AsSpan(13, 16);
+        var ciphertext = data.AsSpan(29);
+
+        var decrypted = new byte[ciphertext.Length];
+        try
+        {
+            using var aes = new AesGcm(Key.Value, 16);
+            aes.Decrypt(nonce, ciphertext, tag, decrypted);
+        }
+        catch (CryptographicException)
+        {
+            return null;
+        }
+
+        if (padLen > decrypted.Length)
+            return null;
+
+        return Encoding.UTF8.GetString(decrypted.AsSpan(padLen));
     }
 
     public override void Write(Utf8JsonWriter writer, string? value, JsonSerializerOptions options)
@@ -96,25 +119,28 @@ internal class TokenEncryptionConverter : JsonConverter<string?>
             return;
         }
 
-        using var aes = Aes.Create();
-        aes.Key = Key.Value;
-        aes.GenerateIV(); // Random IV ensures non-deterministic output
-
-        // Random padding bytes vary the output length
+        var nonce = RandomNumberGenerator.GetBytes(12);
         var padLen = RandomNumberGenerator.GetInt32(1, MaxPaddingLength + 1);
         var tokenBytes = Encoding.UTF8.GetBytes(value);
+
+        // Random padding bytes vary the output length
         var padded = new byte[padLen + tokenBytes.Length];
-        RandomNumberGenerator.Fill(padded[..padLen]);
+        RandomNumberGenerator.Fill(padded.AsSpan(0, padLen));
         tokenBytes.CopyTo(padded, padLen);
 
-        var ciphertext = aes.EncryptCbc(padded, aes.IV);
+        var ciphertext = new byte[padded.Length];
+        var tag = new byte[16];
 
-        // Layout: IV (16 bytes) | padLen (1 byte) | ciphertext
-        var data = new byte[17 + ciphertext.Length];
-        aes.IV.CopyTo(data.AsSpan(0, 16));
-        data[16] = (byte)padLen;
-        ciphertext.CopyTo(data.AsSpan(17));
+        using var aes = new AesGcm(Key.Value, 16);
+        aes.Encrypt(nonce, padded, ciphertext, tag);
 
-        writer.WriteStringValue(Prefix + Convert.ToBase64String(data));
+        // Layout: Nonce (12 bytes) | padLen (1 byte) | Tag (16 bytes) | Ciphertext
+        var data = new byte[29 + ciphertext.Length];
+        nonce.CopyTo(data.AsSpan(0, 12));
+        data[12] = (byte)padLen;
+        tag.CopyTo(data.AsSpan(13, 16));
+        ciphertext.CopyTo(data.AsSpan(29));
+
+        writer.WriteStringValue(Prefix + Convert.ToHexStringLower(data));
     }
 }

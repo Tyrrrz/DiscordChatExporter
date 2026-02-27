@@ -34,7 +34,7 @@
 }
 
 <div class="chatlog__message-group">
-@foreach (var (message, i) in Messages.WithIndex())
+@foreach (var (i, message) in Messages.Index())
 {
     var isFirst = i == 0;
 

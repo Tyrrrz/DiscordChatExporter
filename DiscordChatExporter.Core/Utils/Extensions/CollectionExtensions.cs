@@ -12,16 +12,6 @@ public static class CollectionExtensions
         }
     }
 
-    extension<T>(IEnumerable<T> source)
-    {
-        public IEnumerable<(T value, int index)> WithIndex()
-        {
-            var i = 0;
-            foreach (var o in source)
-                yield return (o, i++);
-        }
-    }
-
     extension<T>(IEnumerable<T?> source)
         where T : class
     {

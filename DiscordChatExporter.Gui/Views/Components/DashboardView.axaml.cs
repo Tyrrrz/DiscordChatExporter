@@ -25,16 +25,12 @@ public partial class DashboardView : UserControl<DashboardViewModel>
 
     private void AvailableGuildsListBox_OnDoubleTapped(object? sender, TappedEventArgs args)
     {
-        // Only works when there is exactly one non-category, child-less channel
         if (
-            DataContext.AvailableChannels is not { Count: 1 }
-            || DataContext.AvailableChannels[0].Channel.IsCategory
-            || DataContext.AvailableChannels[0].Children.Count != 0
+            DataContext.SelectedChannels is not { Count: 1 }
+            || DataContext.SelectedChannels[0].Channel.IsCategory
         )
             return;
 
-        DataContext.SelectedChannels.Clear();
-        DataContext.SelectedChannels.Add(DataContext.AvailableChannels[0]);
         DataContext.ExportCommand.Execute(null);
     }
 

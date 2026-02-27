@@ -23,18 +23,15 @@ public partial class DashboardView : UserControl<DashboardViewModel>
         SelectionChangedEventArgs args
     ) => DataContext.PullChannelsCommand.Execute(null);
 
-    private void AvailableGuildsListBox_OnDoubleTapped(object? sender, TappedEventArgs args)
+    private void AvailableChannelsTreeView_OnDoubleTapped(object? sender, TappedEventArgs args)
     {
-        // Ensure the tap was on an actual guild item, not empty space in the list
-        if (args.Source is not Control { DataContext: Guild })
+        // Ensure the tap was on an actual channel item, not empty space in the tree
+        if (args.Source is not Control { DataContext: ChannelConnection channelConnection })
         {
             return;
         }
 
-        if (
-            DataContext.SelectedChannels is not { Count: 1 }
-            || DataContext.SelectedChannels[0].Channel.IsCategory
-        )
+        if (channelConnection.Channel.IsCategory)
         {
             return;
         }

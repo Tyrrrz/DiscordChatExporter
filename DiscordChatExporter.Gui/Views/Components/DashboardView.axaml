@@ -100,7 +100,6 @@
                     BorderThickness="0,0,1,0">
                     <ListBox
                         x:Name="AvailableGuildsListBox"
-                        DoubleTapped="AvailableGuildsListBox_OnDoubleTapped"
                         ItemsSource="{Binding AvailableGuilds}"
                         ScrollViewer.VerticalScrollBarVisibility="Hidden"
                         SelectedItem="{Binding SelectedGuild}"
@@ -143,6 +142,7 @@
                 <Border Grid.Column="1">
                     <TreeView
                         x:Name="AvailableChannelsTreeView"
+                        DoubleTapped="AvailableChannelsTreeView_OnDoubleTapped"
                         ItemsSource="{Binding AvailableChannels}"
                         SelectedItems="{Binding SelectedChannels}"
                         SelectionChanged="AvailableChannelsTreeView_OnSelectionChanged"

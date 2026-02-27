@@ -52,8 +52,7 @@ public partial class LocalizationManager
             [nameof(AutoUpdateLabel)] = "Auto-update",
             [nameof(AutoUpdateTooltip)] = "Perform automatic updates on every launch",
             [nameof(PersistTokenLabel)] = "Persist token",
-            [nameof(PersistTokenTooltip)] =
-                """
+            [nameof(PersistTokenTooltip)] = """
                 Save the last used token to a file so that it can be persisted between sessions.
                 **Warning**: although the token is stored with encryption, it may still be recovered by an attacker who has access to your system.
                 """,

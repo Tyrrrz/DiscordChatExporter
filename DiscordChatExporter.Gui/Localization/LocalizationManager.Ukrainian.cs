@@ -52,8 +52,7 @@ public partial class LocalizationManager
             [nameof(AutoUpdateLabel)] = "Авто-оновлення",
             [nameof(AutoUpdateTooltip)] = "Виконувати автоматичні оновлення при кожному запуску",
             [nameof(PersistTokenLabel)] = "Зберігати токен",
-            [nameof(PersistTokenTooltip)] =
-                """
+            [nameof(PersistTokenTooltip)] = """
                 Зберігати останній використаний токен у файлі для збереження між сеансами.
                 **Увага**: хоча токен зберігається із шифруванням, він може бути відновлений зловмисником, який має доступ до вашої системи.
                 """,

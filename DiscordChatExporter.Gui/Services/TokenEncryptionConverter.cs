@@ -52,12 +52,11 @@ internal class TokenEncryptionConverter : JsonConverter<string?>
             return Encoding.UTF8.GetString(decrypted.AsSpan(paddingLength));
         }
         catch (Exception ex)
-            when (
-                ex
-                is FormatException
-                    or CryptographicException
-                    or ArgumentException
-                    or IndexOutOfRangeException
+            when (ex
+                    is FormatException
+                        or CryptographicException
+                        or ArgumentException
+                        or IndexOutOfRangeException
             )
         {
             return null;
@@ -89,4 +88,3 @@ internal class TokenEncryptionConverter : JsonConverter<string?>
         writer.WriteStringValue(Prefix + Convert.ToHexStringLower(data));
     }
 }
-

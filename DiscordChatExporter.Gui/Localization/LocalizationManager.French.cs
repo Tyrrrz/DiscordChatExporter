@@ -54,8 +54,7 @@ public partial class LocalizationManager
         [nameof(AutoUpdateLabel)] = "Mise à jour automatique",
         [nameof(AutoUpdateTooltip)] = "Effectuer des mises à jour automatiques à chaque lancement",
         [nameof(PersistTokenLabel)] = "Conserver le token",
-        [nameof(PersistTokenTooltip)] =
-            """
+        [nameof(PersistTokenTooltip)] = """
             Enregistrer le dernier token utilisé dans un fichier pour le conserver entre les sessions.
             **Avertissement** : bien que le token soit stocké avec chiffrement, il peut toujours être récupéré par un attaquant ayant accès à votre système.
             """,

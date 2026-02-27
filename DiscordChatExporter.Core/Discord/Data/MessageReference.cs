@@ -5,7 +5,12 @@ using JsonExtensions.Reading;
 namespace DiscordChatExporter.Core.Discord.Data;
 
 // https://discord.com/developers/docs/resources/channel#message-object-message-reference-structure
-public record MessageReference(Snowflake? MessageId, Snowflake? ChannelId, Snowflake? GuildId)
+public record MessageReference(
+    Snowflake? MessageId,
+    Snowflake? ChannelId,
+    Snowflake? GuildId,
+    MessageReferenceKind Kind
+)
 {
     public static MessageReference Parse(JsonElement json)
     {
@@ -21,6 +26,10 @@ public record MessageReference(Snowflake? MessageId, Snowflake? ChannelId, Snowf
             ?.GetNonWhiteSpaceStringOrNull()
             ?.Pipe(Snowflake.Parse);
 
-        return new MessageReference(messageId, channelId, guildId);
+        var kind =
+            json.GetPropertyOrNull("type")?.GetInt32OrNull()?.Pipe(t => (MessageReferenceKind)t)
+            ?? MessageReferenceKind.Default;
+
+        return new MessageReference(messageId, channelId, guildId, kind);
     }
 }

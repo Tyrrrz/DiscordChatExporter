@@ -80,17 +80,17 @@ public partial class LocalizationManager
             Verzeichnispfade müssen mit einem Schrägstrich enden, um Mehrdeutigkeiten zu vermeiden.
 
             Verfügbare Vorlagen-Token:
-            - **%g** — Server-ID
-            - **%G** — Servername
-            - **%t** — Kategorie-ID
-            - **%T** — Kategoriename
-            - **%c** — Kanal-ID
-            - **%C** — Kanalname
-            - **%p** — Kanalposition
-            - **%P** — Kategorieposition
-            - **%a** — Datum ab
-            - **%b** — Datum bis
-            - **%d** — aktuelles Datum
+            **%g** — Server-ID
+            **%G** — Servername
+            **%t** — Kategorie-ID
+            **%T** — Kategoriename
+            **%c** — Kanal-ID
+            **%C** — Kanalname
+            **%p** — Kanalposition
+            **%P** — Kategorieposition
+            **%a** — Datum ab
+            **%b** — Datum bis
+            **%d** — aktuelles Datum
             """,
         [nameof(FormatLabel)] = "Format",
         [nameof(FormatTooltip)] = "Exportformat",

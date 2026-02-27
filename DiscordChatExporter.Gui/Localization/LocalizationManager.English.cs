@@ -78,17 +78,17 @@ public partial class LocalizationManager
                 Directory paths must end with a slash to avoid ambiguity.
 
                 Available template tokens:
-                - **%g** — server ID
-                - **%G** — server name
-                - **%t** — category ID
-                - **%T** — category name
-                - **%c** — channel ID
-                - **%C** — channel name
-                - **%p** — channel position
-                - **%P** — category position
-                - **%a** — after date
-                - **%b** — before date
-                - **%d** — current date
+                **%g** — server ID
+                **%G** — server name
+                **%t** — category ID
+                **%T** — category name
+                **%c** — channel ID
+                **%C** — channel name
+                **%p** — channel position
+                **%P** — category position
+                **%a** — after date
+                **%b** — before date
+                **%d** — current date
                 """,
             [nameof(FormatLabel)] = "Format",
             [nameof(FormatTooltip)] = "Export format",

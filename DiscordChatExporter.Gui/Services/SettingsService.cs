@@ -12,11 +12,7 @@ using DiscordChatExporter.Gui.Models;
 namespace DiscordChatExporter.Gui.Services;
 
 [ObservableObject]
-public partial class SettingsService()
-    : SettingsBase(
-        Path.Combine(AppContext.BaseDirectory, "Settings.dat"),
-        SerializerContext.Default
-    )
+public partial class SettingsService() : SettingsBase(GetFilePath(), SerializerContext.Default)
 {
     [ObservableProperty]
     public partial bool IsUkraineSupportMessageEnabled { get; set; } = true;
@@ -88,6 +84,17 @@ public partial class SettingsService()
 
         LastToken = lastToken;
     }
+}
+
+public partial class SettingsService
+{
+    private static string GetFilePath() =>
+        Environment.GetEnvironmentVariable("DISCORDCHATEXPORTER_SETTINGS_PATH") is { } path
+        && !string.IsNullOrWhiteSpace(path)
+            ? Path.EndsInDirectorySeparator(path) || Directory.Exists(path)
+                ? Path.Combine(path, "Settings.dat")
+                : path
+            : Path.Combine(AppContext.BaseDirectory, "Settings.dat");
 }
 
 public partial class SettingsService

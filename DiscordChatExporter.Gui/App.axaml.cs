@@ -26,6 +26,8 @@ public class App : Application, IDisposable
     private readonly SettingsService _settingsService;
     private readonly MainViewModel _mainViewModel;
 
+    private bool _isDisposed;
+
     public App()
     {
         var services = new ServiceCollection();
@@ -98,7 +100,23 @@ public class App : Application, IDisposable
     public override void OnFrameworkInitializationCompleted()
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
             desktop.MainWindow = new MainView { DataContext = _mainViewModel };
+
+            void OnExit(object? sender, ControlledApplicationLifetimeExitEventArgs args)
+            {
+                if (sender is IControlledApplicationLifetime lifetime)
+                    lifetime.Exit -= OnExit;
+
+                Dispose();
+            }
+
+            // Although `App.Dispose()` is invoked from `Program.Main(...)`, on some platforms
+            // it may be called too late in the shutdown lifecycle. Attach an exit
+            // handler to ensure timely disposal as a safeguard.
+            // https://github.com/Tyrrrz/YoutubeDownloader/issues/795
+            desktop.Exit += OnExit;
+        }
 
         base.OnFrameworkInitializationCompleted();
 
@@ -115,6 +133,11 @@ public class App : Application, IDisposable
 
     public void Dispose()
     {
+        if (_isDisposed)
+            return;
+
+        _isDisposed = true;
+
         _eventRoot.Dispose();
         _services.Dispose();
     }

@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
@@ -18,6 +21,14 @@ using JsonExtensions.Reading;
 
 namespace DiscordChatExporter.Core.Discord;
 
+[JsonSerializable(typeof(XSuperProperties))]
+internal partial class XSuperPropertiesJsonContext : JsonSerializerContext;
+
+internal sealed record XSuperProperties(
+    [property: JsonPropertyName("os")] string OperatingSystem,
+    [property: JsonPropertyName("client_build_number")] string ClientBuildNumber
+);
+
 public class DiscordClient(
     string token,
     RateLimitPreference rateLimitPreference = RateLimitPreference.RespectAll
@@ -25,6 +36,81 @@ public class DiscordClient(
 {
     private readonly Uri _baseUri = new("https://discord.com/api/v10/", UriKind.Absolute);
     private TokenKind? _resolvedTokenKind;
+
+    private static string? _xSuperPropertiesHeader;
+    
+    private static Guid GenerateLaunchSignature()
+    {
+        var bytes = Guid.NewGuid().ToByteArray();
+        var bits = new BitArray(bytes);
+    
+        // Clear the mod-detection bits
+        int[] bitPositions = [119, 108, 100, 91, 84, 75, 61, 55, 48, 38, 24, 11];
+        foreach (int bit in bitPositions)
+            bits[bit] = false;
+    
+        bits.CopyTo(bytes, 0);
+    
+        return new Guid(bytes);
+    }
+    
+    // We could generate a random UserAgent. However, that way we could run into issues where certain older or newer versions
+    // and certain browsers could trigger experimental or unsupported features on Discord's site, resulting in the requests potentially failing,
+    // creating impossible to replicate issues for users
+    private const string UserAgent =
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36";
+
+    private static async Task<string?> GetXSuperPropertiesHeaderAsync(
+        CancellationToken cancellationToken = default
+    )
+    {
+        //var launchSignature = GenerateLaunchSignature();
+        var buildNumber = await GetBuildNumberAsync();
+
+        if (buildNumber == null)
+            return null;
+
+        // https://github.com/greg6775/Discord-Api-Endpoints/blob/master/README.md
+        // https://docs.discord.food/reference#client-properties
+        var json = JsonSerializer.Serialize(
+            new XSuperProperties("Linux", buildNumber ?? ""), // Operating System based on UserAgent
+            XSuperPropertiesJsonContext.Default.XSuperProperties
+        );
+
+        return Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
+
+        async Task<string?> GetBuildNumberAsync()
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Get, "https://discord.com/app");
+            request.Headers.UserAgent.ParseAdd(UserAgent);
+
+            var response = await Http.Client.SendAsync(
+                request,
+                HttpCompletionOption.ResponseHeadersRead,
+                cancellationToken
+            );
+            var responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
+
+            // Parse BUILD_NUMBER from the response body
+            var buildNumberIndex = responseBody.IndexOf(
+                "\"BUILD_NUMBER\":\"",
+                StringComparison.Ordinal
+            );
+            if (buildNumberIndex == -1)
+                return null;
+
+            var buildNumberStart = buildNumberIndex + "\"BUILD_NUMBER\":\"".Length;
+            var buildNumberEnd = responseBody.IndexOf(
+                "\"",
+                buildNumberStart,
+                StringComparison.Ordinal
+            );
+            if (buildNumberEnd == -1)
+                return null;
+
+            return responseBody.Substring(buildNumberStart, buildNumberEnd - buildNumberStart);
+        }
+    }
 
     private async ValueTask<HttpResponseMessage> GetResponseAsync(
         string url,
@@ -43,6 +129,23 @@ public class DiscordClient(
                     "Authorization",
                     tokenKind == TokenKind.Bot ? $"Bot {token}" : token
                 );
+
+                if (tokenKind == TokenKind.User)
+                {
+                    _xSuperPropertiesHeader ??= await GetXSuperPropertiesHeaderAsync(
+                        innerCancellationToken
+                    );
+                    // If we fail to generate an x-super-properties we should either warn or completely abort this process,
+                    // as the user account may be at risk of being flagged?
+                    if (_xSuperPropertiesHeader != null)
+                    {
+                        request.Headers.TryAddWithoutValidation(
+                            "X-Super-Properties",
+                            _xSuperPropertiesHeader
+                        );
+                    }
+                    request.Headers.UserAgent.ParseAdd(UserAgent);
+                }
 
                 var response = await Http.Client.SendAsync(
                     request,

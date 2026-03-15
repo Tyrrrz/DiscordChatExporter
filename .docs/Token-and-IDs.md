@@ -27,7 +27,7 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 3. Type
 
     ```js
-    let m;webpackChunkdiscord_app.push([[Math.random()],{},e=>{for(let i in e.c){let x=e.c[i];if(x?.exports?.$8&&x.exports.LP&&x.exports.gK){m=x;break}}}]);m&&console.log("Token:",m.exports.LP());
+    let m;webpackChunkdiscord_app.push([[Math.random()],{},e=>{for(let i in e.c){let x=e.c[i];if(x?.exports?.getToken){m=x;break}}}]);m&&console.log("Token:",m.exports.getToken());
     ```
 
     into the console and press <kbd>Enter</kbd>. The console will display your user token.

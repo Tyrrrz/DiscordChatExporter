@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -25,7 +26,9 @@ internal partial class XSuperPropertiesJsonContext : JsonSerializerContext;
 
 internal sealed record XSuperProperties(
     [property: JsonPropertyName("os")] string OperatingSystem,
-    [property: JsonPropertyName("client_build_number")] string ClientBuildNumber
+    [property: JsonPropertyName("client_build_number")] string ClientBuildNumber,
+    [property: JsonPropertyName("client_launch_id")] Guid ClientLaunchId,
+    [property: JsonPropertyName("launch_signature")] Guid LaunchSignature
 );
 
 public class DiscordClient(
@@ -37,6 +40,21 @@ public class DiscordClient(
     private TokenKind? _resolvedTokenKind;
 
     private static string? _xSuperPropertiesHeader;
+
+    private static Guid GenerateLaunchSignature()
+    {
+        var bytes = Guid.NewGuid().ToByteArray();
+        var bits = new BitArray(bytes);
+
+        // Clear the mod-detection bits
+        int[] bitPositions = [119, 108, 100, 91, 84, 75, 61, 55, 48, 38, 24, 11];
+        foreach (int bit in bitPositions)
+            bits[bit] = false;
+
+        bits.CopyTo(bytes, 0);
+
+        return new Guid(bytes);
+    }
 
     // We could generate a random UserAgent. However, that way we could run into issues where certain older or newer versions
     // and certain browsers could trigger experimental or unsupported features on Discord's site, resulting in the requests potentially failing,
@@ -56,7 +74,12 @@ public class DiscordClient(
         // https://github.com/greg6775/Discord-Api-Endpoints/blob/master/README.md
         // https://docs.discord.food/reference#client-properties
         var json = JsonSerializer.Serialize(
-            new XSuperProperties("Linux", buildNumber), // Operating System based on UserAgent
+            new XSuperProperties(
+                OperatingSystem: "Linux", // Operating System based on UserAgent
+                ClientBuildNumber: buildNumber,
+                ClientLaunchId: Guid.NewGuid(),
+                LaunchSignature: GenerateLaunchSignature()
+                ),
             XSuperPropertiesJsonContext.Default.XSuperProperties
         );
 

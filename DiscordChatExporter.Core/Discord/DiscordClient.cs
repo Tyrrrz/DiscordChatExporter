@@ -79,7 +79,7 @@ public class DiscordClient(
                 ClientBuildNumber: buildNumber,
                 ClientLaunchId: Guid.NewGuid(),
                 LaunchSignature: GenerateLaunchSignature()
-                ),
+            ),
             XSuperPropertiesJsonContext.Default.XSuperProperties
         );
 

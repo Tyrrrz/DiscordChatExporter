@@ -10,7 +10,7 @@ namespace DiscordChatExporter.Gui.Services;
 public class UpdateService(SettingsService settingsService) : IDisposable
 {
     private readonly IUpdateManager? _updateManager =
-        OperatingSystem.IsWindows() && !StartOptions.Current.IsAutoUpdateDisabled
+        OperatingSystem.IsWindows() && StartOptions.Current.IsAutoUpdateAllowed
             ? new UpdateManager(
                 new GithubPackageResolver(
                     "Tyrrrz",

@@ -23,8 +23,8 @@ public partial class StartOptions
                         : path
                     : Path.Combine(AppContext.BaseDirectory, "Settings.dat"),
             IsAutoUpdateAllowed = !(
-                Environment.GetEnvironmentVariable("DISCORDCHATEXPORTER_ALLOW_AUTO_UPDATE") is
-                { } env
+                Environment.GetEnvironmentVariable("DISCORDCHATEXPORTER_ALLOW_AUTO_UPDATE")
+                    is { } env
                 && env.Equals("false", StringComparison.OrdinalIgnoreCase)
             ),
         };

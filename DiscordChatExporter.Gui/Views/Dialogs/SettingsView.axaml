@@ -50,8 +50,7 @@
                     <!--  Auto-updates  -->
                     <DockPanel
                         Margin="16,8"
-                        IsVisible="{OnPlatform False,
-                                               Windows=True}"
+                        IsVisible="{Binding IsAutoUpdateAvailable}"
                         LastChildFill="False"
                         ToolTip.Tip="{Binding LocalizationManager.AutoUpdateTooltip}">
                         <TextBlock DockPanel.Dock="Left" Text="{Binding LocalizationManager.AutoUpdateLabel}" />

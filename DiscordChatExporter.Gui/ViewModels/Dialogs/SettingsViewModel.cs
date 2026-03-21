@@ -46,6 +46,9 @@ public class SettingsViewModel : DialogViewModelBase
         set => _settingsService.Language = value;
     }
 
+    public bool IsAutoUpdateAvailable { get; } =
+        OperatingSystem.IsWindows() && !StartOptions.Current.IsAutoUpdateDisabled;
+
     public bool IsAutoUpdateEnabled
     {
         get => _settingsService.IsAutoUpdateEnabled;

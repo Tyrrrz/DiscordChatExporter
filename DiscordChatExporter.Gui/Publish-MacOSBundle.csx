@@ -14,6 +14,11 @@ return await new CliApplicationBuilder()
 public class PublishMacOSBundleCommand : ICommand
 {
     private const string BundleName = "DiscordChatExporter.app";
+    private const string AppName = "DiscordChatExporter";
+    private const string AppCopyright = "© Oleksii Holub";
+    private const string AppIdentifier = "me.Tyrrrz.DiscordChatExporter";
+    private const string AppSpokenName = "Discord Chat Exporter";
+    private const string AppIconName = "AppIcon";
 
     [CommandOption("publish-dir", Description = "Path to the publish output directory.")]
     public required string PublishDirPath { get; init; }
@@ -55,21 +60,21 @@ public class PublishMacOSBundleCommand : ICommand
                 <plist version="1.0">
                   <dict>
                     <key>CFBundleDisplayName</key>
-                    <string>DiscordChatExporter</string>
+                    <string>{AppName}</string>
                     <key>CFBundleName</key>
-                    <string>DiscordChatExporter</string>
+                    <string>{AppName}</string>
                     <key>CFBundleExecutable</key>
-                    <string>DiscordChatExporter</string>
+                    <string>{AppName}</string>
                     <key>NSHumanReadableCopyright</key>
-                    <string>© Oleksii Holub</string>
+                    <string>{AppCopyright}</string>
                     <key>CFBundleIdentifier</key>
-                    <string>me.Tyrrrz.DiscordChatExporter</string>
+                    <string>{AppIdentifier}</string>
                     <key>CFBundleSpokenName</key>
-                    <string>Discord Chat Exporter</string>
+                    <string>{AppSpokenName}</string>
                     <key>CFBundleIconFile</key>
-                    <string>AppIcon</string>
+                    <string>{AppIconName}</string>
                     <key>CFBundleIconName</key>
-                    <string>AppIcon</string>
+                    <string>{AppIconName}</string>
                     <key>CFBundleVersion</key>
                     <string>{FullVersion}</string>
                     <key>CFBundleShortVersionString</key>

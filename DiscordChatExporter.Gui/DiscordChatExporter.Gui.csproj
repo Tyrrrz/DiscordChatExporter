@@ -56,7 +56,7 @@
 
   <Target Name="PublishMacOSBundle" AfterTargets="Publish" Condition="$(PublishMacOSBundle)">
     <Exec
-      Command="dotnet run $(ProjectDir)/Publish-MacOSBundle.csx -- $(PublishDir) $(ProjectDir)/../favicon.icns $(Version) $(AssemblyVersion)"
+      Command="dotnet run $(ProjectDir)/Publish-MacOSBundle.csx -- --publish-dir $(PublishDir) --icons-file $(ProjectDir)/../favicon.icns --full-version $(Version) --short-version $(AssemblyVersion)"
       LogStandardErrorAsError="true"
     />
   </Target>

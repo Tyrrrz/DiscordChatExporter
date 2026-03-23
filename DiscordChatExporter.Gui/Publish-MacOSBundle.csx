@@ -1,4 +1,5 @@
-#:package CliFx@2.3.6
+#!/usr/bin/env -S dotnet run
+#:package CliFx
 
 using CliFx;
 using CliFx.Attributes;
@@ -12,21 +13,21 @@ return await new CliApplicationBuilder()
 [Command(Description = "Publishes the GUI app as a macOS .app bundle.")]
 public class PublishMacOSBundleCommand : ICommand
 {
-    [CommandParameter(0, Name = "publish-dir", Description = "Path to the publish output directory.")]
+    [CommandOption("publish-dir", Description = "Path to the publish output directory.")]
     public required string PublishDirPath { get; init; }
 
-    [CommandParameter(1, Name = "icons-file", Description = "Path to the .icns icons file.")]
+    [CommandOption("icons-file", Description = "Path to the .icns icons file.")]
     public required string IconsFilePath { get; init; }
 
-    [CommandParameter(2, Name = "full-version", Description = "Full version string (e.g. '1.2.3.4').")]
+    [CommandOption("full-version", Description = "Full version string (e.g. '1.2.3.4').")]
     public required string FullVersion { get; init; }
 
-    [CommandParameter(3, Name = "short-version", Description = "Short version string (e.g. '1.2.3').")]
+    [CommandOption("short-version", Description = "Short version string (e.g. '1.2.3').")]
     public required string ShortVersion { get; init; }
 
     public ValueTask ExecuteAsync(IConsole console)
     {
-        // Setup paths
+        // Set up paths
         var publishDirPath = Path.GetFullPath(PublishDirPath);
         var tempDirPath = Path.GetFullPath(
             Path.Combine(publishDirPath, "../publish-macos-app-temp")
@@ -40,8 +41,6 @@ public class PublishMacOSBundleCommand : ICommand
         try
         {
             // Initialize the bundle's directory structure
-            Directory.CreateDirectory(bundleDirPath);
-            Directory.CreateDirectory(contentsDirPath);
             Directory.CreateDirectory(macosDirPath);
             Directory.CreateDirectory(resourcesDirPath);
 
@@ -49,10 +48,11 @@ public class PublishMacOSBundleCommand : ICommand
             File.Copy(
                 IconsFilePath,
                 Path.Combine(resourcesDirPath, "AppIcon.icns"),
-                overwrite: true
+                true
             );
 
             // Generate the Info.plist metadata file with the app information
+            // lang=xml
             var plistContent = $"""
                 <?xml version="1.0" encoding="UTF-8"?>
                 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -91,7 +91,7 @@ public class PublishMacOSBundleCommand : ICommand
             // Delete the previous bundle if it exists
             var existingBundlePath = Path.Combine(publishDirPath, bundleName);
             if (Directory.Exists(existingBundlePath))
-                Directory.Delete(existingBundlePath, recursive: true);
+                Directory.Delete(existingBundlePath, true);
 
             // Move all files from the publish directory into the MacOS directory
             foreach (var entry in Directory.GetFileSystemEntries(publishDirPath))
@@ -110,7 +110,7 @@ public class PublishMacOSBundleCommand : ICommand
         {
             // Clean up the temporary directory
             if (Directory.Exists(tempDirPath))
-                Directory.Delete(tempDirPath, recursive: true);
+                Directory.Delete(tempDirPath, true);
         }
 
         return default;

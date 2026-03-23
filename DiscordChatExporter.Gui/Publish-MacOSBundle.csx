@@ -98,6 +98,7 @@ public class PublishMacOSBundleCommand : ICommand
                     "MacOS",
                     Path.GetFileName(entryPath)
                 );
+
                 if (Directory.Exists(entryPath))
                     Directory.Move(entryPath, destinationPath);
                 else

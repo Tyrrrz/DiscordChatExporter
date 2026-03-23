@@ -35,17 +35,16 @@ public class PublishMacOSBundleCommand : ICommand
         var bundleName = "DiscordChatExporter.app";
         var bundleDirPath = Path.Combine(tempDirPath, bundleName);
         var contentsDirPath = Path.Combine(bundleDirPath, "Contents");
-        var macosDirPath = Path.Combine(contentsDirPath, "MacOS");
-        var resourcesDirPath = Path.Combine(contentsDirPath, "Resources");
 
         try
         {
-            // Initialize the bundle's directory structure
-            Directory.CreateDirectory(macosDirPath);
-            Directory.CreateDirectory(resourcesDirPath);
-
             // Copy icons into the .app's Resources folder
-            File.Copy(IconsFilePath, Path.Combine(resourcesDirPath, "AppIcon.icns"), true);
+            Directory.CreateDirectory(Path.Combine(contentsDirPath, "Resources"));
+            File.Copy(
+                IconsFilePath,
+                Path.Combine(contentsDirPath, "Resources", "AppIcon.icns"),
+                true
+            );
 
             // Generate the Info.plist metadata file with the app information
             // lang=xml
@@ -90,9 +89,10 @@ public class PublishMacOSBundleCommand : ICommand
                 Directory.Delete(existingBundlePath, true);
 
             // Move all files from the publish directory into the MacOS directory
+            Directory.CreateDirectory(Path.Combine(contentsDirPath, "MacOS"));
             foreach (var entry in Directory.GetFileSystemEntries(publishDirPath))
             {
-                var destination = Path.Combine(macosDirPath, Path.GetFileName(entry));
+                var destination = Path.Combine(contentsDirPath, "MacOS", Path.GetFileName(entry));
                 if (Directory.Exists(entry))
                     Directory.Move(entry, destination);
                 else

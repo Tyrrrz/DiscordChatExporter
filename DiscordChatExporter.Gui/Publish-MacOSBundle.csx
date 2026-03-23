@@ -25,7 +25,7 @@ public class PublishMacOSBundleCommand : ICommand
     [CommandOption("short-version", Description = "Short version string (e.g. '1.2.3').")]
     public required string ShortVersion { get; init; }
 
-    public ValueTask ExecuteAsync(IConsole console)
+    public async ValueTask ExecuteAsync(IConsole console)
     {
         // Set up paths
         var publishDirPath = Path.GetFullPath(PublishDirPath);
@@ -45,11 +45,7 @@ public class PublishMacOSBundleCommand : ICommand
             Directory.CreateDirectory(resourcesDirPath);
 
             // Copy icons into the .app's Resources folder
-            File.Copy(
-                IconsFilePath,
-                Path.Combine(resourcesDirPath, "AppIcon.icns"),
-                true
-            );
+            File.Copy(IconsFilePath, Path.Combine(resourcesDirPath, "AppIcon.icns"), true);
 
             // Generate the Info.plist metadata file with the app information
             // lang=xml
@@ -86,7 +82,7 @@ public class PublishMacOSBundleCommand : ICommand
                 </plist>
                 """;
 
-            File.WriteAllText(Path.Combine(contentsDirPath, "Info.plist"), plistContent);
+            await File.WriteAllTextAsync(Path.Combine(contentsDirPath, "Info.plist"), plistContent);
 
             // Delete the previous bundle if it exists
             var existingBundlePath = Path.Combine(publishDirPath, bundleName);
@@ -112,7 +108,5 @@ public class PublishMacOSBundleCommand : ICommand
             if (Directory.Exists(tempDirPath))
                 Directory.Delete(tempDirPath, true);
         }
-
-        return default;
     }
 }

@@ -1,4 +1,4 @@
-#!/usr/bin/env -S dotnet run
+#!/usr/bin/env -S dotnet run --
 #:package CliFx
 
 using CliFx;

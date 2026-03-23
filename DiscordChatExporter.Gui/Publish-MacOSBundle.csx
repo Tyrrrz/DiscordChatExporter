@@ -43,6 +43,7 @@ public class PublishMacOSBundleCommand : ICommand
         // Ensure the temporary directory is clean before use in case a previous run crashed
         if (Directory.Exists(tempDirPath))
             Directory.Delete(tempDirPath, true);
+
         var bundleDirPath = Path.Combine(tempDirPath, BundleName);
         var contentsDirPath = Path.Combine(bundleDirPath, "Contents");
 

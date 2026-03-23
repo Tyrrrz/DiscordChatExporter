@@ -13,6 +13,8 @@ return await new CliApplicationBuilder()
 [Command(Description = "Publishes the GUI app as a macOS .app bundle.")]
 public class PublishMacOSBundleCommand : ICommand
 {
+    private const string BundleName = "DiscordChatExporter.app";
+
     [CommandOption("publish-dir", Description = "Path to the publish output directory.")]
     public required string PublishDirPath { get; init; }
 
@@ -32,8 +34,7 @@ public class PublishMacOSBundleCommand : ICommand
         var tempDirPath = Path.GetFullPath(
             Path.Combine(publishDirPath, "../publish-macos-app-temp")
         );
-        var bundleName = "DiscordChatExporter.app";
-        var bundleDirPath = Path.Combine(tempDirPath, bundleName);
+        var bundleDirPath = Path.Combine(tempDirPath, BundleName);
         var contentsDirPath = Path.Combine(bundleDirPath, "Contents");
 
         try
@@ -84,23 +85,27 @@ public class PublishMacOSBundleCommand : ICommand
             await File.WriteAllTextAsync(Path.Combine(contentsDirPath, "Info.plist"), plistContent);
 
             // Delete the previous bundle if it exists
-            var existingBundlePath = Path.Combine(publishDirPath, bundleName);
+            var existingBundlePath = Path.Combine(publishDirPath, BundleName);
             if (Directory.Exists(existingBundlePath))
                 Directory.Delete(existingBundlePath, true);
 
             // Move all files from the publish directory into the MacOS directory
             Directory.CreateDirectory(Path.Combine(contentsDirPath, "MacOS"));
-            foreach (var entry in Directory.GetFileSystemEntries(publishDirPath))
+            foreach (var entryPath in Directory.GetFileSystemEntries(publishDirPath))
             {
-                var destination = Path.Combine(contentsDirPath, "MacOS", Path.GetFileName(entry));
-                if (Directory.Exists(entry))
-                    Directory.Move(entry, destination);
+                var destinationPath = Path.Combine(
+                    contentsDirPath,
+                    "MacOS",
+                    Path.GetFileName(entryPath)
+                );
+                if (Directory.Exists(entryPath))
+                    Directory.Move(entryPath, destinationPath);
                 else
-                    File.Move(entry, destination);
+                    File.Move(entryPath, destinationPath);
             }
 
             // Move the final bundle into the publish directory for upload
-            Directory.Move(bundleDirPath, Path.Combine(publishDirPath, bundleName));
+            Directory.Move(bundleDirPath, Path.Combine(publishDirPath, BundleName));
         }
         finally
         {

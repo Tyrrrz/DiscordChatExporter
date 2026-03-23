@@ -39,6 +39,10 @@ public class PublishMacOSBundleCommand : ICommand
         var tempDirPath = Path.GetFullPath(
             Path.Combine(publishDirPath, "../publish-macos-app-temp")
         );
+
+        // Ensure the temporary directory is clean before use in case a previous run crashed
+        if (Directory.Exists(tempDirPath))
+            Directory.Delete(tempDirPath, true);
         var bundleDirPath = Path.Combine(tempDirPath, BundleName);
         var contentsDirPath = Path.Combine(bundleDirPath, "Contents");
 

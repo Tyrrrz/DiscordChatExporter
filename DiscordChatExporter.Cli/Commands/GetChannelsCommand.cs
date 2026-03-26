@@ -23,7 +23,7 @@ public partial class GetChannelsCommand : DiscordCommandBase
     [CommandOption(
         "include-threads",
         Description = "Which types of threads should be included.",
-        Converter = typeof(ThreadInclusionModeBindingConverter)
+        Converter = typeof(ThreadInclusionModeInputConverter)
     )]
     public ThreadInclusionMode ThreadInclusionMode { get; set; } = ThreadInclusionMode.None;
 

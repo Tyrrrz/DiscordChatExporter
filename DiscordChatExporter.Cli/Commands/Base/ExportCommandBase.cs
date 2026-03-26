@@ -66,7 +66,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
     [CommandOption(
         "include-threads",
         Description = "Which types of threads should be included.",
-        Converter = typeof(ThreadInclusionModeBindingConverter)
+        Converter = typeof(ThreadInclusionModeInputConverter)
     )]
     public ThreadInclusionMode ThreadInclusionMode { get; set; } = ThreadInclusionMode.None;
 
@@ -141,7 +141,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
         EnvironmentVariable = "FUCK_RUSSIA",
         Description = "Don't print the Support Ukraine message to the console.",
         // Use a converter to accept '1' as 'true' to reuse the existing environment variable
-        Converter = typeof(TruthyBooleanBindingConverter)
+        Converter = typeof(TruthyBooleanInputConverter)
     )]
     public bool IsUkraineSupportMessageDisabled { get; set; } = false;
 

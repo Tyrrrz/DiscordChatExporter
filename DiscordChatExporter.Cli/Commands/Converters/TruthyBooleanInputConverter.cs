@@ -3,7 +3,7 @@ using CliFx.Activation;
 
 namespace DiscordChatExporter.Cli.Commands.Converters;
 
-internal class TruthyBooleanBindingConverter : ScalarInputConverter<bool>
+internal class TruthyBooleanInputConverter : ScalarInputConverter<bool>
 {
     public override bool Convert(string? rawValue)
     {

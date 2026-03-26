@@ -4,7 +4,7 @@ using DiscordChatExporter.Cli.Commands.Shared;
 
 namespace DiscordChatExporter.Cli.Commands.Converters;
 
-internal class ThreadInclusionModeBindingConverter : ScalarInputConverter<ThreadInclusionMode>
+internal class ThreadInclusionModeInputConverter : ScalarInputConverter<ThreadInclusionMode>
 {
     public override ThreadInclusionMode Convert(string? rawValue)
     {

@@ -10,7 +10,7 @@ using DiscordChatExporter.Core.Utils.Extensions;
 namespace DiscordChatExporter.Cli.Commands;
 
 [Command("export", Description = "Exports one or multiple channels.")]
-public class ExportChannelsCommand : ExportCommandBase
+public partial class ExportChannelsCommand : ExportCommandBase
 {
     // TODO: change this to plural (breaking change)
     [CommandOption(
@@ -19,7 +19,7 @@ public class ExportChannelsCommand : ExportCommandBase
         Description = "Channel ID(s). "
             + "If provided with category ID(s), all channels inside those categories will be exported."
     )]
-    public required IReadOnlyList<Snowflake> ChannelIds { get; init; }
+    public required IReadOnlyList<Snowflake> ChannelIds { get; set; }
 
     public override async ValueTask ExecuteAsync(IConsole console)
     {

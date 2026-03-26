@@ -37,23 +37,23 @@ public abstract class ExportCommandBase : DiscordCommandBase
         get;
         // Handle ~/ in paths on Unix systems
         // https://github.com/Tyrrrz/DiscordChatExporter/pull/903
-        init => field = Path.GetFullPath(value);
+        set => field = Path.GetFullPath(value);
     } = Directory.GetCurrentDirectory();
 
     [CommandOption("format", 'f', Description = "Export format.")]
-    public ExportFormat ExportFormat { get; init; } = ExportFormat.HtmlDark;
+    public ExportFormat ExportFormat { get; set; } = ExportFormat.HtmlDark;
 
     [CommandOption(
         "after",
         Description = "Only include messages sent after this date or message ID."
     )]
-    public Snowflake? After { get; init; }
+    public Snowflake? After { get; set; }
 
     [CommandOption(
         "before",
         Description = "Only include messages sent before this date or message ID."
     )]
-    public Snowflake? Before { get; init; }
+    public Snowflake? Before { get; set; }
 
     [CommandOption(
         "partition",
@@ -61,51 +61,51 @@ public abstract class ExportCommandBase : DiscordCommandBase
         Description = "Split the output into partitions, each limited to the specified "
             + "number of messages (e.g. '100') or file size (e.g. '10mb')."
     )]
-    public PartitionLimit PartitionLimit { get; init; } = PartitionLimit.Null;
+    public PartitionLimit PartitionLimit { get; set; } = PartitionLimit.Null;
 
     [CommandOption(
         "include-threads",
         Description = "Which types of threads should be included.",
         Converter = typeof(ThreadInclusionModeBindingConverter)
     )]
-    public ThreadInclusionMode ThreadInclusionMode { get; init; } = ThreadInclusionMode.None;
+    public ThreadInclusionMode ThreadInclusionMode { get; set; } = ThreadInclusionMode.None;
 
     [CommandOption(
         "filter",
         Description = "Only include messages that satisfy this filter. "
             + "See the documentation for more info."
     )]
-    public MessageFilter MessageFilter { get; init; } = MessageFilter.Null;
+    public MessageFilter MessageFilter { get; set; } = MessageFilter.Null;
 
     [CommandOption(
         "parallel",
         Description = "Limits how many channels can be exported in parallel."
     )]
-    public int ParallelLimit { get; init; } = 1;
+    public int ParallelLimit { get; set; } = 1;
 
     [CommandOption(
         "reverse",
         Description = "Export messages in reverse chronological order (newest first)."
     )]
-    public bool IsReverseMessageOrder { get; init; }
+    public bool IsReverseMessageOrder { get; set; }
 
     [CommandOption(
         "markdown",
         Description = "Process markdown, mentions, and other special tokens."
     )]
-    public bool ShouldFormatMarkdown { get; init; } = true;
+    public bool ShouldFormatMarkdown { get; set; } = true;
 
     [CommandOption(
         "media",
         Description = "Download assets referenced by the export (user avatars, attached files, embedded images, etc.)."
     )]
-    public bool ShouldDownloadAssets { get; init; }
+    public bool ShouldDownloadAssets { get; set; }
 
     [CommandOption(
         "reuse-media",
         Description = "Reuse previously downloaded assets to avoid redundant requests."
     )]
-    public bool ShouldReuseAssets { get; init; } = false;
+    public bool ShouldReuseAssets { get; set; } = false;
 
     [CommandOption(
         "media-dir",
@@ -117,25 +117,24 @@ public abstract class ExportCommandBase : DiscordCommandBase
         get;
         // Handle ~/ in paths on Unix systems
         // https://github.com/Tyrrrz/DiscordChatExporter/pull/903
-        init => field = value is not null ? Path.GetFullPath(value) : null;
+        set => field = value is not null ? Path.GetFullPath(value) : null;
     }
 
-    [Obsolete("This option doesn't do anything. Kept for backwards compatibility.")]
     [CommandOption(
         "dateformat",
         Description = "This option doesn't do anything. Kept for backwards compatibility."
     )]
-    public string DateFormat { get; init; } = "MM/dd/yyyy h:mm tt";
+    public string DateFormat { get; set; } = "MM/dd/yyyy h:mm tt";
 
     [CommandOption(
         "locale",
         Description = "Locale to use when formatting dates and numbers. "
             + "If not specified, the default system locale will be used."
     )]
-    public string? Locale { get; init; }
+    public string? Locale { get; set; }
 
     [CommandOption("utc", Description = "Normalize all timestamps to UTC+0.")]
-    public bool IsUtcNormalizationEnabled { get; init; } = false;
+    public bool IsUtcNormalizationEnabled { get; set; } = false;
 
     [CommandOption(
         "fuck-russia",
@@ -144,7 +143,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
         // Use a converter to accept '1' as 'true' to reuse the existing environment variable
         Converter = typeof(TruthyBooleanBindingConverter)
     )]
-    public bool IsUkraineSupportMessageDisabled { get; init; } = false;
+    public bool IsUkraineSupportMessageDisabled { get; set; } = false;
 
     [field: AllowNull, MaybeNull]
     protected ChannelExporter Exporter => field ??= new ChannelExporter(Discord);

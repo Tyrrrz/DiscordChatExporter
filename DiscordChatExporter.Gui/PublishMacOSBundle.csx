@@ -11,7 +11,7 @@ return await new CommandLineApplicationBuilder()
     .RunAsync(args);
 
 [Command(Description = "Publishes the GUI app as a macOS .app bundle.")]
-public class PublishMacOSBundleCommand : ICommand
+public partial class PublishMacOSBundleCommand : ICommand
 {
     private const string BundleName = "DiscordChatExporter.app";
     private const string AppName = "DiscordChatExporter";
@@ -21,16 +21,16 @@ public class PublishMacOSBundleCommand : ICommand
     private const string AppIconName = "AppIcon";
 
     [CommandOption("publish-dir", Description = "Path to the publish output directory.")]
-    public required string PublishDirPath { get; init; }
+    public required string PublishDirPath { get; set; }
 
     [CommandOption("icons-file", Description = "Path to the .icns icons file.")]
-    public required string IconsFilePath { get; init; }
+    public required string IconsFilePath { get; set; }
 
     [CommandOption("full-version", Description = "Full version string (e.g. '1.2.3.4').")]
-    public required string FullVersion { get; init; }
+    public required string FullVersion { get; set; }
 
     [CommandOption("short-version", Description = "Short version string (e.g. '1.2.3').")]
-    public required string ShortVersion { get; init; }
+    public required string ShortVersion { get; set; }
 
     public async ValueTask ExecuteAsync(IConsole console)
     {

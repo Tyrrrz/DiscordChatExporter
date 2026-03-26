@@ -14,23 +14,23 @@ using Spectre.Console;
 namespace DiscordChatExporter.Cli.Commands;
 
 [Command("exportall", Description = "Exports all accessible channels.")]
-public class ExportAllCommand : ExportCommandBase
+public partial class ExportAllCommand : ExportCommandBase
 {
     [CommandOption("include-dm", Description = "Include direct message channels.")]
-    public bool IncludeDirectChannels { get; init; } = true;
+    public bool IncludeDirectChannels { get; set; } = true;
 
     [CommandOption("include-guilds", Description = "Include server channels.")]
-    public bool IncludeGuildChannels { get; init; } = true;
+    public bool IncludeGuildChannels { get; set; } = true;
 
     [CommandOption("include-vc", Description = "Include voice channels.")]
-    public bool IncludeVoiceChannels { get; init; } = true;
+    public bool IncludeVoiceChannels { get; set; } = true;
 
     [CommandOption(
         "data-package",
         Description = "Path to the personal data package (ZIP file) requested from Discord. "
             + "If provided, only channels referenced in the dump will be exported."
     )]
-    public string? DataPackageFilePath { get; init; }
+    public string? DataPackageFilePath { get; set; }
 
     public override async ValueTask ExecuteAsync(IConsole console)
     {

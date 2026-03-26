@@ -17,23 +17,22 @@ public abstract class DiscordCommandBase : ICommand
         EnvironmentVariable = "DISCORD_TOKEN",
         Description = "Authentication token."
     )]
-    public required string Token { get; init; }
+    public required string Token { get; set; }
 
-    [Obsolete("This option doesn't do anything. Kept for backwards compatibility.")]
     [CommandOption(
         "bot",
         'b',
         EnvironmentVariable = "DISCORD_TOKEN_BOT",
         Description = "This option doesn't do anything. Kept for backwards compatibility."
     )]
-    public bool IsBotToken { get; init; } = false;
+    public bool IsBotToken { get; set; } = false;
 
     [CommandOption(
         "respect-rate-limits",
         Description = "Whether to respect advisory rate limits. "
             + "If disabled, only hard rate limits (i.e. 429 responses) will be respected."
     )]
-    public bool ShouldRespectRateLimits { get; init; } = true;
+    public bool ShouldRespectRateLimits { get; set; } = true;
 
     [field: AllowNull, MaybeNull]
     protected DiscordClient Discord =>

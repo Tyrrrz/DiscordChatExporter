@@ -12,20 +12,20 @@ using DiscordChatExporter.Core.Utils.Extensions;
 namespace DiscordChatExporter.Cli.Commands;
 
 [Command("channels", Description = "Get the list of channels in a server.")]
-public class GetChannelsCommand : DiscordCommandBase
+public partial class GetChannelsCommand : DiscordCommandBase
 {
     [CommandOption("guild", 'g', Description = "Server ID.")]
-    public required Snowflake GuildId { get; init; }
+    public required Snowflake GuildId { get; set; }
 
     [CommandOption("include-vc", Description = "Include voice channels.")]
-    public bool IncludeVoiceChannels { get; init; } = true;
+    public bool IncludeVoiceChannels { get; set; } = true;
 
     [CommandOption(
         "include-threads",
         Description = "Which types of threads should be included.",
         Converter = typeof(ThreadInclusionModeBindingConverter)
     )]
-    public ThreadInclusionMode ThreadInclusionMode { get; init; } = ThreadInclusionMode.None;
+    public ThreadInclusionMode ThreadInclusionMode { get; set; } = ThreadInclusionMode.None;
 
     public override async ValueTask ExecuteAsync(IConsole console)
     {

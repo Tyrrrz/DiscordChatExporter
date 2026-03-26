@@ -21,12 +21,6 @@
     <PublishMacOSBundle>false</PublishMacOSBundle>
   </PropertyGroup>
 
-  <!-- HACK: Disable trim warnings because they seem to break when the code contains C# 14 extension blocks -->
-  <PropertyGroup>
-    <EnableTrimAnalyzer>false</EnableTrimAnalyzer>
-    <EnableAotAnalyzer>false</EnableAotAnalyzer>
-  </PropertyGroup>
-
   <ItemGroup>
     <AvaloniaResource Include="..\favicon.ico" Link="favicon.ico" />
   </ItemGroup>

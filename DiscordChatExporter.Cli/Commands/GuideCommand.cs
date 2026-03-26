@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using CliFx;
-using CliFx.Attributes;
+using CliFx.Binding;
 using CliFx.Infrastructure;
 
 namespace DiscordChatExporter.Cli.Commands;

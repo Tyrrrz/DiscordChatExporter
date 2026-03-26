@@ -1,9 +1,9 @@
 ﻿using System.Globalization;
-using CliFx.Extensibility;
+using CliFx.Activation;
 
 namespace DiscordChatExporter.Cli.Commands.Converters;
 
-internal class TruthyBooleanBindingConverter : BindingConverter<bool>
+internal class TruthyBooleanBindingConverter : ScalarInputConverter<bool>
 {
     public override bool Convert(string? rawValue)
     {

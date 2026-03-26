@@ -2,7 +2,7 @@
 #:package CliFx
 
 using CliFx;
-using CliFx.Attributes;
+using CliFx.Binding;
 using CliFx.Infrastructure;
 
 return await new CliApplicationBuilder()

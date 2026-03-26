@@ -6,7 +6,7 @@ using CliFx.Binding;
 using CliFx.Infrastructure;
 
 return await new CommandLineApplicationBuilder()
-    .AddCommand<PublishMacOSBundleCommand>()
+    .AddCommandsFromThisAssembly()
     .Build()
     .RunAsync(args);
 

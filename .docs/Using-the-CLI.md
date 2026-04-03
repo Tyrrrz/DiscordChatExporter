@@ -222,18 +222,25 @@ Documentation on message filter syntax can be found [here](https://github.com/Ty
 
 ### Export channels from a specific server
 
-To export all channels in a specific server, use `list channels` to list channels and pipe the result to `export`:
+To export all channels in a specific server, use `list channels` to list channels and pipe the result to `export`.
+
+**Linux/macOS** (one-liner, token set inline):
 
 ```console
-./DiscordChatExporter.Cli list channels -t "mfa.Ifrn" 21814 | ./DiscordChatExporter.Cli export -t "mfa.Ifrn"
+DISCORD_TOKEN="mfa.Ifrn" ./DiscordChatExporter.Cli list channels 21814 | ./DiscordChatExporter.Cli export
 ```
 
-> **Tip**: To avoid repeating `--token` (or `-t`) twice, set the `DISCORD_TOKEN` environment variable: `export DISCORD_TOKEN="mfa.Ifrn"` (Linux/macOS) or `set DISCORD_TOKEN=mfa.Ifrn` (Windows). Then you can omit `-t` from both commands.
+**Windows**:
+
+```console
+set DISCORD_TOKEN=mfa.Ifrn
+DiscordChatExporter.Cli list channels 21814 | DiscordChatExporter.Cli export
+```
 
 You can also list channels for multiple guilds at once:
 
 ```console
-./DiscordChatExporter.Cli list channels -t "mfa.Ifrn" 21814 35930 | ./DiscordChatExporter.Cli export -t "mfa.Ifrn"
+DISCORD_TOKEN="mfa.Ifrn" ./DiscordChatExporter.Cli list channels 21814 35930 | ./DiscordChatExporter.Cli export
 ```
 
 #### Including threads
@@ -241,7 +248,7 @@ You can also list channels for multiple guilds at once:
 By default, threads are not included. You can change this behavior by passing `--include-threads` to the `list channels` command. It has possible values of `none`, `active`, or `all`, indicating which threads should be included. To include both active and archived threads, use `--include-threads all`.
 
 ```console
-./DiscordChatExporter.Cli list channels -t "mfa.Ifrn" 21814 --include-threads all | ./DiscordChatExporter.Cli export -t "mfa.Ifrn"
+DISCORD_TOKEN="mfa.Ifrn" ./DiscordChatExporter.Cli list channels 21814 --include-threads all | ./DiscordChatExporter.Cli export
 ```
 
 #### Including voice channels
@@ -249,15 +256,24 @@ By default, threads are not included. You can change this behavior by passing `-
 By default, voice channels are included. You can change this behavior by passing `--include-vc false` to the `list channels` command.
 
 ```console
-./DiscordChatExporter.Cli list channels -t "mfa.Ifrn" 21814 --include-vc false | ./DiscordChatExporter.Cli export -t "mfa.Ifrn"
+DISCORD_TOKEN="mfa.Ifrn" ./DiscordChatExporter.Cli list channels 21814 --include-vc false | ./DiscordChatExporter.Cli export
 ```
 
-### Export all channels
+### Export all DMs
 
 To export all DMs:
 
+**Linux/macOS**:
+
 ```console
-./DiscordChatExporter.Cli list channels dm -t "mfa.Ifrn" | ./DiscordChatExporter.Cli export -t "mfa.Ifrn"
+DISCORD_TOKEN="mfa.Ifrn" ./DiscordChatExporter.Cli list channels dm | ./DiscordChatExporter.Cli export
+```
+
+**Windows**:
+
+```console
+set DISCORD_TOKEN=mfa.Ifrn
+DiscordChatExporter.Cli list channels dm | DiscordChatExporter.Cli export
 ```
 
 ### List channels in a server
@@ -271,7 +287,7 @@ To list the channels available in a specific server, use the `list channels` com
 When the output is redirected or piped, the `list channels` command prints only channel IDs (one per line). This allows you to pipe the output directly to the `export` command:
 
 ```console
-./DiscordChatExporter.Cli list channels -t "mfa.Ifrn" 21814 | ./DiscordChatExporter.Cli export -t "mfa.Ifrn"
+DISCORD_TOKEN="mfa.Ifrn" ./DiscordChatExporter.Cli list channels 21814 | ./DiscordChatExporter.Cli export
 ```
 
 ### List direct message channels
@@ -285,7 +301,7 @@ To list all DM channels accessible to the current account, use the `list channel
 When the output is redirected or piped, the `list channels dm` command prints only channel IDs (one per line). This allows you to pipe the output directly to the `export` command:
 
 ```console
-./DiscordChatExporter.Cli list channels dm -t "mfa.Ifrn" | ./DiscordChatExporter.Cli export -t "mfa.Ifrn"
+DISCORD_TOKEN="mfa.Ifrn" ./DiscordChatExporter.Cli list channels dm | ./DiscordChatExporter.Cli export
 ```
 
 ### List servers

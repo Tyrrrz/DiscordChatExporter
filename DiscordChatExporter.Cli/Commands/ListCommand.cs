@@ -9,8 +9,5 @@ namespace DiscordChatExporter.Cli.Commands;
 public partial class ListCommand : ICommand
 {
     public ValueTask ExecuteAsync(IConsole console) =>
-        throw new CommandException(
-            "A subcommand is required ('channels', 'channels dm', or 'guilds').",
-            showHelp: true
-        );
+        throw new CommandException("Use one of the named commands listed below.", showHelp: true);
 }

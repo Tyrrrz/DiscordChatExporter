@@ -23,11 +23,11 @@ Now we're ready to run the commands.
 Type the following command in your terminal of choice, then press ENTER to run it. This will list all available subcommands and options.
 
 ```console
-./dce.sh
+./dce
 ```
 
 > **Note**:
-> On Windows, use `dce.bat` instead of `./dce.sh`.
+> On Windows, use `dce` instead of `./dce`.
 
 > **Docker** users, please refer to the [Docker usage instructions](Docker.md).
 
@@ -41,18 +41,18 @@ Type the following command in your terminal of choice, then press ENTER to run i
 | list guilds       | Outputs the list of accessible servers               |
 | guide             | Explains how to obtain token, server, and channel ID |
 
-To use the commands, you'll need a token. For the instructions on how to get a token, please refer to [this page](Token-and-IDs.md), or run `./dce.sh guide`.
+To use the commands, you'll need a token. For the instructions on how to get a token, please refer to [this page](Token-and-IDs.md), or run `./dce guide`.
 
 To get help with a specific command, run:
 
 ```console
-./dce.sh command --help
+./dce command --help
 ```
 
 For example, to figure out how to use the `export` command, run:
 
 ```console
-./dce.sh export --help
+./dce export --help
 ```
 
 ## Export a specific channel
@@ -60,7 +60,7 @@ For example, to figure out how to use the `export` command, run:
 You can quickly export with DCE's default settings by providing the channel ID as a positional argument and `-t token`.
 
 ```console
-./dce.sh export 53555 -t "mfa.Ifrn"
+./dce export 53555 -t "mfa.Ifrn"
 ```
 
 #### Changing the format
@@ -69,7 +69,7 @@ You can change the export format to `HtmlDark`, `HtmlLight`, `PlainText` `Json` 
 format is `HtmlDark`.
 
 ```console
-./dce.sh export 53555 -t "mfa.Ifrn" -f Json
+./dce export 53555 -t "mfa.Ifrn" -f Json
 ```
 
 #### Changing the output filename
@@ -77,7 +77,7 @@ format is `HtmlDark`.
 You can change the filename by using `-o name.ext`. e.g. for the `HTML` format:
 
 ```console
-./dce.sh export 53555 -t "mfa.Ifrn" -o myserver.html
+./dce export 53555 -t "mfa.Ifrn" -o myserver.html
 ```
 
 #### Changing the output directory
@@ -87,7 +87,7 @@ extension.
 If any of the folders in the path have a space in its name, escape them with quotes (").
 
 ```console
-./dce.sh export 53555 -t "mfa.Ifrn" -o "C:\Discord Exports"
+./dce export 53555 -t "mfa.Ifrn" -o "C:\Discord Exports"
 ```
 
 #### Changing the filename and output directory
@@ -97,7 +97,7 @@ Note that the filename must have an extension, otherwise it will be considered a
 If any of the folders in the path have a space in its name, escape them with quotes (").
 
 ```console
-./dce.sh export 53555 -t "mfa.Ifrn" -o "C:\Discord Exports\myserver.html"
+./dce export 53555 -t "mfa.Ifrn" -o "C:\Discord Exports\myserver.html"
 ```
 
 #### Generating the filename and output directory dynamically
@@ -105,7 +105,7 @@ If any of the folders in the path have a space in its name, escape them with quo
 You can use template tokens to generate the output file path based on the server and channel metadata.
 
 ```console
-./dce.sh export 53555 -t "mfa.Ifrn" -o "C:\Discord Exports\%G\%T\%C.html"
+./dce export 53555 -t "mfa.Ifrn" -o "C:\Discord Exports\%G\%T\%C.html"
 ```
 
 Assuming you are exporting a channel named `"my-channel"` in the `"Text channels"` category from a server
@@ -133,13 +133,13 @@ You can use partitioning to split files after a given number of messages or file
 For example, a channel with 36 messages set to be partitioned every 10 messages will output 4 files.
 
 ```console
-./dce.sh export 53555 -t "mfa.Ifrn" -p 10
+./dce export 53555 -t "mfa.Ifrn" -p 10
 ```
 
 A 45 MB channel set to be partitioned every 20 MB will output 3 files.
 
 ```console
-./dce.sh export 53555 -t "mfa.Ifrn" -p 20mb
+./dce export 53555 -t "mfa.Ifrn" -p 20mb
 ```
 
 #### Downloading assets
@@ -150,7 +150,7 @@ downloaded when using the plain text (TXT) export format.
 A folder containing the assets will be created along with the exported chat. They must be kept together.
 
 ```console
-./dce.sh export 53555 -t "mfa.Ifrn" --media
+./dce export 53555 -t "mfa.Ifrn" --media
 ```
 
 #### Reusing assets
@@ -159,7 +159,7 @@ Previously downloaded assets can be reused to skip redundant downloads as long a
 same folder. Using this option can speed up future exports. This option requires the `--media` option.
 
 ```console
-./dce.sh export 53555 -t "mfa.Ifrn" --media --reuse-media
+./dce export 53555 -t "mfa.Ifrn" --media --reuse-media
 ```
 
 #### Changing the media directory
@@ -168,7 +168,7 @@ By default, the media directory is created alongside the exported chat. You can 
 providing a path that ends with a slash. All of the exported media will be stored in this directory.
 
 ```console
-./dce.sh export 53555 -t "mfa.Ifrn" --media --media-dir "C:\Discord Media"
+./dce export 53555 -t "mfa.Ifrn" --media --media-dir "C:\Discord Media"
 ```
 
 #### Changing the date format
@@ -177,7 +177,7 @@ You can customize how dates are formatted in the exported files by using `--loca
 locales. The default locale is `en-US`.
 
 ```console
-./dce.sh export 53555 -t "mfa.Ifrn" --locale "de-DE"
+./dce export 53555 -t "mfa.Ifrn" --locale "de-DE"
 ```
 
 #### Date ranges
@@ -186,14 +186,14 @@ locales. The default locale is `en-US`.
 Use `--before` to export messages sent before the provided date. E.g. messages sent before September 18th, 2019:
 
 ```console
-./dce.sh export 53555 -t "mfa.Ifrn" --before 2019-09-18
+./dce export 53555 -t "mfa.Ifrn" --before 2019-09-18
 ```
 
 **Messages sent after a date**
 Use `--after` to export messages sent after the provided date. E.g. messages sent after September 17th, 2019 11:34 PM:
 
 ```console
-./dce.sh export 53555 -t "mfa.Ifrn" --after "2019-09-17 23:34"
+./dce export 53555 -t "mfa.Ifrn" --after "2019-09-17 23:34"
 ```
 
 **Messages sent in a date range**
@@ -201,7 +201,7 @@ Use `--before` and `--after` to export messages sent during the provided date ra
 September 17th, 2019 11:34 PM and September 18th:
 
 ```console
-./dce.sh export 53555 -t "mfa.Ifrn" --after "2019-09-17 23:34" --before "2019-09-18"
+./dce export 53555 -t "mfa.Ifrn" --after "2019-09-17 23:34" --before "2019-09-18"
 ```
 
 You can try different formats like `17-SEP-2019 11:34 PM` or even refine your ranges down to
@@ -215,7 +215,7 @@ formats [here](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custo
 Use `--filter` to filter what messages are included in the export.
 
 ```console
-./dce.sh export 53555 -t "mfa.Ifrn" --filter "from:Tyrrrz has:image"
+./dce export 53555 -t "mfa.Ifrn" --filter "from:Tyrrrz has:image"
 ```
 
 Documentation on message filter syntax can be found [here](https://github.com/Tyrrrz/DiscordChatExporter/blob/prime/.docs/Message-filters.md).
@@ -227,20 +227,20 @@ To export all channels in a specific server, use `list channels` to list channel
 **Linux/macOS** (one-liner, token set inline):
 
 ```console
-DISCORD_TOKEN="mfa.Ifrn" ./dce.sh list channels 21814 | ./dce.sh export
+DISCORD_TOKEN="mfa.Ifrn" ./dce list channels 21814 | ./dce export
 ```
 
 **Windows**:
 
 ```console
 set DISCORD_TOKEN=mfa.Ifrn
-dce.bat list channels 21814 | dce.bat export
+dce list channels 21814 | dce export
 ```
 
 You can also list channels for multiple guilds at once:
 
 ```console
-DISCORD_TOKEN="mfa.Ifrn" ./dce.sh list channels 21814 35930 | ./dce.sh export
+DISCORD_TOKEN="mfa.Ifrn" ./dce list channels 21814 35930 | ./dce export
 ```
 
 #### Including threads
@@ -248,7 +248,7 @@ DISCORD_TOKEN="mfa.Ifrn" ./dce.sh list channels 21814 35930 | ./dce.sh export
 By default, threads are not included. You can change this behavior by passing `--include-threads` to the `list channels` command. It has possible values of `none`, `active`, or `all`, indicating which threads should be included. To include both active and archived threads, use `--include-threads all`.
 
 ```console
-DISCORD_TOKEN="mfa.Ifrn" ./dce.sh list channels 21814 --include-threads all | ./dce.sh export
+DISCORD_TOKEN="mfa.Ifrn" ./dce list channels 21814 --include-threads all | ./dce export
 ```
 
 #### Including voice channels
@@ -256,7 +256,7 @@ DISCORD_TOKEN="mfa.Ifrn" ./dce.sh list channels 21814 --include-threads all | ./
 By default, voice channels are included. You can change this behavior by passing `--include-vc false` to the `list channels` command.
 
 ```console
-DISCORD_TOKEN="mfa.Ifrn" ./dce.sh list channels 21814 --include-vc false | ./dce.sh export
+DISCORD_TOKEN="mfa.Ifrn" ./dce list channels 21814 --include-vc false | ./dce export
 ```
 
 ### Export all DMs
@@ -266,14 +266,14 @@ To export all DMs:
 **Linux/macOS**:
 
 ```console
-DISCORD_TOKEN="mfa.Ifrn" ./dce.sh list channels dm | ./dce.sh export
+DISCORD_TOKEN="mfa.Ifrn" ./dce list channels dm | ./dce export
 ```
 
 **Windows**:
 
 ```console
 set DISCORD_TOKEN=mfa.Ifrn
-dce.bat list channels dm | dce.bat export
+dce list channels dm | dce export
 ```
 
 ### List channels in a server
@@ -281,13 +281,13 @@ dce.bat list channels dm | dce.bat export
 To list the channels available in a specific server, use the `list channels` command and provide the server ID as an argument:
 
 ```console
-./dce.sh list channels 21814 -t "mfa.Ifrn"
+./dce list channels 21814 -t "mfa.Ifrn"
 ```
 
 When the output is redirected or piped, the `list channels` command prints only channel IDs (one per line). This allows you to pipe the output directly to the `export` command:
 
 ```console
-DISCORD_TOKEN="mfa.Ifrn" ./dce.sh list channels 21814 | ./dce.sh export
+DISCORD_TOKEN="mfa.Ifrn" ./dce list channels 21814 | ./dce export
 ```
 
 ### List direct message channels
@@ -295,13 +295,13 @@ DISCORD_TOKEN="mfa.Ifrn" ./dce.sh list channels 21814 | ./dce.sh export
 To list all DM channels accessible to the current account, use the `list channels dm` command:
 
 ```console
-./dce.sh list channels dm -t "mfa.Ifrn"
+./dce list channels dm -t "mfa.Ifrn"
 ```
 
 When the output is redirected or piped, the `list channels dm` command prints only channel IDs (one per line). This allows you to pipe the output directly to the `export` command:
 
 ```console
-DISCORD_TOKEN="mfa.Ifrn" ./dce.sh list channels dm | ./dce.sh export
+DISCORD_TOKEN="mfa.Ifrn" ./dce list channels dm | ./dce export
 ```
 
 ### List servers
@@ -309,5 +309,5 @@ DISCORD_TOKEN="mfa.Ifrn" ./dce.sh list channels dm | ./dce.sh export
 To list all servers accessible by the current account, use the `list guilds` command:
 
 ```console
-./dce.sh list guilds -t "mfa.Ifrn" > C:\path\to\output.txt
+./dce list guilds -t "mfa.Ifrn" > C:\path\to\output.txt
 ```

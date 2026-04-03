@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <None
-      Include="dce.sh"
+      Include="dce"
       CopyToOutputDirectory="PreserveNewest"
       CopyToPublishDirectory="PreserveNewest"
     />

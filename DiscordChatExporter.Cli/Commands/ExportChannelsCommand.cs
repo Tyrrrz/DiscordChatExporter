@@ -34,12 +34,25 @@ public partial class ExportChannelsCommand : ExportCommandBase
         var channelIds = new List<Snowflake>(ChannelIds);
         if (channelIds.Count == 0 && console.IsInputRedirected)
         {
+            var lineNumber = 0;
             string? line;
             while ((line = await console.Input.ReadLineAsync()) is not null)
             {
+                lineNumber++;
                 line = line.Trim();
-                if (!string.IsNullOrEmpty(line))
-                    channelIds.Add(Snowflake.Parse(line));
+                if (string.IsNullOrEmpty(line))
+                    continue;
+
+                var snowflake = Snowflake.TryParse(line);
+                if (snowflake is null)
+                {
+                    throw new CommandException(
+                        $"Invalid channel ID on line {lineNumber}: '{line}'. "
+                            + "Each line must contain a valid channel ID."
+                    );
+                }
+
+                channelIds.Add(snowflake.Value);
             }
         }
 

@@ -66,7 +66,6 @@ public partial class GetChannelsCommand : DiscordCommandBase
             foreach (var channel in channels)
             {
                 await console.Output.WriteLineAsync(channel.Id.ToString());
-
                 foreach (var channelThread in threads.Where(t => t.Parent?.Id == channel.Id))
                     await console.Output.WriteLineAsync(channelThread.Id.ToString());
             }

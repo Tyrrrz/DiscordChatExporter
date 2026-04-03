@@ -34,7 +34,7 @@ public partial class ExportChannelsCommand : ExportCommandBase
         var channelIds = new List<Snowflake>(ChannelIds);
         if (channelIds.Count == 0 && console.IsInputRedirected)
         {
-            await foreach (var line in console.Input.ReadAllLinesAsync())
+            await foreach (var line in console.Input.ReadLinesAsync(cancellationToken))
                 channelIds.Add(Snowflake.Parse(line));
         }
 

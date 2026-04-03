@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using CliFx.Infrastructure;
 using Spectre.Console;
@@ -64,10 +65,13 @@ internal static class ConsoleExtensions
         }
     }
 
-    public static async IAsyncEnumerable<string> ReadAllLinesAsync(this TextReader reader)
+    public static async IAsyncEnumerable<string> ReadLinesAsync(
+        this TextReader reader,
+        [System.Runtime.CompilerServices.EnumeratorCancellation]
+            CancellationToken cancellationToken = default
+    )
     {
-        string? line;
-        while ((line = await reader.ReadLineAsync()) is not null)
+        while (await reader.ReadLineAsync(cancellationToken) is { } line)
         {
             line = line.Trim();
             if (!string.IsNullOrEmpty(line))

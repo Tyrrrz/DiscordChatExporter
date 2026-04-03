@@ -13,14 +13,13 @@ namespace DiscordChatExporter.Cli.Commands;
 [Command("export", Description = "Exports one or multiple channels.")]
 public partial class ExportChannelsCommand : ExportCommandBase
 {
-    // TODO: change this to plural (breaking change)
-    [CommandOption(
-        "channel",
-        'c',
+    [CommandParameter(
+        0,
+        Name = "channel-ids",
         Description = "Channel ID(s). "
             + "If provided with category ID(s), all channels inside those categories will be exported. "
             + "If not provided, channel IDs are read from standard input (one per line), "
-            + "enabling piping from the 'channels' or 'dm' commands."
+            + "enabling piping from the 'list channels' or 'list channels dm' commands."
     )]
     public IReadOnlyList<Snowflake> ChannelIds { get; set; } = [];
 
@@ -60,7 +59,7 @@ public partial class ExportChannelsCommand : ExportCommandBase
         {
             throw new CommandException(
                 "No channel IDs provided. "
-                    + "Specify channel IDs via the '--channel' option or pipe them from the 'channels' or 'dm' commands."
+                    + "Specify channel IDs as arguments or pipe them from the 'list channels' or 'list channels dm' commands."
             );
         }
 

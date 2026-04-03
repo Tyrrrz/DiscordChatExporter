@@ -228,7 +228,7 @@ To export all channels in a specific server, use the `channels` command to list 
 ./DiscordChatExporter.Cli channels -t "mfa.Ifrn" -g 21814 | ./DiscordChatExporter.Cli export -t "mfa.Ifrn"
 ```
 
-> **Tip**: To avoid repeating `--token` (or `-t`) twice, set the `DISCORD_TOKEN` environment variable.
+> **Tip**: To avoid repeating `--token` (or `-t`) twice, set the `DISCORD_TOKEN` environment variable: `export DISCORD_TOKEN="mfa.Ifrn"` (Linux/macOS) or `set DISCORD_TOKEN=mfa.Ifrn` (Windows). Then you can omit `-t` from both commands.
 
 #### Including threads
 

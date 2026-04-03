@@ -30,20 +30,29 @@ public partial class GetDirectChannelsCommand : DiscordCommandBase
             .OrderDescending()
             .FirstOrDefault();
 
-        foreach (var channel in channels)
+        // If output is redirected, print only channel IDs (one per line) for easy piping
+        if (console.IsOutputRedirected)
         {
-            // Channel ID
-            await console.Output.WriteAsync(
-                channel.Id.ToString().PadRight(channelIdMaxLength, ' ')
-            );
+            foreach (var channel in channels)
+                await console.Output.WriteLineAsync(channel.Id.ToString());
+        }
+        else
+        {
+            foreach (var channel in channels)
+            {
+                // Channel ID
+                await console.Output.WriteAsync(
+                    channel.Id.ToString().PadRight(channelIdMaxLength, ' ')
+                );
 
-            // Separator
-            using (console.WithForegroundColor(ConsoleColor.DarkGray))
-                await console.Output.WriteAsync(" | ");
+                // Separator
+                using (console.WithForegroundColor(ConsoleColor.DarkGray))
+                    await console.Output.WriteAsync(" | ");
 
-            // Channel name
-            using (console.WithForegroundColor(ConsoleColor.White))
-                await console.Output.WriteLineAsync(channel.GetHierarchicalName());
+                // Channel name
+                using (console.WithForegroundColor(ConsoleColor.White))
+                    await console.Output.WriteLineAsync(channel.GetHierarchicalName());
+            }
         }
     }
 }

@@ -60,54 +60,68 @@ public partial class GetChannelsCommand : DiscordCommandBase
                     .ToArray()
                 : [];
 
-        foreach (var channel in channels)
+        // If output is redirected, print only channel IDs (one per line) for easy piping
+        if (console.IsOutputRedirected)
         {
-            // Channel ID
-            await console.Output.WriteAsync(
-                channel.Id.ToString().PadRight(channelIdMaxLength, ' ')
-            );
-
-            // Separator
-            using (console.WithForegroundColor(ConsoleColor.DarkGray))
-                await console.Output.WriteAsync(" | ");
-
-            // Channel name
-            using (console.WithForegroundColor(ConsoleColor.White))
-                await console.Output.WriteLineAsync(channel.GetHierarchicalName());
-
-            var channelThreads = threads.Where(t => t.Parent?.Id == channel.Id).ToArray();
-            var channelThreadIdMaxLength = channelThreads
-                .Select(t => t.Id.ToString().Length)
-                .OrderDescending()
-                .FirstOrDefault();
-
-            foreach (var channelThread in channelThreads)
+            foreach (var channel in channels)
             {
-                // Indent
-                await console.Output.WriteAsync(" * ");
+                await console.Output.WriteLineAsync(channel.Id.ToString());
 
-                // Thread ID
+                foreach (var channelThread in threads.Where(t => t.Parent?.Id == channel.Id))
+                    await console.Output.WriteLineAsync(channelThread.Id.ToString());
+            }
+        }
+        else
+        {
+            foreach (var channel in channels)
+            {
+                // Channel ID
                 await console.Output.WriteAsync(
-                    channelThread.Id.ToString().PadRight(channelThreadIdMaxLength, ' ')
+                    channel.Id.ToString().PadRight(channelIdMaxLength, ' ')
                 );
 
                 // Separator
                 using (console.WithForegroundColor(ConsoleColor.DarkGray))
                     await console.Output.WriteAsync(" | ");
 
-                // Thread name
+                // Channel name
                 using (console.WithForegroundColor(ConsoleColor.White))
-                    await console.Output.WriteAsync($"Thread / {channelThread.Name}");
+                    await console.Output.WriteLineAsync(channel.GetHierarchicalName());
 
-                // Separator
-                using (console.WithForegroundColor(ConsoleColor.DarkGray))
-                    await console.Output.WriteAsync(" | ");
+                var channelThreads = threads.Where(t => t.Parent?.Id == channel.Id).ToArray();
+                var channelThreadIdMaxLength = channelThreads
+                    .Select(t => t.Id.ToString().Length)
+                    .OrderDescending()
+                    .FirstOrDefault();
 
-                // Thread status
-                using (console.WithForegroundColor(ConsoleColor.White))
-                    await console.Output.WriteLineAsync(
-                        channelThread.IsArchived ? "Archived" : "Active"
+                foreach (var channelThread in channelThreads)
+                {
+                    // Indent
+                    await console.Output.WriteAsync(" * ");
+
+                    // Thread ID
+                    await console.Output.WriteAsync(
+                        channelThread.Id.ToString().PadRight(channelThreadIdMaxLength, ' ')
                     );
+
+                    // Separator
+                    using (console.WithForegroundColor(ConsoleColor.DarkGray))
+                        await console.Output.WriteAsync(" | ");
+
+                    // Thread name
+                    using (console.WithForegroundColor(ConsoleColor.White))
+                        await console.Output.WriteAsync($"Thread / {channelThread.Name}");
+
+                    // Separator
+                    using (console.WithForegroundColor(ConsoleColor.DarkGray))
+                        await console.Output.WriteAsync(" | ");
+
+                    // Thread status
+                    using (console.WithForegroundColor(ConsoleColor.White))
+                        await console.Output.WriteLineAsync(
+                            channelThread.IsArchived ? "Archived" : "Active"
+                        );
+                }
             }
         }
     }

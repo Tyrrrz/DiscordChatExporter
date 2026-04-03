@@ -33,16 +33,13 @@ Type the following command in your terminal of choice, then press ENTER to run i
 
 ## CLI commands
 
-| Command     | Description                                          |
-| ----------- | ---------------------------------------------------- |
-| export      | Exports a channel                                    |
-| exportdm    | Exports all direct message channels                  |
-| exportguild | Exports all channels within the specified server     |
-| exportall   | Exports all accessible channels                      |
-| channels    | Outputs the list of channels in the given server     |
-| dm          | Outputs the list of direct message channels          |
-| guilds      | Outputs the list of accessible servers               |
-| guide       | Explains how to obtain token, server, and channel ID |
+| Command  | Description                                          |
+| -------- | ---------------------------------------------------- |
+| export   | Exports one or more channels                         |
+| channels | Outputs the list of channels in the given server     |
+| dm       | Outputs the list of direct message channels          |
+| guilds   | Outputs the list of accessible servers               |
+| guide    | Explains how to obtain token, server, and channel ID |
 
 To use the commands, you'll need a token. For the instructions on how to get a token, please refer to [this page](Token-and-IDs.md), or run `./DiscordChatExporter.Cli guide`.
 
@@ -225,46 +222,38 @@ Documentation on message filter syntax can be found [here](https://github.com/Ty
 
 ### Export channels from a specific server
 
-To export all channels in a specific server, use the `exportguild` command and provide the server ID through the `-g|--guild` option:
+To export all channels in a specific server, use the `channels` command to list channels and pipe the result to `export`:
 
 ```console
-./DiscordChatExporter.Cli exportguild -t "mfa.Ifrn" -g 21814
+./DiscordChatExporter.Cli channels -t "mfa.Ifrn" -g 21814 | ./DiscordChatExporter.Cli export -t "mfa.Ifrn"
 ```
+
+> **Tip**: To avoid repeating `--token` (or `-t`) twice, set the `DISCORD_TOKEN` environment variable.
 
 #### Including threads
 
-By default, threads are not included in the export. You can change this behavior by using `--include-threads` and
-specifying which threads should be included. It has possible values of `none`, `active`, or `all`, indicating which
-threads should be included. To include both active and archived threads, use `--include-threads all`.
+By default, threads are not included. You can change this behavior by passing `--include-threads` to the `channels` command. It has possible values of `none`, `active`, or `all`, indicating which threads should be included. To include both active and archived threads, use `--include-threads all`.
 
 ```console
-./DiscordChatExporter.Cli exportguild -t "mfa.Ifrn" -g 21814 --include-threads all
+./DiscordChatExporter.Cli channels -t "mfa.Ifrn" -g 21814 --include-threads all | ./DiscordChatExporter.Cli export -t "mfa.Ifrn"
 ```
 
 #### Including voice channels
 
-By default, voice channels are included in the export. You can change this behavior by using `--include-vc` and
-specifying whether to include voice channels in the export. It has possible values of `true` or `false`, to exclude
-voice channels, use `--include-vc false`.
+By default, voice channels are included. You can change this behavior by passing `--include-vc false` to the `channels` command.
 
 ```console
-./DiscordChatExporter.Cli exportguild -t "mfa.Ifrn" -g 21814 --include-vc false
+./DiscordChatExporter.Cli channels -t "mfa.Ifrn" -g 21814 --include-vc false | ./DiscordChatExporter.Cli export -t "mfa.Ifrn"
 ```
 
 ### Export all channels
 
-To export all accessible channels, use the `exportall` command:
+To export all accessible channels, first list all guilds and then pipe each guild's channels to `export`. You can also use `dm` to include direct message channels.
+
+To export all DMs:
 
 ```console
-./DiscordChatExporter.Cli exportall -t "mfa.Ifrn"
-```
-
-#### Excluding DMs
-
-To exclude DMs, add the `--include-dm false` option.
-
-```console
-./DiscordChatExporter.Cli exportall -t "mfa.Ifrn" --include-dm false
+./DiscordChatExporter.Cli dm -t "mfa.Ifrn" | ./DiscordChatExporter.Cli export -t "mfa.Ifrn"
 ```
 
 ### List channels in a server
@@ -275,12 +264,24 @@ To list the channels available in a specific server, use the `channels` command 
 ./DiscordChatExporter.Cli channels -t "mfa.Ifrn" -g 21814
 ```
 
+When the output is redirected or piped, the `channels` command prints only channel IDs (one per line). This allows you to pipe the output directly to the `export` command:
+
+```console
+./DiscordChatExporter.Cli channels -t "mfa.Ifrn" -g 21814 | ./DiscordChatExporter.Cli export -t "mfa.Ifrn"
+```
+
 ### List direct message channels
 
 To list all DM channels accessible to the current account, use the `dm` command:
 
 ```console
 ./DiscordChatExporter.Cli dm -t "mfa.Ifrn"
+```
+
+When the output is redirected or piped, the `dm` command prints only channel IDs (one per line). This allows you to pipe the output directly to the `export` command:
+
+```console
+./DiscordChatExporter.Cli dm -t "mfa.Ifrn" | ./DiscordChatExporter.Cli export -t "mfa.Ifrn"
 ```
 
 ### List servers

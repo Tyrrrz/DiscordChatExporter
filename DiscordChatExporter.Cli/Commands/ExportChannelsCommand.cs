@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using CliFx;
 using CliFx.Binding;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands.Base;
@@ -17,9 +18,11 @@ public partial class ExportChannelsCommand : ExportCommandBase
         "channel",
         'c',
         Description = "Channel ID(s). "
-            + "If provided with category ID(s), all channels inside those categories will be exported."
+            + "If provided with category ID(s), all channels inside those categories will be exported. "
+            + "If not provided, channel IDs are read from standard input (one per line), "
+            + "enabling piping from the 'channels' or 'dm' commands."
     )]
-    public required IReadOnlyList<Snowflake> ChannelIds { get; set; }
+    public IReadOnlyList<Snowflake> ChannelIds { get; set; } = [];
 
     public override async ValueTask ExecuteAsync(IConsole console)
     {
@@ -27,12 +30,33 @@ public partial class ExportChannelsCommand : ExportCommandBase
 
         var cancellationToken = console.RegisterCancellationHandler();
 
+        // If no channel IDs were specified, read them from stdin
+        var channelIds = new List<Snowflake>(ChannelIds);
+        if (channelIds.Count == 0 && console.IsInputRedirected)
+        {
+            string? line;
+            while ((line = await console.Input.ReadLineAsync()) is not null)
+            {
+                line = line.Trim();
+                if (!string.IsNullOrEmpty(line))
+                    channelIds.Add(Snowflake.Parse(line));
+            }
+        }
+
+        if (channelIds.Count == 0)
+        {
+            throw new CommandException(
+                "No channel IDs provided. "
+                    + "Specify channel IDs via the '--channel' option or pipe them from the 'channels' or 'dm' commands."
+            );
+        }
+
         await console.Output.WriteLineAsync("Resolving channel(s)...");
 
         var channels = new List<Channel>();
         var channelsByGuild = new Dictionary<Snowflake, IReadOnlyList<Channel>>();
 
-        foreach (var channelId in ChannelIds)
+        foreach (var channelId in channelIds)
         {
             var channel = await Discord.GetChannelAsync(channelId, cancellationToken);
 

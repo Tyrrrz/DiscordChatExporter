@@ -57,10 +57,10 @@ For example, to figure out how to use the `export` command, run:
 
 ## Export a specific channel
 
-You can quickly export with DCE's default settings by using just `-t token` and the channel ID as a positional argument.
+You can quickly export with DCE's default settings by providing the channel ID as a positional argument and `-t token`.
 
 ```console
-./dce.sh export -t "mfa.Ifrn" 53555
+./dce.sh export 53555 -t "mfa.Ifrn"
 ```
 
 #### Changing the format
@@ -69,7 +69,7 @@ You can change the export format to `HtmlDark`, `HtmlLight`, `PlainText` `Json` 
 format is `HtmlDark`.
 
 ```console
-./dce.sh export -t "mfa.Ifrn" 53555 -f Json
+./dce.sh export 53555 -t "mfa.Ifrn" -f Json
 ```
 
 #### Changing the output filename
@@ -77,7 +77,7 @@ format is `HtmlDark`.
 You can change the filename by using `-o name.ext`. e.g. for the `HTML` format:
 
 ```console
-./dce.sh export -t "mfa.Ifrn" 53555 -o myserver.html
+./dce.sh export 53555 -t "mfa.Ifrn" -o myserver.html
 ```
 
 #### Changing the output directory
@@ -87,7 +87,7 @@ extension.
 If any of the folders in the path have a space in its name, escape them with quotes (").
 
 ```console
-./dce.sh export -t "mfa.Ifrn" 53555 -o "C:\Discord Exports"
+./dce.sh export 53555 -t "mfa.Ifrn" -o "C:\Discord Exports"
 ```
 
 #### Changing the filename and output directory
@@ -97,7 +97,7 @@ Note that the filename must have an extension, otherwise it will be considered a
 If any of the folders in the path have a space in its name, escape them with quotes (").
 
 ```console
-./dce.sh export -t "mfa.Ifrn" 53555 -o "C:\Discord Exports\myserver.html"
+./dce.sh export 53555 -t "mfa.Ifrn" -o "C:\Discord Exports\myserver.html"
 ```
 
 #### Generating the filename and output directory dynamically
@@ -105,7 +105,7 @@ If any of the folders in the path have a space in its name, escape them with quo
 You can use template tokens to generate the output file path based on the server and channel metadata.
 
 ```console
-./dce.sh export -t "mfa.Ifrn" 53555 -o "C:\Discord Exports\%G\%T\%C.html"
+./dce.sh export 53555 -t "mfa.Ifrn" -o "C:\Discord Exports\%G\%T\%C.html"
 ```
 
 Assuming you are exporting a channel named `"my-channel"` in the `"Text channels"` category from a server
@@ -133,13 +133,13 @@ You can use partitioning to split files after a given number of messages or file
 For example, a channel with 36 messages set to be partitioned every 10 messages will output 4 files.
 
 ```console
-./dce.sh export -t "mfa.Ifrn" 53555 -p 10
+./dce.sh export 53555 -t "mfa.Ifrn" -p 10
 ```
 
 A 45 MB channel set to be partitioned every 20 MB will output 3 files.
 
 ```console
-./dce.sh export -t "mfa.Ifrn" 53555 -p 20mb
+./dce.sh export 53555 -t "mfa.Ifrn" -p 20mb
 ```
 
 #### Downloading assets
@@ -150,7 +150,7 @@ downloaded when using the plain text (TXT) export format.
 A folder containing the assets will be created along with the exported chat. They must be kept together.
 
 ```console
-./dce.sh export -t "mfa.Ifrn" 53555 --media
+./dce.sh export 53555 -t "mfa.Ifrn" --media
 ```
 
 #### Reusing assets
@@ -159,7 +159,7 @@ Previously downloaded assets can be reused to skip redundant downloads as long a
 same folder. Using this option can speed up future exports. This option requires the `--media` option.
 
 ```console
-./dce.sh export -t "mfa.Ifrn" 53555 --media --reuse-media
+./dce.sh export 53555 -t "mfa.Ifrn" --media --reuse-media
 ```
 
 #### Changing the media directory
@@ -168,7 +168,7 @@ By default, the media directory is created alongside the exported chat. You can 
 providing a path that ends with a slash. All of the exported media will be stored in this directory.
 
 ```console
-./dce.sh export -t "mfa.Ifrn" 53555 --media --media-dir "C:\Discord Media"
+./dce.sh export 53555 -t "mfa.Ifrn" --media --media-dir "C:\Discord Media"
 ```
 
 #### Changing the date format
@@ -177,7 +177,7 @@ You can customize how dates are formatted in the exported files by using `--loca
 locales. The default locale is `en-US`.
 
 ```console
-./dce.sh export -t "mfa.Ifrn" 53555 --locale "de-DE"
+./dce.sh export 53555 -t "mfa.Ifrn" --locale "de-DE"
 ```
 
 #### Date ranges
@@ -186,14 +186,14 @@ locales. The default locale is `en-US`.
 Use `--before` to export messages sent before the provided date. E.g. messages sent before September 18th, 2019:
 
 ```console
-./dce.sh export -t "mfa.Ifrn" 53555 --before 2019-09-18
+./dce.sh export 53555 -t "mfa.Ifrn" --before 2019-09-18
 ```
 
 **Messages sent after a date**
 Use `--after` to export messages sent after the provided date. E.g. messages sent after September 17th, 2019 11:34 PM:
 
 ```console
-./dce.sh export -t "mfa.Ifrn" 53555 --after "2019-09-17 23:34"
+./dce.sh export 53555 -t "mfa.Ifrn" --after "2019-09-17 23:34"
 ```
 
 **Messages sent in a date range**
@@ -201,7 +201,7 @@ Use `--before` and `--after` to export messages sent during the provided date ra
 September 17th, 2019 11:34 PM and September 18th:
 
 ```console
-./dce.sh export -t "mfa.Ifrn" 53555 --after "2019-09-17 23:34" --before "2019-09-18"
+./dce.sh export 53555 -t "mfa.Ifrn" --after "2019-09-17 23:34" --before "2019-09-18"
 ```
 
 You can try different formats like `17-SEP-2019 11:34 PM` or even refine your ranges down to
@@ -215,7 +215,7 @@ formats [here](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custo
 Use `--filter` to filter what messages are included in the export.
 
 ```console
-./dce.sh export -t "mfa.Ifrn" 53555 --filter "from:Tyrrrz has:image"
+./dce.sh export 53555 -t "mfa.Ifrn" --filter "from:Tyrrrz has:image"
 ```
 
 Documentation on message filter syntax can be found [here](https://github.com/Tyrrrz/DiscordChatExporter/blob/prime/.docs/Message-filters.md).
@@ -281,7 +281,7 @@ dce.bat list channels dm | dce.bat export
 To list the channels available in a specific server, use the `list channels` command and provide the server ID as an argument:
 
 ```console
-./dce.sh list channels -t "mfa.Ifrn" 21814
+./dce.sh list channels 21814 -t "mfa.Ifrn"
 ```
 
 When the output is redirected or piped, the `list channels` command prints only channel IDs (one per line). This allows you to pipe the output directly to the `export` command:

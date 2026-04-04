@@ -57,7 +57,7 @@ public partial class ExportChannelsCommand : ExportCommandBase
         {
             throw new CommandException(
                 "No channel IDs provided. "
-                    + "Specify channel IDs as arguments or pipe them from a newline-separated list."
+                    + "Specify channel IDs as arguments or pipe them from the 'list channels' or 'list channels dm' commands."
             );
         }
 

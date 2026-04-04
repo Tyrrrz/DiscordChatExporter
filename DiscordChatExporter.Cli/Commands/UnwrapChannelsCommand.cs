@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using CliFx;
 using CliFx.Binding;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands.Base;
@@ -30,11 +31,22 @@ public partial class UnwrapChannelsCommand : DiscordCommandBase
         await foreach (var line in console.Input.ReadLinesAsync(cancellationToken))
             sb.Append(line);
 
-        var channels =
-            JsonSerializer.Deserialize(
-                sb.ToString().Trim(),
-                CliJsonSerializerContext.Instance.ChannelArray
-            ) ?? [];
+        Channel[] channels;
+        try
+        {
+            channels =
+                JsonSerializer.Deserialize(
+                    sb.ToString().Trim(),
+                    CliJsonSerializerContext.Instance.ChannelArray
+                ) ?? [];
+        }
+        catch (JsonException)
+        {
+            throw new CommandException(
+                "Failed to parse input as a JSON channel array. "
+                    + "Pipe the output of 'list channels' or 'list channels dm' to this command."
+            );
+        }
 
         var result = new List<Channel>();
         var channelsByGuild = new Dictionary<Snowflake, IReadOnlyList<Channel>>();

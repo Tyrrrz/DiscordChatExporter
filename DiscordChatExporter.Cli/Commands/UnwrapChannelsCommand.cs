@@ -16,7 +16,7 @@ namespace DiscordChatExporter.Cli.Commands;
 
 [Command(
     "list unwrap",
-    Description = "Resolves categories in a channel list to their child channels."
+    Description = "Resolves categories and forums in a channel list to their child channels and threads."
 )]
 public partial class UnwrapChannelsCommand : DiscordCommandBase
 {
@@ -55,6 +55,7 @@ public partial class UnwrapChannelsCommand : DiscordCommandBase
         {
             if (channel.IsCategory)
             {
+                // Expand category to its child channels
                 var guildChannels =
                     channelsByGuild.GetValueOrDefault(channel.GuildId)
                     ?? await Discord.GetGuildChannelsAsync(channel.GuildId, cancellationToken);
@@ -66,6 +67,17 @@ public partial class UnwrapChannelsCommand : DiscordCommandBase
                 }
 
                 channelsByGuild[channel.GuildId] = guildChannels;
+            }
+            else if (channel.Kind == ChannelKind.GuildForum)
+            {
+                // Expand forum to its thread posts
+                await foreach (
+                    var thread in Discord.GetChannelThreadsAsync(
+                        [channel],
+                        cancellationToken: cancellationToken
+                    )
+                )
+                    result.Add(thread);
             }
             else
             {

@@ -39,7 +39,7 @@ Type the following command in your terminal of choice, then press ENTER to run i
 | list channels     | Outputs the list of channels in the given server(s)                  |
 | list channels dm  | Outputs the list of direct message channels                          |
 | list servers      | Outputs the list of accessible servers                               |
-| list unwrap       | Resolves categories in a channel list to their child channels        |
+| list unwrap       | Resolves categories and forums in a channel list to their child channels and threads |
 | guide             | Explains how to obtain token, server, and channel ID                 |
 
 To use the commands, you'll need a token. For the instructions on how to get a token, please refer to [this page](Token-and-IDs.md), or run `./dce guide`.
@@ -331,9 +331,9 @@ The `list channels dm` command outputs a JSON array of channel objects. You can 
 ./dce list channels dm | ./dce export
 ```
 
-### Unwrap categories
+### Unwrap categories and forums
 
-To resolve category channels in a list to their child channels, use the `list unwrap` command:
+To resolve category and forum channels in a list to their child channels and thread posts, use the `list unwrap` command:
 
 ```console
 ./dce list channels 21814 | ./dce list unwrap | ./dce export

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using CliFx.Infrastructure;
@@ -67,8 +68,7 @@ internal static class ConsoleExtensions
 
     public static async IAsyncEnumerable<string> ReadLinesAsync(
         this TextReader reader,
-        [System.Runtime.CompilerServices.EnumeratorCancellation]
-            CancellationToken cancellationToken = default
+        [EnumeratorCancellation] CancellationToken cancellationToken = default
     )
     {
         while (await reader.ReadLineAsync(cancellationToken) is { } line)

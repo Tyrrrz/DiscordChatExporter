@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using CliFx.Binding;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands.Base;
 using DiscordChatExporter.Cli.Commands.Converters;
 using DiscordChatExporter.Cli.Commands.Shared;
+using DiscordChatExporter.Cli.Utils.Json;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Utils.Extensions;
@@ -35,6 +36,8 @@ public partial class GetChannelsCommand : DiscordCommandBase
 
         var cancellationToken = console.RegisterCancellationHandler();
 
+        var allChannels = new List<Channel>();
+
         foreach (var guildId in GuildIds)
         {
             var channels = (await Discord.GetGuildChannelsAsync(guildId, cancellationToken))
@@ -59,86 +62,18 @@ public partial class GetChannelsCommand : DiscordCommandBase
                         .ToArray()
                     : [];
 
-            // If output is redirected, print only channel IDs (one per line) for easy piping
-            if (console.IsOutputRedirected)
+            foreach (var channel in channels)
             {
-                foreach (var channel in channels)
-                {
-                    await console.Output.WriteLineAsync(channel.Id.ToString());
-                    foreach (var channelThread in threads.Where(t => t.Parent?.Id == channel.Id))
-                        await console.Output.WriteLineAsync(channelThread.Id.ToString());
-                }
-            }
-            else
-            {
-                // Show server header when listing multiple servers
-                if (GuildIds.Count > 1)
-                {
-                    var guild = await Discord.GetGuildAsync(guildId, cancellationToken);
-
-                    using (console.WithForegroundColor(ConsoleColor.Cyan))
-                        await console.Output.WriteLineAsync($"{guild.Id} | {guild.Name}");
-                }
-
-                var channelIdMaxLength = channels
-                    .Select(c => c.Id.ToString().Length)
-                    .OrderDescending()
-                    .FirstOrDefault();
-
-                foreach (var channel in channels)
-                {
-                    // Channel ID
-                    await console.Output.WriteAsync(
-                        channel.Id.ToString().PadRight(channelIdMaxLength, ' ')
-                    );
-
-                    // Separator
-                    using (console.WithForegroundColor(ConsoleColor.DarkGray))
-                        await console.Output.WriteAsync(" | ");
-
-                    // Channel name
-                    using (console.WithForegroundColor(ConsoleColor.White))
-                        await console.Output.WriteLineAsync(channel.GetHierarchicalName());
-
-                    var channelThreads = threads.Where(t => t.Parent?.Id == channel.Id).ToArray();
-                    var channelThreadIdMaxLength = channelThreads
-                        .Select(t => t.Id.ToString().Length)
-                        .OrderDescending()
-                        .FirstOrDefault();
-
-                    foreach (var channelThread in channelThreads)
-                    {
-                        // Indent
-                        await console.Output.WriteAsync(" * ");
-
-                        // Thread ID
-                        await console.Output.WriteAsync(
-                            channelThread.Id.ToString().PadRight(channelThreadIdMaxLength, ' ')
-                        );
-
-                        // Separator
-                        using (console.WithForegroundColor(ConsoleColor.DarkGray))
-                            await console.Output.WriteAsync(" | ");
-
-                        // Thread name
-                        using (console.WithForegroundColor(ConsoleColor.White))
-                            await console.Output.WriteAsync($"Thread / {channelThread.Name}");
-
-                        // Separator
-                        using (console.WithForegroundColor(ConsoleColor.DarkGray))
-                            await console.Output.WriteAsync(" | ");
-
-                        // Thread status
-                        using (console.WithForegroundColor(ConsoleColor.White))
-                            await console.Output.WriteLineAsync(
-                                channelThread.IsArchived ? "Archived" : "Active"
-                            );
-                    }
-                }
-
-                if (GuildIds.Count > 1)
-                    await console.Output.WriteLineAsync();
+                allChannels.Add(channel);
+                allChannels.AddRange(threads.Where(t => t.Parent?.Id == channel.Id));
             }
         }
+
+        await console.Output.WriteLineAsync(
+            JsonSerializer.Serialize(
+                allChannels.ToArray(),
+                CliJsonSerializerContext.Instance.ChannelArray
+            )
+        );
     }
 }

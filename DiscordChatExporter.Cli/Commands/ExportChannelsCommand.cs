@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 using CliFx;
 using CliFx.Binding;
@@ -35,7 +36,23 @@ public partial class ExportChannelsCommand : ExportCommandBase
         if (channelIds.Count == 0 && console.IsInputRedirected)
         {
             await foreach (var line in console.Input.ReadLinesAsync(cancellationToken))
-                channelIds.Add(Snowflake.Parse(line.Trim()));
+            {
+                var trimmed = line.Trim();
+                if (string.IsNullOrEmpty(trimmed))
+                    continue;
+
+                // JSON array produced by 'list channels' / 'list channels dm'
+                if (trimmed.StartsWith('['))
+                {
+                    using var doc = JsonDocument.Parse(trimmed);
+                    foreach (var element in doc.RootElement.EnumerateArray())
+                        channelIds.Add(Snowflake.Parse(element.GetProperty("id").GetString()!));
+                }
+                else
+                {
+                    channelIds.Add(Snowflake.Parse(trimmed));
+                }
+            }
         }
 
         if (channelIds.Count == 0)

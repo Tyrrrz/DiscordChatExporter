@@ -1,9 +1,10 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using CliFx.Binding;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands.Base;
+using DiscordChatExporter.Cli.Utils.Json;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Utils.Extensions;
 
@@ -24,23 +25,8 @@ public partial class GetGuildsCommand : DiscordCommandBase
             .ThenBy(g => g.Name)
             .ToArray();
 
-        var guildIdMaxLength = guilds
-            .Select(g => g.Id.ToString().Length)
-            .OrderDescending()
-            .FirstOrDefault();
-
-        foreach (var guild in guilds)
-        {
-            // Guild ID
-            await console.Output.WriteAsync(guild.Id.ToString().PadRight(guildIdMaxLength, ' '));
-
-            // Separator
-            using (console.WithForegroundColor(ConsoleColor.DarkGray))
-                await console.Output.WriteAsync(" | ");
-
-            // Guild name
-            using (console.WithForegroundColor(ConsoleColor.White))
-                await console.Output.WriteLineAsync(guild.Name);
-        }
+        await console.Output.WriteLineAsync(
+            JsonSerializer.Serialize(guilds, CliJsonSerializerContext.Instance.GuildArray)
+        );
     }
 }

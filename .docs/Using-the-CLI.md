@@ -33,13 +33,14 @@ Type the following command in your terminal of choice, then press ENTER to run i
 
 ## CLI commands
 
-| Command           | Description                                          |
-| ----------------- | ---------------------------------------------------- |
-| export            | Exports one or more channels                         |
-| list channels     | Outputs the list of channels in the given server(s)  |
-| list channels dm  | Outputs the list of direct message channels          |
-| list servers      | Outputs the list of accessible servers               |
-| guide             | Explains how to obtain token, server, and channel ID |
+| Command           | Description                                                          |
+| ----------------- | -------------------------------------------------------------------- |
+| export            | Exports one or more channels                                         |
+| list channels     | Outputs the list of channels in the given server(s)                  |
+| list channels dm  | Outputs the list of direct message channels                          |
+| list servers      | Outputs the list of accessible servers                               |
+| list unwrap       | Resolves categories in a channel list to their child channels        |
+| guide             | Explains how to obtain token, server, and channel ID                 |
 
 To use the commands, you'll need a token. For the instructions on how to get a token, please refer to [this page](Token-and-IDs.md), or run `./dce guide`.
 
@@ -244,6 +245,9 @@ Documentation on message filter syntax can be found [here](https://github.com/Ty
 
 ### Export channels from a specific server
 
+> [!IMPORTANT]
+> The following examples assume `DISCORD_TOKEN` is already set. See [CLI commands](#cli-commands) for instructions.
+
 To export all channels in a specific server, use `list channels` to list channels and pipe the result to `export`.
 
 **Linux/macOS:**
@@ -282,6 +286,9 @@ By default, voice channels are included. You can change this behavior by passing
 
 ### Export all DMs
 
+> [!IMPORTANT]
+> The following examples assume `DISCORD_TOKEN` is already set. See [CLI commands](#cli-commands) for instructions.
+
 To export all DMs:
 
 **Linux/macOS:**
@@ -304,7 +311,7 @@ To list the channels available in a specific server, use the `list channels` com
 ./dce list channels 21814 -t "mfa.Ifrn"
 ```
 
-When the output is redirected or piped, the `list channels` command prints only channel IDs (one per line). This allows you to pipe the output directly to the `export` command:
+The `list channels` command outputs a JSON array of channel objects. You can pipe this directly to the `export` command:
 
 ```console
 ./dce list channels 21814 | ./dce export
@@ -318,10 +325,18 @@ To list all DM channels accessible to the current account, use the `list channel
 ./dce list channels dm -t "mfa.Ifrn"
 ```
 
-When the output is redirected or piped, the `list channels dm` command prints only channel IDs (one per line). This allows you to pipe the output directly to the `export` command:
+The `list channels dm` command outputs a JSON array of channel objects. You can pipe this directly to the `export` command:
 
 ```console
 ./dce list channels dm | ./dce export
+```
+
+### Unwrap categories
+
+To resolve category channels in a list to their child channels, use the `list unwrap` command:
+
+```console
+./dce list channels 21814 | ./dce list unwrap | ./dce export
 ```
 
 ### List servers

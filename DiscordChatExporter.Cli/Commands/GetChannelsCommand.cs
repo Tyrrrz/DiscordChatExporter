@@ -16,7 +16,7 @@ namespace DiscordChatExporter.Cli.Commands;
 [Command("list channels", Description = "Gets the list of channels in one or more servers.")]
 public partial class GetChannelsCommand : DiscordCommandBase
 {
-    [CommandParameter(0, Name = "guild-ids", Description = "Server ID(s).")]
+    [CommandParameter(0, Name = "server-ids", Description = "Server ID(s).")]
     public required IReadOnlyList<Snowflake> GuildIds { get; set; }
 
     [CommandOption("include-vc", Description = "Include voice channels.")]
@@ -71,7 +71,7 @@ public partial class GetChannelsCommand : DiscordCommandBase
             }
             else
             {
-                // Show guild header when listing multiple guilds
+                // Show server header when listing multiple servers
                 if (GuildIds.Count > 1)
                 {
                     var guild = await Discord.GetGuildAsync(guildId, cancellationToken);

@@ -38,10 +38,32 @@ Type the following command in your terminal of choice, then press ENTER to run i
 | export            | Exports one or more channels                         |
 | list channels     | Outputs the list of channels in the given server(s)  |
 | list channels dm  | Outputs the list of direct message channels          |
-| list guilds       | Outputs the list of accessible servers               |
+| list servers      | Outputs the list of accessible servers               |
 | guide             | Explains how to obtain token, server, and channel ID |
 
 To use the commands, you'll need a token. For the instructions on how to get a token, please refer to [this page](Token-and-IDs.md), or run `./dce guide`.
+
+To pass the token, use the `-t` option:
+
+```console
+./dce export 53555 -t "mfa.Ifrn"
+```
+
+Alternatively, you can set the `DISCORD_TOKEN` environment variable and omit `-t`:
+
+**Linux/macOS:**
+
+```console
+export DISCORD_TOKEN="mfa.Ifrn"
+```
+
+**Windows:**
+
+```console
+set DISCORD_TOKEN=mfa.Ifrn
+```
+
+The pipeline examples in this guide assume `DISCORD_TOKEN` is already set.
 
 To get help with a specific command, run:
 
@@ -224,23 +246,22 @@ Documentation on message filter syntax can be found [here](https://github.com/Ty
 
 To export all channels in a specific server, use `list channels` to list channels and pipe the result to `export`.
 
-**Linux/macOS** (one-liner, token set inline):
+**Linux/macOS:**
 
 ```console
-DISCORD_TOKEN="mfa.Ifrn" ./dce list channels 21814 | ./dce export
+./dce list channels 21814 | ./dce export
 ```
 
-**Windows**:
+**Windows:**
 
 ```console
-set DISCORD_TOKEN=mfa.Ifrn
 dce list channels 21814 | dce export
 ```
 
-You can also list channels for multiple guilds at once:
+You can also list channels for multiple servers at once:
 
 ```console
-DISCORD_TOKEN="mfa.Ifrn" ./dce list channels 21814 35930 | ./dce export
+./dce list channels 21814 35930 | ./dce export
 ```
 
 #### Including threads
@@ -248,7 +269,7 @@ DISCORD_TOKEN="mfa.Ifrn" ./dce list channels 21814 35930 | ./dce export
 By default, threads are not included. You can change this behavior by passing `--include-threads` to the `list channels` command. It has possible values of `none`, `active`, or `all`, indicating which threads should be included. To include both active and archived threads, use `--include-threads all`.
 
 ```console
-DISCORD_TOKEN="mfa.Ifrn" ./dce list channels 21814 --include-threads all | ./dce export
+./dce list channels 21814 --include-threads all | ./dce export
 ```
 
 #### Including voice channels
@@ -256,23 +277,22 @@ DISCORD_TOKEN="mfa.Ifrn" ./dce list channels 21814 --include-threads all | ./dce
 By default, voice channels are included. You can change this behavior by passing `--include-vc false` to the `list channels` command.
 
 ```console
-DISCORD_TOKEN="mfa.Ifrn" ./dce list channels 21814 --include-vc false | ./dce export
+./dce list channels 21814 --include-vc false | ./dce export
 ```
 
 ### Export all DMs
 
 To export all DMs:
 
-**Linux/macOS**:
+**Linux/macOS:**
 
 ```console
-DISCORD_TOKEN="mfa.Ifrn" ./dce list channels dm | ./dce export
+./dce list channels dm | ./dce export
 ```
 
-**Windows**:
+**Windows:**
 
 ```console
-set DISCORD_TOKEN=mfa.Ifrn
 dce list channels dm | dce export
 ```
 
@@ -287,7 +307,7 @@ To list the channels available in a specific server, use the `list channels` com
 When the output is redirected or piped, the `list channels` command prints only channel IDs (one per line). This allows you to pipe the output directly to the `export` command:
 
 ```console
-DISCORD_TOKEN="mfa.Ifrn" ./dce list channels 21814 | ./dce export
+./dce list channels 21814 | ./dce export
 ```
 
 ### List direct message channels
@@ -301,13 +321,13 @@ To list all DM channels accessible to the current account, use the `list channel
 When the output is redirected or piped, the `list channels dm` command prints only channel IDs (one per line). This allows you to pipe the output directly to the `export` command:
 
 ```console
-DISCORD_TOKEN="mfa.Ifrn" ./dce list channels dm | ./dce export
+./dce list channels dm | ./dce export
 ```
 
 ### List servers
 
-To list all servers accessible by the current account, use the `list guilds` command:
+To list all servers accessible by the current account, use the `list servers` command:
 
 ```console
-./dce list guilds -t "mfa.Ifrn" > C:\path\to\output.txt
+./dce list servers -t "mfa.Ifrn" > C:\path\to\output.txt
 ```

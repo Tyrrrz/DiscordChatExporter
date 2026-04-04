@@ -9,7 +9,7 @@ using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Cli.Commands;
 
-[Command("list guilds", Description = "Gets the list of accessible servers.")]
+[Command("list servers", Description = "Gets the list of accessible servers.")]
 public partial class GetGuildsCommand : DiscordCommandBase
 {
     public override async ValueTask ExecuteAsync(IConsole console)

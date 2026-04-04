@@ -39,8 +39,8 @@ public partial class ExportChannelsCommand : ExportCommandBase
                 if (string.IsNullOrEmpty(trimmed))
                     continue;
 
-                // JSON array produced by 'list channels' / 'list channels dm'
-                if (trimmed.StartsWith('['))
+                // Snowflake IDs are numeric; non-numeric input is treated as a JSON array
+                if (!char.IsAsciiDigit(trimmed[0]))
                 {
                     using var doc = JsonDocument.Parse(trimmed);
                     foreach (var element in doc.RootElement.EnumerateArray())

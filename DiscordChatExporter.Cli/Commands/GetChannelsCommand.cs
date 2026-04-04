@@ -18,7 +18,7 @@ namespace DiscordChatExporter.Cli.Commands;
 public partial class GetChannelsCommand : DiscordCommandBase
 {
     [CommandParameter(0, Name = "server-ids", Description = "Server ID(s).")]
-    public required IReadOnlyList<Snowflake> GuildIds { get; set; }
+    public required IReadOnlyList<Snowflake> ServerIds { get; set; }
 
     [CommandOption("include-vc", Description = "Include voice channels.")]
     public bool IncludeVoiceChannels { get; set; } = true;
@@ -38,9 +38,9 @@ public partial class GetChannelsCommand : DiscordCommandBase
 
         var allChannels = new List<Channel>();
 
-        foreach (var guildId in GuildIds)
+        foreach (var serverId in ServerIds)
         {
-            var channels = (await Discord.GetGuildChannelsAsync(guildId, cancellationToken))
+            var channels = (await Discord.GetGuildChannelsAsync(serverId, cancellationToken))
                 .Where(c => !c.IsCategory)
                 .Where(c => IncludeVoiceChannels || !c.IsVoice)
                 .OrderBy(c => c.Parent?.Position)
@@ -51,7 +51,7 @@ public partial class GetChannelsCommand : DiscordCommandBase
                 ThreadInclusionMode != ThreadInclusionMode.None
                     ? (
                         await Discord.GetGuildThreadsAsync(
-                            guildId,
+                            serverId,
                             ThreadInclusionMode == ThreadInclusionMode.All,
                             null,
                             null,

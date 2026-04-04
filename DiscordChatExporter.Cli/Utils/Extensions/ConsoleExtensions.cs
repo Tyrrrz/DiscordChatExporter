@@ -71,10 +71,9 @@ internal static class ConsoleExtensions
         [EnumeratorCancellation] CancellationToken cancellationToken = default
     )
     {
-        while (await reader.ReadLineAsync(cancellationToken) is { } line)
+        while (await reader.ReadLineAsync(cancellationToken).ConfigureAwait(false) is { } line)
         {
-            if (!string.IsNullOrWhiteSpace(line))
-                yield return line;
+            yield return line;
         }
     }
 }

@@ -43,7 +43,7 @@ Type the following command in your terminal of choice, then press ENTER to run i
 
 To use the commands, you'll need a token. For the instructions on how to get a token, please refer to [this page](Token-and-IDs.md), or run `./dce guide`.
 
-To pass the token, use the `-t` option:
+To pass the token, use the `-t|--token` option:
 
 ```console
 ./dce export 53555 -t "mfa.Ifrn"
@@ -79,7 +79,7 @@ For example, to figure out how to use the `export` command, run:
 
 ## Export a specific channel
 
-You can quickly export with DCE's default settings by providing the channel ID as a positional argument and `-t token`.
+You can quickly export with DCE's default settings by providing the channel ID as a positional argument and `-t|--token`.
 
 ```console
 ./dce export 53555 -t "mfa.Ifrn"
@@ -87,7 +87,7 @@ You can quickly export with DCE's default settings by providing the channel ID a
 
 #### Changing the format
 
-You can change the export format to `HtmlDark`, `HtmlLight`, `PlainText` `Json` or `Csv` with `-f format`. The default
+You can change the export format to `HtmlDark`, `HtmlLight`, `PlainText` `Json` or `Csv` with `-f|--format`. The default
 format is `HtmlDark`.
 
 ```console
@@ -96,7 +96,7 @@ format is `HtmlDark`.
 
 #### Changing the output filename
 
-You can change the filename by using `-o name.ext`. e.g. for the `HTML` format:
+You can change the filename by using `-o|--output`. e.g. for the `HTML` format:
 
 ```console
 ./dce export 53555 -t "mfa.Ifrn" -o myserver.html
@@ -104,7 +104,7 @@ You can change the filename by using `-o name.ext`. e.g. for the `HTML` format:
 
 #### Changing the output directory
 
-You can change the export directory by using `-o` and providing a path that ends with a slash or does not have a file
+You can change the export directory by using `-o|--output` and providing a path that ends with a slash or does not have a file
 extension.
 If any of the folders in the path have a space in its name, escape them with quotes (").
 
@@ -114,7 +114,7 @@ If any of the folders in the path have a space in its name, escape them with quo
 
 #### Changing the filename and output directory
 
-You can change both the filename and export directory by using `-o directory\name.ext`.
+You can change both the filename and export directory by using `-o|--output`.
 Note that the filename must have an extension, otherwise it will be considered a directory name.
 If any of the folders in the path have a space in its name, escape them with quotes (").
 

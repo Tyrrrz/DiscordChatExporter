@@ -73,8 +73,7 @@ internal static class ConsoleExtensions
     {
         while (await reader.ReadLineAsync(cancellationToken) is { } line)
         {
-            line = line.Trim();
-            if (!string.IsNullOrEmpty(line))
+            if (!string.IsNullOrWhiteSpace(line))
                 yield return line;
         }
     }

@@ -7,9 +7,9 @@ using JsonExtensions.Reading;
 
 namespace DiscordChatExporter.Core.Discord.Data.Components;
 
-// https://docs.discord.com/developers/components/reference#what-is-a-component
+// https://docs.discord.com/developers/components/reference#component-object
 public partial record MessageComponent(
-    MessageComponentKind Kind,
+    MessageComponentType Kind,
     IReadOnlyList<MessageComponent> Components,
     ButtonComponent? Button
 )
@@ -29,21 +29,43 @@ public partial record MessageComponent
             return null;
 
         var type = rawType.Value;
-        if (!Enum.IsDefined(typeof(MessageComponentKind), type))
+        if (!Enum.IsDefined(typeof(MessageComponentType), type))
             return null;
 
-        var kind = (MessageComponentKind)type;
+        return Parse((MessageComponentType)type, json);
+    }
 
-        var components =
-            json.GetPropertyOrNull("components")
+    private static MessageComponent Parse(MessageComponentType type, JsonElement json)
+    {
+        return type switch
+        {
+            MessageComponentType.Button => ParseButton(json),
+            _ => ParseDefault(type, json),
+        };
+    }
+
+    private static MessageComponent ParseDefault(MessageComponentType type, JsonElement json)
+    {
+        var components = ParseComponents(json);
+
+        return new MessageComponent(type, components, null);
+    }
+
+    private static MessageComponent ParseButton(JsonElement json)
+    {
+        var components = ParseComponents(json);
+        var button = ButtonComponent.Parse(json);
+
+        return new MessageComponent(MessageComponentType.Button, components, button);
+    }
+
+    private static MessageComponent[] ParseComponents(JsonElement json)
+    {
+        return json.GetPropertyOrNull("components")
                 ?.EnumerateArrayOrNull()
                 ?.Select(Parse)
                 .WhereNotNull()
                 .ToArray()
             ?? [];
-
-        var button = kind == MessageComponentKind.Button ? ButtonComponent.Parse(json) : null;
-
-        return new MessageComponent(kind, components, button);
     }
 }

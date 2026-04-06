@@ -1,7 +1,7 @@
 namespace DiscordChatExporter.Core.Discord.Data.Components;
 
 // https://discord.com/developers/docs/components/reference#component-object-component-types
-public enum MessageComponentKind
+public enum MessageComponentType
 {
     ActionRow = 1,
     Button = 2,

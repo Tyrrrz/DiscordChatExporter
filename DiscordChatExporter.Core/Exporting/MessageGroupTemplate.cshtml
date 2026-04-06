@@ -733,10 +733,10 @@
                     }
 
                     @* Components *@
-                    @if (message.Components.Any(c => c.Kind == MessageComponentKind.ActionRow && c.HasButtons))
+                    @if (message.Components.Any(c => c.Kind == MessageComponentType.ActionRow && c.HasButtons))
                     {
                         <div class="chatlog__components">
-                            @foreach (var actionRow in message.Components.Where(c => c.Kind == MessageComponentKind.ActionRow && c.HasButtons))
+                            @foreach (var actionRow in message.Components.Where(c => c.Kind == MessageComponentType.ActionRow && c.HasButtons))
                             {
                                 <div class="chatlog__action-row">
                                     @foreach (var button in actionRow.Buttons)

@@ -741,7 +741,8 @@
                                 <div class="chatlog__action-row">
                                     @foreach (var button in actionRow.Buttons)
                                     {
-                                        var styleClass = button.Style switch {
+                                        var styleClass = button.Style switch
+                                        {
                                             ButtonStyle.Primary => "chatlog__component-button--primary",
                                             ButtonStyle.Secondary => "chatlog__component-button--secondary",
                                             ButtonStyle.Success => "chatlog__component-button--success",
@@ -752,16 +753,21 @@
                                         };
 
                                         var isUrlButton = button.IsUrlButton;
+                                        var isDisabled = button.IsDisabled;
+                                        var hasEmoji = button.Emoji is not null;
+                                        var hasLabel = !string.IsNullOrWhiteSpace(button.Label);
+                                        var emojiUrl = hasEmoji ? await ResolveAssetUrlAsync(button.Emoji.ImageUrl) : null;
+                                        var cssClass = $"chatlog__component-button {styleClass}";
 
-                                        if (isUrlButton)
+                                        if (isUrlButton && !isDisabled)
                                         {
-                                            <a class="chatlog__component-button @styleClass" href="@button.Url" target="_blank" rel="noreferrer noopener">
-                                                @if (button.Emoji is not null)
+                                            <a class="@cssClass" href="@button.Url" target="_blank" rel="noreferrer noopener">
+                                                @if (hasEmoji)
                                                 {
-                                                    <img class="chatlog__emoji chatlog__emoji--small" alt="@button.Emoji.Name" src="@await ResolveAssetUrlAsync(button.Emoji.ImageUrl)" loading="lazy">
+                                                    <img class="chatlog__emoji chatlog__emoji--small" alt="@button.Emoji.Name" src="@emojiUrl" loading="lazy">
                                                 }
 
-                                                @if (!string.IsNullOrWhiteSpace(button.Label))
+                                                @if (hasLabel)
                                                 {
                                                     <span>@button.Label</span>
                                                 }
@@ -769,13 +775,13 @@
                                         }
                                         else
                                         {
-                                            <button class="chatlog__component-button @styleClass" type="button" disabled>
-                                                @if (button.Emoji is not null)
+                                            <button class="@cssClass" type="button" disabled="@isDisabled" data-url="@(isUrlButton ? button.Url : null)">
+                                                @if (hasEmoji)
                                                 {
-                                                    <img class="chatlog__emoji chatlog__emoji--small" alt="@button.Emoji.Name" src="@await ResolveAssetUrlAsync(button.Emoji.ImageUrl)" loading="lazy">
+                                                    <img class="chatlog__emoji chatlog__emoji--small" alt="@button.Emoji.Name" src="@emojiUrl" loading="lazy">
                                                 }
 
-                                                @if (!string.IsNullOrWhiteSpace(button.Label))
+                                                @if (hasLabel)
                                                 {
                                                     <span>@button.Label</span>
                                                 }

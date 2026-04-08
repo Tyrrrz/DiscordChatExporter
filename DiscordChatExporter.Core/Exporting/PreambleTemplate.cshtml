@@ -461,7 +461,16 @@
             box-sizing: border-box;
         }
 
-        a.chatlog__component-button:hover {
+        a.chatlog__component-button {
+            cursor: pointer;    
+        }
+
+        .chatlog__component-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .chatlog__component-button:hover:not(:disabled) {
             text-decoration: none;
             filter: brightness(0.95);
         }

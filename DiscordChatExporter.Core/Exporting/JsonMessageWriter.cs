@@ -409,7 +409,6 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
         }
 
         _writer.WriteEndObject();
-        await _writer.FlushAsync(cancellationToken);
     }
 
     public override async ValueTask WritePreambleAsync(

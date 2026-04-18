@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Linq;
 using DiscordChatExporter.Core.Discord.Data;
-using DiscordChatExporter.Core.Utils.Extensions;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting;
 

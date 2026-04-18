@@ -11,6 +11,7 @@
     <PackageReference Include="CSharpier.MsBuild" PrivateAssets="all" />
     <PackageReference Include="Deorcify" PrivateAssets="all" />
     <PackageReference Include="Gress" />
+    <PackageReference Include="PowerKit" PrivateAssets="all" />
     <PackageReference Include="Spectre.Console" />
   </ItemGroup>
 

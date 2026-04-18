@@ -11,6 +11,7 @@ using DiscordChatExporter.Core.Discord.Data.Embeds;
 using DiscordChatExporter.Core.Markdown.Parsing;
 using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Writing;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting;
 

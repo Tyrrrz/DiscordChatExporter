@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Utils;
-using DiscordChatExporter.Core.Utils.Extensions;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Markdown.Parsing;
 

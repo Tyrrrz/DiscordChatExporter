@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using DiscordChatExporter.Core.Discord;
-using DiscordChatExporter.Core.Utils.Extensions;
 using DiscordChatExporter.Gui.Framework;
 using DiscordChatExporter.Gui.Localization;
 using DiscordChatExporter.Gui.Models;
 using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.Utils;
 using DiscordChatExporter.Gui.Utils.Extensions;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Gui.ViewModels.Dialogs;
 

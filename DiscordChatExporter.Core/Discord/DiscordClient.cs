@@ -15,6 +15,7 @@ using DiscordChatExporter.Core.Utils.Extensions;
 using Gress;
 using JsonExtensions.Http;
 using JsonExtensions.Reading;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Discord;
 
@@ -161,7 +162,7 @@ public class DiscordClient(
                     $"""
                     Request to '{url}' failed: {response
                         .StatusCode.ToString()
-                        .ToSpaceSeparatedWords()
+                        .SeparateWords(' ')
                         .ToLowerInvariant()}.
                     Response content: {await response.Content.ReadAsStringAsync(
                         cancellationToken

@@ -8,6 +8,7 @@ using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exporting.Filtering;
 using DiscordChatExporter.Core.Exporting.Partitioning;
 using DiscordChatExporter.Core.Utils.Extensions;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting;
 

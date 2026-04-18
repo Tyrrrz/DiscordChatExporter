@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using DiscordChatExporter.Core.Utils.Extensions;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Utils;
 

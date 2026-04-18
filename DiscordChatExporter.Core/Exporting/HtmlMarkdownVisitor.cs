@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Markdown;
 using DiscordChatExporter.Core.Markdown.Parsing;
-using DiscordChatExporter.Core.Utils.Extensions;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting;
 

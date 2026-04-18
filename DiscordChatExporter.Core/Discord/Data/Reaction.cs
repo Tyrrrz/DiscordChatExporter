@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using DiscordChatExporter.Core.Utils.Extensions;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Discord.Data;
 

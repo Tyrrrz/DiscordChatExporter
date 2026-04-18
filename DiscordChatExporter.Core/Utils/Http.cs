@@ -5,9 +5,9 @@ using System.Net.Http;
 using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Threading.Tasks;
-using DiscordChatExporter.Core.Utils.Extensions;
 using Polly;
 using Polly.Retry;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Utils;
 
@@ -24,7 +24,7 @@ public static class Http
 
     private static bool IsRetryableException(Exception exception) =>
         exception
-            .GetSelfAndChildren()
+            .GetSelfAndDescendants()
             .Any(ex =>
                 ex is TimeoutException or SocketException or AuthenticationException
                 || ex is HttpRequestException hrex

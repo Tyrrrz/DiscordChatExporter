@@ -3,20 +3,19 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DiscordChatExporter.Gui.Services;
-using DiscordChatExporter.Gui.Utils;
 using DiscordChatExporter.Gui.Utils.Extensions;
+using PowerKit;
 
 namespace DiscordChatExporter.Gui.Localization;
 
 public partial class LocalizationManager : ObservableObject, IDisposable
 {
-    private readonly DisposableCollector _eventRoot = new();
+    private readonly IDisposable _eventRoot;
 
     public LocalizationManager(SettingsService settingsService)
     {
-        _eventRoot.Add(settingsService.WatchProperty(o => o.Language, v => Language = v, true));
-
-        _eventRoot.Add(
+        _eventRoot = Disposable.Merge(
+            settingsService.WatchProperty(o => o.Language, v => Language = v, true),
             this.WatchProperty(
                 o => o.Language,
                 _ =>

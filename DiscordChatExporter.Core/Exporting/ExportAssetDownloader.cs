@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Web;
 using AsyncKeyedLock;
 using DiscordChatExporter.Core.Utils;
-using DiscordChatExporter.Core.Utils.Extensions;
 using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting;

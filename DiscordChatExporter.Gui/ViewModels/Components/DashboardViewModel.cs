@@ -29,7 +29,7 @@ public partial class DashboardViewModel : ViewModelBase
     private readonly DialogManager _dialogManager;
     private readonly SettingsService _settingsService;
 
-    private readonly IDisposable _eventRoot;
+    private readonly IDisposable _eventSubscription;
     private readonly AutoResetProgressMuxer _progressMuxer;
 
     private DiscordClient? _discord;
@@ -50,7 +50,7 @@ public partial class DashboardViewModel : ViewModelBase
 
         _progressMuxer = Progress.CreateMuxer().WithAutoReset();
 
-        _eventRoot = Disposable.Merge(
+        _eventSubscription = Disposable.Merge(
             Progress.WatchProperty(
                 o => o.Current,
                 _ => OnPropertyChanged(nameof(IsProgressIndeterminate))
@@ -329,7 +329,7 @@ public partial class DashboardViewModel : ViewModelBase
     {
         if (disposing)
         {
-            _eventRoot.Dispose();
+            _eventSubscription.Dispose();
         }
 
         base.Dispose(disposing);

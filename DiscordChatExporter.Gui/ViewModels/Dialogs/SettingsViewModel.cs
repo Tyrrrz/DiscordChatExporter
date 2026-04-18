@@ -15,7 +15,7 @@ public class SettingsViewModel : DialogViewModelBase
 {
     private readonly SettingsService _settingsService;
 
-    private readonly IDisposable _eventRoot;
+    private readonly IDisposable _eventSubscription;
 
     public SettingsViewModel(
         SettingsService settingsService,
@@ -25,7 +25,9 @@ public class SettingsViewModel : DialogViewModelBase
         _settingsService = settingsService;
         LocalizationManager = localizationManager;
 
-        _eventRoot = Disposable.Merge(_settingsService.WatchAllProperties(OnAllPropertiesChanged));
+        _eventSubscription = Disposable.Merge(
+            _settingsService.WatchAllProperties(OnAllPropertiesChanged)
+        );
     }
 
     public LocalizationManager LocalizationManager { get; }
@@ -140,7 +142,7 @@ public class SettingsViewModel : DialogViewModelBase
     {
         if (disposing)
         {
-            _eventRoot.Dispose();
+            _eventSubscription.Dispose();
         }
 
         base.Dispose(disposing);

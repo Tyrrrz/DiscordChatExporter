@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands;
 using DiscordChatExporter.Cli.Tests.Infra;
-using DiscordChatExporter.Cli.Tests.Utils;
 using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Core.Exporting.Partitioning;
 using FluentAssertions;
+using PowerKit;
 using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
@@ -17,7 +17,7 @@ public class PartitioningSpecs
     public async Task I_can_export_a_channel_with_partitioning_based_on_message_count()
     {
         // Arrange
-        using var dir = TempDir.Create();
+        using var dir = TempDirectory.Create();
         var filePath = Path.Combine(dir.Path, "output.html");
 
         // Act
@@ -38,7 +38,7 @@ public class PartitioningSpecs
     public async Task I_can_export_a_channel_with_partitioning_based_on_file_size()
     {
         // Arrange
-        using var dir = TempDir.Create();
+        using var dir = TempDirectory.Create();
         var filePath = Path.Combine(dir.Path, "output.html");
 
         // Act

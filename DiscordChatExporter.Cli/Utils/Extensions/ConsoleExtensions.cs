@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using CliFx.Infrastructure;
 using Spectre.Console;
@@ -59,6 +63,17 @@ internal static class ConsoleExtensions
         {
             progressTask.Value = progressTask.MaxValue;
             progressTask.StopTask();
+        }
+    }
+
+    public static async IAsyncEnumerable<string> ReadLinesAsync(
+        this TextReader reader,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default
+    )
+    {
+        while (await reader.ReadLineAsync(cancellationToken).ConfigureAwait(false) is { } line)
+        {
+            yield return line;
         }
     }
 }

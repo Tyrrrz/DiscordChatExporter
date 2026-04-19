@@ -1,15 +1,16 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using CliFx.Binding;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands.Base;
+using DiscordChatExporter.Cli.Utils.Json;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Utils.Extensions;
 
 namespace DiscordChatExporter.Cli.Commands;
 
-[Command("dm", Description = "Gets the list of all direct message channels.")]
+[Command("list channels dm", Description = "Gets the list of direct message channels.")]
 public partial class GetDirectChannelsCommand : DiscordCommandBase
 {
     public override async ValueTask ExecuteAsync(IConsole console)
@@ -25,25 +26,8 @@ public partial class GetDirectChannelsCommand : DiscordCommandBase
             .ThenBy(c => c.Name)
             .ToArray();
 
-        var channelIdMaxLength = channels
-            .Select(c => c.Id.ToString().Length)
-            .OrderDescending()
-            .FirstOrDefault();
-
-        foreach (var channel in channels)
-        {
-            // Channel ID
-            await console.Output.WriteAsync(
-                channel.Id.ToString().PadRight(channelIdMaxLength, ' ')
-            );
-
-            // Separator
-            using (console.WithForegroundColor(ConsoleColor.DarkGray))
-                await console.Output.WriteAsync(" | ");
-
-            // Channel name
-            using (console.WithForegroundColor(ConsoleColor.White))
-                await console.Output.WriteLineAsync(channel.GetHierarchicalName());
-        }
+        await console.Output.WriteLineAsync(
+            JsonSerializer.Serialize(channels, CliJsonSerializerContext.Instance.ChannelArray)
+        );
     }
 }

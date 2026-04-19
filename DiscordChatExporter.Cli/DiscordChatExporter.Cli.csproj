@@ -17,4 +17,17 @@
   <ItemGroup>
     <ProjectReference Include="../DiscordChatExporter.Core/DiscordChatExporter.Core.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None
+      Include="dce"
+      CopyToOutputDirectory="PreserveNewest"
+      CopyToPublishDirectory="PreserveNewest"
+    />
+    <None
+      Include="dce.bat"
+      CopyToOutputDirectory="PreserveNewest"
+      CopyToPublishDirectory="PreserveNewest"
+    />
+  </ItemGroup>
 </Project>

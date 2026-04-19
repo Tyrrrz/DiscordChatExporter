@@ -23,84 +23,104 @@ Now we're ready to run the commands.
 Type the following command in your terminal of choice, then press ENTER to run it. This will list all available subcommands and options.
 
 ```console
-./DiscordChatExporter.Cli
+./dce
 ```
 
 > **Note**:
-> On Windows, if you're using the default Command Prompt (`cmd`), omit the leading `./` at the start of the command.
+> On Windows, use `dce` instead of `./dce`.
 
 > **Docker** users, please refer to the [Docker usage instructions](Docker.md).
 
 ## CLI commands
 
-| Command     | Description                                          |
-| ----------- | ---------------------------------------------------- |
-| export      | Exports a channel                                    |
-| exportdm    | Exports all direct message channels                  |
-| exportguild | Exports all channels within the specified server     |
-| exportall   | Exports all accessible channels                      |
-| channels    | Outputs the list of channels in the given server     |
-| dm          | Outputs the list of direct message channels          |
-| guilds      | Outputs the list of accessible servers               |
-| guide       | Explains how to obtain token, server, and channel ID |
+| Command           | Description                                                          |
+| ----------------- | -------------------------------------------------------------------- |
+| export            | Exports one or more channels                                         |
+| list channels     | Outputs the list of channels in the given server(s)                  |
+| list channels dm  | Outputs the list of direct message channels                          |
+| list servers      | Outputs the list of accessible servers                               |
+| list unwrap       | Resolves categories and forums in a channel list to their child channels and threads |
+| guide             | Explains how to obtain token, server, and channel ID                 |
 
-To use the commands, you'll need a token. For the instructions on how to get a token, please refer to [this page](Token-and-IDs.md), or run `./DiscordChatExporter.Cli guide`.
+To use the commands, you'll need a token. For the instructions on how to get a token, please refer to [this page](Token-and-IDs.md), or run `./dce guide`.
+
+To pass the token, use the `-t|--token` option:
+
+```console
+./dce export 53555 -t "mfa.Ifrn"
+```
+
+Alternatively, you can set the `DISCORD_TOKEN` environment variable and omit `-t`:
+
+**Linux/macOS:**
+
+```console
+export DISCORD_TOKEN="mfa.Ifrn"
+```
+
+**Windows:**
+
+```console
+set DISCORD_TOKEN=mfa.Ifrn
+```
+
+The pipeline examples in this guide assume `DISCORD_TOKEN` is already set.
 
 To get help with a specific command, run:
 
 ```console
-./DiscordChatExporter.Cli command --help
+./dce command --help
 ```
 
 For example, to figure out how to use the `export` command, run:
 
 ```console
-./DiscordChatExporter.Cli export --help
+./dce export --help
 ```
 
 ## Export a specific channel
 
-You can quickly export with DCE's default settings by using just `-t token` and `-c channelid`.
+You can quickly export with DCE's default settings by providing the channel ID as a positional argument and `-t|--token`.
 
 ```console
-./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555
+./dce export 53555 -t "mfa.Ifrn"
 ```
 
 #### Changing the format
 
-You can change the export format to `HtmlDark`, `HtmlLight`, `PlainText` `Json` or `Csv` with `-f format`. The default
+You can change the export format to `HtmlDark`, `HtmlLight`, `PlainText` `Json` or `Csv` with `-f|--format`. The default
 format is `HtmlDark`.
 
 ```console
-./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 -f Json
+./dce export 53555 -t "mfa.Ifrn" -f Json
 ```
 
 #### Changing the output filename
 
-You can change the filename by using `-o name.ext`. e.g. for the `HTML` format:
+You can change the filename by using `-o|--output`. e.g. for the `HTML` format:
 
 ```console
-./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 -o myserver.html
+./dce export 53555 -t "mfa.Ifrn" -o myserver.html
 ```
 
 #### Changing the output directory
 
-You can change the export directory by using `-o` and providing a path that ends with a slash or does not have a file
+You can change the export directory by using `-o|--output` and providing a path that ends with a slash or does not have a file
 extension.
 If any of the folders in the path have a space in its name, escape them with quotes (").
 
 ```console
-./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 -o "C:\Discord Exports"
+./dce export 53555 -t "mfa.Ifrn" -o "C:\Discord Exports"
 ```
 
 #### Changing the filename and output directory
 
-You can change both the filename and export directory by using `-o directory\name.ext`.
+You can change both the filename and export directory by using `-o|--output`.
 Note that the filename must have an extension, otherwise it will be considered a directory name.
 If any of the folders in the path have a space in its name, escape them with quotes (").
 
 ```console
-./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 -o "C:\Discord Exports\myserver.html"
+./dce export 53555 -t "mfa.Ifrn" -o "C:\Discord Exports\myserver.html"
 ```
 
 #### Generating the filename and output directory dynamically
@@ -108,7 +128,7 @@ If any of the folders in the path have a space in its name, escape them with quo
 You can use template tokens to generate the output file path based on the server and channel metadata.
 
 ```console
-./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 -o "C:\Discord Exports\%G\%T\%C.html"
+./dce export 53555 -t "mfa.Ifrn" -o "C:\Discord Exports\%G\%T\%C.html"
 ```
 
 Assuming you are exporting a channel named `"my-channel"` in the `"Text channels"` category from a server
@@ -136,13 +156,13 @@ You can use partitioning to split files after a given number of messages or file
 For example, a channel with 36 messages set to be partitioned every 10 messages will output 4 files.
 
 ```console
-./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 -p 10
+./dce export 53555 -t "mfa.Ifrn" -p 10
 ```
 
 A 45 MB channel set to be partitioned every 20 MB will output 3 files.
 
 ```console
-./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 -p 20mb
+./dce export 53555 -t "mfa.Ifrn" -p 20mb
 ```
 
 #### Downloading assets
@@ -153,7 +173,7 @@ downloaded when using the plain text (TXT) export format.
 A folder containing the assets will be created along with the exported chat. They must be kept together.
 
 ```console
-./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 --media
+./dce export 53555 -t "mfa.Ifrn" --media
 ```
 
 #### Reusing assets
@@ -162,7 +182,7 @@ Previously downloaded assets can be reused to skip redundant downloads as long a
 same folder. Using this option can speed up future exports. This option requires the `--media` option.
 
 ```console
-./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 --media --reuse-media
+./dce export 53555 -t "mfa.Ifrn" --media --reuse-media
 ```
 
 #### Changing the media directory
@@ -171,7 +191,7 @@ By default, the media directory is created alongside the exported chat. You can 
 providing a path that ends with a slash. All of the exported media will be stored in this directory.
 
 ```console
-./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 --media --media-dir "C:\Discord Media"
+./dce export 53555 -t "mfa.Ifrn" --media --media-dir "C:\Discord Media"
 ```
 
 #### Changing the date format
@@ -180,7 +200,7 @@ You can customize how dates are formatted in the exported files by using `--loca
 locales. The default locale is `en-US`.
 
 ```console
-./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 --locale "de-DE"
+./dce export 53555 -t "mfa.Ifrn" --locale "de-DE"
 ```
 
 #### Date ranges
@@ -189,14 +209,14 @@ locales. The default locale is `en-US`.
 Use `--before` to export messages sent before the provided date. E.g. messages sent before September 18th, 2019:
 
 ```console
-./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 --before 2019-09-18
+./dce export 53555 -t "mfa.Ifrn" --before 2019-09-18
 ```
 
 **Messages sent after a date**
 Use `--after` to export messages sent after the provided date. E.g. messages sent after September 17th, 2019 11:34 PM:
 
 ```console
-./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 --after "2019-09-17 23:34"
+./dce export 53555 -t "mfa.Ifrn" --after "2019-09-17 23:34"
 ```
 
 **Messages sent in a date range**
@@ -204,7 +224,7 @@ Use `--before` and `--after` to export messages sent during the provided date ra
 September 17th, 2019 11:34 PM and September 18th:
 
 ```console
-./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 --after "2019-09-17 23:34" --before "2019-09-18"
+./dce export 53555 -t "mfa.Ifrn" --after "2019-09-17 23:34" --before "2019-09-18"
 ```
 
 You can try different formats like `17-SEP-2019 11:34 PM` or even refine your ranges down to
@@ -218,75 +238,111 @@ formats [here](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custo
 Use `--filter` to filter what messages are included in the export.
 
 ```console
-./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 --filter "from:Tyrrrz has:image"
+./dce export 53555 -t "mfa.Ifrn" --filter "from:Tyrrrz has:image"
 ```
 
 Documentation on message filter syntax can be found [here](https://github.com/Tyrrrz/DiscordChatExporter/blob/prime/.docs/Message-filters.md).
 
 ### Export channels from a specific server
 
-To export all channels in a specific server, use the `exportguild` command and provide the server ID through the `-g|--guild` option:
+> [!IMPORTANT]
+> The following examples assume `DISCORD_TOKEN` is already set. See [CLI commands](#cli-commands) for instructions.
+
+To export all channels in a specific server, use `list channels` to list channels and pipe the result to `export`.
+
+**Linux/macOS:**
 
 ```console
-./DiscordChatExporter.Cli exportguild -t "mfa.Ifrn" -g 21814
+./dce list channels 21814 | ./dce export
+```
+
+**Windows:**
+
+```console
+dce list channels 21814 | dce export
+```
+
+You can also list channels for multiple servers at once:
+
+```console
+./dce list channels 21814 35930 | ./dce export
 ```
 
 #### Including threads
 
-By default, threads are not included in the export. You can change this behavior by using `--include-threads` and
-specifying which threads should be included. It has possible values of `none`, `active`, or `all`, indicating which
-threads should be included. To include both active and archived threads, use `--include-threads all`.
+By default, threads are not included. You can change this behavior by passing `--include-threads` to the `list channels` command. It has possible values of `none`, `active`, or `all`, indicating which threads should be included. To include both active and archived threads, use `--include-threads all`.
 
 ```console
-./DiscordChatExporter.Cli exportguild -t "mfa.Ifrn" -g 21814 --include-threads all
+./dce list channels 21814 --include-threads all | ./dce export
 ```
 
 #### Including voice channels
 
-By default, voice channels are included in the export. You can change this behavior by using `--include-vc` and
-specifying whether to include voice channels in the export. It has possible values of `true` or `false`, to exclude
-voice channels, use `--include-vc false`.
+By default, voice channels are included. You can change this behavior by passing `--include-vc false` to the `list channels` command.
 
 ```console
-./DiscordChatExporter.Cli exportguild -t "mfa.Ifrn" -g 21814 --include-vc false
+./dce list channels 21814 --include-vc false | ./dce export
 ```
 
-### Export all channels
+### Export all DMs
 
-To export all accessible channels, use the `exportall` command:
+> [!IMPORTANT]
+> The following examples assume `DISCORD_TOKEN` is already set. See [CLI commands](#cli-commands) for instructions.
+
+To export all DMs:
+
+**Linux/macOS:**
 
 ```console
-./DiscordChatExporter.Cli exportall -t "mfa.Ifrn"
+./dce list channels dm | ./dce export
 ```
 
-#### Excluding DMs
-
-To exclude DMs, add the `--include-dm false` option.
+**Windows:**
 
 ```console
-./DiscordChatExporter.Cli exportall -t "mfa.Ifrn" --include-dm false
+dce list channels dm | dce export
 ```
 
 ### List channels in a server
 
-To list the channels available in a specific server, use the `channels` command and provide the server ID through the `-g|--guild` option:
+To list the channels available in a specific server, use the `list channels` command and provide the server ID as an argument:
 
 ```console
-./DiscordChatExporter.Cli channels -t "mfa.Ifrn" -g 21814
+./dce list channels 21814 -t "mfa.Ifrn"
+```
+
+The `list channels` command outputs a JSON array of channel objects. You can pipe this directly to the `export` command:
+
+```console
+./dce list channels 21814 | ./dce export
 ```
 
 ### List direct message channels
 
-To list all DM channels accessible to the current account, use the `dm` command:
+To list all DM channels accessible to the current account, use the `list channels dm` command:
 
 ```console
-./DiscordChatExporter.Cli dm -t "mfa.Ifrn"
+./dce list channels dm -t "mfa.Ifrn"
+```
+
+The `list channels dm` command outputs a JSON array of channel objects. You can pipe this directly to the `export` command:
+
+```console
+./dce list channels dm | ./dce export
+```
+
+### Unwrap categories and forums
+
+To resolve category and forum channels in a list to their child channels and thread posts, use the `list unwrap` command:
+
+```console
+./dce list channels 21814 | ./dce list unwrap | ./dce export
 ```
 
 ### List servers
 
-To list all servers accessible by the current account, use the `guilds` command:
+To list all servers accessible by the current account, use the `list servers` command:
 
 ```console
-./DiscordChatExporter.Cli guilds -t "mfa.Ifrn" > C:\path\to\output.txt
+./dce list servers -t "mfa.Ifrn" > C:\path\to\output.txt
 ```

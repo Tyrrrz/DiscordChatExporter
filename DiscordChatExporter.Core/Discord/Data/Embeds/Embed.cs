@@ -44,13 +44,8 @@ public partial record Embed
     {
         var title = json.GetPropertyOrNull("title")?.GetStringOrNull();
 
-        var kind =
-            json.GetPropertyOrNull("type")
-                ?.GetStringOrNull()
-                ?.Pipe(s =>
-                    Enum.TryParse<EmbedKind>(s, true, out var result) ? result : (EmbedKind?)null
-                )
-            ?? EmbedKind.Rich;
+        var kind = json.GetPropertyOrNull("type")
+            .Pipe(s => Enum.ParseOrDefault(s?.GetStringOrNull(), true, EmbedKind.Rich));
 
         var url = json.GetPropertyOrNull("url")?.GetNonWhiteSpaceStringOrNull();
         var timestamp = json.GetPropertyOrNull("timestamp")?.GetDateTimeOffsetOrNull();

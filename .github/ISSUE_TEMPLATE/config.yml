@@ -2,7 +2,7 @@ blank_issues_enabled: false
 contact_links:
   - name: ⚠ Feature request
     url: https://github.com/Tyrrrz/.github/blob/prime/docs/project-status.md
-    about: Sorry, but this project is in maintenance mode and no longer accepts new feature requests.
+    about: Sorry, but this project is in maintenance mode and currently doesn't accept new feature requests.
   - name: 📖 Documentation
     url: https://github.com/Tyrrrz/DiscordChatExporter/blob/prime/.docs
     about: Find usage guides and frequently asked questions.

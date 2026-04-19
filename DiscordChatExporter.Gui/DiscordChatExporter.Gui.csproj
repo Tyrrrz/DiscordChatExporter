@@ -2,7 +2,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <AssemblyName>DiscordChatExporter</AssemblyName>
-    <ApplicationIcon>..\favicon.ico</ApplicationIcon>
+    <ApplicationIcon>../favicon.ico</ApplicationIcon>
     <PublishTrimmed>true</PublishTrimmed>
     <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
@@ -22,7 +22,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <AvaloniaResource Include="..\favicon.ico" Link="favicon.ico" />
+    <AvaloniaResource Include="../favicon.ico" Link="favicon.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,7 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DiscordChatExporter.Core\DiscordChatExporter.Core.csproj" />
+    <ProjectReference Include="../DiscordChatExporter.Core/DiscordChatExporter.Core.csproj" />
   </ItemGroup>
 
   <Target Name="PublishMacOSBundle" AfterTargets="Publish" Condition="$(PublishMacOSBundle)">

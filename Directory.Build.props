@@ -4,7 +4,7 @@
     <Version>999.9.9-dev</Version>
     <Company>Tyrrrz</Company>
     <Copyright>Copyright (c) Oleksii Holub</Copyright>
-    <LangVersion>preview</LangVersion>
+    <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>

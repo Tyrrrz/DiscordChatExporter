@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <ApplicationIcon>..\favicon.ico</ApplicationIcon>
+    <ApplicationIcon>../favicon.ico</ApplicationIcon>
     <PublishTrimmed>true</PublishTrimmed>
     <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
   </PropertyGroup>
@@ -16,6 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DiscordChatExporter.Core\DiscordChatExporter.Core.csproj" />
+    <ProjectReference Include="../DiscordChatExporter.Core/DiscordChatExporter.Core.csproj" />
   </ItemGroup>
 </Project>

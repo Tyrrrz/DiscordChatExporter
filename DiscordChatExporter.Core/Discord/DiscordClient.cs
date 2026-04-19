@@ -59,11 +59,11 @@ public class DiscordClient(
                 {
                     var remainingRequestCount = response
                         .Headers.TryGetValue("X-RateLimit-Remaining")
-                        .Pipe(s => int.ParseOrNull(s, CultureInfo.InvariantCulture));
+                        ?.Pipe(s => int.ParseOrNull(s, CultureInfo.InvariantCulture));
 
                     var resetAfterDelay = response
                         .Headers.TryGetValue("X-RateLimit-Reset-After")
-                        .Pipe(s => double.ParseOrNull(s, CultureInfo.InvariantCulture))
+                        ?.Pipe(s => double.ParseOrNull(s, CultureInfo.InvariantCulture))
                         ?.Pipe(TimeSpan.FromSeconds);
 
                     // If this was the last request available before hitting the rate limit,

@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using AngleSharp.Dom;
 using DiscordChatExporter.Cli.Tests.Infra;
-using DiscordChatExporter.Cli.Tests.Utils.Extensions;
 using DiscordChatExporter.Core.Discord;
 using FluentAssertions;
+using PowerKit.Extensions;
 using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
@@ -22,11 +22,14 @@ public class HtmlMarkdownSpecs
         // Assert
         message
             .Text()
-            .ReplaceWhiteSpace()
+            .ReplaceWhiteSpace(' ')
             .Should()
             .Contain("Default timestamp: 2/12/2023 1:36 PM");
 
-        message.InnerHtml.ReplaceWhiteSpace().Should().Contain("Sunday, February 12, 2023 1:36 PM");
+        message
+            .InnerHtml.ReplaceWhiteSpace(' ')
+            .Should()
+            .Contain("Sunday, February 12, 2023 1:36 PM");
     }
 
     [Fact]
@@ -39,8 +42,11 @@ public class HtmlMarkdownSpecs
         );
 
         // Assert
-        message.Text().ReplaceWhiteSpace().Should().Contain("Short time timestamp: 1:36 PM");
-        message.InnerHtml.ReplaceWhiteSpace().Should().Contain("Sunday, February 12, 2023 1:36 PM");
+        message.Text().ReplaceWhiteSpace(' ').Should().Contain("Short time timestamp: 1:36 PM");
+        message
+            .InnerHtml.ReplaceWhiteSpace(' ')
+            .Should()
+            .Contain("Sunday, February 12, 2023 1:36 PM");
     }
 
     [Fact]
@@ -53,8 +59,11 @@ public class HtmlMarkdownSpecs
         );
 
         // Assert
-        message.Text().ReplaceWhiteSpace().Should().Contain("Long time timestamp: 1:36:12 PM");
-        message.InnerHtml.ReplaceWhiteSpace().Should().Contain("Sunday, February 12, 2023 1:36 PM");
+        message.Text().ReplaceWhiteSpace(' ').Should().Contain("Long time timestamp: 1:36:12 PM");
+        message
+            .InnerHtml.ReplaceWhiteSpace(' ')
+            .Should()
+            .Contain("Sunday, February 12, 2023 1:36 PM");
     }
 
     [Fact]
@@ -67,8 +76,11 @@ public class HtmlMarkdownSpecs
         );
 
         // Assert
-        message.Text().ReplaceWhiteSpace().Should().Contain("Short date timestamp: 2/12/2023");
-        message.InnerHtml.ReplaceWhiteSpace().Should().Contain("Sunday, February 12, 2023 1:36 PM");
+        message.Text().ReplaceWhiteSpace(' ').Should().Contain("Short date timestamp: 2/12/2023");
+        message
+            .InnerHtml.ReplaceWhiteSpace(' ')
+            .Should()
+            .Contain("Sunday, February 12, 2023 1:36 PM");
     }
 
     [Fact]
@@ -83,11 +95,14 @@ public class HtmlMarkdownSpecs
         // Assert
         message
             .Text()
-            .ReplaceWhiteSpace()
+            .ReplaceWhiteSpace(' ')
             .Should()
             .Contain("Long date timestamp: Sunday, February 12, 2023");
 
-        message.InnerHtml.ReplaceWhiteSpace().Should().Contain("Sunday, February 12, 2023 1:36 PM");
+        message
+            .InnerHtml.ReplaceWhiteSpace(' ')
+            .Should()
+            .Contain("Sunday, February 12, 2023 1:36 PM");
     }
 
     [Fact]
@@ -102,11 +117,14 @@ public class HtmlMarkdownSpecs
         // Assert
         message
             .Text()
-            .ReplaceWhiteSpace()
+            .ReplaceWhiteSpace(' ')
             .Should()
             .Contain("Full timestamp: Sunday, February 12, 2023 1:36 PM");
 
-        message.InnerHtml.ReplaceWhiteSpace().Should().Contain("Sunday, February 12, 2023 1:36 PM");
+        message
+            .InnerHtml.ReplaceWhiteSpace(' ')
+            .Should()
+            .Contain("Sunday, February 12, 2023 1:36 PM");
     }
 
     [Fact]
@@ -121,11 +139,14 @@ public class HtmlMarkdownSpecs
         // Assert
         message
             .Text()
-            .ReplaceWhiteSpace()
+            .ReplaceWhiteSpace(' ')
             .Should()
             .Contain("Full long timestamp: Sunday, February 12, 2023 1:36:12 PM");
 
-        message.InnerHtml.ReplaceWhiteSpace().Should().Contain("Sunday, February 12, 2023 1:36 PM");
+        message
+            .InnerHtml.ReplaceWhiteSpace(' ')
+            .Should()
+            .Contain("Sunday, February 12, 2023 1:36 PM");
     }
 
     [Fact]
@@ -140,11 +161,14 @@ public class HtmlMarkdownSpecs
         // Assert
         message
             .Text()
-            .ReplaceWhiteSpace()
+            .ReplaceWhiteSpace(' ')
             .Should()
             .Contain("Relative timestamp: 2/12/2023 1:36 PM");
 
-        message.InnerHtml.ReplaceWhiteSpace().Should().Contain("Sunday, February 12, 2023 1:36 PM");
+        message
+            .InnerHtml.ReplaceWhiteSpace(' ')
+            .Should()
+            .Contain("Sunday, February 12, 2023 1:36 PM");
     }
 
     [Fact]

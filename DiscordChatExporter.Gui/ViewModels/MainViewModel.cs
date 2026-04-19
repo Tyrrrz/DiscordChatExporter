@@ -7,6 +7,7 @@ using DiscordChatExporter.Gui.Localization;
 using DiscordChatExporter.Gui.Services;
 using DiscordChatExporter.Gui.Utils.Extensions;
 using DiscordChatExporter.Gui.ViewModels.Components;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Gui.ViewModels;
 

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text.Json;
-using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Reading;
 using PowerKit.Extensions;
 
@@ -59,7 +58,7 @@ public partial record Embed
         var color = json.GetPropertyOrNull("color")
             ?.GetInt32OrNull()
             ?.Pipe(System.Drawing.Color.FromArgb)
-            .ResetAlpha();
+            .WithFullAlpha();
 
         var author = json.GetPropertyOrNull("author")?.Pipe(EmbedAuthor.Parse);
         var description = json.GetPropertyOrNull("description")?.GetStringOrNull();

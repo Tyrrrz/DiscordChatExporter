@@ -3,8 +3,8 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DiscordChatExporter.Gui.Services;
-using DiscordChatExporter.Gui.Utils.Extensions;
 using PowerKit;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Gui.Localization;
 

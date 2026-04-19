@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Discord.Data.Embeds;
 using DiscordChatExporter.Core.Markdown.Parsing;
-using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Writing;
 using PowerKit.Extensions;
 
@@ -56,7 +55,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
             Context.TryGetMember(user.Id)?.DisplayName ?? user.DisplayName
         );
 
-        _writer.WriteString("color", Context.TryGetUserColor(user.Id)?.ToHex());
+        _writer.WriteString("color", Context.TryGetUserColor(user.Id)?.ToHexString());
         _writer.WriteBoolean("isBot", user.IsBot);
 
         if (includeRoles)
@@ -110,7 +109,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
 
             _writer.WriteString("id", role.Id.ToString());
             _writer.WriteString("name", role.Name);
-            _writer.WriteString("color", role.Color?.ToHex());
+            _writer.WriteString("color", role.Color?.ToHexString());
             _writer.WriteNumber("position", role.Position);
 
             _writer.WriteEndObject();
@@ -282,7 +281,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
         );
 
         if (embed.Color is not null)
-            _writer.WriteString("color", embed.Color.Value.ToHex());
+            _writer.WriteString("color", embed.Color.Value.ToHexString());
 
         if (embed.Author is not null)
         {

@@ -4,8 +4,8 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Gui.Framework;
-using DiscordChatExporter.Gui.Utils.Extensions;
 using DiscordChatExporter.Gui.ViewModels.Components;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Gui.Views.Components;
 

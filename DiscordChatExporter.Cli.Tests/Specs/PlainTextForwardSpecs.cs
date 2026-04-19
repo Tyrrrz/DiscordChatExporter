@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using DiscordChatExporter.Cli.Tests.Infra;
-using DiscordChatExporter.Cli.Tests.Utils.Extensions;
 using FluentAssertions;
+using PowerKit.Extensions;
 using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
@@ -16,7 +16,7 @@ public class PlainTextForwardSpecs
 
         // Assert
         document
-            .ReplaceWhiteSpace()
+            .ReplaceWhiteSpace(' ')
             .Should()
             .ContainAll("{Forwarded Message}", @"¯\_(ツ)_/¯", "12/28/2025 10:52 PM");
     }

@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:csharp.sdk.modelcontextprotocol.io)",
+      "WebFetch(domain:devblogs.microsoft.com)",
+      "WebFetch(domain:github.com)",
+      "WebSearch",
+      "Bash(dotnet build *)",
+      "Bash(dotnet tool *)",
+      "Bash(csharpier DiscordChatExporter.Mcp/)",
+      "Bash(/c/Users/vicas/.local/bin/claude.exe mcp *)",
+      "Bash(gh repo *)",
+      "Bash(git add *)"
+    ]
+  }
+}

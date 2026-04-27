@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "discord": {
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "DiscordChatExporter.Mcp",
+        "--no-build"
+      ],
+      "env": {
+        "DISCORD_TOKEN": "${DISCORD_TOKEN}"
+      }
+    }
+  }
+}

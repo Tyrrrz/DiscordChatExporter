@@ -10,3 +10,7 @@ obj/
 
 # Test results
 TestResults/
+
+# MCP server — local config and generated exports (never commit)
+mcp-settings.json
+discord-exports/

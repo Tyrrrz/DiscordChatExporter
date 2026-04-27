@@ -1,0 +1,11 @@
+{
+  "allowedGuilds": [
+    "123456789012345678"
+  ],
+  "allowedChannels": [
+    "987654321098765432"
+  ],
+  "allowAllChannelsInGuilds": false,
+  "exportPath": null,
+  "viewerPort": 5722
+}

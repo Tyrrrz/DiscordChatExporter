@@ -23,6 +23,7 @@ public partial record Message(
     IReadOnlyList<Attachment> Attachments,
     IReadOnlyList<Embed> Embeds,
     IReadOnlyList<Sticker> Stickers,
+    JsonElement? PollJson,
     IReadOnlyList<Reaction> Reactions,
     IReadOnlyList<User> MentionedUsers,
     MessageReference? Reference,
@@ -35,7 +36,8 @@ public partial record Message(
         string.IsNullOrWhiteSpace(Content)
         && !Attachments.Any()
         && !Embeds.Any()
-        && !Stickers.Any();
+        && !Stickers.Any()
+        && PollJson is null;
 
     public bool IsSystemNotification { get; } =
         Kind is >= MessageKind.RecipientAdd and <= MessageKind.ThreadCreated;
@@ -161,6 +163,8 @@ public partial record Message
                 .ToArray()
             ?? [];
 
+        var poll = json.GetPropertyOrNull("poll");
+
         var reactions =
             json.GetPropertyOrNull("reactions")
                 ?.EnumerateArrayOrNull()
@@ -200,6 +204,7 @@ public partial record Message
             attachments,
             embeds,
             stickers,
+            poll,
             reactions,
             mentionedUsers,
             messageReference,

@@ -32,6 +32,17 @@
         Context.Request.ShouldFormatMarkdown
             ? await HtmlMarkdownVisitor.FormatAsync(Context, markdown, false, CancellationToken)
             : markdown;
+
+    async ValueTask<string?> GetPollAnswerTextAsync(JsonElement answer)
+    {
+        var pollMedia = answer.GetPropertyOrNull("poll_media");
+        var text = pollMedia?.GetPropertyOrNull("text")?.GetStringOrNull();
+
+        if (string.IsNullOrWhiteSpace(text))
+            return null;
+
+        return await FormatMarkdownAsync(text);
+    }
 }
 
 <div class="chatlog__message-group">
@@ -730,6 +741,34 @@
                                 </div>
                             </div>
                         }
+                    }
+
+
+                    @* Poll *@
+                    @if (message.PollJson is not null)
+                    {
+                        var poll = message.PollJson.Value;
+                        var questionText = poll
+                            .GetPropertyOrNull("question")
+                            ?.GetPropertyOrNull("text")
+                            ?.GetStringOrNull();
+
+                        <div class="chatlog__poll">
+                            @if (!string.IsNullOrWhiteSpace(questionText))
+                            {
+                                <div class="chatlog__poll-question">@(await FormatMarkdownAsync(questionText))</div>
+                            }
+
+                            @foreach (var answer in poll.GetPropertyOrNull("answers")?.EnumerateArrayOrNull() ?? [])
+                            {
+                                var answerText = await GetPollAnswerTextAsync(answer);
+
+                                @if (!string.IsNullOrWhiteSpace(answerText))
+                                {
+                                    <div class="chatlog__poll-answer">@answerText</div>
+                                }
+                            }
+                        </div>
                     }
 
                     @* Stickers *@

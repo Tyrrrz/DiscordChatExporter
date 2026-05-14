@@ -28,14 +28,16 @@ public partial record Message(
     MessageReference? Reference,
     Message? ReferencedMessage,
     MessageSnapshot? ForwardedMessage,
-    Interaction? Interaction
+    Interaction? Interaction,
+    JsonElement? Poll
 ) : IHasId
 {
     public bool IsEmpty { get; } =
         string.IsNullOrWhiteSpace(Content)
         && !Attachments.Any()
         && !Embeds.Any()
-        && !Stickers.Any();
+        && !Stickers.Any()
+        && Poll is null;
 
     public bool IsSystemNotification { get; } =
         Kind is >= MessageKind.RecipientAdd and <= MessageKind.ThreadCreated;
@@ -187,6 +189,8 @@ public partial record Message
 
         var interaction = json.GetPropertyOrNull("interaction")?.Pipe(Interaction.Parse);
 
+        var poll = json.GetPropertyOrNull("poll");
+
         return new Message(
             id,
             kind,
@@ -205,7 +209,8 @@ public partial record Message
             messageReference,
             referencedMessage,
             forwardedMessage,
-            interaction
+            interaction,
+            poll
         );
     }
 }

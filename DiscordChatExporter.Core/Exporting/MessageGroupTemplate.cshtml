@@ -400,6 +400,35 @@
                         </div>
                     }
 
+                    @* Poll *@
+                    @if (message.Poll is not null)
+                    {
+                        var pollQuestion = message.Poll.Value
+                            .GetPropertyOrNull("question")?
+                            .GetPropertyOrNull("text")?
+                            .GetStringOrNull();
+
+                        <div class="chatlog__poll">
+                            @if (!string.IsNullOrWhiteSpace(pollQuestion))
+                            {
+                                <div class="chatlog__poll-question"><!--wmm:ignore-->@Html.Raw(await FormatMarkdownAsync(pollQuestion))<!--/wmm:ignore--></div>
+                            }
+
+                            @foreach (var answer in message.Poll.Value.GetPropertyOrNull("answers")?.EnumerateArrayOrNull() ?? [])
+                            {
+                                var answerText = answer
+                                    .GetPropertyOrNull("poll_media")?
+                                    .GetPropertyOrNull("text")?
+                                    .GetStringOrNull();
+
+                                if (!string.IsNullOrWhiteSpace(answerText))
+                                {
+                                    <div class="chatlog__poll-answer"><!--wmm:ignore-->@Html.Raw(await FormatMarkdownAsync(answerText))<!--/wmm:ignore--></div>
+                                }
+                            }
+                        </div>
+                    }
+
                     @* Invites *@
                     @{
                         var inviteCodes = MarkdownParser

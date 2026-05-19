@@ -13,6 +13,8 @@ public partial class LocalizationManager
         [nameof(PullGuildsTooltip)] = "Verfügbare Server und Kanäle laden (Enter)",
         [nameof(SettingsTooltip)] = "Einstellungen",
         [nameof(LastMessageSentTooltip)] = "Letzte Nachricht gesendet:",
+        [nameof(ExportTooltip)] = "Ausgewählte Kanäle exportieren",
+        [nameof(DeleteMessagesTooltip)] = "Nachrichten aus ausgewählten Kanälen löschen",
         [nameof(TokenPlaceholderText)] = "Token",
         // Token instructions (personal account)
         [nameof(TokenPersonalHeader)] = "Token für Ihr persönliches Konto abrufen:",

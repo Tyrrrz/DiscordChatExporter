@@ -75,6 +75,8 @@ public partial class LocalizationManager
     public string PullGuildsTooltip => Get();
     public string SettingsTooltip => Get();
     public string LastMessageSentTooltip => Get();
+    public string ExportTooltip => Get();
+    public string DeleteMessagesTooltip => Get();
     public string TokenPlaceholderText => Get();
 
     // Token instructions (personal account)

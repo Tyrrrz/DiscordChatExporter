@@ -11,6 +11,8 @@ public partial class LocalizationManager
             [nameof(PullGuildsTooltip)] = "Завантажити доступні сервери та канали (Enter)",
             [nameof(SettingsTooltip)] = "Налаштування",
             [nameof(LastMessageSentTooltip)] = "Останнє повідомлення:",
+            [nameof(ExportTooltip)] = "Експортувати вибрані канали",
+            [nameof(DeleteMessagesTooltip)] = "Видалити повідомлення з вибраних каналів",
             [nameof(TokenPlaceholderText)] = "Токен",
             // Token instructions (personal account)
             [nameof(TokenPersonalHeader)] = "Як отримати токен для персонального акаунту:",

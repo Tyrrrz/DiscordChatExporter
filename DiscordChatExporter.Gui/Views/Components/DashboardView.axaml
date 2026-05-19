@@ -301,7 +301,7 @@
                     Foreground="White"
                     IsVisible="{Binding $self.IsEffectivelyEnabled}"
                     Theme="{DynamicResource MaterialIconButton}"
-                    ToolTip.Tip="Delete messages from selected channels">
+                    ToolTip.Tip="{Binding LocalizationManager.DeleteMessagesTooltip}">
                     <materialIcons:MaterialIcon
                         Width="32"
                         Height="32"
@@ -318,7 +318,7 @@
                     Foreground="{DynamicResource MaterialSecondaryMidForegroundBrush}"
                     IsVisible="{Binding $self.IsEffectivelyEnabled}"
                     Theme="{DynamicResource MaterialIconButton}"
-                    ToolTip.Tip="Export selected channels">
+                    ToolTip.Tip="{Binding LocalizationManager.ExportTooltip}">
                     <materialIcons:MaterialIcon
                         Width="32"
                         Height="32"

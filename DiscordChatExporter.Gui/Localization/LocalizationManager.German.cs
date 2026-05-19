@@ -131,6 +131,20 @@ public partial class LocalizationManager
             "Assets in dieses Verzeichnis herunterladen. Wenn nicht angegeben, wird der Asset-Verzeichnispfad vom Ausgabepfad abgeleitet.",
         [nameof(AdvancedOptionsTooltip)] = "Erweiterte Optionen umschalten",
         [nameof(ExportButton)] = "EXPORTIEREN",
+        // Delete Setup
+        [nameof(DeleteWarningTitle)] =
+            "⚠ WARNUNG: Dadurch werden Nachrichten dauerhaft aus dem Kanal gelöscht.",
+        [nameof(DeleteWarningSubtext)] =
+            "Sie können nur Ihre eigenen Nachrichten löschen. Nachrichten anderer Benutzer werden übersprungen.",
+        [nameof(DeleteAfterDateTooltip)] =
+            "Nur Nachrichten löschen, die nach diesem Datum gesendet wurden",
+        [nameof(DeleteBeforeDateTooltip)] =
+            "Nur Nachrichten löschen, die vor diesem Datum gesendet wurden",
+        [nameof(DeleteAfterTimeTooltip)] =
+            "Nur Nachrichten löschen, die nach dieser Uhrzeit gesendet wurden",
+        [nameof(DeleteBeforeTimeTooltip)] =
+            "Nur Nachrichten löschen, die vor dieser Uhrzeit gesendet wurden",
+        [nameof(DeleteButton)] = "LÖSCHEN",
         // Common buttons
         [nameof(CloseButton)] = "SCHLIESSEN",
         [nameof(CancelButton)] = "ABBRECHEN",

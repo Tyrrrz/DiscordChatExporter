@@ -125,6 +125,19 @@ public partial class LocalizationManager
                 "Завантажувати ресурси до цієї директорії. Якщо не вказано, шлях до директорії ресурсів буде визначено з шляху збереження.",
             [nameof(AdvancedOptionsTooltip)] = "Перемкнути розширені параметри",
             [nameof(ExportButton)] = "ЕКСПОРТУВАТИ",
+            // Delete Setup
+            [nameof(DeleteWarningTitle)] = "⚠ УВАГА: Це назавжди видалить повідомлення з каналу.",
+            [nameof(DeleteWarningSubtext)] =
+                "Ви можете видаляти лише власні повідомлення. Повідомлення інших користувачів буде пропущено.",
+            [nameof(DeleteAfterDateTooltip)] =
+                "Видаляти лише повідомлення, надіслані після цієї дати",
+            [nameof(DeleteBeforeDateTooltip)] =
+                "Видаляти лише повідомлення, надіслані до цієї дати",
+            [nameof(DeleteAfterTimeTooltip)] =
+                "Видаляти лише повідомлення, надіслані після цього часу",
+            [nameof(DeleteBeforeTimeTooltip)] =
+                "Видаляти лише повідомлення, надіслані до цього часу",
+            [nameof(DeleteButton)] = "ВИДАЛИТИ",
             // Common buttons
             [nameof(CloseButton)] = "ЗАКРИТИ",
             [nameof(CancelButton)] = "СКАСУВАТИ",

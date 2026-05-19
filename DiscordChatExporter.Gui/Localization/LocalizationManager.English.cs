@@ -125,6 +125,16 @@ public partial class LocalizationManager
                 "Download assets to this directory. If not specified, the asset directory path will be derived from the output path.",
             [nameof(AdvancedOptionsTooltip)] = "Toggle advanced options",
             [nameof(ExportButton)] = "EXPORT",
+            // Delete Setup
+            [nameof(DeleteWarningTitle)] =
+                "⚠ WARNING: This will permanently delete messages from the channel.",
+            [nameof(DeleteWarningSubtext)] =
+                "You can only delete your own messages. Messages from other users will be skipped.",
+            [nameof(DeleteAfterDateTooltip)] = "Only delete messages sent after this date",
+            [nameof(DeleteBeforeDateTooltip)] = "Only delete messages sent before this date",
+            [nameof(DeleteAfterTimeTooltip)] = "Only delete messages sent after this time",
+            [nameof(DeleteBeforeTimeTooltip)] = "Only delete messages sent before this time",
+            [nameof(DeleteButton)] = "DELETE",
             // Common buttons
             [nameof(CloseButton)] = "CLOSE",
             [nameof(CancelButton)] = "CANCEL",

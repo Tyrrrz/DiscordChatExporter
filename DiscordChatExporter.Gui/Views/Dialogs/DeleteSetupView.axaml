@@ -37,7 +37,7 @@
                 IsVisible="{Binding !IsSingleChannel}"
                 TextTrimming="CharacterEllipsis">
                 <Run Text="{Binding Channels.Count, FallbackValue=0, Mode=OneWay}" />
-                <Run Text="channels selected" />
+                <Run Text="{Binding LocalizationManager.ChannelsSelectedText}" />
             </TextBlock>
 
             <!--  Category and channel name (for single channel)  -->
@@ -78,9 +78,9 @@
                             FontWeight="SemiBold"
                             Foreground="#FFFFA500"
                             TextWrapping="Wrap">
-                            <Run Text="⚠ WARNING: This will permanently delete messages from the channel." />
+                            <Run Text="{Binding LocalizationManager.DeleteWarningTitle}" />
                             <LineBreak />
-                            <Run FontWeight="Normal" Text="You can only delete your own messages. Messages from other users will be skipped." />
+                            <Run FontWeight="Normal" Text="{Binding LocalizationManager.DeleteWarningSubtext}" />
                         </TextBlock>
                     </Border>
 
@@ -90,9 +90,9 @@
                             Grid.Row="0"
                             Grid.Column="0"
                             Margin="16,8,8,8"
-                            materialAssists:TextFieldAssist.Label="After (date)"
+                            materialAssists:TextFieldAssist.Label="{Binding LocalizationManager.AfterDateLabel}"
                             SelectedDate="{Binding AfterDate}"
-                            ToolTip.Tip="Only delete messages sent after this date">
+                            ToolTip.Tip="{Binding LocalizationManager.DeleteAfterDateTooltip}">
                             <DatePicker.Styles>
                                 <Style Selector="DatePicker">
                                     <Style Selector="^ /template/ TextBox#DisplayTextBox">
@@ -105,9 +105,9 @@
                             Grid.Row="0"
                             Grid.Column="1"
                             Margin="8,8,16,8"
-                            materialAssists:TextFieldAssist.Label="Before (date)"
+                            materialAssists:TextFieldAssist.Label="{Binding LocalizationManager.BeforeDateLabel}"
                             SelectedDate="{Binding BeforeDate}"
-                            ToolTip.Tip="Only delete messages sent before this date">
+                            ToolTip.Tip="{Binding LocalizationManager.DeleteBeforeDateTooltip}">
                             <DatePicker.Styles>
                                 <Style Selector="DatePicker">
                                     <Style Selector="^ /template/ TextBox#DisplayTextBox">
@@ -122,11 +122,11 @@
                             Grid.Row="1"
                             Grid.Column="0"
                             Margin="16,8,8,8"
-                            materialAssists:TextFieldAssist.Label="After (time)"
+                            materialAssists:TextFieldAssist.Label="{Binding LocalizationManager.AfterTimeLabel}"
                             ClockIdentifier="{x:Static utils:Internationalization.AvaloniaClockIdentifier}"
                             IsEnabled="{Binding IsAfterDateSet}"
                             SelectedTime="{Binding AfterTime}"
-                            ToolTip.Tip="Only delete messages sent after this time">
+                            ToolTip.Tip="{Binding LocalizationManager.DeleteAfterTimeTooltip}">
                             <TimePicker.Styles>
                                 <Style Selector="TimePicker">
                                     <Style Selector="^ /template/ TextBox#PART_DisplayTextBox">
@@ -139,11 +139,11 @@
                             Grid.Row="1"
                             Grid.Column="1"
                             Margin="8,8,16,8"
-                            materialAssists:TextFieldAssist.Label="Before (time)"
+                            materialAssists:TextFieldAssist.Label="{Binding LocalizationManager.BeforeTimeLabel}"
                             ClockIdentifier="{x:Static utils:Internationalization.AvaloniaClockIdentifier}"
                             IsEnabled="{Binding IsBeforeDateSet}"
                             SelectedTime="{Binding BeforeTime}"
-                            ToolTip.Tip="Only delete messages sent before this time">
+                            ToolTip.Tip="{Binding LocalizationManager.DeleteBeforeTimeTooltip}">
                             <TimePicker.Styles>
                                 <Style Selector="TimePicker">
                                     <Style Selector="^ /template/ TextBox#PART_DisplayTextBox">
@@ -165,14 +165,14 @@
             <Button
                 Grid.Column="1"
                 Command="{Binding ConfirmCommand}"
-                Content="DELETE"
+                Content="{Binding LocalizationManager.DeleteButton}"
                 IsDefault="True"
                 Theme="{DynamicResource MaterialOutlineButton}" />
             <Button
                 Grid.Column="2"
                 Margin="16,0,0,0"
                 Command="{Binding CancelCommand}"
-                Content="CANCEL"
+                Content="{Binding LocalizationManager.CancelButton}"
                 IsCancel="True"
                 Theme="{DynamicResource MaterialOutlineButton}" />
         </Grid>

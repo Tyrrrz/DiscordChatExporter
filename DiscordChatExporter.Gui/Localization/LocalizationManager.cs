@@ -143,6 +143,16 @@ public partial class LocalizationManager
     public string AdvancedOptionsTooltip => Get();
     public string ExportButton => Get();
 
+    // ---- Delete Setup ----
+
+    public string DeleteWarningTitle => Get();
+    public string DeleteWarningSubtext => Get();
+    public string DeleteAfterDateTooltip => Get();
+    public string DeleteBeforeDateTooltip => Get();
+    public string DeleteAfterTimeTooltip => Get();
+    public string DeleteBeforeTimeTooltip => Get();
+    public string DeleteButton => Get();
+
     // ---- Common buttons ----
 
     public string CloseButton => Get();

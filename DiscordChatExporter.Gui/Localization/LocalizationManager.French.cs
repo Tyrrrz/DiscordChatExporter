@@ -127,6 +127,20 @@ public partial class LocalizationManager
             "Télécharger les ressources dans ce dossier. Si non spécifié, le chemin sera dérivé du chemin de sortie.",
         [nameof(AdvancedOptionsTooltip)] = "Basculer les options avancées",
         [nameof(ExportButton)] = "EXPORTER",
+        // Delete Setup
+        [nameof(DeleteWarningTitle)] =
+            "⚠ AVERTISSEMENT : Cette action supprimera définitivement les messages du canal.",
+        [nameof(DeleteWarningSubtext)] =
+            "Vous ne pouvez supprimer que vos propres messages. Les messages des autres utilisateurs seront ignorés.",
+        [nameof(DeleteAfterDateTooltip)] =
+            "Supprimer uniquement les messages envoyés après cette date",
+        [nameof(DeleteBeforeDateTooltip)] =
+            "Supprimer uniquement les messages envoyés avant cette date",
+        [nameof(DeleteAfterTimeTooltip)] =
+            "Supprimer uniquement les messages envoyés après cette heure",
+        [nameof(DeleteBeforeTimeTooltip)] =
+            "Supprimer uniquement les messages envoyés avant cette heure",
+        [nameof(DeleteButton)] = "SUPPRIMER",
         // Common buttons
         [nameof(CloseButton)] = "FERMER",
         [nameof(CancelButton)] = "ANNULER",

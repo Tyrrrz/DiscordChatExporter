@@ -5,11 +5,15 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Gui.Framework;
+using DiscordChatExporter.Gui.Localization;
 
 namespace DiscordChatExporter.Gui.ViewModels.Dialogs;
 
-public partial class DeleteSetupViewModel : DialogViewModelBase
+public partial class DeleteSetupViewModel(LocalizationManager localizationManager)
+    : DialogViewModelBase
 {
+    public LocalizationManager LocalizationManager { get; } = localizationManager;
+
     [ObservableProperty]
     public partial Guild? Guild { get; set; }
 

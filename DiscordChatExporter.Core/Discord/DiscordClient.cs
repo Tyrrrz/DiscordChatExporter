@@ -856,12 +856,12 @@ public class DiscordClient(
                 {
                     var remainingRequestCount = response
                         .Headers.TryGetValue("X-RateLimit-Remaining")
-                        ?.Pipe(s => int.Parse(s, CultureInfo.InvariantCulture));
+                        ?.Pipe(s => int.ParseOrNull(s, CultureInfo.InvariantCulture));
 
                     var resetAfterDelay = response
                         .Headers.TryGetValue("X-RateLimit-Reset-After")
-                        ?.Pipe(s => double.Parse(s, CultureInfo.InvariantCulture))
-                        .Pipe(TimeSpan.FromSeconds);
+                        ?.Pipe(s => double.ParseOrNull(s, CultureInfo.InvariantCulture))
+                        ?.Pipe(TimeSpan.FromSeconds);
 
                     if (remainingRequestCount <= 0 && resetAfterDelay is not null)
                     {

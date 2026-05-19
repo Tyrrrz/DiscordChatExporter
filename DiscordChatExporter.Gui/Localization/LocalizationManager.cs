@@ -162,4 +162,6 @@ public partial class LocalizationManager
     public string ErrorPullingChannelsTitle => Get();
     public string ErrorExportingTitle => Get();
     public string SuccessfulExportMessage => Get();
+    public string ErrorDeletingTitle => Get();
+    public string SuccessfulDeletionMessage => Get();
 }

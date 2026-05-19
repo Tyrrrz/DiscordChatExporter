@@ -430,13 +430,17 @@ public partial class DashboardViewModel : ViewModelBase
             );
 
             _snackbarManager.Notify(
-                $"Deleted {totalDeletedCount} message(s), {totalFailedCount} failed"
+                string.Format(
+                    LocalizationManager.SuccessfulDeletionMessage,
+                    totalDeletedCount,
+                    totalFailedCount
+                )
             );
         }
         catch (Exception ex)
         {
             var dialog = _viewModelManager.GetMessageBoxViewModel(
-                "Error deleting messages",
+                LocalizationManager.ErrorDeletingTitle,
                 ex.ToString()
             );
 

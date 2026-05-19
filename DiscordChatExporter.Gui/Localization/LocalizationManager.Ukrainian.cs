@@ -151,5 +151,7 @@ public partial class LocalizationManager
             [nameof(ErrorPullingChannelsTitle)] = "Помилка завантаження каналів",
             [nameof(ErrorExportingTitle)] = "Помилка експорту каналу(-ів)",
             [nameof(SuccessfulExportMessage)] = "Успішно експортовано {0} канал(-ів)",
+            [nameof(ErrorDeletingTitle)] = "Помилка видалення повідомлень",
+            [nameof(SuccessfulDeletionMessage)] = "Видалено {0} повідомлення(-ь), {1} не вдалося",
         };
 }

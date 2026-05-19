@@ -152,5 +152,7 @@ public partial class LocalizationManager
             [nameof(ErrorPullingChannelsTitle)] = "Error al cargar canales",
             [nameof(ErrorExportingTitle)] = "Error al exportar canal(es)",
             [nameof(SuccessfulExportMessage)] = "{0} canal(es) exportado(s) con éxito",
+            [nameof(ErrorDeletingTitle)] = "Error al eliminar mensajes",
+            [nameof(SuccessfulDeletionMessage)] = "{0} mensaje(s) eliminado(s), {1} fallido(s)",
         };
 }

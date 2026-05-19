@@ -5,6 +5,7 @@ using CliFx.Binding;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands.Base;
 using DiscordChatExporter.Core.Discord;
+using DiscordChatExporter.Core.Exceptions;
 using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Cli.Commands;
@@ -15,7 +16,7 @@ public partial class DeleteMessagesCommand : DiscordCommandBase
     [CommandOption(
         "channel",
         'c',
-        Description = "Channel ID. Note: You can only delete your own messages in DMs."
+        Description = "Channel ID. Note: You can only delete your own messages."
     )]
     public required Snowflake ChannelId { get; set; }
 
@@ -137,7 +138,7 @@ public partial class DeleteMessagesCommand : DiscordCommandBase
 
                 // Discord's rate limit headers are handled automatically by DeleteMessageAsync
             }
-            catch
+            catch (DiscordChatExporterException ex) when (!ex.IsFatal)
             {
                 failedCount++;
                 using (console.WithForegroundColor(ConsoleColor.Red))

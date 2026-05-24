@@ -10,3 +10,7 @@ obj/
 
 # Test results
 TestResults/
+
+# Local automation secrets and logs
+scrape.env
+logs/

@@ -1,0 +1,16 @@
+services:
+  discord-scraper:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: discordchatexporter-cron:local
+    init: true
+    user: "${DCE_UID:-1000}:${DCE_GID:-1000}"
+    working_dir: /workspace
+    environment:
+      DISCORD_TOKEN: ${DISCORD_TOKEN:?Set DISCORD_TOKEN in scrape.env or your shell environment.}
+      TZ: ${TZ:-UTC}
+    volumes:
+      - ./config:/config:ro,z
+      - /home/brunner56/Documents:/home/brunner56/Documents:z
+    command: ["help"]

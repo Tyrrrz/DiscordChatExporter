@@ -1,0 +1,139 @@
+{
+  "archive_root": "/home/brunner56/Documents",
+  "defaults": {
+    "include_threads": "all",
+    "include_voice_channels": false
+  },
+  "targets": [
+    {
+      "name": "ror_orig_discord",
+      "kind": "guild",
+      "output_dir": "/home/brunner56/Documents/ror_orig_discord",
+      "guild_ids": [],
+      "channel_ids": [],
+      "guild_name_patterns": ["ror_orig_discord", "ror orig"]
+    },
+    {
+      "name": "ror_new_discord",
+      "kind": "guild",
+      "output_dir": "/home/brunner56/Documents/ror_new_discord",
+      "guild_ids": [],
+      "channel_ids": [],
+      "guild_name_patterns": ["ror_new_discord", "ror new"]
+    },
+    {
+      "name": "Rabbit",
+      "enabled": false,
+      "kind": "guild",
+      "output_dir": "/home/brunner56/Documents/Rabbit",
+      "guild_ids": [],
+      "channel_ids": [],
+      "guild_name_patterns": ["Rabbit"],
+      "disabled_reason": "No archived channel IDs were found locally. Add explicit guild_ids/channel_ids or switch to a user token for discovery."
+    },
+    {
+      "name": "OpenKotOR_discord_msgs",
+      "kind": "guild",
+      "output_dir": "/home/brunner56/Documents/OpenKotOR_discord_msgs",
+      "guild_ids": [],
+      "channel_ids": [],
+      "guild_name_patterns": ["OpenKotOR_discord_msgs", "OpenKotOR"]
+    },
+    {
+      "name": "openkotor_discord_msgs",
+      "kind": "guild",
+      "output_dir": "/home/brunner56/Documents/openkotor_discord_msgs",
+      "guild_ids": [],
+      "channel_ids": [],
+      "guild_name_patterns": ["openkotor_discord_msgs", "openkotor"]
+    },
+    {
+      "name": "MuseScore4",
+      "enabled": false,
+      "kind": "guild",
+      "output_dir": "/home/brunner56/Documents/MuseScore4",
+      "guild_ids": [],
+      "channel_ids": [],
+      "guild_name_patterns": ["MuseScore4", "MuseScore"],
+      "disabled_reason": "No archived channel IDs were found locally. Add explicit guild_ids/channel_ids or switch to a user token for discovery."
+    },
+    {
+      "name": "lmms",
+      "enabled": false,
+      "kind": "guild",
+      "output_dir": "/home/brunner56/Documents/lmms",
+      "guild_ids": [],
+      "channel_ids": [],
+      "guild_name_patterns": ["lmms"],
+      "disabled_reason": "No archived channel IDs were found locally. Add explicit guild_ids/channel_ids or switch to a user token for discovery."
+    },
+    {
+      "name": "KotOR_Speedrun_Discord",
+      "kind": "guild",
+      "output_dir": "/home/brunner56/Documents/KotOR_Speedrun_Discord",
+      "guild_ids": [],
+      "channel_ids": [],
+      "guild_name_patterns": ["KotOR_Speedrun_Discord", "KotOR Speedrun"]
+    },
+    {
+      "name": "KotOR_discord_msgs",
+      "kind": "guild",
+      "output_dir": "/home/brunner56/Documents/KotOR_discord_msgs",
+      "guild_ids": [],
+      "channel_ids": [],
+      "guild_name_patterns": ["KotOR_discord_msgs", "KotOR"]
+    },
+    {
+      "name": "holocron_toolset_discord",
+      "kind": "guild",
+      "output_dir": "/home/brunner56/Documents/holocron_toolset_discord",
+      "guild_ids": [],
+      "channel_ids": [],
+      "guild_name_patterns": ["holocron_toolset_discord", "holocron toolset"]
+    },
+    {
+      "name": "expanded_kotor_discord",
+      "kind": "guild",
+      "output_dir": "/home/brunner56/Documents/expanded_kotor_discord",
+      "guild_ids": [],
+      "channel_ids": [],
+      "guild_name_patterns": ["expanded_kotor_discord", "expanded kotor"]
+    },
+    {
+      "name": "eod_discord",
+      "kind": "guild",
+      "output_dir": "/home/brunner56/Documents/eod_discord",
+      "guild_ids": [],
+      "channel_ids": [],
+      "guild_name_patterns": ["eod_discord", "eod"]
+    },
+    {
+      "name": "DS_Discord_msgs",
+      "kind": "guild",
+      "output_dir": "/home/brunner56/Documents/DS_Discord_msgs",
+      "guild_ids": [],
+      "channel_ids": [],
+      "guild_name_patterns": ["DS_Discord_msgs", "DS"]
+    },
+    {
+      "name": "discord_dms",
+      "enabled": false,
+      "kind": "dms",
+      "output_dir": "/home/brunner56/Documents/discord_dms",
+      "guild_ids": [],
+      "channel_ids": [],
+      "guild_name_patterns": [],
+      "disabled_reason": "The current token cannot read direct messages. Enable this target only with a user token."
+    },
+    {
+      "name": "Cline",
+      "enabled": false,
+      "kind": "guild",
+      "output_dir": "/home/brunner56/Documents/Cline",
+      "guild_ids": [],
+      "channel_ids": [],
+      "guild_name_patterns": ["Cline"],
+      "disabled_reason": "No archived channel IDs were found locally. Add explicit guild_ids/channel_ids or switch to a user token for discovery."
+    }
+  ]
+}

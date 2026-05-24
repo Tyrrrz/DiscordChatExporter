@@ -224,6 +224,15 @@ public class DiscordClient(
         [EnumeratorCancellation] CancellationToken cancellationToken = default
     )
     {
+        if (await ResolveTokenKindAsync(cancellationToken) == TokenKind.Bot)
+        {
+            throw new DiscordChatExporterException(
+                "Bot tokens cannot enumerate accessible servers through the Discord REST API. "
+                    + "Provide explicit server or channel IDs instead of relying on guild discovery.",
+                true
+            );
+        }
+
         yield return Guild.DirectMessages;
 
         var currentAfter = Snowflake.Zero;
@@ -271,6 +280,15 @@ public class DiscordClient(
     {
         if (guildId == Guild.DirectMessages.Id)
         {
+            if (await ResolveTokenKindAsync(cancellationToken) == TokenKind.Bot)
+            {
+                throw new DiscordChatExporterException(
+                    "Bot tokens cannot access direct message channels. "
+                        + "Disable DM scraping or use a user token for DM discovery.",
+                    true
+                );
+            }
+
             var response = await GetJsonResponseAsync("users/@me/channels", cancellationToken);
             foreach (var channelJson in response.EnumerateArray())
                 yield return Channel.Parse(channelJson);

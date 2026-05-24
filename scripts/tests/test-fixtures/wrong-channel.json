@@ -1,0 +1,17 @@
+{
+  "channel": {
+    "id": "999"
+  },
+  "messages": [
+    {
+      "id": "4",
+      "timestamp": "2026-01-04T00:00:00Z",
+      "content": "wrong"
+    }
+  ],
+  "dateRange": {
+    "after": "2026-01-03T00:00:00Z",
+    "before": null
+  },
+  "exportedAt": "2026-01-04T00:00:00Z"
+}

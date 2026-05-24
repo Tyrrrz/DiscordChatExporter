@@ -1,0 +1,22 @@
+{
+  "channel": {
+    "id": "111"
+  },
+  "messages": [
+    {
+      "id": "2",
+      "timestamp": "2026-01-02T00:00:00Z",
+      "content": "second"
+    },
+    {
+      "id": "3",
+      "timestamp": "2026-01-03T00:00:00Z",
+      "content": "third"
+    }
+  ],
+  "dateRange": {
+    "after": "2026-01-02T00:00:00Z",
+    "before": null
+  },
+  "exportedAt": "2026-01-03T00:00:00Z"
+}

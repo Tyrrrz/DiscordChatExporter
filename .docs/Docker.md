@@ -77,3 +77,22 @@ $ docker run -it --rm -v $PWD/data:/out --user $(id -u):$(id -g) tyrrrz/discordc
 DiscordChatExpoter CLI accepts the `DISCORD_TOKEN` environment variable as a fallback for the `--token` option. You can set this variable either with the `--env` Docker option or with a combination of the `--env-file` Docker option and a `.env` file.
 
 Please refer to the [Docker documentation](https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file) for more information.
+
+## Source-built recurring scraper
+
+This repo also ships a local recurring wrapper around the CLI for source-built automation:
+
+- `Dockerfile` builds `DiscordChatExporter.Cli` from source.
+- `docker-compose.yml` runs the wrapper container.
+- `scripts/run-discord-scrape.sh preflight` validates token/config/target resolution without writing archives.
+- `scripts/run-discord-scrape.sh scrape` performs append-oriented JSON updates by exporting newer messages and merging them into the existing local archive instead of blindly replacing the destination file.
+
+For the recurring flow, keep secrets in `scrape.env` (copied from `scrape.env.example`) and keep target/output mapping in `config/scrape-targets.json`.
+
+For recurring runs, targets with `enabled: false` are skipped by default. This is the recommended way to keep unresolved archive roots in the config without blocking the rest of the schedule.
+
+If you authenticate with a **bot token**, do not rely on guild-name or DM discovery. Discord does not expose "list my accessible guilds" or DM enumeration for bot-only REST auth, so recurring targets should be configured with explicit `guild_ids` / `channel_ids` or backed by existing archive files whose names already embed channel IDs (for example, `general [123456789012345678].json`). The `discord_dms` target should stay disabled unless you switch to a user token.
+
+`preflight` now probes one resolved channel per selected target with the source-built CLI before cron is installed. If the token cannot read that channel, setup fails closed and leaves the existing crontab untouched.
+
+If you run the recurring flow through podman on an SELinux-enabled host, keep the bind mounts relabeled (`:z`). The checked-in `docker-compose.yml` already applies this to the recurring wrapper mounts.

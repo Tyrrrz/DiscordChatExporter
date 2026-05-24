@@ -18,14 +18,17 @@ public class DiscordService
     }
 
     public bool IsGuildAllowed(string guildId) =>
-        Settings.AllowedGuilds.Contains(guildId, StringComparer.OrdinalIgnoreCase);
+        Settings.DiscoveryMode
+        || Settings.AllowedGuilds.Contains(guildId, StringComparer.OrdinalIgnoreCase);
 
     public bool IsChannelAllowed(string channelId, string guildId)
     {
         if (!IsGuildAllowed(guildId))
             return false;
 
-        return Settings.AllowAllChannelsInGuilds
+        return Settings.DiscoveryMode
+            || Settings.AllowAllChannelsInGuilds
+            || Settings.GuildsAllowingAllChannels.Contains(guildId, StringComparer.OrdinalIgnoreCase)
             || Settings.AllowedChannels.Contains(channelId, StringComparer.OrdinalIgnoreCase);
     }
 

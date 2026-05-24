@@ -1,0 +1,22 @@
+{
+  "name": "discord",
+  "version": "1.0.0",
+  "description": "Read and export Discord channels, threads, and DMs via DiscordChatExporter",
+  "author": {
+    "name": "seekdtruth"
+  },
+  "mcpServers": {
+    "discord": {
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "C:/Git/DiscordChatExporter/DiscordChatExporter.Mcp",
+        "--no-build"
+      ],
+      "env": {
+        "DISCORD_MCP_SETTINGS": "C:/Git/DiscordChatExporter/mcp-settings.json"
+      }
+    }
+  }
+}

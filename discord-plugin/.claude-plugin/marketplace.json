@@ -1,0 +1,16 @@
+{
+  "name": "local-discord",
+  "owner": {
+    "name": "seekdtruth"
+  },
+  "plugins": [
+    {
+      "name": "discord",
+      "source": "./",
+      "version": "1.0.0",
+      "author": {
+        "name": "seekdtruth"
+      }
+    }
+  ]
+}

@@ -6,6 +6,7 @@ services:
     image: discordchatexporter-cron:local
     init: true
     user: "${DCE_UID:-1000}:${DCE_GID:-1000}"
+    userns_mode: "${DCE_USERNS_MODE:-}"
     working_dir: /workspace
     environment:
       DISCORD_TOKEN: ${DISCORD_TOKEN:?Set DISCORD_TOKEN in scrape.env or your shell environment.}

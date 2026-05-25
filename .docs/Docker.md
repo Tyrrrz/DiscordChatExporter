@@ -96,3 +96,7 @@ If you authenticate with a **bot token**, do not rely on guild-name or DM discov
 `preflight` now probes one resolved channel per selected target with the source-built CLI before cron is installed. If the token cannot read that channel, setup fails closed and leaves the existing crontab untouched.
 
 If you run the recurring flow through podman on an SELinux-enabled host, keep the bind mounts relabeled (`:z`). The checked-in `docker-compose.yml` already applies this to the recurring wrapper mounts.
+
+For rootless podman, set `DCE_USERNS_MODE=keep-id` in `scrape.env` so the mounted archive roots stay writable as your host user instead of appearing as `root:root` inside the container. Keep `DCE_UID` and `DCE_GID` matched to your host user as well.
+
+When the recurring wrapper sees an existing archive file whose name already embeds the channel ID (for example, `Deadly Stream - kotor-general [770102657795751976].json`), future runs keep updating that same path. When a channel is new and has no stored mapping yet, the wrapper now defaults to a human-readable filename based on the export metadata (`Guild - Category - Channel [id].json`) inside the configured target root instead of writing to `channels/<id>.json`.

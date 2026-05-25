@@ -26,6 +26,10 @@ If any selected target fails that authenticated probe, `setup-cron.sh` stops wit
 
 If you are running the recurring wrapper through podman on an SELinux-enabled host, keep the bind mounts relabeled (`:z`). The checked-in `docker-compose.yml` already includes that for the recurring config and archive mounts.
 
+For rootless podman, set `DCE_USERNS_MODE=keep-id` in `scrape.env` so the mounted `Documents` archive roots stay writable as your host user during scheduled runs. Keep `DCE_UID` and `DCE_GID` matched to your host user as well.
+
+Existing archive files remain the source of truth for recurring updates. If a channel already has a local JSON export whose filename embeds the channel ID, the wrapper updates that exact file in place. If the channel is new and has no stored mapping yet, the first export now lands in the configured target root with a human-readable default filename (`Guild - Category - Channel [id].json`) instead of `channels/<id>.json`.
+
 ## Creating the script
 
 1. Open Terminal and create a new text file with `nano /path/to/DiscordChatExporter/cron.sh`

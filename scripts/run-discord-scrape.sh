@@ -71,6 +71,27 @@ normalize_name() {
   printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | tr -cd '[:alnum:]'
 }
 
+escape_file_name_component() {
+  printf '%s' "$1" \
+    | tr '\r\n' '  ' \
+    | sed -E 's#[/\\]+#_#g; s/[[:cntrl:]]+/ /g; s/[[:space:]]+/ /g; s/^ //; s/ $//'
+}
+
+join_name_parts() {
+  local result=""
+  local part
+
+  for part in "$@"; do
+    [[ -n "$part" ]] || continue
+    if [[ -n "$result" ]]; then
+      result+=" - "
+    fi
+    result+="$part"
+  done
+
+  printf '%s\n' "$result"
+}
+
 json_array_from_args() {
   jq -cn '$ARGS.positional' --args "$@"
 }
@@ -101,6 +122,14 @@ assert_subset() {
 path_is_within_root() {
   local root=$1
   local path=$2
+
+  [[ "$path" == /* ]] || return 1
+
+  case "$path" in
+    *"/../"*|../*|*/..|..|*"/./"*|./*|*/.)
+      return 1
+      ;;
+  esac
 
   case "$path" in
     "$root"|"${root}/"*)
@@ -201,7 +230,7 @@ update_channel_map() {
   local temp_file
 
   mkdir -p "$(dirname "$map_file")"
-  temp_file=$(mktemp "$(dirname "$map_file")/channel-map.XXXXXX.json")
+  temp_file=$(mktemp "$(dirname "$map_file")/channel-map.XXXXXX")
   jq --arg channel_id "$channel_id" --arg destination_path "$destination_path" \
     '.[$channel_id] = $destination_path' \
     "$map_file" >"$temp_file"
@@ -213,13 +242,37 @@ get_channel_map_path() {
   printf '%s/.dce-meta/channel-map.json' "$output_dir"
 }
 
+default_destination_path_from_export() {
+  local output_dir=$1
+  local export_path=$2
+  local guild_name category_name channel_name channel_id
+  local escaped_guild_name escaped_category_name escaped_channel_name base_name
+
+  guild_name=$(jq -r '.guild.name // empty' "$export_path")
+  category_name=$(jq -r '.channel.category // empty' "$export_path")
+  channel_name=$(jq -r '.channel.name // empty' "$export_path")
+  channel_id=$(jq -r '.channel.id // empty' "$export_path")
+
+  [[ -n "$channel_id" ]] || die "Export '$export_path' is missing channel.id metadata."
+
+  escaped_guild_name=$(escape_file_name_component "$guild_name")
+  escaped_category_name=$(escape_file_name_component "$category_name")
+  escaped_channel_name=$(escape_file_name_component "$channel_name")
+
+  base_name=$(join_name_parts "$escaped_guild_name" "$escaped_category_name" "$escaped_channel_name")
+  [[ -n "$base_name" ]] || base_name="channel"
+
+  printf '%s/%s [%s].json\n' "$output_dir" "$base_name" "$channel_id"
+}
+
 resolve_destination_path() {
   local output_dir=$1
   local channel_id=$2
+  local export_path=${3:-}
   local map_file mapped_path
   local -a existing_candidates
 
-  mkdir -p "$output_dir/.dce-meta" "$output_dir/channels"
+  mkdir -p "$output_dir/.dce-meta"
   map_file=$(get_channel_map_path "$output_dir")
   ensure_json_file "$map_file"
 
@@ -241,12 +294,19 @@ resolve_destination_path() {
   fi
 
   if (( ${#existing_candidates[@]} == 1 )); then
+    jq empty "${existing_candidates[0]}" >/dev/null 2>&1 \
+      || die "Existing export is not valid JSON: ${existing_candidates[0]}"
+    assert_export_channel_identity "${existing_candidates[0]}" "$channel_id"
     update_channel_map "$map_file" "$channel_id" "${existing_candidates[0]}"
     printf '%s\n' "${existing_candidates[0]}"
     return 0
   fi
 
-  mapped_path="$output_dir/channels/$channel_id.json"
+  [[ -n "$export_path" ]] || return 0
+
+  mapped_path=$(default_destination_path_from_export "$output_dir" "$export_path")
+  path_is_within_root "$output_dir" "$mapped_path" \
+    || die "Derived destination '$mapped_path' for channel $channel_id is outside target root '$output_dir'."
   update_channel_map "$map_file" "$channel_id" "$mapped_path"
   printf '%s\n' "$mapped_path"
 }
@@ -530,9 +590,11 @@ scrape_target() {
   local channel_id
   for channel_id in "${channel_ids[@]}"; do
     destination_path=$(resolve_destination_path "$output_dir" "$channel_id")
-    mkdir -p "$(dirname "$destination_path")"
+    if [[ -n "$destination_path" ]]; then
+      mkdir -p "$(dirname "$destination_path")"
+    fi
 
-    if [[ -f "$destination_path" ]]; then
+    if [[ -n "$destination_path" && -f "$destination_path" ]]; then
       jq empty "$destination_path" >/dev/null 2>&1 || die "Existing export is not valid JSON: $destination_path"
       assert_export_channel_identity "$destination_path" "$channel_id"
     fi
@@ -557,6 +619,11 @@ scrape_target() {
 
     jq empty "$temp_export" >/dev/null 2>&1 || die "Incremental export is not valid JSON: $temp_export"
     assert_export_channel_identity "$temp_export" "$channel_id"
+
+    if [[ -z "$destination_path" ]]; then
+      destination_path=$(resolve_destination_path "$output_dir" "$channel_id" "$temp_export")
+      mkdir -p "$(dirname "$destination_path")"
+    fi
 
     latest_batch_count=$(message_count "$temp_export")
     if [[ ! -f "$destination_path" ]]; then

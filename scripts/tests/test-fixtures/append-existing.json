@@ -1,6 +1,12 @@
 {
+  "guild": {
+    "id": "222",
+    "name": "Fixture Guild"
+  },
   "channel": {
-    "id": "111"
+    "id": "111",
+    "name": "fixture-room",
+    "category": "Testing Grounds"
   },
   "messages": [
     {

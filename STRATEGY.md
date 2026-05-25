@@ -1,6 +1,6 @@
 ---
 name: Recurring Discord scrape automation
-last_updated: 2026-05-24
+last_updated: 2026-05-25
 ---
 
 # Recurring Discord scrape automation Strategy
@@ -11,7 +11,7 @@ The user needs multiple Discord archives refreshed on a schedule without losing 
 
 ## Our approach
 
-Wrap the source-built CLI in a self-hosted Docker + cron workflow that defaults to safe recurring operation: append-only archive updates, conservative target resolution, and fail-closed preflight before anything touches cron or existing exports. We win by treating data preservation and operator clarity as load-bearing, not optional polish.
+Wrap the source-built CLI in a self-hosted Docker + cron workflow that defaults to safe recurring operation: append-only archive updates, conservative target resolution, human-readable first-write defaults inside each configured archive root, and fail-closed preflight before anything touches cron or existing exports. We win by treating data preservation and operator clarity as load-bearing, not optional polish.
 
 ## Who it's for
 

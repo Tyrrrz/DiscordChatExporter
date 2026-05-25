@@ -55,17 +55,30 @@ EOF
 chmod +x "$FAKE_DOCKER"
 
 run_host() {
+  local mode=$1
+  local env_path=${2:-$ENV_FILE}
+
   DCE_REPO_ROOT="$REPO_ROOT" \
   DCE_DOCKER_BIN="$FAKE_DOCKER" \
-  DCE_ENV_FILE="$ENV_FILE" \
+  DCE_ENV_FILE="$env_path" \
   DCE_COMPOSE_FILE="$COMPOSE_FILE" \
   FAKE_DOCKER_CALL_COUNT="$CALL_COUNT" \
   FAKE_DOCKER_TOKEN_FILE="$TOKEN_FILE" \
-  FAKE_DOCKER_MODE="$1" \
+  FAKE_DOCKER_MODE="$mode" \
   "$REPO_ROOT/scripts/run-discord-scrape-host.sh" scrape --target demo
 }
 
+MALICIOUS_ENV="$TMP_DIR/malicious.env"
+MARKER_FILE="$TMP_DIR/marker"
+cat >"$MALICIOUS_ENV" <<EOF
+DISCORD_TOKEN=dummy
+MALICIOUS=\$(touch "$MARKER_FILE")
+EOF
+run_host success "$MALICIOUS_ENV" >/dev/null
+[[ ! -e "$MARKER_FILE" ]] || { echo "env parsing executed shell payload unexpectedly" >&2; exit 1; }
+
 printf 'stale-token\n' >"$TOKEN_FILE"
+printf '0' >"$CALL_COUNT"
 cat >"$ENV_FILE" <<EOF
 DISCORD_TOKEN_FILE=$TOKEN_FILE
 EOF

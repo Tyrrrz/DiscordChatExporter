@@ -44,10 +44,33 @@ require_program() {
 
 load_env_file() {
   [[ -f "$ENV_FILE" ]] || die "Missing env file: $ENV_FILE"
-  set -a
-  # shellcheck disable=SC1090
-  source "$ENV_FILE"
-  set +a
+  local raw_line line key value
+
+  while IFS= read -r raw_line || [[ -n "$raw_line" ]]; do
+    line=$(printf '%s' "$raw_line" | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//')
+    [[ -n "$line" ]] || continue
+    if [[ "$line" == \#* ]]; then
+      continue
+    fi
+    if [[ "$line" == export\ * ]]; then
+      line=${line#export }
+      line=$(printf '%s' "$line" | sed -E 's/^[[:space:]]+//')
+    fi
+
+    [[ "$line" =~ ^[A-Za-z_][A-Za-z0-9_]*= ]] || die "Invalid env assignment in $ENV_FILE: $raw_line"
+
+    key=${line%%=*}
+    value=${line#*=}
+
+    if [[ "$value" =~ ^\".*\"$ ]]; then
+      value=${value:1:${#value}-2}
+    elif [[ "$value" =~ ^\'.*\'$ ]]; then
+      value=${value:1:${#value}-2}
+    fi
+
+    printf -v "$key" '%s' "$value"
+    export "$key"
+  done <"$ENV_FILE"
 }
 
 load_token_from_file() {

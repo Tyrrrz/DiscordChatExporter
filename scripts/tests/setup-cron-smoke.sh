@@ -85,6 +85,7 @@ run_setup
 grep -q '^MAILTO=test@example.com$' "$CRONTAB_FILE" || { echo "expected unrelated crontab line to remain" >&2; exit 1; }
 [[ "$(grep -c '^# BEGIN discord-scrape$' "$CRONTAB_FILE")" == "1" ]] || { echo "expected exactly one managed cron block after install" >&2; exit 1; }
 grep -q 'compose --env-file' "$DOCKER_LOG" || { echo "expected docker preflight to run during install" >&2; exit 1; }
+grep -q 'scripts/run-discord-scrape-host.sh' "$CRONTAB_FILE" || { echo "expected cron job to run host wrapper" >&2; exit 1; }
 
 run_setup
 [[ "$(grep -c '^# BEGIN discord-scrape$' "$CRONTAB_FILE")" == "1" ]] || { echo "expected exactly one managed cron block after reinstall" >&2; exit 1; }

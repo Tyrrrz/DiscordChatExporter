@@ -6,6 +6,7 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
 REPO_ROOT="${DCE_REPO_ROOT:-$(cd "$SCRIPT_DIR/.." && pwd -P)}"
 COMPOSE_FILE="${DCE_COMPOSE_FILE:-$REPO_ROOT/docker-compose.yml}"
 ENV_FILE="${DCE_ENV_FILE:-$REPO_ROOT/scrape.env}"
+HOST_RUNNER="${DCE_HOST_RUNNER:-$REPO_ROOT/scripts/run-discord-scrape-host.sh}"
 CONFIG_FILE="${DCE_CONFIG_FILE:-$REPO_ROOT/config/scrape-targets.json}"
 LOG_FILE="${DCE_LOG_FILE:-$REPO_ROOT/logs/discord-scrape.log}"
 JOB_NAME="discord-scrape"
@@ -96,45 +97,8 @@ strip_existing_job() {
   ' <<<"$existing_crontab"
 }
 
-build_compose_command() {
-  local subcommand=$1
+build_target_args() {
   local -a command_parts
-
-  if [[ -n "$COMPOSE_BIN" ]]; then
-    command_parts=(
-      "$COMPOSE_BIN"
-      --env-file "$ENV_FILE"
-      -f "$COMPOSE_FILE"
-      run
-      -T
-      --rm
-      discord-scraper
-      "$subcommand"
-    )
-  elif (( DOCKER_BIN_OVERRIDDEN == 0 )) && command -v docker-compose >/dev/null 2>&1; then
-    command_parts=(
-      docker-compose
-      --env-file "$ENV_FILE"
-      -f "$COMPOSE_FILE"
-      run
-      -T
-      --rm
-      discord-scraper
-      "$subcommand"
-    )
-  else
-    command_parts=(
-      "$DOCKER_BIN"
-      compose
-      --env-file "$ENV_FILE"
-      -f "$COMPOSE_FILE"
-      run
-      -T
-      --rm
-      discord-scraper
-      "$subcommand"
-    )
-  fi
 
   local target
   for target in "${TARGETS[@]}"; do
@@ -198,10 +162,11 @@ validate_targets() {
 }
 
 run_preflight() {
-  local preflight_command
+  local preflight_command target_args
 
   [[ -f "$ENV_FILE" ]] || die "Missing env file: $ENV_FILE"
-  preflight_command=$(build_compose_command preflight)
+  target_args=$(build_target_args)
+  preflight_command="$(printf '%q ' "$HOST_RUNNER") --env-file $(printf '%q' "$ENV_FILE") --compose-file $(printf '%q' "$COMPOSE_FILE") preflight ${target_args}"
   eval "$preflight_command"
 }
 
@@ -286,6 +251,7 @@ main() {
   fi
 
   [[ -f "$COMPOSE_FILE" ]] || die "Missing compose file: $COMPOSE_FILE"
+  [[ -x "$HOST_RUNNER" ]] || die "Missing or non-executable host runner: $HOST_RUNNER"
   [[ -f "$CONFIG_FILE" ]] || die "Missing config file: $CONFIG_FILE"
   "$JQ_BIN" empty "$CONFIG_FILE" >/dev/null 2>&1 || die "Invalid JSON config: $CONFIG_FILE"
 
@@ -304,7 +270,7 @@ main() {
 
   local begin_marker="# BEGIN ${JOB_NAME}"
   local end_marker="# END ${JOB_NAME}"
-  local current_crontab cleaned_crontab compose_command job_line lock_prefix
+  local current_crontab cleaned_crontab scrape_command target_args job_line lock_prefix
   current_crontab=$("$CRONTAB_BIN" -l 2>/dev/null || true)
   cleaned_crontab=$(strip_existing_job "$current_crontab" "$begin_marker" "$end_marker")
 
@@ -325,14 +291,15 @@ main() {
     run_preflight
   fi
 
-  compose_command=$(build_compose_command scrape)
+  target_args=$(build_target_args)
+  scrape_command="$(printf '%q ' "$HOST_RUNNER") --env-file $(printf '%q' "$ENV_FILE") --compose-file $(printf '%q' "$COMPOSE_FILE") scrape ${target_args}"
   if command -v flock >/dev/null 2>&1; then
     lock_prefix=$(printf '%q ' "$(command -v flock)" "-n" "/tmp/${JOB_NAME}.lock")
   else
     lock_prefix=""
   fi
 
-  job_line="$cron_line cd $(printf '%q' "$REPO_ROOT") && ${lock_prefix}${compose_command}>> $(printf '%q' "$LOG_FILE") 2>&1"
+  job_line="$cron_line cd $(printf '%q' "$REPO_ROOT") && ${lock_prefix}${scrape_command}>> $(printf '%q' "$LOG_FILE") 2>&1"
 
   local cron_block
   cron_block=$(printf '%s\n%s\n%s\n' "$begin_marker" "$job_line" "$end_marker")

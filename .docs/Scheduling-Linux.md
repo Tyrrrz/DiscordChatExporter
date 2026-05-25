@@ -5,13 +5,14 @@
 This repo now includes a source-built recurring wrapper around the CLI:
 
 - `scripts/setup-cron.sh` installs, previews, updates, and removes one managed cron block.
+- `scripts/run-discord-scrape-host.sh` runs preflight/scrape through compose and handles one auth-refresh retry.
 - `Dockerfile` + `docker-compose.yml` build and run the CLI from source.
 - `scripts/run-discord-scrape.sh preflight` validates token/config/target resolution without writing archives.
 - `scripts/run-discord-scrape.sh scrape` performs append-oriented JSON updates so existing local history is retained instead of overwritten.
 
 The recommended Linux flow is:
 
-1. Copy `scrape.env.example` to `scrape.env` and set `DISCORD_TOKEN`.
+1. Copy `scrape.env.example` to `scrape.env` and set `DISCORD_TOKEN` (or set `DISCORD_TOKEN_FILE` for file-based token rotation).
 2. Review `config/scrape-targets.json` and keep archive roots under the configured `archive_root`.
 3. Run `./scripts/setup-cron.sh` for the default monthly schedule, or pass `--interval`, `--at`, or `--cron` to customize it.
 4. Re-run the same script later to update the managed cron block idempotently. Use `--remove` to delete only the managed block.
@@ -23,6 +24,8 @@ Targets with `enabled: false` are skipped by default. Use that field for archive
 If you are using a **bot token**, do not depend on guild-name or DM discovery. Bot tokens cannot enumerate accessible guilds or direct messages through the Discord REST API, so recurring targets need either explicit `guild_ids` / `channel_ids` or existing archive filenames that already encode channel IDs. The recurring wrapper can seed channel selection from those archive filenames, but setup still probes one real channel per target before touching crontab state.
 
 If any selected target fails that authenticated probe, `setup-cron.sh` stops without mutating the live crontab. In practice this means the token must already have access to every enabled target you expect cron to update.
+
+For recurring runs, `setup-cron.sh` now installs a cron command that executes `scripts/run-discord-scrape-host.sh scrape ...`. The host wrapper retries once when it detects Discord auth failures (`401`/`403`) by reloading `DISCORD_TOKEN_FILE` if configured. This keeps cron non-interactive and fail-closed.
 
 If you are running the recurring wrapper through podman on an SELinux-enabled host, keep the bind mounts relabeled (`:z`). The checked-in `docker-compose.yml` already includes that for the recurring config and archive mounts.
 

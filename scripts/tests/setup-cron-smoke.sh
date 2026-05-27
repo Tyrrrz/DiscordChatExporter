@@ -98,4 +98,35 @@ run_setup --remove
 grep -q '^MAILTO=test@example.com$' "$CRONTAB_FILE" || { echo "expected unrelated crontab line to remain after remove" >&2; exit 1; }
 ! grep -q '^# BEGIN discord-scrape$' "$CRONTAB_FILE" || { echo "expected managed cron block to be removed" >&2; exit 1; }
 
+printf 'MAILTO=test@example.com\n' >"$CRONTAB_FILE"
+cp "$CRONTAB_FILE" "$TMP_DIR/crontab-before-preflight-fail.txt"
+FAKE_FAIL_DOCKER="$TMP_DIR/docker-fail"
+cat >"$FAKE_FAIL_DOCKER" <<EOF
+#!/usr/bin/env bash
+set -Eeuo pipefail
+if [[ "\${1:-}" == "compose" ]]; then
+  echo "simulated compose build failure" >&2
+  exit 1
+fi
+exit 0
+EOF
+chmod +x "$FAKE_FAIL_DOCKER"
+
+if DCE_CONFIG_FILE="$CONFIG_PATH" \
+   DCE_ENV_FILE="$ENV_PATH" \
+   DCE_CRONTAB_BIN="$FAKE_CRONTAB" \
+   DCE_DOCKER_BIN="$FAKE_FAIL_DOCKER" \
+   DCE_JQ_BIN="$(command -v jq)" \
+   DCE_REPO_ROOT="$REPO_ROOT" \
+   DCE_LOG_FILE="$TMP_DIR/logs/discord-scrape-fail.log" \
+   "$REPO_ROOT/scripts/setup-cron.sh" --target demo 2>/dev/null; then
+  echo "expected setup to fail when preflight docker build fails" >&2
+  exit 1
+fi
+
+cmp -s "$CRONTAB_FILE" "$TMP_DIR/crontab-before-preflight-fail.txt" || {
+  echo "expected crontab to remain unchanged when preflight fails" >&2
+  exit 1
+}
+
 echo "setup-cron smoke test passed"

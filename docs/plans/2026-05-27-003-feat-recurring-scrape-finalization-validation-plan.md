@@ -1,7 +1,7 @@
 ---
 title: feat: Finalize and validate recurring Discord scrape automation
 type: feat
-status: active
+status: completed
 date: 2026-05-27
 ---
 

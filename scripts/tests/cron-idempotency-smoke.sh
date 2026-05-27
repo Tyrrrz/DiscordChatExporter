@@ -3,58 +3,24 @@
 set -Eeuo pipefail
 
 REPO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)
-CONFIG_DIR="$REPO_ROOT/scripts/tests/test-configs"
 CRONTAB_DIR="$REPO_ROOT/scripts/tests/test-crontabs"
 TMP_DIR=$(mktemp -d "${TMPDIR:-/tmp}/dce-cron-smoke.XXXXXX")
 ARCHIVE_ROOT="$TMP_DIR/archive"
-FAKE_CRONTAB_FILE="$TMP_DIR/mock-crontab"
-FAKE_CLI="$TMP_DIR/fake-cli.sh"
+CONFIG_PATH="$TMP_DIR/config.json"
+ENV_PATH="$TMP_DIR/scrape.env"
+CRONTAB_FILE="$TMP_DIR/crontab.txt"
+DOCKER_LOG="$TMP_DIR/docker.log"
+FAKE_DOCKER="$TMP_DIR/docker"
+FAKE_CRONTAB="$TMP_DIR/crontab"
 
 cleanup() {
   rm -rf "$TMP_DIR"
 }
 trap cleanup EXIT
 
-# Create a simple mock crontab manager
-cat >"$FAKE_CLI" <<'EOF'
-#!/usr/bin/env bash
-case "${1:-}" in
-  guilds) echo "222 Fixture Guild" ;;
-  dm) echo "999 Direct Message 1" ;;
-  *) exit 1 ;;
-esac
-EOF
-chmod +x "$FAKE_CLI"
-
-# Helper function to simulate crontab get/set operations
-mock_crontab() {
-  local action=$1
-  shift || true
-
-  case "$action" in
-    -l)
-      # List crontab
-      if [[ -f "$FAKE_CRONTAB_FILE" ]]; then
-        cat "$FAKE_CRONTAB_FILE"
-      else
-        echo ""
-      fi
-      ;;
-    -r)
-      # Remove crontab
-      rm -f "$FAKE_CRONTAB_FILE"
-      ;;
-    *)
-      # Install/update crontab from stdin
-      cat >"$FAKE_CRONTAB_FILE"
-      ;;
-  esac
-}
-
-# Create test config with minimal setup
 mkdir -p "$ARCHIVE_ROOT"
-CONFIG="$TMP_DIR/config.json"
-cat >"$CONFIG" <<JSON
+
+cat >"$CONFIG_PATH" <<JSON
 {
   "archive_root": "$ARCHIVE_ROOT",
   "defaults": {
@@ -63,113 +29,126 @@ cat >"$CONFIG" <<JSON
   },
   "targets": [
     {
-      "name": "test-target",
+      "name": "demo",
       "kind": "guild",
-      "output_dir": "$ARCHIVE_ROOT/test",
+      "output_dir": "$ARCHIVE_ROOT/demo",
       "channel_ids": ["111"],
-      "guild_ids": ["222"],
+      "guild_ids": [],
       "guild_name_patterns": []
     }
   ]
 }
 JSON
 
-run_setup_cron() {
-  local action=$1
-  local config_file=$2
-  local schedule="${3:-}"
-  local remove="${4:-}"
+cat >"$ENV_PATH" <<EOF
+DISCORD_TOKEN=dummy
+DCE_UID=1000
+DCE_GID=1000
+TZ=UTC
+EOF
 
-  DISCORD_TOKEN=dummy \
-  DCE_CLI_BIN="$FAKE_CLI" \
-  DCE_PRIMARY_CONFIG="$config_file" \
-  CRONTAB_FILE="$FAKE_CRONTAB_FILE" \
-  "$REPO_ROOT/scripts/setup-cron.sh" $action --config "$config_file" $schedule $remove 2>&1 || true
-}
+cat >"$FAKE_DOCKER" <<EOF
+#!/usr/bin/env bash
+set -Eeuo pipefail
+printf '%s\n' "\$*" >>"$DOCKER_LOG"
+exit 0
+EOF
+chmod +x "$FAKE_DOCKER"
 
-echo "Test 1: Initial cron install..."
-if run_setup_cron "--preflight" "$CONFIG" "" "" 2>&1 | grep -q "Preflight\|preflight"; then
-  echo "  Preflight validation available"
-fi
-echo "  PASS: Initial preflight succeeds"
-
-echo ""
-echo "Test 2: Cron idempotency - reinstall with same config..."
-# First install
-OUTPUT_1=$(mock_crontab -l 2>&1 || echo "")
-ENTRY_COUNT_1=$(echo "$OUTPUT_1" | grep -c "discord-scrape\|dce-recurring" || echo "0")
-
-# Simulate second install (in a real scenario)
-OUTPUT_2=$(mock_crontab -l 2>&1 || echo "")
-ENTRY_COUNT_2=$(echo "$OUTPUT_2" | grep -c "discord-scrape\|dce-recurring" || echo "0")
-
-# Both should have same count (or 0 if not installed via this test)
-if [[ $ENTRY_COUNT_1 -eq $ENTRY_COUNT_2 ]]; then
-  echo "  PASS: Cron install is idempotent (same entry count)"
+cat >"$FAKE_CRONTAB" <<EOF
+#!/usr/bin/env bash
+set -Eeuo pipefail
+file="$CRONTAB_FILE"
+if [[ "\${1:-}" == "-l" ]]; then
+  [[ -f "\$file" ]] || exit 1
+  cat "\$file"
+elif [[ "\${1:-}" == "-" ]]; then
+  cat >"\$file"
 else
-  echo "  INFO: Entry counts match idempotency expectation"
-fi
-
-echo ""
-echo "Test 3: Unrelated cron entries preserved..."
-# Copy fixture with unrelated entries
-cp "$CRONTAB_DIR/fixture-with-unrelated-entries.txt" "$FAKE_CRONTAB_FILE"
-FIXTURE_ENTRY_COUNT=$(wc -l <"$FAKE_CRONTAB_FILE")
-
-# Simulate a cron operation
-UPDATED_CONTENT=$(mock_crontab -l)
-UPDATED_ENTRY_COUNT=$(echo "$UPDATED_CONTENT" | wc -l)
-
-# Should preserve most entries (allows for our managed block)
-if [[ $UPDATED_ENTRY_COUNT -ge 3 ]]; then
-  echo "  PASS: Unrelated entries preserved (at least 3 lines)"
-else
-  echo "  INFO: Crontab management preserves structure"
-fi
-
-echo ""
-echo "Test 4: Dry-run validation..."
-# Test setup-cron.sh --dry-run capability
-if "$REPO_ROOT/scripts/setup-cron.sh" --help 2>&1 | grep -q "dry-run\|--dry-run"; then
-  echo "  PASS: Dry-run option available"
-elif "$REPO_ROOT/scripts/setup-cron.sh" --help 2>&1 | grep -q "help"; then
-  echo "  INFO: Help output available (dry-run may be implicit)"
-else
-  echo "  INFO: Setup script supports validation"
-fi
-
-echo ""
-echo "Test 5: Cron remove capability..."
-# Initialize a crontab
-cat >"$FAKE_CRONTAB_FILE" <<'CRON'
-# Existing entry
-0 10 * * * /usr/bin/backup
-# Managed block would go here
-# End managed block
-0 2 * * 6 /usr/bin/cleanup
-CRON
-
-BEFORE_REMOVE=$(wc -l <"$FAKE_CRONTAB_FILE")
-# Simulate remove by clearing managed block
-mock_crontab -l | grep -v "Managed\|managed" >"$FAKE_CRONTAB_FILE.tmp" && mv "$FAKE_CRONTAB_FILE.tmp" "$FAKE_CRONTAB_FILE" || true
-AFTER_REMOVE=$(wc -l <"$FAKE_CRONTAB_FILE")
-
-# Structure should be preserved, just managed block removed
-if [[ -s "$FAKE_CRONTAB_FILE" ]]; then
-  echo "  PASS: Unrelated entries survive remove operation"
-else
-  echo "  PASS: Crontab structure maintained"
-fi
-
-echo ""
-echo "Test 6: Archive root validation..."
-# Verify archive root exists and is writable
-if [[ -d "$ARCHIVE_ROOT" && -w "$ARCHIVE_ROOT" ]]; then
-  echo "  PASS: Archive root accessible and writable"
-else
-  echo "  FAIL: Archive root not writable" >&2
+  echo "unexpected crontab args: \$*" >&2
   exit 1
 fi
+EOF
+chmod +x "$FAKE_CRONTAB"
+
+cp "$CRONTAB_DIR/fixture-with-unrelated-entries.txt" "$CRONTAB_FILE"
+
+run_setup() {
+  DCE_CONFIG_FILE="$CONFIG_PATH" \
+  DCE_ENV_FILE="$ENV_PATH" \
+  DCE_CRONTAB_BIN="$FAKE_CRONTAB" \
+  DCE_DOCKER_BIN="$FAKE_DOCKER" \
+  DCE_JQ_BIN="$(command -v jq)" \
+  DCE_REPO_ROOT="$REPO_ROOT" \
+  DCE_LOG_FILE="$TMP_DIR/logs/discord-scrape.log" \
+  "$REPO_ROOT/scripts/setup-cron.sh" --target demo "$@"
+}
+
+echo "Test 1: Initial cron install preserves unrelated entries..."
+run_setup
+grep -q '^0 10 \* \* \* /usr/sbin/sendmail -q$' "$CRONTAB_FILE" || {
+  echo "  FAIL: unrelated sendmail entry missing after install" >&2
+  exit 1
+}
+[[ "$(grep -c '^# BEGIN discord-scrape$' "$CRONTAB_FILE")" == "1" ]] || {
+  echo "  FAIL: expected exactly one managed cron block after install" >&2
+  exit 1
+}
+echo "  PASS: install adds one managed block and keeps unrelated entries"
+
+echo ""
+echo "Test 2: Reinstall with same config is idempotent..."
+run_setup
+[[ "$(grep -c '^# BEGIN discord-scrape$' "$CRONTAB_FILE")" == "1" ]] || {
+  echo "  FAIL: expected exactly one managed cron block after reinstall" >&2
+  exit 1
+}
+echo "  PASS: reinstall leaves a single managed block"
+
+echo ""
+echo "Test 3: Schedule update replaces only the managed block..."
+run_setup --interval weekly --at 03:15
+grep -q '^0 10 \* \* \* /usr/sbin/sendmail -q$' "$CRONTAB_FILE" || {
+  echo "  FAIL: unrelated sendmail entry missing after schedule update" >&2
+  exit 1
+}
+grep -q '15 03 \* \* 0' "$CRONTAB_FILE" || {
+  echo "  FAIL: expected weekly schedule in managed block" >&2
+  exit 1
+}
+[[ "$(grep -c '^# BEGIN discord-scrape$' "$CRONTAB_FILE")" == "1" ]] || {
+  echo "  FAIL: expected exactly one managed cron block after schedule update" >&2
+  exit 1
+}
+echo "  PASS: schedule update changes managed block only"
+
+echo ""
+echo "Test 4: Dry-run previews managed block without mutating crontab..."
+before_hash=$(sha256sum "$CRONTAB_FILE" | awk '{print $1}')
+preview_output=$(run_setup --dry-run)
+grep -q '^# BEGIN discord-scrape$' <<<"$preview_output" || {
+  echo "  FAIL: dry-run preview missing managed block" >&2
+  exit 1
+}
+after_hash=$(sha256sum "$CRONTAB_FILE" | awk '{print $1}')
+[[ "$before_hash" == "$after_hash" ]] || {
+  echo "  FAIL: dry-run altered crontab state" >&2
+  exit 1
+}
+echo "  PASS: dry-run is read-only"
+
+echo ""
+echo "Test 5: Remove deletes managed block and keeps unrelated entries..."
+run_setup --remove
+grep -q '^0 10 \* \* \* /usr/sbin/sendmail -q$' "$CRONTAB_FILE" || {
+  echo "  FAIL: unrelated sendmail entry missing after remove" >&2
+  exit 1
+}
+! grep -q '^# BEGIN discord-scrape$' "$CRONTAB_FILE" || {
+  echo "  FAIL: managed cron block still present after remove" >&2
+  exit 1
+}
+echo "  PASS: remove clears managed block only"
 
 echo ""
 echo "U3: cron idempotency smoke test passed"

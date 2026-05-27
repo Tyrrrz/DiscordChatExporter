@@ -37,6 +37,28 @@ case "$subcommand" in
   guilds)
     echo "222 Fixture Guild"
     ;;
+  channels)
+    guild=""
+    while (($#)); do
+      case "$1" in
+        --guild)
+          guild=$2
+          shift 2
+          ;;
+        --include-vc|--include-threads)
+          shift 2
+          ;;
+        *)
+          shift
+          ;;
+      esac
+    done
+    if [[ "$guild" == "999999999" ]]; then
+      echo "Guild 999999999 is not accessible" >&2
+      exit 1
+    fi
+    printf '%s\t%s\n' "111" "fixture-room"
+    ;;
   dm)
     echo "999 Direct Message 1"
     ;;
@@ -150,6 +172,87 @@ if [[ -d "$ARCHIVE_ROOT" ]]; then
   exit 1
 fi
 echo "  PASS: Archive not created on setup failure"
+
+# Test 7: Duplicate output_dir across targets
+echo "Test 7: Duplicate output_dir validation..."
+DUPLICATE_CONFIG="$TMP_DIR/duplicate-output-dir.json"
+cat >"$DUPLICATE_CONFIG" <<JSON
+{
+  "archive_root": "$ARCHIVE_ROOT",
+  "defaults": {
+    "include_threads": "all",
+    "include_voice_channels": false
+  },
+  "targets": [
+    {
+      "name": "target-1",
+      "kind": "guild",
+      "output_dir": "$ARCHIVE_ROOT/shared",
+      "channel_ids": ["111"],
+      "guild_ids": [],
+      "guild_name_patterns": []
+    },
+    {
+      "name": "target-2",
+      "kind": "guild",
+      "output_dir": "$ARCHIVE_ROOT/shared",
+      "channel_ids": ["222"],
+      "guild_ids": [],
+      "guild_name_patterns": []
+    }
+  ]
+}
+JSON
+duplicate_output=$(
+  DISCORD_TOKEN=dummy \
+  DCE_CLI_BIN="$FAKE_CLI" \
+  DCE_PRIMARY_CONFIG="$DUPLICATE_CONFIG" \
+  DCE_FALLBACK_CONFIG="$DUPLICATE_CONFIG" \
+  "$REPO_ROOT/scripts/run-discord-scrape.sh" scrape 2>&1 || true
+)
+if grep -q "Duplicate target output directories" <<<"$duplicate_output"; then
+  echo "  PASS: Duplicate output_dir rejected"
+else
+  echo "  FAIL: expected duplicate output_dir validation error" >&2
+  exit 1
+fi
+
+# Test 8: Unresolvable guild_id with no explicit channel_ids
+echo "Test 8: Unresolvable guild target..."
+MISSING_GUILD_CONFIG="$TMP_DIR/missing-guild.json"
+cat >"$MISSING_GUILD_CONFIG" <<JSON
+{
+  "archive_root": "$ARCHIVE_ROOT",
+  "defaults": {
+    "include_threads": "all",
+    "include_voice_channels": false
+  },
+  "targets": [
+    {
+      "name": "missing-guild",
+      "kind": "guild",
+      "output_dir": "$ARCHIVE_ROOT/missing",
+      "channel_ids": [],
+      "guild_ids": ["999999999"],
+      "guild_name_patterns": []
+    }
+  ]
+}
+JSON
+missing_guild_output=$(
+  DISCORD_TOKEN=dummy \
+  DCE_CLI_BIN="$FAKE_CLI" \
+  DCE_PRIMARY_CONFIG="$MISSING_GUILD_CONFIG" \
+  DCE_FALLBACK_CONFIG="$MISSING_GUILD_CONFIG" \
+  "$REPO_ROOT/scripts/run-discord-scrape.sh" scrape 2>&1 || true
+)
+if grep -qi "Guild 999999999 is not accessible\|Guild discovery failed\|Channel discovery failed" <<<"$missing_guild_output"; then
+  echo "  PASS: Unresolvable guild handled safely"
+else
+  echo "  FAIL: expected guild resolution failure for missing guild" >&2
+  echo "$missing_guild_output" >&2
+  exit 1
+fi
 
 echo ""
 echo "U2: error-path smoke test passed"

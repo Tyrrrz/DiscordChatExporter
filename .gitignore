@@ -14,3 +14,4 @@ TestResults/
 # Local automation secrets and logs
 scrape.env
 logs/
+.compound-engineering/*.local.yaml

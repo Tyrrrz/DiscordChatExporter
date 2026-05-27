@@ -1,0 +1,17 @@
+{
+  "archive_root": "/tmp/dce-test",
+  "defaults": {
+    "include_threads": "all",
+    "include_voice_channels": false
+  },
+  "targets": [
+    {
+      "name": "invalid-output-dir",
+      "kind": "guild",
+      "output_dir": "/forbidden/path/outside/archive",
+      "channel_ids": ["111"],
+      "guild_ids": [],
+      "guild_name_patterns": []
+    }
+  ]
+}

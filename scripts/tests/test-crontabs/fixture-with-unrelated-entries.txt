@@ -1,0 +1,17 @@
+# .placeholder crontab for testing idempotency
+# Some unrelated cron jobs to verify they're preserved during setup/update/remove
+
+# Mail cron runs every day at 10 AM
+0 10 * * * /usr/sbin/sendmail -q
+
+# Backup script runs on Saturday at 2 AM
+0 2 * * 6 /home/user/scripts/backup.sh
+
+# System update check runs every 4 hours
+0 */4 * * * /usr/bin/apt-get update
+
+# Log rotation runs daily at midnight
+0 0 * * * /usr/sbin/logrotate /etc/logrotate.conf
+
+# User-specific cleanup script
+0 3 * * 0 /home/user/cleanup/weekly.sh

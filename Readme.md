@@ -81,5 +81,6 @@ To learn more about the war and how you can help, [click here](https://tyrrrz.me
 
 ## See also
 
+- [**Recurring Exports**](.docs/Recurring-Scrape-Setup.md) — automated scheduled exports using cron (Linux/macOS)
 - [**Chat Analytics**](https://github.com/mlomb/chat-analytics) — solution for analyzing chat patterns of Discord users, using exports produced by **DiscordChatExporter**.
 - [**DiscordChatExporter-frontend**](https://github.com/slatinsky/DiscordChatExporter-frontend) — convenient viewer for exports produced by **DiscordChatExporter**.

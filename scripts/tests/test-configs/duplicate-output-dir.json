@@ -1,0 +1,25 @@
+{
+  "archive_root": "/tmp/dce-test",
+  "defaults": {
+    "include_threads": "all",
+    "include_voice_channels": false
+  },
+  "targets": [
+    {
+      "name": "target-1",
+      "kind": "guild",
+      "output_dir": "/tmp/dce-test/shared",
+      "channel_ids": ["111"],
+      "guild_ids": [],
+      "guild_name_patterns": []
+    },
+    {
+      "name": "target-2",
+      "kind": "guild",
+      "output_dir": "/tmp/dce-test/shared",
+      "channel_ids": ["222"],
+      "guild_ids": [],
+      "guild_name_patterns": []
+    }
+  ]
+}

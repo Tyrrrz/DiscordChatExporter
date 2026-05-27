@@ -70,6 +70,30 @@ cat >"$CONFIG_PATH" <<JSON
       "channel_ids": ["111"],
       "guild_ids": [],
       "guild_name_patterns": []
+    },
+    {
+      "name": "partial-write",
+      "kind": "guild",
+      "output_dir": "$ARCHIVE_ROOT/partial-write",
+      "channel_ids": ["111"],
+      "guild_ids": [],
+      "guild_name_patterns": []
+    },
+    {
+      "name": "concurrent-conflict",
+      "kind": "guild",
+      "output_dir": "$ARCHIVE_ROOT/concurrent-conflict",
+      "channel_ids": ["111"],
+      "guild_ids": [],
+      "guild_name_patterns": []
+    },
+    {
+      "name": "idempotent",
+      "kind": "guild",
+      "output_dir": "$ARCHIVE_ROOT/idempotent",
+      "channel_ids": ["111"],
+      "guild_ids": [],
+      "guild_name_patterns": []
     }
   ]
 }
@@ -105,6 +129,8 @@ case "$subcommand" in
     case "$mode" in
       initial) cp "$fixture_dir/append-existing.json" "$output" ;;
       append) cp "$fixture_dir/append-incremental.json" "$output" ;;
+      partial-write) cp "$fixture_dir/append-partial-write.json" "$output" ;;
+      concurrent-conflict) cp "$fixture_dir/append-concurrent-conflict.json" "$output" ;;
       wrong-channel) cp "$fixture_dir/wrong-channel.json" "$output" ;;
       *) echo "unexpected mode: $mode" >&2; exit 1 ;;
     esac
@@ -195,4 +221,46 @@ if run_wrapper seeded-wrong-channel append; then
 fi
 [[ ! -e "$ARCHIVE_ROOT/seeded-wrong-channel/channels/111.json" ]] || { echo "unexpected fallback file created for wrong-channel seeded archive" >&2; exit 1; }
 
-echo "run-discord-scrape smoke test passed"
+# U1: Test partial-write scenario (single message after merge)
+mkdir -p "$ARCHIVE_ROOT/partial-write"
+cp "$FIXTURE_DIR/append-existing.json" "$ARCHIVE_ROOT/partial-write/$DEFAULT_FILE_NAME"
+run_wrapper partial-write partial-write
+PARTIAL_DEST="$ARCHIVE_ROOT/partial-write/$DEFAULT_FILE_NAME"
+[[ -f "$PARTIAL_DEST" ]] || { echo "expected partial-write archive missing" >&2; exit 1; }
+[[ "$(jq -r '.messages | length' "$PARTIAL_DEST")" == "3" ]] || { echo "expected partial-write message count of 3 (2 existing + 1 new)" >&2; exit 1; }
+[[ "$(jq -r '.messages[-1].id' "$PARTIAL_DEST")" == "4" ]] || { echo "expected last message id 4 after partial-write" >&2; exit 1; }
+# Verify messages are sorted by timestamp and id
+last_timestamp=$(jq -r '.messages[-1].timestamp' "$PARTIAL_DEST")
+last_id=$(jq -r '.messages[-1].id' "$PARTIAL_DEST")
+[[ "$last_timestamp" == "2026-01-04T00:00:00Z" ]] || { echo "expected last message timestamp 2026-01-04T00:00:00Z, got $last_timestamp" >&2; exit 1; }
+[[ "$last_id" == "4" ]] || { echo "expected last message id 4, got $last_id" >&2; exit 1; }
+
+# U1: Test concurrent-conflict scenario (overlapping messages deduplicated by id)
+mkdir -p "$ARCHIVE_ROOT/concurrent-conflict"
+cp "$FIXTURE_DIR/append-existing.json" "$ARCHIVE_ROOT/concurrent-conflict/$DEFAULT_FILE_NAME"
+run_wrapper concurrent-conflict concurrent-conflict
+CONFLICT_DEST="$ARCHIVE_ROOT/concurrent-conflict/$DEFAULT_FILE_NAME"
+[[ -f "$CONFLICT_DEST" ]] || { echo "expected concurrent-conflict archive missing" >&2; exit 1; }
+# Should have 4 unique messages (1, 2, 3, 4) - message 2 deduplicated, message 3 and 4 added
+[[ "$(jq -r '.messages | length' "$CONFLICT_DEST")" == "4" ]] || { echo "expected concurrent-conflict message count of 4 (deduplicated by id)" >&2; exit 1; }
+# Verify deduplication: message with id 2 should be the one from the concurrent-conflict fixture (higher precedence)
+message_2_content=$(jq -r '.messages[] | select(.id=="2") | .content' "$CONFLICT_DEST")
+[[ "$message_2_content" == "second (slightly modified)" ]] || { echo "expected message 2 to be from concurrent-conflict fixture (deduplicated), got: $message_2_content" >&2; exit 1; }
+
+# U1: Test idempotency - merging the same incremental file twice should produce identical results
+mkdir -p "$ARCHIVE_ROOT/idempotent"
+cp "$FIXTURE_DIR/append-existing.json" "$ARCHIVE_ROOT/idempotent/$DEFAULT_FILE_NAME"
+run_wrapper idempotent append
+IDEMPOTENT_DEST="$ARCHIVE_ROOT/idempotent/$DEFAULT_FILE_NAME"
+IDEMPOTENT_CHECKSUM_1=$(sha256sum "$IDEMPOTENT_DEST" | awk '{print $1}')
+run_wrapper idempotent append
+IDEMPOTENT_CHECKSUM_2=$(sha256sum "$IDEMPOTENT_DEST" | awk '{print $1}')
+[[ "$IDEMPOTENT_CHECKSUM_1" == "$IDEMPOTENT_CHECKSUM_2" ]] || { echo "expected idempotent merge to produce identical results on repeat" >&2; exit 1; }
+
+# U1: Verify message structure consistency - ensure all required fields present after merge
+[[ "$(jq -r '.guild.id' "$DEST")" == "222" ]] || { echo "expected guild id to be preserved after merge" >&2; exit 1; }
+[[ "$(jq -r '.channel.id' "$DEST")" == "111" ]] || { echo "expected channel id to be preserved after merge" >&2; exit 1; }
+[[ "$(jq -r '.messages[0] | has("id") and has("timestamp") and has("content")' "$DEST")" == "true" ]] || { echo "expected message structure to be complete after merge" >&2; exit 1; }
+
+echo "U1: append-only merge test coverage passed"
+

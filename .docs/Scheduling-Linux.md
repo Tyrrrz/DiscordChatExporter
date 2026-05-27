@@ -1,5 +1,42 @@
 # Scheduling exports with Cron
 
+## Preflight Validation
+
+Before installing the cron job, you can validate that your token, configuration, and target setup are correct by running the preflight command:
+
+```bash
+# Set your token and run preflight
+export DISCORD_TOKEN="your-token-here"
+./scripts/run-discord-scrape.sh preflight --config config/scrape-targets.json
+```
+
+The preflight command:
+- Verifies your Discord token is valid and authenticated
+- Checks that all configured targets are accessible
+- Validates that the archive root and output directories are writable
+- Resolves configured channel/guild IDs without writing any archives
+- Reports which channels will be scraped and their expected output locations
+
+The preflight command is **read-only**: it does not modify archives, create crontab entries, or make any state changes. This makes it safe to run with your real token and existing archives before committing to automated cron runs.
+
+If any preflight check fails, the setup will stop before installing crontab entries. This ensures that cron will not be configured in a broken state.
+
+### Common Preflight Errors
+
+**"Export ... belongs to channel 'XXX', expected 'YYY'"**
+- The archive you're trying to update contains metadata for a different channel than the one you configured
+- Solution: Verify the channel ID in your config matches the archive's embedded channel ID, or move the archive to a different target
+
+**"Guild discovery failed"**
+- You're using a bot token and need to provide explicit guild/channel IDs
+- Solution: Add `guild_ids` and `channel_ids` to your target configuration
+
+**"Output dir ... is outside archive_root"**
+- A configured output directory is not within the configured archive root
+- Solution: Update your `output_dir` to be under the `archive_root` in your config
+
+---
+
 ## Recommended recurring wrapper
 
 This repo now includes a source-built recurring wrapper around the CLI:

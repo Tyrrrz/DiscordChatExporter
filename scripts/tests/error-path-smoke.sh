@@ -15,6 +15,17 @@ cleanup() {
 }
 trap cleanup EXIT
 
+# Create a minimal fixture for successful exports
+cat >"$TMP_DIR/fixture-append.json" <<'EOF'
+{
+  "guild": {"id": "222", "name": "Fixture Guild"},
+  "channel": {"id": "111", "name": "fixture-room", "category": "Testing Grounds"},
+  "messages": [],
+  "dateRange": {"after": null, "before": null},
+  "exportedAt": "2026-01-01T00:00:00Z"
+}
+EOF
+
 cat >"$FAKE_CLI" <<'EOF'
 #!/usr/bin/env bash
 set -Eeuo pipefail
@@ -46,7 +57,7 @@ case "$subcommand" in
       esac
     done
     # Return a minimal valid export for success cases
-    cp /tmp/dce-fixture-append.json "$output" 2>/dev/null || echo '{"messages":[]}' >"$output"
+    cp "${FAKE_DCE_FIXTURE_PATH:?}" "$output" 2>/dev/null || echo '{"messages":[]}' >"$output"
     ;;
   *)
     echo "unexpected subcommand: $subcommand" >&2
@@ -56,16 +67,6 @@ esac
 EOF
 chmod +x "$FAKE_CLI"
 
-# Create a minimal fixture for successful exports
-cat >"$TMP_DIR/fixture-append.json" <<'EOF'
-{
-  "guild": {"id": "222", "name": "Fixture Guild"},
-  "channel": {"id": "111", "name": "fixture-room", "category": "Testing Grounds"},
-  "messages": [],
-  "dateRange": {"after": null, "before": null},
-  "exportedAt": "2026-01-01T00:00:00Z"
-}
-EOF
 export FAKE_DCE_FIXTURE_PATH="$TMP_DIR/fixture-append.json"
 
 run_with_config() {

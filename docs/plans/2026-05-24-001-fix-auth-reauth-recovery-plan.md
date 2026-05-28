@@ -3,7 +3,7 @@ date: 2026-05-24
 sequence: 001
 plan_type: fix
 title: Harden GitHub and Discord reauth recovery
-status: active
+status: completed
 ---
 
 # fix: Harden GitHub and Discord reauth recovery

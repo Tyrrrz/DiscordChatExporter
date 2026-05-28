@@ -1,7 +1,7 @@
 ---
 title: feat: Add recurring CLI scrape automation
 type: feat
-status: active
+status: completed
 date: 2026-05-24
 ---
 

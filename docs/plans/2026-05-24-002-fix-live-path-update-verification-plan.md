@@ -1,7 +1,7 @@
 ---
 title: fix: Verify live archive path updates
 type: fix
-status: active
+status: completed
 date: 2026-05-24
 ---
 

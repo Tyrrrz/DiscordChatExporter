@@ -73,6 +73,7 @@ jobs:
           ./scripts/tests/end-to-end-preflight-smoke.sh
           ./scripts/tests/setup-cron-smoke.sh
           ./scripts/tests/run-discord-scrape-host-smoke.sh
+          ./scripts/tests/gh-approve-pr-runs-smoke.sh
 
   test:
     # Tests need access to secrets, so we can't run them against PRs because of limited trust

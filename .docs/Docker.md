@@ -98,6 +98,8 @@ If you authenticate with a **bot token**, do not rely on guild-name or DM discov
 
 The host wrapper (`scripts/run-discord-scrape-host.sh`) classifies Discord auth failures and retries once after reloading `DISCORD_TOKEN_FILE` (if configured). Persistent auth failure still exits non-zero.
 
+For fork PRs blocked on GitHub Actions approval, repository admins can run `./scripts/gh-approve-pr-runs.sh --repo Tyrrrz/DiscordChatExporter RUN_ID` after exporting `GITHUB_TOKEN`. The script bootstraps `gh` auth and surfaces admin-rights policy blockers separately from token failures.
+
 If you run the recurring flow through podman on an SELinux-enabled host, keep the bind mounts relabeled (`:z`). The checked-in `docker-compose.yml` already applies this to the recurring wrapper mounts.
 
 For rootless podman, set `DCE_USERNS_MODE=keep-id` in `scrape.env` so the mounted archive roots stay writable as your host user instead of appearing as `root:root` inside the container. Keep `DCE_UID` and `DCE_GID` matched to your host user as well.

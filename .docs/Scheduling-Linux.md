@@ -64,6 +64,15 @@ If any selected target fails that authenticated probe, `setup-cron.sh` stops wit
 
 For recurring runs, `setup-cron.sh` now installs a cron command that executes `scripts/run-discord-scrape-host.sh scrape ...`. The host wrapper retries once when it detects Discord auth failures (`401`/`403`) by reloading `DISCORD_TOKEN_FILE` if configured. This keeps cron non-interactive and fail-closed.
 
+When contributing fork PRs to the upstream repository, GitHub Actions runs may wait on maintainer approval. If you have repository admin rights and a `GITHUB_TOKEN` with sufficient scopes, you can attempt approval with:
+
+```bash
+export GITHUB_TOKEN=...   # or define it in ~/.bashrc
+./scripts/gh-approve-pr-runs.sh --repo Tyrrrz/DiscordChatExporter RUN_ID [RUN_ID...]
+```
+
+The helper bootstraps `gh auth login --with-token` when needed. If GitHub responds that admin rights are required, the script exits with an explicit policy-blocker message instead of a generic auth failure.
+
 If you are running the recurring wrapper through podman on an SELinux-enabled host, keep the bind mounts relabeled (`:z`). The checked-in `docker-compose.yml` already includes that for the recurring config and archive mounts.
 
 For rootless podman, set `DCE_USERNS_MODE=keep-id` in `scrape.env` so the mounted `Documents` archive roots stay writable as your host user during scheduled runs. Keep `DCE_UID` and `DCE_GID` matched to your host user as well.

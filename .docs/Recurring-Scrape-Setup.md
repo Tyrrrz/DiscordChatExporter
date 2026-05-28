@@ -59,6 +59,8 @@ export DISCORD_TOKEN="your-token-here"
 # optional: export DISCORD_TOKEN_FILE=/path/to/token/file
 ```
 
+When no explicit token is set, the host wrapper runs `scripts/discover-discord-token.sh`, which tries (in order): `DISCORD_TOKEN` / `DISCORD_TOKEN_FILE`, optional `~/.config/discord-scrape/token`, DiscordChatExporter GUI `Settings.dat` (via `scripts/read-dce-gui-token.sh` when `DISCORDCHATEXPORTER_SETTINGS_PATH` or a sibling `Settings.dat` next to the CLI binary is present), then Discord desktop `leveldb` token candidates (longest match wins).
+
 To materialize `scrape.env` from exported credentials (mode `600`, no manual editing):
 
 ```bash

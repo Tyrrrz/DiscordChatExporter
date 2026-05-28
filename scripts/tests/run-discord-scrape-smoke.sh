@@ -110,6 +110,14 @@ cat >"$CONFIG_PATH" <<JSON
       "channel_ids": ["111"],
       "guild_ids": [],
       "guild_name_patterns": []
+    },
+    {
+      "name": "skip-forbidden",
+      "kind": "guild",
+      "output_dir": "$ARCHIVE_ROOT/skip-forbidden",
+      "channel_ids": ["111", "403"],
+      "guild_ids": [],
+      "guild_name_patterns": []
     }
   ]
 }
@@ -128,6 +136,7 @@ case "$subcommand" in
   export)
     output=""
     after=""
+    channel=""
     while (($#)); do
       case "$1" in
         --output)
@@ -142,7 +151,11 @@ case "$subcommand" in
           fi
           shift 2
           ;;
-        --channel|--format)
+        --channel)
+          channel=$2
+          shift 2
+          ;;
+        --format)
           shift 2
           ;;
         *)
@@ -150,6 +163,11 @@ case "$subcommand" in
           ;;
       esac
     done
+
+    if [[ "$channel" == "403" ]]; then
+      echo "Request to 'channels/403' failed: forbidden." >&2
+      exit 1
+    fi
 
     case "$mode" in
       initial) cp "$fixture_dir/append-existing.json" "$output" ;;
@@ -303,6 +321,13 @@ BOOTSTRAP_DEST="$ARCHIVE_ROOT/bootstrap-map/$DEFAULT_FILE_NAME"
 bootstrap_mapped_dest=$(jq -r '."111"' "$ARCHIVE_ROOT/bootstrap-map/.dce-meta/channel-map.json")
 [[ "$bootstrap_mapped_dest" == "$BOOTSTRAP_DEST" ]] || { echo "expected bootstrap to register existing archive in channel map" >&2; exit 1; }
 [[ "$(jq -r '.messages | length' "$BOOTSTRAP_DEST")" == "3" ]] || { echo "expected bootstrap-map archive to append in place" >&2; exit 1; }
+
+mkdir -p "$ARCHIVE_ROOT/skip-forbidden"
+cp "$FIXTURE_DIR/append-existing.json" "$ARCHIVE_ROOT/skip-forbidden/$DEFAULT_FILE_NAME"
+run_wrapper skip-forbidden append
+SKIP_DEST="$ARCHIVE_ROOT/skip-forbidden/$DEFAULT_FILE_NAME"
+[[ "$(jq -r '.messages | length' "$SKIP_DEST")" == "3" ]] || { echo "expected skip-forbidden to append accessible channel" >&2; exit 1; }
+[[ ! -e "$ARCHIVE_ROOT/skip-forbidden/channels/403.json" ]] || { echo "unexpected fallback file for skipped forbidden channel" >&2; exit 1; }
 
 # shellcheck disable=SC1091
 source "$REPO_ROOT/scripts/run-discord-scrape.sh"

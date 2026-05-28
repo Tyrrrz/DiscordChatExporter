@@ -90,6 +90,8 @@ write_compose_env_temp() {
 
   if [[ -n "${DISCORD_TOKEN:-}" ]]; then
     printf 'DISCORD_TOKEN=%s\n' "$DISCORD_TOKEN" >"$COMPOSE_ENV_TEMP"
+  else
+    : >"$COMPOSE_ENV_TEMP"
   fi
   if [[ -n "${DISCORD_TOKEN_FILE:-}" ]]; then
     printf 'DISCORD_TOKEN_FILE=%s\n' "$DISCORD_TOKEN_FILE" >>"$COMPOSE_ENV_TEMP"
@@ -97,22 +99,44 @@ write_compose_env_temp() {
   if [[ -n "${DCE_REAUTH_COMMAND:-}" ]]; then
     printf 'DCE_REAUTH_COMMAND=%s\n' "$DCE_REAUTH_COMMAND" >>"$COMPOSE_ENV_TEMP"
   fi
+  if [[ -n "${DCE_USERNS_MODE:-}" ]]; then
+    printf 'DCE_USERNS_MODE=%s\n' "$DCE_USERNS_MODE" >>"$COMPOSE_ENV_TEMP"
+  fi
+  if [[ -n "${DCE_UID:-}" ]]; then
+    printf 'DCE_UID=%s\n' "$DCE_UID" >>"$COMPOSE_ENV_TEMP"
+  fi
+  if [[ -n "${DCE_GID:-}" ]]; then
+    printf 'DCE_GID=%s\n' "$DCE_GID" >>"$COMPOSE_ENV_TEMP"
+  fi
+}
+
+configure_rootless_compose() {
+  if [[ -n "${DCE_USERNS_MODE:-}" ]]; then
+    return 0
+  fi
+
+  if [[ "$DOCKER_BIN" == *podman* ]] || podman info >/dev/null 2>&1; then
+    export DCE_USERNS_MODE=keep-id
+  fi
 }
 
 prepare_compose_env() {
   if [[ -f "$ENV_FILE" ]]; then
     load_env_file
     COMPOSE_ENV_FILE="$ENV_FILE"
+    configure_rootless_compose
     return 0
   fi
 
   if [[ -z "${DISCORD_TOKEN:-}" ]]; then
     discover_token_file || true
     load_token_from_file || true
+    load_token_from_discover_script || true
   fi
 
   if [[ -n "${DISCORD_TOKEN:-}" || -n "${DISCORD_TOKEN_FILE:-}" ]]; then
     write_compose_env_temp
+    configure_rootless_compose
     return 0
   fi
 
@@ -151,12 +175,24 @@ discover_token_file() {
   return 1
 }
 
+load_token_from_discover_script() {
+  local discover_script="$REPO_ROOT/scripts/discover-discord-token.sh"
+  local token_value
+
+  [[ -x "$discover_script" ]] || return 1
+  token_value=$("$discover_script" 2>/dev/null) || return 1
+  [[ -n "$token_value" ]] || return 1
+  export DISCORD_TOKEN="$token_value"
+  return 0
+}
+
 ensure_token_present() {
   if [[ -z "${DISCORD_TOKEN:-}" ]]; then
     discover_token_file || true
     load_token_from_file || true
+    load_token_from_discover_script || true
   fi
-  [[ -n "${DISCORD_TOKEN:-}" ]] || die "DISCORD_TOKEN is not set. Set DISCORD_TOKEN or DISCORD_TOKEN_FILE in $ENV_FILE, export it in the shell, or place a token at $REPO_ROOT/.discord-token or ~/.config/discord-scrape/token."
+  [[ -n "${DISCORD_TOKEN:-}" ]] || die "DISCORD_TOKEN is not set. Set DISCORD_TOKEN or DISCORD_TOKEN_FILE in $ENV_FILE, export it in the shell, place a token at $REPO_ROOT/.discord-token or ~/.config/discord-scrape/token, or sign in via DiscordChatExporter GUI / Discord desktop on this machine."
 }
 
 compose_run_args() {
@@ -265,6 +301,7 @@ run_subcommand_with_retry() {
 
   printf 'Detected Discord auth failure. Refreshing token and retrying once...\n' >&2
   load_token_from_file || true
+  load_token_from_discover_script || true
   if [[ -f "$ENV_FILE" ]]; then
     COMPOSE_ENV_FILE="$ENV_FILE"
   elif [[ -n "${DISCORD_TOKEN:-}" ]]; then
@@ -274,6 +311,7 @@ run_subcommand_with_retry() {
   fi
   try_interactive_reauth || true
   ensure_token_present
+  compose_run_args run_args "$subcommand" "$@"
 
   if "${run_args[@]}" >"$output_file" 2>&1; then
     cat "$output_file"

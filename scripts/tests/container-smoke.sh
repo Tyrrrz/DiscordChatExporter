@@ -30,6 +30,10 @@ docker compose --env-file "$TMP_ENV" build
 docker compose --env-file "$TMP_ENV" run --rm discord-scraper help >/dev/null
 docker compose --env-file "$TMP_ENV" run --rm discord-scraper list-targets >/dev/null
 
+docker compose --env-file "$TMP_ENV" run -T --rm --entrypoint /bin/sh discord-scraper -c \
+  'grep -q -- "--partition 1" /opt/dce-scheduler/run-discord-scrape.sh && ! grep -q "1970-01-01" /opt/dce-scheduler/run-discord-scrape.sh' \
+  >/dev/null
+
 if docker version 2>&1 | grep -qi podman || docker info 2>&1 | grep -qi podman; then
   mkdir -p "$WRITE_TEST_DIR"
   docker compose --env-file "$TMP_PODMAN_ENV" run -T --rm --entrypoint /bin/sh discord-scraper -lc "mkdir -p '$WRITE_TEST_DIR/from-container' && rmdir '$WRITE_TEST_DIR/from-container'" >/dev/null

@@ -259,6 +259,7 @@ ensure_json_file() {
 
   if [[ ! -f "$file_path" ]]; then
     printf '{}\n' >"$file_path"
+    chmod 644 "$file_path" 2>/dev/null || true
   fi
 }
 
@@ -274,6 +275,7 @@ update_channel_map() {
     '.[$channel_id] = $destination_path' \
     "$map_file" >"$temp_file"
   mv "$temp_file" "$map_file"
+  chmod 644 "$map_file" 2>/dev/null || true
 }
 
 get_channel_map_path() {
@@ -379,6 +381,48 @@ last_message_id() {
 message_count() {
   local export_path=$1
   jq -r '(.messages | length) // 0' "$export_path"
+}
+
+is_skippable_channel_export_failure() {
+  local log_file=$1
+  grep -qiE \
+    "failed: forbidden|failed: not found|Missing Access|403 Forbidden|404 Not Found|Cannot read message history" \
+    "$log_file"
+}
+
+export_channel_incremental() {
+  local channel_id=$1
+  local temp_export=$2
+  local after_id=$3
+  local -a export_command
+  local export_log export_status=0
+
+  export_command=("$CLI_BIN" export --channel "$channel_id" --format Json --output "$temp_export")
+  if [[ -n "$after_id" ]]; then
+    export_command+=(--after "$after_id")
+  fi
+
+  export_log=$(mktemp "${TMPDIR:-/tmp}/dce-export.${channel_id}.XXXXXX")
+  set +e
+  "${export_command[@]}" >"$export_log" 2>&1
+  export_status=$?
+  set -e
+
+  if (( export_status == 0 )); then
+    rm -f "$export_log"
+    return 0
+  fi
+
+  if is_skippable_channel_export_failure "$export_log"; then
+    log "Skipping channel $channel_id (forbidden or inaccessible)."
+    cat "$export_log" >&2
+    rm -f "$export_log"
+    return 2
+  fi
+
+  cat "$export_log" >&2
+  rm -f "$export_log"
+  return 1
 }
 
 commit_merged_export() {
@@ -620,8 +664,26 @@ preflight_target() {
   probe_channel_id="${channel_ids[0]}"
   probe_dir=$(mktemp -d "${TMPDIR:-/tmp}/dce-preflight.${probe_channel_id}.XXXXXX")
   probe_output="$probe_dir/probe.json"
+  local -a probe_command after_id probe_destination
 
-  if ! "$CLI_BIN" export --channel "$probe_channel_id" --format Json --output "$probe_output" --before "1970-01-01"; then
+  probe_destination=$(resolve_destination_path "$output_dir" "$probe_channel_id")
+  after_id=""
+  if [[ -n "$probe_destination" && -f "$probe_destination" ]]; then
+    after_id=$(last_message_id "$probe_destination")
+  fi
+
+  probe_command=(
+    "$CLI_BIN" export
+    --channel "$probe_channel_id"
+    --format Json
+    --output "$probe_output"
+    --partition 1
+  )
+  if [[ -n "$after_id" ]]; then
+    probe_command+=(--after "$after_id")
+  fi
+
+  if ! "${probe_command[@]}"; then
     rm -rf "$probe_dir"
     die "Target '$target_name' failed authenticated preflight on channel '$probe_channel_id'."
   fi
@@ -635,7 +697,8 @@ scrape_target() {
   local defaults_json=$2
   local target_name output_dir destination_path after_id temp_dir temp_export temp_merged
   local latest_batch_count
-  local -a channel_ids export_command
+  local -a channel_ids
+  local export_status=0
 
   target_name=$(jq -r '.name' <<<"$target_json")
   output_dir=$(jq -r '.output_dir' <<<"$target_json")
@@ -650,6 +713,8 @@ scrape_target() {
   log "Target '$target_name': processing ${#channel_ids[@]} channel(s) into $output_dir."
 
   local channel_id
+  local skipped_channels=0
+  local failed_channels=0
   for channel_id in "${channel_ids[@]}"; do
     destination_path=$(resolve_destination_path "$output_dir" "$channel_id")
     if [[ -n "$destination_path" ]]; then
@@ -667,17 +732,23 @@ scrape_target() {
     temp_export="$temp_dir/export.json"
     temp_merged="$temp_dir/merged.json"
 
-    export_command=("$CLI_BIN" export --channel "$channel_id" --format Json --output "$temp_export")
-    if [[ -n "$after_id" ]]; then
-      export_command+=(--after "$after_id")
-    fi
-
     log "Exporting channel $channel_id for target '$target_name'${after_id:+ after message $after_id}."
 
-    if ! "${export_command[@]}"; then
-      rm -rf "$temp_dir"
-      die "Channel $channel_id failed for target '$target_name'."
-    fi
+    export_status=0
+    export_channel_incremental "$channel_id" "$temp_export" "$after_id" || export_status=$?
+    case "$export_status" in
+      0) ;;
+      2)
+        rm -rf "$temp_dir"
+        skipped_channels=$((skipped_channels + 1))
+        continue
+        ;;
+      *)
+        rm -rf "$temp_dir"
+        failed_channels=$((failed_channels + 1))
+        die "Channel $channel_id failed for target '$target_name'."
+        ;;
+    esac
 
     jq empty "$temp_export" >/dev/null 2>&1 || die "Incremental export is not valid JSON: $temp_export"
     assert_export_channel_identity "$temp_export" "$channel_id"
@@ -706,6 +777,13 @@ scrape_target() {
     commit_merged_export "$destination_path" "$temp_merged"
     rm -rf "$temp_dir"
   done
+
+  if (( skipped_channels > 0 )); then
+    log "Target '$target_name': skipped $skipped_channels inaccessible channel(s)."
+  fi
+  if (( failed_channels > 0 )); then
+    die "Target '$target_name': $failed_channels channel(s) failed."
+  fi
 
   log "Target '$target_name': scrape completed successfully."
 }

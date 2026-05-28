@@ -14,5 +14,6 @@ TestResults/
 # Local automation secrets and logs
 scrape.env
 .discord-token
+agentdecompile_projects/
 logs/
 .compound-engineering/*.local.yaml

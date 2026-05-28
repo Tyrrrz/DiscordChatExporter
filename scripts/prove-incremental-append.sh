@@ -5,6 +5,7 @@ set -Eeuo pipefail
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
 REPO_ROOT="${DCE_REPO_ROOT:-$(cd "$SCRIPT_DIR/.." && pwd -P)}"
 CONFIG_PATH="${DCE_PRIMARY_CONFIG:-$REPO_ROOT/config/scrape-targets.json}"
+CONTAINER_CONFIG="${DCE_CONTAINER_CONFIG:-/config/scrape-targets.json}"
 HOST_RUNNER="$REPO_ROOT/scripts/run-discord-scrape-host.sh"
 SNAPSHOT_DIR=""
 
@@ -147,7 +148,12 @@ main() {
   [[ -s "$before_file" ]] || die "No seeded archives found under $output_dir"
 
   printf 'Running incremental scrape for target %s...\n' "$target"
-  "$HOST_RUNNER" scrape --config "$CONFIG_PATH" --target "$target"
+  local container_config="$CONTAINER_CONFIG"
+  case "$CONFIG_PATH" in
+    "$REPO_ROOT/config/scrape-targets.json"|config/scrape-targets.json|./config/scrape-targets.json) ;;
+    *) container_config="$CONFIG_PATH" ;;
+  esac
+  "$HOST_RUNNER" scrape --config "$container_config" --target "$target"
 
   snapshot_archives "$output_dir" "$after_file"
   compare_snapshots "$before_file" "$after_file"

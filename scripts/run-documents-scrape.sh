@@ -5,7 +5,9 @@ set -Eeuo pipefail
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
 REPO_ROOT="${DCE_REPO_ROOT:-$(cd "$SCRIPT_DIR/.." && pwd -P)}"
 CONFIG_PATH="${DCE_PRIMARY_CONFIG:-$REPO_ROOT/config/scrape-targets.json}"
+CONTAINER_CONFIG="${DCE_CONTAINER_CONFIG:-/config/scrape-targets.json}"
 HOST_RUNNER="$REPO_ROOT/scripts/run-discord-scrape-host.sh"
+DISCOVER_TOKEN="$REPO_ROOT/scripts/discover-discord-token.sh"
 VERIFY_SCRIPT="$REPO_ROOT/scripts/verify-documents-archives.sh"
 SETUP_AUTH="$REPO_ROOT/scripts/setup-scrape-auth.sh"
 
@@ -74,10 +76,32 @@ main() {
 
   if [[ -n "${DISCORD_TOKEN:-}" || -n "${DISCORD_TOKEN_FILE:-}" ]]; then
     "$SETUP_AUTH" 2>/dev/null || true
+  elif [[ -x "$DISCOVER_TOKEN" ]] && "$DISCOVER_TOKEN" >/dev/null 2>&1; then
+    "$SETUP_AUTH" 2>/dev/null || true
   fi
 
-  "$HOST_RUNNER" preflight --config "$CONFIG_PATH" "${passthrough[@]}"
-  "$HOST_RUNNER" scrape --config "$CONFIG_PATH" "${passthrough[@]}"
+  local -a container_args=("${passthrough[@]}")
+  local has_config=0 idx=0
+
+  while (( idx < ${#container_args[@]} )); do
+    if [[ "${container_args[idx]}" == "--config" ]]; then
+      has_config=1
+      case "${container_args[idx + 1]:-}" in
+        "$CONFIG_PATH"|config/scrape-targets.json|./config/scrape-targets.json)
+          container_args[idx + 1]="$CONTAINER_CONFIG"
+          ;;
+      esac
+      break
+    fi
+    idx=$((idx + 1))
+  done
+
+  if (( has_config == 0 )); then
+    container_args=(--config "$CONTAINER_CONFIG" "${container_args[@]}")
+  fi
+
+  "$HOST_RUNNER" preflight "${container_args[@]}"
+  "$HOST_RUNNER" scrape "${container_args[@]}"
 }
 
 main "$@"

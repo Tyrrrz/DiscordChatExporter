@@ -13,5 +13,6 @@ services:
       TZ: ${TZ:-UTC}
     volumes:
       - ./config:/config:ro,z
+      - ./scripts/run-discord-scrape.sh:/opt/dce-scheduler/run-discord-scrape.sh:ro,z
       - /home/brunner56/Documents:/home/brunner56/Documents:z
     command: ["help"]

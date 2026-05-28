@@ -102,6 +102,14 @@ cat >"$CONFIG_PATH" <<JSON
       "channel_ids": ["111"],
       "guild_ids": [],
       "guild_name_patterns": []
+    },
+    {
+      "name": "bootstrap-map",
+      "kind": "guild",
+      "output_dir": "$ARCHIVE_ROOT/bootstrap-map",
+      "channel_ids": ["111"],
+      "guild_ids": [],
+      "guild_name_patterns": []
     }
   ]
 }
@@ -286,6 +294,27 @@ cp "$FIXTURE_DIR/append-unordered-cursor.json" "$ARCHIVE_ROOT/cursor-max-id/$DEF
 FAKE_DCE_EXPECT_AFTER=999 run_wrapper cursor-max-id append-after-high-id
 CURSOR_DEST="$ARCHIVE_ROOT/cursor-max-id/$DEFAULT_FILE_NAME"
 [[ "$(jq -r '.messages | length' "$CURSOR_DEST")" == "4" ]] || { echo "expected cursor-max-id archive to contain four messages" >&2; exit 1; }
+
+mkdir -p "$ARCHIVE_ROOT/bootstrap-map"
+cp "$FIXTURE_DIR/append-existing.json" "$ARCHIVE_ROOT/bootstrap-map/$DEFAULT_FILE_NAME"
+[[ ! -f "$ARCHIVE_ROOT/bootstrap-map/.dce-meta/channel-map.json" ]] || { echo "bootstrap-map should start without channel map" >&2; exit 1; }
+run_wrapper bootstrap-map append
+BOOTSTRAP_DEST="$ARCHIVE_ROOT/bootstrap-map/$DEFAULT_FILE_NAME"
+bootstrap_mapped_dest=$(jq -r '."111"' "$ARCHIVE_ROOT/bootstrap-map/.dce-meta/channel-map.json")
+[[ "$bootstrap_mapped_dest" == "$BOOTSTRAP_DEST" ]] || { echo "expected bootstrap to register existing archive in channel map" >&2; exit 1; }
+[[ "$(jq -r '.messages | length' "$BOOTSTRAP_DEST")" == "3" ]] || { echo "expected bootstrap-map archive to append in place" >&2; exit 1; }
+
+# shellcheck disable=SC1091
+source "$REPO_ROOT/scripts/run-discord-scrape.sh"
+SHRINK_EXISTING="$TMP_DIR/shrink-existing.json"
+SHRINK_MERGED="$TMP_DIR/shrink-merged.json"
+cp "$FIXTURE_DIR/append-existing.json" "$SHRINK_EXISTING"
+jq '.messages = [.messages[0]]' "$SHRINK_EXISTING" >"$SHRINK_MERGED"
+if ( commit_merged_export "$SHRINK_EXISTING" "$SHRINK_MERGED" >/dev/null 2>&1 ); then
+  echo "commit_merged_export should reject shrinking archives" >&2
+  exit 1
+fi
+[[ "$(jq -r '.messages | length' "$SHRINK_EXISTING")" == "2" ]] || { echo "existing archive changed after rejected shrink merge" >&2; exit 1; }
 
 echo "U1: append-only merge test coverage passed"
 

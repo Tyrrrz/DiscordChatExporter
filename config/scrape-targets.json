@@ -33,11 +33,13 @@
     },
     {
       "name": "OpenKotOR_discord_msgs",
+      "enabled": false,
       "kind": "guild",
       "output_dir": "/home/brunner56/Documents/OpenKotOR_discord_msgs",
       "guild_ids": [],
       "channel_ids": [],
-      "guild_name_patterns": ["OpenKotOR_discord_msgs", "OpenKotOR"]
+      "guild_name_patterns": ["OpenKotOR_discord_msgs", "OpenKotOR"],
+      "disabled_reason": "No local archive directory exists; use openkotor_discord_msgs for the active OpenKotOR export folder."
     },
     {
       "name": "openkotor_discord_msgs",

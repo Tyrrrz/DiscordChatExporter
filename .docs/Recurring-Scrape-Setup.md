@@ -44,12 +44,19 @@ Create or edit `config/scrape-targets.json` with your channel selections:
 
 ### 2. Set Your Discord Token
 
-Copy the environment template and add your token:
+Either copy the environment template:
 
 ```bash
 cp scrape.env.example scrape.env
 # Edit scrape.env and set DISCORD_TOKEN=your-token-here
 # OR set DISCORD_TOKEN_FILE=/path/to/token/file for automatic token rotation
+```
+
+Or export the token directly in your shell (the host wrapper accepts this when `scrape.env` is absent):
+
+```bash
+export DISCORD_TOKEN="your-token-here"
+# optional: export DISCORD_TOKEN_FILE=/path/to/token/file
 ```
 
 ### 3. Run Preflight Validation
@@ -58,6 +65,12 @@ Before installing cron, validate your setup:
 
 ```bash
 export DISCORD_TOKEN="your-token"
+./scripts/run-discord-scrape-host.sh preflight --config config/scrape-targets.json
+```
+
+Or run inside the container workflow directly:
+
+```bash
 ./scripts/run-discord-scrape.sh preflight --config config/scrape-targets.json
 ```
 
@@ -140,6 +153,14 @@ archive_root/
 ```
 
 Existing exports are updated in-place with new messages appended and deduplicated by message ID.
+
+**In-place append contract**
+
+- Each target writes under its configured `output_dir` (for example `~/Documents/KotOR_discord_msgs/`).
+- Existing files named `Guild - Category - Channel [channel_id].json` are discovered automatically and updated in place.
+- On the first run against an existing archive tree, the wrapper bootstraps `output_dir/.dce-meta/channel-map.json` from those filenames so it never creates a parallel export file.
+- Incremental exports use DiscordChatExporter `--after` with the highest existing message id, then merge new messages by id.
+- A merge that would reduce message count is rejected; the on-disk archive is left unchanged.
 
 ## Troubleshooting
 

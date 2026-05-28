@@ -10,6 +10,8 @@ DOCKER_BIN="${DCE_DOCKER_BIN:-docker}"
 COMPOSE_BIN="${DCE_COMPOSE_BIN:-}"
 DOCKER_BIN_OVERRIDDEN=0
 REAUTH_COMMAND=""
+COMPOSE_ENV_FILE=""
+COMPOSE_ENV_TEMP=""
 
 if [[ -n "${DCE_DOCKER_BIN:-}" ]]; then
   DOCKER_BIN_OVERRIDDEN=1
@@ -30,6 +32,9 @@ Environment:
   DISCORD_TOKEN            Direct token value (highest precedence after refresh).
   DISCORD_TOKEN_FILE       Optional path to a file containing the Discord token.
   DCE_REAUTH_COMMAND       Optional absolute path to an executable reauth script under the repo root.
+
+Notes:
+  When $ENV_FILE is missing, exported DISCORD_TOKEN or DISCORD_TOKEN_FILE is used instead.
 EOF
 }
 
@@ -40,6 +45,12 @@ die() {
 
 require_program() {
   command -v "$1" >/dev/null 2>&1 || die "Required command '$1' is missing."
+}
+
+cleanup_compose_env() {
+  if [[ -n "$COMPOSE_ENV_TEMP" && -f "$COMPOSE_ENV_TEMP" ]]; then
+    rm -f "$COMPOSE_ENV_TEMP"
+  fi
 }
 
 load_env_file() {
@@ -73,6 +84,40 @@ load_env_file() {
   done <"$ENV_FILE"
 }
 
+write_compose_env_temp() {
+  COMPOSE_ENV_TEMP=$(mktemp "${TMPDIR:-/tmp}/dce-compose-env.XXXXXX")
+  COMPOSE_ENV_FILE="$COMPOSE_ENV_TEMP"
+
+  if [[ -n "${DISCORD_TOKEN:-}" ]]; then
+    printf 'DISCORD_TOKEN=%s\n' "$DISCORD_TOKEN" >"$COMPOSE_ENV_TEMP"
+  fi
+  if [[ -n "${DISCORD_TOKEN_FILE:-}" ]]; then
+    printf 'DISCORD_TOKEN_FILE=%s\n' "$DISCORD_TOKEN_FILE" >>"$COMPOSE_ENV_TEMP"
+  fi
+  if [[ -n "${DCE_REAUTH_COMMAND:-}" ]]; then
+    printf 'DCE_REAUTH_COMMAND=%s\n' "$DCE_REAUTH_COMMAND" >>"$COMPOSE_ENV_TEMP"
+  fi
+}
+
+prepare_compose_env() {
+  if [[ -f "$ENV_FILE" ]]; then
+    load_env_file
+    COMPOSE_ENV_FILE="$ENV_FILE"
+    return 0
+  fi
+
+  if [[ -z "${DISCORD_TOKEN:-}" ]]; then
+    load_token_from_file || true
+  fi
+
+  if [[ -n "${DISCORD_TOKEN:-}" || -n "${DISCORD_TOKEN_FILE:-}" ]]; then
+    write_compose_env_temp
+    return 0
+  fi
+
+  die "Missing env file: $ENV_FILE (copy scrape.env.example to scrape.env) or export DISCORD_TOKEN / DISCORD_TOKEN_FILE in the shell."
+}
+
 load_token_from_file() {
   local token_file=${DISCORD_TOKEN_FILE:-}
   [[ -n "$token_file" ]] || return 1
@@ -89,7 +134,7 @@ ensure_token_present() {
   if [[ -z "${DISCORD_TOKEN:-}" ]]; then
     load_token_from_file || true
   fi
-  [[ -n "${DISCORD_TOKEN:-}" ]] || die "DISCORD_TOKEN is not set. Set DISCORD_TOKEN or DISCORD_TOKEN_FILE in $ENV_FILE."
+  [[ -n "${DISCORD_TOKEN:-}" ]] || die "DISCORD_TOKEN is not set. Set DISCORD_TOKEN or DISCORD_TOKEN_FILE in $ENV_FILE or export it in the shell."
 }
 
 compose_run_args() {
@@ -101,7 +146,7 @@ compose_run_args() {
   if [[ -n "$COMPOSE_BIN" ]]; then
     _out=(
       "$COMPOSE_BIN"
-      --env-file "$ENV_FILE"
+      --env-file "$COMPOSE_ENV_FILE"
       -f "$COMPOSE_FILE"
       run
       -T
@@ -112,7 +157,7 @@ compose_run_args() {
   elif (( DOCKER_BIN_OVERRIDDEN == 0 )) && command -v docker-compose >/dev/null 2>&1; then
     _out=(
       docker-compose
-      --env-file "$ENV_FILE"
+      --env-file "$COMPOSE_ENV_FILE"
       -f "$COMPOSE_FILE"
       run
       -T
@@ -124,7 +169,7 @@ compose_run_args() {
     _out=(
       "$DOCKER_BIN"
       compose
-      --env-file "$ENV_FILE"
+      --env-file "$COMPOSE_ENV_FILE"
       -f "$COMPOSE_FILE"
       run
       -T
@@ -198,6 +243,13 @@ run_subcommand_with_retry() {
 
   printf 'Detected Discord auth failure. Refreshing token and retrying once...\n' >&2
   load_token_from_file || true
+  if [[ -f "$ENV_FILE" ]]; then
+    COMPOSE_ENV_FILE="$ENV_FILE"
+  elif [[ -n "${DISCORD_TOKEN:-}" ]]; then
+    rm -f "$COMPOSE_ENV_TEMP"
+    COMPOSE_ENV_TEMP=""
+    write_compose_env_temp
+  fi
   try_interactive_reauth || true
   ensure_token_present
 
@@ -215,6 +267,8 @@ run_subcommand_with_retry() {
 main() {
   local -a passthrough_args=()
   local subcommand=""
+
+  trap cleanup_compose_env EXIT
 
   while (($#)); do
     case "$1" in
@@ -265,7 +319,7 @@ main() {
   fi
 
   [[ -f "$COMPOSE_FILE" ]] || die "Missing compose file: $COMPOSE_FILE"
-  load_env_file
+  prepare_compose_env
   REAUTH_COMMAND="${DCE_REAUTH_COMMAND:-}"
 
   case "$subcommand" in

@@ -68,6 +68,21 @@ run_host() {
   "$REPO_ROOT/scripts/run-discord-scrape-host.sh" scrape --target demo
 }
 
+run_host_with_shell_token() {
+  local mode=$1
+  local missing_env_path=$2
+
+  DCE_REPO_ROOT="$REPO_ROOT" \
+  DCE_DOCKER_BIN="$FAKE_DOCKER" \
+  DCE_ENV_FILE="$missing_env_path" \
+  DCE_COMPOSE_FILE="$COMPOSE_FILE" \
+  DISCORD_TOKEN=dummy-token \
+  FAKE_DOCKER_CALL_COUNT="$CALL_COUNT" \
+  FAKE_DOCKER_TOKEN_FILE="$TOKEN_FILE" \
+  FAKE_DOCKER_MODE="$mode" \
+  "$REPO_ROOT/scripts/run-discord-scrape-host.sh" scrape --target demo
+}
+
 MALICIOUS_ENV="$TMP_DIR/malicious.env"
 MARKER_FILE="$TMP_DIR/marker"
 cat >"$MALICIOUS_ENV" <<EOF
@@ -93,5 +108,11 @@ if run_host auth-persistent-fail >/dev/null; then
   exit 1
 fi
 [[ "$(cat "$CALL_COUNT")" == "2" ]] || { echo "expected exactly one retry before final failure" >&2; exit 1; }
+
+MISSING_ENV="$TMP_DIR/missing-scrape.env"
+[[ ! -e "$MISSING_ENV" ]]
+printf '0' >"$CALL_COUNT"
+run_host_with_shell_token success "$MISSING_ENV" >/dev/null
+[[ "$(cat "$CALL_COUNT")" == "1" ]] || { echo "expected host wrapper to run with exported DISCORD_TOKEN when scrape.env is missing" >&2; exit 1; }
 
 echo "run-discord-scrape-host smoke test passed"

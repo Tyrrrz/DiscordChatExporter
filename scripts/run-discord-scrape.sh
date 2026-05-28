@@ -191,6 +191,45 @@ load_archive_seed_channel_ids() {
   done < <(find "$output_dir" -type f -name '*.json' ! -path '*/.dce-meta/*' -print0)
 }
 
+bootstrap_channel_map_from_archives() {
+  local output_dir=$1
+  local map_file file_path file_name channel_id mapped_path embedded_channel_id bootstrapped=0
+
+  [[ -d "$output_dir" ]] || return 0
+
+  map_file=$(get_channel_map_path "$output_dir")
+  ensure_json_file "$map_file"
+
+  while IFS= read -r -d '' file_path; do
+    file_name=$(basename "$file_path")
+    if [[ ! "$file_name" =~ \[([0-9]{16,22})\]\.json$ ]]; then
+      continue
+    fi
+
+    channel_id="${BASH_REMATCH[1]}"
+    mapped_path=$(jq -r --arg channel_id "$channel_id" '.[$channel_id] // empty' "$map_file")
+    if [[ -n "$mapped_path" ]]; then
+      continue
+    fi
+
+    path_is_within_root "$output_dir" "$file_path" || continue
+    jq empty "$file_path" >/dev/null 2>&1 || continue
+
+    embedded_channel_id=$(jq -r '.channel.id // empty' "$file_path")
+    if [[ -n "$embedded_channel_id" && "$embedded_channel_id" != "$channel_id" ]]; then
+      log "Skipping bootstrap for '$file_path': filename channel id $channel_id does not match export metadata ($embedded_channel_id)."
+      continue
+    fi
+
+    update_channel_map "$map_file" "$channel_id" "$file_path"
+    bootstrapped=$((bootstrapped + 1))
+  done < <(find "$output_dir" -type f -name '*.json' ! -path '*/.dce-meta/*' -print0)
+
+  if (( bootstrapped > 0 )); then
+    log "Bootstrapped $bootstrapped channel map entries from existing archives under $output_dir."
+  fi
+}
+
 parse_two_column_listing() {
   local line id name
 
@@ -340,6 +379,24 @@ last_message_id() {
 message_count() {
   local export_path=$1
   jq -r '(.messages | length) // 0' "$export_path"
+}
+
+commit_merged_export() {
+  local destination_path=$1
+  local merged_path=$2
+  local before_count after_count atomic_path
+
+  before_count=$(message_count "$destination_path")
+  after_count=$(message_count "$merged_path")
+  if (( after_count < before_count )); then
+    die "Merge would shrink archive '$destination_path' ($before_count -> $after_count messages). Existing file was not modified."
+  fi
+
+  atomic_path=$(mktemp -p "$(dirname "$destination_path")" ".$(basename "$destination_path").dce-replace.XXXXXX")
+  cp "$merged_path" "$atomic_path"
+  jq empty "$atomic_path" >/dev/null 2>&1 || die "Merged export is not valid JSON: $atomic_path"
+  assert_export_channel_identity "$atomic_path" "$(channel_id_from_export "$destination_path")"
+  mv -f "$atomic_path" "$destination_path"
 }
 
 merge_exports() {
@@ -553,6 +610,7 @@ preflight_target() {
 
   target_name=$(jq -r '.name' <<<"$target_json")
   output_dir=$(jq -r '.output_dir' <<<"$target_json")
+  bootstrap_channel_map_from_archives "$output_dir"
 
   mapfile -t channel_ids < <(resolve_target_channels "$target_json" "$defaults_json")
   if (( ${#channel_ids[@]} == 0 )); then
@@ -582,6 +640,7 @@ scrape_target() {
   target_name=$(jq -r '.name' <<<"$target_json")
   output_dir=$(jq -r '.output_dir' <<<"$target_json")
   mkdir -p "$output_dir"
+  bootstrap_channel_map_from_archives "$output_dir"
 
   mapfile -t channel_ids < <(resolve_target_channels "$target_json" "$defaults_json")
   if (( ${#channel_ids[@]} == 0 )); then
@@ -644,7 +703,7 @@ scrape_target() {
     [[ -s "$temp_merged" ]] || die "Merged export is empty for channel $channel_id."
     jq empty "$temp_merged" >/dev/null 2>&1 || die "Merged export is not valid JSON: $temp_merged"
     assert_export_channel_identity "$temp_merged" "$channel_id"
-    mv "$temp_merged" "$destination_path"
+    commit_merged_export "$destination_path" "$temp_merged"
     rm -rf "$temp_dir"
   done
 
@@ -795,4 +854,6 @@ main() {
   esac
 }
 
-main "$@"
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  main "$@"
+fi

@@ -59,6 +59,23 @@ export DISCORD_TOKEN="your-token-here"
 # optional: export DISCORD_TOKEN_FILE=/path/to/token/file
 ```
 
+To materialize `scrape.env` from exported credentials (mode `600`, no manual editing):
+
+```bash
+export DISCORD_TOKEN="your-token-here"
+./scripts/setup-scrape-auth.sh
+```
+
+### 2b. Verify existing ~/Documents archives
+
+Before the first incremental run, confirm each enabled target points at the correct on-disk server folder and already has seeded channel JSON exports (the scraper appends in place and bootstraps `.dce-meta/channel-map.json` from these files):
+
+```bash
+./scripts/verify-documents-archives.sh --config config/scrape-targets.json
+```
+
+Each enabled target should show a non-zero **JSON** count and **SEEDED** channel IDs under `/home/brunner56/Documents/<server>/`.
+
 ### 3. Run Preflight Validation
 
 Before installing cron, validate your setup:

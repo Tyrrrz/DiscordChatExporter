@@ -50,6 +50,30 @@ jobs:
         if: ${{ failure() && steps.verify.outcome == 'failure' }}
         run: echo "::error title=Bad formatting::Formatting issues detected. Please build the solution locally to fix them."
 
+  recurring-scrape-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Run recurring scrape smoke tests
+        run: |
+          chmod +x scripts/*.sh scripts/tests/*.sh
+          ./scripts/tests/run-discord-scrape-smoke.sh
+          ./scripts/tests/error-path-smoke.sh
+          ./scripts/tests/cron-idempotency-smoke.sh
+          ./scripts/tests/end-to-end-preflight-smoke.sh
+          ./scripts/tests/setup-cron-smoke.sh
+          ./scripts/tests/run-discord-scrape-host-smoke.sh
+
   test:
     # Tests need access to secrets, so we can't run them against PRs because of limited trust
     if: ${{ github.event_name != 'pull_request' }}

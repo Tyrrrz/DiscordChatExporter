@@ -331,7 +331,10 @@ last_message_id() {
   local export_path=$1
 
   [[ -f "$export_path" ]] || return 0
-  jq -r '(.messages | last | .id) // empty' "$export_path"
+  jq -r '
+    (.messages // [])
+    | if length == 0 then empty else (max_by(.id) | .id) end
+  ' "$export_path"
 }
 
 message_count() {

@@ -94,6 +94,14 @@ cat >"$CONFIG_PATH" <<JSON
       "channel_ids": ["111"],
       "guild_ids": [],
       "guild_name_patterns": []
+    },
+    {
+      "name": "cursor-max-id",
+      "kind": "guild",
+      "output_dir": "$ARCHIVE_ROOT/cursor-max-id",
+      "channel_ids": ["111"],
+      "guild_ids": [],
+      "guild_name_patterns": []
     }
   ]
 }
@@ -111,13 +119,22 @@ shift || true
 case "$subcommand" in
   export)
     output=""
+    after=""
     while (($#)); do
       case "$1" in
         --output)
           output=$2
           shift 2
           ;;
-        --channel|--format|--after)
+        --after)
+          after=$2
+          if [[ -n "${FAKE_DCE_EXPECT_AFTER:-}" && "$after" != "${FAKE_DCE_EXPECT_AFTER}" ]]; then
+            echo "unexpected --after value: $after (expected ${FAKE_DCE_EXPECT_AFTER})" >&2
+            exit 1
+          fi
+          shift 2
+          ;;
+        --channel|--format)
           shift 2
           ;;
         *)
@@ -129,6 +146,7 @@ case "$subcommand" in
     case "$mode" in
       initial) cp "$fixture_dir/append-existing.json" "$output" ;;
       append) cp "$fixture_dir/append-incremental.json" "$output" ;;
+      append-after-high-id) cp "$fixture_dir/append-after-high-id.json" "$output" ;;
       partial-write) cp "$fixture_dir/append-partial-write.json" "$output" ;;
       concurrent-conflict) cp "$fixture_dir/append-concurrent-conflict.json" "$output" ;;
       wrong-channel) cp "$fixture_dir/wrong-channel.json" "$output" ;;
@@ -153,6 +171,7 @@ run_wrapper() {
   DCE_FALLBACK_CONFIG="$CONFIG_PATH" \
   FAKE_DCE_FIXTURE_DIR="$FIXTURE_DIR" \
   FAKE_DCE_MODE="$mode" \
+  FAKE_DCE_EXPECT_AFTER="${FAKE_DCE_EXPECT_AFTER:-}" \
   "$REPO_ROOT/scripts/run-discord-scrape.sh" scrape --target "$target_name"
 }
 
@@ -261,6 +280,12 @@ IDEMPOTENT_CHECKSUM_2=$(sha256sum "$IDEMPOTENT_DEST" | awk '{print $1}')
 [[ "$(jq -r '.guild.id' "$DEST")" == "222" ]] || { echo "expected guild id to be preserved after merge" >&2; exit 1; }
 [[ "$(jq -r '.channel.id' "$DEST")" == "111" ]] || { echo "expected channel id to be preserved after merge" >&2; exit 1; }
 [[ "$(jq -r '.messages[0] | has("id") and has("timestamp") and has("content")' "$DEST")" == "true" ]] || { echo "expected message structure to be complete after merge" >&2; exit 1; }
+
+mkdir -p "$ARCHIVE_ROOT/cursor-max-id"
+cp "$FIXTURE_DIR/append-unordered-cursor.json" "$ARCHIVE_ROOT/cursor-max-id/$DEFAULT_FILE_NAME"
+FAKE_DCE_EXPECT_AFTER=999 run_wrapper cursor-max-id append-after-high-id
+CURSOR_DEST="$ARCHIVE_ROOT/cursor-max-id/$DEFAULT_FILE_NAME"
+[[ "$(jq -r '.messages | length' "$CURSOR_DEST")" == "4" ]] || { echo "expected cursor-max-id archive to contain four messages" >&2; exit 1; }
 
 echo "U1: append-only merge test coverage passed"
 

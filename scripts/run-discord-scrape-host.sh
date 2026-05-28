@@ -29,7 +29,7 @@ Options:
 Environment:
   DISCORD_TOKEN            Direct token value (highest precedence after refresh).
   DISCORD_TOKEN_FILE       Optional path to a file containing the Discord token.
-  DCE_REAUTH_COMMAND       Optional command to run for interactive/manual reauth when auth fails.
+  DCE_REAUTH_COMMAND       Optional absolute path to an executable reauth script under the repo root.
 EOF
 }
 
@@ -92,13 +92,14 @@ ensure_token_present() {
   [[ -n "${DISCORD_TOKEN:-}" ]] || die "DISCORD_TOKEN is not set. Set DISCORD_TOKEN or DISCORD_TOKEN_FILE in $ENV_FILE."
 }
 
-compose_run_command() {
-  local subcommand=$1
-  shift
-  local -a command_parts
+compose_run_args() {
+  local -n _out=$1
+  local subcommand=$2
+  shift 2
 
+  _out=()
   if [[ -n "$COMPOSE_BIN" ]]; then
-    command_parts=(
+    _out=(
       "$COMPOSE_BIN"
       --env-file "$ENV_FILE"
       -f "$COMPOSE_FILE"
@@ -109,7 +110,7 @@ compose_run_command() {
       "$subcommand"
     )
   elif (( DOCKER_BIN_OVERRIDDEN == 0 )) && command -v docker-compose >/dev/null 2>&1; then
-    command_parts=(
+    _out=(
       docker-compose
       --env-file "$ENV_FILE"
       -f "$COMPOSE_FILE"
@@ -120,7 +121,7 @@ compose_run_command() {
       "$subcommand"
     )
   else
-    command_parts=(
+    _out=(
       "$DOCKER_BIN"
       compose
       --env-file "$ENV_FILE"
@@ -133,8 +134,26 @@ compose_run_command() {
     )
   fi
 
-  command_parts+=("$@")
-  printf '%q ' "${command_parts[@]}"
+  _out+=("$@")
+}
+
+resolve_reauth_command() {
+  local candidate=$1
+  local resolved_dir resolved_path
+
+  [[ -n "$candidate" ]] || return 1
+  [[ "$candidate" == /* ]] || die "DCE_REAUTH_COMMAND must be an absolute path to an executable script under the repository."
+
+  resolved_dir=$(cd "$(dirname "$candidate")" && pwd -P)
+  resolved_path="$resolved_dir/$(basename "$candidate")"
+  [[ -f "$resolved_path" ]] || die "DCE_REAUTH_COMMAND does not exist: $candidate"
+  [[ -x "$resolved_path" ]] || die "DCE_REAUTH_COMMAND is not executable: $candidate"
+  case "$resolved_path" in
+    "$REPO_ROOT"/*) ;;
+    *) die "DCE_REAUTH_COMMAND must be a script inside the repository root." ;;
+  esac
+
+  printf '%s\n' "$resolved_path"
 }
 
 is_discord_auth_failure() {
@@ -145,22 +164,26 @@ is_discord_auth_failure() {
 }
 
 try_interactive_reauth() {
+  local reauth_script
+
   [[ -n "$REAUTH_COMMAND" ]] || return 1
   [[ -t 0 && -t 1 ]] || return 1
+  reauth_script=$(resolve_reauth_command "$REAUTH_COMMAND")
   printf 'Auth failed; running DCE_REAUTH_COMMAND...\n' >&2
-  bash -lc "$REAUTH_COMMAND"
+  "$reauth_script"
 }
 
 run_subcommand_with_retry() {
   local subcommand=$1
   shift
-  local run_command output_file
+  local -a run_args=()
+  local output_file
 
   ensure_token_present
   output_file=$(mktemp "${TMPDIR:-/tmp}/dce-host-run.XXXXXX.log")
 
-  run_command=$(compose_run_command "$subcommand" "$@")
-  if eval "$run_command" >"$output_file" 2>&1; then
+  compose_run_args run_args "$subcommand" "$@"
+  if "${run_args[@]}" >"$output_file" 2>&1; then
     cat "$output_file"
     rm -f "$output_file"
     return 0
@@ -178,7 +201,7 @@ run_subcommand_with_retry() {
   try_interactive_reauth || true
   ensure_token_present
 
-  if eval "$run_command" >"$output_file" 2>&1; then
+  if "${run_args[@]}" >"$output_file" 2>&1; then
     cat "$output_file"
     rm -f "$output_file"
     return 0

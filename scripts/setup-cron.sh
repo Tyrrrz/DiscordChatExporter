@@ -97,25 +97,37 @@ strip_existing_job() {
   ' <<<"$existing_crontab"
 }
 
-build_target_args() {
-  local -a command_parts
+validate_cron_expression() {
+  local expr=$1
+  local -a fields=()
+  local field
+
+  read -r -a fields <<<"$expr"
+  ((${#fields[@]} == 5)) || die "--cron must contain exactly five fields (minute hour day month weekday)."
+
+  for field in "${fields[@]}"; do
+    [[ -n "$field" ]] || die "Empty field in --cron expression."
+    [[ "$field" =~ ^[0-9*,/-]+$ ]] || die "Invalid cron field '$field' in --cron expression."
+  done
+}
+
+append_target_args() {
+  local -n _out=$1
 
   local target
   for target in "${TARGETS[@]}"; do
-    command_parts+=(--target "$target")
+    _out+=(--target "$target")
   done
 
   local guild_id
   for guild_id in "${GUILDS[@]}"; do
-    command_parts+=(--guild "$guild_id")
+    _out+=(--guild "$guild_id")
   done
 
   local channel_id
   for channel_id in "${CHANNELS[@]}"; do
-    command_parts+=(--channel "$channel_id")
+    _out+=(--channel "$channel_id")
   done
-
-  printf '%q ' "${command_parts[@]}"
 }
 
 ensure_target_directories() {
@@ -162,12 +174,17 @@ validate_targets() {
 }
 
 run_preflight() {
-  local preflight_command target_args
+  local -a preflight_args=()
 
   [[ -f "$ENV_FILE" ]] || die "Missing env file: $ENV_FILE"
-  target_args=$(build_target_args)
-  preflight_command="$(printf '%q ' "$HOST_RUNNER") --env-file $(printf '%q' "$ENV_FILE") --compose-file $(printf '%q' "$COMPOSE_FILE") preflight ${target_args}"
-  eval "$preflight_command"
+  preflight_args=(
+    "$HOST_RUNNER"
+    --env-file "$ENV_FILE"
+    --compose-file "$COMPOSE_FILE"
+    preflight
+  )
+  append_target_args preflight_args
+  "${preflight_args[@]}"
 }
 
 main() {
@@ -263,6 +280,7 @@ main() {
 
   local cron_line
   if [[ -n "$CRON_EXPRESSION" ]]; then
+    validate_cron_expression "$CRON_EXPRESSION"
     cron_line=$CRON_EXPRESSION
   else
     cron_line=$(cron_from_schedule "$INTERVAL" "$RUN_AT")
@@ -270,7 +288,8 @@ main() {
 
   local begin_marker="# BEGIN ${JOB_NAME}"
   local end_marker="# END ${JOB_NAME}"
-  local current_crontab cleaned_crontab scrape_command target_args job_line lock_prefix
+  local current_crontab cleaned_crontab scrape_command job_line lock_prefix
+  local -a scrape_args=()
   current_crontab=$("$CRONTAB_BIN" -l 2>/dev/null || true)
   cleaned_crontab=$(strip_existing_job "$current_crontab" "$begin_marker" "$end_marker")
 
@@ -291,8 +310,14 @@ main() {
     run_preflight
   fi
 
-  target_args=$(build_target_args)
-  scrape_command="$(printf '%q ' "$HOST_RUNNER") --env-file $(printf '%q' "$ENV_FILE") --compose-file $(printf '%q' "$COMPOSE_FILE") scrape ${target_args}"
+  scrape_args=(
+    "$HOST_RUNNER"
+    --env-file "$ENV_FILE"
+    --compose-file "$COMPOSE_FILE"
+    scrape
+  )
+  append_target_args scrape_args
+  scrape_command=$(printf '%q ' "${scrape_args[@]}")
   if command -v flock >/dev/null 2>&1; then
     lock_prefix=$(printf '%q ' "$(command -v flock)" "-n" "/tmp/${JOB_NAME}.lock")
   else

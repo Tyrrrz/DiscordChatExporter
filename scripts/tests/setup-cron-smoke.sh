@@ -129,4 +129,12 @@ cmp -s "$CRONTAB_FILE" "$TMP_DIR/crontab-before-preflight-fail.txt" || {
   exit 1
 }
 
+if run_setup --cron "0 2 * * *; touch /tmp/evil" --skip-preflight 2>/dev/null; then
+  echo "expected invalid --cron expression to fail validation" >&2
+  exit 1
+fi
+
+preview_custom_cron=$(run_setup --cron "15 03 * * 0" --skip-preflight --dry-run)
+grep -q '^15 03 \* \* 0 ' <<<"$preview_custom_cron" || { echo "expected validated custom cron in dry-run output" >&2; exit 1; }
+
 echo "setup-cron smoke test passed"

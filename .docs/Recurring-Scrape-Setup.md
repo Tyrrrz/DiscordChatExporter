@@ -76,6 +76,21 @@ Before the first incremental run, confirm each enabled target points at the corr
 
 Each enabled target should show a non-zero **JSON** count and **SEEDED** channel IDs under `/home/brunner56/Documents/<server>/`.
 
+**One-command workflow** (verify → preflight → incremental scrape):
+
+```bash
+export DISCORD_TOKEN="your-token"   # or place token in ~/.config/discord-scrape/token
+./scripts/run-documents-scrape.sh
+./scripts/run-documents-scrape.sh --target KotOR_discord_msgs   # single server
+./scripts/run-documents-scrape.sh --dry-run                     # archives only, no Discord
+```
+
+After a scrape, prove archives only grew in place:
+
+```bash
+./scripts/prove-incremental-append.sh --target KotOR_discord_msgs
+```
+
 ### 3. Run Preflight Validation
 
 Before installing cron, validate your setup:

@@ -107,6 +107,7 @@ prepare_compose_env() {
   fi
 
   if [[ -z "${DISCORD_TOKEN:-}" ]]; then
+    discover_token_file || true
     load_token_from_file || true
   fi
 
@@ -115,7 +116,7 @@ prepare_compose_env() {
     return 0
   fi
 
-  die "Missing env file: $ENV_FILE (copy scrape.env.example to scrape.env) or export DISCORD_TOKEN / DISCORD_TOKEN_FILE in the shell."
+  die "Missing env file: $ENV_FILE (copy scrape.env.example to scrape.env), export DISCORD_TOKEN / DISCORD_TOKEN_FILE, or place a token at $REPO_ROOT/.discord-token or ~/.config/discord-scrape/token."
 }
 
 load_token_from_file() {
@@ -130,11 +131,32 @@ load_token_from_file() {
   return 0
 }
 
+discover_token_file() {
+  local candidate
+
+  if [[ -n "${DISCORD_TOKEN_FILE:-}" && -f "${DISCORD_TOKEN_FILE}" ]]; then
+    return 0
+  fi
+
+  for candidate in \
+    "$REPO_ROOT/.discord-token" \
+    "$HOME/.config/discord-scrape/token" \
+    "$HOME/.config/discord-token"; do
+    if [[ -f "$candidate" ]]; then
+      export DISCORD_TOKEN_FILE="$candidate"
+      return 0
+    fi
+  done
+
+  return 1
+}
+
 ensure_token_present() {
   if [[ -z "${DISCORD_TOKEN:-}" ]]; then
+    discover_token_file || true
     load_token_from_file || true
   fi
-  [[ -n "${DISCORD_TOKEN:-}" ]] || die "DISCORD_TOKEN is not set. Set DISCORD_TOKEN or DISCORD_TOKEN_FILE in $ENV_FILE or export it in the shell."
+  [[ -n "${DISCORD_TOKEN:-}" ]] || die "DISCORD_TOKEN is not set. Set DISCORD_TOKEN or DISCORD_TOKEN_FILE in $ENV_FILE, export it in the shell, or place a token at $REPO_ROOT/.discord-token or ~/.config/discord-scrape/token."
 }
 
 compose_run_args() {

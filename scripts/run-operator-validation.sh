@@ -69,7 +69,9 @@ audit_targets() {
     run_step "audit-archive-json ($TARGET)" "$AUDIT_JSON" --config "$CONFIG_PATH" --target "$TARGET"
     return
   fi
-  while IFS= read -r name; do
+  local -a target_names=()
+  mapfile -t target_names < <(enabled_targets)
+  for name in "${target_names[@]}"; do
     [[ -n "$name" ]] || continue
     if run_step "audit-archive-json ($name)" "$AUDIT_JSON" --config "$CONFIG_PATH" --target "$name"; then
       continue
@@ -78,17 +80,19 @@ audit_targets() {
     if (( CONTINUE_ON_ERROR == 0 )); then
       return 1
     fi
-  done < <(enabled_targets)
+  done
   (( failures == 0 ))
 }
 
 scrape_per_target() {
   local name failures=0 ok=0
   local -a scrape_args=(--config "$CONFIG_PATH")
+  local -a target_names=()
   if (( DRY_RUN )); then
     scrape_args+=(--dry-run)
   fi
-  while IFS= read -r name; do
+  mapfile -t target_names < <(enabled_targets)
+  for name in "${target_names[@]}"; do
     [[ -n "$name" ]] || continue
     log_step "Per-target pass: $name"
     if ! run_step "run-documents-scrape ($name)" "$DOCUMENTS_SCRAPE" "${scrape_args[@]}" --target "$name"; then
@@ -110,7 +114,7 @@ scrape_per_target() {
         return 1
       fi
     fi
-  done < <(enabled_targets)
+  done
   log_step "Per-target summary: $ok succeeded, $failures failed"
   (( failures == 0 ))
 }

@@ -15,6 +15,10 @@
   - [Windows](Scheduling-Windows.md)
   - [macOS](Scheduling-MacOS.md)
   - [Linux](Scheduling-Linux.md)
+- Recurring append-only scrape (Docker + cron, this fork):
+  - [Setup guide](Recurring-Scrape-Setup.md)
+  - [Troubleshooting](Recurring-Scrape-Troubleshooting.md)
+  - [Merge readiness](../docs/recurring-scrape-merge-readiness.md)
 
 ## Video tutorial
 

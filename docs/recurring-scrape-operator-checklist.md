@@ -39,4 +39,6 @@ Validate scripts after changes:
 ./scripts/run-all-smokes.sh
 ```
 
+Merge / review summary: [recurring-scrape-merge-readiness.md](recurring-scrape-merge-readiness.md)
+
 Full detail: [.docs/Recurring-Scrape-Setup.md](../.docs/Recurring-Scrape-Setup.md)

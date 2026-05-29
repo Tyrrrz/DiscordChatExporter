@@ -75,4 +75,8 @@ DCE_REPO_ROOT="$REPO_ROOT" \
 
 "$REPO_ROOT/scripts/run-documents-scrape.sh" --dry-run --config "$TMP_DIR/config.json" >/dev/null
 
+DCE_MIN_FREE_MB=0 DCE_CONFIG_FILE="$TMP_DIR/config.json" \
+  "$REPO_ROOT/scripts/verify-operator-ready.sh" --disk-only --config "$TMP_DIR/config.json" \
+  | grep -q 'disk-only: ok'
+
 echo "documents-scrape-smoke: ok"

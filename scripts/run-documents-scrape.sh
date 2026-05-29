@@ -9,6 +9,7 @@ CONTAINER_CONFIG="${DCE_CONTAINER_CONFIG:-/config/scrape-targets.json}"
 HOST_RUNNER="$REPO_ROOT/scripts/run-discord-scrape-host.sh"
 DISCOVER_TOKEN="$REPO_ROOT/scripts/discover-discord-token.sh"
 VERIFY_SCRIPT="$REPO_ROOT/scripts/verify-documents-archives.sh"
+VERIFY_READY="$REPO_ROOT/scripts/verify-operator-ready.sh"
 SETUP_AUTH="$REPO_ROOT/scripts/setup-scrape-auth.sh"
 
 usage() {
@@ -73,6 +74,8 @@ main() {
     printf 'Dry run complete: archive paths verified. Export DISCORD_TOKEN or create a token file, then rerun without --dry-run.\n'
     exit 0
   fi
+
+  "$VERIFY_READY" --disk-only --config "$CONFIG_PATH"
 
   if [[ -n "${DISCORD_TOKEN:-}" || -n "${DISCORD_TOKEN_FILE:-}" ]]; then
     "$SETUP_AUTH" 2>/dev/null || true

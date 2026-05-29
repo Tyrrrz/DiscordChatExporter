@@ -10,14 +10,16 @@ HOST_RUNNER="$REPO_ROOT/scripts/run-discord-scrape-host.sh"
 VERIFY_ARCHIVES="$REPO_ROOT/scripts/verify-documents-archives.sh"
 DISCOVER="$REPO_ROOT/scripts/discover-discord-token.sh"
 PREFLIGHT_TARGET=""
+DISK_ONLY=0
 
 usage() {
   cat <<EOF
 Usage:
-  $(basename "$0") [--config PATH] [--preflight TARGET]
+  $(basename "$0") [--config PATH] [--disk-only] [--preflight TARGET]
 
 Check host prerequisites for recurring scrape:
   jq, container compose, Discord auth, valid config, seeded archives.
+With --disk-only, only validate config JSON and archive-root free space (DCE_MIN_FREE_MB).
 With --preflight TARGET, also run Discord preflight for one target.
 EOF
 }
@@ -103,6 +105,10 @@ main() {
         CONFIG_PATH=$2
         shift 2
         ;;
+      --disk-only)
+        DISK_ONLY=1
+        shift
+        ;;
       --preflight)
         [[ $# -ge 2 ]] || die "Missing value for --preflight."
         PREFLIGHT_TARGET=$2
@@ -121,6 +127,12 @@ main() {
   require_command jq
   [[ -f "$CONFIG_PATH" ]] || die "Missing config: $CONFIG_PATH"
   jq empty "$CONFIG_PATH" >/dev/null 2>&1 || die "Invalid JSON config: $CONFIG_PATH"
+
+  if (( DISK_ONLY == 1 )); then
+    require_archive_disk_space
+    printf 'disk-only: ok (config %s)\n' "$CONFIG_PATH"
+    exit 0
+  fi
 
   printf 'Operator readiness checks\n'
   printf '=========================\n'

@@ -74,6 +74,8 @@ jobs:
           ./scripts/tests/setup-cron-smoke.sh
           ./scripts/tests/run-discord-scrape-host-smoke.sh
           ./scripts/tests/gh-approve-pr-runs-smoke.sh
+          ./scripts/tests/documents-scrape-smoke.sh
+          ./scripts/tests/verify-documents-auth-smoke.sh
 
   test:
     # Tests need access to secrets, so we can't run them against PRs because of limited trust

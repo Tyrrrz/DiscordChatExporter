@@ -306,6 +306,33 @@ Space requirements:
 - **Large channels**: 50-100 MB per year
 - **Full guild**: 500 MB - several GB depending on activity
 
+## Smoke test validation
+
+Run the full local suite from the repo root (requires `jq`; `container-smoke.sh` also needs Docker/Podman and a writable `archive_root` from `config/scrape-targets.json`):
+
+```bash
+chmod +x scripts/*.sh scripts/tests/*.sh
+for script in scripts/tests/*.sh; do
+  echo "==> $script"
+  "$script"
+done
+```
+
+| Script | CI (`recurring-scrape-smoke`) | Notes |
+|--------|-------------------------------|-------|
+| `run-discord-scrape-smoke.sh` | yes | Append-only merge coverage |
+| `error-path-smoke.sh` | yes | Failure paths |
+| `cron-idempotency-smoke.sh` | yes | Cron installer idempotency |
+| `end-to-end-preflight-smoke.sh` | yes | Preflight wiring |
+| `setup-cron-smoke.sh` | yes | Cron setup dry-run |
+| `run-discord-scrape-host-smoke.sh` | yes | Host wrapper |
+| `gh-approve-pr-runs-smoke.sh` | yes | Fork PR workflow helper |
+| `documents-scrape-smoke.sh` | yes | Unified Documents workflow |
+| `verify-documents-auth-smoke.sh` | yes | Archive verify + auth bootstrap |
+| `container-smoke.sh` | no (local) | Docker build + `help` / `list-targets` |
+
+GitHub Actions runs the CI-marked scripts on every push/PR via `.github/workflows/main.yml` job `recurring-scrape-smoke`.
+
 ## Next Steps
 
 - [Troubleshooting common issues](Recurring-Scrape-Troubleshooting.md)

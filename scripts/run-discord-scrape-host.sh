@@ -12,6 +12,7 @@ DOCKER_BIN_OVERRIDDEN=0
 REAUTH_COMMAND=""
 COMPOSE_ENV_FILE=""
 COMPOSE_ENV_TEMP=""
+VERIFY_READY="$REPO_ROOT/scripts/verify-operator-ready.sh"
 
 if [[ -n "${DCE_DOCKER_BIN:-}" ]]; then
   DOCKER_BIN_OVERRIDDEN=1
@@ -259,6 +260,48 @@ resolve_reauth_command() {
   printf '%s\n' "$resolved_path"
 }
 
+resolve_host_config_path() {
+  local -a args=("$@")
+  local i=0 cfg="$REPO_ROOT/config/scrape-targets.json"
+
+  while (( i < ${#args[@]} )); do
+    if [[ "${args[i]}" == "--config" ]]; then
+      cfg="${args[i + 1]:-}"
+      case "$cfg" in
+        /config/*)
+          cfg="$REPO_ROOT/config/scrape-targets.json"
+          ;;
+        ./*)
+          cfg="$REPO_ROOT/${cfg#./}"
+          ;;
+        /*) ;;
+        *)
+          cfg="$REPO_ROOT/$cfg"
+          ;;
+      esac
+      break
+    fi
+    i=$((i + 1))
+  done
+
+  printf '%s\n' "$cfg"
+}
+
+run_disk_preflight_if_enabled() {
+  local -a args=("$@")
+  local cfg
+
+  if [[ "${DCE_SKIP_DISK_CHECK:-0}" == 1 ]]; then
+    return 0
+  fi
+  if [[ ! -x "$VERIFY_READY" ]]; then
+    return 0
+  fi
+
+  cfg=$(resolve_host_config_path "${args[@]}")
+  "$VERIFY_READY" --disk-only --config "$cfg"
+}
+
 is_discord_auth_failure() {
   local output_file=$1
   grep -Eqi \
@@ -381,6 +424,7 @@ main() {
   [[ -f "$COMPOSE_FILE" ]] || die "Missing compose file: $COMPOSE_FILE"
   prepare_compose_env
   REAUTH_COMMAND="${DCE_REAUTH_COMMAND:-}"
+  run_disk_preflight_if_enabled "${passthrough_args[@]}"
 
   case "$subcommand" in
     preflight|scrape)

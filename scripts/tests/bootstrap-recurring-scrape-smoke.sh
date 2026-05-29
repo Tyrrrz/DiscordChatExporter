@@ -41,9 +41,15 @@ cat >"$TMP_DIR/config.json" <<JSON
 }
 JSON
 
-"$BOOTSTRAP" --dry-run --config "$TMP_DIR/config.json" | grep -q 'Dry run complete' || {
-  printf 'bootstrap --dry-run did not complete\n' >&2
+set +e
+bootstrap_output=$("$BOOTSTRAP" --dry-run --config "$TMP_DIR/config.json" 2>&1)
+bootstrap_status=$?
+set -e
+
+if [[ "$bootstrap_status" -ne 0 ]] || ! grep -q 'Dry run complete' <<<"$bootstrap_output"; then
+  printf 'bootstrap --dry-run failed (status=%s)\n' "$bootstrap_status" >&2
+  printf '%s\n' "$bootstrap_output" >&2
   exit 1
-}
+fi
 
 printf 'bootstrap-recurring-scrape-smoke: ok\n'

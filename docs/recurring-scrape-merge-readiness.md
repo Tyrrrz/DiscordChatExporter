@@ -56,7 +56,8 @@ df -h ~/Documents /home/brunner56/Downloads/DiscordChatExporter
 ```
 
 Override threshold: `DCE_MIN_FREE_MB=2048 ./scripts/verify-operator-ready.sh`  
-Skip check (smokes only): `DCE_MIN_FREE_MB=0`
+Skip check (smokes only): `DCE_MIN_FREE_MB=0`  
+Also enforced by `run-documents-scrape.sh`, `run-discord-scrape-host.sh` (cron), and `run-operator-validation.sh`.
 
 ## CI note (fork PRs)
 

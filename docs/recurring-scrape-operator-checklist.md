@@ -9,6 +9,7 @@ Use this after cloning or opening the **source** repo (`DiscordChatExporter`, no
 3. `./scripts/bootstrap-recurring-scrape.sh` — verify archives, build image, preflight Discord.
 4. `./scripts/run-documents-scrape.sh` — first incremental append-only scrape.
 5. `./scripts/prove-incremental-append.sh --target <name>` — optional grow-only proof.
+6. `./scripts/audit-archive-json.sh` — optional; lists invalid JSON before cron runs.
 
 ## Monthly automation
 

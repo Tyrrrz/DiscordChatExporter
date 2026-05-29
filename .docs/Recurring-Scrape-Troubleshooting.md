@@ -263,14 +263,24 @@ Not this:
 
 **Solutions:**
 
-1. **Validate the file:**
+1. **Audit all archives for a target:**
+   ```bash
+   ./scripts/audit-archive-json.sh --target target-name
+   ```
+
+2. **Validate one file:**
    ```bash
    jq empty archive-file.json
    ```
 
-2. **If corrupted, restore from backup** (if available)
+3. **Truncated export (parse error mid-message):** salvage drops the incomplete tail and keeps earlier messages. A timestamped `.bak.*` backup is created first:
+   ```bash
+   ./scripts/salvage-truncated-export.sh path/to/export.json
+   ```
 
-3. **If no backup, move the archive aside and re-export:**
+4. **If corrupted beyond salvage, restore from backup** (if available)
+
+5. **If no backup, move the archive aside and re-export:**
    ```bash
    mv archive-file.json archive-file.json.bak
    ./scripts/run-discord-scrape.sh scrape --target target-name

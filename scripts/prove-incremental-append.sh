@@ -58,6 +58,10 @@ snapshot_archives() {
     file_name=$(basename "$file_path")
     if [[ "$file_name" =~ \[([0-9]{16,22})\]\.json$ ]]; then
       channel_id=${BASH_REMATCH[1]}
+      if ! jq empty "$file_path" >/dev/null 2>&1; then
+        printf 'WARN: skipping invalid JSON during snapshot: %s\n' "$file_path" >&2
+        continue
+      fi
       count=$(jq -r '(.messages | length) // 0' "$file_path")
       printf '%s\t%s\t%s\n' "$file_path" "$channel_id" "$count" >>"$snapshot_file"
     fi

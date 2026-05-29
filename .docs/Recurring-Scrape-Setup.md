@@ -357,6 +357,7 @@ With Docker/Podman, include the container smoke:
 | `audit-archive-json-smoke.sh` | yes | Invalid JSON detection |
 | `prove-incremental-append-smoke.sh` | yes | Offline prove snapshot/compare |
 | `verify-operator-ready-smoke.sh` | yes | Host prerequisite checks |
+| `run-operator-validation-smoke.sh` | yes | Validation runner dry-run |
 | `container-smoke.sh` | no (local) | Docker build + `help` / `list-targets`; use `--include-container` |
 
 GitHub Actions runs `./scripts/run-all-smokes.sh` via `.github/workflows/main.yml` job `recurring-scrape-smoke`.

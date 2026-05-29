@@ -35,6 +35,14 @@ Optional Discord probe for one target:
 ./scripts/verify-operator-ready.sh --preflight KotOR_discord_msgs
 ```
 
+Full validation with log (GUI token sync + scrape + audit):
+
+```bash
+./scripts/run-operator-validation.sh --sync-gui
+./scripts/run-operator-validation.sh --sync-gui --target eod_discord
+./scripts/run-operator-validation.sh --dry-run
+```
+
 Detail: [.docs/Recurring-Scrape-Setup.md](../.docs/Recurring-Scrape-Setup.md) · [operator checklist](recurring-scrape-operator-checklist.md) · [troubleshooting](../.docs/Recurring-Scrape-Troubleshooting.md)
 
 ## CI note (fork PRs)

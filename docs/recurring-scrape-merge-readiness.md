@@ -71,6 +71,18 @@ Also enforced by `run-documents-scrape.sh`, `run-discord-scrape-host.sh` (cron),
 
 **Podman hosts:** install `podman-compose` (`dnf install podman-compose`) when `docker compose` cannot reach the socket; scripts auto-prefer `podman-compose` when present.
 
+## Host validation (2026-05-29)
+
+Live proof on this machine (Podman + `podman-compose`, GUI token sync):
+
+```bash
+./scripts/run-operator-proof.sh --sync-gui --target eod_discord
+```
+
+Result: **passed** — preflight OK, incremental scrape completed, append-safe proof OK for all 6 channels. Log: `logs/operator-proof-20260529T213341Z.log`.
+
+**Disk warning:** `/home` was ~1.6 GiB free at run time; free several GiB before KotOR-scale targets.
+
 ## CI note (fork PRs)
 
 Upstream workflows may show `action_required` for cross-repo PRs from `th3w1zard1/DiscordChatExporter` until a maintainer approves workflow runs. Local `run-all-smokes.sh` is the authoritative offline gate.

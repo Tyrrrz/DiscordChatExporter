@@ -13,6 +13,8 @@ usage() {
   cat <<EOF
 Usage:
   $(basename "$0") --target NAME [--config PATH]
+  $(basename "$0") --target NAME --snapshot-only --snapshot-file PATH [--config PATH]
+  $(basename "$0") --compare-snapshots BEFORE.tsv AFTER.tsv
 
 Record message counts for every JSON archive under the target's output_dir,
 run one incremental scrape, then assert:
@@ -29,7 +31,10 @@ die() {
 }
 
 cleanup() {
-  [[ -n "$SNAPSHOT_DIR" && -d "$SNAPSHOT_DIR" ]] && rm -rf "$SNAPSHOT_DIR"
+  if [[ -n "${SNAPSHOT_DIR:-}" && -d "$SNAPSHOT_DIR" ]]; then
+    rm -rf "$SNAPSHOT_DIR"
+  fi
+  return 0
 }
 
 require_command() {
@@ -110,6 +115,10 @@ compare_snapshots() {
 
 main() {
   local target=""
+  local snapshot_only=0
+  local snapshot_file=""
+  local compare_before=""
+  local compare_after=""
 
   trap cleanup EXIT
 
@@ -125,6 +134,21 @@ main() {
         CONFIG_PATH=$2
         shift 2
         ;;
+      --snapshot-only)
+        snapshot_only=1
+        shift
+        ;;
+      --snapshot-file)
+        [[ $# -ge 2 ]] || die "Missing value for --snapshot-file."
+        snapshot_file=$2
+        shift 2
+        ;;
+      --compare-snapshots)
+        [[ $# -ge 3 ]] || die "Missing paths for --compare-snapshots."
+        compare_before=$2
+        compare_after=$3
+        shift 3
+        ;;
       --help|-h)
         usage
         exit 0
@@ -135,14 +159,31 @@ main() {
     esac
   done
 
+  require_command jq
+
+  if [[ -n "$compare_before" ]]; then
+    [[ -f "$compare_before" ]] || die "Missing snapshot: $compare_before"
+    [[ -f "$compare_after" ]] || die "Missing snapshot: $compare_after"
+    compare_snapshots "$compare_before" "$compare_after"
+    printf 'Snapshot comparison passed.\n'
+    exit 0
+  fi
+
   [[ -n "$target" ]] || die "--target is required."
 
-  require_command jq
   [[ -f "$CONFIG_PATH" ]] || die "Missing config: $CONFIG_PATH"
 
   local output_dir
   output_dir=$(target_output_dir "$target")
   [[ -n "$output_dir" && "$output_dir" != "null" ]] || die "Unknown target: $target"
+
+  if (( snapshot_only )); then
+    [[ -n "$snapshot_file" ]] || die "--snapshot-file is required with --snapshot-only."
+    snapshot_archives "$output_dir" "$snapshot_file"
+    [[ -s "$snapshot_file" ]] || die "No seeded archives found under $output_dir"
+    printf 'Snapshot written: %s\n' "$snapshot_file"
+    exit 0
+  fi
 
   SNAPSHOT_DIR=$(mktemp -d "${TMPDIR:-/tmp}/dce-prove-append.XXXXXX")
   local before_file="$SNAPSHOT_DIR/before.tsv"

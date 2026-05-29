@@ -81,7 +81,7 @@ To learn more about the war and how you can help, [click here](https://tyrrrz.me
 
 ## See also
 
-- [**Recurring Exports**](.docs/Recurring-Scrape-Setup.md) — append-only incremental JSON exports via Docker/cron (Linux/macOS). From the source repo: `./scripts/bootstrap-recurring-scrape.sh`, then `./scripts/run-documents-scrape.sh`; validate with `./scripts/run-all-smokes.sh`. GUI zip users: `../DiscordChatExporter.linux-x64/RECURRING-SCRAPE.md`. Maintainer summary: [docs/recurring-scrape-merge-readiness.md](docs/recurring-scrape-merge-readiness.md).
+- [**Recurring Exports**](.docs/Recurring-Scrape-Setup.md) — append-only incremental JSON exports via Docker/cron (Linux/macOS). From the source repo: `./scripts/operator-handoff.sh`, then `./scripts/run-documents-scrape.sh`; validate with `./scripts/run-all-smokes.sh`. GUI zip users: `../DiscordChatExporter.linux-x64/RECURRING-SCRAPE.md`. Maintainer summary: [docs/recurring-scrape-merge-readiness.md](docs/recurring-scrape-merge-readiness.md).
 - [**Documented solutions**](docs/solutions/) — searchable learnings (append-only scrape, Docker/cron workflow); YAML frontmatter: `module`, `tags`, `problem_type`
 - [**Chat Analytics**](https://github.com/mlomb/chat-analytics) — solution for analyzing chat patterns of Discord users, using exports produced by **DiscordChatExporter**.
 - [**DiscordChatExporter-frontend**](https://github.com/slatinsky/DiscordChatExporter-frontend) — convenient viewer for exports produced by **DiscordChatExporter**.

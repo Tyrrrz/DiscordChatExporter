@@ -34,9 +34,20 @@ JSON
 
 printf 'DISCORD_TOKEN=dummy\n' >"$ENV_PATH"
 
-DCE_MIN_FREE_MB=0 \
-  DCE_CONFIG_FILE="$CONFIG_PATH" \
-  DCE_ENV_FILE="$ENV_PATH" \
-  "$HANDOFF" --config "$CONFIG_PATH" --skip-df | grep -q 'Handoff complete'
+set +e
+handoff_output=$(
+  DCE_MIN_FREE_MB=0 \
+    DCE_CONFIG_FILE="$CONFIG_PATH" \
+    DCE_ENV_FILE="$ENV_PATH" \
+    "$HANDOFF" --config "$CONFIG_PATH" --skip-df 2>&1
+)
+handoff_status=$?
+set -e
+
+if [[ "$handoff_status" -ne 0 ]] || ! grep -q 'Handoff complete' <<<"$handoff_output"; then
+  printf 'operator-handoff failed (status=%s)\n' "$handoff_status" >&2
+  printf '%s\n' "$handoff_output" >&2
+  exit 1
+fi
 
 printf 'operator-handoff-smoke: ok\n'

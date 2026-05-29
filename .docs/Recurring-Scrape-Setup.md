@@ -11,7 +11,7 @@ This guide walks you through setting up automated recurring Discord exports usin
 
 ## Quick Start
 
-**Fastest path:** `./scripts/bootstrap-recurring-scrape.sh` (see [operator checklist](../docs/recurring-scrape-operator-checklist.md)).
+**Fastest path:** `./scripts/verify-operator-ready.sh` then `./scripts/bootstrap-recurring-scrape.sh` (see [operator checklist](../docs/recurring-scrape-operator-checklist.md)).
 
 **Append-only contract (read first)**
 
@@ -356,6 +356,7 @@ With Docker/Podman, include the container smoke:
 | `bootstrap-recurring-scrape-smoke.sh` | yes | Bootstrap dry-run |
 | `audit-archive-json-smoke.sh` | yes | Invalid JSON detection |
 | `prove-incremental-append-smoke.sh` | yes | Offline prove snapshot/compare |
+| `verify-operator-ready-smoke.sh` | yes | Host prerequisite checks |
 | `container-smoke.sh` | no (local) | Docker build + `help` / `list-targets`; use `--include-container` |
 
 GitHub Actions runs `./scripts/run-all-smokes.sh` via `.github/workflows/main.yml` job `recurring-scrape-smoke`.

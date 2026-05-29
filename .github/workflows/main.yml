@@ -65,7 +65,9 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y jq
 
       - name: Run recurring scrape smoke tests
-        run: ./scripts/run-all-smokes.sh
+        run: |
+          chmod +x scripts/*.sh scripts/tests/*.sh
+          ./scripts/run-all-smokes.sh
 
   test:
     # Tests need access to secrets, so we can't run them against PRs because of limited trust

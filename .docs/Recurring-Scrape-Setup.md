@@ -11,6 +11,8 @@ This guide walks you through setting up automated recurring Discord exports usin
 
 ## Quick Start
 
+**Fastest path:** `./scripts/bootstrap-recurring-scrape.sh` (see [operator checklist](../docs/recurring-scrape-operator-checklist.md)).
+
 **Append-only contract (read first)**
 
 - Each target writes under its configured `output_dir` (for example `~/Documents/KotOR_discord_msgs/`).

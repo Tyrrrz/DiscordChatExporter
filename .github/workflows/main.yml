@@ -77,6 +77,7 @@ jobs:
           ./scripts/tests/documents-scrape-smoke.sh
           ./scripts/tests/verify-documents-auth-smoke.sh
           ./scripts/tests/scrape-here-smoke.sh
+          ./scripts/tests/bootstrap-recurring-scrape-smoke.sh
 
   test:
     # Tests need access to secrets, so we can't run them against PRs because of limited trust

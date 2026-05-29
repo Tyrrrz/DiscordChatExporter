@@ -51,6 +51,30 @@ resolve_compose() {
   die "Install Docker or Podman with compose support."
 }
 
+require_archive_disk_space() {
+  local min_mb=${DCE_MIN_FREE_MB:-1024}
+  local archive_root path avail_kb need_kb
+
+  if (( min_mb <= 0 )); then
+    printf 'disk: check skipped (DCE_MIN_FREE_MB=%s)\n' "$min_mb"
+    return 0
+  fi
+
+  archive_root=$(jq -r '.archive_root // empty' "$CONFIG_PATH")
+  [[ -n "$archive_root" && "$archive_root" != null ]] || die "Config is missing archive_root."
+  need_kb=$((min_mb * 1024))
+
+  for path in "$archive_root" "$REPO_ROOT"; do
+    [[ -e "$path" ]] || continue
+    avail_kb=$(df -Pk "$path" | awk 'NR==2 {print $4}')
+    [[ -n "$avail_kb" && "$avail_kb" =~ ^[0-9]+$ ]] || die "Could not read free space for $path"
+    if (( avail_kb < need_kb )); then
+      die "Insufficient disk space on $(df -Pk "$path" | awk 'NR==2 {print $6}'): $((avail_kb / 1024)) MiB free, need at least ${min_mb} MiB under archive_root ($archive_root). Free space before scraping."
+    fi
+    printf 'disk: %s has %s MiB free (need %s MiB)\n' "$(df -Pk "$path" | awk 'NR==2 {print $6}')" "$((avail_kb / 1024))" "$min_mb"
+  done
+}
+
 check_auth() {
   if [[ -f "$ENV_FILE" ]] && grep -qE '^[[:space:]]*DISCORD_TOKEN=' "$ENV_FILE"; then
     printf 'auth: scrape.env has DISCORD_TOKEN\n'
@@ -100,6 +124,7 @@ main() {
 
   printf 'Operator readiness checks\n'
   printf '=========================\n'
+  require_archive_disk_space
   resolve_compose
   check_auth
   printf 'config: %s\n\n' "$CONFIG_PATH"

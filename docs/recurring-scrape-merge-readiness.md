@@ -46,6 +46,18 @@ Full validation with log (GUI token sync + scrape + audit):
 
 Detail: [.docs/Recurring-Scrape-Setup.md](../.docs/Recurring-Scrape-Setup.md) · [operator checklist](recurring-scrape-operator-checklist.md) · [troubleshooting](../.docs/Recurring-Scrape-Troubleshooting.md)
 
+## Disk space
+
+Incremental merges need temporary space (often 2× the largest channel JSON). Before scraping:
+
+```bash
+df -h ~/Documents /home/brunner56/Downloads/DiscordChatExporter
+./scripts/verify-operator-ready.sh   # fails below 1 GiB free by default
+```
+
+Override threshold: `DCE_MIN_FREE_MB=2048 ./scripts/verify-operator-ready.sh`  
+Skip check (smokes only): `DCE_MIN_FREE_MB=0`
+
 ## CI note (fork PRs)
 
 Upstream workflows may show `action_required` for cross-repo PRs from `th3w1zard1/DiscordChatExporter` until a maintainer approves workflow runs. Local `run-all-smokes.sh` is the authoritative offline gate.

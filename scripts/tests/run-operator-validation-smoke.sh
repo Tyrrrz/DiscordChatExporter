@@ -58,7 +58,8 @@ EOF
 chmod +x "$FAKE_DOCKER"
 export PATH="$TMP_DIR:$PATH_BACKUP"
 
-DCE_REPO_ROOT="$REPO_ROOT" DCE_CONFIG_FILE="$CONFIG_PATH" DCE_ENV_FILE="$ENV_PATH" DCE_LOG_DIR="$LOG_DIR" \
+DCE_MIN_FREE_MB=0 DCE_REPO_ROOT="$REPO_ROOT" DCE_CONFIG_FILE="$CONFIG_PATH" DCE_ENV_FILE="$ENV_PATH" \
+  DCE_LOG_DIR="$LOG_DIR" \
   "$RUNNER" --dry-run --per-target --config "$CONFIG_PATH" --log-file "$LOG_DIR/validation.log"
 
 grep -q 'Per-target summary: 2 succeeded, 0 failed' "$LOG_DIR/validation.log" || {

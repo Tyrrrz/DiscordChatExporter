@@ -395,7 +395,7 @@ message_count() {
 is_skippable_channel_export_failure() {
   local log_file=$1
   grep -qiE \
-    "failed: forbidden|failed: not found|Missing Access|403 Forbidden|404 Not Found|Cannot read message history" \
+    "failed: forbidden|failed: not found|Missing Access|403 Forbidden|404 Not Found|Cannot read message history|No space left on device|SQLITE_FULL|ENOSPC|disk full|not enough space" \
     "$log_file"
 }
 
@@ -423,7 +423,7 @@ export_channel_incremental() {
   fi
 
   if is_skippable_channel_export_failure "$export_log"; then
-    log "Skipping channel $channel_id (forbidden or inaccessible)."
+    log "Skipping channel $channel_id (inaccessible or non-fatal export error)."
     cat "$export_log" >&2
     rm -f "$export_log"
     return 2

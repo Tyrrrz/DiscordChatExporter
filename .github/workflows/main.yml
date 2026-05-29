@@ -67,7 +67,7 @@ jobs:
       - name: Run recurring scrape smoke tests
         run: |
           chmod +x scripts/*.sh scripts/tests/*.sh
-          ./scripts/run-all-smokes.sh
+          DCE_MIN_FREE_MB=0 ./scripts/run-all-smokes.sh
 
   test:
     # Tests need access to secrets, so we can't run them against PRs because of limited trust

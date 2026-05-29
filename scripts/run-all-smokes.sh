@@ -43,6 +43,8 @@ main() {
 
   chmod +x "$REPO_ROOT"/scripts/*.sh "$tests_dir"/*.sh 2>/dev/null || true
 
+  export DCE_MIN_FREE_MB="${DCE_MIN_FREE_MB:-0}"
+
   local script_path failures=0 ran=0
   for script_path in "$tests_dir"/*.sh; do
     [[ -f "$script_path" ]] || continue

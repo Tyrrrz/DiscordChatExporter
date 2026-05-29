@@ -22,6 +22,7 @@ Fork branch `feat/recurring-cli-scrape` adds append-only, Docker-based increment
 ## Operator quick path
 
 ```bash
+./scripts/operator-handoff.sh      # disk + verify + archive dry-run
 ./scripts/verify-operator-ready.sh
 cp scrape.env.example scrape.env   # or ./scripts/sync-token-from-gui.sh --force
 ./scripts/bootstrap-recurring-scrape.sh

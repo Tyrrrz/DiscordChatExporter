@@ -4,7 +4,8 @@ Use this after cloning or opening the **source** repo (`DiscordChatExporter`, no
 
 ## One-time setup
 
-0. `./scripts/verify-operator-ready.sh` — jq, compose, auth, and archive folders.
+0. `./scripts/operator-handoff.sh` — recommended: disk summary, verify-operator-ready, and documents dry-run in one step.
+   Or `./scripts/verify-operator-ready.sh` alone for prerequisites only.
 1. `cp scrape.env.example scrape.env` and set `DISCORD_TOKEN`, or `./scripts/sync-token-from-gui.sh --force` (reads GUI `Settings.dat`).
 2. `./scripts/bootstrap-recurring-scrape.sh --dry-run` — confirm every **enabled** target has seeded JSON under `output_dir`.
 3. `./scripts/bootstrap-recurring-scrape.sh` — verify archives, build image, preflight Discord.

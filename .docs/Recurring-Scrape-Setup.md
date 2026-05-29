@@ -321,14 +321,24 @@ Space requirements:
 
 ## Smoke test validation
 
-Run the full local suite from the repo root (requires `jq`; `container-smoke.sh` also needs Docker/Podman and a writable `archive_root` from `config/scrape-targets.json`):
+Run the full offline suite from the repo root (requires `jq`):
 
 ```bash
-chmod +x scripts/*.sh scripts/tests/*.sh
-for script in scripts/tests/*.sh; do
-  echo "==> $script"
-  "$script"
-done
+./scripts/run-all-smokes.sh
+```
+
+With Docker/Podman, include the container smoke:
+
+```bash
+./scripts/run-all-smokes.sh --include-container
+```
+
+**Archive integrity helpers** (not smokes; run against live `~/Documents` trees):
+
+```bash
+./scripts/audit-archive-json.sh --target KotOR_discord_msgs
+./scripts/salvage-truncated-export.sh path/to/export.json   # truncated JSON only
+./scripts/prove-incremental-append.sh --target NAME        # live grow-only proof (needs token)
 ```
 
 | Script | CI (`recurring-scrape-smoke`) | Notes |
@@ -342,9 +352,13 @@ done
 | `gh-approve-pr-runs-smoke.sh` | yes | Fork PR workflow helper |
 | `documents-scrape-smoke.sh` | yes | Unified Documents workflow |
 | `verify-documents-auth-smoke.sh` | yes | Archive verify + auth bootstrap |
-| `container-smoke.sh` | no (local) | Docker build + `help` / `list-targets` |
+| `scrape-here-smoke.sh` | yes | Workspace bridge launcher |
+| `bootstrap-recurring-scrape-smoke.sh` | yes | Bootstrap dry-run |
+| `audit-archive-json-smoke.sh` | yes | Invalid JSON detection |
+| `prove-incremental-append-smoke.sh` | yes | Offline prove snapshot/compare |
+| `container-smoke.sh` | no (local) | Docker build + `help` / `list-targets`; use `--include-container` |
 
-GitHub Actions runs the CI-marked scripts on every push/PR via `.github/workflows/main.yml` job `recurring-scrape-smoke`.
+GitHub Actions runs `./scripts/run-all-smokes.sh` via `.github/workflows/main.yml` job `recurring-scrape-smoke`.
 
 ## Next Steps
 

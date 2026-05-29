@@ -33,4 +33,10 @@ Installed jobs are marked `# BEGIN discord-scrape` in `crontab -l`. Logs append 
 
 See `../DiscordChatExporter.linux-x64/RECURRING-SCRAPE.md` or run `../DiscordChatExporter.linux-x64/bootstrap-recurring-scrape.sh`.
 
+Validate scripts after changes:
+
+```bash
+./scripts/run-all-smokes.sh
+```
+
 Full detail: [.docs/Recurring-Scrape-Setup.md](../.docs/Recurring-Scrape-Setup.md)

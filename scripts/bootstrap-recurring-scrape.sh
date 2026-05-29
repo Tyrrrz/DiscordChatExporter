@@ -149,7 +149,8 @@ main() {
   if grep -q 'inaccessible, but .* seeded archive' "$preflight_log" \
     || grep -qiE 'failed: forbidden|Missing Access' "$preflight_log"; then
     printf '\nToken note: many channels returned forbidden. That usually means a bot token without message-history access.\n'
-    printf '  For live incremental downloads, put a user token in %s (see .docs/Token-and-IDs.md).\n' "$ENV_FILE"
+    printf '  For live incremental downloads, run: %s --force\n' "$REPO_ROOT/scripts/sync-token-from-gui.sh"
+    printf '  Or put a user token in %s (see .docs/Token-and-IDs.md).\n' "$ENV_FILE"
     printf '  Append-only archives are still safe: existing JSON is updated in place and never fully re-downloaded.\n'
   fi
   rm -f "$preflight_log"

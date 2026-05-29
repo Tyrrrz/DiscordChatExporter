@@ -4,7 +4,7 @@ Use this after cloning or opening the **source** repo (`DiscordChatExporter`, no
 
 ## One-time setup
 
-1. `cp scrape.env.example scrape.env` and set `DISCORD_TOKEN` (user token recommended for guild history).
+1. `cp scrape.env.example scrape.env` and set `DISCORD_TOKEN`, or `./scripts/sync-token-from-gui.sh --force` (reads GUI `Settings.dat`).
 2. `./scripts/bootstrap-recurring-scrape.sh --dry-run` — confirm every **enabled** target has seeded JSON under `output_dir`.
 3. `./scripts/bootstrap-recurring-scrape.sh` — verify archives, build image, preflight Discord.
 4. `./scripts/run-documents-scrape.sh` — first incremental append-only scrape.

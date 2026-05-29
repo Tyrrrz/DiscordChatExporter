@@ -374,7 +374,16 @@ last_message_id() {
   [[ -f "$export_path" ]] || return 0
   jq -r '
     (.messages // [])
-    | if length == 0 then empty else (max_by(.id) | .id) end
+    | if length == 0 then empty else (
+        sort_by(
+          .id as $id
+          | ($id | tostring) as $s
+          | (22 - ($s | length)) as $pad
+          | if $pad > 0 then ("0" * $pad) + $s else $s end
+        )
+        | last
+        | .id
+      ) end
   ' "$export_path"
 }
 
@@ -508,11 +517,15 @@ load_guild_channel_cache() {
   local cache_file="$CACHE_ROOT/channels_${guild_id}_${include_voice}_${include_threads}.txt"
 
   if [[ ! -f "$cache_file" ]]; then
-    "$CLI_BIN" channels \
+    local output
+    if ! output=$("$CLI_BIN" channels \
       --guild "$guild_id" \
       --include-vc "$include_voice" \
-      --include-threads "$include_threads" \
-      | parse_channel_listing >"$cache_file"
+      --include-threads "$include_threads" 2>&1); then
+      die "Channel discovery failed for guild $guild_id. CLI output: $output"
+    fi
+
+    printf '%s\n' "$output" | parse_channel_listing >"$cache_file"
   fi
 
   cat "$cache_file"

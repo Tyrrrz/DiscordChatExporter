@@ -17,5 +17,6 @@ services:
     volumes:
       - ./config:/config:ro,z
       - ./scripts/run-discord-scrape.sh:/opt/dce-scheduler/run-discord-scrape.sh:ro,z
+      # Host path must match archive_root in config/scrape-targets.json (override on other machines).
       - ${DCE_ARCHIVE_ROOT:-/home/brunner56/Documents}:${DCE_ARCHIVE_ROOT:-/home/brunner56/Documents}:z
     command: ["help"]

@@ -14,6 +14,8 @@ AUDIT_JSON="$REPO_ROOT/scripts/audit-archive-json.sh"
 DRY_RUN=0
 SKIP_SCRAPE=0
 SYNC_GUI_FLAG=0
+PER_TARGET=0
+CONTINUE_ON_ERROR=0
 TARGET=""
 LOG_FILE=""
 
@@ -30,6 +32,8 @@ Options:
   --skip-scrape   Readiness only (no scrape, no audit loop)
   --sync-gui      Run sync-token-from-gui.sh --force before checks
   --target NAME   Limit scrape/audit to one configured target
+  --per-target    Scrape and audit each enabled target separately
+  --continue-on-error  With --per-target, keep going after a target fails
   --config PATH   Targets JSON (default: config/scrape-targets.json)
   --log-file PATH Append output to this file (default: logs/operator-validation-UTC.log)
   --help          Show this help text
@@ -55,16 +59,60 @@ run_step() {
   return "$status"
 }
 
+enabled_targets() {
+  jq -r '.targets[] | select(.enabled != false) | .name' "$CONFIG_PATH"
+}
+
 audit_targets() {
+  local name failures=0
   if [[ -n "$TARGET" ]]; then
     run_step "audit-archive-json ($TARGET)" "$AUDIT_JSON" --config "$CONFIG_PATH" --target "$TARGET"
     return
   fi
-  local name
   while IFS= read -r name; do
     [[ -n "$name" ]] || continue
-    run_step "audit-archive-json ($name)" "$AUDIT_JSON" --config "$CONFIG_PATH" --target "$name" || return 1
-  done < <(jq -r '.targets[] | select(.enabled != false) | .name' "$CONFIG_PATH")
+    if run_step "audit-archive-json ($name)" "$AUDIT_JSON" --config "$CONFIG_PATH" --target "$name"; then
+      continue
+    fi
+    failures=$((failures + 1))
+    if (( CONTINUE_ON_ERROR == 0 )); then
+      return 1
+    fi
+  done < <(enabled_targets)
+  (( failures == 0 ))
+}
+
+scrape_per_target() {
+  local name failures=0 ok=0
+  local -a scrape_args=(--config "$CONFIG_PATH")
+  if (( DRY_RUN )); then
+    scrape_args+=(--dry-run)
+  fi
+  while IFS= read -r name; do
+    [[ -n "$name" ]] || continue
+    log_step "Per-target pass: $name"
+    if ! run_step "run-documents-scrape ($name)" "$DOCUMENTS_SCRAPE" "${scrape_args[@]}" --target "$name"; then
+      failures=$((failures + 1))
+      if (( CONTINUE_ON_ERROR == 0 )); then
+        return 1
+      fi
+      continue
+    fi
+    if (( DRY_RUN )); then
+      ok=$((ok + 1))
+      continue
+    fi
+    if run_step "audit-archive-json ($name)" "$AUDIT_JSON" --config "$CONFIG_PATH" --target "$name"; then
+      ok=$((ok + 1))
+    else
+      failures=$((failures + 1))
+      if (( CONTINUE_ON_ERROR == 0 )); then
+        return 1
+      fi
+    fi
+  done < <(enabled_targets)
+  log_step "Per-target summary: $ok succeeded, $failures failed"
+  (( failures == 0 ))
 }
 
 main() {
@@ -97,6 +145,14 @@ main() {
         LOG_FILE=$2
         shift 2
         ;;
+      --per-target)
+        PER_TARGET=1
+        shift
+        ;;
+      --continue-on-error)
+        CONTINUE_ON_ERROR=1
+        shift
+        ;;
       --help|-h)
         usage
         exit 0
@@ -117,6 +173,11 @@ main() {
   set -o pipefail
   {
     log_step "Operator validation started (config=$CONFIG_PATH)"
+    if [[ -n "$TARGET" ]]; then
+      log_step "Targets: $TARGET"
+    else
+      log_step "Enabled targets: $(enabled_targets | paste -sd, -)"
+    fi
     if (( SYNC_GUI_FLAG )); then
       run_step "sync-token-from-gui" "$SYNC_GUI" --force || failures=$((failures + 1))
     fi
@@ -125,6 +186,8 @@ main() {
 
     if (( SKIP_SCRAPE )); then
       log_step "Skip scrape requested."
+    elif (( PER_TARGET )) && [[ -z "$TARGET" ]]; then
+      scrape_per_target || failures=$((failures + 1))
     else
       local -a scrape_args=(--config "$CONFIG_PATH")
       [[ -n "$TARGET" ]] && scrape_args+=(--target "$TARGET")

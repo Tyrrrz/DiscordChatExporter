@@ -40,6 +40,7 @@ Full validation with log (GUI token sync + scrape + audit):
 ```bash
 ./scripts/run-operator-validation.sh --sync-gui
 ./scripts/run-operator-validation.sh --sync-gui --target eod_discord
+./scripts/run-operator-validation.sh --sync-gui --per-target --continue-on-error
 ./scripts/run-operator-validation.sh --dry-run
 ```
 

@@ -1,5 +1,16 @@
 # Recurring scrape — merge readiness
 
+## Branch status (2026-05-29)
+
+| Gate | Status |
+|------|--------|
+| Offline smokes (`run-all-smokes.sh`) | 19/19 pass |
+| Live proof (`run-operator-proof.sh --sync-gui --target eod_discord`) | Passed on maintainer host |
+| Monthly cron (`setup-cron.sh`) | Installed (`00 04 1 * *`); dry-run preflight OK for all enabled targets |
+| Upstream CI (fork PR) | `action_required` until Tyrrrz approves workflow runs |
+
+**Merge-ready** for upstream review. Further feature work should use a new branch; avoid additional `/lfg` passes unless scope changes.
+
 Fork branch `feat/recurring-cli-scrape` adds append-only, Docker-based incremental exports with optional monthly cron. Intended for personal archive trees under a configurable `archive_root` (for example `~/Documents/*`).
 
 GUI zip users: [docs/gui-zip-recurring-scrape-bridge.md](gui-zip-recurring-scrape-bridge.md).

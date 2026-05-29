@@ -10,7 +10,8 @@ Use this after cloning or opening the **source** repo (`DiscordChatExporter`, no
 2. `./scripts/bootstrap-recurring-scrape.sh --dry-run` — confirm every **enabled** target has seeded JSON under `output_dir`.
 3. `./scripts/bootstrap-recurring-scrape.sh` — verify archives, build image, preflight Discord.
 4. `./scripts/run-documents-scrape.sh` — first incremental append-only scrape.
-5. `./scripts/prove-incremental-append.sh --target <name>` — optional grow-only proof.
+   Or `./scripts/run-operator-proof.sh --sync-gui --target <name>` — handoff + scrape + grow-only proof in one step.
+5. `./scripts/prove-incremental-append.sh --target <name>` — optional if you did not use `run-operator-proof.sh`.
 6. `./scripts/audit-archive-json.sh` — optional; lists invalid JSON before cron runs.
 
 ## Monthly automation

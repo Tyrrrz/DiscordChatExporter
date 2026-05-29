@@ -463,7 +463,7 @@ merge_exports() {
       )
     | .dateRange = {
         after: ($existing.dateRange.after // $incremental.dateRange.after),
-        before: ($existing.dateRange.before // $incremental.dateRange.before)
+        before: ($incremental.dateRange.before // $existing.dateRange.before)
       }
     | .exportedAt = ($incremental.exportedAt // $existing.exportedAt)
     | if ($existing | has("messageCount")) or ($incremental | has("messageCount"))
@@ -722,7 +722,7 @@ preflight_target() {
     preflight_probe_channel "$probe_channel_id" "$output_dir" || probe_status=$?
     case "$probe_status" in
       0)
-        log "Preflight ok for target '$target_name': ${#channel_ids[@]} channel(s) resolved for $output_dir."
+        log "Preflight ok for target '$target_name': token verified (${#channel_ids[@]} channel(s) resolved, probe succeeded on $probe_channel_id) for $output_dir."
         return 0
         ;;
       2)
@@ -766,7 +766,6 @@ scrape_target() {
 
   local channel_id
   local skipped_channels=0
-  local failed_channels=0
   for channel_id in "${channel_ids[@]}"; do
     destination_path=$(resolve_destination_path "$output_dir" "$channel_id")
     if [[ -n "$destination_path" ]]; then
@@ -797,7 +796,6 @@ scrape_target() {
         ;;
       *)
         rm -rf "$temp_dir"
-        failed_channels=$((failed_channels + 1))
         die "Channel $channel_id failed for target '$target_name'."
         ;;
     esac
@@ -832,9 +830,6 @@ scrape_target() {
 
   if (( skipped_channels > 0 )); then
     log "Target '$target_name': skipped $skipped_channels inaccessible channel(s)."
-  fi
-  if (( failed_channels > 0 )); then
-    die "Target '$target_name': $failed_channels channel(s) failed."
   fi
 
   log "Target '$target_name': scrape completed successfully."

@@ -1,0 +1,28 @@
+{
+  "guild": {
+    "id": "222",
+    "name": "Fixture Guild"
+  },
+  "channel": {
+    "id": "111",
+    "name": "fixture-room",
+    "category": "Testing Grounds"
+  },
+  "messages": [
+    {
+      "id": "999999999999999999",
+      "timestamp": "2026-01-01T00:00:00Z",
+      "content": "eighteen-digit-high-string-order"
+    },
+    {
+      "id": "1000000000000000000",
+      "timestamp": "2026-01-02T00:00:00Z",
+      "content": "nineteen-digit-true-max"
+    }
+  ],
+  "dateRange": {
+    "after": null,
+    "before": null
+  },
+  "exportedAt": "2026-01-02T00:00:00Z"
+}

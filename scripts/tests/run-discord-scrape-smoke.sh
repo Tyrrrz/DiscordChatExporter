@@ -104,6 +104,14 @@ cat >"$CONFIG_PATH" <<JSON
       "guild_name_patterns": []
     },
     {
+      "name": "cursor-mixed-length",
+      "kind": "guild",
+      "output_dir": "$ARCHIVE_ROOT/cursor-mixed-length",
+      "channel_ids": ["111"],
+      "guild_ids": [],
+      "guild_name_patterns": []
+    },
+    {
       "name": "bootstrap-map",
       "kind": "guild",
       "output_dir": "$ARCHIVE_ROOT/bootstrap-map",
@@ -173,6 +181,7 @@ case "$subcommand" in
       initial) cp "$fixture_dir/append-existing.json" "$output" ;;
       append) cp "$fixture_dir/append-incremental.json" "$output" ;;
       append-after-high-id) cp "$fixture_dir/append-after-high-id.json" "$output" ;;
+      append-after-mixed-length) cp "$fixture_dir/append-after-mixed-length.json" "$output" ;;
       partial-write) cp "$fixture_dir/append-partial-write.json" "$output" ;;
       concurrent-conflict) cp "$fixture_dir/append-concurrent-conflict.json" "$output" ;;
       wrong-channel) cp "$fixture_dir/wrong-channel.json" "$output" ;;
@@ -312,6 +321,12 @@ cp "$FIXTURE_DIR/append-unordered-cursor.json" "$ARCHIVE_ROOT/cursor-max-id/$DEF
 FAKE_DCE_EXPECT_AFTER=999 run_wrapper cursor-max-id append-after-high-id
 CURSOR_DEST="$ARCHIVE_ROOT/cursor-max-id/$DEFAULT_FILE_NAME"
 [[ "$(jq -r '.messages | length' "$CURSOR_DEST")" == "4" ]] || { echo "expected cursor-max-id archive to contain four messages" >&2; exit 1; }
+
+mkdir -p "$ARCHIVE_ROOT/cursor-mixed-length"
+cp "$FIXTURE_DIR/append-mixed-length-cursor.json" "$ARCHIVE_ROOT/cursor-mixed-length/$DEFAULT_FILE_NAME"
+FAKE_DCE_EXPECT_AFTER=1000000000000000000 run_wrapper cursor-mixed-length append-after-mixed-length
+MIXED_CURSOR_DEST="$ARCHIVE_ROOT/cursor-mixed-length/$DEFAULT_FILE_NAME"
+[[ "$(jq -r '.messages | length' "$MIXED_CURSOR_DEST")" == "3" ]] || { echo "expected cursor-mixed-length archive to contain three messages" >&2; exit 1; }
 
 mkdir -p "$ARCHIVE_ROOT/bootstrap-map"
 cp "$FIXTURE_DIR/append-existing.json" "$ARCHIVE_ROOT/bootstrap-map/$DEFAULT_FILE_NAME"

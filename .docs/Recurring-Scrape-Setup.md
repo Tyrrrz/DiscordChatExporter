@@ -11,6 +11,14 @@ This guide walks you through setting up automated recurring Discord exports usin
 
 ## Quick Start
 
+**Append-only contract (read first)**
+
+- Each target writes under its configured `output_dir` (for example `~/Documents/KotOR_discord_msgs/`).
+- Existing files named `Guild - Category - Channel [channel_id].json` are discovered automatically and updated in place.
+- On the first run against an existing archive tree, the wrapper bootstraps `output_dir/.dce-meta/channel-map.json` from those filenames so it never creates a parallel export file.
+- Incremental exports use DiscordChatExporter `--after` with the highest existing message id, then merge new messages by id.
+- A merge that would reduce message count is rejected; the on-disk archive is left unchanged.
+
 ### 1. Configure Your Targets
 
 Create or edit `config/scrape-targets.json` with your channel selections:
@@ -44,6 +52,8 @@ Create or edit `config/scrape-targets.json` with your channel selections:
 
 ### 2. Set Your Discord Token
 
+**Cron requires `scrape.env`.** Manual `export DISCORD_TOKEN` works for one-off runs, but scheduled jobs run in a minimal environment and need a persisted env file.
+
 Either copy the environment template:
 
 ```bash
@@ -76,7 +86,7 @@ Before the first incremental run, confirm each enabled target points at the corr
 ./scripts/verify-documents-archives.sh --config config/scrape-targets.json
 ```
 
-Each enabled target should show a non-zero **JSON** count and **SEEDED** channel IDs under `/home/brunner56/Documents/<server>/`.
+Each enabled target should show a non-zero **JSON** count and **SEEDED** channel IDs under your configured `output_dir` values (see `archive_root` in `config/scrape-targets.json`).
 
 **One-command workflow** (verify → preflight → incremental scrape):
 
@@ -141,8 +151,8 @@ The default is monthly. Customize it with:
 # Run every day at 2 AM
 ./scripts/setup-cron.sh --config config/scrape-targets.json --interval "daily" --at "2:00"
 
-# Run every Sunday at noon
-./scripts/setup-cron.sh --config config/scrape-targets.json --interval "weekly" --at "sun 12:00"
+# Run every Sunday at noon (weekly uses Sunday; time is HH:MM only)
+./scripts/setup-cron.sh --config config/scrape-targets.json --interval weekly --at "12:00"
 
 # Custom cron expression (every 6 hours)
 ./scripts/setup-cron.sh --config config/scrape-targets.json --cron "0 */6 * * *"
@@ -186,15 +196,7 @@ archive_root/
 └── ...
 ```
 
-Existing exports are updated in-place with new messages appended and deduplicated by message ID.
-
-**In-place append contract**
-
-- Each target writes under its configured `output_dir` (for example `~/Documents/KotOR_discord_msgs/`).
-- Existing files named `Guild - Category - Channel [channel_id].json` are discovered automatically and updated in place.
-- On the first run against an existing archive tree, the wrapper bootstraps `output_dir/.dce-meta/channel-map.json` from those filenames so it never creates a parallel export file.
-- Incremental exports use DiscordChatExporter `--after` with the highest existing message id, then merge new messages by id.
-- A merge that would reduce message count is rejected; the on-disk archive is left unchanged.
+Existing exports are updated in-place with new messages appended and deduplicated by message ID. See **Append-only contract** at the top of this guide.
 
 ## Troubleshooting
 
@@ -286,12 +288,21 @@ Re-run setup with new parameters (old entry replaced):
 Check logs from your last run:
 
 ```bash
-# Recent cron execution
+# Primary log file (default from setup-cron.sh)
+tail -f logs/discord-scrape.log
+
+# Recent cron execution (system log)
 sudo grep discord-scrape /var/log/syslog  # Debian/Ubuntu
 sudo grep discord-scrape /var/log/cron    # CentOS/RHEL
 
-# Or check via Docker logs if using containers
-docker-compose logs -f
+# Container build/run issues
+docker compose logs -f
+```
+
+After a scheduled run, confirm archives grew in place:
+
+```bash
+./scripts/prove-incremental-append.sh --target KotOR_discord_msgs
 ```
 
 ## Performance Considerations

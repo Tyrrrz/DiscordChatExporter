@@ -45,6 +45,7 @@ Options:
   --cron EXPR         Use an explicit five-field cron expression instead of --interval/--at.
   --job-name NAME     Marker name for the installed cron block. Default: discord-scrape
   --log-file PATH     Cron log file. Default: $LOG_FILE
+  --config PATH       Scrape targets JSON. Default: $CONFIG_FILE
   --env-file PATH     Compose env file. Default: $ENV_FILE
   --skip-preflight    Install the cron job without running the authenticated container preflight.
   --dry-run           Print the cron block instead of installing it.
@@ -130,6 +131,22 @@ append_target_args() {
   done
 }
 
+container_config_path() {
+  local config_path=$1
+
+  if [[ "$config_path" == "$REPO_ROOT/config/"* ]]; then
+    printf '/config/%s\n' "$(basename "$config_path")"
+    return 0
+  fi
+
+  if [[ "$config_path" == config/* ]]; then
+    printf '/config/%s\n' "${config_path#config/}"
+    return 0
+  fi
+
+  printf '%s\n' "$config_path"
+}
+
 ensure_target_directories() {
   local selected_targets_json archive_root output_dir
 
@@ -182,6 +199,7 @@ run_preflight() {
     --env-file "$ENV_FILE"
     --compose-file "$COMPOSE_FILE"
     preflight
+    --config "$(container_config_path "$CONFIG_FILE")"
   )
   append_target_args preflight_args
   "${preflight_args[@]}"
@@ -228,6 +246,11 @@ main() {
       --log-file)
         [[ $# -ge 2 ]] || die "Missing value for --log-file."
         LOG_FILE=$2
+        shift 2
+        ;;
+      --config)
+        [[ $# -ge 2 ]] || die "Missing value for --config."
+        CONFIG_FILE=$2
         shift 2
         ;;
       --env-file)
@@ -315,6 +338,7 @@ main() {
     --env-file "$ENV_FILE"
     --compose-file "$COMPOSE_FILE"
     scrape
+    --config "$(container_config_path "$CONFIG_FILE")"
   )
   append_target_args scrape_args
   scrape_command=$(printf '%q ' "${scrape_args[@]}")

@@ -645,26 +645,16 @@ resolve_target_channels() {
   fi
 }
 
-preflight_target() {
-  local target_json=$1
-  local defaults_json=$2
-  local target_name output_dir
-  local probe_channel_id probe_dir probe_output
-  local -a channel_ids
+preflight_probe_channel() {
+  local probe_channel_id=$1
+  local output_dir=$2
+  local probe_dir probe_output probe_log
+  local -a probe_command after_id probe_destination
+  local probe_status=0
 
-  target_name=$(jq -r '.name' <<<"$target_json")
-  output_dir=$(jq -r '.output_dir' <<<"$target_json")
-  bootstrap_channel_map_from_archives "$output_dir"
-
-  mapfile -t channel_ids < <(resolve_target_channels "$target_json" "$defaults_json")
-  if (( ${#channel_ids[@]} == 0 )); then
-    die "Target '$target_name' resolved no channels during preflight."
-  fi
-
-  probe_channel_id="${channel_ids[0]}"
   probe_dir=$(mktemp -d "${TMPDIR:-/tmp}/dce-preflight.${probe_channel_id}.XXXXXX")
   probe_output="$probe_dir/probe.json"
-  local -a probe_command after_id probe_destination
+  probe_log=$(mktemp "${TMPDIR:-/tmp}/dce-preflight-log.${probe_channel_id}.XXXXXX")
 
   probe_destination=$(resolve_destination_path "$output_dir" "$probe_channel_id")
   after_id=""
@@ -683,13 +673,75 @@ preflight_target() {
     probe_command+=(--after "$after_id")
   fi
 
-  if ! "${probe_command[@]}"; then
+  set +e
+  "${probe_command[@]}" >"$probe_log" 2>&1
+  probe_status=$?
+  set -e
+
+  if (( probe_status == 0 )); then
+    rm -f "$probe_log"
     rm -rf "$probe_dir"
-    die "Target '$target_name' failed authenticated preflight on channel '$probe_channel_id'."
+    return 0
   fi
 
+  if is_skippable_channel_export_failure "$probe_log"; then
+    log "Preflight probe skipped channel $probe_channel_id (forbidden or inaccessible)."
+    cat "$probe_log" >&2
+    rm -f "$probe_log"
+    rm -rf "$probe_dir"
+    return 2
+  fi
+
+  cat "$probe_log" >&2
+  rm -f "$probe_log"
   rm -rf "$probe_dir"
-  log "Preflight ok for target '$target_name': ${#channel_ids[@]} channel(s) resolved for $output_dir."
+  return 1
+}
+
+preflight_target() {
+  local target_json=$1
+  local defaults_json=$2
+  local target_name output_dir
+  local probe_channel_id
+  local -a channel_ids seeded_channel_ids
+  local probe_status=0
+  local skipped_channels=0
+  local probed_channels=0
+
+  target_name=$(jq -r '.name' <<<"$target_json")
+  output_dir=$(jq -r '.output_dir' <<<"$target_json")
+  bootstrap_channel_map_from_archives "$output_dir"
+
+  mapfile -t channel_ids < <(resolve_target_channels "$target_json" "$defaults_json")
+  if (( ${#channel_ids[@]} == 0 )); then
+    die "Target '$target_name' resolved no channels during preflight."
+  fi
+
+  for probe_channel_id in "${channel_ids[@]}"; do
+    probed_channels=$((probed_channels + 1))
+    preflight_probe_channel "$probe_channel_id" "$output_dir" || probe_status=$?
+    case "$probe_status" in
+      0)
+        log "Preflight ok for target '$target_name': ${#channel_ids[@]} channel(s) resolved for $output_dir."
+        return 0
+        ;;
+      2)
+        skipped_channels=$((skipped_channels + 1))
+        probe_status=0
+        ;;
+      *)
+        die "Target '$target_name' failed authenticated preflight on channel '$probe_channel_id'."
+        ;;
+    esac
+  done
+
+  mapfile -t seeded_channel_ids < <(load_archive_seed_channel_ids "$output_dir" | sort -u)
+  if (( skipped_channels == probed_channels && ${#seeded_channel_ids[@]} > 0 )); then
+    log "Preflight ok for target '$target_name' with warning: all ${#channel_ids[@]} resolved channel(s) are inaccessible, but ${#seeded_channel_ids[@]} seeded archive(s) exist under $output_dir."
+    return 0
+  fi
+
+  die "Target '$target_name' failed preflight: every resolved channel is inaccessible and no seeded archives exist under $output_dir."
 }
 
 scrape_target() {

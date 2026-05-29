@@ -102,3 +102,10 @@ Operators rely on `run-documents-scrape.sh`, `verify-documents-archives.sh`, and
 - All ten smoke scripts exit 0.
 
 **Verification:** Single shell loop over `scripts/tests/*.sh`.
+
+---
+
+### Delta Update (2026-05-29)
+- **Landed:** Source-built Docker + compose + `setup-cron.sh` (monthly default); append-only merge; custom `~/Documents/*` targets; compound solution doc; preflight skips forbidden channels when seeded archives exist; `--config` on `setup-cron.sh`; compose `DCE_ARCHIVE_ROOT` + optional `scrape.env` for builds; operator doc fixes (append contract, weekly schedule, monitoring log path).
+- **Partial:** Live grow-only proof on all enabled targets not run in this pass; some channels remain forbidden under current token.
+- **Next:** `prove-incremental-append.sh` per enabled target; consider `container-smoke.sh` in CI when Docker is available on runners.

@@ -18,6 +18,7 @@ cd ../DiscordChatExporter   # or your clone path
 # or: cp scrape.env.example scrape.env and set DISCORD_TOKEN (never commit)
 ./scripts/bootstrap-recurring-scrape.sh    # verify, build image, preflight
 ./scripts/run-documents-scrape.sh          # incremental append-only scrape
+./scripts/run-operator-proof.sh --sync-gui --target eod_discord   # one-target handoff + scrape + grow-only proof
 ./scripts/setup-cron.sh --dry-run          # preview monthly job (default 1st @ 04:00)
 ./scripts/setup-cron.sh                    # install cron after handoff passes
 ```
@@ -33,7 +34,9 @@ Archives: `config/scrape-targets.json` (typically `~/Documents/*` per target `ou
 
 **Disk:** Free several GiB on `/home` and archive roots before large scrapes (`DCE_MIN_FREE_MB`, default 1024).
 
-**Validate scripts:** `./scripts/run-all-smokes.sh`
+**Validate scripts:** `DCE_MIN_FREE_MB=0 ./scripts/run-all-smokes.sh` (19 offline smokes)
+
+**Podman (Fedora):** install `podman-compose` when `docker compose` cannot reach the socket; scripts auto-prefer it.
 
 ## Wrappers in the GUI zip folder
 

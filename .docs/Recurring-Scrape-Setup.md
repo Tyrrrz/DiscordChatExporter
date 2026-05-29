@@ -13,6 +13,8 @@ This guide walks you through setting up automated recurring Discord exports usin
 
 **Fastest path:** `./scripts/operator-handoff.sh` (disk + verify + archive dry-run), then `./scripts/bootstrap-recurring-scrape.sh` without `--dry-run` when ready (see [operator checklist](../docs/recurring-scrape-operator-checklist.md)).
 
+**One-target live proof:** `./scripts/run-operator-proof.sh --sync-gui --target eod_discord` (handoff → scrape → grow-only check; use `--dry-run` for handoff only).
+
 **Disk space:** `verify-operator-ready` and scrape entrypoints fail below 1 GiB free by default (`DCE_MIN_FREE_MB`, default 1024). Large channel JSON merges need extra headroom.
 
 **Append-only contract (read first)**

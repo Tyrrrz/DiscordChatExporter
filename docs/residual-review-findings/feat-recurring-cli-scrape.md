@@ -1,7 +1,11 @@
 ## Residual Review Findings
 
-Source: ce-code-review autofix pass on `docs/plans/2026-05-29-011-feat-documents-recurring-scrape-verify-plan.md`
+Source: ce-code-review autofix passes on plans 011 and 012.
 
-- **[P2][manual]** `scripts/run-discord-scrape.sh` (`last_message_id`) — `max_by(.id)` uses string comparison; mixed-length snowflakes can pick wrong cursor and re-fetch history. Suggested fix: `sort_by(.id) | last | .id` or padded numeric compare.
-- **[P3][manual]** `scripts/run-discord-scrape.sh` (`load_guild_channel_cache`) — Channel listing failures exit without CLI stderr context. Mirror `load_guild_cache` error capture.
-- **[P3][advisory]** `docker-compose.yml` — `DCE_ARCHIVE_ROOT` defaults to `/home/brunner56/Documents`; set explicitly on other hosts.
+**Status (2026-05-29):** R1–R3 addressed in `25e1a7e`.
+
+- ~~**[P2][manual]** `last_message_id` snowflake cursor~~ — fixed: padded `sort_by` on message ids.
+- ~~**[P3][manual]** `load_guild_channel_cache` diagnostics~~ — fixed: capture CLI output on failure.
+- ~~**[P3][advisory]** `DCE_ARCHIVE_ROOT` portability~~ — fixed: compose comment.
+
+**Open:** Use a user token (not bot) for live incremental downloads when channels return 403.

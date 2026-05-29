@@ -336,5 +336,5 @@ GitHub Actions runs the CI-marked scripts on every push/PR via `.github/workflow
 ## Next Steps
 
 - [Troubleshooting common issues](Recurring-Scrape-Troubleshooting.md)
-- [Scheduling documentation for your OS](.docs/Scheduling-Linux.md)
-- [Docker and containerization details](.docs/Docker.md)
+- [Scheduling documentation for your OS](Scheduling-Linux.md)
+- [Docker and containerization details](Docker.md)

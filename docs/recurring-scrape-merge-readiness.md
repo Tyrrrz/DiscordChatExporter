@@ -38,6 +38,13 @@ Optional Discord probe for one target:
 ./scripts/verify-operator-ready.sh --preflight KotOR_discord_msgs
 ```
 
+Single-target live proof (handoff → scrape → grow-only check):
+
+```bash
+./scripts/run-operator-proof.sh --sync-gui --target eod_discord
+./scripts/run-operator-proof.sh --dry-run   # handoff only
+```
+
 Full validation with log (GUI token sync + scrape + audit):
 
 ```bash
@@ -61,6 +68,8 @@ df -h ~/Documents /home/brunner56/Downloads/DiscordChatExporter
 Override threshold: `DCE_MIN_FREE_MB=2048 ./scripts/verify-operator-ready.sh`  
 Skip check (smokes only): `DCE_MIN_FREE_MB=0`  
 Also enforced by `run-documents-scrape.sh`, `run-discord-scrape-host.sh` (cron), and `run-operator-validation.sh`.
+
+**Podman hosts:** install `podman-compose` (`dnf install podman-compose`) when `docker compose` cannot reach the socket; scripts auto-prefer `podman-compose` when present.
 
 ## CI note (fork PRs)
 

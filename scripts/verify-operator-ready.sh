@@ -38,6 +38,10 @@ resolve_compose() {
     printf 'compose: %s\n' "$DCE_COMPOSE_BIN"
     return 0
   fi
+  if command -v podman-compose >/dev/null 2>&1 && podman info >/dev/null 2>&1; then
+    printf 'compose: podman-compose\n'
+    return 0
+  fi
   if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
     printf 'compose: docker compose\n'
     return 0

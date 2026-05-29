@@ -196,10 +196,29 @@ ensure_token_present() {
   [[ -n "${DISCORD_TOKEN:-}" ]] || die "DISCORD_TOKEN is not set. Set DISCORD_TOKEN or DISCORD_TOKEN_FILE in $ENV_FILE, export it in the shell, place a token at $REPO_ROOT/.discord-token or ~/.config/discord-scrape/token, or sign in via DiscordChatExporter GUI / Discord desktop on this machine."
 }
 
+resolve_compose_bin() {
+  if [[ -n "${DCE_COMPOSE_BIN:-}" ]]; then
+    COMPOSE_BIN=$DCE_COMPOSE_BIN
+    return 0
+  fi
+  # Smoke tests inject DCE_DOCKER_BIN with a fake compose shim; never route those through podman-compose.
+  if (( DOCKER_BIN_OVERRIDDEN == 1 )); then
+    COMPOSE_BIN=""
+    return 0
+  fi
+  if command -v podman-compose >/dev/null 2>&1 && podman info >/dev/null 2>&1; then
+    COMPOSE_BIN=podman-compose
+    return 0
+  fi
+  COMPOSE_BIN=""
+}
+
 compose_run_args() {
   local -n _out=$1
   local subcommand=$2
   shift 2
+
+  resolve_compose_bin
 
   _out=()
   if [[ -n "$COMPOSE_BIN" ]]; then

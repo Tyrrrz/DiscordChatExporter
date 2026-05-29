@@ -55,6 +55,10 @@ resolve_compose() {
     COMPOSE_BIN=("$DCE_COMPOSE_BIN")
     return 0
   fi
+  if command -v podman-compose >/dev/null 2>&1 && podman info >/dev/null 2>&1; then
+    COMPOSE_BIN=(podman-compose)
+    return 0
+  fi
   if command -v docker-compose >/dev/null 2>&1; then
     COMPOSE_BIN=(docker-compose)
     return 0

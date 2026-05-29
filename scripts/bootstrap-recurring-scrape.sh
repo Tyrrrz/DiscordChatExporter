@@ -134,9 +134,26 @@ main() {
     preflight_args+=(--target "$target")
   done
 
-  "${preflight_args[@]}"
+  local preflight_log preflight_status
+  preflight_log=$(mktemp "${TMPDIR:-/tmp}/dce-bootstrap-preflight.XXXXXX")
+  "${preflight_args[@]}" 2>&1 | tee "$preflight_log"
+  preflight_status=${PIPESTATUS[0]}
+
+  if (( preflight_status != 0 )); then
+    cat "$preflight_log" >&2
+    rm -f "$preflight_log"
+    exit "$preflight_status"
+  fi
 
   printf '\nBootstrap complete.\n'
+  if grep -q 'inaccessible, but .* seeded archive' "$preflight_log" \
+    || grep -qiE 'failed: forbidden|Missing Access' "$preflight_log"; then
+    printf '\nToken note: many channels returned forbidden. That usually means a bot token without message-history access.\n'
+    printf '  For live incremental downloads, put a user token in %s (see .docs/Token-and-IDs.md).\n' "$ENV_FILE"
+    printf '  Append-only archives are still safe: existing JSON is updated in place and never fully re-downloaded.\n'
+  fi
+  rm -f "$preflight_log"
+
   printf '  Scrape now:  %s\n' "$REPO_ROOT/scripts/run-documents-scrape.sh"
   printf '  Install cron: %s --dry-run\n' "$REPO_ROOT/scripts/setup-cron.sh"
 }

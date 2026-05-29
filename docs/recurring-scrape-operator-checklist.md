@@ -14,10 +14,12 @@ Use this after cloning or opening the **source** repo (`DiscordChatExporter`, no
 
 ```bash
 ./scripts/setup-cron.sh --dry-run
-./scripts/setup-cron.sh
+./scripts/setup-cron.sh --skip-preflight   # after bootstrap preflight already succeeded
 ```
 
 Defaults: first day of month at 04:00. Override with `--interval weekly`, `--at HH:MM`, or `--cron '0 4 1 * *'`.
+
+Installed jobs are marked `# BEGIN discord-scrape` in `crontab -l`. Logs append to `logs/discord-scrape.log`.
 
 ## Narrow a run
 

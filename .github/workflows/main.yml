@@ -76,6 +76,7 @@ jobs:
           ./scripts/tests/gh-approve-pr-runs-smoke.sh
           ./scripts/tests/documents-scrape-smoke.sh
           ./scripts/tests/verify-documents-auth-smoke.sh
+          ./scripts/tests/scrape-here-smoke.sh
 
   test:
     # Tests need access to secrets, so we can't run them against PRs because of limited trust

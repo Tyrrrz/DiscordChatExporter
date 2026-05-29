@@ -33,7 +33,7 @@ Installed jobs are marked `# BEGIN discord-scrape` in `crontab -l`. Logs append 
 
 ## GUI zip only
 
-See [gui-zip-recurring-scrape-bridge.md](gui-zip-recurring-scrape-bridge.md) or run `../DiscordChatExporter.linux-x64/bootstrap-recurring-scrape.sh`.
+See [gui-zip-recurring-scrape-bridge.md](gui-zip-recurring-scrape-bridge.md), run `./scripts/sync-gui-bridge-doc.sh`, or use `../DiscordChatExporter.linux-x64/bootstrap-recurring-scrape.sh`.
 
 Validate scripts after changes:
 

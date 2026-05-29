@@ -7,7 +7,7 @@ DiscordChatExporter.linux-x64/     ← GUI (this folder)
 DiscordChatExporter/               ← source repo (scripts, Docker, config)
 ```
 
-Copy this file to `../DiscordChatExporter.linux-x64/RECURRING-SCRAPE.md` if you want the quick reference next to the GUI binary.
+Sync to the GUI zip folder: `./scripts/sync-gui-bridge-doc.sh` (writes `../DiscordChatExporter.linux-x64/RECURRING-SCRAPE.md` by default).
 
 ## Quick start (run from source repo)
 

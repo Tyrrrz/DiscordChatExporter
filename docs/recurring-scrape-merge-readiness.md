@@ -82,9 +82,9 @@ Also enforced by `run-documents-scrape.sh`, `run-discord-scrape-host.sh` (cron),
 
 **Podman hosts:** install `podman-compose` (`dnf install podman-compose`) when `docker compose` cannot reach the socket; scripts auto-prefer `podman-compose` when present.
 
-## Host validation (2026-05-29)
+## Host validation (2026-05-29 / 2026-05-30)
 
-Live proof on this machine (Podman + `podman-compose`, GUI token sync):
+### Single-target proof (`eod_discord`)
 
 ```bash
 ./scripts/run-operator-proof.sh --sync-gui --target eod_discord
@@ -92,7 +92,30 @@ Live proof on this machine (Podman + `podman-compose`, GUI token sync):
 
 Result: **passed** — preflight OK, incremental scrape completed, append-safe proof OK for all 6 channels. Log: `logs/operator-proof-20260529T213341Z.log`.
 
-**Disk warning:** `/home` was ~1.6 GiB free at run time; free several GiB before KotOR-scale targets.
+### Full per-target validation (`--per-target --continue-on-error`)
+
+```bash
+DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh --sync-gui --per-target --continue-on-error \
+  --log-file logs/full-validation-latest.log
+```
+
+**2026-05-30 run** (log `logs/full-validation-latest.log`, started `01:35:29Z`):
+
+| Target | Scrape | Audit | Notes |
+|--------|--------|-------|-------|
+| ror_orig_discord | pass | pass | |
+| ror_new_discord | pass | pass | |
+| openkotor_discord_msgs | pass | pass | |
+| KotOR_Speedrun_Discord | pass | pass | 7 channels skipped (forbidden) |
+| KotOR_discord_msgs | in progress / long-running | — | 27 channels; allow time on first full scrape |
+| holocron_toolset_discord | pending | — | |
+| expanded_kotor_discord | pending | — | |
+| eod_discord | pending | — | |
+| DS_Discord_msgs | pending | — | |
+
+Re-check completion: `grep 'Per-target summary\\|Operator validation finished' logs/full-validation-latest.log`
+
+**Disk:** ~25 GiB free on `/home` at 2026-05-30; still allow headroom for KotOR `yes_general`-scale merges.
 
 ## CI note (fork PRs)
 

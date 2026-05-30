@@ -94,8 +94,9 @@ scrape_per_target() {
   mapfile -t target_names < <(enabled_targets)
   for name in "${target_names[@]}"; do
     [[ -n "$name" ]] || continue
-    log_step "Per-target pass: $name"
+    log_step "Per-target begin: $name"
     if ! run_step "run-documents-scrape ($name)" "$DOCUMENTS_SCRAPE" "${scrape_args[@]}" --target "$name"; then
+      log_step "Per-target failed: $name (scrape)"
       failures=$((failures + 1))
       if (( CONTINUE_ON_ERROR == 0 )); then
         return 1
@@ -103,12 +104,15 @@ scrape_per_target() {
       continue
     fi
     if (( DRY_RUN )); then
+      log_step "Per-target done: $name (dry-run)"
       ok=$((ok + 1))
       continue
     fi
     if run_step "audit-archive-json ($name)" "$AUDIT_JSON" --config "$CONFIG_PATH" --target "$name"; then
+      log_step "Per-target done: $name (ok)"
       ok=$((ok + 1))
     else
+      log_step "Per-target failed: $name (audit)"
       failures=$((failures + 1))
       if (( CONTINUE_ON_ERROR == 0 )); then
         return 1

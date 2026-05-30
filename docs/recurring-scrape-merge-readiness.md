@@ -99,23 +99,23 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh --sync-gui --per-target -
   --log-file logs/full-validation-latest.log
 ```
 
-**2026-05-30 run** (log `logs/full-validation-latest.log`, started `01:35:29Z`):
+**Combined 2026-05-30 validation** (`logs/full-validation-latest.log` + `logs/validation-resume-20260530.log`):
 
 | Target | Scrape | Audit | Notes |
 |--------|--------|-------|-------|
-| ror_orig_discord | pass | pass | |
-| ror_new_discord | pass | pass | |
-| openkotor_discord_msgs | pass | pass | |
+| ror_orig_discord | pass | pass | full-validation run |
+| ror_new_discord | pass | pass | full-validation run |
+| openkotor_discord_msgs | pass | pass | full-validation run |
 | KotOR_Speedrun_Discord | pass | pass | 7 channels skipped (forbidden) |
-| KotOR_discord_msgs | in progress / long-running | — | 27 channels; allow time on first full scrape |
-| holocron_toolset_discord | pending | — | |
-| expanded_kotor_discord | pending | — | |
-| eod_discord | pending | — | |
-| DS_Discord_msgs | pending | — | |
+| holocron_toolset_discord | pass | pass | validation-resume |
+| expanded_kotor_discord | pass | pass | validation-resume |
+| eod_discord | pass | pass | validation-resume |
+| DS_Discord_msgs | pass | pass | validation-resume; some channels forbidden |
+| KotOR_discord_msgs | **fail** | — | channel `221726893064454144` (`yes_general`) failed mid-export (~11%); see log |
 
-Re-check completion: `grep 'Per-target summary\\|Operator validation finished' logs/full-validation-latest.log`
+**KotOR remediation:** ensure several GiB free on `/home`, run `./scripts/audit-archive-json.sh --target KotOR_discord_msgs`, salvage truncated JSON if needed, then `./scripts/run-operator-validation.sh --target KotOR_discord_msgs`.
 
-**Disk:** ~25 GiB free on `/home` at 2026-05-30; still allow headroom for KotOR `yes_general`-scale merges.
+**Disk:** ~22 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
 
 ## CI note (fork PRs)
 

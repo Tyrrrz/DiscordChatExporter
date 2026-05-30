@@ -4,6 +4,8 @@ set -Eeuo pipefail
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
 REPO_ROOT="${DCE_REPO_ROOT:-$(cd "$SCRIPT_DIR/.." && pwd -P)}"
+# shellcheck source=lib/scrape-run-plan.sh
+source "$SCRIPT_DIR/lib/scrape-run-plan.sh"
 COMPOSE_FILE="${DCE_COMPOSE_FILE:-$REPO_ROOT/docker-compose.yml}"
 ENV_FILE="${DCE_ENV_FILE:-$REPO_ROOT/scrape.env}"
 DOCKER_BIN="${DCE_DOCKER_BIN:-docker}"
@@ -444,6 +446,18 @@ main() {
   prepare_compose_env
   REAUTH_COMMAND="${DCE_REAUTH_COMMAND:-}"
   run_disk_preflight_if_enabled "${passthrough_args[@]}"
+
+  local host_config host_targets=() arg_idx=0
+  host_config=$(resolve_host_config_path "${passthrough_args[@]}")
+  while (( arg_idx < ${#passthrough_args[@]} )); do
+    if [[ "${passthrough_args[arg_idx]}" == "--target" ]]; then
+      host_targets+=("${passthrough_args[arg_idx + 1]:-}")
+      arg_idx=$((arg_idx + 2))
+      continue
+    fi
+    arg_idx=$((arg_idx + 1))
+  done
+  print_scrape_config_plan "$host_config" "Host $subcommand" "${host_targets[@]}"
 
   case "$subcommand" in
     preflight|scrape)

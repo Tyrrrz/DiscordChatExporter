@@ -11,8 +11,9 @@ cleanup() {
 trap cleanup EXIT
 
 FAKE_REPO="$TMP_DIR/fake-repo"
-mkdir -p "$FAKE_REPO/scripts"
+mkdir -p "$FAKE_REPO/scripts/lib"
 cp "$REPO_ROOT/scripts/run-discord-scrape-host.sh" "$FAKE_REPO/scripts/"
+cp "$REPO_ROOT/scripts/lib/scrape-run-plan.sh" "$FAKE_REPO/scripts/lib/"
 chmod +x "$FAKE_REPO/scripts/run-discord-scrape-host.sh"
 
 COMPOSE_FILE="$TMP_DIR/docker-compose.yml"
@@ -73,7 +74,12 @@ DCE_REPO_ROOT="$REPO_ROOT" \
   DISCORD_TOKEN=dummy \
   "$PROVE" --config "$TMP_DIR/config.json" --target demo >/dev/null
 
-"$REPO_ROOT/scripts/run-documents-scrape.sh" --dry-run --config "$TMP_DIR/config.json" >/dev/null
+DOC_OUT="$TMP_DIR/documents-dry-run.log"
+"$REPO_ROOT/scripts/run-documents-scrape.sh" --dry-run --config "$TMP_DIR/config.json" >"$DOC_OUT" 2>&1
+grep -q 'Documents scrape run plan' "$DOC_OUT" || {
+  echo "expected Documents scrape run plan in dry-run output" >&2
+  exit 1
+}
 
 DCE_MIN_FREE_MB=0 DCE_CONFIG_FILE="$TMP_DIR/config.json" \
   "$REPO_ROOT/scripts/verify-operator-ready.sh" --disk-only --config "$TMP_DIR/config.json" \

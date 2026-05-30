@@ -11,6 +11,8 @@ DISCOVER_TOKEN="$REPO_ROOT/scripts/discover-discord-token.sh"
 VERIFY_SCRIPT="$REPO_ROOT/scripts/verify-documents-archives.sh"
 VERIFY_READY="$REPO_ROOT/scripts/verify-operator-ready.sh"
 SETUP_AUTH="$REPO_ROOT/scripts/setup-scrape-auth.sh"
+# shellcheck source=lib/scrape-run-plan.sh
+source "$SCRIPT_DIR/lib/scrape-run-plan.sh"
 
 usage() {
   cat <<EOF
@@ -69,6 +71,12 @@ main() {
   done
 
   "$VERIFY_SCRIPT" --config "$CONFIG_PATH"
+
+  local -a plan_targets=()
+  if [[ -n "$target" ]]; then
+    plan_targets=("$target")
+  fi
+  print_scrape_config_plan "$CONFIG_PATH" "Documents scrape" "${plan_targets[@]}"
 
   if (( dry_run == 1 )); then
     printf 'Dry run complete: archive paths verified. Export DISCORD_TOKEN or create a token file, then rerun without --dry-run.\n'

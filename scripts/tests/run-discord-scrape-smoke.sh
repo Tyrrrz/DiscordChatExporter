@@ -210,7 +210,20 @@ run_wrapper() {
   "$REPO_ROOT/scripts/run-discord-scrape.sh" scrape --target "$target_name"
 }
 
-run_wrapper demo initial
+SCRAPE_LOG="$TMP_DIR/scrape.log"
+run_wrapper demo initial 2>"$SCRAPE_LOG"
+grep -q 'Scrape run plan' "$SCRAPE_LOG" || {
+  echo "expected Scrape run plan in scrape output" >&2
+  exit 1
+}
+grep -q 'Scrape run summary' "$SCRAPE_LOG" || {
+  echo "expected Scrape run summary in scrape output" >&2
+  exit 1
+}
+grep -qE 'CREATED|MERGED|UNCHANGED' "$SCRAPE_LOG" || {
+  echo "expected channel result line in scrape output" >&2
+  exit 1
+}
 
 DEST="$ARCHIVE_ROOT/demo/$DEFAULT_FILE_NAME"
 [[ -f "$DEST" ]] || { echo "expected destination archive missing" >&2; exit 1; }

@@ -46,6 +46,163 @@ log() {
   printf '[%s] %s\n' "$(timestamp)" "$*" >&2
 }
 
+SCRAPE_SUMMARY_ENTRIES=()
+
+reset_scrape_summary() {
+  SCRAPE_SUMMARY_ENTRIES=()
+}
+
+record_channel_result() {
+  local target_name=$1 channel_id=$2 guild_label=$3 file_path=$4 action=$5
+  local before_count=$6 fetched_count=$7 after_count=$8
+  SCRAPE_SUMMARY_ENTRIES+=(
+    "$target_name"$'\t'"$channel_id"$'\t'"$guild_label"$'\t'"$file_path"$'\t'"$action"$'\t'"$before_count"$'\t'"$fetched_count"$'\t'"$after_count"
+  )
+}
+
+guild_name_for_id() {
+  local guild_id=$1
+  local cached_id cached_name
+
+  while IFS=$'\t' read -r cached_id cached_name; do
+    [[ "$cached_id" == "$guild_id" ]] || continue
+    printf '%s\n' "$cached_name"
+    return 0
+  done < <(load_guild_cache)
+
+  printf '%s\n' "$guild_id"
+}
+
+guild_label_from_export() {
+  local export_path=$1
+  local guild_id guild_name
+
+  [[ -n "$export_path" && -f "$export_path" ]] || {
+    printf 'unknown guild\n'
+    return 0
+  }
+
+  guild_id=$(jq -r '.guild.id // empty' "$export_path")
+  guild_name=$(jq -r '.guild.name // empty' "$export_path")
+  if [[ -n "$guild_id" && -n "$guild_name" ]]; then
+    printf '%s [%s]\n' "$guild_name" "$guild_id"
+    return 0
+  fi
+
+  if [[ -n "$guild_id" ]]; then
+    printf '%s [%s]\n' "$(guild_name_for_id "$guild_id")" "$guild_id"
+    return 0
+  fi
+
+  printf 'unknown guild\n'
+}
+
+describe_target_resolution() {
+  local target_json=$1
+  local kind target_name output_dir
+  local -a configured_channel_ids configured_guild_ids seeded_channel_ids guild_labels
+  local guild_id guild_name channel_count
+
+  target_name=$(jq -r '.name' <<<"$target_json")
+  output_dir=$(jq -r '.output_dir' <<<"$target_json")
+  kind=$(jq -r '.kind // "guild"' <<<"$target_json")
+
+  if [[ "$kind" == "dms" ]]; then
+    channel_count=$(load_dm_channel_cache | wc -l | tr -d ' ')
+    printf 'DM target (%s channel(s))' "${channel_count:-0}"
+    return 0
+  fi
+
+  mapfile -t configured_channel_ids < <(jq -r '.channel_ids[]? | tostring' <<<"$target_json")
+  if (( ${#configured_channel_ids[@]} > 0 )); then
+    printf '%s explicit channel id(s)' "${#configured_channel_ids[@]}"
+    return 0
+  fi
+
+  mapfile -t seeded_channel_ids < <(load_archive_seed_channel_ids "$output_dir" | sort -u)
+  if (( ${#seeded_channel_ids[@]} > 0 )); then
+    printf 'archive-seeded (%s channel file(s))' "${#seeded_channel_ids[@]}"
+    return 0
+  fi
+
+  mapfile -t configured_guild_ids < <(resolve_configured_guilds "$target_json")
+  if (( ${#configured_guild_ids[@]} == 0 )); then
+    printf 'no guild/channel resolution (check config or token)'
+    return 0
+  fi
+
+  for guild_id in "${configured_guild_ids[@]}"; do
+    guild_name=$(guild_name_for_id "$guild_id")
+    guild_labels+=("$guild_name [$guild_id]")
+  done
+
+  (IFS='; '; printf '%s' "${guild_labels[*]}")
+}
+
+log_run_plan() {
+  local mode=$1 config_path=$2
+  shift 2
+  local -a selected_targets=("$@")
+  local target_json target_name output_dir resolution
+
+  log '=== Scrape run plan ==='
+  log "Config: $config_path"
+  log "Mode: $mode"
+
+  for target_json in "${selected_targets[@]}"; do
+    target_name=$(jq -r '.name' <<<"$target_json")
+    output_dir=$(jq -r '.output_dir' <<<"$target_json")
+    resolution=$(describe_target_resolution "$target_json")
+    log "  Target '$target_name' → $output_dir"
+    log "    Server scope: $resolution"
+  done
+}
+
+print_scrape_summary() {
+  local entry target_name channel_id guild_label file_path action
+  local before_count fetched_count after_count delta appended=0
+  local created=0 merged=0 unchanged=0 skipped=0
+
+  log '=== Scrape run summary ==='
+
+  if (( ${#SCRAPE_SUMMARY_ENTRIES[@]} == 0 )); then
+    log '  No channel activity recorded.'
+    return 0
+  fi
+
+  for entry in "${SCRAPE_SUMMARY_ENTRIES[@]}"; do
+    IFS=$'\t' read -r target_name channel_id guild_label file_path action before_count fetched_count after_count <<<"$entry"
+
+    case "$action" in
+      CREATED)
+        created=$((created + 1))
+        delta=$((after_count - before_count))
+        appended=$((appended + delta))
+        log "  CREATED  $file_path  +$delta messages (0 → $after_count)  channel $channel_id  $guild_label"
+        ;;
+      MERGED)
+        merged=$((merged + 1))
+        delta=$((after_count - before_count))
+        appended=$((appended + delta))
+        log "  MERGED   $file_path  +$delta messages ($before_count → $after_count, fetched $fetched_count)  channel $channel_id  $guild_label"
+        ;;
+      UNCHANGED)
+        unchanged=$((unchanged + 1))
+        log "  UNCHANGED $file_path  $after_count messages  channel $channel_id  $guild_label"
+        ;;
+      SKIPPED)
+        skipped=$((skipped + 1))
+        log "  SKIPPED  channel $channel_id  $guild_label  (inaccessible or non-fatal export error)"
+        ;;
+      *)
+        log "  $action  $file_path  channel $channel_id  $guild_label"
+        ;;
+    esac
+  done
+
+  log "Totals: $created created, $merged merged, $unchanged unchanged, $skipped skipped; +$appended messages appended"
+}
+
 die() {
   log "ERROR: $*"
   exit 1
@@ -761,7 +918,7 @@ scrape_target() {
   local target_json=$1
   local defaults_json=$2
   local target_name output_dir destination_path after_id temp_dir temp_export temp_merged
-  local latest_batch_count
+  local latest_batch_count guild_label before_count after_count
   local -a channel_ids
   local export_status=0
 
@@ -776,11 +933,14 @@ scrape_target() {
   fi
 
   log "Target '$target_name': processing ${#channel_ids[@]} channel(s) into $output_dir."
+  log "  Server scope: $(describe_target_resolution "$target_json")"
 
   local channel_id
   local skipped_channels=0
   for channel_id in "${channel_ids[@]}"; do
     destination_path=$(resolve_destination_path "$output_dir" "$channel_id")
+    before_count=0
+    guild_label="unknown guild"
     if [[ -n "$destination_path" ]]; then
       mkdir -p "$(dirname "$destination_path")"
     fi
@@ -788,6 +948,8 @@ scrape_target() {
     if [[ -n "$destination_path" && -f "$destination_path" ]]; then
       jq empty "$destination_path" >/dev/null 2>&1 || die "Existing export is not valid JSON: $destination_path"
       assert_export_channel_identity "$destination_path" "$channel_id"
+      before_count=$(message_count "$destination_path")
+      guild_label=$(guild_label_from_export "$destination_path")
     fi
 
     after_id=$(last_message_id "$destination_path")
@@ -796,7 +958,7 @@ scrape_target() {
     temp_export="$temp_dir/export.json"
     temp_merged="$temp_dir/merged.json"
 
-    log "Exporting channel $channel_id for target '$target_name'${after_id:+ after message $after_id}."
+    log "Exporting channel $channel_id for target '$target_name'${after_id:+ after message $after_id}${destination_path:+ → $destination_path}."
 
     export_status=0
     export_channel_incremental "$channel_id" "$temp_export" "$after_id" || export_status=$?
@@ -805,6 +967,7 @@ scrape_target() {
       2)
         rm -rf "$temp_dir"
         skipped_channels=$((skipped_channels + 1))
+        record_channel_result "$target_name" "$channel_id" "$guild_label" "${destination_path:-n/a}" SKIPPED "$before_count" 0 "$before_count"
         continue
         ;;
       *)
@@ -815,6 +978,7 @@ scrape_target() {
 
     jq empty "$temp_export" >/dev/null 2>&1 || die "Incremental export is not valid JSON: $temp_export"
     assert_export_channel_identity "$temp_export" "$channel_id"
+    guild_label=$(guild_label_from_export "$temp_export")
 
     if [[ -z "$destination_path" ]]; then
       destination_path=$(resolve_destination_path "$output_dir" "$channel_id" "$temp_export")
@@ -824,11 +988,16 @@ scrape_target() {
     latest_batch_count=$(message_count "$temp_export")
     if [[ ! -f "$destination_path" ]]; then
       mv "$temp_export" "$destination_path"
+      after_count=$(message_count "$destination_path")
+      record_channel_result "$target_name" "$channel_id" "$guild_label" "$destination_path" CREATED 0 "$after_count" "$after_count"
+      log "  CREATED $destination_path (+$after_count messages, new archive)"
       rm -rf "$temp_dir"
       continue
     fi
 
     if (( latest_batch_count == 0 )); then
+      record_channel_result "$target_name" "$channel_id" "$guild_label" "$destination_path" UNCHANGED "$before_count" 0 "$before_count"
+      log "  UNCHANGED $destination_path ($before_count messages, no new export data)"
       rm -rf "$temp_dir"
       continue
     fi
@@ -838,6 +1007,9 @@ scrape_target() {
     jq empty "$temp_merged" >/dev/null 2>&1 || die "Merged export is not valid JSON: $temp_merged"
     assert_export_channel_identity "$temp_merged" "$channel_id"
     commit_merged_export "$destination_path" "$temp_merged"
+    after_count=$(message_count "$destination_path")
+    record_channel_result "$target_name" "$channel_id" "$guild_label" "$destination_path" MERGED "$before_count" "$latest_batch_count" "$after_count"
+    log "  MERGED $destination_path (+$((after_count - before_count)) messages, $before_count → $after_count, fetched $latest_batch_count)"
     rm -rf "$temp_dir"
   done
 
@@ -945,6 +1117,9 @@ run_target_mode() {
   CACHE_ROOT=$(mktemp -d "${TMPDIR:-/tmp}/dce-scrape.XXXXXX")
   trap 'rm -rf "$CACHE_ROOT"' EXIT
 
+  reset_scrape_summary
+  log_run_plan "$mode" "$config_path" "${selected_targets[@]}"
+
   local target_json
   for target_json in "${selected_targets[@]}"; do
     if [[ "$mode" == "preflight" ]]; then
@@ -953,6 +1128,10 @@ run_target_mode() {
       scrape_target "$target_json" "$defaults_json"
     fi
   done
+
+  if [[ "$mode" == "scrape" ]]; then
+    print_scrape_summary
+  fi
 }
 
 main() {

@@ -4,6 +4,8 @@ set -Eeuo pipefail
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
 REPO_ROOT="${DCE_REPO_ROOT:-$(cd "$SCRIPT_DIR/.." && pwd -P)}"
+# shellcheck source=lib/scrape-run-plan.sh
+source "$SCRIPT_DIR/lib/scrape-run-plan.sh"
 CONFIG_PATH="${DCE_CONFIG_FILE:-$REPO_ROOT/config/scrape-targets.json}"
 VERIFY_READY="$REPO_ROOT/scripts/verify-operator-ready.sh"
 DOCUMENTS_SCRAPE="$REPO_ROOT/scripts/run-documents-scrape.sh"
@@ -76,6 +78,8 @@ main() {
   printf 'Operator handoff\n'
   printf '================\n'
   printf 'config: %s\n\n' "$CONFIG_PATH"
+  print_scrape_config_plan "$CONFIG_PATH" "Operator handoff"
+  printf '\n'
 
   if (( SKIP_DF == 0 )); then
     print_disk_summary

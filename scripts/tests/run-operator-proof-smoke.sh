@@ -49,5 +49,9 @@ if [[ "$status" -ne 0 ]] || ! grep -q 'Dry run complete' <<<"$output"; then
   printf '%s\n' "$output" >&2
   exit 1
 fi
+grep -q 'Operator proof run plan' <<<"$output" || {
+  echo "expected Operator proof run plan in dry-run output" >&2
+  exit 1
+}
 
 printf 'run-operator-proof-smoke: ok\n'

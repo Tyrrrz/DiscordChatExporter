@@ -65,5 +65,9 @@ if [[ "$channel_status" -ne 0 ]] || ! grep -q 'Handoff complete' <<<"$channel_ou
   printf '%s\n' "$channel_output" >&2
   exit 1
 fi
+if ! grep -q 'Scrape lock status' <<<"$handoff_output"; then
+  printf 'operator-handoff missing scrape lock status section\n' >&2
+  exit 1
+fi
 
 printf 'operator-handoff-smoke: ok\n'

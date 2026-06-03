@@ -9,6 +9,7 @@ source "$SCRIPT_DIR/lib/scrape-run-plan.sh"
 CONFIG_PATH="${DCE_CONFIG_FILE:-$REPO_ROOT/config/scrape-targets.json}"
 VERIFY_READY="$REPO_ROOT/scripts/verify-operator-ready.sh"
 DOCUMENTS_SCRAPE="$REPO_ROOT/scripts/run-documents-scrape.sh"
+LOCK_STATUS="$REPO_ROOT/scripts/scrape-lock-status.sh"
 SKIP_DF=0
 TARGET=""
 CHANNEL_ARGS=()
@@ -101,6 +102,18 @@ main() {
   fi
 
   "$VERIFY_READY" --config "$CONFIG_PATH"
+
+  if [[ -x "$LOCK_STATUS" ]]; then
+    printf '\n'
+    set +e
+    "$LOCK_STATUS" --config "$CONFIG_PATH"
+    lock_status=$?
+    set -e
+    if (( lock_status == 1 )); then
+      printf '\nWARN: scrape lock is held; wait for the active scrape or confirm it is stale before starting another run.\n'
+    fi
+  fi
+
   local -a dry_run_args=(--dry-run --config "$CONFIG_PATH")
   [[ -n "$TARGET" ]] && dry_run_args+=(--target "$TARGET")
   dry_run_args+=("${CHANNEL_ARGS[@]}")

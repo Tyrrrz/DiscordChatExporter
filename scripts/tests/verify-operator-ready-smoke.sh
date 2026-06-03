@@ -37,6 +37,27 @@ JSON
 
 printf 'DISCORD_TOKEN=dummy\n' >"$ENV_PATH"
 
+mem_output=$(
+  DCE_MIN_FREE_MB=0 DCE_REPO_ROOT="$REPO_ROOT" DCE_CONFIG_FILE="$CONFIG_PATH" DCE_ENV_FILE="$ENV_PATH" \
+    "$VERIFY" --config "$CONFIG_PATH" 2>&1
+)
+grep -q 'Operator ready' <<<"$mem_output" || {
+  printf 'ERROR: verify-operator-ready failed\n' >&2
+  printf '%s\n' "$mem_output" >&2
+  exit 1
+}
+
+printf 'DISCORD_TOKEN=dummy\nDCE_CONTAINER_MEMORY=8g\n' >"$ENV_PATH"
+mem_output=$(
+  DCE_MIN_FREE_MB=0 DCE_REPO_ROOT="$REPO_ROOT" DCE_CONFIG_FILE="$CONFIG_PATH" DCE_ENV_FILE="$ENV_PATH" \
+    "$VERIFY" --config "$CONFIG_PATH" 2>&1
+)
+grep -q 'container memory: 8g' <<<"$mem_output" || {
+  printf 'ERROR: expected container memory line in verify output\n' >&2
+  printf '%s\n' "$mem_output" >&2
+  exit 1
+}
+
 cat >"$FAKE_DOCKER" <<'EOF'
 #!/usr/bin/env bash
 if [[ "${1:-}" == "compose" && "${2:-}" == "version" ]]; then

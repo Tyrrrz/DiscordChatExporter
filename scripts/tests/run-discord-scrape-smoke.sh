@@ -416,7 +416,8 @@ run_wrapper skip-abort append 2>"$SKIP_ABORT_LOG"
 SKIP_ABORT_DEST="$ARCHIVE_ROOT/skip-abort/$DEFAULT_FILE_NAME"
 [[ "$(jq -r '.messages | length' "$SKIP_ABORT_DEST")" == "3" ]] || { echo "expected skip-abort to append accessible channel" >&2; exit 1; }
 [[ ! -e "$ARCHIVE_ROOT/skip-abort/channels/134.json" ]] || { echo "unexpected fallback file for skipped abort channel" >&2; exit 1; }
-grep -q 'SKIPPED.*134' "$SKIP_ABORT_LOG" || { echo "expected SKIPPED line for abort channel 134" >&2; exit 1; }
+grep -q 'SKIPPED (OOM/aborted).*134' "$SKIP_ABORT_LOG" || { echo "expected SKIPPED_OOM line for abort channel 134" >&2; exit 1; }
+grep -q 'Hint: for OOM/aborted channels' "$SKIP_ABORT_LOG" || { echo "expected OOM operator hint in scrape summary" >&2; exit 1; }
 grep -q 'Preserving partial export temp' "$SKIP_ABORT_LOG" || { echo "expected partial temp preserved on abort channel 134" >&2; exit 1; }
 partial_temp_dirs=( "$ARCHIVE_ROOT/skip-abort/.dce-temp"/export.134.* )
 [[ -d "${partial_temp_dirs[0]}" ]] || { echo "expected partial temp dir preserved for channel 134" >&2; exit 1; }

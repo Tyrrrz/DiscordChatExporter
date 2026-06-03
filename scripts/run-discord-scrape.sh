@@ -49,9 +49,11 @@ log() {
 }
 
 SCRAPE_SUMMARY_ENTRIES=()
+LAST_EXPORT_SKIP_KIND=""
 
 reset_scrape_summary() {
   SCRAPE_SUMMARY_ENTRIES=()
+  LAST_EXPORT_SKIP_KIND=""
 }
 
 record_channel_result() {
@@ -163,7 +165,7 @@ log_run_plan() {
 print_scrape_summary() {
   local entry target_name channel_id guild_label file_path action
   local before_count fetched_count after_count delta appended=0
-  local created=0 merged=0 unchanged=0 skipped=0
+  local created=0 merged=0 unchanged=0 skipped=0 skipped_oom=0
 
   log '=== Scrape run summary ==='
 
@@ -192,6 +194,11 @@ print_scrape_summary() {
         unchanged=$((unchanged + 1))
         log "  UNCHANGED $file_path  $after_count messages  channel $channel_id  $guild_label"
         ;;
+      SKIPPED_OOM)
+        skipped=$((skipped + 1))
+        skipped_oom=$((skipped_oom + 1))
+        log "  SKIPPED (OOM/aborted)  channel $channel_id  $guild_label  (partial temp preserved under .dce-temp when present)"
+        ;;
       SKIPPED)
         skipped=$((skipped + 1))
         log "  SKIPPED  channel $channel_id  $guild_label  (inaccessible or non-fatal export error)"
@@ -203,6 +210,9 @@ print_scrape_summary() {
   done
 
   log "Totals: $created created, $merged merged, $unchanged unchanged, $skipped skipped; +$appended messages appended"
+  if (( skipped_oom > 0 )); then
+    log "Hint: for OOM/aborted channels, set DCE_CONTAINER_MEMORY=8g in scrape.env, run --salvage-before-scrape, then retry with --channel."
+  fi
 }
 
 die() {
@@ -755,6 +765,8 @@ export_channel_incremental() {
   local -a export_command
   local export_log export_status=0
 
+  LAST_EXPORT_SKIP_KIND=""
+
   export_command=("$CLI_BIN" export --channel "$channel_id" --format Json --output "$temp_export")
   if [[ -n "$after_id" ]]; then
     export_command+=(--after "$after_id")
@@ -773,6 +785,11 @@ export_channel_incremental() {
 
   # SIGINT (130), SIGTERM (143), SIGABRT (134), SIGKILL/OOM (137), SIGSEGV (139)
   if (( export_status == 130 || export_status == 143 || export_status == 134 || export_status == 137 || export_status == 139 )); then
+    if (( export_status == 134 || export_status == 137 || export_status == 139 )); then
+      LAST_EXPORT_SKIP_KIND=oom
+    else
+      LAST_EXPORT_SKIP_KIND=abort
+    fi
     log "Skipping channel $channel_id (export process aborted, exit $export_status)."
     [[ -s "$export_log" ]] && cat "$export_log" >&2
     rm -f "$export_log"
@@ -780,6 +797,11 @@ export_channel_incremental() {
   fi
 
   if is_skippable_channel_export_failure "$export_log"; then
+    if grep -qiE 'out of memory|OOM|Killed|SIGKILL|SIGABRT|Aborted \\(core dumped\\)|core dumped' "$export_log"; then
+      LAST_EXPORT_SKIP_KIND=oom
+    else
+      LAST_EXPORT_SKIP_KIND=access
+    fi
     log "Skipping channel $channel_id (inaccessible or non-fatal export error)."
     cat "$export_log" >&2
     rm -f "$export_log"
@@ -1268,7 +1290,11 @@ scrape_target() {
           rm -rf "$temp_dir"
         fi
         skipped_channels=$((skipped_channels + 1))
-        record_channel_result "$target_name" "$channel_id" "$guild_label" "${destination_path:-n/a}" SKIPPED "$before_count" 0 "$before_count"
+        local skip_action=SKIPPED
+        if [[ "${LAST_EXPORT_SKIP_KIND:-}" == oom ]]; then
+          skip_action=SKIPPED_OOM
+        fi
+        record_channel_result "$target_name" "$channel_id" "$guild_label" "${destination_path:-n/a}" "$skip_action" "$before_count" 0 "$before_count"
         continue
         ;;
       *)

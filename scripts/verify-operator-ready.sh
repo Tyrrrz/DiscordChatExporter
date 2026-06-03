@@ -101,6 +101,21 @@ check_auth() {
   die "No Discord token: set scrape.env, export DISCORD_TOKEN, or sync from GUI."
 }
 
+print_container_memory() {
+  local mem=""
+
+  if [[ -f "$ENV_FILE" ]]; then
+    mem=$(grep -E '^[[:space:]]*DCE_CONTAINER_MEMORY=' "$ENV_FILE" 2>/dev/null | tail -1 | cut -d= -f2- | tr -d '\r' || true)
+  fi
+  if [[ -z "$mem" && -n "${DCE_CONTAINER_MEMORY:-}" ]]; then
+    mem="$DCE_CONTAINER_MEMORY"
+  fi
+  mem=${mem#"${mem%%[![:space:]]*}"}
+  mem=${mem%"${mem##*[![:space:]]}"}
+  [[ -n "$mem" && "$mem" != "0" ]] || return 0
+  printf 'container memory: %s (compose mem_limit)\n' "$mem"
+}
+
 main() {
   while (($#)); do
     case "$1" in
@@ -143,6 +158,7 @@ main() {
   require_archive_disk_space
   resolve_compose
   check_auth
+  print_container_memory
   printf 'config: %s\n\n' "$CONFIG_PATH"
 
   DCE_PRIMARY_CONFIG="$CONFIG_PATH" "$VERIFY_ARCHIVES" --config "$CONFIG_PATH"

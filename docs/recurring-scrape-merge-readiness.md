@@ -156,6 +156,8 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
 
 **Plan 064 (2026-06-04):** OOM, scrape-lock, and partial-temp salvage runbooks in `.docs/Recurring-Scrape-Troubleshooting.md`; GUI bridge notes `DCE_CONTAINER_MEMORY` for yes_general.
 
+**Plan 065 (2026-06-04):** Scrape summary labels OOM skips as `SKIPPED (OOM/aborted)` with operator hint; `verify-operator-ready` prints configured container memory.
+
 **Disk:** ~65 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
 
 ## CI note (fork PRs)

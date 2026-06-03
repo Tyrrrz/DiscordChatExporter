@@ -72,4 +72,23 @@ grep -q 'Operator validation finished successfully' "$LOG_DIR/validation.log" ||
   exit 1
 }
 
+SALVAGE_LOG="$LOG_DIR/salvage-validation.log"
+DCE_MIN_FREE_MB=0 DCE_REPO_ROOT="$REPO_ROOT" DCE_CONFIG_FILE="$CONFIG_PATH" DCE_ENV_FILE="$ENV_PATH" \
+  DCE_LOG_DIR="$LOG_DIR" DCE_SKIP_SCRAPE_LOCK=1 \
+  "$RUNNER" --salvage-only --target demo --config "$CONFIG_PATH" --log-file "$SALVAGE_LOG"
+
+grep -q 'Mode: salvage-only' "$SALVAGE_LOG" || {
+  printf 'ERROR: salvage-only mode not logged\n' >&2
+  exit 1
+}
+grep -q 'run-documents-scrape (salvage-only)' "$SALVAGE_LOG" || {
+  printf 'ERROR: salvage-only documents scrape step missing\n' >&2
+  exit 1
+}
+grep -q 'Operator validation finished successfully' "$SALVAGE_LOG" || {
+  printf 'ERROR: salvage-only validation did not succeed\n' >&2
+  cat "$SALVAGE_LOG" >&2
+  exit 1
+}
+
 printf 'run-operator-validation-smoke: ok\n'

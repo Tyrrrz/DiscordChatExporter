@@ -13,6 +13,8 @@ AUDIT_JSON="$REPO_ROOT/scripts/audit-archive-json.sh"
 
 DRY_RUN=0
 SKIP_SCRAPE=0
+SALVAGE_ONLY=0
+SALVAGE_BEFORE=0
 SYNC_GUI_FLAG=0
 PER_TARGET=0
 CONTINUE_ON_ERROR=0
@@ -31,6 +33,8 @@ End-to-end operator validation with timestamped log:
 Options:
   --dry-run       Readiness + archives only (no Discord scrape)
   --skip-scrape   Readiness only (no scrape, no audit loop)
+  --salvage-only  Merge stale .dce-temp exports only, then audit (no Discord scrape)
+  --salvage-before-scrape  Run salvage-only pass before incremental scrape
   --sync-gui      Run sync-token-from-gui.sh --force before checks
   --target NAME   Limit scrape/audit to one configured target
   --channel ID    With exactly one --target, limit scrape to channel ID (repeatable)
@@ -86,19 +90,75 @@ audit_targets() {
   (( failures == 0 ))
 }
 
+run_documents_scrape() {
+  local -a scrape_args=(--config "$CONFIG_PATH")
+  scrape_args+=("${CHANNEL_ARGS[@]}")
+  [[ -n "$TARGET" ]] && scrape_args+=(--target "$TARGET")
+
+  if (( SALVAGE_ONLY )); then
+    run_step "run-documents-scrape (salvage-only)" "$DOCUMENTS_SCRAPE" "${scrape_args[@]}" --salvage-only
+    return $?
+  fi
+
+  if (( DRY_RUN )); then
+    run_step "run-documents-scrape (dry-run)" "$DOCUMENTS_SCRAPE" "${scrape_args[@]}" --dry-run
+    return $?
+  fi
+
+  if (( SALVAGE_BEFORE )); then
+    run_step "run-documents-scrape (salvage-before)" "$DOCUMENTS_SCRAPE" "${scrape_args[@]}" --salvage-only || return $?
+  fi
+
+  run_step "run-documents-scrape" "$DOCUMENTS_SCRAPE" "${scrape_args[@]}"
+}
+
 scrape_per_target() {
   local name failures=0 ok=0
   local -a scrape_args=(--config "$CONFIG_PATH")
   scrape_args+=("${CHANNEL_ARGS[@]}")
   local -a target_names=()
-  if (( DRY_RUN )); then
-    scrape_args+=(--dry-run)
-  fi
   mapfile -t target_names < <(enabled_targets)
   for name in "${target_names[@]}"; do
     [[ -n "$name" ]] || continue
     log_step "Per-target begin: $name"
-    if ! run_step "run-documents-scrape ($name)" "$DOCUMENTS_SCRAPE" "${scrape_args[@]}" --target "$name"; then
+    local -a per_args=("${scrape_args[@]}" --target "$name")
+    if (( SALVAGE_ONLY )); then
+      if ! run_step "run-documents-scrape ($name salvage-only)" "$DOCUMENTS_SCRAPE" "${per_args[@]}" --salvage-only; then
+        log_step "Per-target failed: $name (salvage-only)"
+        failures=$((failures + 1))
+        (( CONTINUE_ON_ERROR )) || return 1
+        continue
+      fi
+      if run_step "audit-archive-json ($name)" "$AUDIT_JSON" --config "$CONFIG_PATH" --target "$name"; then
+        log_step "Per-target done: $name (salvage-only ok)"
+        ok=$((ok + 1))
+      else
+        log_step "Per-target failed: $name (audit)"
+        failures=$((failures + 1))
+        (( CONTINUE_ON_ERROR )) || return 1
+      fi
+      continue
+    fi
+    if (( DRY_RUN )); then
+      if ! run_step "run-documents-scrape ($name)" "$DOCUMENTS_SCRAPE" "${per_args[@]}" --dry-run; then
+        log_step "Per-target failed: $name (dry-run)"
+        failures=$((failures + 1))
+        (( CONTINUE_ON_ERROR )) || return 1
+        continue
+      fi
+      log_step "Per-target done: $name (dry-run)"
+      ok=$((ok + 1))
+      continue
+    fi
+    if (( SALVAGE_BEFORE )); then
+      if ! run_step "run-documents-scrape ($name salvage)" "$DOCUMENTS_SCRAPE" "${per_args[@]}" --salvage-only; then
+        log_step "Per-target failed: $name (salvage-before)"
+        failures=$((failures + 1))
+        (( CONTINUE_ON_ERROR )) || return 1
+        continue
+      fi
+    fi
+    if ! run_step "run-documents-scrape ($name)" "$DOCUMENTS_SCRAPE" "${per_args[@]}"; then
       log_step "Per-target failed: $name (scrape)"
       failures=$((failures + 1))
       if (( CONTINUE_ON_ERROR == 0 )); then
@@ -135,6 +195,14 @@ main() {
         ;;
       --skip-scrape)
         SKIP_SCRAPE=1
+        shift
+        ;;
+      --salvage-only)
+        SALVAGE_ONLY=1
+        shift
+        ;;
+      --salvage-before-scrape)
+        SALVAGE_BEFORE=1
         shift
         ;;
       --sync-gui)
@@ -179,6 +247,13 @@ main() {
     esac
   done
 
+  if (( SALVAGE_ONLY == 1 && SALVAGE_BEFORE == 1 )); then
+    die "--salvage-only and --salvage-before-scrape are mutually exclusive."
+  fi
+  if (( SALVAGE_ONLY == 1 && DRY_RUN == 1 )); then
+    die "--salvage-only cannot be combined with --dry-run."
+  fi
+
   mkdir -p "$LOG_DIR"
   if [[ -z "$LOG_FILE" ]]; then
     LOG_FILE="$LOG_DIR/operator-validation-$(date -u +%Y%m%dT%H%M%SZ).log"
@@ -192,6 +267,8 @@ main() {
     if [[ -n "$TARGET" ]]; then
       log_step "Targets: $TARGET"
       ((${#CHANNEL_ARGS[@]})) && log_step "Scrape channel filter: ${CHANNEL_ARGS[*]}"
+      (( SALVAGE_ONLY )) && log_step "Mode: salvage-only"
+      (( SALVAGE_BEFORE )) && log_step "Mode: salvage-before-scrape"
     else
       log_step "Enabled targets: $(enabled_targets | paste -sd, -)"
     fi
@@ -206,15 +283,12 @@ main() {
     elif (( PER_TARGET )) && [[ -z "$TARGET" ]]; then
       scrape_per_target || failures=$((failures + 1))
     else
-      local -a scrape_args=(--config "$CONFIG_PATH")
-      scrape_args+=("${CHANNEL_ARGS[@]}")
-      [[ -n "$TARGET" ]] && scrape_args+=(--target "$TARGET")
-      if (( DRY_RUN )); then
-        scrape_args+=(--dry-run)
-      fi
-      run_step "run-documents-scrape" "$DOCUMENTS_SCRAPE" "${scrape_args[@]}" || failures=$((failures + 1))
-      if (( DRY_RUN == 0 && failures == 0 )); then
-        audit_targets || failures=$((failures + 1))
+      if run_documents_scrape; then
+        if (( DRY_RUN == 0 && failures == 0 )); then
+          audit_targets || failures=$((failures + 1))
+        fi
+      else
+        failures=$((failures + 1))
       fi
     fi
 

@@ -16,19 +16,21 @@ source "$SCRIPT_DIR/lib/scrape-run-plan.sh"
 TARGET=""
 SYNC_GUI_FLAG=0
 DRY_RUN=0
+SALVAGE_BEFORE=0
 CHANNEL_ARGS=()
 
 usage() {
   cat <<EOF
 Usage:
-  $(basename "$0") [--target NAME] [--channel ID] [--config PATH] [--sync-gui] [--dry-run]
+  $(basename "$0") [--target NAME] [--channel ID] [--config PATH] [--sync-gui] [--dry-run] [--salvage-before-scrape]
 
 End-to-end operator proof:
-  operator-handoff → incremental scrape → prove-incremental-append
+  operator-handoff → [optional salvage] → incremental scrape → prove-incremental-append
 
 When --target is omitted, all enabled targets in the config are processed.
 
   --channel ID  With exactly one --target, limit scrape/prove to channel ID (repeatable)
+  --salvage-before-scrape  Merge stale .dce-temp exports before incremental scrape
 
 Logs append to logs/operator-proof-<timestamp>.log
 EOF
@@ -58,6 +60,10 @@ main() {
         ;;
       --dry-run)
         DRY_RUN=1
+        shift
+        ;;
+      --salvage-before-scrape)
+        SALVAGE_BEFORE=1
         shift
         ;;
       --channel)
@@ -120,6 +126,13 @@ main() {
       printf '\n--- Target: %s ---\n' "$name"
       local -a scrape_args=(--config "$CONFIG_PATH" --target "$name")
       scrape_args+=("${CHANNEL_ARGS[@]}")
+      if (( SALVAGE_BEFORE )); then
+        if ! "$DOCUMENTS" "${scrape_args[@]}" --salvage-only; then
+          failed=$((failed + 1))
+          printf 'Operator proof FAILED for %s (salvage-before)\n' "$name" >&2
+          continue
+        fi
+      fi
       if "$DOCUMENTS" "${scrape_args[@]}" && "$PROVE" "${scrape_args[@]}"; then
         succeeded=$((succeeded + 1))
         printf 'Operator proof passed for %s\n' "$name"

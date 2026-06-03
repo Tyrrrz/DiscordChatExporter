@@ -21,6 +21,9 @@ JSON
 
 printf '{"messages":[\n' >"$ARCHIVE_ROOT/bad/truncated [222].json"
 
+mkdir -p "$ARCHIVE_ROOT/good/.dce-temp/export.111.PARTIAL"
+printf '{"messages":[\n' >"$ARCHIVE_ROOT/good/.dce-temp/export.111.PARTIAL/export.json"
+
 cat >"$CONFIG_PATH" <<JSON
 {
   "archive_root": "$ARCHIVE_ROOT",

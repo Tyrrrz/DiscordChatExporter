@@ -35,7 +35,7 @@ audit_dir() {
     fi
     printf 'INVALID\t%s\n' "$file_path"
     FAILURES=$((FAILURES + 1))
-  done < <(find "$output_dir" -type f -name '*.json' ! -path '*/.dce-meta/*' -print0 2>/dev/null)
+  done < <(find "$output_dir" -type f -name '*.json' ! -path '*/.dce-meta/*' ! -path '*/.dce-temp/*' -print0 2>/dev/null)
 }
 
 main() {

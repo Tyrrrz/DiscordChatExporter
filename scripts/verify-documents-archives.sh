@@ -28,7 +28,7 @@ require_command() {
 
 count_archive_json() {
   local output_dir=$1
-  find "$output_dir" -type f -name '*.json' ! -path '*/.dce-meta/*' 2>/dev/null | wc -l | tr -d ' '
+  find "$output_dir" -type f -name '*.json' ! -path '*/.dce-meta/*' ! -path '*/.dce-temp/*' 2>/dev/null | wc -l | tr -d ' '
 }
 
 count_seeded_channel_ids() {
@@ -42,7 +42,7 @@ count_seeded_channel_ids() {
     if [[ "$file_name" =~ \[([0-9]{16,22})\]\.json$ ]]; then
       printf '%s\n' "${BASH_REMATCH[1]}"
     fi
-  done < <(find "$output_dir" -type f -name '*.json' ! -path '*/.dce-meta/*' -print0 2>/dev/null) | sort -u | wc -l | tr -d ' '
+  done < <(find "$output_dir" -type f -name '*.json' ! -path '*/.dce-meta/*' ! -path '*/.dce-temp/*' -print0 2>/dev/null) | sort -u | wc -l | tr -d ' '
 }
 
 count_channel_map_entries() {

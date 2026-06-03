@@ -322,6 +322,7 @@ Space requirements:
 - **Typical channel**: 1-10 MB per year of messages
 - **Large channels**: 50-100 MB per year
 - **Full guild**: 500 MB - several GB depending on activity
+- **Multi-year catch-up in container:** may OOM on first export; set `DCE_CONTAINER_MEMORY=8g` in `scrape.env` and use `--salvage-before-scrape` (see [Troubleshooting](Recurring-Scrape-Troubleshooting.md#channel-export-skipped-oom--aborted--killed))
 
 ## Smoke test validation
 

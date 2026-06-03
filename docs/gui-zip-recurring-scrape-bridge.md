@@ -44,6 +44,7 @@ After stopping a long run, merge quiescent partial exports before re-downloading
 ./scripts/operator-handoff.sh --salvage-only --target KotOR_discord_msgs --channel 221726893064454144
 
 # Salvage then incremental catch-up (with audit + log)
+# For large yes_general catch-up, set DCE_CONTAINER_MEMORY=8g in scrape.env first.
 DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
   --salvage-before-scrape \
   --target KotOR_discord_msgs \

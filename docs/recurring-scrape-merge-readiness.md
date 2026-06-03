@@ -154,6 +154,8 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
 
 **Plan 063 (2026-06-04):** Optional `DCE_CONTAINER_MEMORY` compose `mem_limit` for large channel catch-up (default 0 = unlimited).
 
+**Plan 064 (2026-06-04):** OOM, scrape-lock, and partial-temp salvage runbooks in `.docs/Recurring-Scrape-Troubleshooting.md`; GUI bridge notes `DCE_CONTAINER_MEMORY` for yes_general.
+
 **Disk:** ~65 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
 
 ## CI note (fork PRs)

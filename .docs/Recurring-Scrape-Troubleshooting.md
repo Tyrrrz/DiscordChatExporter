@@ -310,6 +310,89 @@ Not this:
 
 ---
 
+### Channel Export SKIPPED (OOM / Aborted / Killed)
+
+**Symptoms:** Log shows `SKIPPED` for one channel, `Aborted (core dumped)`, `Killed`, or `out of memory`; other channels in the target may still succeed.
+
+**Cause:** Large multi-year catch-up (for example KotOR `yes_general`) builds a big in-memory JSON export inside the container. Partial progress is kept under `output_dir/.dce-temp/` for salvage on the next run.
+
+**Solutions:**
+
+1. **Salvage partial temps before re-scraping** (avoids re-downloading from the archive cursor):
+   ```bash
+   ./scripts/scrape-lock-status.sh
+   ./scripts/operator-handoff.sh --salvage-only --target KotOR_discord_msgs --channel 221726893064454144
+   ```
+
+2. **Raise container memory** in `scrape.env` (default `0` = no compose cap):
+   ```bash
+   # scrape.env
+   DCE_CONTAINER_MEMORY=8g
+   ```
+   Then run a channel-scoped catch-up:
+   ```bash
+   DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
+     --salvage-before-scrape \
+     --target KotOR_discord_msgs \
+     --channel 221726893064454144 \
+     --log-file logs/kotor-yes-general.log
+   ```
+
+3. **Ensure only one scrape** holds `{archive_root}/.dce-scrape.lock` (see next section).
+
+4. **Confirm host disk headroom** — merges need temporary space on the archive volume (`df -h ~/Documents`).
+
+---
+
+### Scrape Lock Already Held
+
+**Symptoms:** `Scrape lock is held` or `Another scrape is already running` when starting validation or documents scrape.
+
+**Cause:** Only one scrape should run per `archive_root`. A long validation, cron job, or a second checkout (for example Downloads vs MyBook) can hold `{archive_root}/.dce-scrape.lock`.
+
+**Solutions:**
+
+1. **Inspect lock state:**
+   ```bash
+   ./scripts/scrape-lock-status.sh
+   ```
+
+2. **Wait** for the active scrape to finish if PID is live.
+
+3. **Reclaim stale lock** after a crash (only when status shows stale/free):
+   ```bash
+   ./scripts/scrape-lock-status.sh --reclaim-stale
+   ```
+
+4. **Do not delete the lock** while a scrape is still running — twin exports can OOM-loop on the same channel.
+
+---
+
+### Partial Export Stuck in `.dce-temp`
+
+**Symptoms:** Large folder under `output_dir/.dce-temp/export.<channel_id>.*`; archive cursor not advancing; audit excludes `.dce-temp` (expected).
+
+**Solutions:**
+
+1. **Stop any active export** writing that temp (check lock status and running `podman`/`docker` processes).
+
+2. **Salvage quiescent temps** (default skips temps modified in the last ~120s):
+   ```bash
+   ./scripts/run-documents-scrape.sh --salvage-only --target NAME [--channel ID]
+   ```
+
+3. **Force salvage of an active temp** only after confirming nothing is writing:
+   ```bash
+   DCE_SALVAGE_ACTIVE_TEMPS=1 ./scripts/run-documents-scrape.sh --salvage-only --target NAME --channel ID
+   ```
+
+4. **Truncated JSON in the archive file itself** (not `.dce-temp`):
+   ```bash
+   ./scripts/salvage-truncated-export.sh path/to/archive.json
+   ```
+
+---
+
 ### "Failed to write archive" or Permission Denied
 
 **Symptoms:** Export fails with write permission errors

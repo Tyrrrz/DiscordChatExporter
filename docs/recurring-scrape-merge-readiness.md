@@ -5,7 +5,7 @@
 | Gate | Status |
 |------|--------|
 | Offline smokes (`run-all-smokes.sh`) | 23/23 pass |
-| Branch HEAD (fork) | `8684138` — PR #1538 body synced plans 070–079 (plan 080) |
+| Branch HEAD (fork) | `3d65c0e` — PR #1538 pruned stale Latest blocks (plan 082) |
 | Live proof (`run-operator-proof.sh --sync-gui --target eod_discord`) | Passed on maintainer host |
 | Monthly cron (`setup-cron.sh`) | Installed (`00 04 1 * *`); dry-run preflight OK for all enabled targets |
 | Upstream CI (fork PR) | `action_required` until Tyrrrz approves workflow runs |
@@ -192,6 +192,8 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
 **Plan 080 (2026-06-04):** PR #1538 body refreshed with compact plans 070–079 operator delta and 23/23 gate.
 
 **Plan 081 (2026-06-04):** `setup-cron.sh --salvage-before-scrape` opt-in for scheduled salvage-before incremental scrape.
+
+**Plan 082 (2026-06-04):** PR #1538 pruned 30+ stale `Latest` blocks; single plans 070–081 operator delta remains.
 
 **Disk:** ~65 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
 

@@ -12,6 +12,7 @@ VERIFY_SCRIPT="$REPO_ROOT/scripts/verify-documents-archives.sh"
 VERIFY_READY="$REPO_ROOT/scripts/verify-operator-ready.sh"
 SETUP_AUTH="$REPO_ROOT/scripts/setup-scrape-auth.sh"
 LOCK_STATUS="$REPO_ROOT/scripts/scrape-lock-status.sh"
+LOG_DIR="${DCE_LOG_DIR:-$REPO_ROOT/logs}"
 # shellcheck source=lib/scrape-lock.sh
 source "$SCRIPT_DIR/lib/scrape-lock.sh"
 # shellcheck source=lib/scrape-run-plan.sh
@@ -35,6 +36,7 @@ Options:
   --target NAME Limit preflight/scrape to one configured target
   --channel ID  With exactly one --target, limit scrape to channel ID (repeatable)
   --config PATH Scrape target config (default: config/scrape-targets.json)
+  --summary-file PATH  Machine-readable scrape summary JSON (default: logs/documents-scrape-UTC.summary.json)
 EOF
 }
 
@@ -71,6 +73,7 @@ main() {
   local salvage_only=0
   local salvage_before=0
   local target=""
+  local summary_file=""
   local -a passthrough=()
 
   while (($#)); do
@@ -102,6 +105,11 @@ main() {
         [[ $# -ge 2 ]] || die "Missing value for --config."
         CONFIG_PATH=$2
         passthrough+=(--config "$2")
+        shift 2
+        ;;
+      --summary-file)
+        [[ $# -ge 2 ]] || die "Missing value for --summary-file."
+        summary_file=$2
         shift 2
         ;;
       --help|-h)
@@ -173,6 +181,17 @@ main() {
   elif [[ -x "$DISCOVER_TOKEN" ]] && "$DISCOVER_TOKEN" >/dev/null 2>&1; then
     "$SETUP_AUTH" 2>/dev/null || true
   fi
+
+  export DCE_RUN_SUMMARY_JSON=1
+  if [[ -z "${DCE_RUN_SUMMARY_FILE:-}" ]]; then
+    if [[ -n "$summary_file" ]]; then
+      export DCE_RUN_SUMMARY_FILE="$summary_file"
+    else
+      mkdir -p "$LOG_DIR"
+      export DCE_RUN_SUMMARY_FILE="$LOG_DIR/documents-scrape-$(date -u +%Y%m%dT%H%M%SZ).summary.json"
+    fi
+  fi
+  printf 'JSON summary file: %s\n' "$DCE_RUN_SUMMARY_FILE"
 
   "$HOST_RUNNER" preflight "${container_args[@]}"
   "$HOST_RUNNER" scrape "${container_args[@]}"

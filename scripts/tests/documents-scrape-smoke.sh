@@ -83,11 +83,19 @@ grep -q 'Documents scrape run plan' "$DOC_OUT" || {
   echo "expected Documents scrape run plan in dry-run output" >&2
   exit 1
 }
+grep -q 'JSON summary file:' "$DOC_OUT" && {
+  echo "dry-run should not enable JSON summary export" >&2
+  exit 1
+}
 
 CHANNEL_DRY="$TMP_DIR/channel-dry-run.log"
 "$REPO_ROOT/scripts/run-documents-scrape.sh" --dry-run --config "$TMP_DIR/config.json" --target demo --channel 111111111111111111 >"$CHANNEL_DRY" 2>&1
 grep -q 'Documents scrape run plan' "$CHANNEL_DRY" || {
   echo "expected dry-run to accept --channel passthrough" >&2
+  exit 1
+}
+grep -q 'JSON summary file:' "$CHANNEL_DRY" && {
+  echo "dry-run with --channel should not enable JSON summary export" >&2
   exit 1
 }
 
@@ -100,13 +108,20 @@ EOF
 chmod +x "$FAKE_DOCKER"
 printf 'DISCORD_TOKEN=dummy-token\n' >"$TMP_DIR/scrape.env"
 
+LIVE_DOC_OUT="$TMP_DIR/documents-live.log"
 DCE_MIN_FREE_MB=0 \
   DCE_SKIP_SCRAPE_LOCK=1 \
   DCE_DOCKER_BIN="$FAKE_DOCKER" \
   FAKE_DOCKER_ARGS_LOG="$ARGS_LOG" \
   DCE_ENV_FILE="$TMP_DIR/scrape.env" \
-  "$REPO_ROOT/scripts/run-documents-scrape.sh" --config "$TMP_DIR/config.json" --target demo --channel 111111111111111111 >/dev/null
+  DCE_LOG_DIR="$TMP_DIR/logs" \
+  "$REPO_ROOT/scripts/run-documents-scrape.sh" --config "$TMP_DIR/config.json" --target demo --channel 111111111111111111 >"$LIVE_DOC_OUT" 2>&1
 
+grep -q 'JSON summary file:' "$LIVE_DOC_OUT" || {
+  echo "expected live documents scrape to enable JSON summary export" >&2
+  cat "$LIVE_DOC_OUT" >&2
+  exit 1
+}
 grep -q '111111111111111111' "$ARGS_LOG" || {
   echo "expected --channel to reach container compose invocation" >&2
   cat "$ARGS_LOG" >&2
@@ -126,6 +141,10 @@ DCE_MIN_FREE_MB=0 \
 grep -q 'salvage completed' "$SALVAGE_DOC_LOG" || {
   echo "expected --salvage-only to run local salvage" >&2
   cat "$SALVAGE_DOC_LOG" >&2
+  exit 1
+}
+grep -q 'JSON summary file:' "$SALVAGE_DOC_LOG" && {
+  echo "salvage-only should not enable JSON summary export" >&2
   exit 1
 }
 
@@ -150,6 +169,11 @@ grep -q 'salvage completed' "$SALVAGE_BEFORE_LOG" || {
 grep -q 'compose' "$ARGS_LOG" || {
   echo "expected --salvage-before-scrape to continue into container scrape" >&2
   cat "$ARGS_LOG" >&2
+  exit 1
+}
+grep -q 'JSON summary file:' "$SALVAGE_BEFORE_LOG" || {
+  echo "expected --salvage-before-scrape live path to enable JSON summary export" >&2
+  cat "$SALVAGE_BEFORE_LOG" >&2
   exit 1
 }
 

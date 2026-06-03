@@ -552,7 +552,7 @@ message_count() {
 is_skippable_channel_export_failure() {
   local log_file=$1
   grep -qiE \
-    "failed: forbidden|failed: not found|Missing Access|403 Forbidden|404 Not Found|Cannot read message history|No space left on device|SQLITE_FULL|ENOSPC|disk full|not enough space" \
+    "failed: forbidden|failed: not found|Missing Access|403 Forbidden|404 Not Found|Cannot read message history|No space left on device|SQLITE_FULL|ENOSPC|disk full|not enough space|Aborted \\(core dumped\\)|core dumped|out of memory|OOM|Killed|SIGKILL|SIGABRT" \
     "$log_file"
 }
 
@@ -577,6 +577,14 @@ export_channel_incremental() {
   if (( export_status == 0 )); then
     rm -f "$export_log"
     return 0
+  fi
+
+  # SIGABRT (134), SIGKILL/OOM (137), SIGSEGV (139) — bash reports these when the CLI crashes.
+  if (( export_status == 134 || export_status == 137 || export_status == 139 )); then
+    log "Skipping channel $channel_id (export process aborted, exit $export_status)."
+    [[ -s "$export_log" ]] && cat "$export_log" >&2
+    rm -f "$export_log"
+    return 2
   fi
 
   if is_skippable_channel_export_failure "$export_log"; then

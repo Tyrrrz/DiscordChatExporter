@@ -111,9 +111,16 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh --sync-gui --per-target -
 | expanded_kotor_discord | pass | pass | validation-resume |
 | eod_discord | pass | pass | validation-resume |
 | DS_Discord_msgs | pass | pass | validation-resume; some channels forbidden |
-| KotOR_discord_msgs | **fail** | — | channel `221726893064454144` (`yes_general`) failed mid-export (~11%); see log |
+| KotOR_discord_msgs | **retry** | — | `yes_general` CLI abort (OOM); fixed in plan 040 to skip channel on exit 134/137/139 |
 
-**KotOR remediation:** ensure several GiB free on `/home`, run `./scripts/audit-archive-json.sh --target KotOR_discord_msgs`, salvage truncated JSON if needed, then `./scripts/run-operator-validation.sh --target KotOR_discord_msgs`.
+**KotOR remediation (plan 040):** `run-discord-scrape.sh` skips channels when export exits 134/137/139 (abort/OOM) or log matches disk/forbidden patterns. Re-run:
+
+```bash
+docker compose build   # or podman-compose build
+DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh --target KotOR_discord_msgs
+```
+
+Large `yes_general` may still skip; export that channel separately with more container memory if needed.
 
 **Disk:** ~22 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
 

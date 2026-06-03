@@ -5,7 +5,7 @@
 | Gate | Status |
 |------|--------|
 | Offline smokes (`run-all-smokes.sh`) | 23/23 pass |
-| Branch HEAD (fork) | `b71c697` — PR #1538 body synced plans 070–079 (plan 080) |
+| Branch HEAD (fork) | `8684138` — PR #1538 body synced plans 070–079 (plan 080) |
 | Live proof (`run-operator-proof.sh --sync-gui --target eod_discord`) | Passed on maintainer host |
 | Monthly cron (`setup-cron.sh`) | Installed (`00 04 1 * *`); dry-run preflight OK for all enabled targets |
 | Upstream CI (fork PR) | `action_required` until Tyrrrz approves workflow runs |

@@ -325,7 +325,7 @@ Space requirements:
 
 ## Smoke test validation
 
-Run the full offline suite from the repo root (requires `jq`):
+Run the full offline suite from the repo root (requires `jq`). **21 offline smokes** run by default; add `--include-container` for a 22nd local-only check:
 
 ```bash
 ./scripts/run-all-smokes.sh
@@ -347,21 +347,27 @@ With Docker/Podman, include the container smoke:
 
 | Script | CI (`recurring-scrape-smoke`) | Notes |
 |--------|-------------------------------|-------|
-| `run-discord-scrape-smoke.sh` | yes | Append-only merge coverage |
-| `error-path-smoke.sh` | yes | Failure paths |
-| `cron-idempotency-smoke.sh` | yes | Cron installer idempotency |
-| `end-to-end-preflight-smoke.sh` | yes | Preflight wiring |
-| `setup-cron-smoke.sh` | yes | Cron setup dry-run |
-| `run-discord-scrape-host-smoke.sh` | yes | Host wrapper |
-| `gh-approve-pr-runs-smoke.sh` | yes | Fork PR workflow helper |
-| `documents-scrape-smoke.sh` | yes | Unified Documents workflow |
-| `verify-documents-auth-smoke.sh` | yes | Archive verify + auth bootstrap |
-| `scrape-here-smoke.sh` | yes | Workspace bridge launcher |
-| `bootstrap-recurring-scrape-smoke.sh` | yes | Bootstrap dry-run |
+| `archive-disk-space-smoke.sh` | yes | Disk preflight / `DCE_MIN_FREE_MB` |
 | `audit-archive-json-smoke.sh` | yes | Invalid JSON detection |
+| `bootstrap-recurring-scrape-smoke.sh` | yes | Bootstrap dry-run |
+| `cron-idempotency-smoke.sh` | yes | Cron installer idempotency |
+| `documents-scrape-smoke.sh` | yes | Unified Documents workflow + lock gate |
+| `end-to-end-preflight-smoke.sh` | yes | Preflight wiring |
+| `error-path-smoke.sh` | yes | Failure paths |
+| `gh-approve-pr-runs-smoke.sh` | yes | Fork PR workflow helper |
+| `operator-handoff-smoke.sh` | yes | Operator handoff dry-run |
 | `prove-incremental-append-smoke.sh` | yes | Offline prove snapshot/compare |
-| `verify-operator-ready-smoke.sh` | yes | Host prerequisite checks |
+| `run-discord-scrape-host-lock-smoke.sh` | yes | Archive-root scrape lock |
+| `run-discord-scrape-host-smoke.sh` | yes | Host wrapper |
+| `run-discord-scrape-smoke.sh` | yes | Append-only merge coverage |
+| `run-operator-proof-smoke.sh` | yes | Scrape + prove dry-run |
 | `run-operator-validation-smoke.sh` | yes | Validation runner dry-run |
+| `scrape-here-smoke.sh` | yes | Workspace bridge launcher |
+| `scrape-lock-status-smoke.sh` | yes | Lock status + stale reclaim |
+| `setup-cron-smoke.sh` | yes | Cron setup dry-run |
+| `sync-gui-bridge-doc-smoke.sh` | yes | GUI bridge doc sync |
+| `verify-documents-auth-smoke.sh` | yes | Archive verify + auth bootstrap |
+| `verify-operator-ready-smoke.sh` | yes | Host prerequisite checks |
 | `container-smoke.sh` | no (local) | Docker build + `help` / `list-targets`; use `--include-container` |
 
 GitHub Actions runs `./scripts/run-all-smokes.sh` via `.github/workflows/main.yml` job `recurring-scrape-smoke`.

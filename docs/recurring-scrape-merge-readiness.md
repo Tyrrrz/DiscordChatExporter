@@ -133,6 +133,8 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh --sync-gui --per-target -
 
 **Plan 044 (2026-06-04):** Offline smoke asserts partial temp preserved on OOM skip (channel 134). Host wrapper prefers `DISCORD_TOKEN_FILE` over inherited shell tokens.
 
+**Plan 061 (2026-06-04):** Shared `scripts/lib/scrape-lock.sh` — lock path, held check, holder formatting, and reclaim helpers sourced by host runner, lock status, and operator wrappers. `run-all-smokes.sh` → 21/21 pass.
+
 **Plans 054–059 (2026-06-04):** Salvage-only subcommand; archive-root lock with meta sidecar; operator validation/proof/handoff salvage flags; `scrape-lock-status.sh` + `--reclaim-stale`; documents scrape lock gate + `--salvage-before-scrape`. `run-all-smokes.sh` → 21/21 pass.
 
 **KotOR / yes_general (plan 040–043):** Incremental `--after` works for all channels; most return `UNCHANGED` in seconds. `yes_general` archive last message was **2021-01-17** — the first catch-up legitimately fetches years of history. Prior bug: OOM skip **deleted** partial temp exports, causing re-download loops. Plan 043 preserves partial temps and salvages on next run.

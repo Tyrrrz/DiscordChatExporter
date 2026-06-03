@@ -43,13 +43,15 @@ After stopping a long run, merge quiescent partial exports before re-downloading
 # Merge partial temps only (no Discord)
 ./scripts/operator-handoff.sh --salvage-only --target KotOR_discord_msgs --channel 221726893064454144
 
-# Salvage then incremental catch-up (with audit + log)
-# For large yes_general catch-up, set DCE_CONTAINER_MEMORY=8g in scrape.env first.
-DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
-  --salvage-before-scrape \
-  --target KotOR_discord_msgs \
-  --channel 221726893064454144 \
-  --log-file logs/kotor-yes-general-$(date -u +%Y%m%d-%H%M%S).log
+# Salvage then incremental catch-up (one command; 8g cap via scrape-targets.json for KotOR)
+./scripts/run-kotor-yes-general-catchup.sh
+# Or: --dry-run | --salvage-only | --validation | --prove
+# Inspect: ./scripts/print-scrape-summary.sh logs/kotor-yes-general.summary.json
+
+# Manual equivalent (validation with audit):
+# DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
+#   --salvage-before-scrape --target KotOR_discord_msgs \
+#   --channel 221726893064454144 --log-file logs/kotor-yes-general.log
 ```
 
 Or direct documents scrape:
@@ -67,7 +69,7 @@ Archives: `config/scrape-targets.json` (typically `~/Documents/*` per target `ou
 
 **Disk:** Free several GiB on `/home` and archive roots before large scrapes (`DCE_MIN_FREE_MB`, default 1024).
 
-**Validate scripts:** `DCE_MIN_FREE_MB=0 ./scripts/run-all-smokes.sh` (21 offline smokes)
+**Validate scripts:** `DCE_MIN_FREE_MB=0 ./scripts/run-all-smokes.sh` (**24/24** offline smokes; `--include-container` optional)
 
 **Podman (Fedora):** install `podman-compose` when `docker compose` cannot reach the socket; scripts auto-prefer it.
 

@@ -5,7 +5,7 @@
 | Gate | Status |
 |------|--------|
 | Offline smokes (`run-all-smokes.sh`) | 24/24 pass |
-| Branch HEAD (fork) | `18a22a6` — PR #1538 pruned stale Latest blocks (plan 082) |
+| Branch HEAD (fork) | `7171d7b` — KotOR yes_general catch-up wrapper (plan 083) |
 | Live proof (`run-operator-proof.sh --sync-gui --target eod_discord`) | Passed on maintainer host |
 | Monthly cron (`setup-cron.sh`) | Installed (`00 04 1 * *`); dry-run preflight OK for all enabled targets |
 | Upstream CI (fork PR) | `action_required` until Tyrrrz approves workflow runs |
@@ -203,6 +203,8 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
 **Plan 082 (2026-06-04):** PR #1538 pruned 30+ stale `Latest` blocks; single plans 070–081 operator delta remains.
 
 **Plan 083 (2026-06-04):** `run-kotor-yes-general-catchup.sh` — one-command yes_general path (salvage-before, log, summary hint).
+
+**Plan 084 (2026-06-04):** GUI bridge + troubleshooting cite KotOR wrapper; merge-readiness HEAD synced; bridge sync smoke asserts wrapper + 24/24.
 
 **Disk:** ~65 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
 

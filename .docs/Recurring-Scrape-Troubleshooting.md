@@ -324,18 +324,15 @@ Not this:
    ./scripts/operator-handoff.sh --salvage-only --target KotOR_discord_msgs --channel 221726893064454144
    ```
 
-2. **Raise container memory** in `scrape.env` (default `0` = no compose cap):
+2. **Raise container memory** in `scrape.env` if needed (default `0` = no compose cap; `KotOR_discord_msgs` already sets `container_memory: "8g"` for single-target runs):
    ```bash
-   # scrape.env
+   # scrape.env — optional global override
    DCE_CONTAINER_MEMORY=8g
    ```
-   Then run a channel-scoped catch-up:
+   Then run the one-command catch-up:
    ```bash
-   DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
-     --salvage-before-scrape \
-     --target KotOR_discord_msgs \
-     --channel 221726893064454144 \
-     --log-file logs/kotor-yes-general.log
+   ./scripts/run-kotor-yes-general-catchup.sh
+   # Inspect totals: ./scripts/print-scrape-summary.sh logs/kotor-yes-general.summary.json
    ```
 
 3. **Ensure only one scrape** holds `{archive_root}/.dce-scrape.lock` (see next section).

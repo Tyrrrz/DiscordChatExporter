@@ -58,12 +58,15 @@ Salvage then incremental scrape:
 ./scripts/run-operator-proof.sh --salvage-before-scrape --sync-gui --target NAME
 ```
 
-**KotOR yes_general** (`221726893064454144`): first catch-up after a 2021 archive cursor can take hours and may OOM; salvage preserved partials before retrying. Stop duplicate validation processes (MyBook vs Downloads checkouts share the same lock). For large catch-up, set `DCE_CONTAINER_MEMORY=8g` in `scrape.env` (or export before the run), then:
+**KotOR yes_general** (`221726893064454144`): first catch-up after a 2021 archive cursor can take hours and may OOM; salvage preserved partials before retrying. Stop duplicate validation processes (MyBook vs Downloads checkouts share the same lock). `KotOR_discord_msgs` sets `container_memory: "8g"` in `scrape-targets.json` for single-target runs; override globally with `DCE_CONTAINER_MEMORY` in `scrape.env` if needed. Channel-scoped proof:
 
 ```bash
 ./scripts/run-operator-validation.sh --salvage-before-scrape \
   --target KotOR_discord_msgs --channel 221726893064454144 \
   --log-file logs/kotor-yes-general.log
+
+./scripts/prove-incremental-append.sh \
+  --target KotOR_discord_msgs --channel 221726893064454144
 ```
 
 ## GUI zip only

@@ -18,7 +18,12 @@ print_scrape_config_plan() {
     printf 'Targets (%s selected):\n' "${#requested_targets[@]}"
     for name in "${requested_targets[@]}"; do
       output_dir=$(jq -r --arg name "$name" '.targets[] | select(.name == $name) | .output_dir' "$config_path")
-      printf '  - %s → %s\n' "$name" "$output_dir"
+      mem=$(target_container_memory "$config_path" "$name" 2>/dev/null || true)
+      if [[ -n "$mem" && "$mem" != "null" ]]; then
+        printf '  - %s → %s (container_memory: %s)\n' "$name" "$output_dir" "$mem"
+      else
+        printf '  - %s → %s\n' "$name" "$output_dir"
+      fi
     done
     return 0
   fi
@@ -34,4 +39,35 @@ print_scrape_config_plan() {
 enabled_target_names() {
   local config_path=$1
   jq -r '.targets[] | select(.enabled != false) | .name' "$config_path"
+}
+
+target_container_memory() {
+  local config_path=$1
+  local target_name=$2
+
+  if [[ ! -f "$config_path" ]]; then
+    printf '\n'
+    return 0
+  fi
+  jq -r --arg name "$target_name" '
+    .targets[]
+    | select(.name == $name)
+    | .container_memory // empty
+  ' "$config_path"
+}
+
+apply_single_target_container_memory() {
+  local config_path=$1
+  local target_name=$2
+  local mem=""
+
+  [[ -n "$target_name" ]] || return 0
+  if [[ -n "${DCE_CONTAINER_MEMORY:-}" && "${DCE_CONTAINER_MEMORY:-0}" != "0" ]]; then
+    return 0
+  fi
+
+  mem=$(target_container_memory "$config_path" "$target_name")
+  [[ -n "$mem" && "$mem" != "null" ]] || return 0
+
+  export DCE_CONTAINER_MEMORY="$mem"
 }

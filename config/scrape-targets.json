@@ -81,6 +81,7 @@
       "name": "KotOR_discord_msgs",
       "kind": "guild",
       "output_dir": "/home/brunner56/Documents/KotOR_discord_msgs",
+      "container_memory": "8g",
       "guild_ids": [],
       "channel_ids": [],
       "guild_name_patterns": ["KotOR_discord_msgs", "KotOR"]

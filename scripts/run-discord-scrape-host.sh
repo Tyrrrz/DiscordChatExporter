@@ -43,6 +43,8 @@ Environment:
   DCE_COMPOSE_TTY          When zero, compose run passes -T (no pseudo-TTY). Default omits -T
                            so compose backends allocate a TTY for line-buffered progress logs.
   DCE_CONTAINER_MEMORY     Optional container memory cap (e.g. 8g, 8192m). Default 0 = unlimited.
+                           Targets may set container_memory in scrape-targets.json (used when
+                           exactly one --target is selected and this env var is unset or 0).
 
 Notes:
   When $ENV_FILE is missing, exported DISCORD_TOKEN or DISCORD_TOKEN_FILE is used instead.
@@ -507,6 +509,23 @@ run_subcommand_with_retry() {
   die "Container run failed for '$subcommand' after one auth refresh retry."
 }
 
+collect_passthrough_targets() {
+  local -n _targets_out=$1
+  shift
+  local -a args=("$@")
+  local idx=0
+
+  _targets_out=()
+  while (( idx < ${#args[@]} )); do
+    if [[ "${args[idx]}" == "--target" ]]; then
+      _targets_out+=("${args[idx + 1]:-}")
+      idx=$((idx + 2))
+      continue
+    fi
+    idx=$((idx + 1))
+  done
+}
+
 main() {
   local -a passthrough_args=()
   local subcommand=""
@@ -562,22 +581,20 @@ main() {
   fi
 
   [[ -f "$COMPOSE_FILE" ]] || die "Missing compose file: $COMPOSE_FILE"
+
+  local host_config host_targets=()
+  host_config=$(resolve_host_config_path "${passthrough_args[@]}")
+  collect_passthrough_targets host_targets "${passthrough_args[@]}"
+  if ((${#host_targets[@]} == 1)); then
+    apply_single_target_container_memory "$host_config" "${host_targets[0]}"
+  fi
+
   if [[ "$subcommand" != "salvage" ]]; then
     prepare_compose_env
   fi
   REAUTH_COMMAND="${DCE_REAUTH_COMMAND:-}"
   run_disk_preflight_if_enabled "${passthrough_args[@]}"
 
-  local host_config host_targets=() arg_idx=0
-  host_config=$(resolve_host_config_path "${passthrough_args[@]}")
-  while (( arg_idx < ${#passthrough_args[@]} )); do
-    if [[ "${passthrough_args[arg_idx]}" == "--target" ]]; then
-      host_targets+=("${passthrough_args[arg_idx + 1]:-}")
-      arg_idx=$((arg_idx + 2))
-      continue
-    fi
-    arg_idx=$((arg_idx + 1))
-  done
   print_scrape_config_plan "$host_config" "Host $subcommand" "${host_targets[@]}"
 
   case "$subcommand" in

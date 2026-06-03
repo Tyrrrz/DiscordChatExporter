@@ -160,6 +160,8 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
 
 **Plan 066 (2026-06-04):** `prove-incremental-append --channel` filters snapshots and grow-only comparison to selected channels.
 
+**Plan 067 (2026-06-04):** Optional per-target `container_memory` in `scrape-targets.json` (single `--target` runs); `KotOR_discord_msgs` defaults to `8g`.
+
 **Disk:** ~65 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
 
 ## CI note (fork PRs)

@@ -254,4 +254,54 @@ grep -q 'env:DCE_CONTAINER_MEMORY=8g' "$COMPOSE_MEM_LOG" || {
   exit 1
 }
 
+TARGET_MEM_CONFIG="$TMP_DIR/target-mem-config.json"
+mkdir -p "$TMP_DIR/archive/demo"
+cat >"$TARGET_MEM_CONFIG" <<EOF
+{
+  "archive_root": "$TMP_DIR/archive",
+  "targets": [
+    {
+      "name": "demo",
+      "output_dir": "$TMP_DIR/archive/demo",
+      "container_memory": "4g"
+    }
+  ]
+}
+EOF
+ENV_NO_MEM="$TMP_DIR/no-mem.env"
+printf 'DISCORD_TOKEN=dummy\n' >"$ENV_NO_MEM"
+COMPOSE_TARGET_MEM_LOG="$TMP_DIR/compose-target-mem.log"
+env -u DCE_CONTAINER_MEMORY \
+  DCE_SKIP_SCRAPE_LOCK=1 \
+  DCE_COMPOSE_BIN="$FAKE_COMPOSE" \
+  DCE_REPO_ROOT="$REPO_ROOT" \
+  DCE_ENV_FILE="$ENV_NO_MEM" \
+  DCE_COMPOSE_FILE="$COMPOSE_FILE" \
+  FAKE_COMPOSE_ARGS_LOG="$COMPOSE_TARGET_MEM_LOG" \
+  "$REPO_ROOT/scripts/run-discord-scrape-host.sh" scrape \
+  --config "$TARGET_MEM_CONFIG" --target demo >/dev/null
+grep -q 'env:DCE_CONTAINER_MEMORY=4g' "$COMPOSE_TARGET_MEM_LOG" || {
+  echo "expected target container_memory=4g in compose env when global unset" >&2
+  cat "$COMPOSE_TARGET_MEM_LOG" >&2
+  exit 1
+}
+
+ENV_OVERRIDE="$TMP_DIR/override-mem.env"
+printf 'DISCORD_TOKEN=dummy\nDCE_CONTAINER_MEMORY=2g\n' >"$ENV_OVERRIDE"
+COMPOSE_OVERRIDE_LOG="$TMP_DIR/compose-override-mem.log"
+env -u DCE_CONTAINER_MEMORY \
+  DCE_SKIP_SCRAPE_LOCK=1 \
+  DCE_COMPOSE_BIN="$FAKE_COMPOSE" \
+  DCE_REPO_ROOT="$REPO_ROOT" \
+  DCE_ENV_FILE="$ENV_OVERRIDE" \
+  DCE_COMPOSE_FILE="$COMPOSE_FILE" \
+  FAKE_COMPOSE_ARGS_LOG="$COMPOSE_OVERRIDE_LOG" \
+  "$REPO_ROOT/scripts/run-discord-scrape-host.sh" scrape \
+  --config "$TARGET_MEM_CONFIG" --target demo >/dev/null
+grep -q 'env:DCE_CONTAINER_MEMORY=2g' "$COMPOSE_OVERRIDE_LOG" || {
+  echo "expected scrape.env DCE_CONTAINER_MEMORY to override target config" >&2
+  cat "$COMPOSE_OVERRIDE_LOG" >&2
+  exit 1
+}
+
 echo "run-discord-scrape-host smoke test passed"

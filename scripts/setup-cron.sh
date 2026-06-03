@@ -7,6 +7,7 @@ REPO_ROOT="${DCE_REPO_ROOT:-$(cd "$SCRIPT_DIR/.." && pwd -P)}"
 COMPOSE_FILE="${DCE_COMPOSE_FILE:-$REPO_ROOT/docker-compose.yml}"
 ENV_FILE="${DCE_ENV_FILE:-$REPO_ROOT/scrape.env}"
 HOST_RUNNER="${DCE_HOST_RUNNER:-$REPO_ROOT/scripts/run-discord-scrape-host.sh}"
+DOCUMENTS_SCRAPE="${DCE_DOCUMENTS_SCRAPE:-$REPO_ROOT/scripts/run-documents-scrape.sh}"
 CONFIG_FILE="${DCE_CONFIG_FILE:-$REPO_ROOT/config/scrape-targets.json}"
 LOG_FILE="${DCE_LOG_FILE:-$REPO_ROOT/logs/discord-scrape.log}"
 JOB_NAME="discord-scrape"
@@ -292,6 +293,7 @@ main() {
 
   [[ -f "$COMPOSE_FILE" ]] || die "Missing compose file: $COMPOSE_FILE"
   [[ -x "$HOST_RUNNER" ]] || die "Missing or non-executable host runner: $HOST_RUNNER"
+  [[ -x "$DOCUMENTS_SCRAPE" ]] || die "Missing or non-executable documents scrape: $DOCUMENTS_SCRAPE"
   [[ -f "$CONFIG_FILE" ]] || die "Missing config file: $CONFIG_FILE"
   "$JQ_BIN" empty "$CONFIG_FILE" >/dev/null 2>&1 || die "Invalid JSON config: $CONFIG_FILE"
 
@@ -334,11 +336,9 @@ main() {
   fi
 
   scrape_args=(
-    "$HOST_RUNNER"
-    --env-file "$ENV_FILE"
-    --compose-file "$COMPOSE_FILE"
-    scrape
-    --config "$(container_config_path "$CONFIG_FILE")"
+    "$DOCUMENTS_SCRAPE"
+    --config "$CONFIG_FILE"
+    --log-file "$LOG_FILE"
   )
   append_target_args scrape_args
   scrape_command=$(printf '%q ' "${scrape_args[@]}")
@@ -348,7 +348,7 @@ main() {
     lock_prefix=""
   fi
 
-  job_line="$cron_line cd $(printf '%q' "$REPO_ROOT") && DCE_COMPOSE_TTY=0 ${lock_prefix}${scrape_command}>> $(printf '%q' "$LOG_FILE") 2>&1"
+  job_line="$cron_line cd $(printf '%q' "$REPO_ROOT") && DCE_COMPOSE_TTY=0 DCE_ENV_FILE=$(printf '%q' "$ENV_FILE") DCE_COMPOSE_FILE=$(printf '%q' "$COMPOSE_FILE") ${lock_prefix}${scrape_command}"
 
   local cron_block
   cron_block=$(printf '%s\n%s\n%s\n' "$begin_marker" "$job_line" "$end_marker")

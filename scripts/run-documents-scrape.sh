@@ -35,6 +35,7 @@ Options:
   --salvage-before-scrape  Run salvage-only pass before preflight and incremental scrape
   --target NAME Limit preflight/scrape to one configured target
   --channel ID  With exactly one --target, limit scrape to channel ID (repeatable)
+  --guild ID    With exactly one --target, limit scrape to guild ID (repeatable)
   --config PATH Scrape target config (default: config/scrape-targets.json)
   --log-file PATH Append full workflow output to this file (default on live scrape: logs/documents-scrape-UTC.log)
   --summary-file PATH  Machine-readable scrape summary JSON (default: <log-basename>.summary.json on live scrape)
@@ -170,6 +171,11 @@ main() {
       --channel)
         [[ $# -ge 2 ]] || die "Missing value for --channel."
         passthrough+=(--channel "$2")
+        shift 2
+        ;;
+      --guild)
+        [[ $# -ge 2 ]] || die "Missing value for --guild."
+        passthrough+=(--guild "$2")
         shift 2
         ;;
       --config)

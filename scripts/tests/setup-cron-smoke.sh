@@ -85,8 +85,11 @@ run_setup
 grep -q '^MAILTO=test@example.com$' "$CRONTAB_FILE" || { echo "expected unrelated crontab line to remain" >&2; exit 1; }
 [[ "$(grep -c '^# BEGIN discord-scrape$' "$CRONTAB_FILE")" == "1" ]] || { echo "expected exactly one managed cron block after install" >&2; exit 1; }
 grep -q 'compose --env-file' "$DOCKER_LOG" || { echo "expected docker preflight to run during install" >&2; exit 1; }
-grep -q 'scripts/run-discord-scrape-host.sh' "$CRONTAB_FILE" || { echo "expected cron job to run host wrapper" >&2; exit 1; }
-grep -q 'DCE_COMPOSE_TTY=0' "$CRONTAB_FILE" || { echo "expected cron job to disable compose TTY for log append" >&2; exit 1; }
+grep -q 'scripts/run-documents-scrape.sh' "$CRONTAB_FILE" || { echo "expected cron job to run documents scrape" >&2; exit 1; }
+grep -q -- '--log-file' "$CRONTAB_FILE" || { echo "expected cron job to pass --log-file" >&2; exit 1; }
+grep -q 'DCE_ENV_FILE=' "$CRONTAB_FILE" || { echo "expected cron job to set DCE_ENV_FILE" >&2; exit 1; }
+grep -q 'DCE_COMPOSE_TTY=0' "$CRONTAB_FILE" || { echo "expected cron job to disable compose TTY" >&2; exit 1; }
+grep -q '>>' "$CRONTAB_FILE" && { echo "expected cron job to rely on documents scrape tee, not shell redirect" >&2; exit 1; }
 
 run_setup
 [[ "$(grep -c '^# BEGIN discord-scrape$' "$CRONTAB_FILE")" == "1" ]] || { echo "expected exactly one managed cron block after reinstall" >&2; exit 1; }

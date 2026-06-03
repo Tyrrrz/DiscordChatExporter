@@ -297,6 +297,9 @@ Check logs from your last run:
 # Primary log file (default from setup-cron.sh)
 tail -f logs/discord-scrape.log
 
+# Machine-readable totals beside the cron log
+./scripts/print-scrape-summary.sh logs/discord-scrape.summary.json
+
 # Recent cron execution (system log)
 sudo grep discord-scrape /var/log/syslog  # Debian/Ubuntu
 sudo grep discord-scrape /var/log/cron    # CentOS/RHEL

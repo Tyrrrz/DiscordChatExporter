@@ -186,6 +186,8 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
 
 **Plan 078 (2026-06-04):** `run-documents-scrape.sh` `--log-file` with auto tee on live scrapes; summary pairs with log basename.
 
+**Plan 079 (2026-06-04):** `setup-cron.sh` installs `run-documents-scrape.sh --log-file` (unified workflow + JSON summary) instead of bare host scrape redirect.
+
 **Disk:** ~65 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
 
 ## CI note (fork PRs)

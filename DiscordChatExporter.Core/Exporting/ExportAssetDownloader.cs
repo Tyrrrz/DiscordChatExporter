@@ -64,15 +64,15 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
         await Http.ResiliencePipeline.ExecuteAsync(
             async innerCancellationToken =>
             {
-                // Download the file.
-                // Use ResponseHeadersRead so the response body is streamed to disk instead of
-                // being fully buffered into memory first, which can cause an OutOfMemoryException
-                // on large attachments.
+                // Download the file
                 using var response = await Http.Client.GetAsync(
                     url,
                     HttpCompletionOption.ResponseHeadersRead,
                     innerCancellationToken
                 );
+
+                response.EnsureSuccessStatusCode();
+
                 await using var output = File.Create(filePath);
                 await response.Content.CopyToAsync(output, innerCancellationToken);
             },

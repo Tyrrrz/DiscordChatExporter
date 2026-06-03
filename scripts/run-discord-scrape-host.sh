@@ -14,6 +14,8 @@ DOCKER_BIN_OVERRIDDEN=0
 REAUTH_COMMAND=""
 COMPOSE_ENV_FILE=""
 COMPOSE_ENV_TEMP=""
+SCRAPE_LOCK_FILE=""
+SCRAPE_LOCK_FD=""
 VERIFY_READY="$REPO_ROOT/scripts/verify-operator-ready.sh"
 
 if [[ -n "${DCE_DOCKER_BIN:-}" ]]; then
@@ -54,6 +56,33 @@ cleanup_compose_env() {
   if [[ -n "$COMPOSE_ENV_TEMP" && -f "$COMPOSE_ENV_TEMP" ]]; then
     rm -f "$COMPOSE_ENV_TEMP"
   fi
+}
+
+acquire_scrape_lock() {
+  if [[ "${DCE_SKIP_SCRAPE_LOCK:-0}" == "1" ]]; then
+    return 0
+  fi
+  command -v flock >/dev/null 2>&1 || return 0
+
+  SCRAPE_LOCK_FILE="${DCE_SCRAPE_LOCK_FILE:-$REPO_ROOT/.dce-scrape.lock}"
+  exec {SCRAPE_LOCK_FD}>>"$SCRAPE_LOCK_FILE"
+  if ! flock -n "$SCRAPE_LOCK_FD"; then
+    die "Another scrape is already running (lock: $SCRAPE_LOCK_FILE). Wait for it to finish or confirm no scrape is active before removing the lock."
+  fi
+}
+
+release_scrape_lock() {
+  if [[ -z "${SCRAPE_LOCK_FD:-}" ]]; then
+    return 0
+  fi
+  flock -u "$SCRAPE_LOCK_FD" 2>/dev/null || true
+  exec {SCRAPE_LOCK_FD}>&-
+  SCRAPE_LOCK_FD=""
+}
+
+cleanup_on_exit() {
+  release_scrape_lock
+  cleanup_compose_env
 }
 
 load_env_file() {
@@ -402,7 +431,7 @@ main() {
   local -a passthrough_args=()
   local subcommand=""
 
-  trap cleanup_compose_env EXIT
+  trap cleanup_on_exit EXIT
 
   while (($#)); do
     case "$1" in
@@ -470,7 +499,11 @@ main() {
   print_scrape_config_plan "$host_config" "Host $subcommand" "${host_targets[@]}"
 
   case "$subcommand" in
-    preflight|scrape)
+    preflight)
+      run_subcommand_with_retry "$subcommand" "${passthrough_args[@]}"
+      ;;
+    scrape)
+      acquire_scrape_lock
       run_subcommand_with_retry "$subcommand" "${passthrough_args[@]}"
       ;;
   esac

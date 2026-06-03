@@ -115,6 +115,8 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh --sync-gui --per-target -
 
 \* Audit failed before plan 045 because truncated partial exports under `.dce-temp/` were scanned as archives. After fix, audit passes while partial temps exist.
 
+**Plan 046 (2026-06-04):** `run-discord-scrape-host.sh scrape` holds non-blocking `flock` on `.dce-scrape.lock` so overlapping manual/cron validation cannot spawn twin yes_general exports. Stop duplicate runs before restarting KotOR validation.
+
 **Plan 045 (2026-06-04):** `audit-archive-json.sh` and `verify-documents-archives.sh` skip `*/.dce-temp/*` (in-progress partial exports). Salvage run 2026-06-03: 7 merged, 17 unchanged, 3 skipped (+5404 messages); yes_general OOM-skipped with partial temps preserved for next salvage.
 
 **Plan 044 (2026-06-04):** Offline smoke asserts partial temp preserved on OOM skip (channel 134). Host wrapper prefers `DISCORD_TOKEN_FILE` over inherited shell tokens. `run-all-smokes.sh` → 19/19 pass.

@@ -85,6 +85,7 @@ run_host() {
   local env_path=${2:-$ENV_FILE}
 
   env -u DISCORD_TOKEN \
+    DCE_SKIP_SCRAPE_LOCK=1 \
     DCE_REPO_ROOT="$REPO_ROOT" \
     DCE_DOCKER_BIN="$FAKE_DOCKER" \
     DCE_ENV_FILE="$env_path" \
@@ -100,6 +101,7 @@ run_host_with_shell_token() {
   local missing_env_path=$2
 
   DCE_REPO_ROOT="$REPO_ROOT" \
+  DCE_SKIP_SCRAPE_LOCK=1 \
   DCE_DOCKER_BIN="$FAKE_DOCKER" \
   DCE_ENV_FILE="$missing_env_path" \
   DCE_COMPOSE_FILE="$COMPOSE_FILE" \

@@ -11,21 +11,24 @@ VERIFY_READY="$REPO_ROOT/scripts/verify-operator-ready.sh"
 DOCUMENTS_SCRAPE="$REPO_ROOT/scripts/run-documents-scrape.sh"
 LOCK_STATUS="$REPO_ROOT/scripts/scrape-lock-status.sh"
 SKIP_DF=0
+SALVAGE_ONLY=0
 TARGET=""
 CHANNEL_ARGS=()
 
 usage() {
   cat <<EOF
 Usage:
-  $(basename "$0") [--config PATH] [--skip-df] [--target NAME] [--channel ID]
+  $(basename "$0") [--config PATH] [--skip-df] [--target NAME] [--channel ID] [--salvage-only]
 
 Run operator handoff checks before cron install or a full scrape:
   1. Free-space summary (archive_root + repo)
   2. verify-operator-ready (jq, compose, auth, archives)
-  3. run-documents-scrape --dry-run (archive paths only)
+  3. scrape lock status (when available)
+  4. run-documents-scrape --dry-run OR --salvage-only
 
-  --target NAME   Limit dry-run scrape plan to one configured target
-  --channel ID    With exactly one --target, limit dry-run to channel ID (repeatable)
+  --target NAME   Limit documents step to one configured target
+  --channel ID    With exactly one --target, limit to channel ID (repeatable)
+  --salvage-only  Merge stale .dce-temp exports only (no dry-run, no Discord scrape)
 
 Environment:
   DCE_MIN_FREE_MB   Minimum MiB free (default 1024 in verify-operator-ready)
@@ -67,6 +70,10 @@ main() {
         ;;
       --skip-df)
         SKIP_DF=1
+        shift
+        ;;
+      --salvage-only)
+        SALVAGE_ONLY=1
         shift
         ;;
       --target)
@@ -114,17 +121,26 @@ main() {
     fi
   fi
 
-  local -a dry_run_args=(--dry-run --config "$CONFIG_PATH")
-  [[ -n "$TARGET" ]] && dry_run_args+=(--target "$TARGET")
-  dry_run_args+=("${CHANNEL_ARGS[@]}")
-  "$DOCUMENTS_SCRAPE" "${dry_run_args[@]}"
-
-  printf '\nHandoff complete. Safe to run:\n'
-  printf '  ./scripts/run-documents-scrape.sh'
+  local -a documents_args=(--config "$CONFIG_PATH")
+  [[ -n "$TARGET" ]] && documents_args+=(--target "$TARGET")
+  documents_args+=("${CHANNEL_ARGS[@]}")
+  if (( SALVAGE_ONLY )); then
+    documents_args+=(--salvage-only)
+    "$DOCUMENTS_SCRAPE" "${documents_args[@]}"
+    printf '\nHandoff complete (salvage-only). Next:\n'
+    printf '  ./scripts/run-operator-validation.sh --salvage-before-scrape'
+  else
+    documents_args+=(--dry-run)
+    "$DOCUMENTS_SCRAPE" "${documents_args[@]}"
+    printf '\nHandoff complete. Safe to run:\n'
+    printf '  ./scripts/run-documents-scrape.sh'
+  fi
   [[ -n "$TARGET" ]] && printf ' --target %s' "$TARGET"
   ((${#CHANNEL_ARGS[@]})) && printf ' %s' "${CHANNEL_ARGS[*]}"
   printf '\n'
-  printf '  ./scripts/setup-cron.sh --dry-run\n'
+  if (( ! SALVAGE_ONLY )); then
+    printf '  ./scripts/setup-cron.sh --dry-run\n'
+  fi
 }
 
 main "$@"

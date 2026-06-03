@@ -17,12 +17,13 @@ TARGET=""
 SYNC_GUI_FLAG=0
 DRY_RUN=0
 SALVAGE_BEFORE=0
+SALVAGE_ONLY=0
 CHANNEL_ARGS=()
 
 usage() {
   cat <<EOF
 Usage:
-  $(basename "$0") [--target NAME] [--channel ID] [--config PATH] [--sync-gui] [--dry-run] [--salvage-before-scrape]
+  $(basename "$0") [--target NAME] [--channel ID] [--config PATH] [--sync-gui] [--dry-run] [--salvage-only] [--salvage-before-scrape]
 
 End-to-end operator proof:
   operator-handoff → [optional salvage] → incremental scrape → prove-incremental-append
@@ -30,6 +31,7 @@ End-to-end operator proof:
 When --target is omitted, all enabled targets in the config are processed.
 
   --channel ID  With exactly one --target, limit scrape/prove to channel ID (repeatable)
+  --salvage-only  Handoff + merge stale .dce-temp exports only (no Discord scrape or prove)
   --salvage-before-scrape  Merge stale .dce-temp exports before incremental scrape
 
 Logs append to logs/operator-proof-<timestamp>.log
@@ -66,6 +68,10 @@ main() {
         SALVAGE_BEFORE=1
         shift
         ;;
+      --salvage-only)
+        SALVAGE_ONLY=1
+        shift
+        ;;
       --channel)
         [[ $# -ge 2 ]] || die "Missing value for --channel."
         CHANNEL_ARGS+=(--channel "$2")
@@ -82,6 +88,13 @@ main() {
   done
 
   [[ -f "$CONFIG_PATH" ]] || die "Missing config: $CONFIG_PATH"
+
+  if (( SALVAGE_ONLY == 1 && DRY_RUN == 1 )); then
+    die "--salvage-only cannot be combined with --dry-run."
+  fi
+  if (( SALVAGE_ONLY == 1 && SALVAGE_BEFORE == 1 )); then
+    die "--salvage-only and --salvage-before-scrape are mutually exclusive."
+  fi
 
   local -a targets=()
   if [[ -n "$TARGET" ]]; then
@@ -115,10 +128,15 @@ main() {
     local -a handoff_args=(--config "$CONFIG_PATH")
     [[ -n "$TARGET" ]] && handoff_args+=(--target "$TARGET")
     handoff_args+=("${CHANNEL_ARGS[@]}")
+    (( SALVAGE_ONLY )) && handoff_args+=(--salvage-only)
     "$HANDOFF" "${handoff_args[@]}"
 
     if (( DRY_RUN == 1 )); then
       printf '\nDry run complete (no Discord scrape).\n'
+      exit 0
+    fi
+    if (( SALVAGE_ONLY == 1 )); then
+      printf '\nSalvage-only proof complete (no Discord scrape or append proof).\n'
       exit 0
     fi
 

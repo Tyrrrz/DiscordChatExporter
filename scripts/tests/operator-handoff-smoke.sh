@@ -70,4 +70,25 @@ if ! grep -q 'Scrape lock status' <<<"$handoff_output"; then
   exit 1
 fi
 
+set +e
+salvage_output=$(
+  DCE_MIN_FREE_MB=0 \
+    DCE_CONFIG_FILE="$CONFIG_PATH" \
+    DCE_ENV_FILE="$ENV_PATH" \
+    DCE_SKIP_SCRAPE_LOCK=1 \
+    "$HANDOFF" --config "$CONFIG_PATH" --skip-df --salvage-only --target demo 2>&1
+)
+salvage_status=$?
+set -e
+
+if [[ "$salvage_status" -ne 0 ]] || ! grep -q 'Handoff complete (salvage-only)' <<<"$salvage_output"; then
+  printf 'operator-handoff --salvage-only failed (status=%s)\n' "$salvage_status" >&2
+  printf '%s\n' "$salvage_output" >&2
+  exit 1
+fi
+grep -q 'salvage completed' <<<"$salvage_output" || {
+  printf 'operator-handoff --salvage-only missing salvage completed marker\n' >&2
+  exit 1
+}
+
 printf 'operator-handoff-smoke: ok\n'

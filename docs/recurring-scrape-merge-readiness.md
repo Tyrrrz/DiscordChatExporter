@@ -111,9 +111,9 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh --sync-gui --per-target -
 | expanded_kotor_discord | pass | pass | validation-resume |
 | eod_discord | pass | pass | validation-resume |
 | DS_Discord_msgs | pass | pass | validation-resume; some channels forbidden |
-| KotOR_discord_msgs | **in progress** | — | plan 041 retry after abort-skip fix; log `logs/kotor-retry-20260530.log` |
+| KotOR_discord_msgs | **in progress** | — | `yes_general` has ~5 years of backlog (archive cursor was Jan 2021); plan 043 preserves partial temps on OOM skip |
 
-**KotOR remediation (plan 040–041):** `run-discord-scrape.sh` skips channels when export exits 134/137/139 (abort/OOM) or log matches disk/forbidden patterns. Offline regression: `run-discord-scrape-smoke.sh` `skip-abort` target. Re-run:
+**KotOR / yes_general (plan 040–043):** Incremental `--after` works for all channels; most return `UNCHANGED` in seconds. `yes_general` archive last message was **2021-01-17** — the first catch-up legitimately fetches years of history. Prior bug: OOM skip **deleted** partial temp exports, causing re-download loops. Plan 043 preserves partial temps and salvages on next run.
 
 ```bash
 docker compose build   # or podman-compose build

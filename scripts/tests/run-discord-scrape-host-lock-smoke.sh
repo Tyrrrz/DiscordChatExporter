@@ -43,6 +43,7 @@ EOF
 (
   exec {lock_fd}>>"$LOCK_FILE"
   flock -n "$lock_fd" || exit 1
+  printf 'pid=%s\nstarted=2020-01-01T00:00:00Z\ncmd=mock-lock-holder\n' "$$" >"${LOCK_FILE}.meta"
   sleep 120
 ) &
 HOLDER_PID=$!
@@ -69,6 +70,11 @@ if ! grep -q 'Another scrape is already running' <<<"$output"; then
   printf '%s\n' "$output" >&2
   exit 1
 fi
+if ! grep -q 'Holder pid' <<<"$output"; then
+  echo "expected holder pid details in lock-held error" >&2
+  printf '%s\n' "$output" >&2
+  exit 1
+fi
 
 kill "$HOLDER_PID" 2>/dev/null || true
 wait "$HOLDER_PID" 2>/dev/null || true
@@ -81,6 +87,57 @@ if ! DCE_REPO_ROOT="$REPO_ROOT" \
   DCE_COMPOSE_FILE="$COMPOSE_FILE" \
   "$REPO_ROOT/scripts/run-discord-scrape-host.sh" scrape --target demo >/dev/null; then
   echo "expected scrape to succeed after lock released" >&2
+  exit 1
+fi
+
+ARCHIVE_ROOT="$TMP_DIR/archive_shared"
+mkdir -p "$ARCHIVE_ROOT/demo"
+CONFIG_PATH="$TMP_DIR/archive-config.json"
+ARCHIVE_LOCK="$ARCHIVE_ROOT/.dce-scrape.lock"
+cat >"$CONFIG_PATH" <<JSON
+{
+  "archive_root": "$ARCHIVE_ROOT",
+  "targets": [
+    {
+      "name": "demo",
+      "kind": "guild",
+      "output_dir": "$ARCHIVE_ROOT/demo",
+      "enabled": true
+    }
+  ]
+}
+JSON
+
+(
+  exec {archive_lock_fd}>>"$ARCHIVE_LOCK"
+  flock -n "$archive_lock_fd" || exit 1
+  sleep 120
+) &
+HOLDER_PID=$!
+sleep 0.2
+
+set +e
+archive_output=$(
+  DCE_REPO_ROOT="$REPO_ROOT" \
+  DCE_DOCKER_BIN="$FAKE_DOCKER" \
+  DCE_ENV_FILE="$ENV_FILE" \
+  DCE_COMPOSE_FILE="$COMPOSE_FILE" \
+  "$REPO_ROOT/scripts/run-discord-scrape-host.sh" scrape --config "$CONFIG_PATH" --target demo 2>&1
+)
+archive_status=$?
+set -e
+
+kill "$HOLDER_PID" 2>/dev/null || true
+wait "$HOLDER_PID" 2>/dev/null || true
+HOLDER_PID=""
+
+if [[ "$archive_status" -eq 0 ]]; then
+  echo "expected archive-root lock to block scrape" >&2
+  exit 1
+fi
+if ! grep -Fq "$ARCHIVE_LOCK" <<<"$archive_output"; then
+  echo "expected archive-root lock path in error message" >&2
+  printf '%s\n' "$archive_output" >&2
   exit 1
 fi
 

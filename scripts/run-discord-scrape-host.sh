@@ -60,17 +60,98 @@ cleanup_compose_env() {
   fi
 }
 
+resolve_scrape_lock_file() {
+  local config_path=$1
+
+  if [[ -n "${DCE_SCRAPE_LOCK_FILE:-}" ]]; then
+    printf '%s\n' "$DCE_SCRAPE_LOCK_FILE"
+    return 0
+  fi
+
+  local archive_root=""
+  if [[ -f "$config_path" ]]; then
+    archive_root=$(jq -r '.archive_root // empty' "$config_path" 2>/dev/null) || true
+  fi
+  if [[ -n "$archive_root" && "$archive_root" != null ]]; then
+    printf '%s/.dce-scrape.lock\n' "$archive_root"
+  else
+    printf '%s/.dce-scrape.lock\n' "$REPO_ROOT"
+  fi
+}
+
+scrape_lock_meta_path() {
+  printf '%s.meta\n' "$SCRAPE_LOCK_FILE"
+}
+
+write_scrape_lock_meta() {
+  local meta_file
+  meta_file=$(scrape_lock_meta_path)
+  printf 'pid=%s\nstarted=%s\ncmd=%s\n' \
+    "$$" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(ps -o args= -p $$ 2>/dev/null | head -c 500 || echo unknown)" >"$meta_file"
+}
+
+remove_scrape_lock_meta() {
+  rm -f "$(scrape_lock_meta_path)"
+}
+
+format_scrape_lock_holder() {
+  local meta_file=$1
+  local pid="" started="" cmd="" holder_state=""
+
+  [[ -f "$meta_file" ]] || return 0
+  pid=$(grep -E '^pid=' "$meta_file" | head -1 | cut -d= -f2- || true)
+  started=$(grep -E '^started=' "$meta_file" | head -1 | cut -d= -f2- || true)
+  cmd=$(grep -E '^cmd=' "$meta_file" | head -1 | cut -d= -f2- || true)
+  [[ -n "$pid" ]] || return 0
+
+  if kill -0 "$pid" 2>/dev/null; then
+    holder_state="running"
+  else
+    holder_state="not running"
+  fi
+  printf 'Holder pid %s (%s, started %s): %s' "$pid" "$holder_state" "${started:-unknown}" "${cmd:-unknown}"
+}
+
+try_reclaim_stale_scrape_lock() {
+  local meta_file pid
+  meta_file=$(scrape_lock_meta_path)
+  [[ -f "$meta_file" ]] || return 1
+  pid=$(grep -E '^pid=' "$meta_file" | head -1 | cut -d= -f2- || true)
+  [[ -n "$pid" ]] || return 1
+  if kill -0 "$pid" 2>/dev/null; then
+    return 1
+  fi
+  printf 'WARN: reclaiming scrape lock; previous holder pid %s is not running.\n' "$pid" >&2
+  remove_scrape_lock_meta
+  return 0
+}
+
 acquire_scrape_lock() {
+  local config_path=${1:-}
+
   if [[ "${DCE_SKIP_SCRAPE_LOCK:-0}" == "1" ]]; then
     return 0
   fi
   command -v flock >/dev/null 2>&1 || return 0
 
-  SCRAPE_LOCK_FILE="${DCE_SCRAPE_LOCK_FILE:-$REPO_ROOT/.dce-scrape.lock}"
+  [[ -n "$config_path" ]] || config_path="$REPO_ROOT/config/scrape-targets.json"
+  SCRAPE_LOCK_FILE=$(resolve_scrape_lock_file "$config_path")
+  mkdir -p "$(dirname "$SCRAPE_LOCK_FILE")"
+
   exec {SCRAPE_LOCK_FD}>>"$SCRAPE_LOCK_FILE"
   if ! flock -n "$SCRAPE_LOCK_FD"; then
+    if try_reclaim_stale_scrape_lock && flock -n "$SCRAPE_LOCK_FD"; then
+      write_scrape_lock_meta
+      return 0
+    fi
+    local holder_msg=""
+    holder_msg=$(format_scrape_lock_holder "$(scrape_lock_meta_path)") || true
+    if [[ -n "$holder_msg" ]]; then
+      die "Another scrape is already running (lock: $SCRAPE_LOCK_FILE). $holder_msg"
+    fi
     die "Another scrape is already running (lock: $SCRAPE_LOCK_FILE). Wait for it to finish or confirm no scrape is active before removing the lock."
   fi
+  write_scrape_lock_meta
 }
 
 release_scrape_lock() {
@@ -80,6 +161,7 @@ release_scrape_lock() {
   flock -u "$SCRAPE_LOCK_FD" 2>/dev/null || true
   exec {SCRAPE_LOCK_FD}>&-
   SCRAPE_LOCK_FD=""
+  remove_scrape_lock_meta
 }
 
 cleanup_on_exit() {
@@ -514,7 +596,7 @@ main() {
       run_subcommand_with_retry "$subcommand" "${passthrough_args[@]}"
       ;;
     scrape)
-      acquire_scrape_lock
+      acquire_scrape_lock "$host_config"
       run_subcommand_with_retry "$subcommand" "${passthrough_args[@]}"
       ;;
   esac

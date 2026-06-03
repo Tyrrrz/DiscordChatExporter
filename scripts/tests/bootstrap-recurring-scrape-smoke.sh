@@ -52,4 +52,38 @@ if [[ "$bootstrap_status" -ne 0 ]] || ! grep -q 'Dry run complete' <<<"$bootstra
   exit 1
 fi
 
+KOTOR_ARCHIVE="$TMP_DIR/archive/kotor"
+mkdir -p "$KOTOR_ARCHIVE"
+printf '{"messages":[{"id":"1","timestamp":"2020-01-01T00:00:00+00:00"}],"channel":{"id":"221726893064454144"}}\n' \
+  >"$KOTOR_ARCHIVE/Guild - yes_general [221726893064454144].json"
+KOTOR_CONFIG="$TMP_DIR/kotor-config.json"
+cat >"$KOTOR_CONFIG" <<JSON
+{
+  "archive_root": "$TMP_DIR",
+  "targets": [
+    {
+      "name": "KotOR_discord_msgs",
+      "kind": "guild",
+      "output_dir": "$KOTOR_ARCHIVE",
+      "enabled": true
+    }
+  ]
+}
+JSON
+
+set +e
+kotor_output=$("$BOOTSTRAP" --dry-run --config "$KOTOR_CONFIG" 2>&1)
+kotor_status=$?
+set -e
+
+if [[ "$kotor_status" -ne 0 ]] || ! grep -q 'Dry run complete' <<<"$kotor_output"; then
+  printf 'bootstrap KotOR dry-run failed (status=%s)\n' "$kotor_status" >&2
+  printf '%s\n' "$kotor_output" >&2
+  exit 1
+fi
+grep -q 'run-kotor-yes-general-catchup.sh' <<<"$kotor_output" || {
+  printf 'bootstrap dry-run missing KotOR catch-up hint\n' >&2
+  exit 1
+}
+
 printf 'bootstrap-recurring-scrape-smoke: ok\n'

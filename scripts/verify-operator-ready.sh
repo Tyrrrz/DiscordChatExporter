@@ -6,6 +6,8 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
 REPO_ROOT="${DCE_REPO_ROOT:-$(cd "$SCRIPT_DIR/.." && pwd -P)}"
 # shellcheck source=lib/scrape-run-plan.sh
 source "$SCRIPT_DIR/lib/scrape-run-plan.sh"
+# shellcheck source=lib/kotor-catchup-hint.sh
+source "$SCRIPT_DIR/lib/kotor-catchup-hint.sh"
 CONFIG_PATH="${DCE_CONFIG_FILE:-$REPO_ROOT/config/scrape-targets.json}"
 ENV_FILE="${DCE_ENV_FILE:-$REPO_ROOT/scrape.env}"
 HOST_RUNNER="$REPO_ROOT/scripts/run-discord-scrape-host.sh"
@@ -197,6 +199,7 @@ main() {
   printf '\nOperator ready. Next:\n'
   printf '  ./scripts/run-documents-scrape.sh\n'
   printf '  ./scripts/setup-cron.sh --dry-run\n'
+  print_kotor_catchup_hint "$CONFIG_PATH"
 }
 
 main "$@"

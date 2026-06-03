@@ -208,6 +208,8 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
 
 **Plan 085 (2026-06-04):** `operator-handoff.sh` prints KotOR catch-up hint when `KotOR_discord_msgs` is enabled.
 
+**Plan 086 (2026-06-04):** Shared `lib/kotor-catchup-hint.sh`; verify-operator-ready + bootstrap print same hint.
+
 **Disk:** ~65 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
 
 ## CI note (fork PRs)

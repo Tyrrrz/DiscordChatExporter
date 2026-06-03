@@ -10,6 +10,8 @@ COMPOSE_FILE="${DCE_COMPOSE_FILE:-$REPO_ROOT/docker-compose.yml}"
 HOST_RUNNER="$REPO_ROOT/scripts/run-discord-scrape-host.sh"
 VERIFY_SCRIPT="$REPO_ROOT/scripts/verify-documents-archives.sh"
 SETUP_AUTH="$REPO_ROOT/scripts/setup-scrape-auth.sh"
+# shellcheck source=lib/kotor-catchup-hint.sh
+source "$SCRIPT_DIR/lib/kotor-catchup-hint.sh"
 
 DRY_RUN=0
 SKIP_BUILD=0
@@ -118,6 +120,7 @@ main() {
   if (( DRY_RUN == 1 )); then
     printf 'Dry run complete: archive paths verified under configured output_dir values.\n'
     printf 'Next: cp scrape.env.example scrape.env, set DISCORD_TOKEN, then rerun without --dry-run.\n'
+    print_kotor_catchup_hint "$CONFIG_PATH"
     exit 0
   fi
 
@@ -161,6 +164,7 @@ main() {
 
   printf '  Scrape now:  %s\n' "$REPO_ROOT/scripts/run-documents-scrape.sh"
   printf '  Install cron: %s --dry-run\n' "$REPO_ROOT/scripts/setup-cron.sh"
+  print_kotor_catchup_hint "$CONFIG_PATH"
 }
 
 main "$@"

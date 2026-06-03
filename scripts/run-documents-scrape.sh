@@ -28,6 +28,7 @@ End-to-end Documents scrape workflow:
 Options:
   --dry-run     Verify archives only; do not call Discord
   --target NAME Limit preflight/scrape to one configured target
+  --channel ID  With exactly one --target, limit scrape to channel ID (repeatable)
   --config PATH Scrape target config (default: config/scrape-targets.json)
 EOF
 }
@@ -52,6 +53,11 @@ main() {
         [[ $# -ge 2 ]] || die "Missing value for --target."
         target=$2
         passthrough+=(--target "$2")
+        shift 2
+        ;;
+      --channel)
+        [[ $# -ge 2 ]] || die "Missing value for --channel."
+        passthrough+=(--channel "$2")
         shift 2
         ;;
       --config)

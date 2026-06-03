@@ -17,6 +17,7 @@ SYNC_GUI_FLAG=0
 PER_TARGET=0
 CONTINUE_ON_ERROR=0
 TARGET=""
+CHANNEL_ARGS=()
 LOG_FILE=""
 
 usage() {
@@ -32,6 +33,7 @@ Options:
   --skip-scrape   Readiness only (no scrape, no audit loop)
   --sync-gui      Run sync-token-from-gui.sh --force before checks
   --target NAME   Limit scrape/audit to one configured target
+  --channel ID    With exactly one --target, limit scrape to channel ID (repeatable)
   --per-target    Scrape and audit each enabled target separately
   --continue-on-error  With --per-target, keep going after a target fails
   --config PATH   Targets JSON (default: config/scrape-targets.json)
@@ -87,6 +89,7 @@ audit_targets() {
 scrape_per_target() {
   local name failures=0 ok=0
   local -a scrape_args=(--config "$CONFIG_PATH")
+  scrape_args+=("${CHANNEL_ARGS[@]}")
   local -a target_names=()
   if (( DRY_RUN )); then
     scrape_args+=(--dry-run)
@@ -143,6 +146,11 @@ main() {
         TARGET=$2
         shift 2
         ;;
+      --channel)
+        [[ $# -ge 2 ]] || die "Missing value for --channel."
+        CHANNEL_ARGS+=(--channel "$2")
+        shift 2
+        ;;
       --config)
         [[ $# -ge 2 ]] || die "Missing value for --config."
         CONFIG_PATH=$2
@@ -183,6 +191,7 @@ main() {
     log_step "Operator validation started (config=$CONFIG_PATH)"
     if [[ -n "$TARGET" ]]; then
       log_step "Targets: $TARGET"
+      ((${#CHANNEL_ARGS[@]})) && log_step "Scrape channel filter: ${CHANNEL_ARGS[*]}"
     else
       log_step "Enabled targets: $(enabled_targets | paste -sd, -)"
     fi
@@ -198,6 +207,7 @@ main() {
       scrape_per_target || failures=$((failures + 1))
     else
       local -a scrape_args=(--config "$CONFIG_PATH")
+      scrape_args+=("${CHANNEL_ARGS[@]}")
       [[ -n "$TARGET" ]] && scrape_args+=(--target "$TARGET")
       if (( DRY_RUN )); then
         scrape_args+=(--dry-run)

@@ -83,6 +83,35 @@ grep -q 'Documents scrape run plan' "$DOC_OUT" || {
   exit 1
 }
 
+CHANNEL_DRY="$TMP_DIR/channel-dry-run.log"
+"$REPO_ROOT/scripts/run-documents-scrape.sh" --dry-run --config "$TMP_DIR/config.json" --target demo --channel 111111111111111111 >"$CHANNEL_DRY" 2>&1
+grep -q 'Documents scrape run plan' "$CHANNEL_DRY" || {
+  echo "expected dry-run to accept --channel passthrough" >&2
+  exit 1
+}
+
+ARGS_LOG="$TMP_DIR/compose-args.log"
+cat >"$FAKE_DOCKER" <<'EOF'
+#!/usr/bin/env bash
+printf '%s\n' "$*" >>"${FAKE_DOCKER_ARGS_LOG:?}"
+printf 'run succeeded\n'
+EOF
+chmod +x "$FAKE_DOCKER"
+printf 'DISCORD_TOKEN=dummy-token\n' >"$TMP_DIR/scrape.env"
+
+DCE_MIN_FREE_MB=0 \
+  DCE_SKIP_SCRAPE_LOCK=1 \
+  DCE_DOCKER_BIN="$FAKE_DOCKER" \
+  FAKE_DOCKER_ARGS_LOG="$ARGS_LOG" \
+  DCE_ENV_FILE="$TMP_DIR/scrape.env" \
+  "$REPO_ROOT/scripts/run-documents-scrape.sh" --config "$TMP_DIR/config.json" --target demo --channel 111111111111111111 >/dev/null
+
+grep -q '111111111111111111' "$ARGS_LOG" || {
+  echo "expected --channel to reach container compose invocation" >&2
+  cat "$ARGS_LOG" >&2
+  exit 1
+}
+
 DCE_MIN_FREE_MB=0 DCE_CONFIG_FILE="$TMP_DIR/config.json" \
   "$REPO_ROOT/scripts/verify-operator-ready.sh" --disk-only --config "$TMP_DIR/config.json" \
   | grep -q 'disk-only: ok'

@@ -126,6 +126,14 @@ cat >"$CONFIG_PATH" <<JSON
       "channel_ids": ["111", "403"],
       "guild_ids": [],
       "guild_name_patterns": []
+    },
+    {
+      "name": "skip-abort",
+      "kind": "guild",
+      "output_dir": "$ARCHIVE_ROOT/skip-abort",
+      "channel_ids": ["111", "134"],
+      "guild_ids": [],
+      "guild_name_patterns": []
     }
   ]
 }
@@ -175,6 +183,11 @@ case "$subcommand" in
     if [[ "$channel" == "403" ]]; then
       echo "Request to 'channels/403' failed: forbidden." >&2
       exit 1
+    fi
+
+    if [[ "$channel" == "134" ]]; then
+      echo "Aborted (core dumped)" >&2
+      exit 134
     fi
 
     case "$mode" in
@@ -356,6 +369,15 @@ run_wrapper skip-forbidden append
 SKIP_DEST="$ARCHIVE_ROOT/skip-forbidden/$DEFAULT_FILE_NAME"
 [[ "$(jq -r '.messages | length' "$SKIP_DEST")" == "3" ]] || { echo "expected skip-forbidden to append accessible channel" >&2; exit 1; }
 [[ ! -e "$ARCHIVE_ROOT/skip-forbidden/channels/403.json" ]] || { echo "unexpected fallback file for skipped forbidden channel" >&2; exit 1; }
+
+mkdir -p "$ARCHIVE_ROOT/skip-abort"
+cp "$FIXTURE_DIR/append-existing.json" "$ARCHIVE_ROOT/skip-abort/$DEFAULT_FILE_NAME"
+SKIP_ABORT_LOG="$TMP_DIR/skip-abort.log"
+run_wrapper skip-abort append 2>"$SKIP_ABORT_LOG"
+SKIP_ABORT_DEST="$ARCHIVE_ROOT/skip-abort/$DEFAULT_FILE_NAME"
+[[ "$(jq -r '.messages | length' "$SKIP_ABORT_DEST")" == "3" ]] || { echo "expected skip-abort to append accessible channel" >&2; exit 1; }
+[[ ! -e "$ARCHIVE_ROOT/skip-abort/channels/134.json" ]] || { echo "unexpected fallback file for skipped abort channel" >&2; exit 1; }
+grep -q 'SKIPPED.*134' "$SKIP_ABORT_LOG" || { echo "expected SKIPPED line for abort channel 134" >&2; exit 1; }
 
 # shellcheck disable=SC1091
 source "$REPO_ROOT/scripts/run-discord-scrape.sh"

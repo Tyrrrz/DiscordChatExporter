@@ -1,10 +1,10 @@
 # Recurring scrape — merge readiness
 
-## Branch status (2026-05-29)
+## Branch status (2026-05-30)
 
 | Gate | Status |
 |------|--------|
-| Offline smokes (`run-all-smokes.sh`) | 19/19 pass |
+| Offline smokes (`run-all-smokes.sh`) | 19/19 pass (includes abort exit 134 skip regression) |
 | Live proof (`run-operator-proof.sh --sync-gui --target eod_discord`) | Passed on maintainer host |
 | Monthly cron (`setup-cron.sh`) | Installed (`00 04 1 * *`); dry-run preflight OK for all enabled targets |
 | Upstream CI (fork PR) | `action_required` until Tyrrrz approves workflow runs |
@@ -111,9 +111,9 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh --sync-gui --per-target -
 | expanded_kotor_discord | pass | pass | validation-resume |
 | eod_discord | pass | pass | validation-resume |
 | DS_Discord_msgs | pass | pass | validation-resume; some channels forbidden |
-| KotOR_discord_msgs | **retry** | — | `yes_general` CLI abort (OOM); fixed in plan 040 to skip channel on exit 134/137/139 |
+| KotOR_discord_msgs | **in progress** | — | plan 041 retry after abort-skip fix; log `logs/kotor-retry-20260530.log` |
 
-**KotOR remediation (plan 040):** `run-discord-scrape.sh` skips channels when export exits 134/137/139 (abort/OOM) or log matches disk/forbidden patterns. Re-run:
+**KotOR remediation (plan 040–041):** `run-discord-scrape.sh` skips channels when export exits 134/137/139 (abort/OOM) or log matches disk/forbidden patterns. Offline regression: `run-discord-scrape-smoke.sh` `skip-abort` target. Re-run:
 
 ```bash
 docker compose build   # or podman-compose build
@@ -122,7 +122,7 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh --target KotOR_discord_ms
 
 Large `yes_general` may still skip; export that channel separately with more container memory if needed.
 
-**Disk:** ~22 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
+**Disk:** ~65 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
 
 ## CI note (fork PRs)
 

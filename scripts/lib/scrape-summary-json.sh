@@ -33,3 +33,19 @@ recover_json_summary_if_missing() {
   [[ -s "$dest_file" ]] && return 1
   extract_json_summary_from_log "$run_log" "$dest_file"
 }
+
+sanitize_target_slug() {
+  local raw=$1
+  printf '%s' "$raw" | sed 's/[^A-Za-z0-9._-]/_/g'
+}
+
+per_target_summary_file() {
+  local log_dir=$1
+  local prefix=$2
+  local target=$3
+  local slug
+
+  [[ -n "$log_dir" && -n "$prefix" && -n "$target" ]] || return 1
+  slug=$(sanitize_target_slug "$target")
+  printf '%s/%s-%s-%s.summary.json' "$log_dir" "$prefix" "$slug" "$(date -u +%Y%m%dT%H%M%SZ)"
+}

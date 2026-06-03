@@ -13,6 +13,8 @@ AUDIT_JSON="$REPO_ROOT/scripts/audit-archive-json.sh"
 LOCK_STATUS="$REPO_ROOT/scripts/scrape-lock-status.sh"
 # shellcheck source=lib/scrape-lock.sh
 source "$SCRIPT_DIR/lib/scrape-lock.sh"
+# shellcheck source=lib/scrape-summary-json.sh
+source "$SCRIPT_DIR/lib/scrape-summary-json.sh"
 
 DRY_RUN=0
 SKIP_SCRAPE=0
@@ -167,7 +169,10 @@ scrape_per_target() {
         continue
       fi
     fi
-    if ! run_step "run-documents-scrape ($name)" "$DOCUMENTS_SCRAPE" "${per_args[@]}"; then
+    local summary_file
+    summary_file=$(per_target_summary_file "$LOG_DIR" operator-validation "$name")
+    log_step "Per-target JSON summary: $summary_file"
+    if ! run_step "run-documents-scrape ($name)" "$DOCUMENTS_SCRAPE" "${per_args[@]}" --summary-file "$summary_file"; then
       log_step "Per-target failed: $name (scrape)"
       failures=$((failures + 1))
       if (( CONTINUE_ON_ERROR == 0 )); then
@@ -269,11 +274,17 @@ main() {
   fi
 
   local export_json_summary=0
+  local per_target_summaries=0
+  if (( PER_TARGET )) && [[ -z "$TARGET" ]]; then
+    per_target_summaries=1
+  fi
   if (( DRY_RUN == 0 && SKIP_SCRAPE == 0 && SALVAGE_ONLY == 0 )); then
     export_json_summary=1
     export DCE_RUN_SUMMARY_JSON=1
-    if [[ -z "${DCE_RUN_SUMMARY_FILE:-}" ]]; then
-      export DCE_RUN_SUMMARY_FILE="${LOG_FILE%.log}.summary.json"
+    if (( per_target_summaries == 0 )); then
+      if [[ -z "${DCE_RUN_SUMMARY_FILE:-}" ]]; then
+        export DCE_RUN_SUMMARY_FILE="${LOG_FILE%.log}.summary.json"
+      fi
     fi
   fi
 
@@ -291,7 +302,11 @@ main() {
       log_step "Enabled targets: $(enabled_targets | paste -sd, -)"
     fi
     if (( export_json_summary )); then
-      log_step "JSON summary file: ${DCE_RUN_SUMMARY_FILE:-}"
+      if (( per_target_summaries )); then
+        log_step "JSON summaries: per-target under $LOG_DIR"
+      else
+        log_step "JSON summary file: ${DCE_RUN_SUMMARY_FILE:-}"
+      fi
     fi
     if (( SYNC_GUI_FLAG )); then
       run_step "sync-token-from-gui" "$SYNC_GUI" --force || failures=$((failures + 1))
@@ -326,7 +341,7 @@ main() {
   } 2>&1 | tee -a "$LOG_FILE"
   local pipeline_status=${PIPESTATUS[0]}
 
-  if (( export_json_summary )) && [[ -n "${DCE_RUN_SUMMARY_FILE:-}" ]]; then
+  if (( export_json_summary )) && (( per_target_summaries == 0 )) && [[ -n "${DCE_RUN_SUMMARY_FILE:-}" ]]; then
     # shellcheck source=lib/scrape-summary-json.sh
     source "$SCRIPT_DIR/lib/scrape-summary-json.sh"
     if recover_json_summary_if_missing "$LOG_FILE" "$DCE_RUN_SUMMARY_FILE"; then

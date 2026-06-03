@@ -9,9 +9,11 @@ HANDOFF="$REPO_ROOT/scripts/operator-handoff.sh"
 DOCUMENTS="$REPO_ROOT/scripts/run-documents-scrape.sh"
 PROVE="$REPO_ROOT/scripts/prove-incremental-append.sh"
 SYNC_GUI="$REPO_ROOT/scripts/sync-token-from-gui.sh"
-LOG_DIR="$REPO_ROOT/logs"
+LOG_DIR="${DCE_LOG_DIR:-$REPO_ROOT/logs}"
 # shellcheck source=lib/scrape-run-plan.sh
 source "$SCRIPT_DIR/lib/scrape-run-plan.sh"
+# shellcheck source=lib/scrape-summary-json.sh
+source "$SCRIPT_DIR/lib/scrape-summary-json.sh"
 
 TARGET=""
 SYNC_GUI_FLAG=0
@@ -36,8 +38,9 @@ When --target is omitted, all enabled targets in the config are processed.
   --salvage-before-scrape  Merge stale .dce-temp exports before incremental scrape
   --log-file PATH          Append output to this file (default: logs/operator-proof-UTC.log)
 
-Logs append to logs/operator-proof-<timestamp>.log (or --log-file). When scraping, also writes
-<log-basename>.summary.json unless DCE_RUN_SUMMARY_FILE is already set.
+Logs append to logs/operator-proof-<timestamp>.log (or --log-file). When scraping one target, also writes
+<log-basename>.summary.json unless DCE_RUN_SUMMARY_FILE is already set. Multiple targets each get
+logs/operator-proof-<target>-<UTC>.summary.json.
 EOF
 }
 
@@ -121,11 +124,17 @@ main() {
   fi
 
   local export_json_summary=0
+  local per_target_summaries=0
+  if ((${#targets[@]} > 1)); then
+    per_target_summaries=1
+  fi
   if (( DRY_RUN == 0 && SALVAGE_ONLY == 0 )); then
     export_json_summary=1
     export DCE_RUN_SUMMARY_JSON=1
-    if [[ -z "${DCE_RUN_SUMMARY_FILE:-}" ]]; then
-      export DCE_RUN_SUMMARY_FILE="${log_file%.log}.summary.json"
+    if (( per_target_summaries == 0 )); then
+      if [[ -z "${DCE_RUN_SUMMARY_FILE:-}" ]]; then
+        export DCE_RUN_SUMMARY_FILE="${log_file%.log}.summary.json"
+      fi
     fi
   fi
 
@@ -140,7 +149,11 @@ main() {
     printf 'config: %s\n' "$CONFIG_PATH"
     print_scrape_config_plan "$CONFIG_PATH" "Operator proof" "${targets[@]}"
     if (( export_json_summary )); then
-      printf 'JSON summary file: %s\n' "${DCE_RUN_SUMMARY_FILE:-}"
+      if (( per_target_summaries )); then
+        printf 'JSON summaries: per-target under %s\n' "$(dirname "$log_file")"
+      else
+        printf 'JSON summary file: %s\n' "${DCE_RUN_SUMMARY_FILE:-}"
+      fi
     fi
     printf 'started: %s\n\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
@@ -168,6 +181,12 @@ main() {
       printf '\n--- Target: %s ---\n' "$name"
       local -a scrape_args=(--config "$CONFIG_PATH" --target "$name")
       scrape_args+=("${CHANNEL_ARGS[@]}")
+      if (( export_json_summary && per_target_summaries )); then
+        local summary_file
+        summary_file=$(per_target_summary_file "$(dirname "$log_file")" operator-proof "$name")
+        printf 'JSON summary file: %s\n' "$summary_file"
+        scrape_args+=(--summary-file "$summary_file")
+      fi
       if (( SALVAGE_BEFORE )); then
         if ! "$DOCUMENTS" "${scrape_args[@]}" --salvage-only; then
           failed=$((failed + 1))
@@ -189,7 +208,7 @@ main() {
     (( failed == 0 )) || exit 1
   } 2>&1 | tee "$log_file"
 
-  if (( export_json_summary )) && [[ -n "${DCE_RUN_SUMMARY_FILE:-}" ]]; then
+  if (( export_json_summary )) && (( per_target_summaries == 0 )) && [[ -n "${DCE_RUN_SUMMARY_FILE:-}" ]]; then
     # shellcheck source=lib/scrape-summary-json.sh
     source "$SCRIPT_DIR/lib/scrape-summary-json.sh"
     if recover_json_summary_if_missing "$log_file" "$DCE_RUN_SUMMARY_FILE"; then

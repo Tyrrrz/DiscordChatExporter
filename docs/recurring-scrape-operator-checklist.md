@@ -56,7 +56,8 @@ Salvage then incremental scrape:
 ./scripts/run-documents-scrape.sh --salvage-before-scrape --target NAME [--channel ID]
 ./scripts/run-operator-validation.sh --salvage-before-scrape --target NAME [--channel ID] --log-file logs/scrape.log
 ./scripts/run-operator-proof.sh --salvage-before-scrape --sync-gui --target NAME
-# When scraping, also writes logs/operator-proof-<UTC>.summary.json beside the proof log
+# When scraping one target, also writes logs/operator-proof-<UTC>.summary.json beside the proof log
+# All enabled targets: each gets logs/operator-proof-<target>-<UTC>.summary.json
 ```
 
 **KotOR yes_general** (`221726893064454144`): first catch-up after a 2021 archive cursor can take hours and may OOM; salvage preserved partials before retrying. Stop duplicate validation processes (MyBook vs Downloads checkouts share the same lock). `KotOR_discord_msgs` sets `container_memory: "8g"` in `scrape-targets.json` for single-target runs; override globally with `DCE_CONTAINER_MEMORY` in `scrape.env` if needed. Channel-scoped proof:

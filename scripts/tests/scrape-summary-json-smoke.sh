@@ -77,4 +77,16 @@ if extract_json_summary_from_log "$TMP_DIR/bad.log" "$OUT_FILE" 2>/dev/null; the
   exit 1
 fi
 
+path=$(per_target_summary_file "$TMP_DIR" operator-validation 'KotOR_discord_msgs')
+[[ "$path" == "$TMP_DIR/operator-validation-KotOR_discord_msgs-"*.summary.json ]] || {
+  printf 'ERROR: unexpected per_target_summary_file path: %s\n' "$path" >&2
+  exit 1
+}
+
+slug_path=$(per_target_summary_file "$TMP_DIR" operator-proof 'weird name!')
+[[ "$slug_path" == "$TMP_DIR/operator-proof-weird_name_-"*.summary.json ]] || {
+  printf 'ERROR: expected sanitized slug in path: %s\n' "$slug_path" >&2
+  exit 1
+}
+
 printf 'scrape-summary-json-smoke: ok\n'

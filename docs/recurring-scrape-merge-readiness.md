@@ -180,6 +180,8 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
 
 **Plan 075 (2026-06-04):** `run-documents-scrape.sh` auto-writes `logs/documents-scrape-<UTC>.summary.json` on live scrapes.
 
+**Plan 076 (2026-06-04):** Multi-target validation (`--per-target`) and proof loops write separate `logs/operator-*-<target>-<UTC>.summary.json` per scrape.
+
 **Disk:** ~65 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
 
 ## CI note (fork PRs)

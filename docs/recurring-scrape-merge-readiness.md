@@ -166,6 +166,8 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
 
 **Plan 069 (2026-06-04):** Optional JSON scrape run summary via `DCE_RUN_SUMMARY_JSON` / `DCE_RUN_SUMMARY_FILE`.
 
+**Plan 070 (2026-06-04):** Compose mounts `logs/` at `/logs`; host runner passthrough; operator-validation auto-writes `*.summary.json` beside `--log-file`.
+
 **Disk:** ~65 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
 
 ## CI note (fork PRs)

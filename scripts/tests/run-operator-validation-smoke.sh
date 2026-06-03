@@ -72,6 +72,11 @@ grep -q 'Operator validation finished successfully' "$LOG_DIR/validation.log" ||
   exit 1
 }
 
+if grep -q 'JSON summary file:' "$LOG_DIR/validation.log"; then
+  printf 'ERROR: dry-run should not enable JSON summary export\n' >&2
+  exit 1
+fi
+
 SALVAGE_LOG="$LOG_DIR/salvage-validation.log"
 DCE_MIN_FREE_MB=0 DCE_REPO_ROOT="$REPO_ROOT" DCE_CONFIG_FILE="$CONFIG_PATH" DCE_ENV_FILE="$ENV_PATH" \
   DCE_LOG_DIR="$LOG_DIR" DCE_SKIP_SCRAPE_LOCK=1 \

@@ -268,6 +268,15 @@ main() {
     LOG_FILE="$LOG_DIR/operator-validation-$(date -u +%Y%m%dT%H%M%SZ).log"
   fi
 
+  local export_json_summary=0
+  if (( DRY_RUN == 0 && SKIP_SCRAPE == 0 && SALVAGE_ONLY == 0 )); then
+    export_json_summary=1
+    export DCE_RUN_SUMMARY_JSON=1
+    if [[ -z "${DCE_RUN_SUMMARY_FILE:-}" ]]; then
+      export DCE_RUN_SUMMARY_FILE="${LOG_FILE%.log}.summary.json"
+    fi
+  fi
+
   local failures=0
 
   set -o pipefail
@@ -280,6 +289,9 @@ main() {
       (( SALVAGE_BEFORE )) && log_step "Mode: salvage-before-scrape"
     else
       log_step "Enabled targets: $(enabled_targets | paste -sd, -)"
+    fi
+    if (( export_json_summary )); then
+      log_step "JSON summary file: ${DCE_RUN_SUMMARY_FILE:-}"
     fi
     if (( SYNC_GUI_FLAG )); then
       run_step "sync-token-from-gui" "$SYNC_GUI" --force || failures=$((failures + 1))

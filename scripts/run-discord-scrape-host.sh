@@ -45,6 +45,8 @@ Environment:
   DCE_CONTAINER_MEMORY     Optional container memory cap (e.g. 8g, 8192m). Default 0 = unlimited.
                            Targets may set container_memory in scrape-targets.json (used when
                            exactly one --target is selected and this env var is unset or 0).
+  DCE_RUN_SUMMARY_JSON     When 1, container logs DCE_JSON_SUMMARY after scrape.
+  DCE_RUN_SUMMARY_FILE     Host path under logs/ is mapped to /logs/ inside the container.
 
 Notes:
   When $ENV_FILE is missing, exported DISCORD_TOKEN or DISCORD_TOKEN_FILE is used instead.
@@ -64,6 +66,40 @@ cleanup_compose_env() {
   if [[ -n "$COMPOSE_ENV_TEMP" && -f "$COMPOSE_ENV_TEMP" ]]; then
     rm -f "$COMPOSE_ENV_TEMP"
   fi
+}
+
+ensure_repo_logs_dir() {
+  mkdir -p "$REPO_ROOT/logs"
+}
+
+map_summary_file_for_container() {
+  local host_path=$1
+  local logs_dir="$REPO_ROOT/logs"
+
+  [[ -n "$host_path" ]] || return 0
+  case "$host_path" in
+    /logs/*)
+      printf '%s\n' "$host_path"
+      ;;
+    "$logs_dir"/*)
+      printf '/logs/%s\n' "$(basename "$host_path")"
+      ;;
+    *)
+      printf '%s\n' "$host_path"
+      ;;
+  esac
+}
+
+ensure_summary_file_host_dir() {
+  local host_path=${1:-${DCE_RUN_SUMMARY_FILE:-}}
+
+  [[ -n "$host_path" ]] || return 0
+  case "$host_path" in
+    /logs/*)
+      host_path="$REPO_ROOT/logs/$(basename "$host_path")"
+      ;;
+  esac
+  mkdir -p "$(dirname "$host_path")"
 }
 
 write_scrape_lock_meta() {
@@ -190,6 +226,14 @@ write_compose_env_temp() {
     printf 'DCE_CONTAINER_MEMORY=%s\n' "$DCE_CONTAINER_MEMORY" >>"$COMPOSE_ENV_TEMP"
   else
     printf 'DCE_CONTAINER_MEMORY=0\n' >>"$COMPOSE_ENV_TEMP"
+  fi
+  if [[ "${DCE_RUN_SUMMARY_JSON:-0}" == "1" ]]; then
+    printf 'DCE_RUN_SUMMARY_JSON=1\n' >>"$COMPOSE_ENV_TEMP"
+  fi
+  if [[ -n "${DCE_RUN_SUMMARY_FILE:-}" ]]; then
+    local container_summary_file
+    container_summary_file=$(map_summary_file_for_container "$DCE_RUN_SUMMARY_FILE")
+    printf 'DCE_RUN_SUMMARY_FILE=%s\n' "$container_summary_file" >>"$COMPOSE_ENV_TEMP"
   fi
 }
 
@@ -587,6 +631,11 @@ main() {
   collect_passthrough_targets host_targets "${passthrough_args[@]}"
   if ((${#host_targets[@]} == 1)); then
     apply_single_target_container_memory "$host_config" "${host_targets[0]}"
+  fi
+
+  if [[ "$subcommand" == "scrape" ]]; then
+    ensure_repo_logs_dir
+    ensure_summary_file_host_dir
   fi
 
   if [[ "$subcommand" != "salvage" ]]; then

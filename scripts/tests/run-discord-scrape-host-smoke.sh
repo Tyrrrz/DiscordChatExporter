@@ -216,6 +216,8 @@ while (($#)); do
   esac
 done
 printf 'env:DCE_CONTAINER_MEMORY=%s\n' "${DCE_CONTAINER_MEMORY:-}" >>"${FAKE_COMPOSE_ARGS_LOG:?}"
+printf 'env:DCE_RUN_SUMMARY_JSON=%s\n' "${DCE_RUN_SUMMARY_JSON:-0}" >>"${FAKE_COMPOSE_ARGS_LOG:?}"
+printf 'env:DCE_RUN_SUMMARY_FILE=%s\n' "${DCE_RUN_SUMMARY_FILE:-}" >>"${FAKE_COMPOSE_ARGS_LOG:?}"
 printf '%s\n' "${all_args[*]}" >>"${FAKE_COMPOSE_ARGS_LOG:?}"
 printf 'run succeeded\n'
 EOF
@@ -301,6 +303,31 @@ env -u DCE_CONTAINER_MEMORY \
 grep -q 'env:DCE_CONTAINER_MEMORY=2g' "$COMPOSE_OVERRIDE_LOG" || {
   echo "expected scrape.env DCE_CONTAINER_MEMORY to override target config" >&2
   cat "$COMPOSE_OVERRIDE_LOG" >&2
+  exit 1
+}
+
+SUMMARY_HOST="$REPO_ROOT/logs/host-smoke-summary.json"
+mkdir -p "$REPO_ROOT/logs"
+COMPOSE_SUMMARY_LOG="$TMP_DIR/compose-summary.log"
+env -u DCE_CONTAINER_MEMORY -u DCE_RUN_SUMMARY_FILE \
+  DCE_SKIP_SCRAPE_LOCK=1 \
+  DCE_COMPOSE_BIN="$FAKE_COMPOSE" \
+  DCE_REPO_ROOT="$REPO_ROOT" \
+  DCE_ENV_FILE="$ENV_NO_MEM" \
+  DCE_COMPOSE_FILE="$COMPOSE_FILE" \
+  DCE_RUN_SUMMARY_JSON=1 \
+  DCE_RUN_SUMMARY_FILE="$SUMMARY_HOST" \
+  FAKE_COMPOSE_ARGS_LOG="$COMPOSE_SUMMARY_LOG" \
+  "$REPO_ROOT/scripts/run-discord-scrape-host.sh" scrape \
+  --config "$TARGET_MEM_CONFIG" --target demo >/dev/null
+grep -q 'env:DCE_RUN_SUMMARY_JSON=1' "$COMPOSE_SUMMARY_LOG" || {
+  echo "expected DCE_RUN_SUMMARY_JSON in compose env passthrough" >&2
+  cat "$COMPOSE_SUMMARY_LOG" >&2
+  exit 1
+}
+grep -q 'env:DCE_RUN_SUMMARY_FILE=/logs/host-smoke-summary.json' "$COMPOSE_SUMMARY_LOG" || {
+  echo "expected host logs path mapped to /logs in compose env" >&2
+  cat "$COMPOSE_SUMMARY_LOG" >&2
   exit 1
 }
 

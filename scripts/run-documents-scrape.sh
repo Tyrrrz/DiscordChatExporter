@@ -36,7 +36,8 @@ Options:
   --target NAME Limit preflight/scrape to one configured target
   --channel ID  With exactly one --target, limit scrape to channel ID (repeatable)
   --config PATH Scrape target config (default: config/scrape-targets.json)
-  --summary-file PATH  Machine-readable scrape summary JSON (default: logs/documents-scrape-UTC.summary.json)
+  --log-file PATH Append full workflow output to this file (default on live scrape: logs/documents-scrape-UTC.log)
+  --summary-file PATH  Machine-readable scrape summary JSON (default: <log-basename>.summary.json on live scrape)
 EOF
 }
 
@@ -68,12 +69,82 @@ run_local_salvage() {
   "$HOST_RUNNER" salvage "${salvage_args[@]}"
 }
 
+run_documents_scrape_workflow() {
+  local dry_run=$1
+  local salvage_only=$2
+  local salvage_before=$3
+  local target=$4
+  local log_file=$5
+  local -a passthrough=("${@:6}")
+
+  "$VERIFY_SCRIPT" --config "$CONFIG_PATH"
+
+  local -a plan_targets=()
+  if [[ -n "$target" ]]; then
+    plan_targets=("$target")
+  fi
+  print_scrape_config_plan "$CONFIG_PATH" "Documents scrape" "${plan_targets[@]}"
+
+  if (( dry_run == 1 )); then
+    printf 'Dry run complete: archive paths verified. Export DISCORD_TOKEN or create a token file, then rerun without --dry-run.\n'
+    return 0
+  fi
+
+  "$VERIFY_READY" --disk-only --config "$CONFIG_PATH"
+
+  require_scrape_lock_free
+
+  if (( salvage_only == 1 )); then
+    run_local_salvage "${passthrough[@]}"
+    return 0
+  fi
+
+  if (( salvage_before == 1 )); then
+    run_local_salvage "${passthrough[@]}"
+  fi
+
+  local -a container_args=("${passthrough[@]}")
+  local has_config=0 idx=0
+
+  while (( idx < ${#container_args[@]} )); do
+    if [[ "${container_args[idx]}" == "--config" ]]; then
+      has_config=1
+      case "${container_args[idx + 1]:-}" in
+        "$CONFIG_PATH"|config/scrape-targets.json|./config/scrape-targets.json)
+          container_args[idx + 1]="$CONTAINER_CONFIG"
+          ;;
+      esac
+      break
+    fi
+    idx=$((idx + 1))
+  done
+
+  if (( has_config == 0 )); then
+    container_args=(--config "$CONTAINER_CONFIG" "${container_args[@]}")
+  fi
+
+  if [[ -n "${DISCORD_TOKEN:-}" || -n "${DISCORD_TOKEN_FILE:-}" ]]; then
+    "$SETUP_AUTH" 2>/dev/null || true
+  elif [[ -x "$DISCOVER_TOKEN" ]] && "$DISCOVER_TOKEN" >/dev/null 2>&1; then
+    "$SETUP_AUTH" 2>/dev/null || true
+  fi
+
+  if [[ -n "$log_file" ]]; then
+    printf 'Log file: %s\n' "$log_file"
+  fi
+  printf 'JSON summary file: %s\n' "${DCE_RUN_SUMMARY_FILE:-}"
+
+  "$HOST_RUNNER" preflight "${container_args[@]}"
+  "$HOST_RUNNER" scrape "${container_args[@]}"
+}
+
 main() {
   local dry_run=0
   local salvage_only=0
   local salvage_before=0
   local target=""
   local summary_file=""
+  local log_file=""
   local -a passthrough=()
 
   while (($#)); do
@@ -107,6 +178,11 @@ main() {
         passthrough+=(--config "$2")
         shift 2
         ;;
+      --log-file)
+        [[ $# -ge 2 ]] || die "Missing value for --log-file."
+        log_file=$2
+        shift 2
+        ;;
       --summary-file)
         [[ $# -ge 2 ]] || die "Missing value for --summary-file."
         summary_file=$2
@@ -130,71 +206,49 @@ main() {
     die "Use only one of --dry-run, --salvage-only, or --salvage-before-scrape."
   fi
 
-  "$VERIFY_SCRIPT" --config "$CONFIG_PATH"
-
-  local -a plan_targets=()
-  if [[ -n "$target" ]]; then
-    plan_targets=("$target")
-  fi
-  print_scrape_config_plan "$CONFIG_PATH" "Documents scrape" "${plan_targets[@]}"
-
-  if (( dry_run == 1 )); then
-    printf 'Dry run complete: archive paths verified. Export DISCORD_TOKEN or create a token file, then rerun without --dry-run.\n'
-    exit 0
-  fi
-
-  "$VERIFY_READY" --disk-only --config "$CONFIG_PATH"
-
-  require_scrape_lock_free
-
-  if (( salvage_only == 1 )); then
-    run_local_salvage "${passthrough[@]}"
-    exit 0
-  fi
-
-  if (( salvage_before == 1 )); then
-    run_local_salvage "${passthrough[@]}"
-  fi
-
-  local -a container_args=("${passthrough[@]}")
-  local has_config=0 idx=0
-
-  while (( idx < ${#container_args[@]} )); do
-    if [[ "${container_args[idx]}" == "--config" ]]; then
-      has_config=1
-      case "${container_args[idx + 1]:-}" in
-        "$CONFIG_PATH"|config/scrape-targets.json|./config/scrape-targets.json)
-          container_args[idx + 1]="$CONTAINER_CONFIG"
-          ;;
-      esac
-      break
+  local export_json_summary=0
+  if (( dry_run == 0 && salvage_only == 0 )); then
+    export_json_summary=1
+    mkdir -p "$LOG_DIR"
+    if [[ -z "$log_file" ]]; then
+      log_file="$LOG_DIR/documents-scrape-$(date -u +%Y%m%dT%H%M%SZ).log"
     fi
-    idx=$((idx + 1))
-  done
-
-  if (( has_config == 0 )); then
-    container_args=(--config "$CONTAINER_CONFIG" "${container_args[@]}")
-  fi
-
-  if [[ -n "${DISCORD_TOKEN:-}" || -n "${DISCORD_TOKEN_FILE:-}" ]]; then
-    "$SETUP_AUTH" 2>/dev/null || true
-  elif [[ -x "$DISCOVER_TOKEN" ]] && "$DISCOVER_TOKEN" >/dev/null 2>&1; then
-    "$SETUP_AUTH" 2>/dev/null || true
-  fi
-
-  export DCE_RUN_SUMMARY_JSON=1
-  if [[ -z "${DCE_RUN_SUMMARY_FILE:-}" ]]; then
-    if [[ -n "$summary_file" ]]; then
-      export DCE_RUN_SUMMARY_FILE="$summary_file"
-    else
-      mkdir -p "$LOG_DIR"
-      export DCE_RUN_SUMMARY_FILE="$LOG_DIR/documents-scrape-$(date -u +%Y%m%dT%H%M%SZ).summary.json"
+    export DCE_RUN_SUMMARY_JSON=1
+    if [[ -z "${DCE_RUN_SUMMARY_FILE:-}" ]]; then
+      if [[ -n "$summary_file" ]]; then
+        export DCE_RUN_SUMMARY_FILE="$summary_file"
+      else
+        export DCE_RUN_SUMMARY_FILE="${log_file%.log}.summary.json"
+      fi
     fi
   fi
-  printf 'JSON summary file: %s\n' "$DCE_RUN_SUMMARY_FILE"
 
-  "$HOST_RUNNER" preflight "${container_args[@]}"
-  "$HOST_RUNNER" scrape "${container_args[@]}"
+  local pipeline_status=0
+  if [[ -n "$log_file" ]]; then
+    mkdir -p "$(dirname "$log_file")"
+    set -o pipefail
+    {
+      run_documents_scrape_workflow "$dry_run" "$salvage_only" "$salvage_before" "$target" "$log_file" "${passthrough[@]}"
+    } 2>&1 | tee -a "$log_file"
+    pipeline_status=${PIPESTATUS[0]}
+  else
+    run_documents_scrape_workflow "$dry_run" "$salvage_only" "$salvage_before" "$target" "" "${passthrough[@]}"
+    pipeline_status=$?
+  fi
+
+  if (( export_json_summary )) && [[ -n "${DCE_RUN_SUMMARY_FILE:-}" && -n "$log_file" ]]; then
+    # shellcheck source=lib/scrape-summary-json.sh
+    source "$SCRIPT_DIR/lib/scrape-summary-json.sh"
+    if recover_json_summary_if_missing "$log_file" "$DCE_RUN_SUMMARY_FILE"; then
+      printf 'JSON summary recovered from log: %s\n' "$DCE_RUN_SUMMARY_FILE"
+    fi
+  fi
+
+  if [[ -n "$log_file" ]]; then
+    printf 'Log: %s\n' "$log_file"
+  fi
+
+  exit "$pipeline_status"
 }
 
 main "$@"

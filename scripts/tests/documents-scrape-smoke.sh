@@ -122,9 +122,49 @@ grep -q 'JSON summary file:' "$LIVE_DOC_OUT" || {
   cat "$LIVE_DOC_OUT" >&2
   exit 1
 }
+grep -q 'Log:' "$LIVE_DOC_OUT" || {
+  echo "expected live documents scrape to print Log: path" >&2
+  exit 1
+}
+shopt -s nullglob
+auto_logs=("$TMP_DIR/logs"/documents-scrape-*.log)
+((${#auto_logs[@]} > 0)) || {
+  echo "expected auto teed log under DCE_LOG_DIR" >&2
+  exit 1
+}
+grep -q 'JSON summary file:' "${auto_logs[0]}" || {
+  echo "expected JSON summary line in teed log file" >&2
+  exit 1
+}
+shopt -u nullglob
 grep -q '111111111111111111' "$ARGS_LOG" || {
   echo "expected --channel to reach container compose invocation" >&2
   cat "$ARGS_LOG" >&2
+  exit 1
+}
+
+EXPLICIT_LOG="$TMP_DIR/logs/live-documents.log"
+EXPLICIT_SUMMARY="$TMP_DIR/logs/live-documents.summary.json"
+: >"$ARGS_LOG"
+DCE_MIN_FREE_MB=0 \
+  DCE_SKIP_SCRAPE_LOCK=1 \
+  DCE_DOCKER_BIN="$FAKE_DOCKER" \
+  FAKE_DOCKER_ARGS_LOG="$ARGS_LOG" \
+  DCE_ENV_FILE="$TMP_DIR/scrape.env" \
+  "$REPO_ROOT/scripts/run-documents-scrape.sh" \
+  --config "$TMP_DIR/config.json" --target demo --log-file "$EXPLICIT_LOG" >"$TMP_DIR/explicit-live.out" 2>&1
+
+[[ -s "$EXPLICIT_LOG" ]] || {
+  echo "expected --log-file to create teed log" >&2
+  exit 1
+}
+grep -q 'Log file: '"$EXPLICIT_LOG" "$EXPLICIT_LOG" || {
+  echo "expected Log file: marker in teed log" >&2
+  exit 1
+}
+grep -q 'JSON summary file: '"$EXPLICIT_SUMMARY" "$EXPLICIT_LOG" || {
+  echo "expected summary path paired with --log-file basename" >&2
+  cat "$EXPLICIT_LOG" >&2
   exit 1
 }
 

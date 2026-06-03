@@ -184,6 +184,8 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
 
 **Plan 077 (2026-06-04):** Setup doc + merge-readiness smoke inventory synced to 23 offline tests (includes `print-scrape-summary-smoke`, `scrape-summary-json-smoke`).
 
+**Plan 078 (2026-06-04):** `run-documents-scrape.sh` `--log-file` with auto tee on live scrapes; summary pairs with log basename.
+
 **Disk:** ~65 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
 
 ## CI note (fork PRs)

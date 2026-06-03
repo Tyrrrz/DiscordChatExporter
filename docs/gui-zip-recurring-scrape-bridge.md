@@ -27,14 +27,46 @@ Optional integrity tools:
 
 ```bash
 ./scripts/audit-archive-json.sh
+./scripts/scrape-lock-status.sh              # show archive-root scrape lock
+./scripts/scrape-lock-status.sh --reclaim-stale   # clear dead-holder lock artifacts
 # ./scripts/salvage-truncated-export.sh path/to/export.json
 ```
+
+### Stuck or crashed export (partial `.dce-temp`)
+
+After stopping a long run, merge quiescent partial exports before re-downloading history:
+
+```bash
+./scripts/scrape-lock-status.sh
+./scripts/scrape-lock-status.sh --reclaim-stale   # when state is stale
+
+# Merge partial temps only (no Discord)
+./scripts/operator-handoff.sh --salvage-only --target KotOR_discord_msgs --channel 221726893064454144
+
+# Salvage then incremental catch-up (with audit + log)
+DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
+  --salvage-before-scrape \
+  --target KotOR_discord_msgs \
+  --channel 221726893064454144 \
+  --log-file logs/kotor-yes-general-$(date -u +%Y%m%d-%H%M%S).log
+```
+
+Or direct documents scrape:
+
+```bash
+./scripts/run-documents-scrape.sh \
+  --salvage-before-scrape \
+  --target KotOR_discord_msgs \
+  --channel 221726893064454144
+```
+
+If a temp is still being written, stop the export first. To merge an active temp after confirming nothing is writing: `DCE_SALVAGE_ACTIVE_TEMPS=1`.
 
 Archives: `config/scrape-targets.json` (typically `~/Documents/*` per target `output_dir`).
 
 **Disk:** Free several GiB on `/home` and archive roots before large scrapes (`DCE_MIN_FREE_MB`, default 1024).
 
-**Validate scripts:** `DCE_MIN_FREE_MB=0 ./scripts/run-all-smokes.sh` (19 offline smokes)
+**Validate scripts:** `DCE_MIN_FREE_MB=0 ./scripts/run-all-smokes.sh` (21 offline smokes)
 
 **Podman (Fedora):** install `podman-compose` when `docker compose` cannot reach the socket; scripts auto-prefer it.
 

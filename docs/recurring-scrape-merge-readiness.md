@@ -1,17 +1,17 @@
 # Recurring scrape — merge readiness
 
-## Branch status (2026-05-30)
+## Branch status (2026-06-04)
 
 | Gate | Status |
 |------|--------|
-| Offline smokes (`run-all-smokes.sh`) | 19/19 pass (includes abort exit 134 skip regression) |
+| Offline smokes (`run-all-smokes.sh`) | 21/21 pass |
 | Live proof (`run-operator-proof.sh --sync-gui --target eod_discord`) | Passed on maintainer host |
 | Monthly cron (`setup-cron.sh`) | Installed (`00 04 1 * *`); dry-run preflight OK for all enabled targets |
 | Upstream CI (fork PR) | `action_required` until Tyrrrz approves workflow runs |
 
-**Merge-ready** for upstream review. Further feature work should use a new branch; avoid additional `/lfg` passes unless scope changes.
-
 Fork branch `feat/recurring-cli-scrape` adds append-only, Docker-based incremental exports with optional monthly cron. Intended for personal archive trees under a configurable `archive_root` (for example `~/Documents/*`).
+
+**Recent operator tooling (plans 054–059):** `salvage` subcommand, archive-root scrape lock + `scrape-lock-status.sh`, `--salvage-only` / `--salvage-before-scrape` on validation/documents/handoff/proof, lock gate before scrape, `--reclaim-stale` for dead holders.
 
 GUI zip users: [docs/gui-zip-recurring-scrape-bridge.md](gui-zip-recurring-scrape-bridge.md).
 
@@ -22,7 +22,7 @@ GUI zip users: [docs/gui-zip-recurring-scrape-bridge.md](gui-zip-recurring-scrap
 - **Host:** `scripts/run-discord-scrape-host.sh`, `scripts/run-documents-scrape.sh`, `scripts/bootstrap-recurring-scrape.sh`
 - **Auth:** `scrape.env`, `scripts/setup-scrape-auth.sh`, `scripts/sync-token-from-gui.sh`
 - **Cron:** `scripts/setup-cron.sh` (`--interval monthly` default)
-- **Integrity:** `scripts/audit-archive-json.sh`, `scripts/salvage-truncated-export.sh`, `scripts/prove-incremental-append.sh`
+- **Integrity:** `scripts/audit-archive-json.sh`, `scripts/salvage-truncated-export.sh`, `scripts/prove-incremental-append.sh`, `scripts/scrape-lock-status.sh`
 - **CI:** `.github/workflows/main.yml` job `recurring-scrape-smoke` runs `./scripts/run-all-smokes.sh`
 
 ## Validate before merge
@@ -63,6 +63,16 @@ Full validation with log (GUI token sync + scrape + audit):
 ./scripts/run-operator-validation.sh --sync-gui --target eod_discord
 ./scripts/run-operator-validation.sh --sync-gui --per-target --continue-on-error
 ./scripts/run-operator-validation.sh --dry-run
+./scripts/run-operator-validation.sh --salvage-only --target KotOR_discord_msgs --channel 221726893064454144
+./scripts/run-operator-validation.sh --salvage-before-scrape --target KotOR_discord_msgs --channel 221726893064454144
+```
+
+Lock and salvage helpers:
+
+```bash
+./scripts/scrape-lock-status.sh
+./scripts/scrape-lock-status.sh --reclaim-stale
+./scripts/run-documents-scrape.sh --salvage-before-scrape --target NAME [--channel ID]
 ```
 
 Detail: [.docs/Recurring-Scrape-Setup.md](../.docs/Recurring-Scrape-Setup.md) · [operator checklist](recurring-scrape-operator-checklist.md) · [troubleshooting](../.docs/Recurring-Scrape-Troubleshooting.md)
@@ -121,7 +131,9 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh --sync-gui --per-target -
 
 **Plan 045 (2026-06-04):** `audit-archive-json.sh` and `verify-documents-archives.sh` skip `*/.dce-temp/*` (in-progress partial exports). Salvage run 2026-06-03: 7 merged, 17 unchanged, 3 skipped (+5404 messages); yes_general OOM-skipped with partial temps preserved for next salvage.
 
-**Plan 044 (2026-06-04):** Offline smoke asserts partial temp preserved on OOM skip (channel 134). Host wrapper prefers `DISCORD_TOKEN_FILE` over inherited shell tokens. `run-all-smokes.sh` → 19/19 pass.
+**Plan 044 (2026-06-04):** Offline smoke asserts partial temp preserved on OOM skip (channel 134). Host wrapper prefers `DISCORD_TOKEN_FILE` over inherited shell tokens.
+
+**Plans 054–059 (2026-06-04):** Salvage-only subcommand; archive-root lock with meta sidecar; operator validation/proof/handoff salvage flags; `scrape-lock-status.sh` + `--reclaim-stale`; documents scrape lock gate + `--salvage-before-scrape`. `run-all-smokes.sh` → 21/21 pass.
 
 **KotOR / yes_general (plan 040–043):** Incremental `--after` works for all channels; most return `UNCHANGED` in seconds. `yes_general` archive last message was **2021-01-17** — the first catch-up legitimately fetches years of history. Prior bug: OOM skip **deleted** partial temp exports, causing re-download loops. Plan 043 preserves partial temps and salvages on next run.
 

@@ -11,13 +11,14 @@ DISCOVER_TOKEN="$REPO_ROOT/scripts/discover-discord-token.sh"
 VERIFY_SCRIPT="$REPO_ROOT/scripts/verify-documents-archives.sh"
 VERIFY_READY="$REPO_ROOT/scripts/verify-operator-ready.sh"
 SETUP_AUTH="$REPO_ROOT/scripts/setup-scrape-auth.sh"
+LOCK_STATUS="$REPO_ROOT/scripts/scrape-lock-status.sh"
 # shellcheck source=lib/scrape-run-plan.sh
 source "$SCRIPT_DIR/lib/scrape-run-plan.sh"
 
 usage() {
   cat <<EOF
 Usage:
-  $(basename "$0") [--dry-run] [--salvage-only] [--target NAME] [--config PATH]
+  $(basename "$0") [--dry-run] [--salvage-only] [--salvage-before-scrape] [--target NAME] [--config PATH]
 
 End-to-end Documents scrape workflow:
   1. Verify enabled targets have seeded archives under ~/Documents/<server>/
@@ -28,6 +29,7 @@ End-to-end Documents scrape workflow:
 Options:
   --dry-run       Verify archives only; do not call Discord
   --salvage-only  Merge quiescent stale .dce-temp exports only (no Discord export)
+  --salvage-before-scrape  Run salvage-only pass before preflight and incremental scrape
   --target NAME Limit preflight/scrape to one configured target
   --channel ID  With exactly one --target, limit scrape to channel ID (repeatable)
   --config PATH Scrape target config (default: config/scrape-targets.json)
@@ -39,9 +41,37 @@ die() {
   exit 1
 }
 
+ensure_scrape_lock_available() {
+  if [[ "${DCE_SKIP_SCRAPE_LOCK:-0}" == "1" ]]; then
+    return 0
+  fi
+  [[ -x "$LOCK_STATUS" ]] || return 0
+  if ! "$LOCK_STATUS" --config "$CONFIG_PATH"; then
+    die "Scrape lock is held; another scrape may be running. Inspect: $LOCK_STATUS --config $CONFIG_PATH"
+  fi
+}
+
+run_local_salvage() {
+  local -a salvage_args=(--config "$CONFIG_PATH")
+  local skip_next=0 arg
+  for arg in "$@"; do
+    if (( skip_next )); then
+      skip_next=0
+      continue
+    fi
+    if [[ "$arg" == "--config" ]]; then
+      skip_next=1
+      continue
+    fi
+    salvage_args+=("$arg")
+  done
+  "$HOST_RUNNER" salvage "${salvage_args[@]}"
+}
+
 main() {
   local dry_run=0
   local salvage_only=0
+  local salvage_before=0
   local target=""
   local -a passthrough=()
 
@@ -53,6 +83,10 @@ main() {
         ;;
       --salvage-only)
         salvage_only=1
+        shift
+        ;;
+      --salvage-before-scrape)
+        salvage_before=1
         shift
         ;;
       --target)
@@ -82,6 +116,14 @@ main() {
     esac
   done
 
+  local exclusive=0
+  (( dry_run == 1 )) && exclusive=$((exclusive + 1))
+  (( salvage_only == 1 )) && exclusive=$((exclusive + 1))
+  (( salvage_before == 1 )) && exclusive=$((exclusive + 1))
+  if (( exclusive > 1 )); then
+    die "Use only one of --dry-run, --salvage-only, or --salvage-before-scrape."
+  fi
+
   "$VERIFY_SCRIPT" --config "$CONFIG_PATH"
 
   local -a plan_targets=()
@@ -97,22 +139,15 @@ main() {
 
   "$VERIFY_READY" --disk-only --config "$CONFIG_PATH"
 
+  ensure_scrape_lock_available
+
   if (( salvage_only == 1 )); then
-    local -a salvage_args=(--config "$CONFIG_PATH")
-    local skip_next=0 arg
-    for arg in "${passthrough[@]}"; do
-      if (( skip_next )); then
-        skip_next=0
-        continue
-      fi
-      if [[ "$arg" == "--config" ]]; then
-        skip_next=1
-        continue
-      fi
-      salvage_args+=("$arg")
-    done
-    "$HOST_RUNNER" salvage "${salvage_args[@]}"
+    run_local_salvage "${passthrough[@]}"
     exit 0
+  fi
+
+  if (( salvage_before == 1 )); then
+    run_local_salvage "${passthrough[@]}"
   fi
 
   local -a container_args=("${passthrough[@]}")

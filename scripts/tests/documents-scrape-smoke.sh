@@ -128,6 +128,60 @@ grep -q 'salvage completed' "$SALVAGE_DOC_LOG" || {
   exit 1
 }
 
+SALVAGE_BEFORE_LOG="$TMP_DIR/salvage-before.log"
+: >"$ARGS_LOG"
+DCE_MIN_FREE_MB=0 \
+  DCE_SKIP_SCRAPE_LOCK=1 \
+  DCE_DOCKER_BIN="$FAKE_DOCKER" \
+  FAKE_DOCKER_ARGS_LOG="$ARGS_LOG" \
+  DCE_ENV_FILE="$TMP_DIR/scrape.env" \
+  "$REPO_ROOT/scripts/run-documents-scrape.sh" \
+  --salvage-before-scrape --config "$TMP_DIR/config.json" --target demo >"$SALVAGE_BEFORE_LOG" 2>&1 || {
+  echo "salvage-before-scrape documents scrape failed" >&2
+  cat "$SALVAGE_BEFORE_LOG" >&2
+  exit 1
+}
+grep -q 'salvage completed' "$SALVAGE_BEFORE_LOG" || {
+  echo "expected --salvage-before-scrape to run local salvage first" >&2
+  cat "$SALVAGE_BEFORE_LOG" >&2
+  exit 1
+}
+grep -q 'compose' "$ARGS_LOG" || {
+  echo "expected --salvage-before-scrape to continue into container scrape" >&2
+  cat "$ARGS_LOG" >&2
+  exit 1
+}
+
+command -v flock >/dev/null 2>&1 && {
+  LOCK_FILE="$TMP_DIR/.dce-scrape.lock"
+  HOLDER_PID=""
+  (
+    exec {lock_fd}>>"$LOCK_FILE"
+    flock -n "$lock_fd" || exit 1
+    sleep 120
+  ) &
+  HOLDER_PID=$!
+  sleep 0.2
+
+  set +e
+  blocked_output=$(
+    DCE_MIN_FREE_MB=0 \
+      "$REPO_ROOT/scripts/run-documents-scrape.sh" \
+      --salvage-only --config "$TMP_DIR/config.json" --target demo 2>&1
+  )
+  blocked_status=$?
+  set -e
+
+  kill "$HOLDER_PID" 2>/dev/null || true
+  wait "$HOLDER_PID" 2>/dev/null || true
+
+  if [[ "$blocked_status" -eq 0 ]] || ! grep -q 'Scrape lock is held' <<<"$blocked_output"; then
+    echo "expected documents scrape to fail when archive lock held" >&2
+    printf '%s\n' "$blocked_output" >&2
+    exit 1
+  fi
+}
+
 DCE_MIN_FREE_MB=0 DCE_CONFIG_FILE="$TMP_DIR/config.json" \
   "$REPO_ROOT/scripts/verify-operator-ready.sh" --disk-only --config "$TMP_DIR/config.json" \
   | grep -q 'disk-only: ok'

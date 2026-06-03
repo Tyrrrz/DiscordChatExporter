@@ -327,12 +327,10 @@ main() {
   local pipeline_status=${PIPESTATUS[0]}
 
   if (( export_json_summary )) && [[ -n "${DCE_RUN_SUMMARY_FILE:-}" ]]; then
-    if [[ ! -s "${DCE_RUN_SUMMARY_FILE}" ]]; then
-      # shellcheck source=lib/scrape-summary-json.sh
-      source "$SCRIPT_DIR/lib/scrape-summary-json.sh"
-      if extract_json_summary_from_log "$LOG_FILE" "$DCE_RUN_SUMMARY_FILE"; then
-        printf 'JSON summary recovered from log: %s\n' "$DCE_RUN_SUMMARY_FILE"
-      fi
+    # shellcheck source=lib/scrape-summary-json.sh
+    source "$SCRIPT_DIR/lib/scrape-summary-json.sh"
+    if recover_json_summary_if_missing "$LOG_FILE" "$DCE_RUN_SUMMARY_FILE"; then
+      printf 'JSON summary recovered from log: %s\n' "$DCE_RUN_SUMMARY_FILE"
     fi
   fi
 

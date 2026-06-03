@@ -511,6 +511,18 @@ try_interactive_reauth() {
   "$reauth_script"
 }
 
+recover_scrape_summary_from_run_log() {
+  local output_file=$1
+  local dest_file=${DCE_RUN_SUMMARY_FILE:-}
+
+  [[ -n "$dest_file" ]] || return 0
+  # shellcheck source=lib/scrape-summary-json.sh
+  source "$SCRIPT_DIR/lib/scrape-summary-json.sh"
+  if recover_json_summary_if_missing "$output_file" "$dest_file"; then
+    printf 'JSON summary recovered from run log: %s\n' "$dest_file" >&2
+  fi
+}
+
 run_subcommand_with_retry() {
   local subcommand=$1
   shift
@@ -522,6 +534,7 @@ run_subcommand_with_retry() {
 
   compose_run_args run_args "$subcommand" "$@"
   if "${run_args[@]}" 2>&1 | tee "$output_file"; then
+    recover_scrape_summary_from_run_log "$output_file"
     rm -f "$output_file"
     return 0
   fi
@@ -545,6 +558,7 @@ run_subcommand_with_retry() {
   compose_run_args run_args "$subcommand" "$@"
 
   if "${run_args[@]}" 2>&1 | tee "$output_file"; then
+    recover_scrape_summary_from_run_log "$output_file"
     rm -f "$output_file"
     return 0
   fi

@@ -24,3 +24,12 @@ extract_json_summary_from_log() {
   mkdir -p "$(dirname "$dest_file")"
   jq . <<<"$json_payload" >"$dest_file"
 }
+
+recover_json_summary_if_missing() {
+  local run_log=$1
+  local dest_file=$2
+
+  [[ -n "$run_log" && -n "$dest_file" ]] || return 1
+  [[ -s "$dest_file" ]] && return 1
+  extract_json_summary_from_log "$run_log" "$dest_file"
+}

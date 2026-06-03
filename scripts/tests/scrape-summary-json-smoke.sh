@@ -43,6 +43,23 @@ jq -e '.totals.merged == 9' "$OUT_FILE" >/dev/null || {
   exit 1
 }
 
+EXISTING="$TMP_DIR/existing.summary.json"
+printf '{"version":1,"totals":{"merged":1}}\n' >"$EXISTING"
+if recover_json_summary_if_missing "$LOG_FILE" "$EXISTING" 2>/dev/null; then
+  printf 'ERROR: recover should skip when dest already non-empty\n' >&2
+  exit 1
+fi
+
+RECOVER_OUT="$TMP_DIR/recover-via-helper.summary.json"
+recover_json_summary_if_missing "$LOG_FILE" "$RECOVER_OUT" || {
+  printf 'ERROR: recover_json_summary_if_missing failed\n' >&2
+  exit 1
+}
+jq -e '.totals.merged == 9' "$RECOVER_OUT" >/dev/null || {
+  printf 'ERROR: recover helper wrote wrong content\n' >&2
+  exit 1
+}
+
 if extract_json_summary_from_log "$TMP_DIR/missing.log" "$OUT_FILE" 2>/dev/null; then
   printf 'ERROR: extract should fail on missing log\n' >&2
   exit 1

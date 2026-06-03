@@ -83,6 +83,12 @@ if [[ "$mode" == "streaming" ]]; then
   exit 0
 fi
 
+if [[ "$mode" == "json-summary-log-only" ]]; then
+  printf '[2026-06-04T12:00:00Z] DCE_JSON_SUMMARY: {"version":1,"totals":{"merged":42,"unchanged":0,"created":0,"skipped":0,"skipped_oom":0,"messages_appended":7}}\n' >&2
+  printf 'run succeeded\n'
+  exit 0
+fi
+
 printf 'run succeeded\n'
 EOF
 chmod +x "$FAKE_DOCKER"
@@ -328,6 +334,36 @@ grep -q 'env:DCE_RUN_SUMMARY_JSON=1' "$COMPOSE_SUMMARY_LOG" || {
 grep -q 'env:DCE_RUN_SUMMARY_FILE=/logs/host-smoke-summary.json' "$COMPOSE_SUMMARY_LOG" || {
   echo "expected host logs path mapped to /logs in compose env" >&2
   cat "$COMPOSE_SUMMARY_LOG" >&2
+  exit 1
+}
+
+HOST_RECOVER_SUMMARY="$TMP_DIR/host-run-recovered.summary.json"
+HOST_RECOVER_STDERR="$TMP_DIR/host-recover-stderr.txt"
+rm -f "$HOST_RECOVER_SUMMARY"
+printf '0' >"$CALL_COUNT"
+env -u DISCORD_TOKEN \
+  DCE_SKIP_SCRAPE_LOCK=1 \
+  DCE_REPO_ROOT="$REPO_ROOT" \
+  DCE_DOCKER_BIN="$FAKE_DOCKER" \
+  DCE_ENV_FILE="$ENV_FILE" \
+  DCE_COMPOSE_FILE="$COMPOSE_FILE" \
+  DCE_RUN_SUMMARY_FILE="$HOST_RECOVER_SUMMARY" \
+  FAKE_DOCKER_CALL_COUNT="$CALL_COUNT" \
+  FAKE_DOCKER_TOKEN_FILE="$TOKEN_FILE" \
+  FAKE_DOCKER_MODE=json-summary-log-only \
+  "$REPO_ROOT/scripts/run-discord-scrape-host.sh" scrape --target demo \
+  >/dev/null 2>"$HOST_RECOVER_STDERR"
+[[ -s "$HOST_RECOVER_SUMMARY" ]] || {
+  echo "expected host runner to recover summary from compose run log" >&2
+  exit 1
+}
+jq -e '.totals.merged == 42 and .totals.messages_appended == 7' "$HOST_RECOVER_SUMMARY" >/dev/null || {
+  echo "recovered host summary JSON content mismatch" >&2
+  exit 1
+}
+grep -q 'JSON summary recovered from run log:' "$HOST_RECOVER_STDERR" || {
+  echo "expected recovery notice on stderr" >&2
+  cat "$HOST_RECOVER_STDERR" >&2
   exit 1
 }
 

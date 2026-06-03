@@ -172,6 +172,8 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
 
 **Plan 071 (2026-06-04):** When summary file write fails, operator validation recovers JSON from the last `DCE_JSON_SUMMARY:` line in the teed log.
 
+**Plan 072 (2026-06-04):** Host runner recovers JSON summary from the captured compose run log before deleting the temp file.
+
 **Disk:** ~65 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
 
 ## CI note (fork PRs)

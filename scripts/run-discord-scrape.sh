@@ -629,12 +629,62 @@ PY
   fi
 }
 
+stale_temp_is_active() {
+  local stale_export=$1
+  local min_age=${DCE_STALE_TEMP_MIN_AGE_SECONDS:-120}
+  local now mtime age
+
+  if [[ "${DCE_SALVAGE_ACTIVE_TEMPS:-0}" == "1" ]]; then
+    return 1
+  fi
+
+  now=$(date +%s)
+  mtime=$(stat -c '%Y' "$stale_export" 2>/dev/null || stat -f '%m' "$stale_export" 2>/dev/null || echo 0)
+  age=$((now - mtime))
+  (( age < min_age ))
+}
+
+merge_stale_export_into_destination() {
+  local destination_path=$1
+  local stale_export=$2
+  local stale_dir=$3
+  local salvage_merged="$stale_dir/merged.json"
+  local attempt=0
+
+  while (( attempt < 2 )); do
+    if (( attempt > 0 )); then
+      salvage_truncated_json "$stale_export" || true
+    fi
+    rm -f "$salvage_merged"
+    if merge_exports_auto "$destination_path" "$stale_export" "$salvage_merged" && [[ -s "$salvage_merged" ]]; then
+      if json_is_valid "$salvage_merged"; then
+        local before_count after_count
+        before_count=$(message_count_fast "$destination_path")
+        commit_merged_export "$destination_path" "$salvage_merged"
+        after_count=$(message_count_fast "$destination_path")
+        if (( after_count > before_count )); then
+          log "  SALVAGED $destination_path (+$((after_count - before_count)) messages from stale temp, $before_count → $after_count)"
+          return 0
+        fi
+        log "  Stale temp merged with no new messages, discarding: $stale_dir"
+        return 0
+      fi
+      log "  Stale temp merge produced invalid JSON, retaining for retry: $stale_dir"
+      return 1
+    fi
+    attempt=$((attempt + 1))
+  done
+
+  log "  Stale temp merge failed, retaining for retry: $stale_dir"
+  return 1
+}
+
 salvage_stale_temp_exports() {
   local output_dir=$1
   local channel_id=$2
   local destination_path=$3
 
-  local stale_dirs stale_dir stale_export salvage_merged
+  local stale_dirs stale_dir stale_export
   mapfile -t stale_dirs < <(
     find "$output_dir/.dce-temp" -maxdepth 1 -type d -name "export.${channel_id}.*" 2>/dev/null || true
   )
@@ -645,6 +695,11 @@ salvage_stale_temp_exports() {
     stale_export="$stale_dir/export.json"
     [[ -f "$stale_export" ]] || { rm -rf "$stale_dir"; continue; }
     [[ -s "$stale_export" ]] || { rm -rf "$stale_dir"; continue; }
+
+    if stale_temp_is_active "$stale_export"; then
+      log "  Stale temp still active (recently modified), skipping salvage: $stale_dir"
+      continue
+    fi
 
     if ! salvage_truncated_json "$stale_export"; then
       log "  Stale temp export unsalvageable, discarding: $stale_dir"
@@ -668,25 +723,8 @@ salvage_stale_temp_exports() {
     fi
 
     if [[ -n "$destination_path" && -f "$destination_path" ]]; then
-      salvage_merged="$stale_dir/merged.json"
-      if merge_exports_auto "$destination_path" "$stale_export" "$salvage_merged" && [[ -s "$salvage_merged" ]]; then
-        if json_is_valid "$salvage_merged"; then
-          local before_count after_count
-          before_count=$(message_count_fast "$destination_path")
-          commit_merged_export "$destination_path" "$salvage_merged"
-          after_count=$(message_count_fast "$destination_path")
-          if (( after_count > before_count )); then
-            log "  SALVAGED $destination_path (+$((after_count - before_count)) messages from stale temp, $before_count → $after_count)"
-            merged_ok=1
-          else
-            log "  Stale temp merged with no new messages, discarding: $stale_dir"
-            merged_ok=1
-          fi
-        else
-          log "  Stale temp merge produced invalid JSON, retaining for retry: $stale_dir"
-        fi
-      else
-        log "  Stale temp merge failed, retaining for retry: $stale_dir"
+      if merge_stale_export_into_destination "$destination_path" "$stale_export" "$stale_dir"; then
+        merged_ok=1
       fi
     elif [[ -n "$destination_path" ]]; then
       mkdir -p "$(dirname "$destination_path")"

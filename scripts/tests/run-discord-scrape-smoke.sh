@@ -150,6 +150,14 @@ cat >"$CONFIG_PATH" <<JSON
       "channel_ids": ["111"],
       "guild_ids": [],
       "guild_name_patterns": []
+    },
+    {
+      "name": "salvage-stale-active",
+      "kind": "guild",
+      "output_dir": "$ARCHIVE_ROOT/salvage-stale-active",
+      "channel_ids": ["111"],
+      "guild_ids": [],
+      "guild_name_patterns": []
     }
   ]
 }
@@ -417,12 +425,28 @@ grep -q 'exit 143' "$SKIP_SIGTERM_LOG" || { echo "expected sigterm exit logged f
 grep -q 'Preserving partial export temp' "$SKIP_SIGTERM_LOG" || { echo "expected partial temp preserved on sigterm channel 143" >&2; exit 1; }
 
 # Salvage stale temp export smoke
+mkdir -p "$ARCHIVE_ROOT/salvage-stale-active"
+cp "$FIXTURE_DIR/append-existing.json" "$ARCHIVE_ROOT/salvage-stale-active/$DEFAULT_FILE_NAME"
+mkdir -p "$ARCHIVE_ROOT/salvage-stale-active/.dce-meta"
+printf '{\"111\":\"%s\"}\n' "$ARCHIVE_ROOT/salvage-stale-active/$DEFAULT_FILE_NAME" >"$ARCHIVE_ROOT/salvage-stale-active/.dce-meta/channel-map.json"
+mkdir -p "$ARCHIVE_ROOT/salvage-stale-active/.dce-temp/export.111.ACTIVE"
+cp "$FIXTURE_DIR/salvage-truncated.json" "$ARCHIVE_ROOT/salvage-stale-active/.dce-temp/export.111.ACTIVE/export.json"
+SALVAGE_ACTIVE_LOG="$TMP_DIR/salvage-stale-active.log"
+DCE_STALE_TEMP_MIN_AGE_SECONDS=9999 \
+  run_wrapper salvage-stale-active append 2>"$SALVAGE_ACTIVE_LOG"
+grep -q 'still active' "$SALVAGE_ACTIVE_LOG" || { echo "expected active stale temp skip message" >&2; exit 1; }
+[[ -d "$ARCHIVE_ROOT/salvage-stale-active/.dce-temp/export.111.ACTIVE" ]] || {
+  echo "expected active stale temp dir to be retained" >&2
+  exit 1
+}
+
 mkdir -p "$ARCHIVE_ROOT/salvage-stale"
 cp "$FIXTURE_DIR/append-existing.json" "$ARCHIVE_ROOT/salvage-stale/$DEFAULT_FILE_NAME"
 mkdir -p "$ARCHIVE_ROOT/salvage-stale/.dce-meta"
 printf '{\"111\":\"%s\"}\n' "$ARCHIVE_ROOT/salvage-stale/$DEFAULT_FILE_NAME" >"$ARCHIVE_ROOT/salvage-stale/.dce-meta/channel-map.json"
 mkdir -p "$ARCHIVE_ROOT/salvage-stale/.dce-temp/export.111.STALE"
 cp "$FIXTURE_DIR/salvage-truncated.json" "$ARCHIVE_ROOT/salvage-stale/.dce-temp/export.111.STALE/export.json"
+touch -d '1 hour ago' "$ARCHIVE_ROOT/salvage-stale/.dce-temp/export.111.STALE/export.json"
 SALVAGE_LOG="$TMP_DIR/salvage-stale.log"
 run_wrapper salvage-stale append 2>"$SALVAGE_LOG"
 SALVAGE_DEST="$ARCHIVE_ROOT/salvage-stale/$DEFAULT_FILE_NAME"

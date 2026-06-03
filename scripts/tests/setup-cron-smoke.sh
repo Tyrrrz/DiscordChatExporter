@@ -141,4 +141,10 @@ fi
 preview_custom_cron=$(run_setup --cron "15 03 * * 0" --skip-preflight --dry-run)
 grep -q '^15 03 \* \* 0 ' <<<"$preview_custom_cron" || { echo "expected validated custom cron in dry-run output" >&2; exit 1; }
 
+salvage_preview=$(run_setup --salvage-before-scrape --skip-preflight --dry-run)
+grep -q -- '--salvage-before-scrape' <<<"$salvage_preview" || {
+  echo "expected --salvage-before-scrape in cron dry-run preview" >&2
+  exit 1
+}
+
 echo "setup-cron smoke test passed"

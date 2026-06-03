@@ -31,6 +31,7 @@ Installed jobs are marked `# BEGIN discord-scrape` in `crontab -l`. Logs append 
 ./scripts/run-documents-scrape.sh --target KotOR_discord_msgs
 ./scripts/run-documents-scrape.sh --target KotOR_discord_msgs --channel CHANNEL_ID
 ./scripts/setup-cron.sh --target KotOR_discord_msgs --channel CHANNEL_ID
+# After OOM partials: add --salvage-before-scrape so cron merges stale .dce-temp before scrape
 ```
 
 ## Scrape lock and salvage

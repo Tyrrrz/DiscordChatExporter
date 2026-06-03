@@ -17,6 +17,7 @@ CRON_EXPRESSION=""
 DRY_RUN=0
 REMOVE=0
 SKIP_PREFLIGHT=0
+SALVAGE_BEFORE=0
 
 TARGETS=()
 GUILDS=()
@@ -48,6 +49,7 @@ Options:
   --log-file PATH     Cron log file. Default: $LOG_FILE
   --config PATH       Scrape targets JSON. Default: $CONFIG_FILE
   --env-file PATH     Compose env file. Default: $ENV_FILE
+  --salvage-before-scrape  Cron job merges stale .dce-temp exports before incremental scrape
   --skip-preflight    Install the cron job without running the authenticated container preflight.
   --dry-run           Print the cron block instead of installing it.
   --remove            Remove the managed cron block and exit.
@@ -56,7 +58,7 @@ Options:
 Examples:
   $(basename "$0")
   $(basename "$0") --target discord_dms --interval weekly --at 02:30
-  $(basename "$0") --target Cline --channel 123456789012345678 --channel 234567890123456789
+  $(basename "$0") --target KotOR_discord_msgs --channel 221726893064454144 --salvage-before-scrape
 EOF
 }
 
@@ -263,6 +265,10 @@ main() {
         SKIP_PREFLIGHT=1
         shift
         ;;
+      --salvage-before-scrape)
+        SALVAGE_BEFORE=1
+        shift
+        ;;
       --dry-run)
         DRY_RUN=1
         shift
@@ -341,6 +347,9 @@ main() {
     --log-file "$LOG_FILE"
   )
   append_target_args scrape_args
+  if (( SALVAGE_BEFORE == 1 )); then
+    scrape_args+=(--salvage-before-scrape)
+  fi
   scrape_command=$(printf '%q ' "${scrape_args[@]}")
   if command -v flock >/dev/null 2>&1; then
     lock_prefix=$(printf '%q ' "$(command -v flock)" "-n" "/tmp/${JOB_NAME}.lock")

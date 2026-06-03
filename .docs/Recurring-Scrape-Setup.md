@@ -141,6 +141,13 @@ Once preflight passes, install the recurring export:
 
 This creates a managed cron entry that runs monthly (default). The entry can be updated or removed later.
 
+For KotOR yes_general or other post-OOM catch-up, add `--salvage-before-scrape` so each run merges stale `.dce-temp` exports before incremental scrape:
+
+```bash
+./scripts/setup-cron.sh --config config/scrape-targets.json \
+  --target KotOR_discord_msgs --channel 221726893064454144 --salvage-before-scrape
+```
+
 ### 5. Verify Installation
 
 Check that the cron job was installed:

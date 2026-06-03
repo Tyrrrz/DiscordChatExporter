@@ -191,6 +191,8 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
 
 **Plan 080 (2026-06-04):** PR #1538 body refreshed with compact plans 070–079 operator delta and 23/23 gate.
 
+**Plan 081 (2026-06-04):** `setup-cron.sh --salvage-before-scrape` opt-in for scheduled salvage-before incremental scrape.
+
 **Disk:** ~65 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
 
 ## CI note (fork PRs)

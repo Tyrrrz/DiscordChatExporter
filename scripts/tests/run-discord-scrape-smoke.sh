@@ -194,6 +194,7 @@ case "$subcommand" in
     fi
 
     if [[ "$channel" == "134" ]]; then
+      cp "$fixture_dir/salvage-truncated.json" "$output"
       echo "Aborted (core dumped)" >&2
       exit 134
     fi
@@ -386,6 +387,10 @@ SKIP_ABORT_DEST="$ARCHIVE_ROOT/skip-abort/$DEFAULT_FILE_NAME"
 [[ "$(jq -r '.messages | length' "$SKIP_ABORT_DEST")" == "3" ]] || { echo "expected skip-abort to append accessible channel" >&2; exit 1; }
 [[ ! -e "$ARCHIVE_ROOT/skip-abort/channels/134.json" ]] || { echo "unexpected fallback file for skipped abort channel" >&2; exit 1; }
 grep -q 'SKIPPED.*134' "$SKIP_ABORT_LOG" || { echo "expected SKIPPED line for abort channel 134" >&2; exit 1; }
+grep -q 'Preserving partial export temp' "$SKIP_ABORT_LOG" || { echo "expected partial temp preserved on abort channel 134" >&2; exit 1; }
+partial_temp_dirs=( "$ARCHIVE_ROOT/skip-abort/.dce-temp"/export.134.* )
+[[ -d "${partial_temp_dirs[0]}" ]] || { echo "expected partial temp dir preserved for channel 134" >&2; exit 1; }
+[[ -s "${partial_temp_dirs[0]}/export.json" ]] || { echo "expected partial export.json preserved for channel 134" >&2; exit 1; }
 
 # Salvage stale temp export smoke
 mkdir -p "$ARCHIVE_ROOT/salvage-stale"

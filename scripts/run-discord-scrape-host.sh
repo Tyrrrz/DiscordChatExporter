@@ -126,7 +126,14 @@ configure_rootless_compose() {
 prepare_compose_env() {
   if [[ -f "$ENV_FILE" ]]; then
     load_env_file
-    COMPOSE_ENV_FILE="$ENV_FILE"
+    if [[ -n "${DISCORD_TOKEN_FILE:-}" && -f "${DISCORD_TOKEN_FILE}" ]]; then
+      load_token_from_file || true
+    elif [[ -z "${DISCORD_TOKEN:-}" ]]; then
+      discover_token_file || true
+      load_token_from_file || true
+      load_token_from_discover_script || true
+    fi
+    write_compose_env_temp
     configure_rootless_compose
     return 0
   fi
@@ -190,9 +197,13 @@ load_token_from_discover_script() {
 }
 
 ensure_token_present() {
-  if [[ -z "${DISCORD_TOKEN:-}" ]]; then
+  if [[ -n "${DISCORD_TOKEN_FILE:-}" && -f "${DISCORD_TOKEN_FILE}" ]]; then
+    load_token_from_file || true
+  elif [[ -z "${DISCORD_TOKEN:-}" ]]; then
     discover_token_file || true
     load_token_from_file || true
+  fi
+  if [[ -z "${DISCORD_TOKEN:-}" ]]; then
     load_token_from_discover_script || true
   fi
   [[ -n "${DISCORD_TOKEN:-}" ]] || die "DISCORD_TOKEN is not set. Set DISCORD_TOKEN or DISCORD_TOKEN_FILE in $ENV_FILE, export it in the shell, place a token at $REPO_ROOT/.discord-token or ~/.config/discord-scrape/token, or sign in via DiscordChatExporter GUI / Discord desktop on this machine."
@@ -365,14 +376,13 @@ run_subcommand_with_retry() {
 
   printf 'Detected Discord auth failure. Refreshing token and retrying once...\n' >&2
   load_token_from_file || true
-  load_token_from_discover_script || true
-  if [[ -f "$ENV_FILE" ]]; then
-    COMPOSE_ENV_FILE="$ENV_FILE"
-  elif [[ -n "${DISCORD_TOKEN:-}" ]]; then
-    rm -f "$COMPOSE_ENV_TEMP"
-    COMPOSE_ENV_TEMP=""
-    write_compose_env_temp
+  if [[ -z "${DISCORD_TOKEN:-}" ]]; then
+    load_token_from_discover_script || true
   fi
+  rm -f "$COMPOSE_ENV_TEMP"
+  COMPOSE_ENV_TEMP=""
+  write_compose_env_temp
+  COMPOSE_ENV_FILE="$COMPOSE_ENV_TEMP"
   try_interactive_reauth || true
   ensure_token_present
   compose_run_args run_args "$subcommand" "$@"

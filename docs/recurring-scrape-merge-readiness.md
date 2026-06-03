@@ -111,7 +111,9 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh --sync-gui --per-target -
 | expanded_kotor_discord | pass | pass | validation-resume |
 | eod_discord | pass | pass | validation-resume |
 | DS_Discord_msgs | pass | pass | validation-resume; some channels forbidden |
-| KotOR_discord_msgs | **in progress** | — | `yes_general` has ~5 years of backlog (archive cursor was Jan 2021); plan 043 preserves partial temps on OOM skip |
+| KotOR_discord_msgs | **in progress** | — | plan 044 validation started 2026-06-04 (`logs/kotor-validation-20260604.log`); `yes_general` catch-up + preserve-partial smoke |
+
+**Plan 044 (2026-06-04):** Offline smoke asserts partial temp preserved on OOM skip (channel 134). Host wrapper always writes explicit compose env from `DISCORD_TOKEN_FILE` (fixes auth-retry when shell exports a stale `DISCORD_TOKEN`). `run-all-smokes.sh` → 19/19 pass.
 
 **KotOR / yes_general (plan 040–043):** Incremental `--after` works for all channels; most return `UNCHANGED` in seconds. `yes_general` archive last message was **2021-01-17** — the first catch-up legitimately fetches years of history. Prior bug: OOM skip **deleted** partial temp exports, causing re-download loops. Plan 043 preserves partial temps and salvages on next run.
 

@@ -35,8 +35,34 @@ fi
 count=$((count + 1))
 printf '%s' "$count" >"$count_file"
 
+while (($#)); do
+  case "$1" in
+    --env-file)
+      if [[ $# -ge 2 && -f "$2" ]]; then
+        local_env=$2
+        while IFS='=' read -r env_key env_value || [[ -n "$env_key" ]]; do
+          [[ -z "$env_key" || "$env_key" =~ ^# ]] && continue
+          env_key=${env_key#export }
+          env_key=${env_key%%[[:space:]]*}
+          printf -v "$env_key" '%s' "$env_value"
+          export "$env_key"
+        done <"$local_env"
+      fi
+      shift 2
+      ;;
+    *)
+      shift
+      ;;
+  esac
+done
+
+token="${DISCORD_TOKEN:-}"
+if [[ -z "$token" && -n "${DISCORD_TOKEN_FILE:-}" && -f "$DISCORD_TOKEN_FILE" ]]; then
+  token=$(head -n 1 "$DISCORD_TOKEN_FILE" | tr -d '\r')
+fi
+
 if [[ "$mode" == "auth-refresh" ]]; then
-  if [[ "${DISCORD_TOKEN:-}" == "stale-token" ]]; then
+  if [[ "$token" == "stale-token" ]]; then
     printf 'Authentication token is invalid.\n' >&2
     printf 'fresh-token\n' >"$token_file"
     exit 1
@@ -58,14 +84,15 @@ run_host() {
   local mode=$1
   local env_path=${2:-$ENV_FILE}
 
-  DCE_REPO_ROOT="$REPO_ROOT" \
-  DCE_DOCKER_BIN="$FAKE_DOCKER" \
-  DCE_ENV_FILE="$env_path" \
-  DCE_COMPOSE_FILE="$COMPOSE_FILE" \
-  FAKE_DOCKER_CALL_COUNT="$CALL_COUNT" \
-  FAKE_DOCKER_TOKEN_FILE="$TOKEN_FILE" \
-  FAKE_DOCKER_MODE="$mode" \
-  "$REPO_ROOT/scripts/run-discord-scrape-host.sh" scrape --target demo
+  env -u DISCORD_TOKEN \
+    DCE_REPO_ROOT="$REPO_ROOT" \
+    DCE_DOCKER_BIN="$FAKE_DOCKER" \
+    DCE_ENV_FILE="$env_path" \
+    DCE_COMPOSE_FILE="$COMPOSE_FILE" \
+    FAKE_DOCKER_CALL_COUNT="$CALL_COUNT" \
+    FAKE_DOCKER_TOKEN_FILE="$TOKEN_FILE" \
+    FAKE_DOCKER_MODE="$mode" \
+    "$REPO_ROOT/scripts/run-discord-scrape-host.sh" scrape --target demo
 }
 
 run_host_with_shell_token() {

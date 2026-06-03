@@ -4,7 +4,7 @@
 
 | Gate | Status |
 |------|--------|
-| Offline smokes (`run-all-smokes.sh`) | 21/21 pass |
+| Offline smokes (`run-all-smokes.sh`) | 23/23 pass |
 | Live proof (`run-operator-proof.sh --sync-gui --target eod_discord`) | Passed on maintainer host |
 | Monthly cron (`setup-cron.sh`) | Installed (`00 04 1 * *`); dry-run preflight OK for all enabled targets |
 | Upstream CI (fork PR) | `action_required` until Tyrrrz approves workflow runs |
@@ -181,6 +181,8 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
 **Plan 075 (2026-06-04):** `run-documents-scrape.sh` auto-writes `logs/documents-scrape-<UTC>.summary.json` on live scrapes.
 
 **Plan 076 (2026-06-04):** Multi-target validation (`--per-target`) and proof loops write separate `logs/operator-*-<target>-<UTC>.summary.json` per scrape.
+
+**Plan 077 (2026-06-04):** Setup doc + merge-readiness smoke inventory synced to 23 offline tests (includes `print-scrape-summary-smoke`, `scrape-summary-json-smoke`).
 
 **Disk:** ~65 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
 

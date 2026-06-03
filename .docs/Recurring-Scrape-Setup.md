@@ -326,7 +326,7 @@ Space requirements:
 
 ## Smoke test validation
 
-Run the full offline suite from the repo root (requires `jq`). **21 offline smokes** run by default; add `--include-container` for a 22nd local-only check:
+Run the full offline suite from the repo root (requires `jq`). **23 offline smokes** run by default; add `--include-container` for a 24th local-only check:
 
 ```bash
 ./scripts/run-all-smokes.sh
@@ -357,6 +357,7 @@ With Docker/Podman, include the container smoke:
 | `error-path-smoke.sh` | yes | Failure paths |
 | `gh-approve-pr-runs-smoke.sh` | yes | Fork PR workflow helper |
 | `operator-handoff-smoke.sh` | yes | Operator handoff dry-run |
+| `print-scrape-summary-smoke.sh` | yes | JSON summary pretty-print CLI |
 | `prove-incremental-append-smoke.sh` | yes | Offline prove snapshot/compare |
 | `run-discord-scrape-host-lock-smoke.sh` | yes | Archive-root scrape lock |
 | `run-discord-scrape-host-smoke.sh` | yes | Host wrapper |
@@ -365,6 +366,7 @@ With Docker/Podman, include the container smoke:
 | `run-operator-validation-smoke.sh` | yes | Validation runner dry-run |
 | `scrape-here-smoke.sh` | yes | Workspace bridge launcher |
 | `scrape-lock-status-smoke.sh` | yes | Lock status + stale reclaim |
+| `scrape-summary-json-smoke.sh` | yes | Log marker extract + per-target path helper |
 | `setup-cron-smoke.sh` | yes | Cron setup dry-run |
 | `sync-gui-bridge-doc-smoke.sh` | yes | GUI bridge doc sync |
 | `verify-documents-auth-smoke.sh` | yes | Archive verify + auth bootstrap |

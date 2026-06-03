@@ -4,6 +4,8 @@ set -Eeuo pipefail
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
 REPO_ROOT="${DCE_REPO_ROOT:-$(cd "$SCRIPT_DIR/.." && pwd -P)}"
+# shellcheck source=lib/scrape-run-plan.sh
+source "$SCRIPT_DIR/lib/scrape-run-plan.sh"
 CONFIG_PATH="${DCE_CONFIG_FILE:-$REPO_ROOT/config/scrape-targets.json}"
 ENV_FILE="${DCE_ENV_FILE:-$REPO_ROOT/scrape.env}"
 HOST_RUNNER="$REPO_ROOT/scripts/run-discord-scrape-host.sh"
@@ -116,6 +118,29 @@ print_container_memory() {
   printf 'container memory: %s (compose mem_limit)\n' "$mem"
 }
 
+print_config_target_memory() {
+  local global_mem="" name mem
+
+  if [[ -f "$ENV_FILE" ]]; then
+    global_mem=$(grep -E '^[[:space:]]*DCE_CONTAINER_MEMORY=' "$ENV_FILE" 2>/dev/null | tail -1 | cut -d= -f2- | tr -d '\r' || true)
+  fi
+  if [[ -z "$global_mem" && -n "${DCE_CONTAINER_MEMORY:-}" ]]; then
+    global_mem="$DCE_CONTAINER_MEMORY"
+  fi
+  global_mem=${global_mem#"${global_mem%%[![:space:]]*}"}
+  global_mem=${global_mem%"${global_mem##*[![:space:]]}"}
+  if [[ -n "$global_mem" && "$global_mem" != "0" ]]; then
+    return 0
+  fi
+
+  while IFS= read -r name; do
+    [[ -n "$name" ]] || continue
+    mem=$(target_container_memory "$CONFIG_PATH" "$name")
+    [[ -n "$mem" && "$mem" != "null" ]] || continue
+    printf 'target memory: %s → %s (single --target scrape)\n' "$name" "$mem"
+  done < <(enabled_target_names "$CONFIG_PATH")
+}
+
 main() {
   while (($#)); do
     case "$1" in
@@ -159,6 +184,7 @@ main() {
   resolve_compose
   check_auth
   print_container_memory
+  print_config_target_memory
   printf 'config: %s\n\n' "$CONFIG_PATH"
 
   DCE_PRIMARY_CONFIG="$CONFIG_PATH" "$VERIFY_ARCHIVES" --config "$CONFIG_PATH"

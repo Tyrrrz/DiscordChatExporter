@@ -29,6 +29,7 @@ cat >"$CONFIG_PATH" <<JSON
       "name": "demo",
       "kind": "guild",
       "output_dir": "$ARCHIVE_ROOT/demo",
+      "container_memory": "4g",
       "enabled": true
     }
   ]
@@ -46,6 +47,16 @@ grep -q 'Operator ready' <<<"$mem_output" || {
   printf '%s\n' "$mem_output" >&2
   exit 1
 }
+grep -q 'target memory: demo → 4g' <<<"$mem_output" || {
+  printf 'ERROR: expected per-target memory hint in verify output\n' >&2
+  printf '%s\n' "$mem_output" >&2
+  exit 1
+}
+grep -qE 'demo[[:space:]].*4g' <<<"$mem_output" || {
+  printf 'ERROR: expected MEM column for demo target\n' >&2
+  printf '%s\n' "$mem_output" >&2
+  exit 1
+}
 
 printf 'DISCORD_TOKEN=dummy\nDCE_CONTAINER_MEMORY=8g\n' >"$ENV_PATH"
 mem_output=$(
@@ -57,6 +68,10 @@ grep -q 'container memory: 8g' <<<"$mem_output" || {
   printf '%s\n' "$mem_output" >&2
   exit 1
 }
+if grep -q 'target memory: demo → 4g' <<<"$mem_output"; then
+  printf 'ERROR: per-target memory hint should be hidden when global cap is set\n' >&2
+  exit 1
+fi
 
 cat >"$FAKE_DOCKER" <<'EOF'
 #!/usr/bin/env bash

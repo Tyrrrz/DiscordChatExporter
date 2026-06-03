@@ -77,17 +77,18 @@ main() {
   [[ -n "$archive_root" ]] || die "Config is missing archive_root."
 
   printf 'Archive root: %s\n\n' "$archive_root"
-  printf '%-28s %-40s %8s %8s %8s %s\n' "TARGET" "OUTPUT_DIR" "JSON" "SEEDED" "MAP" "STATUS"
-  printf '%-28s %-40s %8s %8s %8s %s\n' "------" "----------" "----" "------" "-----" "------"
+  printf '%-28s %-40s %8s %8s %8s %6s %s\n' "TARGET" "OUTPUT_DIR" "JSON" "SEEDED" "MAP" "MEM" "STATUS"
+  printf '%-28s %-40s %8s %8s %8s %6s %s\n' "------" "----------" "----" "------" "-----" "---" "------"
 
-  local target_json name output_dir enabled json_count seeded_count map_count map_file status
+  local target_json name output_dir enabled json_count seeded_count map_count map_file mem status
   while IFS= read -r target_json; do
     name=$(jq -r '.name' <<<"$target_json")
     output_dir=$(jq -r '.output_dir' <<<"$target_json")
     enabled=$(jq -r 'if has("enabled") then .enabled else true end' <<<"$target_json")
 
     if [[ "$enabled" == "false" ]]; then
-      printf '%-28s %-40s %8s %8s %8s %s\n' "$name" "$output_dir" "-" "-" "-" "disabled"
+      mem=$(jq -r '.container_memory // "-"' <<<"$target_json")
+      printf '%-28s %-40s %8s %8s %8s %6s %s\n' "$name" "$output_dir" "-" "-" "-" "$mem" "disabled"
       continue
     fi
 
@@ -115,7 +116,10 @@ main() {
       fi
     fi
 
-    printf '%-28s %-40s %8s %8s %8s %s\n' "$name" "$output_dir" "$json_count" "$seeded_count" "$map_count" "$status"
+    mem=$(jq -r '.container_memory // "-"' <<<"$target_json")
+    [[ -n "$mem" && "$mem" != "null" ]] || mem="-"
+
+    printf '%-28s %-40s %8s %8s %8s %6s %s\n' "$name" "$output_dir" "$json_count" "$seeded_count" "$map_count" "$mem" "$status"
   done < <(jq -c '.targets[]' "$CONFIG_PATH")
 
   printf '\n'

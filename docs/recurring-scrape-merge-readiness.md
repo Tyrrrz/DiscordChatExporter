@@ -162,6 +162,8 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
 
 **Plan 067 (2026-06-04):** Optional per-target `container_memory` in `scrape-targets.json` (single `--target` runs); `KotOR_discord_msgs` defaults to `8g`.
 
+**Plan 068 (2026-06-04):** `verify-documents-archives` MEM column and `verify-operator-ready` target memory hints when global cap unset.
+
 **Disk:** ~65 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
 
 ## CI note (fork PRs)

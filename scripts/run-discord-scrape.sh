@@ -549,6 +549,96 @@ message_count() {
   jq -r '(.messages | length) // 0' "$export_path"
 }
 
+salvage_truncated_json() {
+  local export_path=$1
+  if jq empty "$export_path" >/dev/null 2>&1; then
+    return 0
+  fi
+  command -v python3 >/dev/null 2>&1 || return 1
+  python3 - "$export_path" <<'PY' || return 1
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+data = path.read_bytes()
+marker = b"},\n    {"
+idx = data.rfind(marker)
+if idx < 0:
+    sys.exit(1)
+
+truncated = data[: idx + 1]
+suffix = b'\n  ],\n  "messageCount": 0\n}'
+path.write_bytes(truncated + suffix)
+PY
+  jq empty "$export_path" >/dev/null 2>&1 || return 1
+  local temp_file
+  temp_file=$(mktemp "${TMPDIR:-/tmp}/dce-salvage-fix.XXXXXX.json")
+  if jq '.messageCount = (.messages | length)' "$export_path" >"$temp_file" 2>/dev/null; then
+    mv -f "$temp_file" "$export_path"
+  else
+    rm -f "$temp_file"
+  fi
+}
+
+salvage_stale_temp_exports() {
+  local output_dir=$1
+  local channel_id=$2
+  local destination_path=$3
+
+  local stale_dirs stale_dir stale_export salvage_merged
+  mapfile -t stale_dirs < <(
+    find "$output_dir/.dce-temp" -maxdepth 1 -type d -name "export.${channel_id}.*" 2>/dev/null || true
+  )
+
+  (( ${#stale_dirs[@]} > 0 )) || return 0
+
+  for stale_dir in "${stale_dirs[@]}"; do
+    stale_export="$stale_dir/export.json"
+    [[ -f "$stale_export" ]] || { rm -rf "$stale_dir"; continue; }
+    [[ -s "$stale_export" ]] || { rm -rf "$stale_dir"; continue; }
+
+    if ! salvage_truncated_json "$stale_export"; then
+      log "  Stale temp export unsalvageable, discarding: $stale_dir"
+      rm -rf "$stale_dir"
+      continue
+    fi
+
+    local stale_channel_id
+    stale_channel_id=$(channel_id_from_export "$stale_export" 2>/dev/null) || true
+    if [[ -n "$stale_channel_id" && "$stale_channel_id" != "$channel_id" ]]; then
+      log "  Stale temp export wrong channel ($stale_channel_id != $channel_id), discarding: $stale_dir"
+      rm -rf "$stale_dir"
+      continue
+    fi
+
+    local salvage_count
+    salvage_count=$(message_count "$stale_export")
+    if (( salvage_count == 0 )); then
+      rm -rf "$stale_dir"
+      continue
+    fi
+
+    if [[ -n "$destination_path" && -f "$destination_path" ]]; then
+      salvage_merged="$stale_dir/merged.json"
+      if merge_exports "$destination_path" "$stale_export" "$salvage_merged" && [[ -s "$salvage_merged" ]]; then
+        if jq empty "$salvage_merged" >/dev/null 2>&1; then
+          local before_count after_count
+          before_count=$(message_count "$destination_path")
+          commit_merged_export "$destination_path" "$salvage_merged"
+          after_count=$(message_count "$destination_path")
+          log "  SALVAGED $destination_path (+$((after_count - before_count)) messages from stale temp, $before_count → $after_count)"
+        fi
+      fi
+    elif [[ -n "$destination_path" ]]; then
+      mkdir -p "$(dirname "$destination_path")"
+      cp "$stale_export" "$destination_path"
+      log "  SALVAGED $destination_path (${salvage_count} messages from stale temp, new archive)"
+    fi
+
+    rm -rf "$stale_dir"
+  done
+}
+
 is_skippable_channel_export_failure() {
   local log_file=$1
   grep -qiE \
@@ -960,8 +1050,13 @@ scrape_target() {
       guild_label=$(guild_label_from_export "$destination_path")
     fi
 
-    after_id=$(last_message_id "$destination_path")
     mkdir -p "$output_dir/.dce-temp"
+    salvage_stale_temp_exports "$output_dir" "$channel_id" "$destination_path"
+
+    if [[ -n "$destination_path" && -f "$destination_path" ]]; then
+      before_count=$(message_count "$destination_path")
+    fi
+    after_id=$(last_message_id "$destination_path")
     temp_dir=$(mktemp -d "$output_dir/.dce-temp/export.${channel_id}.XXXXXX")
     temp_export="$temp_dir/export.json"
     temp_merged="$temp_dir/merged.json"

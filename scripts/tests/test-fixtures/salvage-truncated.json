@@ -1,0 +1,20 @@
+{
+  "guild": {
+    "id": "222",
+    "name": "Fixture Guild"
+  },
+  "channel": {
+    "id": "111",
+    "name": "fixture-room",
+    "category": "Testing Grounds"
+  },
+  "messages": [
+    {
+      "id": "3",
+      "timestamp": "2026-01-03T00:00:00Z",
+      "content": "third"
+    },
+    {
+      "id": "4",
+      "timestamp": "2026-01-04T00:00:00Z",
+      "content": "fourth - this message is trun

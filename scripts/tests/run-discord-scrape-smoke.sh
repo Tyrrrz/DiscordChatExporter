@@ -134,6 +134,14 @@ cat >"$CONFIG_PATH" <<JSON
       "channel_ids": ["111", "134"],
       "guild_ids": [],
       "guild_name_patterns": []
+    },
+    {
+      "name": "salvage-stale",
+      "kind": "guild",
+      "output_dir": "$ARCHIVE_ROOT/salvage-stale",
+      "channel_ids": ["111"],
+      "guild_ids": [],
+      "guild_name_patterns": []
     }
   ]
 }
@@ -378,6 +386,22 @@ SKIP_ABORT_DEST="$ARCHIVE_ROOT/skip-abort/$DEFAULT_FILE_NAME"
 [[ "$(jq -r '.messages | length' "$SKIP_ABORT_DEST")" == "3" ]] || { echo "expected skip-abort to append accessible channel" >&2; exit 1; }
 [[ ! -e "$ARCHIVE_ROOT/skip-abort/channels/134.json" ]] || { echo "unexpected fallback file for skipped abort channel" >&2; exit 1; }
 grep -q 'SKIPPED.*134' "$SKIP_ABORT_LOG" || { echo "expected SKIPPED line for abort channel 134" >&2; exit 1; }
+
+# Salvage stale temp export smoke
+mkdir -p "$ARCHIVE_ROOT/salvage-stale"
+cp "$FIXTURE_DIR/append-existing.json" "$ARCHIVE_ROOT/salvage-stale/$DEFAULT_FILE_NAME"
+mkdir -p "$ARCHIVE_ROOT/salvage-stale/.dce-meta"
+printf '{\"111\":\"%s\"}\n' "$ARCHIVE_ROOT/salvage-stale/$DEFAULT_FILE_NAME" >"$ARCHIVE_ROOT/salvage-stale/.dce-meta/channel-map.json"
+mkdir -p "$ARCHIVE_ROOT/salvage-stale/.dce-temp/export.111.STALE"
+cp "$FIXTURE_DIR/salvage-truncated.json" "$ARCHIVE_ROOT/salvage-stale/.dce-temp/export.111.STALE/export.json"
+SALVAGE_LOG="$TMP_DIR/salvage-stale.log"
+run_wrapper salvage-stale append 2>"$SALVAGE_LOG"
+SALVAGE_DEST="$ARCHIVE_ROOT/salvage-stale/$DEFAULT_FILE_NAME"
+SALVAGE_COUNT=$(jq -r '.messages | length' "$SALVAGE_DEST")
+(( SALVAGE_COUNT >= 3 )) || { echo "expected salvage-stale archive to have at least 3 messages (got $SALVAGE_COUNT)" >&2; exit 1; }
+jq -e '.messages[] | select(.id == "3")' "$SALVAGE_DEST" >/dev/null || { echo "expected salvaged message id 3 in archive" >&2; exit 1; }
+[[ ! -d "$ARCHIVE_ROOT/salvage-stale/.dce-temp/export.111.STALE" ]] || { echo "expected stale temp dir cleaned up after salvage" >&2; exit 1; }
+grep -q 'SALVAGED' "$SALVAGE_LOG" || { echo "expected SALVAGED line in salvage log" >&2; exit 1; }
 
 # shellcheck disable=SC1091
 source "$REPO_ROOT/scripts/run-discord-scrape.sh"

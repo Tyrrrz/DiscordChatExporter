@@ -7,6 +7,7 @@ using Avalonia.Platform;
 using DiscordChatExporter.Gui.Framework;
 using DiscordChatExporter.Gui.Localization;
 using DiscordChatExporter.Gui.Services;
+using DiscordChatExporter.Gui.Utils.Extensions;
 using DiscordChatExporter.Gui.ViewModels;
 using DiscordChatExporter.Gui.ViewModels.Components;
 using DiscordChatExporter.Gui.ViewModels.Dialogs;
@@ -17,7 +18,7 @@ using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Gui;
 
-public class App : Application, IDisposable
+public partial class App : Application, IDisposable
 {
     private readonly ServiceProvider _services;
     private readonly SettingsService _settingsService;
@@ -133,5 +134,14 @@ public class App : Application, IDisposable
 
         _eventSubscription.Dispose();
         _services.Dispose();
+    }
+}
+
+public partial class App
+{
+    public static void Shutdown(int exitCode = 0)
+    {
+        if (Current?.ApplicationLifetime?.TryShutdown(exitCode) != true)
+            Environment.Exit(exitCode);
     }
 }

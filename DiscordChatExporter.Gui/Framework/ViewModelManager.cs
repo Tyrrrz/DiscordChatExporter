@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using DiscordChatExporter.Core.Discord.Data;
+using DiscordChatExporter.Gui.Localization;
 using DiscordChatExporter.Gui.ViewModels;
 using DiscordChatExporter.Gui.ViewModels.Components;
 using DiscordChatExporter.Gui.ViewModels.Dialogs;
@@ -8,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DiscordChatExporter.Gui.Framework;
 
-public class ViewModelManager(IServiceProvider services)
+public class ViewModelManager(IServiceProvider services, LocalizationManager localizationManager)
 {
     public MainViewModel GetMainViewModel() => services.GetRequiredService<MainViewModel>();
 
@@ -46,7 +47,7 @@ public class ViewModelManager(IServiceProvider services)
     }
 
     public MessageBoxViewModel GetMessageBoxViewModel(string title, string message) =>
-        GetMessageBoxViewModel(title, message, "CLOSE", null);
+        GetMessageBoxViewModel(title, message, localizationManager.CloseButton, null);
 
     public SettingsViewModel GetSettingsViewModel() =>
         services.GetRequiredService<SettingsViewModel>();

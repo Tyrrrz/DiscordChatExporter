@@ -1,11 +1,8 @@
-using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Avalonia;
 using DiscordChatExporter.Gui.Framework;
 using DiscordChatExporter.Gui.Localization;
 using DiscordChatExporter.Gui.Services;
-using DiscordChatExporter.Gui.Utils.Extensions;
 using DiscordChatExporter.Gui.ViewModels.Components;
 using PowerKit.Extensions;
 
@@ -88,8 +85,7 @@ public partial class MainViewModel(
                 {
                     updateService.FinalizeUpdate(true);
 
-                    if (Application.Current?.ApplicationLifetime?.TryShutdown(2) != true)
-                        Environment.Exit(2);
+                    App.Shutdown(2);
                 }
             );
         }

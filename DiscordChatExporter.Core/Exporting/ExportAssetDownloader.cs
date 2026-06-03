@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -64,7 +65,14 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
             async innerCancellationToken =>
             {
                 // Download the file
-                using var response = await Http.Client.GetAsync(url, innerCancellationToken);
+                using var response = await Http.Client.GetAsync(
+                    url,
+                    HttpCompletionOption.ResponseHeadersRead,
+                    innerCancellationToken
+                );
+
+                response.EnsureSuccessStatusCode();
+
                 await using var output = File.Create(filePath);
                 await response.Content.CopyToAsync(output, innerCancellationToken);
             },

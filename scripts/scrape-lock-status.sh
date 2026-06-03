@@ -9,10 +9,12 @@ CONFIG_PATH="${DCE_CONFIG_FILE:-$REPO_ROOT/config/scrape-targets.json}"
 usage() {
   cat <<EOF
 Usage:
-  $(basename "$0") [--config PATH]
+  $(basename "$0") [--config PATH] [--reclaim-stale]
 
 Report scrape serialization lock state for the configured archive root.
 Uses the same lock path rules as run-discord-scrape-host.sh.
+
+  --reclaim-stale  Remove stale .meta and unheld lock file when holder pid is dead
 
 Exit codes:
   0  Safe to scrape (no lock, unheld lock file, or stale reclaimable holder)
@@ -83,13 +85,41 @@ lock_is_held() {
   return 0
 }
 
+reclaim_stale_lock() {
+  local lock_file=$1 meta_file=$2
+
+  if lock_is_held "$lock_file"; then
+    die "Cannot reclaim: scrape lock is actively held."
+  fi
+
+  if [[ -f "$meta_file" ]]; then
+    local pid
+    pid=$(read_meta_field "$meta_file" pid)
+    if [[ -n "$pid" ]] && kill -0 "$pid" 2>/dev/null; then
+      die "Cannot reclaim: holder pid $pid is still running."
+    fi
+    rm -f "$meta_file"
+    printf 'removed stale lock meta: %s\n' "$meta_file"
+  fi
+
+  if [[ -e "$lock_file" ]] && ! lock_is_held "$lock_file"; then
+    rm -f "$lock_file"
+    printf 'removed unheld lock file: %s\n' "$lock_file"
+  fi
+}
+
 main() {
+  local reclaim=0
   while (($#)); do
     case "$1" in
       --config)
         [[ $# -ge 2 ]] || die "Missing value for --config."
         CONFIG_PATH=$2
         shift 2
+        ;;
+      --reclaim-stale)
+        reclaim=1
+        shift
         ;;
       --help|-h)
         usage
@@ -136,8 +166,22 @@ main() {
     if [[ -n "$pid" ]] && ! kill -0 "$pid" 2>/dev/null; then
       printf 'state: stale (reclaimable; holder pid %s is not running)\n' "$pid"
       format_holder_line "$meta_file"
+      if (( reclaim )); then
+        reclaim_stale_lock "$lock_file" "$meta_file"
+        printf 'state: free (stale lock reclaimed)\n'
+      fi
       exit 0
     fi
+  fi
+
+  if (( reclaim )); then
+    if [[ -e "$lock_file" ]] && ! lock_is_held "$lock_file"; then
+      reclaim_stale_lock "$lock_file" "$meta_file"
+      printf 'state: free (orphan lock reclaimed)\n'
+      exit 0
+    fi
+    printf 'state: free (nothing to reclaim)\n'
+    exit 0
   fi
 
   printf 'state: free (lock file present but not held)\n'

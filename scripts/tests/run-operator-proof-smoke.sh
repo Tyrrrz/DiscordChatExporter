@@ -35,6 +35,19 @@ JSON
 
 printf 'DISCORD_TOKEN=dummy\n' >"$ENV_PATH"
 
+COMPOSE_FILE="$TMP_DIR/docker-compose.yml"
+FAKE_DOCKER="$TMP_DIR/docker"
+cat >"$COMPOSE_FILE" <<'EOF'
+services:
+  discord-scraper:
+    image: fake
+EOF
+cat >"$FAKE_DOCKER" <<'EOF'
+#!/usr/bin/env bash
+printf 'run succeeded\n'
+EOF
+chmod +x "$FAKE_DOCKER"
+
 set +e
 output=$(
   DCE_MIN_FREE_MB=0 \
@@ -71,6 +84,30 @@ if [[ "$salvage_status" -ne 0 ]] || ! grep -q 'Salvage-only proof complete' <<<"
   printf '%s\n' "$salvage_output" >&2
   exit 1
 fi
+
+set +e
+salvage_before_output=$(
+  DCE_MIN_FREE_MB=0 \
+    DCE_CONFIG_FILE="$CONFIG_PATH" \
+    DCE_ENV_FILE="$ENV_PATH" \
+    DCE_SKIP_SCRAPE_LOCK=1 \
+    DCE_DOCKER_BIN="$FAKE_DOCKER" \
+    DCE_COMPOSE_FILE="$COMPOSE_FILE" \
+    "$PROOF" --config "$CONFIG_PATH" --target demo --salvage-before-scrape 2>&1
+)
+salvage_before_status=$?
+set -e
+
+if [[ "$salvage_before_status" -ne 0 ]] || ! grep -q 'salvage completed' <<<"$salvage_before_output"; then
+  printf 'run-operator-proof --salvage-before-scrape failed (status=%s)\n' "$salvage_before_status" >&2
+  printf '%s\n' "$salvage_before_output" >&2
+  exit 1
+fi
+grep -q 'Operator proof passed for demo' <<<"$salvage_before_output" || {
+  printf 'expected operator proof to pass after salvage-before scrape\n' >&2
+  printf '%s\n' "$salvage_before_output" >&2
+  exit 1
+}
 
 command -v flock >/dev/null 2>&1 && {
   LOCK_FILE="$TMP_DIR/archive/.dce-scrape.lock"

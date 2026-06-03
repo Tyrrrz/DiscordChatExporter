@@ -91,4 +91,19 @@ if [[ "$stale_status" -ne 0 ]] || ! grep -q 'state: stale (reclaimable' <<<"$sta
   exit 1
 fi
 
+set +e
+reclaim_output=$("$STATUS" --config "$CONFIG_PATH" --reclaim-stale 2>&1)
+reclaim_status=$?
+set -e
+
+if [[ "$reclaim_status" -ne 0 ]] || ! grep -q 'removed stale lock meta' <<<"$reclaim_output"; then
+  echo "expected --reclaim-stale to remove stale meta" >&2
+  printf '%s\n' "$reclaim_output" >&2
+  exit 1
+fi
+[[ ! -f "${LOCK_FILE}.meta" ]] || {
+  echo "expected stale meta removed after reclaim" >&2
+  exit 1
+}
+
 printf 'scrape-lock-status-smoke: ok\n'

@@ -4,7 +4,7 @@
 
 | Gate | Status |
 |------|--------|
-| Offline smokes (`run-all-smokes.sh`) | 23/23 pass |
+| Offline smokes (`run-all-smokes.sh`) | 24/24 pass |
 | Branch HEAD (fork) | `18a22a6` — PR #1538 pruned stale Latest blocks (plan 082) |
 | Live proof (`run-operator-proof.sh --sync-gui --target eod_discord`) | Passed on maintainer host |
 | Monthly cron (`setup-cron.sh`) | Installed (`00 04 1 * *`); dry-run preflight OK for all enabled targets |
@@ -148,6 +148,13 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh --target KotOR_discord_ms
 Large `yes_general` may still skip without a higher container cap; `KotOR_discord_msgs` sets `container_memory: "8g"` in `scrape-targets.json` for single-target runs (override globally with `DCE_CONTAINER_MEMORY` in `scrape.env`):
 
 ```bash
+./scripts/run-kotor-yes-general-catchup.sh
+# writes logs/kotor-yes-general.log + .summary.json; --dry-run | --validation | --prove
+```
+
+Manual equivalent:
+
+```bash
 DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
   --salvage-before-scrape --target KotOR_discord_msgs \
   --channel 221726893064454144 \
@@ -194,6 +201,8 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
 **Plan 081 (2026-06-04):** `setup-cron.sh --salvage-before-scrape` opt-in for scheduled salvage-before incremental scrape.
 
 **Plan 082 (2026-06-04):** PR #1538 pruned 30+ stale `Latest` blocks; single plans 070–081 operator delta remains.
+
+**Plan 083 (2026-06-04):** `run-kotor-yes-general-catchup.sh` — one-command yes_general path (salvage-before, log, summary hint).
 
 **Disk:** ~65 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
 

@@ -60,7 +60,14 @@ Salvage then incremental scrape:
 # Live documents scrape auto-tees to logs/documents-scrape-<UTC>.log (or --log-file); summary at <log-basename>.summary.json
 ```
 
-**KotOR yes_general** (`221726893064454144`): first catch-up after a 2021 archive cursor can take hours and may OOM; salvage preserved partials before retrying. Stop duplicate validation processes (MyBook vs Downloads checkouts share the same lock). `KotOR_discord_msgs` sets `container_memory: "8g"` in `scrape-targets.json` for single-target runs; override globally with `DCE_CONTAINER_MEMORY` in `scrape.env` if needed. Channel-scoped proof:
+**KotOR yes_general** (`221726893064454144`): first catch-up after a 2021 archive cursor can take hours and may OOM; salvage preserved partials before retrying. One-command path:
+
+```bash
+./scripts/run-kotor-yes-general-catchup.sh
+# Or: --dry-run | --salvage-only | --validation | --prove
+```
+
+Manual equivalent:
 
 ```bash
 ./scripts/run-operator-validation.sh --salvage-before-scrape \

@@ -336,7 +336,7 @@ Space requirements:
 
 ## Smoke test validation
 
-Run the full offline suite from the repo root (requires `jq`). **23 offline smokes** run by default; add `--include-container` for a 24th local-only check:
+Run the full offline suite from the repo root (requires `jq`). **24 offline smokes** run by default; add `--include-container` for a 25th local-only check:
 
 ```bash
 ./scripts/run-all-smokes.sh
@@ -366,6 +366,7 @@ With Docker/Podman, include the container smoke:
 | `end-to-end-preflight-smoke.sh` | yes | Preflight wiring |
 | `error-path-smoke.sh` | yes | Failure paths |
 | `gh-approve-pr-runs-smoke.sh` | yes | Fork PR workflow helper |
+| `kotor-yes-general-catchup-smoke.sh` | yes | KotOR yes_general wrapper dry-run |
 | `operator-handoff-smoke.sh` | yes | Operator handoff dry-run |
 | `print-scrape-summary-smoke.sh` | yes | JSON summary pretty-print CLI |
 | `prove-incremental-append-smoke.sh` | yes | Offline prove snapshot/compare |

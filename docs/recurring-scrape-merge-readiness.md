@@ -158,6 +158,8 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
 
 **Plan 065 (2026-06-04):** Scrape summary labels OOM skips as `SKIPPED (OOM/aborted)` with operator hint; `verify-operator-ready` prints configured container memory.
 
+**Plan 066 (2026-06-04):** `prove-incremental-append --channel` filters snapshots and grow-only comparison to selected channels.
+
 **Disk:** ~65 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
 
 ## CI note (fork PRs)

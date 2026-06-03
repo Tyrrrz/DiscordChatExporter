@@ -16,12 +16,12 @@ Usage:
   $(basename "$0") --target NAME --snapshot-only --snapshot-file PATH [--config PATH]
   $(basename "$0") --compare-snapshots BEFORE.tsv AFTER.tsv
 
-Record message counts for every JSON archive under the target's output_dir,
+Record message counts for JSON archives under the target's output_dir,
 run one incremental scrape, then assert:
   - archive file paths are unchanged (no parallel channels/ fallbacks)
   - message counts never shrink
 
-  --channel ID  Limit incremental scrape to channel ID (repeatable; requires --target)
+  --channel ID  Limit scrape and snapshot/compare to channel ID (repeatable)
 
 Requires valid Discord auth (scrape.env, exported DISCORD_TOKEN, or token file).
 EOF
@@ -52,9 +52,24 @@ target_output_dir() {
   ' "$CONFIG_PATH"
 }
 
+snapshot_channel_allowed() {
+  local channel_id=$1
+  shift
+  local -a filter_ids=("$@")
+  local id
+
+  ((${#filter_ids[@]} == 0)) && return 0
+  for id in "${filter_ids[@]}"; do
+    [[ "$id" == "$channel_id" ]] && return 0
+  done
+  return 1
+}
+
 snapshot_archives() {
   local output_dir=$1
   local snapshot_file=$2
+  shift 2
+  local -a channel_filter=("$@")
   local file_path file_name channel_id count
 
   : >"$snapshot_file"
@@ -65,6 +80,9 @@ snapshot_archives() {
     file_name=$(basename "$file_path")
     if [[ "$file_name" =~ \[([0-9]{16,22})\]\.json$ ]]; then
       channel_id=${BASH_REMATCH[1]}
+      if ! snapshot_channel_allowed "$channel_id" "${channel_filter[@]}"; then
+        continue
+      fi
       if ! jq empty "$file_path" >/dev/null 2>&1; then
         printf 'WARN: skipping invalid JSON during snapshot: %s\n' "$file_path" >&2
         continue
@@ -72,7 +90,7 @@ snapshot_archives() {
       count=$(jq -r '(.messages | length) // 0' "$file_path")
       printf '%s\t%s\t%s\n' "$file_path" "$channel_id" "$count" >>"$snapshot_file"
     fi
-  done < <(find "$output_dir" -type f -name '*.json' ! -path '*/.dce-meta/*' -print0 2>/dev/null)
+  done < <(find "$output_dir" -type f -name '*.json' ! -path '*/.dce-meta/*' ! -path '*/.dce-temp/*' -print0 2>/dev/null)
 }
 
 compare_snapshots() {
@@ -122,6 +140,7 @@ main() {
   local compare_before=""
   local compare_after=""
   local -a channel_args=()
+  local -a channel_ids=()
 
   trap cleanup EXIT
 
@@ -155,6 +174,7 @@ main() {
       --channel)
         [[ $# -ge 2 ]] || die "Missing value for --channel."
         channel_args+=(--channel "$2")
+        channel_ids+=("$2")
         shift 2
         ;;
       --help|-h)
@@ -187,8 +207,8 @@ main() {
 
   if (( snapshot_only )); then
     [[ -n "$snapshot_file" ]] || die "--snapshot-file is required with --snapshot-only."
-    snapshot_archives "$output_dir" "$snapshot_file"
-    [[ -s "$snapshot_file" ]] || die "No seeded archives found under $output_dir"
+    snapshot_archives "$output_dir" "$snapshot_file" "${channel_ids[@]}"
+    [[ -s "$snapshot_file" ]] || die "No seeded archives found under $output_dir for channel filter."
     printf 'Snapshot written: %s\n' "$snapshot_file"
     exit 0
   fi
@@ -197,9 +217,12 @@ main() {
   local before_file="$SNAPSHOT_DIR/before.tsv"
   local after_file="$SNAPSHOT_DIR/after.tsv"
 
-  snapshot_archives "$output_dir" "$before_file"
-  [[ -s "$before_file" ]] || die "No seeded archives found under $output_dir"
+  snapshot_archives "$output_dir" "$before_file" "${channel_ids[@]}"
+  [[ -s "$before_file" ]] || die "No seeded archives found under $output_dir for channel filter."
 
+  if ((${#channel_ids[@]} > 0)); then
+    printf 'Channel-scoped proof for %s channel(s).\n' "${#channel_ids[@]}"
+  fi
   printf 'Running incremental scrape for target %s...\n' "$target"
   local container_config="$CONTAINER_CONFIG"
   case "$CONFIG_PATH" in
@@ -208,7 +231,7 @@ main() {
   esac
   "$HOST_RUNNER" scrape --config "$container_config" --target "$target" "${channel_args[@]}"
 
-  snapshot_archives "$output_dir" "$after_file"
+  snapshot_archives "$output_dir" "$after_file" "${channel_ids[@]}"
   compare_snapshots "$before_file" "$after_file"
   printf 'Append-safe proof passed for target %s.\n' "$target"
 }

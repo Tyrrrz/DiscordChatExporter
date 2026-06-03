@@ -28,6 +28,17 @@ cat >"$ARCHIVE_ROOT/demo/Guild - general [111111111111111111].json" <<'JSON'
 }
 JSON
 
+cat >"$ARCHIVE_ROOT/demo/Guild - other [333333333333333333].json" <<'JSON'
+{
+  "guild": {"id": "1", "name": "Guild"},
+  "channel": {"id": "333333333333333333", "name": "other"},
+  "messages": [
+    {"id": "9", "timestamp": "2020-01-01T00:00:00+00:00", "type": "Default", "content": "other"}
+  ],
+  "messageCount": 1
+}
+JSON
+
 printf '{"messages":[\n' >"$ARCHIVE_ROOT/demo/truncated [222222222222222222].json"
 
 cat >"$CONFIG_PATH" <<JSON
@@ -52,6 +63,17 @@ if ! grep -q '111111111111111111' "$BEFORE"; then
 fi
 if grep -q '222222222222222222' "$BEFORE"; then
   printf 'ERROR: invalid JSON file should be skipped in snapshot\n' >&2
+  exit 1
+fi
+
+FILTERED="$TMP_DIR/filtered.tsv"
+DCE_PRIMARY_CONFIG="$CONFIG_PATH" "$PROVE" --target demo --snapshot-only --snapshot-file "$FILTERED" --channel 111111111111111111
+grep -q '111111111111111111' "$FILTERED" || {
+  printf 'ERROR: channel-filtered snapshot missing target channel\n' >&2
+  exit 1
+}
+if grep -q '333333333333333333' "$FILTERED"; then
+  printf 'ERROR: channel-filtered snapshot should exclude other valid channels\n' >&2
   exit 1
 fi
 

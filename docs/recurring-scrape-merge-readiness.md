@@ -22,7 +22,7 @@ GUI zip users: [docs/gui-zip-recurring-scrape-bridge.md](gui-zip-recurring-scrap
 - **Host:** `scripts/run-discord-scrape-host.sh`, `scripts/run-documents-scrape.sh`, `scripts/bootstrap-recurring-scrape.sh`
 - **Auth:** `scrape.env`, `scripts/setup-scrape-auth.sh`, `scripts/sync-token-from-gui.sh`
 - **Cron:** `scripts/setup-cron.sh` (`--interval monthly` default)
-- **Integrity:** `scripts/audit-archive-json.sh`, `scripts/salvage-truncated-export.sh`, `scripts/prove-incremental-append.sh`, `scripts/scrape-lock-status.sh`
+- **Integrity:** `scripts/audit-archive-json.sh`, `scripts/salvage-truncated-export.sh`, `scripts/prove-incremental-append.sh` (use `--channel ID` for channel-scoped grow-only proof), `scripts/scrape-lock-status.sh`
 - **CI:** `.github/workflows/main.yml` job `recurring-scrape-smoke` runs `./scripts/run-all-smokes.sh`
 
 ## Validate before merge

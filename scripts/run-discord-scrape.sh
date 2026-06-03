@@ -211,7 +211,79 @@ print_scrape_summary() {
 
   log "Totals: $created created, $merged merged, $unchanged unchanged, $skipped skipped; +$appended messages appended"
   if (( skipped_oom > 0 )); then
-    log "Hint: for OOM/aborted channels, set DCE_CONTAINER_MEMORY=8g in scrape.env, run --salvage-before-scrape, then retry with --channel."
+    log "Hint: for OOM/aborted channels, raise container memory (target container_memory in config or DCE_CONTAINER_MEMORY in scrape.env), run --salvage-before-scrape, then retry with --channel."
+  fi
+  write_scrape_summary_json "$created" "$merged" "$unchanged" "$skipped" "$skipped_oom" "$appended"
+}
+
+write_scrape_summary_json() {
+  local created=$1 merged=$2 unchanged=$3 skipped=$4 skipped_oom=$5 appended=$6
+  local entry target_name channel_id guild_label file_path action
+  local before_count fetched_count after_count delta channels_json='[]' summary_json
+
+  [[ "${DCE_RUN_SUMMARY_JSON:-0}" == "1" || -n "${DCE_RUN_SUMMARY_FILE:-}" ]] || return 0
+
+  for entry in "${SCRAPE_SUMMARY_ENTRIES[@]}"; do
+    IFS=$'\t' read -r target_name channel_id guild_label file_path action before_count fetched_count after_count <<<"$entry"
+    delta=$((after_count - before_count))
+    channels_json=$(
+      jq -cn \
+        --argjson arr "$channels_json" \
+        --arg target "$target_name" \
+        --arg channel_id "$channel_id" \
+        --arg guild_label "$guild_label" \
+        --arg file_path "$file_path" \
+        --arg action "$action" \
+        --argjson before_count "$before_count" \
+        --argjson fetched_count "$fetched_count" \
+        --argjson after_count "$after_count" \
+        --argjson delta "$delta" \
+        '$arr + [{
+          target: $target,
+          channel_id: $channel_id,
+          guild_label: $guild_label,
+          file_path: $file_path,
+          action: $action,
+          before_count: $before_count,
+          fetched_count: $fetched_count,
+          after_count: $after_count,
+          delta: $delta
+        }]'
+    )
+  done
+
+  summary_json=$(
+    jq -cn \
+      --arg finished_at "$(timestamp)" \
+      --argjson channels "$channels_json" \
+      --argjson created "$created" \
+      --argjson merged "$merged" \
+      --argjson unchanged "$unchanged" \
+      --argjson skipped "$skipped" \
+      --argjson skipped_oom "$skipped_oom" \
+      --argjson messages_appended "$appended" \
+      '{
+        version: 1,
+        finished_at: $finished_at,
+        totals: {
+          created: $created,
+          merged: $merged,
+          unchanged: $unchanged,
+          skipped: $skipped,
+          skipped_oom: $skipped_oom,
+          messages_appended: $messages_appended
+        },
+        channels: $channels
+      }'
+  )
+
+  if [[ "${DCE_RUN_SUMMARY_JSON:-0}" == "1" ]]; then
+    log "DCE_JSON_SUMMARY: $(jq -c . <<<"$summary_json")"
+  fi
+  if [[ -n "${DCE_RUN_SUMMARY_FILE:-}" ]]; then
+    mkdir -p "$(dirname "$DCE_RUN_SUMMARY_FILE")"
+    jq . <<<"$summary_json" >"$DCE_RUN_SUMMARY_FILE"
+    log "JSON summary written: $DCE_RUN_SUMMARY_FILE"
   fi
 }
 

@@ -502,5 +502,33 @@ if ( commit_merged_export "$SHRINK_EXISTING" "$SHRINK_MERGED" >/dev/null 2>&1 );
 fi
 [[ "$(jq -r '.messages | length' "$SHRINK_EXISTING")" == "2" ]] || { echo "existing archive changed after rejected shrink merge" >&2; exit 1; }
 
+SUMMARY_JSON="$TMP_DIR/scrape-summary.json"
+DCE_RUN_SUMMARY_FILE="$SUMMARY_JSON" \
+  DISCORD_TOKEN=dummy \
+  DCE_CLI_BIN="$FAKE_CLI" \
+  DCE_PRIMARY_CONFIG="$CONFIG_PATH" \
+  DCE_FALLBACK_CONFIG="$CONFIG_PATH" \
+  FAKE_DCE_FIXTURE_DIR="$FIXTURE_DIR" \
+  FAKE_DCE_MODE=append \
+  "$REPO_ROOT/scripts/run-discord-scrape.sh" scrape --target idempotent 2>"$TMP_DIR/json-scrape.log"
+jq -e '.version == 1 and (.channels | length) >= 1 and (.totals.merged + .totals.unchanged) >= 1' "$SUMMARY_JSON" >/dev/null || {
+  echo "expected valid JSON scrape summary file" >&2
+  cat "$SUMMARY_JSON" >&2
+  exit 1
+}
+DCE_RUN_SUMMARY_JSON=1 \
+  DCE_RUN_SUMMARY_FILE="$TMP_DIR/scrape-summary-inline.json" \
+  DISCORD_TOKEN=dummy \
+  DCE_CLI_BIN="$FAKE_CLI" \
+  DCE_PRIMARY_CONFIG="$CONFIG_PATH" \
+  DCE_FALLBACK_CONFIG="$CONFIG_PATH" \
+  FAKE_DCE_FIXTURE_DIR="$FIXTURE_DIR" \
+  FAKE_DCE_MODE=append \
+  "$REPO_ROOT/scripts/run-discord-scrape.sh" scrape --target idempotent 2>"$TMP_DIR/json-inline.log"
+grep -q 'DCE_JSON_SUMMARY:' "$TMP_DIR/json-inline.log" || {
+  echo "expected DCE_JSON_SUMMARY line when DCE_RUN_SUMMARY_JSON=1" >&2
+  exit 1
+}
+
 echo "U1: append-only merge test coverage passed"
 

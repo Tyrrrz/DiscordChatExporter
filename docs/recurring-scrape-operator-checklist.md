@@ -66,6 +66,7 @@ Salvage then incremental scrape:
   --target KotOR_discord_msgs --channel 221726893064454144 \
   --log-file logs/kotor-yes-general.log
 # Also writes logs/kotor-yes-general.summary.json (machine-readable scrape totals)
+# Inspect: ./scripts/print-scrape-summary.sh logs/kotor-yes-general.summary.json
 
 ./scripts/prove-incremental-append.sh \
   --target KotOR_discord_msgs --channel 221726893064454144

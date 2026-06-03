@@ -176,6 +176,8 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
 
 **Plan 073 (2026-06-04):** Operator proof auto-writes `*.summary.json` beside proof log with tee-log recovery (parity with validation).
 
+**Plan 074 (2026-06-04):** `print-scrape-summary.sh` pretty-prints `*.summary.json` (`--json`, `--oom-only`, stdin `-`).
+
 **Disk:** ~65 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
 
 ## CI note (fork PRs)

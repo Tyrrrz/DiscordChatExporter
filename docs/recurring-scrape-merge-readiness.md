@@ -144,12 +144,14 @@ docker compose build   # or podman-compose build
 DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh --target KotOR_discord_msgs
 ```
 
-Large `yes_general` may still skip without a higher container cap; set `DCE_CONTAINER_MEMORY=8g` in `scrape.env` and export that channel separately:
+Large `yes_general` may still skip without a higher container cap; `KotOR_discord_msgs` sets `container_memory: "8g"` in `scrape-targets.json` for single-target runs (override globally with `DCE_CONTAINER_MEMORY` in `scrape.env`):
 
 ```bash
-# scrape.env: DCE_CONTAINER_MEMORY=8g
 DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
-  --salvage-before-scrape --target KotOR_discord_msgs --channel 221726893064454144
+  --salvage-before-scrape --target KotOR_discord_msgs \
+  --channel 221726893064454144 \
+  --log-file logs/kotor-yes-general.log
+# Also writes logs/kotor-yes-general.summary.json (or recovers from log if file write fails)
 ```
 
 **Plan 063 (2026-06-04):** Optional `DCE_CONTAINER_MEMORY` compose `mem_limit` for large channel catch-up (default 0 = unlimited).
@@ -167,6 +169,8 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
 **Plan 069 (2026-06-04):** Optional JSON scrape run summary via `DCE_RUN_SUMMARY_JSON` / `DCE_RUN_SUMMARY_FILE`.
 
 **Plan 070 (2026-06-04):** Compose mounts `logs/` at `/logs`; host runner passthrough; operator-validation auto-writes `*.summary.json` beside `--log-file`.
+
+**Plan 071 (2026-06-04):** When summary file write fails, operator validation recovers JSON from the last `DCE_JSON_SUMMARY:` line in the teed log.
 
 **Disk:** ~65 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
 

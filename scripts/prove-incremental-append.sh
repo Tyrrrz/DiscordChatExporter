@@ -12,7 +12,7 @@ SNAPSHOT_DIR=""
 usage() {
   cat <<EOF
 Usage:
-  $(basename "$0") --target NAME [--config PATH]
+  $(basename "$0") --target NAME [--config PATH] [--channel ID]
   $(basename "$0") --target NAME --snapshot-only --snapshot-file PATH [--config PATH]
   $(basename "$0") --compare-snapshots BEFORE.tsv AFTER.tsv
 
@@ -20,6 +20,8 @@ Record message counts for every JSON archive under the target's output_dir,
 run one incremental scrape, then assert:
   - archive file paths are unchanged (no parallel channels/ fallbacks)
   - message counts never shrink
+
+  --channel ID  Limit incremental scrape to channel ID (repeatable; requires --target)
 
 Requires valid Discord auth (scrape.env, exported DISCORD_TOKEN, or token file).
 EOF
@@ -119,6 +121,7 @@ main() {
   local snapshot_file=""
   local compare_before=""
   local compare_after=""
+  local -a channel_args=()
 
   trap cleanup EXIT
 
@@ -148,6 +151,11 @@ main() {
         compare_before=$2
         compare_after=$3
         shift 3
+        ;;
+      --channel)
+        [[ $# -ge 2 ]] || die "Missing value for --channel."
+        channel_args+=(--channel "$2")
+        shift 2
         ;;
       --help|-h)
         usage
@@ -198,7 +206,7 @@ main() {
     "$REPO_ROOT/config/scrape-targets.json"|config/scrape-targets.json|./config/scrape-targets.json) ;;
     *) container_config="$CONFIG_PATH" ;;
   esac
-  "$HOST_RUNNER" scrape --config "$container_config" --target "$target"
+  "$HOST_RUNNER" scrape --config "$container_config" --target "$target" "${channel_args[@]}"
 
   snapshot_archives "$output_dir" "$after_file"
   compare_snapshots "$before_file" "$after_file"

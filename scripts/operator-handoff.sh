@@ -10,16 +10,21 @@ CONFIG_PATH="${DCE_CONFIG_FILE:-$REPO_ROOT/config/scrape-targets.json}"
 VERIFY_READY="$REPO_ROOT/scripts/verify-operator-ready.sh"
 DOCUMENTS_SCRAPE="$REPO_ROOT/scripts/run-documents-scrape.sh"
 SKIP_DF=0
+TARGET=""
+CHANNEL_ARGS=()
 
 usage() {
   cat <<EOF
 Usage:
-  $(basename "$0") [--config PATH] [--skip-df]
+  $(basename "$0") [--config PATH] [--skip-df] [--target NAME] [--channel ID]
 
 Run operator handoff checks before cron install or a full scrape:
   1. Free-space summary (archive_root + repo)
   2. verify-operator-ready (jq, compose, auth, archives)
   3. run-documents-scrape --dry-run (archive paths only)
+
+  --target NAME   Limit dry-run scrape plan to one configured target
+  --channel ID    With exactly one --target, limit dry-run to channel ID (repeatable)
 
 Environment:
   DCE_MIN_FREE_MB   Minimum MiB free (default 1024 in verify-operator-ready)
@@ -63,6 +68,16 @@ main() {
         SKIP_DF=1
         shift
         ;;
+      --target)
+        [[ $# -ge 2 ]] || die "Missing value for --target."
+        TARGET=$2
+        shift 2
+        ;;
+      --channel)
+        [[ $# -ge 2 ]] || die "Missing value for --channel."
+        CHANNEL_ARGS+=(--channel "$2")
+        shift 2
+        ;;
       --help|-h)
         usage
         exit 0
@@ -86,10 +101,16 @@ main() {
   fi
 
   "$VERIFY_READY" --config "$CONFIG_PATH"
-  "$DOCUMENTS_SCRAPE" --dry-run --config "$CONFIG_PATH"
+  local -a dry_run_args=(--dry-run --config "$CONFIG_PATH")
+  [[ -n "$TARGET" ]] && dry_run_args+=(--target "$TARGET")
+  dry_run_args+=("${CHANNEL_ARGS[@]}")
+  "$DOCUMENTS_SCRAPE" "${dry_run_args[@]}"
 
   printf '\nHandoff complete. Safe to run:\n'
-  printf '  ./scripts/run-documents-scrape.sh\n'
+  printf '  ./scripts/run-documents-scrape.sh'
+  [[ -n "$TARGET" ]] && printf ' --target %s' "$TARGET"
+  ((${#CHANNEL_ARGS[@]})) && printf ' %s' "${CHANNEL_ARGS[*]}"
+  printf '\n'
   printf '  ./scripts/setup-cron.sh --dry-run\n'
 }
 

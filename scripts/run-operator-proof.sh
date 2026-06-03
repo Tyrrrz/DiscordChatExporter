@@ -16,16 +16,19 @@ source "$SCRIPT_DIR/lib/scrape-run-plan.sh"
 TARGET=""
 SYNC_GUI_FLAG=0
 DRY_RUN=0
+CHANNEL_ARGS=()
 
 usage() {
   cat <<EOF
 Usage:
-  $(basename "$0") [--target NAME] [--config PATH] [--sync-gui] [--dry-run]
+  $(basename "$0") [--target NAME] [--channel ID] [--config PATH] [--sync-gui] [--dry-run]
 
 End-to-end operator proof:
   operator-handoff → incremental scrape → prove-incremental-append
 
 When --target is omitted, all enabled targets in the config are processed.
+
+  --channel ID  With exactly one --target, limit scrape/prove to channel ID (repeatable)
 
 Logs append to logs/operator-proof-<timestamp>.log
 EOF
@@ -56,6 +59,11 @@ main() {
       --dry-run)
         DRY_RUN=1
         shift
+        ;;
+      --channel)
+        [[ $# -ge 2 ]] || die "Missing value for --channel."
+        CHANNEL_ARGS+=(--channel "$2")
+        shift 2
         ;;
       --help|-h)
         usage
@@ -98,7 +106,10 @@ main() {
       "$SYNC_GUI" --force
     fi
 
-    "$HANDOFF" --config "$CONFIG_PATH"
+    local -a handoff_args=(--config "$CONFIG_PATH")
+    [[ -n "$TARGET" ]] && handoff_args+=(--target "$TARGET")
+    handoff_args+=("${CHANNEL_ARGS[@]}")
+    "$HANDOFF" "${handoff_args[@]}"
 
     if (( DRY_RUN == 1 )); then
       printf '\nDry run complete (no Discord scrape).\n'
@@ -107,7 +118,9 @@ main() {
 
     for name in "${targets[@]}"; do
       printf '\n--- Target: %s ---\n' "$name"
-      if "$DOCUMENTS" --config "$CONFIG_PATH" --target "$name" && "$PROVE" --config "$CONFIG_PATH" --target "$name"; then
+      local -a scrape_args=(--config "$CONFIG_PATH" --target "$name")
+      scrape_args+=("${CHANNEL_ARGS[@]}")
+      if "$DOCUMENTS" "${scrape_args[@]}" && "$PROVE" "${scrape_args[@]}"; then
         succeeded=$((succeeded + 1))
         printf 'Operator proof passed for %s\n' "$name"
       else

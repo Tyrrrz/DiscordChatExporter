@@ -75,4 +75,9 @@ if "$PROVE" --compare-snapshots "$AFTER" "$BEFORE" 2>/dev/null; then
   exit 1
 fi
 
+if ! "$PROVE" --help 2>&1 | grep -q -- '--channel'; then
+  printf 'ERROR: prove --help should document --channel\n' >&2
+  exit 1
+fi
+
 printf 'prove-incremental-append-smoke: ok\n'

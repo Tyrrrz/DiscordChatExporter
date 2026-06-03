@@ -50,4 +50,20 @@ if [[ "$handoff_status" -ne 0 ]] || ! grep -q 'Handoff complete' <<<"$handoff_ou
   exit 1
 fi
 
+set +e
+channel_output=$(
+  DCE_MIN_FREE_MB=0 \
+    DCE_CONFIG_FILE="$CONFIG_PATH" \
+    DCE_ENV_FILE="$ENV_PATH" \
+    "$HANDOFF" --config "$CONFIG_PATH" --skip-df --target demo --channel 111111111111111111 2>&1
+)
+channel_status=$?
+set -e
+
+if [[ "$channel_status" -ne 0 ]] || ! grep -q 'Handoff complete' <<<"$channel_output"; then
+  printf 'operator-handoff --channel failed (status=%s)\n' "$channel_status" >&2
+  printf '%s\n' "$channel_output" >&2
+  exit 1
+fi
+
 printf 'operator-handoff-smoke: ok\n'

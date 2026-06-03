@@ -27,6 +27,7 @@ usage() {
 Usage:
   $(basename "$0") preflight [run-discord-scrape options...]
   $(basename "$0") scrape [run-discord-scrape options...]
+  $(basename "$0") salvage [run-discord-scrape options...]
 
 Options:
   --env-file PATH      Env file to load and pass to compose. Default: $ENV_FILE
@@ -419,6 +420,28 @@ resolve_reauth_command() {
   printf '%s\n' "$resolved_path"
 }
 
+run_local_salvage() {
+  local host_config=$1
+  shift
+  local -a local_args=() skip_next=0 arg
+
+  for arg in "$@"; do
+    if (( skip_next )); then
+      skip_next=0
+      continue
+    fi
+    if [[ "$arg" == "--config" ]]; then
+      skip_next=1
+      continue
+    fi
+    local_args+=("$arg")
+  done
+
+  DCE_PRIMARY_CONFIG="$host_config" \
+    DCE_FALLBACK_CONFIG="$host_config" \
+    "$SCRIPT_DIR/run-discord-scrape.sh" salvage --config "$host_config" "${local_args[@]}"
+}
+
 resolve_host_config_path() {
   local -a args=("$@")
   local i=0 cfg="$REPO_ROOT/config/scrape-targets.json"
@@ -542,7 +565,7 @@ main() {
         usage
         exit 0
         ;;
-      preflight|scrape)
+      preflight|scrape|salvage)
         if [[ -n "$subcommand" ]]; then
           passthrough_args+=("$1")
         else
@@ -552,7 +575,7 @@ main() {
         ;;
       *)
         if [[ -z "$subcommand" ]]; then
-          die "Unsupported subcommand '$1'. Use 'preflight' or 'scrape'."
+          die "Unsupported subcommand '$1'. Use 'preflight', 'scrape', or 'salvage'."
         fi
         passthrough_args+=("$1")
         shift
@@ -575,7 +598,9 @@ main() {
   fi
 
   [[ -f "$COMPOSE_FILE" ]] || die "Missing compose file: $COMPOSE_FILE"
-  prepare_compose_env
+  if [[ "$subcommand" != "salvage" ]]; then
+    prepare_compose_env
+  fi
   REAUTH_COMMAND="${DCE_REAUTH_COMMAND:-}"
   run_disk_preflight_if_enabled "${passthrough_args[@]}"
 
@@ -598,6 +623,10 @@ main() {
     scrape)
       acquire_scrape_lock "$host_config"
       run_subcommand_with_retry "$subcommand" "${passthrough_args[@]}"
+      ;;
+    salvage)
+      acquire_scrape_lock "$host_config"
+      run_local_salvage "$host_config" "${passthrough_args[@]}"
       ;;
   esac
 }

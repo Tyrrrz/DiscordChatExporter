@@ -17,16 +17,17 @@ source "$SCRIPT_DIR/lib/scrape-run-plan.sh"
 usage() {
   cat <<EOF
 Usage:
-  $(basename "$0") [--dry-run] [--target NAME] [--config PATH]
+  $(basename "$0") [--dry-run] [--salvage-only] [--target NAME] [--config PATH]
 
 End-to-end Documents scrape workflow:
   1. Verify enabled targets have seeded archives under ~/Documents/<server>/
   2. Bootstrap scrape.env when DISCORD_TOKEN is exported
-  3. Preflight against Discord (skipped with --dry-run)
+  3. Preflight against Discord (skipped with --dry-run or --salvage-only)
   4. Incremental scrape (append-only merges into existing JSON files)
 
 Options:
-  --dry-run     Verify archives only; do not call Discord
+  --dry-run       Verify archives only; do not call Discord
+  --salvage-only  Merge quiescent stale .dce-temp exports only (no Discord export)
   --target NAME Limit preflight/scrape to one configured target
   --channel ID  With exactly one --target, limit scrape to channel ID (repeatable)
   --config PATH Scrape target config (default: config/scrape-targets.json)
@@ -40,6 +41,7 @@ die() {
 
 main() {
   local dry_run=0
+  local salvage_only=0
   local target=""
   local -a passthrough=()
 
@@ -47,6 +49,10 @@ main() {
     case "$1" in
       --dry-run)
         dry_run=1
+        shift
+        ;;
+      --salvage-only)
+        salvage_only=1
         shift
         ;;
       --target)
@@ -91,10 +97,22 @@ main() {
 
   "$VERIFY_READY" --disk-only --config "$CONFIG_PATH"
 
-  if [[ -n "${DISCORD_TOKEN:-}" || -n "${DISCORD_TOKEN_FILE:-}" ]]; then
-    "$SETUP_AUTH" 2>/dev/null || true
-  elif [[ -x "$DISCOVER_TOKEN" ]] && "$DISCOVER_TOKEN" >/dev/null 2>&1; then
-    "$SETUP_AUTH" 2>/dev/null || true
+  if (( salvage_only == 1 )); then
+    local -a salvage_args=(--config "$CONFIG_PATH")
+    local skip_next=0 arg
+    for arg in "${passthrough[@]}"; do
+      if (( skip_next )); then
+        skip_next=0
+        continue
+      fi
+      if [[ "$arg" == "--config" ]]; then
+        skip_next=1
+        continue
+      fi
+      salvage_args+=("$arg")
+    done
+    "$HOST_RUNNER" salvage "${salvage_args[@]}"
+    exit 0
   fi
 
   local -a container_args=("${passthrough[@]}")
@@ -115,6 +133,12 @@ main() {
 
   if (( has_config == 0 )); then
     container_args=(--config "$CONTAINER_CONFIG" "${container_args[@]}")
+  fi
+
+  if [[ -n "${DISCORD_TOKEN:-}" || -n "${DISCORD_TOKEN_FILE:-}" ]]; then
+    "$SETUP_AUTH" 2>/dev/null || true
+  elif [[ -x "$DISCOVER_TOKEN" ]] && "$DISCOVER_TOKEN" >/dev/null 2>&1; then
+    "$SETUP_AUTH" 2>/dev/null || true
   fi
 
   "$HOST_RUNNER" preflight "${container_args[@]}"

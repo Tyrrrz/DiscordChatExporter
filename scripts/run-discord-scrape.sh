@@ -15,6 +15,7 @@ usage() {
 Usage:
   run-discord-scrape.sh scrape [options]
   run-discord-scrape.sh preflight [options]
+  run-discord-scrape.sh salvage [options]
   run-discord-scrape.sh list-targets [--config PATH]
   run-discord-scrape.sh help
   run-discord-scrape.sh <DiscordChatExporter CLI args...>
@@ -22,6 +23,7 @@ Usage:
 Subcommands:
   scrape        Incrementally export channels into append-only JSON files.
   preflight     Validate token/config/target resolution without writing archives.
+  salvage       Merge quiescent stale .dce-temp exports into archives (no Discord export).
   list-targets  Print configured targets from the scrape config.
   help          Show this help text.
 
@@ -1156,6 +1158,54 @@ preflight_target() {
   die "Target '$target_name' failed preflight: every resolved channel is inaccessible and no seeded archives exist under $output_dir."
 }
 
+salvage_only_target() {
+  local target_json=$1
+  local defaults_json=$2
+  local target_name output_dir destination_path
+  local -a channel_ids=()
+  local channel_id before_count after_count
+
+  target_name=$(jq -r '.name' <<<"$target_json")
+  output_dir=$(jq -r '.output_dir' <<<"$target_json")
+  mkdir -p "$output_dir"
+  bootstrap_channel_map_from_archives "$output_dir"
+
+  mapfile -t channel_ids < <(resolve_target_channels "$target_json" "$defaults_json")
+  if (( ${#channel_ids[@]} == 0 )); then
+    die "Target '$target_name' resolved no channels."
+  fi
+
+  log "Target '$target_name': salvaging stale temp exports for ${#channel_ids[@]} channel(s) under $output_dir (no Discord export)."
+  log "  Server scope: $(describe_target_resolution "$target_json")"
+
+  for channel_id in "${channel_ids[@]}"; do
+    destination_path=$(resolve_destination_path "$output_dir" "$channel_id")
+    if [[ -n "$destination_path" && -f "$destination_path" ]]; then
+      jq empty "$destination_path" >/dev/null 2>&1 || die "Existing export is not valid JSON: $destination_path"
+      assert_export_channel_identity "$destination_path" "$channel_id"
+      before_count=$(message_count "$destination_path")
+    else
+      before_count=0
+    fi
+
+    mkdir -p "$output_dir/.dce-temp"
+    salvage_stale_temp_exports "$output_dir" "$channel_id" "$destination_path"
+
+    if [[ -n "$destination_path" && -f "$destination_path" ]]; then
+      after_count=$(message_count "$destination_path")
+      if (( after_count > before_count )); then
+        log "  Salvage appended $((after_count - before_count)) messages for channel $channel_id ($before_count → $after_count)."
+      else
+        log "  No salvage merge for channel $channel_id."
+      fi
+    else
+      log "  No archive path for channel $channel_id; salvage skipped or created nothing mergeable."
+    fi
+  done
+
+  log "Target '$target_name': salvage completed."
+}
+
 scrape_target() {
   local target_json=$1
   local defaults_json=$2
@@ -1345,7 +1395,9 @@ run_target_mode() {
 
   require_command jq
   validate_config_contract "$config_path"
-  [[ -n "${DISCORD_TOKEN:-}" ]] || die "DISCORD_TOKEN is not set."
+  if [[ "$mode" != "salvage" ]]; then
+    [[ -n "${DISCORD_TOKEN:-}" ]] || die "DISCORD_TOKEN is not set."
+  fi
 
   defaults_json=$(jq -c '.defaults // {}' "$config_path")
   mapfile -t selected_targets < <(load_selected_targets "$config_path" "${requested_targets[@]}")
@@ -1373,11 +1425,17 @@ run_target_mode() {
 
   local target_json
   for target_json in "${selected_targets[@]}"; do
-    if [[ "$mode" == "preflight" ]]; then
-      preflight_target "$target_json" "$defaults_json"
-    else
-      scrape_target "$target_json" "$defaults_json"
-    fi
+    case "$mode" in
+      preflight)
+        preflight_target "$target_json" "$defaults_json"
+        ;;
+      salvage)
+        salvage_only_target "$target_json" "$defaults_json"
+        ;;
+      scrape)
+        scrape_target "$target_json" "$defaults_json"
+        ;;
+    esac
   done
 
   if [[ "$mode" == "scrape" ]]; then
@@ -1415,6 +1473,9 @@ main() {
       ;;
     scrape)
       run_target_mode scrape "$@"
+      ;;
+    salvage)
+      run_target_mode salvage "$@"
       ;;
     *)
       exec "$CLI_BIN" "$subcommand" "$@"

@@ -158,6 +158,14 @@ cat >"$CONFIG_PATH" <<JSON
       "channel_ids": ["111"],
       "guild_ids": [],
       "guild_name_patterns": []
+    },
+    {
+      "name": "salvage-only",
+      "kind": "guild",
+      "output_dir": "$ARCHIVE_ROOT/salvage-only",
+      "channel_ids": ["111"],
+      "guild_ids": [],
+      "guild_name_patterns": []
     }
   ]
 }
@@ -455,6 +463,31 @@ SALVAGE_COUNT=$(jq -r '.messages | length' "$SALVAGE_DEST")
 jq -e '.messages[] | select(.id == "3")' "$SALVAGE_DEST" >/dev/null || { echo "expected salvaged message id 3 in archive" >&2; exit 1; }
 [[ ! -d "$ARCHIVE_ROOT/salvage-stale/.dce-temp/export.111.STALE" ]] || { echo "expected stale temp dir cleaned up after salvage" >&2; exit 1; }
 grep -q 'SALVAGED' "$SALVAGE_LOG" || { echo "expected SALVAGED line in salvage log" >&2; exit 1; }
+
+mkdir -p "$ARCHIVE_ROOT/salvage-only"
+cp "$FIXTURE_DIR/append-existing.json" "$ARCHIVE_ROOT/salvage-only/$DEFAULT_FILE_NAME"
+mkdir -p "$ARCHIVE_ROOT/salvage-only/.dce-meta"
+printf '{\"111\":\"%s\"}\n' "$ARCHIVE_ROOT/salvage-only/$DEFAULT_FILE_NAME" >"$ARCHIVE_ROOT/salvage-only/.dce-meta/channel-map.json"
+mkdir -p "$ARCHIVE_ROOT/salvage-only/.dce-temp/export.111.ONLYSTALE"
+cp "$FIXTURE_DIR/salvage-truncated.json" "$ARCHIVE_ROOT/salvage-only/.dce-temp/export.111.ONLYSTALE/export.json"
+touch -d '1 hour ago' "$ARCHIVE_ROOT/salvage-only/.dce-temp/export.111.ONLYSTALE/export.json"
+SALVAGE_ONLY_LOG="$TMP_DIR/salvage-only.log"
+DISCORD_TOKEN=dummy \
+  DCE_CLI_BIN="$FAKE_CLI" \
+  DCE_PRIMARY_CONFIG="$CONFIG_PATH" \
+  DCE_FALLBACK_CONFIG="$CONFIG_PATH" \
+  FAKE_DCE_FIXTURE_DIR="$FIXTURE_DIR" \
+  FAKE_DCE_MODE=append \
+  "$REPO_ROOT/scripts/run-discord-scrape.sh" salvage --config "$CONFIG_PATH" --target salvage-only >"$SALVAGE_ONLY_LOG" 2>&1
+grep -q 'Exporting channel' "$SALVAGE_ONLY_LOG" && {
+  echo "salvage-only should not invoke Discord export" >&2
+  cat "$SALVAGE_ONLY_LOG" >&2
+  exit 1
+}
+grep -q 'salvage completed' "$SALVAGE_ONLY_LOG" || { echo "expected salvage completed in salvage-only log" >&2; exit 1; }
+SALVAGE_ONLY_DEST="$ARCHIVE_ROOT/salvage-only/$DEFAULT_FILE_NAME"
+SALVAGE_ONLY_COUNT=$(jq -r '.messages | length' "$SALVAGE_ONLY_DEST")
+(( SALVAGE_ONLY_COUNT >= 3 )) || { echo "expected salvage-only archive to have at least 3 messages (got $SALVAGE_ONLY_COUNT)" >&2; exit 1; }
 
 # shellcheck disable=SC1091
 source "$REPO_ROOT/scripts/run-discord-scrape.sh"

@@ -46,7 +46,7 @@ DCE_REPO_ROOT="$FAKE_REPO" \
 
 ARCHIVE="$TMP_DIR/server"
 mkdir -p "$ARCHIVE"
-printf '{"messages":[{"id":"1","timestamp":"2020-01-01T00:00:00"}]}\n' >"$ARCHIVE/Guild - general [111111111111111111].json"
+printf '{"guild":{"id":"1","name":"Guild"},"channel":{"id":"111111111111111111","name":"general"},"messages":[{"id":"1","timestamp":"2020-01-01T00:00:00"}]}\n' >"$ARCHIVE/Guild - general [111111111111111111].json"
 
 cat >"$TMP_DIR/config.json" <<JSON
 {
@@ -109,6 +109,22 @@ DCE_MIN_FREE_MB=0 \
 grep -q '111111111111111111' "$ARGS_LOG" || {
   echo "expected --channel to reach container compose invocation" >&2
   cat "$ARGS_LOG" >&2
+  exit 1
+}
+
+cp "$REPO_ROOT/scripts/run-discord-scrape.sh" "$FAKE_REPO/scripts/"
+chmod +x "$FAKE_REPO/scripts/run-discord-scrape.sh"
+SALVAGE_DOC_LOG="$TMP_DIR/salvage-documents.log"
+DCE_MIN_FREE_MB=0 \
+  DCE_SKIP_SCRAPE_LOCK=1 \
+  "$REPO_ROOT/scripts/run-documents-scrape.sh" --salvage-only --config "$TMP_DIR/config.json" --target demo >"$SALVAGE_DOC_LOG" 2>&1 || {
+  echo "salvage-only documents scrape failed" >&2
+  cat "$SALVAGE_DOC_LOG" >&2
+  exit 1
+}
+grep -q 'salvage completed' "$SALVAGE_DOC_LOG" || {
+  echo "expected --salvage-only to run local salvage" >&2
+  cat "$SALVAGE_DOC_LOG" >&2
   exit 1
 }
 

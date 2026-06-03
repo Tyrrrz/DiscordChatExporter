@@ -76,6 +76,13 @@ if [[ "$mode" == "auth-persistent-fail" ]]; then
   exit 1
 fi
 
+if [[ "$mode" == "streaming" ]]; then
+  printf 'streaming-line1\n'
+  sleep 0.3
+  printf 'streaming-line2\n'
+  exit 0
+fi
+
 printf 'run succeeded\n'
 EOF
 chmod +x "$FAKE_DOCKER"
@@ -143,5 +150,27 @@ MISSING_ENV="$TMP_DIR/missing-scrape.env"
 printf '0' >"$CALL_COUNT"
 run_host_with_shell_token success "$MISSING_ENV" >/dev/null
 [[ "$(cat "$CALL_COUNT")" == "1" ]] || { echo "expected host wrapper to run with exported DISCORD_TOKEN when scrape.env is missing" >&2; exit 1; }
+
+STREAM_OUTPUT="$TMP_DIR/stream-output.txt"
+printf '0' >"$CALL_COUNT"
+run_host streaming >"$STREAM_OUTPUT" &
+stream_pid=$!
+for _ in $(seq 1 20); do
+  if grep -q streaming-line1 "$STREAM_OUTPUT" 2>/dev/null; then
+    break
+  fi
+  sleep 0.05
+done
+grep -q streaming-line1 "$STREAM_OUTPUT" || {
+  echo "expected streaming-line1 before host scrape completed" >&2
+  kill "$stream_pid" 2>/dev/null || true
+  wait "$stream_pid" 2>/dev/null || true
+  exit 1
+}
+wait "$stream_pid"
+grep -q streaming-line2 "$STREAM_OUTPUT" || {
+  echo "expected streaming-line2 in host scrape output" >&2
+  exit 1
+}
 
 echo "run-discord-scrape-host smoke test passed"

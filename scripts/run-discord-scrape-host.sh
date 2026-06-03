@@ -390,13 +390,10 @@ run_subcommand_with_retry() {
   output_file=$(mktemp "${TMPDIR:-/tmp}/dce-host-run.XXXXXX.log")
 
   compose_run_args run_args "$subcommand" "$@"
-  if "${run_args[@]}" >"$output_file" 2>&1; then
-    cat "$output_file"
+  if "${run_args[@]}" 2>&1 | tee "$output_file"; then
     rm -f "$output_file"
     return 0
   fi
-
-  cat "$output_file" >&2
 
   if ! is_discord_auth_failure "$output_file"; then
     rm -f "$output_file"
@@ -416,13 +413,11 @@ run_subcommand_with_retry() {
   ensure_token_present
   compose_run_args run_args "$subcommand" "$@"
 
-  if "${run_args[@]}" >"$output_file" 2>&1; then
-    cat "$output_file"
+  if "${run_args[@]}" 2>&1 | tee "$output_file"; then
     rm -f "$output_file"
     return 0
   fi
 
-  cat "$output_file" >&2
   rm -f "$output_file"
   die "Container run failed for '$subcommand' after one auth refresh retry."
 }

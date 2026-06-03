@@ -37,6 +37,7 @@ MISSING_ENV="$TMP_DIR/missing-scrape.env"
 [[ ! -e "$MISSING_ENV" ]]
 
 DCE_REPO_ROOT="$FAKE_REPO" \
+  DCE_SKIP_SCRAPE_LOCK=1 \
   DCE_DOCKER_BIN="$FAKE_DOCKER" \
   DCE_ENV_FILE="$MISSING_ENV" \
   DCE_COMPOSE_FILE="$COMPOSE_FILE" \
@@ -68,6 +69,7 @@ HOST="$REPO_ROOT/scripts/run-discord-scrape-host.sh"
 
 # Prove script should fail when host would shrink archives (simulate by patching fake docker to no-op)
 DCE_REPO_ROOT="$REPO_ROOT" \
+  DCE_SKIP_SCRAPE_LOCK=1 \
   DCE_DOCKER_BIN="$FAKE_DOCKER" \
   DCE_ENV_FILE="$MISSING_ENV" \
   DCE_COMPOSE_FILE="$COMPOSE_FILE" \

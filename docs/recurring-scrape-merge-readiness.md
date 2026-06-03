@@ -174,6 +174,8 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
 
 **Plan 072 (2026-06-04):** Host runner recovers JSON summary from the captured compose run log before deleting the temp file.
 
+**Plan 073 (2026-06-04):** Operator proof auto-writes `*.summary.json` beside proof log with tee-log recovery (parity with validation).
+
 **Disk:** ~65 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
 
 ## CI note (fork PRs)

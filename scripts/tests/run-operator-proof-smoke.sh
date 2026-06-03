@@ -67,6 +67,10 @@ grep -q 'Operator proof run plan' <<<"$output" || {
   echo "expected Operator proof run plan in dry-run output" >&2
   exit 1
 }
+if grep -q 'JSON summary file:' <<<"$output"; then
+  echo "dry-run should not enable JSON summary export" >&2
+  exit 1
+fi
 
 set +e
 salvage_output=$(
@@ -82,6 +86,10 @@ set -e
 if [[ "$salvage_status" -ne 0 ]] || ! grep -q 'Salvage-only proof complete' <<<"$salvage_output"; then
   printf 'run-operator-proof --salvage-only failed (status=%s)\n' "$salvage_status" >&2
   printf '%s\n' "$salvage_output" >&2
+  exit 1
+fi
+if grep -q 'JSON summary file:' <<<"$salvage_output"; then
+  echo "salvage-only should not enable JSON summary export" >&2
   exit 1
 fi
 
@@ -106,6 +114,10 @@ fi
 grep -q 'Operator proof passed for demo' <<<"$salvage_before_output" || {
   printf 'expected operator proof to pass after salvage-before scrape\n' >&2
   printf '%s\n' "$salvage_before_output" >&2
+  exit 1
+}
+grep -q 'JSON summary file:' <<<"$salvage_before_output" || {
+  printf 'expected JSON summary path when operator proof scrapes\n' >&2
   exit 1
 }
 

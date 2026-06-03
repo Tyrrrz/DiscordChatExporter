@@ -19,6 +19,7 @@ DRY_RUN=0
 SALVAGE_BEFORE=0
 SALVAGE_ONLY=0
 CHANNEL_ARGS=()
+LOG_FILE=""
 
 usage() {
   cat <<EOF
@@ -33,8 +34,10 @@ When --target is omitted, all enabled targets in the config are processed.
   --channel ID  With exactly one --target, limit scrape/prove to channel ID (repeatable)
   --salvage-only  Handoff + merge stale .dce-temp exports only (no Discord scrape or prove)
   --salvage-before-scrape  Merge stale .dce-temp exports before incremental scrape
+  --log-file PATH          Append output to this file (default: logs/operator-proof-UTC.log)
 
-Logs append to logs/operator-proof-<timestamp>.log
+Logs append to logs/operator-proof-<timestamp>.log (or --log-file). When scraping, also writes
+<log-basename>.summary.json unless DCE_RUN_SUMMARY_FILE is already set.
 EOF
 }
 
@@ -77,6 +80,11 @@ main() {
         CHANNEL_ARGS+=(--channel "$2")
         shift 2
         ;;
+      --log-file)
+        [[ $# -ge 2 ]] || die "Missing value for --log-file."
+        LOG_FILE=$2
+        shift 2
+        ;;
       --help|-h)
         usage
         exit 0
@@ -106,7 +114,20 @@ main() {
 
   mkdir -p "$LOG_DIR"
   local log_file
-  log_file="$LOG_DIR/operator-proof-$(date -u +%Y%m%dT%H%M%SZ).log"
+  if [[ -n "$LOG_FILE" ]]; then
+    log_file="$LOG_FILE"
+  else
+    log_file="$LOG_DIR/operator-proof-$(date -u +%Y%m%dT%H%M%SZ).log"
+  fi
+
+  local export_json_summary=0
+  if (( DRY_RUN == 0 && SALVAGE_ONLY == 0 )); then
+    export_json_summary=1
+    export DCE_RUN_SUMMARY_JSON=1
+    if [[ -z "${DCE_RUN_SUMMARY_FILE:-}" ]]; then
+      export DCE_RUN_SUMMARY_FILE="${log_file%.log}.summary.json"
+    fi
+  fi
 
   local failed=0 succeeded=0 name
 
@@ -118,6 +139,9 @@ main() {
     fi
     printf 'config: %s\n' "$CONFIG_PATH"
     print_scrape_config_plan "$CONFIG_PATH" "Operator proof" "${targets[@]}"
+    if (( export_json_summary )); then
+      printf 'JSON summary file: %s\n' "${DCE_RUN_SUMMARY_FILE:-}"
+    fi
     printf 'started: %s\n\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
     if (( SYNC_GUI_FLAG == 1 )); then
@@ -164,6 +188,14 @@ main() {
       "$succeeded" "$failed" "${#targets[@]}"
     (( failed == 0 )) || exit 1
   } 2>&1 | tee "$log_file"
+
+  if (( export_json_summary )) && [[ -n "${DCE_RUN_SUMMARY_FILE:-}" ]]; then
+    # shellcheck source=lib/scrape-summary-json.sh
+    source "$SCRIPT_DIR/lib/scrape-summary-json.sh"
+    if recover_json_summary_if_missing "$log_file" "$DCE_RUN_SUMMARY_FILE"; then
+      printf 'JSON summary recovered from log: %s\n' "$DCE_RUN_SUMMARY_FILE"
+    fi
+  fi
 
   printf 'Log: %s\n' "$log_file"
 }

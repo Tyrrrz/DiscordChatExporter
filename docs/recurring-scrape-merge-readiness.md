@@ -5,7 +5,7 @@
 | Gate | Status |
 |------|--------|
 | Offline smokes (`run-all-smokes.sh`) | 24/24 pass |
-| Branch HEAD (fork) | `27e133f` — GUI bridge KotOR wrapper doc sync (plan 084) |
+| Branch HEAD (fork) | `a59cff7` — operator-handoff KotOR catch-up hint (plan 085) |
 | Live proof (`run-operator-proof.sh --sync-gui --target eod_discord`) | Passed on maintainer host |
 | Monthly cron (`setup-cron.sh`) | Installed (`00 04 1 * *`); dry-run preflight OK for all enabled targets |
 | Upstream CI (fork PR) | `action_required` until Tyrrrz approves workflow runs |

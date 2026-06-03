@@ -5,6 +5,7 @@
 | Gate | Status |
 |------|--------|
 | Offline smokes (`run-all-smokes.sh`) | 23/23 pass |
+| Branch HEAD (fork) | `b71c697` — PR #1538 body synced plans 070–079 (plan 080) |
 | Live proof (`run-operator-proof.sh --sync-gui --target eod_discord`) | Passed on maintainer host |
 | Monthly cron (`setup-cron.sh`) | Installed (`00 04 1 * *`); dry-run preflight OK for all enabled targets |
 | Upstream CI (fork PR) | `action_required` until Tyrrrz approves workflow runs |
@@ -187,6 +188,8 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
 **Plan 078 (2026-06-04):** `run-documents-scrape.sh` `--log-file` with auto tee on live scrapes; summary pairs with log basename.
 
 **Plan 079 (2026-06-04):** `setup-cron.sh` installs `run-documents-scrape.sh --log-file` (unified workflow + JSON summary) instead of bare host scrape redirect.
+
+**Plan 080 (2026-06-04):** PR #1538 body refreshed with compact plans 070–079 operator delta and 23/23 gate.
 
 **Disk:** ~65 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
 

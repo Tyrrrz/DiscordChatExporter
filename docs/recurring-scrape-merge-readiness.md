@@ -206,6 +206,8 @@ DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
 
 **Plan 084 (2026-06-04):** GUI bridge + troubleshooting cite KotOR wrapper; merge-readiness HEAD synced; bridge sync smoke asserts wrapper + 24/24.
 
+**Plan 085 (2026-06-04):** `operator-handoff.sh` prints KotOR catch-up hint when `KotOR_discord_msgs` is enabled.
+
 **Disk:** ~65 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
 
 ## CI note (fork PRs)

@@ -91,4 +91,43 @@ grep -q 'salvage completed' <<<"$salvage_output" || {
   exit 1
 }
 
+KOTOR_CONFIG="$TMP_DIR/kotor-config.json"
+KOTOR_ARCHIVE="$TMP_DIR/archive/kotor"
+mkdir -p "$KOTOR_ARCHIVE"
+printf '{"messages":[{"id":"1"}],"channel":{"id":"221726893064454144"}}\n' \
+  >"$KOTOR_ARCHIVE/Guild - yes_general [221726893064454144].json"
+cat >"$KOTOR_CONFIG" <<JSON
+{
+  "archive_root": "$TMP_DIR/archive",
+  "targets": [
+    {
+      "name": "KotOR_discord_msgs",
+      "kind": "guild",
+      "output_dir": "$KOTOR_ARCHIVE",
+      "enabled": true
+    }
+  ]
+}
+JSON
+
+set +e
+kotor_output=$(
+  DCE_MIN_FREE_MB=0 \
+    DCE_CONFIG_FILE="$KOTOR_CONFIG" \
+    DCE_ENV_FILE="$ENV_PATH" \
+    "$HANDOFF" --config "$KOTOR_CONFIG" --skip-df 2>&1
+)
+kotor_status=$?
+set -e
+
+if [[ "$kotor_status" -ne 0 ]] || ! grep -q 'Handoff complete' <<<"$kotor_output"; then
+  printf 'operator-handoff KotOR hint failed (status=%s)\n' "$kotor_status" >&2
+  printf '%s\n' "$kotor_output" >&2
+  exit 1
+fi
+grep -q 'run-kotor-yes-general-catchup.sh' <<<"$kotor_output" || {
+  printf 'operator-handoff missing KotOR catch-up hint\n' >&2
+  exit 1
+}
+
 printf 'operator-handoff-smoke: ok\n'

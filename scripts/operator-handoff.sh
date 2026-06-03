@@ -60,6 +60,19 @@ require_command() {
   command -v "$1" >/dev/null 2>&1 || die "Required command '$1' is missing."
 }
 
+kotor_catchup_enabled() {
+  require_command jq
+  jq -e '.targets[] | select(.name == "KotOR_discord_msgs" and (.enabled // true) == true)' \
+    "$CONFIG_PATH" >/dev/null 2>&1
+}
+
+print_kotor_catchup_hint() {
+  kotor_catchup_enabled || return 0
+  printf '\nKotOR yes_general catch-up (channel 221726893064454144):\n'
+  printf '  ./scripts/run-kotor-yes-general-catchup.sh\n'
+  printf '  ./scripts/print-scrape-summary.sh logs/kotor-yes-general.summary.json\n'
+}
+
 main() {
   while (($#)); do
     case "$1" in
@@ -141,6 +154,7 @@ main() {
   if (( ! SALVAGE_ONLY )); then
     printf '  ./scripts/setup-cron.sh --dry-run\n'
   fi
+  print_kotor_catchup_hint
 }
 
 main "$@"

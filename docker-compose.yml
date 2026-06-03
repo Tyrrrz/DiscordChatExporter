@@ -4,6 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile
     image: discordchatexporter-cron:local
+    # 0 = no cap (default). Set DCE_CONTAINER_MEMORY=8g in scrape.env for large channel catch-up.
+    mem_limit: ${DCE_CONTAINER_MEMORY:-0}
     init: true
     user: "${DCE_UID:-1000}:${DCE_GID:-1000}"
     userns_mode: "${DCE_USERNS_MODE:-}"

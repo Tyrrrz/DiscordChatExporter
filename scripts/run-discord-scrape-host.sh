@@ -42,6 +42,7 @@ Environment:
   DCE_REAUTH_COMMAND       Optional absolute path to an executable reauth script under the repo root.
   DCE_COMPOSE_TTY          When zero, compose run passes -T (no pseudo-TTY). Default omits -T
                            so compose backends allocate a TTY for line-buffered progress logs.
+  DCE_CONTAINER_MEMORY     Optional container memory cap (e.g. 8g, 8192m). Default 0 = unlimited.
 
 Notes:
   When $ENV_FILE is missing, exported DISCORD_TOKEN or DISCORD_TOKEN_FILE is used instead.
@@ -182,6 +183,11 @@ write_compose_env_temp() {
   fi
   if [[ -n "${DCE_GID:-}" ]]; then
     printf 'DCE_GID=%s\n' "$DCE_GID" >>"$COMPOSE_ENV_TEMP"
+  fi
+  if [[ -n "${DCE_CONTAINER_MEMORY:-}" ]]; then
+    printf 'DCE_CONTAINER_MEMORY=%s\n' "$DCE_CONTAINER_MEMORY" >>"$COMPOSE_ENV_TEMP"
+  else
+    printf 'DCE_CONTAINER_MEMORY=0\n' >>"$COMPOSE_ENV_TEMP"
   fi
 }
 

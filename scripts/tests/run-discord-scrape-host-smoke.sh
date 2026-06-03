@@ -195,7 +195,28 @@ COMPOSE_TTY_LOG="$TMP_DIR/compose-tty-default.log"
 FAKE_COMPOSE="$TMP_DIR/fake-compose"
 cat >"$FAKE_COMPOSE" <<'EOF'
 #!/usr/bin/env bash
-printf '%s\n' "$*" >>"${FAKE_COMPOSE_ARGS_LOG:?}"
+all_args=( "$@" )
+while (($#)); do
+  case "$1" in
+    --env-file)
+      if [[ $# -ge 2 && -f "$2" ]]; then
+        while IFS='=' read -r env_key env_value || [[ -n "$env_key" ]]; do
+          [[ -z "$env_key" || "$env_key" =~ ^# ]] && continue
+          env_key=${env_key#export }
+          env_key=${env_key%%[[:space:]]*}
+          printf -v "$env_key" '%s' "$env_value"
+          export "$env_key"
+        done <"$2"
+      fi
+      shift 2
+      ;;
+    *)
+      shift
+      ;;
+  esac
+done
+printf 'env:DCE_CONTAINER_MEMORY=%s\n' "${DCE_CONTAINER_MEMORY:-}" >>"${FAKE_COMPOSE_ARGS_LOG:?}"
+printf '%s\n' "${all_args[*]}" >>"${FAKE_COMPOSE_ARGS_LOG:?}"
 printf 'run succeeded\n'
 EOF
 chmod +x "$FAKE_COMPOSE"
@@ -217,6 +238,19 @@ run_host_compose_capture "$ENV_FILE" "$FAKE_COMPOSE" "$COMPOSE_NOTTY_LOG" DCE_CO
 grep -qE '(^|[[:space:]])-T([[:space:]]|$)' "$COMPOSE_NOTTY_LOG" || {
   echo "expected DCE_COMPOSE_TTY=0 compose run to use -T" >&2
   cat "$COMPOSE_NOTTY_LOG" >&2
+  exit 1
+}
+
+MEM_ENV="$TMP_DIR/mem.env"
+cat >"$MEM_ENV" <<EOF
+DISCORD_TOKEN=dummy
+DCE_CONTAINER_MEMORY=8g
+EOF
+COMPOSE_MEM_LOG="$TMP_DIR/compose-mem.log"
+run_host_compose_capture "$MEM_ENV" "$FAKE_COMPOSE" "$COMPOSE_MEM_LOG" >/dev/null
+grep -q 'env:DCE_CONTAINER_MEMORY=8g' "$COMPOSE_MEM_LOG" || {
+  echo "expected DCE_CONTAINER_MEMORY=8g in compose env file passthrough" >&2
+  cat "$COMPOSE_MEM_LOG" >&2
   exit 1
 }
 

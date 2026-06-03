@@ -144,7 +144,15 @@ docker compose build   # or podman-compose build
 DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh --target KotOR_discord_msgs
 ```
 
-Large `yes_general` may still skip; export that channel separately with more container memory if needed.
+Large `yes_general` may still skip without a higher container cap; set `DCE_CONTAINER_MEMORY=8g` in `scrape.env` and export that channel separately:
+
+```bash
+# scrape.env: DCE_CONTAINER_MEMORY=8g
+DCE_MIN_FREE_MB=0 ./scripts/run-operator-validation.sh \
+  --salvage-before-scrape --target KotOR_discord_msgs --channel 221726893064454144
+```
+
+**Plan 063 (2026-06-04):** Optional `DCE_CONTAINER_MEMORY` compose `mem_limit` for large channel catch-up (default 0 = unlimited).
 
 **Disk:** ~65 GiB free on `/home` (2026-05-30); large channel merges still need headroom.
 

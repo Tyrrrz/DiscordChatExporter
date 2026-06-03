@@ -11,6 +11,8 @@ VERIFY_READY="$REPO_ROOT/scripts/verify-operator-ready.sh"
 DOCUMENTS_SCRAPE="$REPO_ROOT/scripts/run-documents-scrape.sh"
 AUDIT_JSON="$REPO_ROOT/scripts/audit-archive-json.sh"
 LOCK_STATUS="$REPO_ROOT/scripts/scrape-lock-status.sh"
+# shellcheck source=lib/scrape-lock.sh
+source "$SCRIPT_DIR/lib/scrape-lock.sh"
 
 DRY_RUN=0
 SKIP_SCRAPE=0
@@ -91,12 +93,8 @@ audit_targets() {
   (( failures == 0 ))
 }
 
-ensure_scrape_lock_available() {
-  if [[ "${DCE_SKIP_SCRAPE_LOCK:-0}" == "1" ]]; then
-    return 0
-  fi
-  [[ -x "$LOCK_STATUS" ]] || return 0
-  if ! "$LOCK_STATUS" --config "$CONFIG_PATH"; then
+require_scrape_lock_free() {
+  if ! ensure_scrape_lock_available "$CONFIG_PATH" "$LOCK_STATUS"; then
     die "Scrape lock is held; another scrape may be running. Inspect: $LOCK_STATUS --config $CONFIG_PATH"
   fi
 }
@@ -292,7 +290,7 @@ main() {
     if (( SKIP_SCRAPE )); then
       log_step "Skip scrape requested."
     else
-      ensure_scrape_lock_available || failures=$((failures + 1))
+      require_scrape_lock_free || failures=$((failures + 1))
       if (( failures == 0 )); then
         if (( PER_TARGET )) && [[ -z "$TARGET" ]]; then
           scrape_per_target || failures=$((failures + 1))

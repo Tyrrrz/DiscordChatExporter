@@ -6,6 +6,8 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
 REPO_ROOT="${DCE_REPO_ROOT:-$(cd "$SCRIPT_DIR/.." && pwd -P)}"
 # shellcheck source=lib/scrape-run-plan.sh
 source "$SCRIPT_DIR/lib/scrape-run-plan.sh"
+# shellcheck source=lib/scrape-lock.sh
+source "$SCRIPT_DIR/lib/scrape-lock.sh"
 COMPOSE_FILE="${DCE_COMPOSE_FILE:-$REPO_ROOT/docker-compose.yml}"
 ENV_FILE="${DCE_ENV_FILE:-$REPO_ROOT/scrape.env}"
 DOCKER_BIN="${DCE_DOCKER_BIN:-docker}"
@@ -61,70 +63,26 @@ cleanup_compose_env() {
   fi
 }
 
-resolve_scrape_lock_file() {
-  local config_path=$1
-
-  if [[ -n "${DCE_SCRAPE_LOCK_FILE:-}" ]]; then
-    printf '%s\n' "$DCE_SCRAPE_LOCK_FILE"
-    return 0
-  fi
-
-  local archive_root=""
-  if [[ -f "$config_path" ]]; then
-    archive_root=$(jq -r '.archive_root // empty' "$config_path" 2>/dev/null) || true
-  fi
-  if [[ -n "$archive_root" && "$archive_root" != null ]]; then
-    printf '%s/.dce-scrape.lock\n' "$archive_root"
-  else
-    printf '%s/.dce-scrape.lock\n' "$REPO_ROOT"
-  fi
-}
-
-scrape_lock_meta_path() {
-  printf '%s.meta\n' "$SCRAPE_LOCK_FILE"
-}
-
 write_scrape_lock_meta() {
   local meta_file
-  meta_file=$(scrape_lock_meta_path)
+  meta_file=$(scrape_lock_meta_path "$SCRAPE_LOCK_FILE")
   printf 'pid=%s\nstarted=%s\ncmd=%s\n' \
     "$$" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(ps -o args= -p $$ 2>/dev/null | head -c 500 || echo unknown)" >"$meta_file"
 }
 
 remove_scrape_lock_meta() {
-  rm -f "$(scrape_lock_meta_path)"
-}
-
-format_scrape_lock_holder() {
-  local meta_file=$1
-  local pid="" started="" cmd="" holder_state=""
-
-  [[ -f "$meta_file" ]] || return 0
-  pid=$(grep -E '^pid=' "$meta_file" | head -1 | cut -d= -f2- || true)
-  started=$(grep -E '^started=' "$meta_file" | head -1 | cut -d= -f2- || true)
-  cmd=$(grep -E '^cmd=' "$meta_file" | head -1 | cut -d= -f2- || true)
-  [[ -n "$pid" ]] || return 0
-
-  if kill -0 "$pid" 2>/dev/null; then
-    holder_state="running"
-  else
-    holder_state="not running"
-  fi
-  printf 'Holder pid %s (%s, started %s): %s' "$pid" "$holder_state" "${started:-unknown}" "${cmd:-unknown}"
+  rm -f "$(scrape_lock_meta_path "$SCRAPE_LOCK_FILE")"
 }
 
 try_reclaim_stale_scrape_lock() {
   local meta_file pid
-  meta_file=$(scrape_lock_meta_path)
-  [[ -f "$meta_file" ]] || return 1
-  pid=$(grep -E '^pid=' "$meta_file" | head -1 | cut -d= -f2- || true)
-  [[ -n "$pid" ]] || return 1
-  if kill -0 "$pid" 2>/dev/null; then
-    return 1
+  meta_file=$(scrape_lock_meta_path "$SCRAPE_LOCK_FILE")
+  pid=$(read_scrape_lock_meta_field "$meta_file" pid)
+  if scrape_lock_try_reclaim_meta "$meta_file"; then
+    printf 'WARN: reclaiming scrape lock; previous holder pid %s is not running.\n' "$pid" >&2
+    return 0
   fi
-  printf 'WARN: reclaiming scrape lock; previous holder pid %s is not running.\n' "$pid" >&2
-  remove_scrape_lock_meta
-  return 0
+  return 1
 }
 
 acquire_scrape_lock() {
@@ -136,7 +94,7 @@ acquire_scrape_lock() {
   command -v flock >/dev/null 2>&1 || return 0
 
   [[ -n "$config_path" ]] || config_path="$REPO_ROOT/config/scrape-targets.json"
-  SCRAPE_LOCK_FILE=$(resolve_scrape_lock_file "$config_path")
+  SCRAPE_LOCK_FILE=$(resolve_scrape_lock_file "$config_path" "$REPO_ROOT")
   mkdir -p "$(dirname "$SCRAPE_LOCK_FILE")"
 
   exec {SCRAPE_LOCK_FD}>>"$SCRAPE_LOCK_FILE"
@@ -146,7 +104,7 @@ acquire_scrape_lock() {
       return 0
     fi
     local holder_msg=""
-    holder_msg=$(format_scrape_lock_holder "$(scrape_lock_meta_path)") || true
+    holder_msg=$(scrape_lock_format_holder_summary "$(scrape_lock_meta_path "$SCRAPE_LOCK_FILE")") || true
     if [[ -n "$holder_msg" ]]; then
       die "Another scrape is already running (lock: $SCRAPE_LOCK_FILE). $holder_msg"
     fi

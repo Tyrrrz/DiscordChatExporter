@@ -12,6 +12,8 @@ VERIFY_SCRIPT="$REPO_ROOT/scripts/verify-documents-archives.sh"
 VERIFY_READY="$REPO_ROOT/scripts/verify-operator-ready.sh"
 SETUP_AUTH="$REPO_ROOT/scripts/setup-scrape-auth.sh"
 LOCK_STATUS="$REPO_ROOT/scripts/scrape-lock-status.sh"
+# shellcheck source=lib/scrape-lock.sh
+source "$SCRIPT_DIR/lib/scrape-lock.sh"
 # shellcheck source=lib/scrape-run-plan.sh
 source "$SCRIPT_DIR/lib/scrape-run-plan.sh"
 
@@ -41,12 +43,8 @@ die() {
   exit 1
 }
 
-ensure_scrape_lock_available() {
-  if [[ "${DCE_SKIP_SCRAPE_LOCK:-0}" == "1" ]]; then
-    return 0
-  fi
-  [[ -x "$LOCK_STATUS" ]] || return 0
-  if ! "$LOCK_STATUS" --config "$CONFIG_PATH"; then
+require_scrape_lock_free() {
+  if ! ensure_scrape_lock_available "$CONFIG_PATH" "$LOCK_STATUS"; then
     die "Scrape lock is held; another scrape may be running. Inspect: $LOCK_STATUS --config $CONFIG_PATH"
   fi
 }
@@ -139,7 +137,7 @@ main() {
 
   "$VERIFY_READY" --disk-only --config "$CONFIG_PATH"
 
-  ensure_scrape_lock_available
+  require_scrape_lock_free
 
   if (( salvage_only == 1 )); then
     run_local_salvage "${passthrough[@]}"

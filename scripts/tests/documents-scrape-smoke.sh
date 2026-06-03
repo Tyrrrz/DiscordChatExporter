@@ -14,6 +14,7 @@ FAKE_REPO="$TMP_DIR/fake-repo"
 mkdir -p "$FAKE_REPO/scripts/lib"
 cp "$REPO_ROOT/scripts/run-discord-scrape-host.sh" "$FAKE_REPO/scripts/"
 cp "$REPO_ROOT/scripts/lib/scrape-run-plan.sh" "$FAKE_REPO/scripts/lib/"
+cp "$REPO_ROOT/scripts/lib/scrape-lock.sh" "$FAKE_REPO/scripts/lib/"
 chmod +x "$FAKE_REPO/scripts/run-discord-scrape-host.sh"
 
 COMPOSE_FILE="$TMP_DIR/docker-compose.yml"

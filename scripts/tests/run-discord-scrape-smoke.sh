@@ -136,6 +136,14 @@ cat >"$CONFIG_PATH" <<JSON
       "guild_name_patterns": []
     },
     {
+      "name": "skip-sigterm",
+      "kind": "guild",
+      "output_dir": "$ARCHIVE_ROOT/skip-sigterm",
+      "channel_ids": ["111", "143"],
+      "guild_ids": [],
+      "guild_name_patterns": []
+    },
+    {
       "name": "salvage-stale",
       "kind": "guild",
       "output_dir": "$ARCHIVE_ROOT/salvage-stale",
@@ -197,6 +205,12 @@ case "$subcommand" in
       cp "$fixture_dir/salvage-truncated.json" "$output"
       echo "Aborted (core dumped)" >&2
       exit 134
+    fi
+
+    if [[ "$channel" == "143" ]]; then
+      cp "$fixture_dir/salvage-truncated.json" "$output"
+      echo "Terminated" >&2
+      exit 143
     fi
 
     case "$mode" in
@@ -391,6 +405,16 @@ grep -q 'Preserving partial export temp' "$SKIP_ABORT_LOG" || { echo "expected p
 partial_temp_dirs=( "$ARCHIVE_ROOT/skip-abort/.dce-temp"/export.134.* )
 [[ -d "${partial_temp_dirs[0]}" ]] || { echo "expected partial temp dir preserved for channel 134" >&2; exit 1; }
 [[ -s "${partial_temp_dirs[0]}/export.json" ]] || { echo "expected partial export.json preserved for channel 134" >&2; exit 1; }
+
+mkdir -p "$ARCHIVE_ROOT/skip-sigterm"
+cp "$FIXTURE_DIR/append-existing.json" "$ARCHIVE_ROOT/skip-sigterm/$DEFAULT_FILE_NAME"
+SKIP_SIGTERM_LOG="$TMP_DIR/skip-sigterm.log"
+run_wrapper skip-sigterm append 2>"$SKIP_SIGTERM_LOG"
+SKIP_SIGTERM_DEST="$ARCHIVE_ROOT/skip-sigterm/$DEFAULT_FILE_NAME"
+[[ "$(jq -r '.messages | length' "$SKIP_SIGTERM_DEST")" == "3" ]] || { echo "expected skip-sigterm to append accessible channel" >&2; exit 1; }
+grep -q 'SKIPPED.*143' "$SKIP_SIGTERM_LOG" || { echo "expected SKIPPED line for sigterm channel 143" >&2; exit 1; }
+grep -q 'exit 143' "$SKIP_SIGTERM_LOG" || { echo "expected sigterm exit logged for channel 143" >&2; exit 1; }
+grep -q 'Preserving partial export temp' "$SKIP_SIGTERM_LOG" || { echo "expected partial temp preserved on sigterm channel 143" >&2; exit 1; }
 
 # Salvage stale temp export smoke
 mkdir -p "$ARCHIVE_ROOT/salvage-stale"

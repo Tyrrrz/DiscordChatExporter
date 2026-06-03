@@ -731,8 +731,8 @@ export_channel_incremental() {
     return 0
   fi
 
-  # SIGABRT (134), SIGKILL/OOM (137), SIGSEGV (139) — bash reports these when the CLI crashes.
-  if (( export_status == 134 || export_status == 137 || export_status == 139 )); then
+  # SIGINT (130), SIGTERM (143), SIGABRT (134), SIGKILL/OOM (137), SIGSEGV (139)
+  if (( export_status == 130 || export_status == 143 || export_status == 134 || export_status == 137 || export_status == 139 )); then
     log "Skipping channel $channel_id (export process aborted, exit $export_status)."
     [[ -s "$export_log" ]] && cat "$export_log" >&2
     rm -f "$export_log"

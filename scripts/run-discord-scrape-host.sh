@@ -37,6 +37,8 @@ Environment:
   DISCORD_TOKEN            Direct token value (highest precedence after refresh).
   DISCORD_TOKEN_FILE       Optional path to a file containing the Discord token.
   DCE_REAUTH_COMMAND       Optional absolute path to an executable reauth script under the repo root.
+  DCE_COMPOSE_TTY          When zero, compose run passes -T (no pseudo-TTY). Default omits -T
+                           so compose backends allocate a TTY for line-buffered progress logs.
 
 Notes:
   When $ENV_FILE is missing, exported DISCORD_TOKEN or DISCORD_TOKEN_FILE is used instead.
@@ -255,11 +257,19 @@ resolve_compose_bin() {
   COMPOSE_BIN=""
 }
 
+compose_tty_flag() {
+  if [[ "${DCE_COMPOSE_TTY:-1}" == "0" ]]; then
+    printf '%s' '-T'
+  fi
+}
+
 compose_run_args() {
   local -n _out=$1
   local subcommand=$2
+  local tty_flag
   shift 2
 
+  tty_flag=$(compose_tty_flag)
   resolve_compose_bin
 
   _out=()
@@ -269,7 +279,9 @@ compose_run_args() {
       --env-file "$COMPOSE_ENV_FILE"
       -f "$COMPOSE_FILE"
       run
-      -T
+    )
+    [[ -n "$tty_flag" ]] && _out+=("$tty_flag")
+    _out+=(
       --rm
       discord-scraper
       "$subcommand"
@@ -280,7 +292,9 @@ compose_run_args() {
       --env-file "$COMPOSE_ENV_FILE"
       -f "$COMPOSE_FILE"
       run
-      -T
+    )
+    [[ -n "$tty_flag" ]] && _out+=("$tty_flag")
+    _out+=(
       --rm
       discord-scraper
       "$subcommand"
@@ -292,7 +306,9 @@ compose_run_args() {
       --env-file "$COMPOSE_ENV_FILE"
       -f "$COMPOSE_FILE"
       run
-      -T
+    )
+    [[ -n "$tty_flag" ]] && _out+=("$tty_flag")
+    _out+=(
       --rm
       discord-scraper
       "$subcommand"

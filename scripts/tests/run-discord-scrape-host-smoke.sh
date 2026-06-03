@@ -103,6 +103,24 @@ run_host() {
     "$REPO_ROOT/scripts/run-discord-scrape-host.sh" scrape --target demo
 }
 
+run_host_compose_capture() {
+  local env_path=${1:-$ENV_FILE}
+  local compose_bin=$2
+  local args_log=$3
+  shift 3
+  local -a extra_env=( "$@" )
+
+  env -u DISCORD_TOKEN \
+    DCE_SKIP_SCRAPE_LOCK=1 \
+    DCE_COMPOSE_BIN="$compose_bin" \
+    DCE_REPO_ROOT="$REPO_ROOT" \
+    DCE_ENV_FILE="$env_path" \
+    DCE_COMPOSE_FILE="$COMPOSE_FILE" \
+    FAKE_COMPOSE_ARGS_LOG="$args_log" \
+    "${extra_env[@]}" \
+    "$REPO_ROOT/scripts/run-discord-scrape-host.sh" scrape --target demo
+}
+
 run_host_with_shell_token() {
   local mode=$1
   local missing_env_path=$2
@@ -170,6 +188,35 @@ grep -q streaming-line1 "$STREAM_OUTPUT" || {
 wait "$stream_pid"
 grep -q streaming-line2 "$STREAM_OUTPUT" || {
   echo "expected streaming-line2 in host scrape output" >&2
+  exit 1
+}
+
+COMPOSE_TTY_LOG="$TMP_DIR/compose-tty-default.log"
+FAKE_COMPOSE="$TMP_DIR/fake-compose"
+cat >"$FAKE_COMPOSE" <<'EOF'
+#!/usr/bin/env bash
+printf '%s\n' "$*" >>"${FAKE_COMPOSE_ARGS_LOG:?}"
+printf 'run succeeded\n'
+EOF
+chmod +x "$FAKE_COMPOSE"
+
+run_host_compose_capture "$ENV_FILE" "$FAKE_COMPOSE" "$COMPOSE_TTY_LOG" >/dev/null
+grep -q ' run --rm ' "$COMPOSE_TTY_LOG" || {
+  echo "expected default compose run to omit -T for live TTY allocation" >&2
+  cat "$COMPOSE_TTY_LOG" >&2
+  exit 1
+}
+grep -qE '(^|[[:space:]])-T([[:space:]]|$)' "$COMPOSE_TTY_LOG" && {
+  echo "expected default compose run not to pass -T" >&2
+  cat "$COMPOSE_TTY_LOG" >&2
+  exit 1
+}
+
+COMPOSE_NOTTY_LOG="$TMP_DIR/compose-tty-off.log"
+run_host_compose_capture "$ENV_FILE" "$FAKE_COMPOSE" "$COMPOSE_NOTTY_LOG" DCE_COMPOSE_TTY=0 >/dev/null
+grep -qE '(^|[[:space:]])-T([[:space:]]|$)' "$COMPOSE_NOTTY_LOG" || {
+  echo "expected DCE_COMPOSE_TTY=0 compose run to use -T" >&2
+  cat "$COMPOSE_NOTTY_LOG" >&2
   exit 1
 }
 

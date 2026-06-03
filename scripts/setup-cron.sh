@@ -348,7 +348,7 @@ main() {
     lock_prefix=""
   fi
 
-  job_line="$cron_line cd $(printf '%q' "$REPO_ROOT") && ${lock_prefix}${scrape_command}>> $(printf '%q' "$LOG_FILE") 2>&1"
+  job_line="$cron_line cd $(printf '%q' "$REPO_ROOT") && DCE_COMPOSE_TTY=0 ${lock_prefix}${scrape_command}>> $(printf '%q' "$LOG_FILE") 2>&1"
 
   local cron_block
   cron_block=$(printf '%s\n%s\n%s\n' "$begin_marker" "$job_line" "$end_marker")

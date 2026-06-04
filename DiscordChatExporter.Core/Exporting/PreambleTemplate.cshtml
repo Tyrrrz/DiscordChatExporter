@@ -1,5 +1,6 @@
 @using System
 @using System.Threading.Tasks
+@using RazorBlade
 
 @inherits RazorBlade.HtmlTemplate
 
@@ -24,10 +25,10 @@
     string FormatDate(DateTimeOffset instant, string format = "g") =>
         Context.FormatDate(instant, format);
 
-    async ValueTask<string> FormatMarkdownAsync(string markdown) =>
+    async ValueTask<IEncodedContent> FormatMarkdownAsync(string markdown) =>
         Context.Request.ShouldFormatMarkdown
-            ? await HtmlMarkdownVisitor.FormatAsync(Context, markdown, true, CancellationToken)
-            : markdown;
+            ? Html.Raw(await HtmlMarkdownVisitor.FormatAsync(Context, markdown, true, CancellationToken))
+            : Html.Raw(Html.Encode(markdown));
 }
 
 <!DOCTYPE html>
@@ -748,7 +749,7 @@
         .chatlog__embed-spotify {
             border: 0;
         }
-        
+
         .chatlog__embed-twitch {
             border: 0;
         }
@@ -1063,7 +1064,7 @@
 
         @if (!string.IsNullOrWhiteSpace(Context.Request.Channel.Topic))
         {
-            <div class="preamble__entry preamble__entry--small">@Html.Raw(await FormatMarkdownAsync(Context.Request.Channel.Topic))</div>
+            <div class="preamble__entry preamble__entry--small">@(await FormatMarkdownAsync(Context.Request.Channel.Topic))</div>
         }
 
         @if (Context.Request.After is not null || Context.Request.Before is not null)

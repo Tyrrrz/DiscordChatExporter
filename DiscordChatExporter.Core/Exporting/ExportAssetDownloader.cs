@@ -39,22 +39,27 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
 
         // Check for a file cached by the legacy naming scheme (5-char hash) and rename it
         // to the new naming scheme to preserve backwards compatibility with existing exports
+        // This will catch both the 5-char lowercase hash and the 5-char uppercase hash variants
         if (reuse)
         {
-            var legacyFilePath = Path.Combine(workingDirPath, GetLegacyFileNameFromUrl(url));
-            if (File.Exists(legacyFilePath))
+            var legacyFileNames = GetLegacyFileNamesFromUrl(url);
+            foreach (var legacyFileName in legacyFileNames)
             {
-                // Overwrite in case the destination file was created concurrently between our
-                // earlier existence check and this move operation
-                try
+                var legacyFilePath = Path.Combine(workingDirPath, legacyFileName);
+                if (File.Exists(legacyFilePath))
                 {
-                    File.Move(legacyFilePath, filePath, overwrite: true);
-                    return _previousPathsByUrl[url] = filePath;
-                }
-                catch (IOException)
-                {
-                    // The legacy file was moved or deleted concurrently or something else happened.
-                    // Upgrading old files is not crucial, so we can just move on.
+                    // Overwrite in case the destination file was created concurrently between our
+                    // earlier existence check and this move operation
+                    try
+                    {
+                        File.Move(legacyFilePath, filePath, overwrite: true);
+                        return _previousPathsByUrl[url] = filePath;
+                    }
+                    catch (IOException)
+                    {
+                        // The legacy file was moved or deleted concurrently or something else happened.
+                        // Upgrading old files is not crucial, so we can just move on.
+                    }
                 }
             }
         }
@@ -137,13 +142,23 @@ internal partial class ExportAssetDownloader
         );
 
     // Legacy naming used a 5-char hash, kept for backwards compatibility with existing exports
-    private static string GetLegacyFileNameFromUrl(string url) =>
-        GetFileNameFromUrl(
-            url,
-            SHA256
-                .HashData(Encoding.UTF8.GetBytes(NormalizeUrl(url)))
-                .Pipe(Convert.ToHexStringLower)
-                // 5 chars = 20 bits, reaches 1% collision probability at ~145 files
-                .Truncate(5)
-        );
+    private static string[] GetLegacyFileNamesFromUrl(string url)
+    {
+        var hashData = SHA256.HashData(Encoding.UTF8.GetBytes(NormalizeUrl(url)));
+
+        return
+        [
+            // Lowercase variant (introduced in 2.46.1)
+            GetFileNameFromUrl(
+                url,
+                Convert.ToHexStringLower(hashData).Truncate(5)
+            ),
+
+            // Uppercase variant (original)
+            GetFileNameFromUrl(
+                url,
+                Convert.ToHexString(hashData).Truncate(5)
+            )
+        ];
+    }
 }

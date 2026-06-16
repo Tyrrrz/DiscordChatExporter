@@ -87,10 +87,14 @@ internal partial class ExportAssetDownloader
 {
     private static string NormalizeUrl(string url)
     {
-        // Remove signature parameters from Discord CDN URLs to normalize them
+        // Remove signature parameters from Discord CDN/media URLs to normalize them
         var uri = new Uri(url);
-        if (!string.Equals(uri.Host, "cdn.discordapp.com", StringComparison.OrdinalIgnoreCase))
+
+        if (!string.Equals(uri.Host, "cdn.discordapp.com", StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(uri.Host, "media.discordapp.net", StringComparison.OrdinalIgnoreCase))
+        {
             return url;
+        }
 
         var query = HttpUtility.ParseQueryString(uri.Query);
         query.Remove("ex");

@@ -89,17 +89,17 @@ from:96\-LB
 In most cases, you will need to enclose your filter in quotes (`"`) to escape characters that may have special meaning in your shell:
 
 ```console
-DiscordChatExporter.Cli export [...] --filter "from:Tyrrrz has:image"
+$ ./DiscordChatExporter.Cli export [...] --filter "from:Tyrrrz has:image"
 ```
 
 If you need to include quotes inside the filter itself as well, use single quotes (`'`) for those instead:
 
 ```console
-DiscordChatExporter.Cli export [...] --filter "from:Tyrrrz 'hello world'"
+$ ./DiscordChatExporter.Cli export [...] --filter "from:Tyrrrz 'hello world'"
 ```
 
 Additionally, negated filters (those that start with `-`) may cause parsing issues even when enclosed in quotes. To avoid this, use the tilde (`~`) character instead of the dash (`-`):
 
 ```console
-DiscordChatExporter.Cli export [...] --filter ~from:Tyrrrz
+$ ./DiscordChatExporter.Cli export [...] --filter ~from:Tyrrrz
 ```

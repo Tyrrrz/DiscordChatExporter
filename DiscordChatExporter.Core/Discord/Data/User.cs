@@ -1,7 +1,7 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
-using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Reading;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Discord.Data;
 
@@ -18,7 +18,7 @@ public partial record User(
     string AvatarUrl
 ) : IHasId
 {
-    public string DiscriminatorFormatted =>
+    public string DiscriminatorFormatted { get; } =
         Discriminator is not null ? $"{Discriminator:0000}" : "0000";
 
     // This effectively represents the user's true identity.

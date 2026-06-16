@@ -1,4 +1,4 @@
-﻿namespace DiscordChatExporter.Core.Exporting.Partitioning;
+namespace DiscordChatExporter.Core.Exporting.Partitioning;
 
 internal class NullPartitionLimit : PartitionLimit
 {

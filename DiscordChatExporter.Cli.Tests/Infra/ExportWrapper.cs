@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,12 +19,7 @@ namespace DiscordChatExporter.Cli.Tests.Infra;
 
 public static class ExportWrapper
 {
-    private static readonly AsyncKeyedLocker<string> Locker =
-        new(o =>
-        {
-            o.PoolSize = 20;
-            o.PoolInitialFill = 1;
-        });
+    private static readonly AsyncKeyedLocker<string> Locker = new();
 
     private static readonly string DirPath = Path.Combine(
         Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
@@ -61,7 +56,7 @@ public static class ExportWrapper
                 ExportFormat = format,
                 OutputPath = filePath,
                 Locale = "en-US",
-                IsUtcNormalizationEnabled = true
+                IsUtcNormalizationEnabled = true,
             }.ExecuteAsync(console);
         }
 
@@ -93,13 +88,12 @@ public static class ExportWrapper
         Snowflake messageId
     )
     {
-        var message = (await GetMessagesAsHtmlAsync(channelId)).SingleOrDefault(
-            e =>
-                string.Equals(
-                    e.GetAttribute("data-message-id"),
-                    messageId.ToString(),
-                    StringComparison.OrdinalIgnoreCase
-                )
+        var message = (await GetMessagesAsHtmlAsync(channelId)).SingleOrDefault(e =>
+            string.Equals(
+                e.GetAttribute("data-message-id"),
+                messageId.ToString(),
+                StringComparison.OrdinalIgnoreCase
+            )
         );
 
         if (message is null)
@@ -117,13 +111,12 @@ public static class ExportWrapper
         Snowflake messageId
     )
     {
-        var message = (await GetMessagesAsJsonAsync(channelId)).SingleOrDefault(
-            j =>
-                string.Equals(
-                    j.GetProperty("id").GetString(),
-                    messageId.ToString(),
-                    StringComparison.OrdinalIgnoreCase
-                )
+        var message = (await GetMessagesAsJsonAsync(channelId)).SingleOrDefault(j =>
+            string.Equals(
+                j.GetProperty("id").GetString(),
+                messageId.ToString(),
+                StringComparison.OrdinalIgnoreCase
+            )
         );
 
         if (message.ValueKind == JsonValueKind.Undefined)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -7,8 +7,7 @@ using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exporting.Filtering;
 using DiscordChatExporter.Core.Exporting.Partitioning;
-using DiscordChatExporter.Core.Utils;
-using DiscordChatExporter.Core.Utils.Extensions;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting;
 
@@ -34,6 +33,8 @@ public partial class ExportRequest
 
     public MessageFilter MessageFilter { get; }
 
+    public bool IsReverseMessageOrder { get; }
+
     public bool ShouldFormatMarkdown { get; }
 
     public bool ShouldDownloadAssets { get; }
@@ -56,6 +57,7 @@ public partial class ExportRequest
         Snowflake? before,
         PartitionLimit partitionLimit,
         MessageFilter messageFilter,
+        bool isReverseMessageOrder,
         bool shouldFormatMarkdown,
         bool shouldDownloadAssets,
         bool shouldReuseAssets,
@@ -70,6 +72,7 @@ public partial class ExportRequest
         Before = before;
         PartitionLimit = partitionLimit;
         MessageFilter = messageFilter;
+        IsReverseMessageOrder = isReverseMessageOrder;
         ShouldFormatMarkdown = shouldFormatMarkdown;
         ShouldDownloadAssets = shouldDownloadAssets;
         ShouldReuseAssets = shouldReuseAssets;
@@ -145,7 +148,7 @@ public partial class ExportRequest
         // File extension
         buffer.Append('.').Append(format.GetFileExtension());
 
-        return PathEx.EscapeFileName(buffer.ToString());
+        return Path.EscapeFileName(buffer.ToString());
     }
 
     private static string FormatPath(
@@ -160,7 +163,7 @@ public partial class ExportRequest
             path,
             "%.",
             m =>
-                PathEx.EscapeFileName(
+                Path.EscapeFileName(
                     m.Value switch
                     {
                         // On %T and %P, we have to make sure that we still get name and position of the category if the channel is a thread
@@ -201,7 +204,7 @@ public partial class ExportRequest
                             ),
 
                         "%%" => "%",
-                        _ => m.Value
+                        _ => m.Value,
                     }
                 )
         );

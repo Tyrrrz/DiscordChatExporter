@@ -1,4 +1,4 @@
-﻿using DiscordChatExporter.Core.Discord.Data;
+using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exporting.Filtering.Parsing;
 using Superpower;
 

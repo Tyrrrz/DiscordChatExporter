@@ -1,32 +1,31 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using CliFx.Attributes;
+using CliFx.Binding;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands.Base;
 using DiscordChatExporter.Cli.Commands.Converters;
 using DiscordChatExporter.Cli.Commands.Shared;
 using DiscordChatExporter.Core.Discord;
-using DiscordChatExporter.Core.Discord.Data;
-using DiscordChatExporter.Core.Utils.Extensions;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Cli.Commands;
 
 [Command("channels", Description = "Get the list of channels in a server.")]
-public class GetChannelsCommand : DiscordCommandBase
+public partial class GetChannelsCommand : DiscordCommandBase
 {
     [CommandOption("guild", 'g', Description = "Server ID.")]
-    public required Snowflake GuildId { get; init; }
+    public required Snowflake GuildId { get; set; }
 
     [CommandOption("include-vc", Description = "Include voice channels.")]
-    public bool IncludeVoiceChannels { get; init; } = true;
+    public bool IncludeVoiceChannels { get; set; } = true;
 
     [CommandOption(
         "include-threads",
         Description = "Which types of threads should be included.",
-        Converter = typeof(ThreadInclusionModeBindingConverter)
+        Converter = typeof(ThreadInclusionModeInputConverter)
     )]
-    public ThreadInclusionMode ThreadInclusionMode { get; init; } = ThreadInclusionMode.None;
+    public ThreadInclusionMode ThreadInclusionMode { get; set; } = ThreadInclusionMode.None;
 
     public override async ValueTask ExecuteAsync(IConsole console)
     {
@@ -59,7 +58,7 @@ public class GetChannelsCommand : DiscordCommandBase
                 )
                     .OrderBy(c => c.Name)
                     .ToArray()
-                : Array.Empty<Channel>();
+                : [];
 
         foreach (var channel in channels)
         {

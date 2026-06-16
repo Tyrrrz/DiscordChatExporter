@@ -2,8 +2,6 @@
 
 ## Installation & Usage
 
-- [Get .NET Core Runtime](Dotnet.md) (Required for CLI; Installed automatically for GUI; Not required in Docker)
-- [Windows](Getting-started.md#gui-or-cli) | [macOS](MacOS.md) | [Linux](Linux.md) | [Docker](Docker.md)
 - Getting started:
   - [Using the GUI](Using-the-GUI.md)
   - [Using the CLI](Using-the-CLI.md)
@@ -29,6 +27,5 @@
 - [General questions](Troubleshooting.md#general)
 - [First steps help](Troubleshooting.md#first-steps)
 - [It's crashing/failing](Troubleshooting.md#DCE-is-crashingfailing)
-- [.NET Core Runtime is required](Troubleshooting.md#net-core-runtime-is-required)
 - [Errors](Troubleshooting.md#errors)
 - [**More help**](Troubleshooting.md)

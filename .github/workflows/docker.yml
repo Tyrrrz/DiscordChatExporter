@@ -4,16 +4,15 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - master
+      - prime
     tags:
       - "*"
   pull_request:
     branches:
-      - master
+      - prime
 
 jobs:
-  # Outputs from this job aren't really used, but it's here to verify that
-  # the Dockerfile builds correctly on pull requests.
+  # Outputs from this job aren't really used, but it's here to verify that the Dockerfile builds correctly
   pack:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -24,10 +23,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # 4.1.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Install Docker Buildx
-        uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # 3.0.0
+        uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4.1.0
 
       - name: Build image
         run: >
@@ -37,16 +36,16 @@ jobs:
           --build-arg VERSION=${{ github.ref_type == 'tag' && github.ref_name || format('999.9.9-ci-{0}', github.sha) }}
           --output type=tar,dest=DiscordChatExporter.Cli.Docker.tar
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # 3.1.3
+      - name: Upload image
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: DiscordChatExporter.Cli.Docker
           path: DiscordChatExporter.Cli.Docker.tar
           if-no-files-found: error
 
   deploy:
-    # Deploy to DockerHub only on tag push or master branch push
-    if: ${{ github.ref_type == 'tag' || github.ref_type == 'branch' && github.ref_name == 'master' }}
+    # Deploy to DockerHub only on tag push or prime branch push
+    if: ${{ github.ref_type == 'tag' || github.ref_type == 'branch' && github.ref_name == 'prime' }}
 
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -56,10 +55,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # 4.1.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Install Docker Buildx
-        uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # 3.0.0
+        uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4.1.0
 
       - name: Login to DockerHub
         run: >

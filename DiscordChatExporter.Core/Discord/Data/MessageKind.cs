@@ -1,4 +1,4 @@
-﻿namespace DiscordChatExporter.Core.Discord.Data;
+namespace DiscordChatExporter.Core.Discord.Data;
 
 // https://discord.com/developers/docs/resources/channel#message-object-message-types
 public enum MessageKind
@@ -12,5 +12,5 @@ public enum MessageKind
     ChannelPinnedMessage = 6,
     GuildMemberJoin = 7,
     ThreadCreated = 18,
-    Reply = 19
+    Reply = 19,
 }

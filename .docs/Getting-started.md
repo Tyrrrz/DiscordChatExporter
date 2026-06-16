@@ -15,12 +15,9 @@ The information presented on this page is valid for **all** platforms.
 **DCE** has two different versions:
 
 - **Graphical User Interface** (**GUI**) - it's the preferred version for newcomers as it is easy to use.
-  You can get it by [downloading](https://github.com/Tyrrrz/DiscordChatExporter/releases/latest) the `DiscordChatExporter.zip` file.
+  You can get it by [downloading](https://github.com/Tyrrrz/DiscordChatExporter/releases/latest) the `DiscordChatExporter.*.zip` file.
 - **Command-line Interface** (**CLI**) - offers greater flexibility and more features for advanced users, such as export scheduling, ID lists, and more specific date ranges.
-  You can get it by [downloading](https://github.com/Tyrrrz/DiscordChatExporter/releases/latest) the `DiscordChatExporter.CLI.zip` file.
-
-If you're not comfortable with **Windows'** Command-line (cmd), please choose the GUI.
-[**macOS**](MacOS.md), [**Linux**](Linux.md) and [**Docker**](Docker.md) users can only use the CLI version.
+  You can get it by [downloading](https://github.com/Tyrrrz/DiscordChatExporter/releases/latest) the `DiscordChatExporter.Cli.*.zip` file.
 
 There are dedicated guides for each version:
 
@@ -36,15 +33,15 @@ The HTML format replicates Discord's interface, making it the most user-friendly
 It's the best format for attachment preview and sharing.
 You can open `.html` files with a web browser, such as Google Chrome.
 
-> **Warning**:
+> [!WARNING]
 > If a picture is deleted, or if a user changes its avatar, the respective images will no longer be displayed.
-> Export using the "Download referenced assets" (`--media`) option to avoid this.
+> Export using the "Download assets" (`--media`) option to avoid this.
 
 ### Plain Text
 
 <img src="https://i.imgur.com/PbUyRXD.png" height="400"/>
 
-The Plain Text format is the best option for archiving due to its small size.
+The Plain Text format formats messages as plain text, and has the smallest size.
 You can open `.txt` files with a text editor, such as Notepad.
 
 ### JSON

@@ -24,7 +24,7 @@ Follow the [instructions here](Token-and-IDs.md).
 
 ### Will I get banned if I use this?
 
-Automating user accounts is technically against [TOS](https://discord.com/terms), use at your discretion. [Bot accounts](https://discord.com/developers/docs/topics/oauth2#bots) don't have this restriction.
+Automating user accounts is technically against [TOS](https://discord.com/terms), use at your discretion. [Bot accounts](https://discord.com/developers/docs/topics/oauth2#bot-users) don't have this restriction.
 
 ### Will the messages disappear from the exported file if I delete a message, delete my account or block a person?
 
@@ -70,14 +70,7 @@ Check the following page: [Obtaining token](Token-and-IDs.md)
 
 ### When I open DCE a black window pops up quickly or nothing shows up
 
-If you have [.NET Core Runtime correctly installed](Dotnet.md), you might have downloaded the CLi flavor, try [downloading the GUI](Getting-started.md#gui-or-cli) instead.
-
-### How do I run DCE on macOS or Linux?
-
-Check the following pages:
-
-- [macOS usage instructions](MacOS.md)
-- [Linux usage instructions](Linux.md)
+You might have downloaded the CLI flavor of the app, which is meant to be run in a terminal. Try [downloading the GUI](Getting-started.md#gui-or-cli) instead if that's what you want.
 
 ### How can I set DCE to export automatically at certain times?
 
@@ -90,16 +83,6 @@ Check the following pages to learn how to schedule **DiscordChatExporter.CLI** r
 ### The exported file is too large, I can't open it
 
 Try opening it with a different program, try partitioning or use a different file format, like `PlainText`.
-
-### DCE is crashing/failing
-
-Check the following page: [Installing .NET Core Runtime](Dotnet.md)
-
-If you already have .NET Core installed, please check if your problem is a [known issue](https://github.com/Tyrrrz/DiscordChatExporter/issues?q=is%3Aissue) before [opening a bug report](https://github.com/Tyrrrz/DiscordChatExporter/issues/new).
-
-### .NET Core Runtime is required
-
-Check the following page: [Installing .NET Core Runtime](Dotnet.md)
 
 ### I see messages in the export, but they have no content
 
@@ -133,34 +116,26 @@ Make sure you're [copying the DM Channel ID](Token-and-IDs.md#how-to-get-a-direc
 
 ## Errors
 
-```console
+```yml
 DiscordChatExporter.Domain.Exceptions.DiscordChatExporterException: Authentication token is invalid.
-...
 ```
 
 ↳ Make sure the provided token is correct.
 
-```console
+```yml
 DiscordChatExporter.Domain.Exceptions.DiscordChatExporterException: Requested resource does not exist.
 ```
 
 ↳ Check your channel ID, it might be invalid. [Read this if you need help](Token-and-IDs.md).
 
-```console
+```yml
 DiscordChatExporter.Domain.Exceptions.DiscordChatExporterException: Access is forbidden.
 ```
 
 ↳ This means you don't have access to the channel.
 
-```console
-The application to execute does not exist:
-```
-
-↳ The `DiscordChatExporter.Cli.dll` file is missing. Keep the `.exe` and all the `.dll` files together. If you didn't move the files, try unzipping again.
-
-```console
+```yml
 System.Net.WebException: Error: TrustFailure ... Invalid certificate received from server.
-...
 ```
 
 ↳ Try running cert-sync.
@@ -170,6 +145,12 @@ Debian/Ubuntu: `cert-sync /etc/ssl/certs/ca-certificates.crt`
 Red Hat: `cert-sync --user /etc/pki/tls/certs/ca-bundle.crt`
 
 If it still doesn't work, try mozroots: `mozroots --import --ask-remove`
+
+## macOS-specific
+
+### DiscordChatExporter is damaged and can’t be opened. You should move it to the Trash.
+
+Check the [Using the GUI page](Using-the-GUI.md#step-1) for instructions on how to run the app.
 
 ---
 

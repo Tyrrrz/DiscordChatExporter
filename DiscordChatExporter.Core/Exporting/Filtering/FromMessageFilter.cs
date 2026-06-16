@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using DiscordChatExporter.Core.Discord.Data;
 
 namespace DiscordChatExporter.Core.Exporting.Filtering;

@@ -7,5 +7,5 @@ public enum EmbedKind
     Image,
     Video,
     Gifv,
-    Link
+    Link,
 }

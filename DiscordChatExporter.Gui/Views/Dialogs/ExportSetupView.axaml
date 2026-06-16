@@ -1,0 +1,285 @@
+<UserControl
+    x:Class="DiscordChatExporter.Gui.Views.Dialogs.ExportSetupView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+    xmlns:converters="clr-namespace:DiscordChatExporter.Gui.Converters"
+    xmlns:dialogs="clr-namespace:DiscordChatExporter.Gui.ViewModels.Dialogs"
+    xmlns:materialAssists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
+    xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:utils="clr-namespace:DiscordChatExporter.Gui.Utils"
+    x:Name="UserControl"
+    Width="380"
+    x:DataType="dialogs:ExportSetupViewModel">
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!--  Guild/channel info  -->
+        <Grid
+            Grid.Row="0"
+            Margin="16"
+            ColumnDefinitions="Auto,*">
+            <!--  Guild icon  -->
+            <Ellipse
+                Grid.Column="0"
+                Width="32"
+                Height="32">
+                <Ellipse.Fill>
+                    <ImageBrush asyncImageLoader:ImageBrushLoader.Source="{Binding Guild.IconUrl}" />
+                </Ellipse.Fill>
+            </Ellipse>
+
+            <!--  Channel count (for multiple channels)  -->
+            <TextBlock
+                Grid.Column="1"
+                Margin="8,0,0,0"
+                VerticalAlignment="Center"
+                FontSize="19"
+                FontWeight="Light"
+                IsVisible="{Binding !IsSingleChannel}"
+                TextTrimming="CharacterEllipsis">
+                <Run Text="{Binding Channels.Count, FallbackValue=0, Mode=OneWay}" />
+                <Run Text="{Binding LocalizationManager.ChannelsSelectedText}" />
+            </TextBlock>
+
+            <!--  Category and channel name (for single channel)  -->
+            <TextBlock
+                Grid.Column="1"
+                Margin="8,0,0,0"
+                VerticalAlignment="Center"
+                FontSize="19"
+                FontWeight="Light"
+                IsVisible="{Binding IsSingleChannel}"
+                TextTrimming="CharacterEllipsis"
+                ToolTip.Tip="{Binding Channels[0], Converter={x:Static converters:ChannelToHierarchicalNameStringConverter.Instance}}">
+                <Run Text="{Binding Channels[0].Parent.Name, StringFormat='{}{0} / ', FallbackValue='', TargetNullValue='', Mode=OneWay}" /><Run FontWeight="SemiBold" Text="{Binding Channels[0].Name, Mode=OneWay}" />
+            </TextBlock>
+        </Grid>
+
+        <Border
+            Grid.Row="1"
+            Padding="0,8"
+            BorderBrush="{DynamicResource MaterialDividerBrush}"
+            BorderThickness="0,1">
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <StackPanel Orientation="Vertical">
+                    <!--  Output path  -->
+                    <TextBox
+                        Margin="16,8"
+                        materialAssists:TextFieldAssist.Label="{Binding LocalizationManager.OutputPathLabel}"
+                        Text="{Binding OutputPath}"
+                        Theme="{DynamicResource FilledTextBox}">
+                        <ToolTip.Tip>
+                            <TextBlock
+                                MaxWidth="400"
+                                Inlines="{Binding LocalizationManager.OutputPathTooltip, Converter={x:Static converters:MarkdownToInlinesConverter.Instance}}"
+                                TextWrapping="Wrap" />
+                        </ToolTip.Tip>
+                        <TextBox.InnerRightContent>
+                            <Button
+                                Margin="8,8,8,6"
+                                Padding="8"
+                                VerticalAlignment="Center"
+                                Command="{Binding ShowOutputPathPromptCommand}"
+                                Theme="{DynamicResource MaterialFlatButton}">
+                                <materialIcons:MaterialIcon
+                                    Width="20"
+                                    Height="20"
+                                    Kind="FolderOpen" />
+                            </Button>
+                        </TextBox.InnerRightContent>
+                    </TextBox>
+
+                    <!--  Format  -->
+                    <ComboBox
+                        Margin="16,8"
+                        materialAssists:ComboBoxAssist.Label="{Binding LocalizationManager.FormatLabel}"
+                        ItemsSource="{Binding AvailableFormats}"
+                        SelectedItem="{Binding SelectedFormat}"
+                        Theme="{DynamicResource MaterialFilledComboBox}"
+                        ToolTip.Tip="{Binding LocalizationManager.FormatTooltip}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={x:Static converters:ExportFormatToStringConverter.Instance}}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <!--  Advanced section  -->
+                    <StackPanel
+                        Margin="16,8"
+                        IsVisible="{Binding IsAdvancedSectionDisplayed}"
+                        Orientation="Vertical"
+                        Spacing="16">
+                        <!--  Date limits  -->
+                        <Grid
+                            ColumnDefinitions="*,*"
+                            ColumnSpacing="16"
+                            RowDefinitions="*,*"
+                            RowSpacing="16">
+                            <DatePicker
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                materialAssists:TextFieldAssist.Label="{Binding LocalizationManager.AfterDateLabel}"
+                                SelectedDate="{Binding AfterDate}"
+                                ToolTip.Tip="{Binding LocalizationManager.AfterDateTooltip}">
+                                <DatePicker.Styles>
+                                    <Style Selector="DatePicker">
+                                        <Style Selector="^ /template/ TextBox#DisplayTextBox">
+                                            <Setter Property="Theme" Value="{DynamicResource FilledTextBox}" />
+                                        </Style>
+                                    </Style>
+                                </DatePicker.Styles>
+                            </DatePicker>
+                            <DatePicker
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                materialAssists:TextFieldAssist.Label="{Binding LocalizationManager.BeforeDateLabel}"
+                                SelectedDate="{Binding BeforeDate}"
+                                ToolTip.Tip="{Binding LocalizationManager.BeforeDateTooltip}">
+                                <DatePicker.Styles>
+                                    <Style Selector="DatePicker">
+                                        <Style Selector="^ /template/ TextBox#DisplayTextBox">
+                                            <Setter Property="Theme" Value="{DynamicResource FilledTextBox}" />
+                                        </Style>
+                                    </Style>
+                                </DatePicker.Styles>
+                            </DatePicker>
+
+                            <!--  Time limits  -->
+                            <TimePicker
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                materialAssists:TextFieldAssist.Label="{Binding LocalizationManager.AfterTimeLabel}"
+                                ClockIdentifier="{x:Static utils:Internationalization.AvaloniaClockIdentifier}"
+                                IsEnabled="{Binding IsAfterDateSet}"
+                                SelectedTime="{Binding AfterTime}"
+                                ToolTip.Tip="{Binding LocalizationManager.AfterTimeTooltip}">
+                                <TimePicker.Styles>
+                                    <Style Selector="TimePicker">
+                                        <Style Selector="^ /template/ TextBox#PART_DisplayTextBox">
+                                            <Setter Property="Theme" Value="{DynamicResource FilledTextBox}" />
+                                        </Style>
+                                    </Style>
+                                </TimePicker.Styles>
+                            </TimePicker>
+                            <TimePicker
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                materialAssists:TextFieldAssist.Label="{Binding LocalizationManager.BeforeTimeLabel}"
+                                ClockIdentifier="{x:Static utils:Internationalization.AvaloniaClockIdentifier}"
+                                IsEnabled="{Binding IsBeforeDateSet}"
+                                SelectedTime="{Binding BeforeTime}"
+                                ToolTip.Tip="{Binding LocalizationManager.BeforeTimeTooltip}">
+                                <TimePicker.Styles>
+                                    <Style Selector="TimePicker">
+                                        <Style Selector="^ /template/ TextBox#PART_DisplayTextBox">
+                                            <Setter Property="Theme" Value="{DynamicResource FilledTextBox}" />
+                                        </Style>
+                                    </Style>
+                                </TimePicker.Styles>
+                            </TimePicker>
+                        </Grid>
+
+                        <!--  Partitioning  -->
+                        <TextBox
+                            materialAssists:TextFieldAssist.Label="{Binding LocalizationManager.PartitionLimitLabel}"
+                            Text="{Binding PartitionLimitValue}"
+                            Theme="{DynamicResource FilledTextBox}"
+                            ToolTip.Tip="{Binding LocalizationManager.PartitionLimitTooltip}" />
+
+                        <!--  Filtering  -->
+                        <TextBox
+                            materialAssists:TextFieldAssist.Label="{Binding LocalizationManager.MessageFilterLabel}"
+                            Text="{Binding MessageFilterValue}"
+                            Theme="{DynamicResource FilledTextBox}"
+                            ToolTip.Tip="{Binding LocalizationManager.MessageFilterTooltip}" />
+
+                        <!--  Reverse message order  -->
+                        <DockPanel LastChildFill="False" ToolTip.Tip="{Binding LocalizationManager.ReverseMessageOrderTooltip}">
+                            <TextBlock DockPanel.Dock="Left" Text="{Binding LocalizationManager.ReverseMessageOrderLabel}" />
+                            <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding IsReverseMessageOrder}" />
+                        </DockPanel>
+
+                        <!--  Markdown formatting  -->
+                        <DockPanel LastChildFill="False" ToolTip.Tip="{Binding LocalizationManager.FormatMarkdownTooltip}">
+                            <TextBlock DockPanel.Dock="Left" Text="{Binding LocalizationManager.FormatMarkdownLabel}" />
+                            <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding ShouldFormatMarkdown}" />
+                        </DockPanel>
+
+                        <!--  Download assets  -->
+                        <DockPanel LastChildFill="False" ToolTip.Tip="{Binding LocalizationManager.DownloadAssetsTooltip}">
+                            <TextBlock DockPanel.Dock="Left" Text="{Binding LocalizationManager.DownloadAssetsLabel}" />
+                            <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding ShouldDownloadAssets}" />
+                        </DockPanel>
+
+                        <!--  Reuse assets  -->
+                        <DockPanel
+                            IsEnabled="{Binding ShouldDownloadAssets}"
+                            LastChildFill="False"
+                            ToolTip.Tip="{Binding LocalizationManager.ReuseAssetsTooltip}">
+                            <TextBlock DockPanel.Dock="Left" Text="{Binding LocalizationManager.ReuseAssetsLabel}" />
+                            <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding ShouldReuseAssets}" />
+                        </DockPanel>
+
+                        <!--  Assets path  -->
+                        <TextBox
+                            materialAssists:TextFieldAssist.Label="{Binding LocalizationManager.AssetsDirPathLabel}"
+                            IsEnabled="{Binding ShouldDownloadAssets}"
+                            Text="{Binding AssetsDirPath}"
+                            Theme="{DynamicResource FilledTextBox}"
+                            ToolTip.Tip="{Binding LocalizationManager.AssetsDirPathTooltip}">
+                            <TextBox.InnerRightContent>
+                                <Button
+                                    Margin="8,8,8,6"
+                                    Padding="8"
+                                    VerticalAlignment="Center"
+                                    Command="{Binding ShowAssetsDirPathPromptCommand}"
+                                    Theme="{DynamicResource MaterialFlatButton}">
+                                    <materialIcons:MaterialIcon
+                                        Width="20"
+                                        Height="20"
+                                        Kind="FolderOpen" />
+                                </Button>
+                            </TextBox.InnerRightContent>
+                        </TextBox>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!--  Buttons  -->
+        <Grid
+            Grid.Row="2"
+            Margin="16"
+            ColumnDefinitions="Auto,*,Auto,Auto"
+            ColumnSpacing="8">
+            <ToggleButton
+                Grid.Column="0"
+                IsChecked="{Binding IsAdvancedSectionDisplayed}"
+                Theme="{DynamicResource MaterialOutlineButton}"
+                ToolTip.Tip="{Binding LocalizationManager.AdvancedOptionsTooltip}">
+                <Button.Styles>
+                    <Style Selector="ToggleButton">
+                        <Setter Property="Content" Value="MORE" />
+
+                        <Style Selector="^:checked">
+                            <Setter Property="Content" Value="LESS" />
+                        </Style>
+                    </Style>
+                </Button.Styles>
+            </ToggleButton>
+
+            <Button
+                Grid.Column="2"
+                Command="{Binding ConfirmCommand}"
+                Content="{Binding LocalizationManager.ExportButton}"
+                IsDefault="True"
+                Theme="{DynamicResource MaterialOutlineButton}" />
+            <Button
+                Grid.Column="3"
+                Command="{Binding CloseCommand}"
+                Content="{Binding LocalizationManager.CancelButton}"
+                IsCancel="True"
+                Theme="{DynamicResource MaterialOutlineButton}" />
+        </Grid>
+    </Grid>
+</UserControl>

@@ -1,4 +1,4 @@
-﻿namespace DiscordChatExporter.Core.Discord.Data;
+namespace DiscordChatExporter.Core.Discord.Data;
 
 // https://discord.com/developers/docs/resources/channel#channel-object-channel-types
 public enum ChannelKind
@@ -14,5 +14,5 @@ public enum ChannelKind
     GuildPrivateThread = 12,
     GuildStageVoice = 13,
     GuildDirectory = 14,
-    GuildForum = 15
+    GuildForum = 15,
 }

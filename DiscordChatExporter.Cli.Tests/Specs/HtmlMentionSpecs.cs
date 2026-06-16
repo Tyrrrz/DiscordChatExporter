@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using AngleSharp.Dom;
 using DiscordChatExporter.Cli.Tests.Infra;
 using DiscordChatExporter.Core.Discord;
@@ -60,5 +60,18 @@ public class HtmlMentionSpecs
 
         // Assert
         message.Text().Should().Contain("Role mention: @Role 1");
+    }
+
+    [Fact]
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_thread_mention()
+    {
+        // Act
+        var message = await ExportWrapper.GetMessageAsHtmlAsync(
+            ChannelIds.MentionTestCases,
+            Snowflake.Parse("1474874276828938290")
+        );
+
+        // Assert
+        message.Text().Should().Contain("Thread mention: #Thread starting message");
     }
 }

@@ -1,9 +1,9 @@
-﻿using System.Text;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Markdown;
 using DiscordChatExporter.Core.Markdown.Parsing;
-using DiscordChatExporter.Core.Utils.Extensions;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting;
 
@@ -57,6 +57,12 @@ internal partial class PlainTextMarkdownVisitor(ExportContext context, StringBui
         }
         else if (mention.Kind == MentionKind.Channel)
         {
+            // Channel/thread mentions may reference threads that are not preloaded,
+            // so we resolve them on demand.
+            // https://github.com/Tyrrrz/DiscordChatExporter/issues/1261
+            if (mention.TargetId is not null)
+                await context.PopulateChannelAsync(mention.TargetId.Value, cancellationToken);
+
             var channel = mention.TargetId?.Pipe(context.TryGetChannel);
             var name = channel?.Name ?? "deleted-channel";
 

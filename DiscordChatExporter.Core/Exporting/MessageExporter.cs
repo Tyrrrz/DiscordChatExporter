@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,24 +13,7 @@ internal partial class MessageExporter(ExportContext context) : IAsyncDisposable
 
     public long MessagesExported { get; private set; }
 
-    private async ValueTask ResetWriterAsync(CancellationToken cancellationToken = default)
-    {
-        if (_writer is not null)
-        {
-            try
-            {
-                await _writer.WritePostambleAsync(cancellationToken);
-            }
-            // Writer must be disposed, even if it fails to write the postamble
-            finally
-            {
-                await _writer.DisposeAsync();
-                _writer = null;
-            }
-        }
-    }
-
-    private async ValueTask<MessageWriter> GetWriterAsync(
+    private async ValueTask<MessageWriter> InitializeWriterAsync(
         CancellationToken cancellationToken = default
     )
     {
@@ -43,7 +26,7 @@ internal partial class MessageExporter(ExportContext context) : IAsyncDisposable
             )
         )
         {
-            await ResetWriterAsync(cancellationToken);
+            await UninitializeWriterAsync(cancellationToken);
             _partitionIndex++;
         }
 
@@ -60,17 +43,41 @@ internal partial class MessageExporter(ExportContext context) : IAsyncDisposable
         return _writer = writer;
     }
 
+    private async ValueTask UninitializeWriterAsync(CancellationToken cancellationToken = default)
+    {
+        if (_writer is not null)
+        {
+            try
+            {
+                await _writer.WritePostambleAsync(cancellationToken);
+            }
+            // Writer must be disposed, even if it fails to write the postamble
+            finally
+            {
+                await _writer.DisposeAsync();
+                _writer = null;
+            }
+        }
+    }
+
     public async ValueTask ExportMessageAsync(
         Message message,
         CancellationToken cancellationToken = default
     )
     {
-        var writer = await GetWriterAsync(cancellationToken);
+        var writer = await InitializeWriterAsync(cancellationToken);
         await writer.WriteMessageAsync(message, cancellationToken);
         MessagesExported++;
     }
 
-    public async ValueTask DisposeAsync() => await ResetWriterAsync();
+    public async ValueTask DisposeAsync()
+    {
+        // If not messages were written, force the creation of an empty file
+        if (MessagesExported <= 0)
+            _ = await InitializeWriterAsync();
+
+        await UninitializeWriterAsync();
+    }
 }
 
 internal partial class MessageExporter
@@ -100,13 +107,15 @@ internal partial class MessageExporter
             ExportFormat.PlainText => new PlainTextMessageWriter(File.Create(filePath), context),
             ExportFormat.Csv => new CsvMessageWriter(File.Create(filePath), context),
             ExportFormat.HtmlDark => new HtmlMessageWriter(File.Create(filePath), context, "Dark"),
-            ExportFormat.HtmlLight
-                => new HtmlMessageWriter(File.Create(filePath), context, "Light"),
+            ExportFormat.HtmlLight => new HtmlMessageWriter(
+                File.Create(filePath),
+                context,
+                "Light"
+            ),
             ExportFormat.Json => new JsonMessageWriter(File.Create(filePath), context),
-            _
-                => throw new ArgumentOutOfRangeException(
-                    nameof(format),
-                    $"Unknown export format '{format}'."
-                )
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(format),
+                $"Unknown export format '{format}'."
+            ),
         };
 }

@@ -1,3 +1,13 @@
-﻿using CliFx;
+using System.Threading.Tasks;
+using CliFx;
 
-return await new CliApplicationBuilder().AddCommandsFromThisAssembly().Build().RunAsync(args);
+namespace DiscordChatExporter.Cli;
+
+public static class Program
+{
+    public static async Task<int> Main(string[] args) =>
+        await new CommandLineApplicationBuilder()
+            .AddCommandsFromThisAssembly()
+            .Build()
+            .RunAsync(args);
+}

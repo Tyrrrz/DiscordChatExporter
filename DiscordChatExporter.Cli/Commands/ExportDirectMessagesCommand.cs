@@ -1,14 +1,14 @@
-﻿using System.Threading.Tasks;
-using CliFx.Attributes;
+using System.Threading.Tasks;
+using CliFx.Binding;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands.Base;
 using DiscordChatExporter.Core.Discord.Data;
-using DiscordChatExporter.Core.Utils.Extensions;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Cli.Commands;
 
 [Command("exportdm", Description = "Exports all direct message channels.")]
-public class ExportDirectMessagesCommand : ExportCommandBase
+public partial class ExportDirectMessagesCommand : ExportCommandBase
 {
     public override async ValueTask ExecuteAsync(IConsole console)
     {

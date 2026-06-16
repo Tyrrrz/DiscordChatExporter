@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using DiscordChatExporter.Cli.Tests.Infra;
 using DiscordChatExporter.Core.Discord;
-using DiscordChatExporter.Core.Utils.Extensions;
 using FluentAssertions;
+using PowerKit.Extensions;
 using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
@@ -90,12 +90,11 @@ public class HtmlEmbedSpecs
             .QuerySelectorAll("source")
             .Select(e => e.GetAttribute("src"))
             .WhereNotNull()
-            .Where(
-                s =>
-                    s.Contains(
-                        "i_am_currently_feeling_slight_displeasure_of_what_you_have_just_sent_lqrem.mp4",
-                        StringComparison.Ordinal
-                    )
+            .Where(s =>
+                s.Contains(
+                    "i_am_currently_feeling_slight_displeasure_of_what_you_have_just_sent_lqrem.mp4",
+                    StringComparison.Ordinal
+                )
             )
             .Should()
             .ContainSingle();
@@ -150,6 +149,26 @@ public class HtmlEmbedSpecs
         iframeUrl.Should().StartWith("https://open.spotify.com/embed/track/1LHZMWefF9502NPfArRfvP");
     }
 
+    [Fact(Skip = "Twitch does not allow embeds from inside local HTML files")]
+    public async Task I_can_export_a_channel_that_contains_a_message_with_a_Twitch_clip_embed()
+    {
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/1196
+
+        // Act
+        var message = await ExportWrapper.GetMessageAsHtmlAsync(
+            ChannelIds.EmbedTestCases,
+            Snowflake.Parse("1207002986128216074")
+        );
+
+        // Assert
+        var iframeUrl = message.QuerySelector("iframe")?.GetAttribute("src");
+        iframeUrl
+            .Should()
+            .StartWith(
+                "https://clips.twitch.tv/embed?clip=SpicyMildCiderThisIsSparta--PQhbllrvej_Ee7v"
+            );
+    }
+
     [Fact]
     public async Task I_can_export_a_channel_that_contains_a_message_with_a_YouTube_video_embed()
     {
@@ -162,8 +181,14 @@ public class HtmlEmbedSpecs
         );
 
         // Assert
-        var iframeUrl = message.QuerySelector("iframe")?.GetAttribute("src");
-        iframeUrl.Should().StartWith("https://www.youtube.com/embed/qOWW4OlgbvE");
+        // Check that the YouTube video thumbnail image exists with the correct video ID
+        var youtubeThumbnailSrc = message
+            .QuerySelectorAll("img")
+            .Select(e => e.GetAttribute("src"))
+            .WhereNotNull()
+            .FirstOrDefault(s => s.Contains("qOWW4OlgbvE", StringComparison.Ordinal));
+
+        youtubeThumbnailSrc.Should().NotBeNull();
     }
 
     [Fact]
@@ -185,42 +210,38 @@ public class HtmlEmbedSpecs
 
         imageUrls
             .Should()
-            .Contain(
-                u =>
-                    u.EndsWith(
-                        "https/pbs.twimg.com/media/FVYIzYPWAAAMBqZ.png",
-                        StringComparison.Ordinal
-                    )
+            .Contain(u =>
+                u.EndsWith(
+                    "https/pbs.twimg.com/media/FVYIzYPWAAAMBqZ.png",
+                    StringComparison.Ordinal
+                )
             );
 
         imageUrls
             .Should()
-            .Contain(
-                u =>
-                    u.EndsWith(
-                        "https/pbs.twimg.com/media/FVYJBWJWAAMNAx2.png",
-                        StringComparison.Ordinal
-                    )
+            .Contain(u =>
+                u.EndsWith(
+                    "https/pbs.twimg.com/media/FVYJBWJWAAMNAx2.png",
+                    StringComparison.Ordinal
+                )
             );
 
         imageUrls
             .Should()
-            .Contain(
-                u =>
-                    u.EndsWith(
-                        "https/pbs.twimg.com/media/FVYJHiRX0AANZcz.png",
-                        StringComparison.Ordinal
-                    )
+            .Contain(u =>
+                u.EndsWith(
+                    "https/pbs.twimg.com/media/FVYJHiRX0AANZcz.png",
+                    StringComparison.Ordinal
+                )
             );
 
         imageUrls
             .Should()
-            .Contain(
-                u =>
-                    u.EndsWith(
-                        "https/pbs.twimg.com/media/FVYJNZNXwAAPnVG.png",
-                        StringComparison.Ordinal
-                    )
+            .Contain(u =>
+                u.EndsWith(
+                    "https/pbs.twimg.com/media/FVYJNZNXwAAPnVG.png",
+                    StringComparison.Ordinal
+                )
             );
 
         message.QuerySelectorAll(".chatlog__embed").Should().ContainSingle();

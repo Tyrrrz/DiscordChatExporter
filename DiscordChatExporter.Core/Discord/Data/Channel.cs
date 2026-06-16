@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
-using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Reading;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Discord.Data;
 
@@ -21,21 +21,23 @@ public partial record Channel(
     Snowflake? LastMessageId
 ) : IHasId
 {
-    public bool IsDirect => Kind is ChannelKind.DirectTextChat or ChannelKind.DirectGroupTextChat;
+    public bool IsDirect { get; } =
+        Kind is ChannelKind.DirectTextChat or ChannelKind.DirectGroupTextChat;
 
     public bool IsGuild => !IsDirect;
 
-    public bool IsCategory => Kind == ChannelKind.GuildCategory;
+    public bool IsCategory { get; } = Kind == ChannelKind.GuildCategory;
 
-    public bool IsVoice => Kind is ChannelKind.GuildVoiceChat or ChannelKind.GuildStageVoice;
+    public bool IsVoice { get; } =
+        Kind is ChannelKind.GuildVoiceChat or ChannelKind.GuildStageVoice;
 
-    public bool IsThread =>
+    public bool IsThread { get; } =
         Kind
-            is ChannelKind.GuildNewsThread
-                or ChannelKind.GuildPublicThread
-                or ChannelKind.GuildPrivateThread;
+        is ChannelKind.GuildNewsThread
+            or ChannelKind.GuildPublicThread
+            or ChannelKind.GuildPrivateThread;
 
-    public bool IsEmpty => LastMessageId is null;
+    public bool IsEmpty { get; } = LastMessageId is null;
 
     public IEnumerable<Channel> GetParents()
     {
@@ -67,7 +69,8 @@ public partial record Channel
         var guildId =
             json.GetPropertyOrNull("guild_id")
                 ?.GetNonWhiteSpaceStringOrNull()
-                ?.Pipe(Snowflake.Parse) ?? Guild.DirectMessages.Id;
+                ?.Pipe(Snowflake.Parse)
+            ?? Guild.DirectMessages.Id;
 
         var name =
             // Guild channel
@@ -76,6 +79,7 @@ public partial record Channel
             ?? json.GetPropertyOrNull("recipients")
                 ?.EnumerateArrayOrNull()
                 ?.Select(User.Parse)
+                .OrderBy(u => u.Id)
                 .Select(u => u.DisplayName)
                 .Pipe(s => string.Join(", ", s))
             // Fallback
@@ -93,7 +97,8 @@ public partial record Channel
         var isArchived =
             json.GetPropertyOrNull("thread_metadata")
                 ?.GetPropertyOrNull("archived")
-                ?.GetBooleanOrNull() ?? false;
+                ?.GetBooleanOrNull()
+            ?? false;
 
         var lastMessageId = json.GetPropertyOrNull("last_message_id")
             ?.GetNonWhiteSpaceStringOrNull()

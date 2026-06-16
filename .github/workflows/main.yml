@@ -4,12 +4,12 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - master
+      - prime
     tags:
       - "*"
   pull_request:
     branches:
-      - master
+      - prime
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
@@ -18,7 +18,7 @@ env:
 
 jobs:
   format:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 10
 
     permissions:
@@ -26,24 +26,35 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # 4.1.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Install .NET
-        uses: actions/setup-dotnet@3447fd6a9f9e57506b15f895c5b76d3b197dc7c2 # 3.2.0
-        with:
-          dotnet-version: 8.0.x
+        uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
+
+      # Build the project separately to discern between build and format errors
+      - name: Build
+        run: >
+          dotnet build
+          -p:CSharpier_Bypass=true
+          --configuration Release
 
       - name: Verify formatting
+        id: verify
         run: >
           dotnet build
           -t:CSharpierFormat
           --configuration Release
+          --no-restore
+
+      - name: Report issues
+        if: ${{ failure() && steps.verify.outcome == 'failure' }}
+        run: echo "::error title=Bad formatting::Formatting issues detected. Please build the solution locally to fix them."
 
   test:
     # Tests need access to secrets, so we can't run them against PRs because of limited trust
     if: ${{ github.event_name != 'pull_request' }}
 
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 10
 
     permissions:
@@ -51,12 +62,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # 4.1.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Install .NET
-        uses: actions/setup-dotnet@3447fd6a9f9e57506b15f895c5b76d3b197dc7c2 # 3.2.0
-        with:
-          dotnet-version: 8.0.x
+        uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
 
       - name: Run tests
         env:
@@ -72,7 +81,7 @@ jobs:
           DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
       - name: Upload coverage
-        uses: codecov/codecov-action@eaaf4bedf32dbdc6b720b63067d99c4d77d6047d # 3.1.4
+        uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v6.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -82,8 +91,24 @@ jobs:
         app:
           - DiscordChatExporter.Cli
           - DiscordChatExporter.Gui
+        rid:
+          - win-arm64
+          - win-x86
+          - win-x64
+          - linux-arm
+          - linux-arm64
+          - linux-musl-x64
+          - linux-x64
+          - osx-arm64
+          - osx-x64
+        include:
+          - app: DiscordChatExporter.Cli
+            asset: DiscordChatExporter.Cli
+          - app: DiscordChatExporter.Gui
+            # GUI assets aren't suffixed, unlike the CLI assets
+            asset: DiscordChatExporter
 
-    runs-on: windows-latest
+    runs-on: ${{ startsWith(matrix.rid, 'win-') && 'windows-latest' || startsWith(matrix.rid, 'osx-') && 'macos-latest' || 'ubuntu-latest' }}
     timeout-minutes: 10
 
     permissions:
@@ -92,25 +117,27 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # 4.1.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Install .NET
-        uses: actions/setup-dotnet@3447fd6a9f9e57506b15f895c5b76d3b197dc7c2 # 3.2.0
-        with:
-          dotnet-version: 8.0.x
+        uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
 
       - name: Publish app
         run: >
           dotnet publish ${{ matrix.app }}
           -p:Version=${{ github.ref_type == 'tag' && github.ref_name || format('999.9.9-ci-{0}', github.sha) }}
           -p:CSharpier_Bypass=true
+          -p:EncryptionSalt=${{ secrets.ENCRYPTION_SALT || 'HimalayanPinkSalt' }}
+          -p:PublishMacOSBundle=${{ startsWith(matrix.rid, 'osx-') }}
           --output ${{ matrix.app }}/bin/publish/
           --configuration Release
+          --runtime ${{ matrix.rid }}
+          --self-contained
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # 3.1.3
+      - name: Upload app binaries
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: ${{ matrix.app }}
+          name: ${{ matrix.asset }}.${{ matrix.rid }}
           path: ${{ matrix.app }}/bin/publish/
           if-no-files-found: error
 
@@ -147,11 +174,21 @@ jobs:
         app:
           - DiscordChatExporter.Cli
           - DiscordChatExporter.Gui
+        rid:
+          - win-arm64
+          - win-x86
+          - win-x64
+          - linux-arm
+          - linux-arm64
+          - linux-musl-x64
+          - linux-x64
+          - osx-arm64
+          - osx-x64
         include:
           - app: DiscordChatExporter.Cli
             asset: DiscordChatExporter.Cli
           - app: DiscordChatExporter.Gui
-            # GUI asset isn't suffixed, unlike the CLI asset
+            # GUI assets aren't suffixed, unlike the CLI assets
             asset: DiscordChatExporter
 
     runs-on: ubuntu-latest
@@ -162,23 +199,31 @@ jobs:
       contents: write
 
     steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # 3.0.2
+      - name: Download app binaries
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: ${{ matrix.app }}
+          name: ${{ matrix.asset }}.${{ matrix.rid }}
           path: ${{ matrix.app }}/
+
+      - name: Set permissions
+        if: ${{ !startsWith(matrix.rid, 'win-') }}
+        run: |
+          [ -f ${{ matrix.app }}/${{ matrix.asset }} ] && chmod +x ${{ matrix.app }}/${{ matrix.asset }} || true
+
+          # macOS bundle
+          [ -f ${{ matrix.app }}/${{ matrix.asset }}.app/Contents/MacOS/${{ matrix.asset }} ] && chmod +x ${{ matrix.app }}/${{ matrix.asset }}.app/Contents/MacOS/${{ matrix.asset }} || true
 
       - name: Create package
         # Change into the artifacts directory to avoid including the directory itself in the zip archive
         working-directory: ${{ matrix.app }}/
-        run: zip -r ../${{ matrix.asset }}.zip .
+        run: zip -r ../${{ matrix.asset }}.${{ matrix.rid }}.zip .
 
       - name: Upload release asset
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >
           gh release upload ${{ github.ref_name }}
-          ${{ matrix.asset }}.zip
+          ${{ matrix.asset }}.${{ matrix.rid }}.zip
           --repo ${{ github.event.repository.full_name }}
 
   notify:
@@ -191,7 +236,7 @@ jobs:
 
     steps:
       - name: Notify Discord
-        uses: tyrrrz/action-http-request@64c70c67f5ebc54d4c7ea09cbe3553322778afd5 # 1.1.2
+        uses: tyrrrz/action-http-request@110f1a0f0f7e91c3b2de349539249f4573c243fa # 1.1.5
         with:
           url: ${{ secrets.DISCORD_WEBHOOK }}
           method: POST

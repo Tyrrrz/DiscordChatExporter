@@ -1,11 +1,10 @@
-﻿using System;
+using System;
 using System.Globalization;
-using System.Windows.Data;
+using Avalonia.Data.Converters;
 using DiscordChatExporter.Core.Exporting;
 
 namespace DiscordChatExporter.Gui.Converters;
 
-[ValueConversion(typeof(ExportFormat), typeof(string))]
 public class ExportFormatToStringConverter : IValueConverter
 {
     public static ExportFormatToStringConverter Instance { get; } = new();
@@ -15,7 +14,7 @@ public class ExportFormatToStringConverter : IValueConverter
         Type targetType,
         object? parameter,
         CultureInfo culture
-    ) => value is ExportFormat exportFormatValue ? exportFormatValue.GetDisplayName() : default;
+    ) => value is ExportFormat format ? format.GetDisplayName() : default;
 
     public object ConvertBack(
         object? value,

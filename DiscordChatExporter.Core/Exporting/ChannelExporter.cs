@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord;
@@ -20,43 +20,10 @@ public class ChannelExporter(DiscordClient discord)
         if (request.Channel.Kind == ChannelKind.GuildForum)
         {
             throw new DiscordChatExporterException(
-                $"Channel '{request.Channel.Name}' (#{request.Channel.Id}) "
-                    + $"of guild '{request.Guild.Name}' (#{request.Guild.Id}) "
+                $"Channel '{request.Channel.Name}' "
+                    + $"of guild '{request.Guild.Name}' "
                     + $"is a forum and cannot be exported directly. "
                     + "You need to pull its threads and export them individually."
-            );
-        }
-
-        // Check if the channel is empty
-        if (request.Channel.IsEmpty)
-        {
-            throw new DiscordChatExporterException(
-                $"Channel '{request.Channel.Name}' (#{request.Channel.Id}) "
-                    + $"of guild '{request.Guild.Name}' (#{request.Guild.Id}) "
-                    + $"does not contain any messages."
-            );
-        }
-
-        // Check if the 'after' boundary is valid
-        if (request.After is not null && !request.Channel.MayHaveMessagesAfter(request.After.Value))
-        {
-            throw new DiscordChatExporterException(
-                $"Channel '{request.Channel.Name}' (#{request.Channel.Id}) "
-                    + $"of guild '{request.Guild.Name}' (#{request.Guild.Id}) "
-                    + $"does not contain any messages within the specified period."
-            );
-        }
-
-        // Check if the 'before' boundary is valid
-        if (
-            request.Before is not null
-            && !request.Channel.MayHaveMessagesBefore(request.Before.Value)
-        )
-        {
-            throw new DiscordChatExporterException(
-                $"Channel '{request.Channel.Name}' (#{request.Channel.Id}) "
-                    + $"of guild '{request.Guild.Name}' (#{request.Guild.Id}) "
-                    + $"does not contain any messages within the specified period."
             );
         }
 
@@ -64,17 +31,56 @@ public class ChannelExporter(DiscordClient discord)
         var context = new ExportContext(discord, request);
         await context.PopulateChannelsAndRolesAsync(cancellationToken);
 
-        // Export messages
+        // Initialize the exporter before further checks to ensure the file is created even if
+        // an exception is thrown after this point.
         await using var messageExporter = new MessageExporter(context);
-        await foreach (
-            var message in discord.GetMessagesAsync(
+
+        // Check if the channel is empty
+        if (request.Channel.IsEmpty)
+        {
+            throw new ChannelEmptyException(
+                $"Channel '{request.Channel.Name}' "
+                    + $"of guild '{request.Guild.Name}' "
+                    + $"does not contain any messages; an empty file will be created."
+            );
+        }
+
+        // Check if the 'before' and 'after' boundaries are valid
+        if (
+            (
+                request.Before is not null
+                && !request.Channel.MayHaveMessagesBefore(request.Before.Value)
+            )
+            || (
+                request.After is not null
+                && !request.Channel.MayHaveMessagesAfter(request.After.Value)
+            )
+        )
+        {
+            throw new ChannelEmptyException(
+                $"Channel '{request.Channel.Name}' "
+                    + $"of guild '{request.Guild.Name}' "
+                    + $"does not contain any messages within the specified period; an empty file will be created."
+            );
+        }
+
+        var messages = !request.IsReverseMessageOrder
+            ? discord.GetMessagesAsync(
                 request.Channel.Id,
                 request.After,
                 request.Before,
                 progress,
                 cancellationToken
             )
-        )
+            : discord.GetMessagesInReverseAsync(
+                request.Channel.Id,
+                request.After,
+                request.Before,
+                progress,
+                cancellationToken
+            );
+
+        await foreach (var message in messages)
         {
             try
             {
@@ -97,16 +103,6 @@ public class ChannelExporter(DiscordClient discord)
                     ex
                 );
             }
-        }
-
-        // Throw if no messages were exported
-        if (messageExporter.MessagesExported <= 0)
-        {
-            throw new DiscordChatExporterException(
-                $"Channel '{request.Channel.Name}' (#{request.Channel.Id}) "
-                    + $"of guild '{request.Guild.Name}' (#{request.Guild.Id}) "
-                    + $"does not contain any matching messages within the specified period."
-            );
         }
     }
 }

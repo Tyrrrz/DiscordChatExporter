@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/Misc/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="DiscordChatExporter.Cli.dockerfile" />
+    <File Path="global.json" />
+    <File Path="License.txt" />
+    <File Path="NuGet.config" />
+    <File Path="Readme.md" />
+  </Folder>
+
+  <Project Path="DiscordChatExporter.Cli.Tests/DiscordChatExporter.Cli.Tests.csproj" />
+  <Project Path="DiscordChatExporter.Cli/DiscordChatExporter.Cli.csproj" />
+  <Project Path="DiscordChatExporter.Core/DiscordChatExporter.Core.csproj" />
+  <Project Path="DiscordChatExporter.Gui/DiscordChatExporter.Gui.csproj" />
+</Solution>

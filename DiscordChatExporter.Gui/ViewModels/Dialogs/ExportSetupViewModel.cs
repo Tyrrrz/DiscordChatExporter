@@ -1,89 +1,118 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Avalonia.Platform.Storage;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Core.Exporting.Filtering;
 using DiscordChatExporter.Core.Exporting.Partitioning;
-using DiscordChatExporter.Core.Utils.Extensions;
+using DiscordChatExporter.Gui.Framework;
+using DiscordChatExporter.Gui.Localization;
 using DiscordChatExporter.Gui.Services;
-using DiscordChatExporter.Gui.ViewModels.Framework;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Gui.ViewModels.Dialogs;
 
-public class ExportSetupViewModel : DialogScreen
+public partial class ExportSetupViewModel(
+    DialogManager dialogManager,
+    SettingsService settingsService,
+    LocalizationManager localizationManager
+) : DialogViewModelBase
 {
-    private readonly DialogManager _dialogManager;
-    private readonly SettingsService _settingsService;
+    public LocalizationManager LocalizationManager { get; } = localizationManager;
 
-    public Guild? Guild { get; set; }
+    [ObservableProperty]
+    public partial Guild? Guild { get; set; }
 
-    public IReadOnlyList<Channel>? Channels { get; set; }
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsSingleChannel))]
+    public partial IReadOnlyList<Channel>? Channels { get; set; }
+
+    [ObservableProperty]
+    public partial string? OutputPath { get; set; }
+
+    [ObservableProperty]
+    public partial ExportFormat SelectedFormat { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsAfterDateSet))]
+    [NotifyPropertyChangedFor(nameof(After))]
+    public partial DateTimeOffset? AfterDate { get; set; }
+
+    [ObservableProperty]
+    public partial TimeSpan? AfterTime { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsBeforeDateSet))]
+    [NotifyPropertyChangedFor(nameof(Before))]
+    public partial DateTimeOffset? BeforeDate { get; set; }
+
+    [ObservableProperty]
+    public partial TimeSpan? BeforeTime { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(PartitionLimit))]
+    public partial string? PartitionLimitValue { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(MessageFilter))]
+    public partial string? MessageFilterValue { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsReverseMessageOrder { get; set; }
+
+    [ObservableProperty]
+    public partial bool ShouldFormatMarkdown { get; set; }
+
+    [ObservableProperty]
+    public partial bool ShouldDownloadAssets { get; set; }
+
+    [ObservableProperty]
+    public partial bool ShouldReuseAssets { get; set; }
+
+    [ObservableProperty]
+    public partial string? AssetsDirPath { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsAdvancedSectionDisplayed { get; set; }
 
     public bool IsSingleChannel => Channels?.Count == 1;
 
-    public string? OutputPath { get; set; }
-
     public IReadOnlyList<ExportFormat> AvailableFormats { get; } = Enum.GetValues<ExportFormat>();
-
-    public ExportFormat SelectedFormat { get; set; }
-
-    // This date/time abomination is required because we use separate controls to set these
-
-    public DateTimeOffset? AfterDate { get; set; }
 
     public bool IsAfterDateSet => AfterDate is not null;
 
-    public TimeSpan? AfterTime { get; set; }
-
     public DateTimeOffset? After => AfterDate?.Add(AfterTime ?? TimeSpan.Zero);
-
-    public DateTimeOffset? BeforeDate { get; set; }
 
     public bool IsBeforeDateSet => BeforeDate is not null;
 
-    public TimeSpan? BeforeTime { get; set; }
-
     public DateTimeOffset? Before => BeforeDate?.Add(BeforeTime ?? TimeSpan.Zero);
-
-    public string? PartitionLimitValue { get; set; }
 
     public PartitionLimit PartitionLimit =>
         !string.IsNullOrWhiteSpace(PartitionLimitValue)
             ? PartitionLimit.Parse(PartitionLimitValue)
             : PartitionLimit.Null;
 
-    public string? MessageFilterValue { get; set; }
-
     public MessageFilter MessageFilter =>
         !string.IsNullOrWhiteSpace(MessageFilterValue)
             ? MessageFilter.Parse(MessageFilterValue)
             : MessageFilter.Null;
 
-    public bool ShouldFormatMarkdown { get; set; }
-
-    public bool ShouldDownloadAssets { get; set; }
-
-    public bool ShouldReuseAssets { get; set; }
-
-    public string? AssetsDirPath { get; set; }
-
-    public bool IsAdvancedSectionDisplayed { get; set; }
-
-    public ExportSetupViewModel(DialogManager dialogManager, SettingsService settingsService)
+    public override Task InitializeAsync()
     {
-        _dialogManager = dialogManager;
-        _settingsService = settingsService;
-
         // Persist preferences
-        SelectedFormat = _settingsService.LastExportFormat;
-        PartitionLimitValue = _settingsService.LastPartitionLimitValue;
-        MessageFilterValue = _settingsService.LastMessageFilterValue;
-        ShouldFormatMarkdown = _settingsService.LastShouldFormatMarkdown;
-        ShouldDownloadAssets = _settingsService.LastShouldDownloadAssets;
-        ShouldReuseAssets = _settingsService.LastShouldReuseAssets;
-        AssetsDirPath = _settingsService.LastAssetsDirPath;
+        SelectedFormat = settingsService.LastExportFormat;
+        PartitionLimitValue = settingsService.LastPartitionLimitValue;
+        MessageFilterValue = settingsService.LastMessageFilterValue;
+        IsReverseMessageOrder = settingsService.LastIsReverseMessageOrder;
+        ShouldFormatMarkdown = settingsService.LastShouldFormatMarkdown;
+        ShouldDownloadAssets = settingsService.LastShouldDownloadAssets;
+        ShouldReuseAssets = settingsService.LastShouldReuseAssets;
+        AssetsDirPath = settingsService.LastAssetsDirPath;
 
         // Show the "advanced options" section by default if any
         // of the advanced options are set to non-default values.
@@ -94,12 +123,14 @@ public class ExportSetupViewModel : DialogScreen
             || !string.IsNullOrWhiteSpace(MessageFilterValue)
             || ShouldDownloadAssets
             || ShouldReuseAssets
-            || !string.IsNullOrWhiteSpace(AssetsDirPath);
+            || !string.IsNullOrWhiteSpace(AssetsDirPath)
+            || IsReverseMessageOrder;
+
+        return Task.CompletedTask;
     }
 
-    public void ToggleAdvancedSection() => IsAdvancedSectionDisplayed = !IsAdvancedSectionDisplayed;
-
-    public void ShowOutputPathPrompt()
+    [RelayCommand]
+    private async Task ShowOutputPathPromptAsync()
     {
         if (IsSingleChannel)
         {
@@ -112,33 +143,43 @@ public class ExportSetupViewModel : DialogScreen
             );
 
             var extension = SelectedFormat.GetFileExtension();
-            var filter = $"{extension.ToUpperInvariant()} files|*.{extension}";
 
-            var path = _dialogManager.PromptSaveFilePath(filter, defaultFileName);
+            var path = await dialogManager.PromptSaveFilePathAsync(
+                [
+                    new FilePickerFileType($"{extension.ToUpperInvariant()} file")
+                    {
+                        Patterns = [$"*.{extension}"],
+                    },
+                ],
+                defaultFileName
+            );
+
             if (!string.IsNullOrWhiteSpace(path))
                 OutputPath = path;
         }
         else
         {
-            var path = _dialogManager.PromptDirectoryPath();
+            var path = await dialogManager.PromptDirectoryPathAsync();
             if (!string.IsNullOrWhiteSpace(path))
                 OutputPath = path;
         }
     }
 
-    public void ShowAssetsDirPathPrompt()
+    [RelayCommand]
+    private async Task ShowAssetsDirPathPromptAsync()
     {
-        var path = _dialogManager.PromptDirectoryPath();
+        var path = await dialogManager.PromptDirectoryPathAsync();
         if (!string.IsNullOrWhiteSpace(path))
             AssetsDirPath = path;
     }
 
-    public void Confirm()
+    [RelayCommand]
+    private async Task ConfirmAsync()
     {
-        // Prompt the output path if it's not set yet
+        // Prompt the output path if it hasn't been set yet
         if (string.IsNullOrWhiteSpace(OutputPath))
         {
-            ShowOutputPathPrompt();
+            await ShowOutputPathPromptAsync();
 
             // If the output path is still not set, cancel the export
             if (string.IsNullOrWhiteSpace(OutputPath))
@@ -146,31 +187,15 @@ public class ExportSetupViewModel : DialogScreen
         }
 
         // Persist preferences
-        _settingsService.LastExportFormat = SelectedFormat;
-        _settingsService.LastPartitionLimitValue = PartitionLimitValue;
-        _settingsService.LastMessageFilterValue = MessageFilterValue;
-        _settingsService.LastShouldFormatMarkdown = ShouldFormatMarkdown;
-        _settingsService.LastShouldDownloadAssets = ShouldDownloadAssets;
-        _settingsService.LastShouldReuseAssets = ShouldReuseAssets;
-        _settingsService.LastAssetsDirPath = AssetsDirPath;
+        settingsService.LastExportFormat = SelectedFormat;
+        settingsService.LastPartitionLimitValue = PartitionLimitValue;
+        settingsService.LastMessageFilterValue = MessageFilterValue;
+        settingsService.LastIsReverseMessageOrder = IsReverseMessageOrder;
+        settingsService.LastShouldFormatMarkdown = ShouldFormatMarkdown;
+        settingsService.LastShouldDownloadAssets = ShouldDownloadAssets;
+        settingsService.LastShouldReuseAssets = ShouldReuseAssets;
+        settingsService.LastAssetsDirPath = AssetsDirPath;
 
         Close(true);
-    }
-}
-
-public static class ExportSetupViewModelExtensions
-{
-    public static ExportSetupViewModel CreateExportSetupViewModel(
-        this IViewModelFactory factory,
-        Guild guild,
-        IReadOnlyList<Channel> channels
-    )
-    {
-        var viewModel = factory.CreateExportSetupViewModel();
-
-        viewModel.Guild = guild;
-        viewModel.Channels = channels;
-
-        return viewModel;
     }
 }

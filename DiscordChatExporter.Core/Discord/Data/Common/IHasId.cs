@@ -1,4 +1,4 @@
-﻿namespace DiscordChatExporter.Core.Discord.Data.Common;
+namespace DiscordChatExporter.Core.Discord.Data.Common;
 
 public interface IHasId
 {

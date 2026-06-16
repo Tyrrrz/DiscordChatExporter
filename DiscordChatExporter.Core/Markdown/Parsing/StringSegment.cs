@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 
 namespace DiscordChatExporter.Core.Markdown.Parsing;
 
@@ -14,5 +14,5 @@ internal readonly record struct StringSegment(string Source, int StartIndex, int
 
     public StringSegment Relocate(Capture capture) => Relocate(capture.Index, capture.Length);
 
-    public override string ToString() => Source.Substring(StartIndex, Length);
+    public override string ToString() => Source[StartIndex..EndIndex];
 }

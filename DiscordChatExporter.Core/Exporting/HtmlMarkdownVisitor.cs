@@ -1,14 +1,13 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Markdown;
 using DiscordChatExporter.Core.Markdown.Parsing;
-using DiscordChatExporter.Core.Utils.Extensions;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting;
 
@@ -34,58 +33,51 @@ internal partial class HtmlMarkdownVisitor(
     {
         var (openingTag, closingTag) = formatting.Kind switch
         {
-            FormattingKind.Bold
-                => (
-                    // lang=html
-                    "<strong>",
-                    // lang=html
-                    "</strong>"
-                ),
+            FormattingKind.Bold => (
+                // lang=html
+                "<strong>",
+                // lang=html
+                "</strong>"
+            ),
 
-            FormattingKind.Italic
-                => (
-                    // lang=html
-                    "<em>",
-                    // lang=html
-                    "</em>"
-                ),
+            FormattingKind.Italic => (
+                // lang=html
+                "<em>",
+                // lang=html
+                "</em>"
+            ),
 
-            FormattingKind.Underline
-                => (
-                    // lang=html
-                    "<u>",
-                    // lang=html
-                    "</u>"
-                ),
+            FormattingKind.Underline => (
+                // lang=html
+                "<u>",
+                // lang=html
+                "</u>"
+            ),
 
-            FormattingKind.Strikethrough
-                => (
-                    // lang=html
-                    "<s>",
-                    // lang=html
-                    "</s>"
-                ),
+            FormattingKind.Strikethrough => (
+                // lang=html
+                "<s>",
+                // lang=html
+                "</s>"
+            ),
 
-            FormattingKind.Spoiler
-                => (
-                    // lang=html
-                    """<span class="chatlog__markdown-spoiler chatlog__markdown-spoiler--hidden" onclick="showSpoiler(event, this)">""",
-                    // lang=html
-                    """</span>"""
-                ),
+            FormattingKind.Spoiler => (
+                // lang=html
+                """<span class="chatlog__markdown-spoiler chatlog__markdown-spoiler--hidden" onclick="showSpoiler(event, this)">""",
+                // lang=html
+                """</span>"""
+            ),
 
-            FormattingKind.Quote
-                => (
-                    // lang=html
-                    """<div class="chatlog__markdown-quote"><div class="chatlog__markdown-quote-border"></div><div class="chatlog__markdown-quote-content">""",
-                    // lang=html
-                    """</div></div>"""
-                ),
+            FormattingKind.Quote => (
+                // lang=html
+                """<div class="chatlog__markdown-quote"><div class="chatlog__markdown-quote-border"></div><div class="chatlog__markdown-quote-content">""",
+                // lang=html
+                """</div></div>"""
+            ),
 
-            _
-                => throw new InvalidOperationException(
-                    $"Unknown formatting kind '{formatting.Kind}'."
-                )
+            _ => throw new InvalidOperationException(
+                $"Unknown formatting kind '{formatting.Kind}'."
+            ),
         };
 
         buffer.Append(openingTag);
@@ -155,7 +147,9 @@ internal partial class HtmlMarkdownVisitor(
         buffer.Append(
             // lang=html
             $"""
-            <code class="chatlog__markdown-pre chatlog__markdown-pre--inline">{HtmlEncode(inlineCodeBlock.Code)}</code>
+            <code class="chatlog__markdown-pre chatlog__markdown-pre--inline">{HtmlEncode(
+                inlineCodeBlock.Code
+            )}</code>
             """
         );
 
@@ -168,13 +162,15 @@ internal partial class HtmlMarkdownVisitor(
     )
     {
         var highlightClass = !string.IsNullOrWhiteSpace(multiLineCodeBlock.Language)
-            ? $"language-{multiLineCodeBlock.Language}"
+            ? $"language-{HtmlEncode(multiLineCodeBlock.Language)}"
             : "nohighlight";
 
         buffer.Append(
             // lang=html
             $"""
-            <code class="chatlog__markdown-pre chatlog__markdown-pre--multiline {highlightClass}">{HtmlEncode(multiLineCodeBlock.Code)}</code>
+            <code class="chatlog__markdown-pre chatlog__markdown-pre--multiline {highlightClass}">{HtmlEncode(
+                multiLineCodeBlock.Code
+            )}</code>
             """
         );
 
@@ -213,7 +209,6 @@ internal partial class HtmlMarkdownVisitor(
         CancellationToken cancellationToken = default
     )
     {
-        var emojiImageUrl = Emoji.GetImageUrl(emoji.Id, emoji.Name, emoji.IsAnimated);
         var jumboClass = isJumbo ? "chatlog__emoji--large" : "";
 
         buffer.Append(
@@ -222,9 +217,11 @@ internal partial class HtmlMarkdownVisitor(
             <img
                 loading="lazy"
                 class="chatlog__emoji {jumboClass}"
-                alt="{emoji.Name}"
-                title="{emoji.Code}"
-                src="{await context.ResolveAssetUrlAsync(emojiImageUrl, cancellationToken)}">
+                alt="{HtmlEncode(emoji.Name)}"
+                title="{HtmlEncode(emoji.Code)}"
+                src="{HtmlEncode(
+                await context.ResolveAssetUrlAsync(emoji.ImageUrl, cancellationToken)
+            )}">
             """
         );
     }
@@ -267,12 +264,20 @@ internal partial class HtmlMarkdownVisitor(
             buffer.Append(
                 // lang=html
                 $"""
-                <span class="chatlog__markdown-mention" title="{HtmlEncode(fullName)}">@{HtmlEncode(displayName)}</span>
+                <span class="chatlog__markdown-mention" title="{HtmlEncode(fullName)}">@{HtmlEncode(
+                    displayName
+                )}</span>
                 """
             );
         }
         else if (mention.Kind == MentionKind.Channel)
         {
+            // Channel/thread mentions may reference threads that are not preloaded,
+            // so we resolve them on demand.
+            // https://github.com/Tyrrrz/DiscordChatExporter/issues/1261
+            if (mention.TargetId is not null)
+                await context.PopulateChannelAsync(mention.TargetId.Value, cancellationToken);
+
             var channel = mention.TargetId?.Pipe(context.TryGetChannel);
             var symbol = channel?.IsVoice == true ? "🔊" : "#";
             var name = channel?.Name ?? "deleted-channel";
@@ -290,10 +295,8 @@ internal partial class HtmlMarkdownVisitor(
             var name = role?.Name ?? "deleted-role";
             var color = role?.Color;
 
-            var style = color is not null
-                ? $"""
-                  color: rgb({color.Value.R}, {color.Value.G}, {color.Value.B}); background-color: rgba({color.Value.R}, {color.Value.G}, {color.Value.B}, 0.1);
-                  """
+            var style = color is { } c
+                ? $"color: rgb({c.R}, {c.G}, {c.B}); background-color: rgba({c.R}, {c.G}, {c.B}, 0.1);"
                 : null;
 
             buffer.Append(
@@ -321,7 +324,9 @@ internal partial class HtmlMarkdownVisitor(
         buffer.Append(
             // lang=html
             $"""
-            <span class="chatlog__markdown-timestamp" title="{HtmlEncode(formattedLong)}">{HtmlEncode(formatted)}</span>
+            <span class="chatlog__markdown-timestamp" title="{HtmlEncode(
+                formattedLong
+            )}">{HtmlEncode(formatted)}</span>
             """
         );
 
@@ -344,10 +349,8 @@ internal partial class HtmlMarkdownVisitor
 
         var isJumbo =
             isJumboAllowed
-            && nodes.All(
-                n =>
-                    n is EmojiNode
-                    || n is TextNode textNode && string.IsNullOrWhiteSpace(textNode.Text)
+            && nodes.All(n =>
+                n is EmojiNode || n is TextNode textNode && string.IsNullOrWhiteSpace(textNode.Text)
             );
 
         var buffer = new StringBuilder();

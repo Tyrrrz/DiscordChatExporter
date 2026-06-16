@@ -1,4 +1,4 @@
-﻿using DiscordChatExporter.Core.Utils.Extensions;
+using DiscordChatExporter.Core.Utils.Extensions;
 using Superpower;
 using Superpower.Parsers;
 
@@ -30,8 +30,8 @@ internal static class FilterGrammar
         .OneOf(QuotedString, UnquotedString)
         .Named("text string");
 
-    private static readonly TextParser<MessageFilter> ContainsFilter = String.Select(
-        v => (MessageFilter)new ContainsMessageFilter(v)
+    private static readonly TextParser<MessageFilter> ContainsFilter = String.Select(v =>
+        (MessageFilter)new ContainsMessageFilter(v)
     );
 
     private static readonly TextParser<MessageFilter> FromFilter = Span.EqualToIgnoreCase("from:")
@@ -125,7 +125,7 @@ internal static class FilterGrammar
             op switch
             {
                 '|' => new BinaryExpressionMessageFilter(left, right, BinaryExpressionKind.Or),
-                _ => new BinaryExpressionMessageFilter(left, right, BinaryExpressionKind.And)
+                _ => new BinaryExpressionMessageFilter(left, right, BinaryExpressionKind.And),
             }
     );
 

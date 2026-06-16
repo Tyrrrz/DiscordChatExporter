@@ -1,33 +1,34 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Discord.Data.Embeds;
-using DiscordChatExporter.Core.Utils.Extensions;
+using DiscordChatExporter.Core.Markdown.Parsing;
 using JsonExtensions.Writing;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting;
 
 internal class JsonMessageWriter(Stream stream, ExportContext context)
     : MessageWriter(stream, context)
 {
-    private readonly Utf8JsonWriter _writer =
-        new(
-            stream,
-            new JsonWriterOptions
-            {
-                // https://github.com/Tyrrrz/DiscordChatExporter/issues/450
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                Indented = true,
-                // Validation errors may mask actual failures
-                // https://github.com/Tyrrrz/DiscordChatExporter/issues/413
-                SkipValidation = true
-            }
-        );
+    private readonly Utf8JsonWriter _writer = new(
+        stream,
+        new JsonWriterOptions
+        {
+            // https://github.com/Tyrrrz/DiscordChatExporter/issues/450
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            Indented = true,
+            // Validation errors may mask actual failures
+            // https://github.com/Tyrrrz/DiscordChatExporter/issues/413
+            SkipValidation = true,
+        }
+    );
 
     private async ValueTask<string> FormatMarkdownAsync(
         string markdown,
@@ -37,22 +38,31 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
             ? await PlainTextMarkdownVisitor.FormatAsync(Context, markdown, cancellationToken)
             : markdown;
 
-    private async ValueTask WriteUserAsync(User user, CancellationToken cancellationToken = default)
+    private async ValueTask WriteUserAsync(
+        User user,
+        bool includeRoles = true,
+        CancellationToken cancellationToken = default
+    )
     {
         _writer.WriteStartObject();
 
         _writer.WriteString("id", user.Id.ToString());
         _writer.WriteString("name", user.Name);
         _writer.WriteString("discriminator", user.DiscriminatorFormatted);
+
         _writer.WriteString(
             "nickname",
             Context.TryGetMember(user.Id)?.DisplayName ?? user.DisplayName
         );
-        _writer.WriteString("color", Context.TryGetUserColor(user.Id)?.ToHex());
+
+        _writer.WriteString("color", Context.TryGetUserColor(user.Id)?.ToHexString());
         _writer.WriteBoolean("isBot", user.IsBot);
 
-        _writer.WritePropertyName("roles");
-        await WriteRolesAsync(Context.GetUserRoles(user.Id), cancellationToken);
+        if (includeRoles)
+        {
+            _writer.WritePropertyName("roles");
+            await WriteRolesAsync(Context.GetUserRoles(user.Id), cancellationToken);
+        }
 
         _writer.WriteString(
             "avatarUrl",
@@ -60,6 +70,26 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                 Context.TryGetMember(user.Id)?.AvatarUrl ?? user.AvatarUrl,
                 cancellationToken
             )
+        );
+
+        _writer.WriteEndObject();
+        await _writer.FlushAsync(cancellationToken);
+    }
+
+    private async ValueTask WriteEmojiAsync(
+        Emoji emoji,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _writer.WriteStartObject();
+
+        _writer.WriteString("id", emoji.Id.ToString());
+        _writer.WriteString("name", emoji.Name);
+        _writer.WriteString("code", emoji.Code);
+        _writer.WriteBoolean("isAnimated", emoji.IsAnimated);
+        _writer.WriteString(
+            "imageUrl",
+            await Context.ResolveAssetUrlAsync(emoji.ImageUrl, cancellationToken)
         );
 
         _writer.WriteEndObject();
@@ -79,7 +109,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
 
             _writer.WriteString("id", role.Id.ToString());
             _writer.WriteString("name", role.Name);
-            _writer.WriteString("color", role.Color?.ToHex());
+            _writer.WriteString("color", role.Color?.ToHexString());
             _writer.WriteNumber("position", role.Position);
 
             _writer.WriteEndObject();
@@ -87,6 +117,24 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
 
         _writer.WriteEndArray();
         await _writer.FlushAsync(cancellationToken);
+    }
+
+    private async ValueTask WriteAttachmentAsync(
+        Attachment attachment,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _writer.WriteStartObject();
+
+        _writer.WriteString("id", attachment.Id.ToString());
+        _writer.WriteString(
+            "url",
+            await Context.ResolveAssetUrlAsync(attachment.Url, cancellationToken)
+        );
+        _writer.WriteString("fileName", attachment.FileName);
+        _writer.WriteNumber("fileSizeBytes", attachment.FileSize.TotalBytes);
+
+        _writer.WriteEndObject();
     }
 
     private async ValueTask WriteEmbedAuthorAsync(
@@ -108,6 +156,8 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                     cancellationToken
                 )
             );
+
+            _writer.WriteString("iconCanonicalUrl", embedAuthor.IconUrl);
         }
 
         _writer.WriteEndObject();
@@ -130,6 +180,8 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                     cancellationToken
                 )
             );
+
+            _writer.WriteString("canonicalUrl", embedImage.Url);
         }
 
         _writer.WriteNumber("width", embedImage.Width);
@@ -155,6 +207,8 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                     cancellationToken
                 )
             );
+
+            _writer.WriteString("canonicalUrl", embedVideo.Url);
         }
 
         _writer.WriteNumber("width", embedVideo.Width);
@@ -182,6 +236,8 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                     cancellationToken
                 )
             );
+
+            _writer.WriteString("iconCanonicalUrl", embedFooter.IconUrl);
         }
 
         _writer.WriteEndObject();
@@ -225,7 +281,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
         );
 
         if (embed.Color is not null)
-            _writer.WriteString("color", embed.Color.Value.ToHex());
+            _writer.WriteString("color", embed.Color.Value.ToHexString());
 
         if (embed.Author is not null)
         {
@@ -273,8 +329,46 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
 
         _writer.WriteEndArray();
 
+        // Inline emoji
+        _writer.WriteStartArray("inlineEmojis");
+
+        if (!string.IsNullOrWhiteSpace(embed.Description))
+        {
+            foreach (
+                var emoji in MarkdownParser
+                    .ExtractEmojis(embed.Description)
+                    .DistinctBy(e => e.Name, StringComparer.Ordinal)
+            )
+            {
+                await WriteEmojiAsync(
+                    new Emoji(emoji.Id, emoji.Name, emoji.IsAnimated),
+                    cancellationToken
+                );
+            }
+        }
+
+        _writer.WriteEndArray();
+
         _writer.WriteEndObject();
         await _writer.FlushAsync(cancellationToken);
+    }
+
+    private async ValueTask WriteStickerAsync(
+        Sticker sticker,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _writer.WriteStartObject();
+
+        _writer.WriteString("id", sticker.Id.ToString());
+        _writer.WriteString("name", sticker.Name);
+        _writer.WriteString("format", sticker.Format.ToString());
+        _writer.WriteString(
+            "sourceUrl",
+            await Context.ResolveAssetUrlAsync(sticker.SourceUrl, cancellationToken)
+        );
+
+        _writer.WriteEndObject();
     }
 
     public override async ValueTask WritePreambleAsync(
@@ -373,25 +467,13 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
 
         // Author
         _writer.WritePropertyName("author");
-        await WriteUserAsync(message.Author, cancellationToken);
+        await WriteUserAsync(message.Author, true, cancellationToken);
 
         // Attachments
         _writer.WriteStartArray("attachments");
 
         foreach (var attachment in message.Attachments)
-        {
-            _writer.WriteStartObject();
-
-            _writer.WriteString("id", attachment.Id.ToString());
-            _writer.WriteString(
-                "url",
-                await Context.ResolveAssetUrlAsync(attachment.Url, cancellationToken)
-            );
-            _writer.WriteString("fileName", attachment.FileName);
-            _writer.WriteNumber("fileSizeBytes", attachment.FileSize.TotalBytes);
-
-            _writer.WriteEndObject();
-        }
+            await WriteAttachmentAsync(attachment, cancellationToken);
 
         _writer.WriteEndArray();
 
@@ -407,19 +489,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
         _writer.WriteStartArray("stickers");
 
         foreach (var sticker in message.Stickers)
-        {
-            _writer.WriteStartObject();
-
-            _writer.WriteString("id", sticker.Id.ToString());
-            _writer.WriteString("name", sticker.Name);
-            _writer.WriteString("format", sticker.Format.ToString());
-            _writer.WriteString(
-                "sourceUrl",
-                await Context.ResolveAssetUrlAsync(sticker.SourceUrl, cancellationToken)
-            );
-
-            _writer.WriteEndObject();
-        }
+            await WriteStickerAsync(sticker, cancellationToken);
 
         _writer.WriteEndArray();
 
@@ -431,20 +501,14 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
             _writer.WriteStartObject();
 
             // Emoji
-            _writer.WriteStartObject("emoji");
-            _writer.WriteString("id", reaction.Emoji.Id.ToString());
-            _writer.WriteString("name", reaction.Emoji.Name);
-            _writer.WriteString("code", reaction.Emoji.Code);
-            _writer.WriteBoolean("isAnimated", reaction.Emoji.IsAnimated);
-            _writer.WriteString(
-                "imageUrl",
-                await Context.ResolveAssetUrlAsync(reaction.Emoji.ImageUrl, cancellationToken)
-            );
-            _writer.WriteEndObject();
+            _writer.WritePropertyName("emoji");
+            await WriteEmojiAsync(reaction.Emoji, cancellationToken);
 
             _writer.WriteNumber("count", reaction.Count);
 
+            // Reaction authors
             _writer.WriteStartArray("users");
+
             await foreach (
                 var user in Context.Discord.GetMessageReactionsAsync(
                     Context.Request.Channel.Id,
@@ -454,28 +518,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                 )
             )
             {
-                _writer.WriteStartObject();
-
-                // Write limited user information without color and roles,
-                // so we can avoid fetching guild member information for each user.
-                _writer.WriteString("id", user.Id.ToString());
-                _writer.WriteString("name", user.Name);
-                _writer.WriteString("discriminator", user.DiscriminatorFormatted);
-                _writer.WriteString(
-                    "nickname",
-                    Context.TryGetMember(user.Id)?.DisplayName ?? user.DisplayName
-                );
-                _writer.WriteBoolean("isBot", user.IsBot);
-
-                _writer.WriteString(
-                    "avatarUrl",
-                    await Context.ResolveAssetUrlAsync(
-                        Context.TryGetMember(user.Id)?.AvatarUrl ?? user.AvatarUrl,
-                        cancellationToken
-                    )
-                );
-
-                _writer.WriteEndObject();
+                await WriteUserAsync(user, false, cancellationToken);
             }
 
             _writer.WriteEndArray();
@@ -487,9 +530,8 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
 
         // Mentions
         _writer.WriteStartArray("mentions");
-
         foreach (var user in message.MentionedUsers)
-            await WriteUserAsync(user, cancellationToken);
+            await WriteUserAsync(user, true, cancellationToken);
 
         _writer.WriteEndArray();
 
@@ -497,9 +539,55 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
         if (message.Reference is not null)
         {
             _writer.WriteStartObject("reference");
+            _writer.WriteString("type", message.Reference.Kind.ToString());
             _writer.WriteString("messageId", message.Reference.MessageId?.ToString());
             _writer.WriteString("channelId", message.Reference.ChannelId?.ToString());
             _writer.WriteString("guildId", message.Reference.GuildId?.ToString());
+            _writer.WriteEndObject();
+        }
+
+        // Forwarded message
+        if (message.ForwardedMessage is not null)
+        {
+            _writer.WriteStartObject("forwardedMessage");
+
+            _writer.WriteString(
+                "timestamp",
+                Context.NormalizeDate(message.ForwardedMessage.Timestamp)
+            );
+
+            _writer.WriteString(
+                "timestampEdited",
+                message.ForwardedMessage.EditedTimestamp?.Pipe(Context.NormalizeDate)
+            );
+
+            _writer.WriteString(
+                "content",
+                await FormatMarkdownAsync(message.ForwardedMessage.Content, cancellationToken)
+            );
+
+            // Forwarded attachments
+            _writer.WriteStartArray("attachments");
+
+            foreach (var attachment in message.ForwardedMessage.Attachments)
+                await WriteAttachmentAsync(attachment, cancellationToken);
+
+            _writer.WriteEndArray();
+
+            // Forwarded embeds
+            _writer.WriteStartArray("embeds");
+            foreach (var embed in message.ForwardedMessage.Embeds)
+                await WriteEmbedAsync(embed, cancellationToken);
+            _writer.WriteEndArray();
+
+            // Forwarded stickers
+            _writer.WriteStartArray("stickers");
+
+            foreach (var sticker in message.ForwardedMessage.Stickers)
+                await WriteStickerAsync(sticker, cancellationToken);
+
+            _writer.WriteEndArray();
+
             _writer.WriteEndObject();
         }
 
@@ -512,10 +600,27 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
             _writer.WriteString("name", message.Interaction.Name);
 
             _writer.WritePropertyName("user");
-            await WriteUserAsync(message.Interaction.User, cancellationToken);
+            await WriteUserAsync(message.Interaction.User, true, cancellationToken);
 
             _writer.WriteEndObject();
         }
+
+        // Inline emoji
+        _writer.WriteStartArray("inlineEmojis");
+
+        foreach (
+            var emoji in MarkdownParser
+                .ExtractEmojis(message.Content)
+                .DistinctBy(e => e.Name, StringComparer.Ordinal)
+        )
+        {
+            await WriteEmojiAsync(
+                new Emoji(emoji.Id, emoji.Name, emoji.IsAnimated),
+                cancellationToken
+            );
+        }
+
+        _writer.WriteEndArray();
 
         _writer.WriteEndObject();
         await _writer.FlushAsync(cancellationToken);

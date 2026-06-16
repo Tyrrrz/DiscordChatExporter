@@ -1,4 +1,4 @@
-﻿using DiscordChatExporter.Core.Discord;
+using DiscordChatExporter.Core.Discord;
 
 namespace DiscordChatExporter.Core.Markdown;
 

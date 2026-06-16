@@ -1,3 +1,3 @@
-﻿namespace DiscordChatExporter.Core.Markdown;
+namespace DiscordChatExporter.Core.Markdown;
 
 internal abstract record MarkdownNode;

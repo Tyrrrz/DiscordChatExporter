@@ -1,8 +1,11 @@
-﻿namespace DiscordChatExporter.Core.Discord.Data.Embeds;
+namespace DiscordChatExporter.Core.Discord.Data.Embeds;
 
 public partial record YouTubeVideoEmbedProjection(string VideoId)
 {
-    public string Url => $"https://www.youtube.com/embed/{VideoId}";
+    public string Url { get; } = $"https://www.youtube.com/watch?v={VideoId}";
+
+    // Using hqdefault.jpg which is guaranteed to exist for all YouTube videos
+    public string ThumbnailUrl { get; } = $"https://i.ytimg.com/vi/{VideoId}/hqdefault.jpg";
 }
 
 public partial record YouTubeVideoEmbedProjection

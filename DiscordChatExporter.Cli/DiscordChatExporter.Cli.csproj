@@ -1,21 +1,21 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <ApplicationIcon>..\favicon.ico</ApplicationIcon>
+    <ApplicationIcon>../favicon.ico</ApplicationIcon>
+    <PublishTrimmed>true</PublishTrimmed>
+    <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CliFx" Version="2.3.5" />
-    <PackageReference Include="CSharpier.MsBuild" Version="0.26.7" PrivateAssets="all" />
-    <PackageReference Include="Deorcify" Version="1.0.2" PrivateAssets="all" />
-    <PackageReference Include="DotnetRuntimeBootstrapper" Version="2.5.2" PrivateAssets="all" />
-    <PackageReference Include="Gress" Version="2.1.1" />
-    <PackageReference Include="Spectre.Console" Version="0.48.0" />
+    <PackageReference Include="CliFx" />
+    <PackageReference Include="CSharpier.MsBuild" PrivateAssets="all" />
+    <PackageReference Include="Deorcify" />
+    <PackageReference Include="Gress" />
+    <PackageReference Include="PowerKit" />
+    <PackageReference Include="Spectre.Console" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DiscordChatExporter.Core\DiscordChatExporter.Core.csproj" />
+    <ProjectReference Include="../DiscordChatExporter.Core/DiscordChatExporter.Core.csproj" />
   </ItemGroup>
-
 </Project>

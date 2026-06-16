@@ -1,7 +1,7 @@
-﻿namespace DiscordChatExporter.Core.Discord;
+namespace DiscordChatExporter.Core.Discord;
 
 public enum TokenKind
 {
     User,
-    Bot
+    Bot,
 }

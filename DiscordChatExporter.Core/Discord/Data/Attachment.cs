@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
-using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Reading;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Discord.Data;
 
@@ -18,7 +18,7 @@ public partial record Attachment(
     FileSize FileSize
 ) : IHasId
 {
-    public string FileExtension => Path.GetExtension(FileName);
+    public string FileExtension { get; } = Path.GetExtension(FileName);
 
     public bool IsImage =>
         string.Equals(FileExtension, ".jpg", StringComparison.OrdinalIgnoreCase)
@@ -41,7 +41,7 @@ public partial record Attachment(
         || string.Equals(FileExtension, ".flac", StringComparison.OrdinalIgnoreCase)
         || string.Equals(FileExtension, ".m4a", StringComparison.OrdinalIgnoreCase);
 
-    public bool IsSpoiler => FileName.StartsWith("SPOILER_", StringComparison.Ordinal);
+    public bool IsSpoiler { get; } = FileName.StartsWith("SPOILER_", StringComparison.Ordinal);
 }
 
 public partial record Attachment

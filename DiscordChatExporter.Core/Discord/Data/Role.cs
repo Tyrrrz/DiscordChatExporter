@@ -1,8 +1,8 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
-using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Reading;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Discord.Data;
 
@@ -18,7 +18,7 @@ public record Role(Snowflake Id, string Name, int Position, Color? Color) : IHas
         var color = json.GetPropertyOrNull("color")
             ?.GetInt32OrNull()
             ?.Pipe(System.Drawing.Color.FromArgb)
-            .ResetAlpha()
+            .WithFullAlpha()
             .NullIf(c => c.ToRgb() <= 0);
 
         return new Role(id, name, position, color);

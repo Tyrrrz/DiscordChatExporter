@@ -1,13 +1,13 @@
-﻿using System.Text.Json;
-using DiscordChatExporter.Core.Utils.Extensions;
+using System.Text.Json;
 using JsonExtensions.Reading;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Discord.Data;
 
 // https://discord.com/developers/docs/resources/application#application-object
 public partial record Application(Snowflake Id, string Name, ApplicationFlags Flags)
 {
-    public bool IsMessageContentIntentEnabled =>
+    public bool IsMessageContentIntentEnabled { get; } =
         Flags.HasFlag(ApplicationFlags.GatewayMessageContent)
         || Flags.HasFlag(ApplicationFlags.GatewayMessageContentLimited);
 }

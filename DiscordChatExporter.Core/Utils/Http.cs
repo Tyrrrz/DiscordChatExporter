@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Threading.Tasks;
-using DiscordChatExporter.Core.Utils.Extensions;
 using Polly;
 using Polly.Retry;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Utils;
 
@@ -24,12 +24,11 @@ public static class Http
 
     private static bool IsRetryableException(Exception exception) =>
         exception
-            .GetSelfAndChildren()
-            .Any(
-                ex =>
-                    ex is TimeoutException or SocketException or AuthenticationException
-                    || ex is HttpRequestException hrex
-                        && IsRetryableStatusCode(hrex.StatusCode ?? HttpStatusCode.OK)
+            .GetSelfAndDescendants()
+            .Any(ex =>
+                ex is TimeoutException or SocketException or AuthenticationException
+                || ex is HttpRequestException hrex
+                    && IsRetryableStatusCode(hrex.StatusCode ?? HttpStatusCode.OK)
             );
 
     public static ResiliencePipeline ResiliencePipeline { get; } =
@@ -40,7 +39,7 @@ public static class Http
                     ShouldHandle = new PredicateBuilder().Handle<Exception>(IsRetryableException),
                     MaxRetryAttempts = 4,
                     BackoffType = DelayBackoffType.Exponential,
-                    Delay = TimeSpan.FromSeconds(1)
+                    Delay = TimeSpan.FromSeconds(1),
                 }
             )
             .Build();
@@ -69,7 +68,7 @@ public static class Http
                         return ValueTask.FromResult<TimeSpan?>(
                             TimeSpan.FromSeconds(Math.Pow(2, args.AttemptNumber) + 1)
                         );
-                    }
+                    },
                 }
             )
             .Build();

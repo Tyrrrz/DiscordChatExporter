@@ -1,9 +1,9 @@
 # DiscordChatExporter
 
-[![Status](https://img.shields.io/badge/status-maintenance-ffd700.svg)](https://github.com/Tyrrrz/.github/blob/master/docs/project-status.md)
+[![Status](https://img.shields.io/badge/status-maintenance-ffd700.svg)](https://github.com/Tyrrrz/.github/blob/prime/docs/project-status.md)
 [![Made in Ukraine](https://img.shields.io/badge/made_in-ukraine-ffd700.svg?labelColor=0057b7)](https://tyrrrz.me/ukraine)
-[![Build](https://img.shields.io/github/actions/workflow/status/Tyrrrz/DiscordChatExporter/main.yml?branch=master)](https://github.com/Tyrrrz/DiscordChatExporter/actions)
-[![Coverage](https://img.shields.io/codecov/c/github/Tyrrrz/DiscordChatExporter/master)](https://codecov.io/gh/Tyrrrz/DiscordChatExporter)
+[![Build](https://img.shields.io/github/actions/workflow/status/Tyrrrz/DiscordChatExporter/main.yml?branch=prime)](https://github.com/Tyrrrz/DiscordChatExporter/actions)
+[![Coverage](https://img.shields.io/codecov/c/github/Tyrrrz/DiscordChatExporter/prime)](https://codecov.io/gh/Tyrrrz/DiscordChatExporter)
 [![Release](https://img.shields.io/github/release/Tyrrrz/DiscordChatExporter.svg)](https://github.com/Tyrrrz/DiscordChatExporter/releases)
 [![Downloads](https://img.shields.io/github/downloads/Tyrrrz/DiscordChatExporter/total.svg)](https://github.com/Tyrrrz/DiscordChatExporter/releases)
 [![Pulls](https://img.shields.io/docker/pulls/tyrrrz/discordchatexporter)](https://hub.docker.com/r/tyrrrz/discordchatexporter)
@@ -23,12 +23,11 @@
 **DiscordChatExporter** is an application that can be used to export message history from any [Discord](https://discord.com) channel to a file.
 It works with direct messages, group messages, and server channels, and supports Discord's dialect of markdown as well as most other rich media features.
 
-<!-- Can't use a relative link here due to a bug in markdown parsing -->
-> ❔ If you have questions or issues, **please refer to the [docs](https://github.com/Tyrrrz/DiscordChatExporter/tree/master/.docs)**.
+> [!WARNING]
+> While **DiscordChatExporter** allows it, automating user accounts is against Discord TOS and may result in you getting banned.
+> If possible, use a bot to export chat logs from accessible channels.
 
-> 💬 If you want to chat, **join my [Discord server](https://discord.gg/2SUWKFnHSm)**.
-
-## Terms of use<sup>[[?]](https://github.com/Tyrrrz/.github/blob/master/docs/why-so-political.md)</sup>
+## Terms of use<sup>[[?]](https://github.com/Tyrrrz/.github/blob/prime/docs/why-so-political.md)</sup>
 
 By using this project or its source code, for any purpose and in any shape or form, you grant your **implicit agreement** to all the following statements:
 
@@ -41,74 +40,34 @@ To learn more about the war and how you can help, [click here](https://tyrrrz.me
 
 ## Download
 
-This application comes in two flavors: graphical user interface (**GUI**) and command-line interface (**CLI**).
-The following table lists all available download options:
+- **Graphical user interface** (desktop app):
+  - 🟢 **[Stable release](https://github.com/Tyrrrz/DiscordChatExporter/releases/latest)**: look for `DiscordChatExporter.*.zip`
+  - 🟠 [CI build](https://github.com/Tyrrrz/DiscordChatExporter/actions/workflows/main.yml): look for `DiscordChatExporter.*.zip`
+  - 📦 [Scoop](https://scoop.sh/#/apps?q=DiscordChatExporter&p=1&id=c71b7367623c560a2dc746b9739b9568b79b59ae): `scoop install extras/discordchatexporter` (community-maintained)
+  - 📦 [WinGet](https://winstall.app/apps/Tyrrrz.DiscordChatExporter.GUI): `winget install Tyrrrz.DiscordChatExporter.GUI` (community-maintained)
+  - 📦 [AUR](https://aur.archlinux.org/packages/discord-chat-exporter-gui): `yay -S discord-chat-exporter-gui` (community-maintained)
+  - 📦 [Nix](https://search.nixos.org/packages?show=discordchatexporter-desktop): `nix-shell -p discordchatexporter-desktop` (community-maintained)
+- **Command-line interface** (terminal app):
+  - 🟢 **[Stable release](https://github.com/Tyrrrz/DiscordChatExporter/releases/latest)**: look for `DiscordChatExporter.Cli.*.zip`
+  - 🟠 [CI build](https://github.com/Tyrrrz/DiscordChatExporter/actions/workflows/main.yml): look for `DiscordChatExporter.Cli.*.zip`
+  - 🐋 [Docker](https://hub.docker.com/r/tyrrrz/discordchatexporter): `docker pull tyrrrz/discordchatexporter`
+  - 📦 [WinGet](https://winstall.app/apps/Tyrrrz.DiscordChatExporter.CLI): `winget install Tyrrrz.DiscordChatExporter.CLI` (community-maintained)
+  - 📦 [AUR](https://aur.archlinux.org/packages/discord-chat-exporter-cli): `yay -S discord-chat-exporter-cli` (community-maintained)
+  - 📦 [Nix](https://search.nixos.org/packages?show=discordchatexporter-cli): `nix-shell -p discordchatexporter-cli` (community-maintained)
 
-<table>
-  <thead>
-    <tr>
-      <th></th>
-      <th>Downloads</th>
-      <th>Supported OS</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><b>GUI</b></td>
-      <td>
-        <ul>
-          <li>🟢 <b><a href="https://github.com/Tyrrrz/DiscordChatExporter/releases/latest">Stable release</a></b> (<code>DiscordChatExporter.zip</code>)</li>
-          <li>🟠 <a href="https://github.com/Tyrrrz/DiscordChatExporter/actions/workflows/main.yml">CI build</a> (<code>DiscordChatExporter.Gui.zip</code>)</li>
-        </ul>
-      </td>
-      <td>
-        <ul>
-          <li>Windows <b>7</b> or higher</li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td><b>CLI</b></td>
-      <td>
-        <ul>
-          <li>🟢 <b><a href="https://github.com/Tyrrrz/DiscordChatExporter/releases/latest">Stable release</a></b> (<code>DiscordChatExporter.Cli.zip</code></li>
-          <li>🟠 <a href="https://github.com/Tyrrrz/DiscordChatExporter/actions/workflows/main.yml">CI build</a> (<code>DiscordChatExporter.Cli.zip</code>)</li>
-          <li>🐋 <a href="https://hub.docker.com/r/tyrrrz/discordchatexporter">Docker</a> (<code>tyrrrz/discordchatexporter</code>)</li>
-          <li>📦 <a href="https://aur.archlinux.org/packages/discord-chat-exporter-cli">AUR</a> (<code>discord-chat-exporter-cli</code>)</li>
-          <li>📦 <a href="https://search.nixos.org/packages?query=discordchatexporter-cli">Nix</a> (<code>discordchatexporter-cli</code>)</li>
-        </ul>
-      </td>
-      <td>
-        <ul>
-          <li>Windows <b>7</b> or higher</li>
-          <li>macOS <b>10.13 (High Sierra)</b> or higher</li>
-          <li>Linux (multiple distros)</li>
-        </ul>
-      </td>
-    </tr>
-  </tbody>
-</table>
+> [!IMPORTANT]
+> To launch the GUI version of the app on MacOS, you may need to first remove the downloaded file from quarantine.
+> You can do that by running the following command in the terminal: `xattr -rd com.apple.quarantine DiscordChatExporter.app`.
 
-> **Important**:
-> To run **DiscordChatExporter**, you need to make sure that the **.NET 8.0 Runtime** is installed.
-> You can download it here:
->
-> - [.NET 8.0 Runtime for **macOS x64**](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-8.0.0-macos-x64-installer)
-> - [.NET 8.0 Runtime for **macOS arm64**](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-8.0.0-macos-arm64-installer)
-> - [.NET 8.0 Runtime for **Linux**](https://learn.microsoft.com/dotnet/core/install/linux) (find the correct download for your distro)
-> - On Windows, the runtime should be installed automatically when you run the application for the first time
->
-> This should not be necessary if you install **DiscordChatExporter** using a package manager, as it should take care of the dependencies for you.
-> This is also not necessary if you are running **DiscordChatExporter** via Docker, because the image already contains the runtime.
+> [!NOTE]
+> Community-maintained packages are published independently from this repository and may not always be up to date with the latest release.
 
-> **Note**:
-> AUR and Nix packages linked above are maintained by the community.
-> If you have any issues with them, please contact the corresponding maintainers.
+> [!NOTE]
+> If you're unsure which build is right for your system, consult with [this page](https://useragent.cc) to determine your OS and CPU architecture.
 
 ## Features
 
-- Graphical user interface (Windows)
-- Command-line interface (Windows, Linux, macOS)
+- Cross-platform graphical and command-line interfaces
 - Authentication via either a user or a bot token
 - Multiple output formats: HTML (dark/light), TXT, CSV, JSON
 - Support for markdown, attachments, embeds, emoji, and other rich media features

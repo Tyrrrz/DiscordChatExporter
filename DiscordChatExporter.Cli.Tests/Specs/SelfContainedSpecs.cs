@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CliFx.Infrastructure;
@@ -7,6 +7,7 @@ using DiscordChatExporter.Cli.Tests.Infra;
 using DiscordChatExporter.Cli.Tests.Utils;
 using DiscordChatExporter.Core.Exporting;
 using FluentAssertions;
+using PowerKit;
 using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;
@@ -17,7 +18,7 @@ public class SelfContainedSpecs
     public async Task I_can_export_a_channel_and_download_all_referenced_assets()
     {
         // Arrange
-        using var dir = TempDir.Create();
+        using var dir = TempDirectory.Create();
         var filePath = Path.Combine(dir.Path, "output.html");
 
         // Act
@@ -27,7 +28,7 @@ public class SelfContainedSpecs
             ChannelIds = [ChannelIds.SelfContainedTestCases],
             ExportFormat = ExportFormat.HtmlDark,
             OutputPath = filePath,
-            ShouldDownloadAssets = true
+            ShouldDownloadAssets = true,
         }.ExecuteAsync(new FakeConsole());
 
         // Assert

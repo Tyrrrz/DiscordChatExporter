@@ -1,14 +1,14 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
-using DiscordChatExporter.Core.Utils.Extensions;
 using JsonExtensions.Reading;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Discord.Data;
 
 // https://discord.com/developers/docs/resources/guild#guild-object
 public partial record Guild(Snowflake Id, string Name, string IconUrl) : IHasId
 {
-    public bool IsDirect => Id == DirectMessages.Id;
+    public bool IsDirect { get; } = Id == Snowflake.Zero;
 }
 
 public partial record Guild
@@ -25,7 +25,8 @@ public partial record Guild
         var iconUrl =
             json.GetPropertyOrNull("icon")
                 ?.GetNonWhiteSpaceStringOrNull()
-                ?.Pipe(h => ImageCdn.GetGuildIconUrl(id, h)) ?? ImageCdn.GetFallbackUserAvatarUrl();
+                ?.Pipe(h => ImageCdn.GetGuildIconUrl(id, h))
+            ?? ImageCdn.GetFallbackUserAvatarUrl();
 
         return new Guild(id, name, iconUrl);
     }

@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using DiscordChatExporter.Cli.Tests.Infra;
 using FluentAssertions;
 using Xunit;

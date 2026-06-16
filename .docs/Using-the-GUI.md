@@ -10,13 +10,28 @@
 
 ### Step 1
 
-After extracting the `.zip`, open `DiscordChatExporter.exe`
+After extracting the `.zip`, run `DiscordChatExporter.exe` **(Windows)**, or `DiscordChatExporter` **(Linux)**.
+
+If you're using **macOS**, you'll need to manually grant permission for the app to run.  
+If you skip these steps, the "DiscordChatExporter is damaged and can’t be opened" error will be shown.
+
+1. Open Terminal.app. You can search for it in Spotlight (press <kbd>⌘</kbd> + <kbd>Space</kbd> and type "Terminal").
+2. Paste the following into the terminal window:
+   ```bash
+   xattr -rd com.apple.quarantine
+   ```
+3. Hit <kbd>Space</kbd> once to add a space after the command
+4. Drag and drop DiscordChatExporter.app into the terminal window
+5. Press <kbd>Return</kbd> to run the command
+6. Open DiscordChatExporter.app normally
+
+> Apple requires apps to be notarized and signed in order to run on macOS without warnings, which in turn requires an Apple Developer membership ($99/year). This open-source project is distributed for free and without commercial intent.
 
 ### Step 2
 
 Please refer to the on-screen instructions to get your token, then paste your token in the upper text box and hit ENTER or click the arrow (→).
 
-> **Warning**:
+> [!WARNING]
 > **Never share your token!**
 > A token gives full access to an account, treat it like a password.
 
@@ -61,37 +76,30 @@ In this screen you can customize the following:
 
 ## Settings
 
-- **Auto-update**
-Perform automatic updates on every launch.
+- **Auto-update** - Perform automatic updates on every launch.
 Default: Enabled
 
   > **Note**:
   > Keep this option enabled to receive the latest features and bug fixes!
 
-- **Dark mode**
-Use darker colors in the UI (User Interface).
+- **Dark mode** - Use darker colors in the UI (User Interface).
 Default: Disabled
 
-- **Persist token**
-Persist last used token between sessions.
+- **Persist token** - Persist last used token between sessions.
 Default: Enabled
 
-- **Show threads**
-Controls whether threads are shown in the channel list.
+- **Show threads** - Controls whether threads are shown in the channel list.
 Default: none
 
-- **Locale**
-Customize how dates are formatted in the exported files.
+- **Locale** - Customize how dates are formatted in the exported files.
 
-- **Date format**
-Customize how dates are formatted in the exported files in the settings menu ().
+- **Date format** - Customize how dates are formatted in the exported files in the settings menu ().
 
-- **Parallel limit**
-The number of channels that will be exported at the same time.
+- **Parallel limit** - The number of channels that will be exported at the same time.
 Default: 1
-
-- **Normalize to UTC**
-Convert all dates to UTC before exporting.
 
   > **Note**:
   > Try to keep this number low so that your account doesn't get flagged.
+
+- **Normalize to UTC** - Convert all dates to UTC before exporting.
+

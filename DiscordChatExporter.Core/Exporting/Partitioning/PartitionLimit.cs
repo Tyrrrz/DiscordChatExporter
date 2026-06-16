@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
@@ -37,7 +37,7 @@ public partial class PartitionLimit
             "M" => 1_000_000,
             "K" => 1_000,
             "" => 1,
-            _ => -1
+            _ => -1,
         };
 
         if (magnitude < 0)

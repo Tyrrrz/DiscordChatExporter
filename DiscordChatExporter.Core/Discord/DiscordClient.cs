@@ -629,6 +629,33 @@ public class DiscordClient(
         return response.EnumerateArray().Select(Message.Parse).LastOrDefault();
     }
 
+    public async ValueTask<Message?> TryGetMessageAsync(
+        Snowflake channelId,
+        Snowflake messageId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        // Use the regular message listing endpoint with the 'around' parameter instead of the
+        // dedicated single-message endpoint, because the latter is not accessible to user tokens.
+        var url = new UrlBuilder()
+            .SetPath($"channels/{channelId}/messages")
+            .SetQueryParameter("around", messageId.ToString())
+            .SetQueryParameter("limit", "1")
+            .Build();
+
+        // Can be null on channels that the user cannot access
+        var response = await TryGetJsonResponseAsync(url, cancellationToken);
+        if (response is null)
+            return null;
+
+        // The endpoint returns messages around the requested ID, so make sure to only return
+        // the message that exactly matches it (it may be absent if it has been deleted).
+        return response
+            .Value.EnumerateArray()
+            .Select(Message.Parse)
+            .FirstOrDefault(m => m.Id == messageId);
+    }
+
     public async IAsyncEnumerable<Message> GetMessagesAsync(
         Snowflake channelId,
         Snowflake? after = null,

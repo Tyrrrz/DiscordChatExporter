@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord;
@@ -80,7 +82,53 @@ public class ChannelExporter(DiscordClient discord)
                 cancellationToken
             );
 
-        await foreach (var message in messages)
+        // Threads created from a message don't include that message in their own history, even
+        // though it logically belongs to the thread as its very first message. Because the thread
+        // shares its ID with that starter message, we can fetch it from the parent channel and
+        // export it together with the rest of the thread's messages.
+        // This doesn't apply to forum/media posts, whose starter message is already part of the
+        // thread's own history.
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/1265
+        var starterMessage =
+            request.Channel.IsThread
+            && request.Channel.Parent is { Kind: not ChannelKind.GuildForum } parent
+                ? await discord.TryGetMessageAsync(parent.Id, request.Channel.Id, cancellationToken)
+                : null;
+
+        // Only include the starter message if it falls within the requested range
+        if (
+            starterMessage is not null
+            && (
+                (request.After is not null && starterMessage.Id < request.After.Value)
+                || (request.Before is not null && starterMessage.Id > request.Before.Value)
+            )
+        )
+        {
+            starterMessage = null;
+        }
+
+        // Prepend the starter message to the thread's history, or append it when exporting in
+        // reverse order, so that it remains the oldest message in the output either way.
+        async IAsyncEnumerable<Message> GetMessagesWithStarter(
+            [EnumeratorCancellation] CancellationToken innerCancellationToken
+        )
+        {
+            if (starterMessage is not null && !request.IsReverseMessageOrder)
+                yield return starterMessage;
+
+            await foreach (var message in messages.WithCancellation(innerCancellationToken))
+            {
+                // Avoid exporting the starter message twice in case it's also returned as part
+                // of the thread's own history.
+                if (message.Id != starterMessage?.Id)
+                    yield return message;
+            }
+
+            if (starterMessage is not null && request.IsReverseMessageOrder)
+                yield return starterMessage;
+        }
+
+        await foreach (var message in GetMessagesWithStarter(cancellationToken))
         {
             try
             {

@@ -113,9 +113,11 @@ public class ChannelExporter(DiscordClient discord)
             [EnumeratorCancellation] CancellationToken innerCancellationToken
         )
         {
+            // If the message order is not reversed, the starter message should be the first one in the output, so we yield it before fetching the rest of the thread's history.
             if (starterMessage is not null && !request.IsReverseMessageOrder)
                 yield return starterMessage;
 
+            // Fetch the rest of the thread's history and yield messages one by one
             await foreach (var message in messages.WithCancellation(innerCancellationToken))
             {
                 // Avoid exporting the starter message twice in case it's also returned as part
@@ -124,6 +126,7 @@ public class ChannelExporter(DiscordClient discord)
                     yield return message;
             }
 
+            // If the message order is reversed, the starter message should be the last one in the output, so we yield it after fetching the rest of the thread's history.
             if (starterMessage is not null && request.IsReverseMessageOrder)
                 yield return starterMessage;
         }

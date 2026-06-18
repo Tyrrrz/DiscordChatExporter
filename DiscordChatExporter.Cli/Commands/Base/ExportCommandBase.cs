@@ -165,8 +165,6 @@ public abstract class ExportCommandBase : DiscordCommandBase
             throw new CommandException("Option --media-dir cannot be used without --media.");
         }
 
-        var unwrappedChannels = new List<Channel>(channels);
-
         // Make sure the user does not try to export multiple channels into one file.
         // Output path must either be a directory or contain template tokens for this to work.
         // Validate this up-front, before fetching threads, because thread fetching can take a
@@ -197,6 +195,8 @@ public abstract class ExportCommandBase : DiscordCommandBase
                     + $"Provided output path: '{OutputPath}'."
             );
         }
+
+        var unwrappedChannels = new List<Channel>(channels);
 
         // Unwrap threads
         if (ThreadInclusionMode != ThreadInclusionMode.None)

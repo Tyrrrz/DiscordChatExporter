@@ -120,6 +120,13 @@ public class ChannelExporter(DiscordClient discord)
             // Fetch the rest of the thread's history and yield messages one by one
             await foreach (var message in messages.WithCancellation(innerCancellationToken))
             {
+                // A thread created from a message has an empty THREAD_STARTER_MESSAGE placeholder
+                // at the top of its history that merely points back to the originating message.
+                // It never carries any renderable content of its own and is superseded by the
+                // actual starter message fetched above, so skip it.
+                if (message.Kind == MessageKind.ThreadStarterMessage)
+                    continue;
+
                 // Avoid exporting the starter message twice in case it's also returned as part
                 // of the thread's own history.
                 if (message.Id != starterMessage?.Id)

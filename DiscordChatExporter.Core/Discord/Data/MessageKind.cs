@@ -13,4 +13,5 @@ public enum MessageKind
     GuildMemberJoin = 7,
     ThreadCreated = 18,
     Reply = 19,
+    ThreadStarterMessage = 21,
 }

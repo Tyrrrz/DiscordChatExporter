@@ -131,8 +131,8 @@ internal static partial class MarkdownParser
 
     private static readonly IMatcher<MarkdownContext, MarkdownNode> HeadingNodeMatcher =
         new RegexMatcher<MarkdownContext, MarkdownNode>(
-            // Consume the linebreak so that it's not attached to following nodes.
-            new Regex(@"^(\#{1,3})\s(.+)\n", DefaultRegexOptions),
+            // Consume the linebreak, if present, so that it's not attached to following nodes.
+            new Regex(@"^(\#{1,3})[^\S\r\n]+([^\r\n]+)(?:\r?\n|$)", DefaultRegexOptions),
             (c, s, m) => new HeadingNode(m.Groups[1].Length, Parse(c, s.Relocate(m.Groups[2])))
         );
 

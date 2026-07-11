@@ -264,7 +264,7 @@ internal static partial class MarkdownParser
     private static readonly IMatcher<MarkdownContext, MarkdownNode> MaskedLinkNodeMatcher =
         new RegexMatcher<MarkdownContext, MarkdownNode>(
             // Capture [title](link)
-            new Regex(@"\[(.+?)\]\((.+?)\)", DefaultRegexOptions),
+            new Regex(@"\[(.+?)\]\((https?://\S*[^\.,:;""'\s])\)", DefaultRegexOptions),
             (c, s, m) => new LinkNode(m.Groups[2].Value, Parse(c, s.Relocate(m.Groups[1])))
         );
 

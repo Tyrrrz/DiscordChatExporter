@@ -796,6 +796,10 @@ public class DiscordClient(
 
             foreach (var message in messages)
             {
+                // Messages are ordered newest to oldest, so no later message can satisfy this bound.
+                if (after is not null && message.Id.CompareTo(after.Value) <= 0)
+                    yield break;
+
                 lastMessage ??= message;
 
                 // Report progress based on timestamps

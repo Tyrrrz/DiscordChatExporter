@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Gui.Localization;
 using DiscordChatExporter.Gui.ViewModels;
@@ -18,13 +19,15 @@ public class ViewModelManager(IServiceProvider services, LocalizationManager loc
 
     public ExportSetupViewModel GetExportSetupViewModel(
         Guild guild,
-        IReadOnlyList<Channel> channels
+        IReadOnlyList<Channel> channels,
+        IReadOnlySet<Snowflake> forumChannelIds
     )
     {
         var viewModel = services.GetRequiredService<ExportSetupViewModel>();
 
         viewModel.Guild = guild;
         viewModel.Channels = channels;
+        viewModel.ForumChannelIds = forumChannelIds;
 
         return viewModel;
     }

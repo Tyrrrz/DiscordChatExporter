@@ -796,6 +796,10 @@ public class DiscordClient(
 
             foreach (var message in messages)
             {
+                // Ensure that the messages are in range
+                if (message.Timestamp <= after?.ToDate())
+                    yield break;
+
                 lastMessage ??= message;
 
                 // Report progress based on timestamps

@@ -20,9 +20,9 @@ public class UrlBuilder
         return this;
     }
 
-    public UrlBuilder SetQueryParameter(string key, string? value, bool ignoreUnsetValue = true)
+    public UrlBuilder SetQueryParameter(string key, string? value, bool ignoreIfEmptyValue = true)
     {
-        if (ignoreUnsetValue && string.IsNullOrWhiteSpace(value))
+        if (ignoreIfEmptyValue && string.IsNullOrWhiteSpace(value))
             return this;
 
         var keyEncoded = Uri.EscapeDataString(key);

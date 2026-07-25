@@ -592,6 +592,33 @@ public class DiscordClient(
         }
     }
 
+    public async ValueTask<Message?> TryGetMessageAsync(
+        Snowflake channelId,
+        Snowflake messageId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        // Use the regular message listing endpoint with the 'around' parameter instead of the
+        // dedicated single-message endpoint, because the latter is not accessible to user tokens.
+        var url = new UrlBuilder()
+            .SetPath($"channels/{channelId}/messages")
+            .SetQueryParameter("around", messageId.ToString())
+            .SetQueryParameter("limit", "1")
+            .Build();
+
+        // Can be null on channels that the user cannot access
+        var response = await TryGetJsonResponseAsync(url, cancellationToken);
+        if (response is null)
+            return null;
+
+        // The endpoint returns messages around the requested ID, so make sure to only return
+        // the message that exactly matches it (it may be absent if it has been deleted).
+        return response
+            .Value.EnumerateArray()
+            .Select(Message.Parse)
+            .FirstOrDefault(m => m.Id == messageId);
+    }
+
     private async ValueTask<Message?> TryGetFirstMessageAsync(
         Snowflake channelId,
         Snowflake? after = null,
@@ -634,59 +661,56 @@ public class DiscordClient(
         return response.Value.EnumerateArray().Select(Message.Parse).LastOrDefault();
     }
 
-    public async ValueTask<Message?> TryGetMessageAsync(
+    private async IAsyncEnumerable<Message> GetMessagesAsync(
         Snowflake channelId,
-        Snowflake messageId,
-        CancellationToken cancellationToken = default
+        Snowflake? after,
+        Snowflake? before,
+        IProgress<Percentage>? progress,
+        bool isReverse,
+        [EnumeratorCancellation] CancellationToken cancellationToken
     )
     {
-        // Use the regular message listing endpoint with the 'around' parameter instead of the
-        // dedicated single-message endpoint, because the latter is not accessible to user tokens.
-        var url = new UrlBuilder()
-            .SetPath($"channels/{channelId}/messages")
-            .SetQueryParameter("around", messageId.ToString())
-            .SetQueryParameter("limit", "1")
-            .Build();
+        // To keep the understanding of message history independent of the fetching direction,
+        // we'll refer to the two ends of the range as Alpha and Omega.
+        // Depending on the direction, these are either 'before' and 'after', or 'after' and 'before'.
+        //
+        // Chronological order:
+        // <after> Alpha [----->----->----] Omega <before>
+        // Reverse chronological order:
+        // <after> Omega [-----<-----<----] Alpha <before>
 
-        // Can be null on channels that the user cannot access
-        var response = await TryGetJsonResponseAsync(url, cancellationToken);
-        if (response is null)
-            return null;
+        // Because Discord API doesn't allow us to provide both 'after' and 'before' parameters
+        // at the same time, we have to establish at least one end of the boundary manually.
+        // To do that, we'll fetch the Omega message, which will be the terminal message in the range:
+        // last message in chronological order, or first message in reverse chronological order.
+        // This snapshotting also has the side benefit of allowing us to calculate progress by comparing
+        // the timestamps of the Alpha message, Omega message, and the message being currently processed.
+        var omegaMessage = !isReverse
+            ? await TryGetLastMessageAsync(channelId, before, cancellationToken)
+            : await TryGetFirstMessageAsync(channelId, after, cancellationToken);
 
-        // The endpoint returns messages around the requested ID, so make sure to only return
-        // the message that exactly matches it (it may be absent if it has been deleted).
-        return response
-            .Value.EnumerateArray()
-            .Select(Message.Parse)
-            .FirstOrDefault(m => m.Id == messageId);
-    }
-
-    public async IAsyncEnumerable<Message> GetMessagesAsync(
-        Snowflake channelId,
-        Snowflake? after = null,
-        Snowflake? before = null,
-        IProgress<Percentage>? progress = null,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default
-    )
-    {
-        // Get the last message in the specified range, so we can later calculate the
-        // progress based on the difference between message timestamps.
-        // This also snapshots the boundaries, which means that messages posted after
-        // the export started will not appear in the output.
-        var lastMessage = await TryGetLastMessageAsync(channelId, before, cancellationToken);
-        if (lastMessage is null || lastMessage.Timestamp < after?.ToDate())
+        // If the Omega doesn't exist or falls outside of the range, then there are simply no messages
+        // satisfying the specified range.
+        if (
+            omegaMessage is null
+            || (!isReverse && omegaMessage.Timestamp < after?.ToDate())
+            || (isReverse && omegaMessage.Timestamp > before?.ToDate())
+        )
+        {
             yield break;
+        }
 
-        // Keep track of the first message in range in order to calculate the progress
-        var firstMessage = default(Message);
+        // Persist the Alpha message as soon as we fetch the initial batch of messages.
+        // This is only used for calculating progress.
+        var alphaMessage = default(Message);
 
-        var currentAfter = after ?? Snowflake.Zero;
+        var currentBoundary = !isReverse ? after ?? Snowflake.Zero : before;
         while (true)
         {
             var url = new UrlBuilder()
                 .SetPath($"channels/{channelId}/messages")
                 .SetQueryParameter("limit", "100")
-                .SetQueryParameter("after", currentAfter.ToString())
+                .SetQueryParameter(!isReverse ? "after" : "before", currentBoundary?.ToString())
                 .Build();
 
             var response = await GetJsonResponseAsync(url, cancellationToken);
@@ -694,8 +718,8 @@ public class DiscordClient(
             var messages = response
                 .EnumerateArray()
                 .Select(Message.Parse)
-                // Messages are returned from newest to oldest, so we need to reverse them
-                .Reverse()
+                // Messages in batches are always returned from newest to oldest, so reverse if needed
+                .Pipe(messages => isReverse ? messages : messages.Reverse())
                 .ToArray();
 
             // Break if there are no messages (can happen if messages are deleted during execution)
@@ -710,24 +734,31 @@ public class DiscordClient(
 
             foreach (var message in messages)
             {
-                firstMessage ??= message;
-
-                // Ensure that the messages are in range
-                if (message.Timestamp > lastMessage.Timestamp)
+                // Ensure that we're still in range by checking against the Omega
+                if (!isReverse ? message.Id > omegaMessage.Id : message.Id < omegaMessage.Id)
+                {
                     yield break;
+                }
+
+                alphaMessage ??= message;
 
                 // Report progress based on timestamps
                 if (progress is not null)
                 {
-                    var exportedDuration = (message.Timestamp - firstMessage.Timestamp).Duration();
-                    var totalDuration = (lastMessage.Timestamp - firstMessage.Timestamp).Duration();
+                    var fetchedDuration = isReverse
+                        ? alphaMessage.Timestamp - message.Timestamp
+                        : message.Timestamp - alphaMessage.Timestamp;
+
+                    var totalDuration = isReverse
+                        ? alphaMessage.Timestamp - omegaMessage.Timestamp
+                        : omegaMessage.Timestamp - alphaMessage.Timestamp;
 
                     progress.Report(
                         Percentage.FromFraction(
                             // Avoid division by zero if all messages have the exact same timestamp
                             // (which happens when there's only one message in the channel)
                             totalDuration > TimeSpan.Zero
-                                ? exportedDuration / totalDuration
+                                ? fetchedDuration / totalDuration
                                 : 1
                         )
                     );
@@ -747,9 +778,34 @@ public class DiscordClient(
                         : null;
 
                 yield return actualMessage ?? message;
-
-                currentAfter = message.Id;
             }
+
+            // The new boundary is always determined by the last message in the batch,
+            // because we order the messages based on fetching direction.
+            currentBoundary = messages.Last().Id;
+        }
+    }
+
+    public async IAsyncEnumerable<Message> GetMessagesAsync(
+        Snowflake channelId,
+        Snowflake? after = null,
+        Snowflake? before = null,
+        IProgress<Percentage>? progress = null,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default
+    )
+    {
+        await foreach (
+            var message in GetMessagesAsync(
+                channelId,
+                after,
+                before,
+                progress,
+                false,
+                cancellationToken
+            )
+        )
+        {
+            yield return message;
         }
     }
 
@@ -761,81 +817,18 @@ public class DiscordClient(
         [EnumeratorCancellation] CancellationToken cancellationToken = default
     )
     {
-        // Get the first message in the specified range, so we can later calculate the
-        // progress based on the difference between message timestamps.
-        // Snapshotting is not necessary here because new messages can't appear in the past.
-        var firstMessage = await TryGetFirstMessageAsync(channelId, after, cancellationToken);
-        if (firstMessage is null || firstMessage.Timestamp > before?.ToDate())
-            yield break;
-
-        // Keep track of the last message in range in order to calculate the progress
-        var lastMessage = default(Message);
-
-        var currentBefore = before;
-        while (true)
+        await foreach (
+            var message in GetMessagesAsync(
+                channelId,
+                after,
+                before,
+                progress,
+                true,
+                cancellationToken
+            )
+        )
         {
-            var url = new UrlBuilder()
-                .SetPath($"channels/{channelId}/messages")
-                .SetQueryParameter("limit", "100")
-                .SetQueryParameter("before", currentBefore?.ToString())
-                .Build();
-
-            var response = await GetJsonResponseAsync(url, cancellationToken);
-
-            var messages = response.EnumerateArray().Select(Message.Parse).ToArray();
-
-            // Break if there are no messages (can happen if messages are deleted during execution)
-            if (!messages.Any())
-                yield break;
-
-            // If all messages are empty, make sure that it's not because the bot account doesn't
-            // have the MESSAGE_CONTENT intent enabled.
-            // https://github.com/Tyrrrz/DiscordChatExporter/issues/1106#issuecomment-1741548959
-            if (messages.All(m => m.IsEmpty))
-                await EnsureMessageContentIntentAsync(cancellationToken);
-
-            foreach (var message in messages)
-            {
-                // Ensure that the messages are in range
-                if (message.Timestamp <= after?.ToDate())
-                    yield break;
-
-                lastMessage ??= message;
-
-                // Report progress based on timestamps
-                if (progress is not null)
-                {
-                    var exportedDuration = (lastMessage.Timestamp - message.Timestamp).Duration();
-                    var totalDuration = (lastMessage.Timestamp - firstMessage.Timestamp).Duration();
-
-                    progress.Report(
-                        Percentage.FromFraction(
-                            // Avoid division by zero if all messages have the exact same timestamp
-                            // (which happens when there's only one message in the channel)
-                            totalDuration > TimeSpan.Zero
-                                ? exportedDuration / totalDuration
-                                : 1
-                        )
-                    );
-                }
-
-                // Some messages, for example thread starter messages, are returned by the API as content-less references.
-                // Try to resolve them to the actual message so that they appear as they do in the Discord client.
-                var actualMessage =
-                    message.Kind == MessageKind.ThreadStarterMessage
-                    && message.Reference?.ChannelId is { } referencedChannelId
-                    && message.Reference?.MessageId is { } referencedMessageId
-                        ? await TryGetMessageAsync(
-                            referencedChannelId,
-                            referencedMessageId,
-                            cancellationToken
-                        )
-                        : null;
-
-                yield return actualMessage ?? message;
-            }
-
-            currentBefore = messages.Last().Id;
+            yield return message;
         }
     }
 

@@ -68,9 +68,9 @@ exit 0
 
 - `tokenhere` with your [Token](Token-and-IDs.md)
 - `channelhere` with a [Channel ID](Token-and-IDs.md)
-- `dceFOLDERpathhere` with DCE's **directory's path** (e.g. `/Users/user/Desktop/DiscordChatExporterFolder`, NOT `/Users/user/Desktop/DiscordChatExporterFolder/DiscordChatExporter.DLL`)
+- `dceFOLDERpathhere` with DCE's **directory's path** (e.g., `/Users/user/Desktop/DiscordChatExporterFolder`, NOT `/Users/user/Desktop/DiscordChatExporterFolder/DiscordChatExporter.DLL`)
 - `filenamehere` with the exported channel's filename, without spaces
-- `dirhere` with the directory you want the files to be saved at (e.g. `/Users/user/Documents/Discord\ Exports`)
+- `dirhere` with the directory you want the files to be saved at (e.g., `/Users/user/Documents/Discord\ Exports`)
 - `formathere` with one of the available export formats
 
 To quickly get file or folder paths, select the file/folder, then hit Command+I (⌘I) and copy what's after `Where:`.

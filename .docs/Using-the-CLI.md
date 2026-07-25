@@ -77,7 +77,7 @@ format is `HtmlDark`.
 
 #### Changing the output filename
 
-You can change the filename by using `-o name.ext`. e.g. for the `HTML` format:
+You can change the filename by using `-o name.ext`. e.g., for the `HTML` format:
 
 ```console
 ./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 -o myserver.html
@@ -186,21 +186,21 @@ locales. The default locale is `en-US`.
 #### Date ranges
 
 **Messages sent before a date**
-Use `--before` to export messages sent before the provided date. E.g. messages sent before September 18th, 2019:
+Use `--before` to export messages sent before the provided date. e.g., messages sent before September 18th, 2019:
 
 ```console
 ./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 --before 2019-09-18
 ```
 
 **Messages sent after a date**
-Use `--after` to export messages sent after the provided date. E.g. messages sent after September 17th, 2019 11:34 PM:
+Use `--after` to export messages sent after the provided date. e.g., messages sent after September 17th, 2019 11:34 PM:
 
 ```console
 ./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 --after "2019-09-17 23:34"
 ```
 
 **Messages sent in a date range**
-Use `--before` and `--after` to export messages sent during the provided date range. E.g. messages sent between
+Use `--before` and `--after` to export messages sent during the provided date range. e.g., messages sent between
 September 17th, 2019 11:34 PM and September 18th:
 
 ```console

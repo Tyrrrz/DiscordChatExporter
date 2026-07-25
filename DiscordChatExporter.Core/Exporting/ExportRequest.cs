@@ -208,7 +208,7 @@ public partial class ExportRequest
 
         // Determine whether the output path refers to a directory or a file.
         // The extension-based heuristic is evaluated on the original, unsubstituted path,
-        // because the value of a template token (e.g. a guild or channel name) may contain
+        // because the value of a template token (e.g., a guild or channel name) may contain
         // a period that would otherwise be mistaken for a file extension, incorrectly causing
         // a directory path to be treated as a file.
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/1502

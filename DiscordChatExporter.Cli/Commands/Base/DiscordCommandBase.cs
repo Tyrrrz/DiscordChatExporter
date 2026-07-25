@@ -30,7 +30,7 @@ public abstract class DiscordCommandBase : ICommand
     [CommandOption(
         "respect-rate-limits",
         Description = "Whether to respect advisory rate limits. "
-            + "If disabled, only hard rate limits (i.e. 429 responses) will be respected."
+            + "If disabled, only hard rate limits (i.e., 429 responses) will be respected."
     )]
     public bool ShouldRespectRateLimits { get; set; } = true;
 

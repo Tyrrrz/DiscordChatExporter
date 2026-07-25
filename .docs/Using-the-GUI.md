@@ -12,7 +12,7 @@
 
 After extracting the `.zip`, run `DiscordChatExporter.exe` **(Windows)**, or `DiscordChatExporter` **(Linux)**.
 
-If you're using **macOS**, you'll need to manually grant permission for the app to run.  
+If you're using **macOS**, you'll need to manually grant permission for the app to run.
 If you skip these steps, the "DiscordChatExporter is damaged and can’t be opened" error will be shown.
 
 1. Open Terminal.app. You can search for it in Spotlight (press <kbd>⌘</kbd> + <kbd>Space</kbd> and type "Terminal").
@@ -56,10 +56,11 @@ In this screen you can customize the following:
 - **Export format** - HTML (Dark), HTML (Light), TXT, CSV and JSON
 
 - **Date range (after/before)** (Optional) - If set, only messages sent in the provided date range will be exported. Only one value (either after or before) is required if you want to use this option.
+
   > **Note**:
   > Please note that the time defaults to **12:00 AM** (midnight/00:00). This means that if you choose to export between Sep 17th and Sep 18th, messages from Sep 18th won't be exported.
 
-- **Partition limit** (Optional) - Split output into partitions, each limited to this number of messages (e.g. 100) or file size (e.g. 10mb). For example, a channel with 36 messages set to be partitioned every 10 messages will output 4 files.
+- **Partition limit** (Optional) - Split output into partitions, each limited to this number of messages (e.g., 100) or file size (e.g., 10mb). For example, a channel with 36 messages set to be partitioned every 10 messages will output 4 files.
 
 - **Message Filter** (Optional) - Special notation for filtering the messages that get included in the export. See [Message filters](Message-filters.md) for more info.
 
@@ -77,29 +78,28 @@ In this screen you can customize the following:
 ## Settings
 
 - **Auto-update** - Perform automatic updates on every launch.
-Default: Enabled
+  Default: Enabled
 
   > **Note**:
   > Keep this option enabled to receive the latest features and bug fixes!
 
 - **Dark mode** - Use darker colors in the UI (User Interface).
-Default: Disabled
+  Default: Disabled
 
 - **Persist token** - Persist last used token between sessions.
-Default: Enabled
+  Default: Enabled
 
 - **Show threads** - Controls whether threads are shown in the channel list.
-Default: none
+  Default: none
 
 - **Locale** - Customize how dates are formatted in the exported files.
 
 - **Date format** - Customize how dates are formatted in the exported files in the settings menu ().
 
 - **Parallel limit** - The number of channels that will be exported at the same time.
-Default: 1
+  Default: 1
 
   > **Note**:
   > Try to keep this number low so that your account doesn't get flagged.
 
 - **Normalize to UTC** - Convert all dates to UTC before exporting.
-

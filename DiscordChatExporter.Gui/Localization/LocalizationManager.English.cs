@@ -58,7 +58,7 @@ public partial class LocalizationManager
                 """,
             [nameof(RateLimitPreferenceLabel)] = "Rate limit preference",
             [nameof(RateLimitPreferenceTooltip)] =
-                "Whether to respect advisory rate limits. If disabled, only hard rate limits (i.e. 429 responses) will be respected.",
+                "Whether to respect advisory rate limits. If disabled, only hard rate limits (i.e., 429 responses) will be respected.",
             [nameof(ShowThreadsLabel)] = "Show threads",
             [nameof(ShowThreadsTooltip)] = "Which types of threads to show in the channel list",
             [nameof(LocaleLabel)] = "Locale",
@@ -102,10 +102,10 @@ public partial class LocalizationManager
             [nameof(BeforeTimeTooltip)] = "Only include messages sent before this time",
             [nameof(PartitionLimitLabel)] = "Partition limit",
             [nameof(PartitionLimitTooltip)] =
-                "Split the output into partitions, each limited to the specified number of messages (e.g. '100') or file size (e.g. '10mb')",
+                "Split the output into partitions, each limited to the specified number of messages (e.g., '100') or file size (e.g., '10mb')",
             [nameof(MessageFilterLabel)] = "Message filter",
             [nameof(MessageFilterTooltip)] =
-                "Only include messages that satisfy this filter (e.g. 'from:foo#1234' or 'has:image'). See the documentation for more info.",
+                "Only include messages that satisfy this filter (e.g., 'from:foo#1234' or 'has:image'). See the documentation for more info.",
             [nameof(ReverseMessageOrderLabel)] = "Reverse messages",
             [nameof(ReverseMessageOrderTooltip)] =
                 "Export messages in reverse chronological order (newest first)",

@@ -209,7 +209,7 @@ internal static partial class MarkdownParser
         new RegexMatcher<MarkdownContext, MarkdownNode>(
             new Regex(
                 // Build a pattern from all known emoji, sorted longest-first so that compound
-                // emoji (e.g. sequences with ZWJ or skin-tone modifiers) are matched before
+                // emoji (e.g., sequences with ZWJ or skin-tone modifiers) are matched before
                 // their individual components.
                 "("
                     + string.Join(
@@ -408,7 +408,7 @@ internal static partial class MarkdownParser
             TimestampNodeMatcher
         );
 
-    // Minimal set of matchers for non-multimedia formats (e.g. plain text)
+    // Minimal set of matchers for non-multimedia formats (e.g., plain text)
     private static readonly IMatcher<MarkdownContext, MarkdownNode> MinimalNodeMatcher =
         new AggregateMatcher<MarkdownContext, MarkdownNode>(
             // Mentions

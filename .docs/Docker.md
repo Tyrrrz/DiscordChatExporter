@@ -16,7 +16,7 @@ $ docker pull tyrrrz/discordchatexporter:stable
 Note the `:stable` tag. DiscordChatExporter images are tagged according to the following patterns:
 
 - `stable` — latest stable version release. This tag is updated with each release of a new project version. Recommended for personal use.
-- `x.y.z` (e.g. `2.30.1`) — specific stable version release. This tag is pushed when the corresponding version is released and never updated thereafter. Recommended for use in automation scenarios.
+- `x.y.z` (e.g., `2.30.1`) — specific stable version release. This tag is pushed when the corresponding version is released and never updated thereafter. Recommended for use in automation scenarios.
 - `latest` — latest (potentially unstable) build. This tag is updated with each new commit to the `prime` branch. Not recommended, unless you want to test a new feature that has not been released in a stable version yet.
 
 You can see all available tags [here](https://hub.docker.com/r/tyrrrz/discordchatexporter/tags?ordering=name).

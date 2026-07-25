@@ -33,9 +33,9 @@ exit
 
 - `tokenhere` with your [Token](Token-and-IDs.md)
 - `channelhere` with a [Channel ID](Token-and-IDs.md)
-- `exefolderhere` with the .exe **directory's path** (e.g. C:\Users\User\Desktop\DiscordChatExporter)
+- `exefolderhere` with the .exe **directory's path** (e.g., C:\Users\User\Desktop\DiscordChatExporter)
 - `filenamehere` with a filename without spaces
-- `dirhere` with the export directory (e.g. C:\Users\User\Documents\Exports)
+- `dirhere` with the export directory (e.g., C:\Users\User\Documents\Exports)
 - `formathere` with one of the available export formats
 
 Make sure not to delete the quotes (")

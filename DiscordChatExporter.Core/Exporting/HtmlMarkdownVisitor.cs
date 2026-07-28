@@ -188,12 +188,19 @@ internal partial class HtmlMarkdownVisitor(
             .Groups[1]
             .Value;
 
+        var safeUrl = ExportContext.EnsureSafeUrl(link.Url);
+        if (string.IsNullOrWhiteSpace(safeUrl))
+        {
+            await VisitAsync(link.Children, cancellationToken);
+            return;
+        }
+
         buffer.Append(
             !string.IsNullOrWhiteSpace(linkedMessageId)
                 // lang=html
-                ? $"""<a href="{HtmlEncode(link.Url)}" onclick="scrollToMessage(event, '{linkedMessageId}')">"""
+                ? $"""<a href="{HtmlEncode(safeUrl)}" onclick="scrollToMessage(event, '{linkedMessageId}')">"""
                 // lang=html
-                : $"""<a href="{HtmlEncode(link.Url)}">"""
+                : $"""<a href="{HtmlEncode(safeUrl)}">"""
         );
 
         await VisitAsync(link.Children, cancellationToken);

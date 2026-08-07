@@ -8,6 +8,12 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <MacOSBundleIdentifier>me.tyrrrz.discordchatexporter</MacOSBundleIdentifier>
+    <MacOSBundleName>DCE</MacOSBundleName>
+    <MacOSBundleDisplayName>DiscordChatExporter</MacOSBundleDisplayName>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <EncryptionSalt>HimalayanPinkSalt</EncryptionSalt>
   </PropertyGroup>
 
@@ -15,10 +21,6 @@
     <!-- Expose this property in code -->
     <ProjectProperty Include="EncryptionSalt" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <PublishMacOSBundle>false</PublishMacOSBundle>
-  </PropertyGroup>
 
   <ItemGroup>
     <AvaloniaResource Include="../favicon.ico" Link="favicon.ico" />
@@ -34,6 +36,7 @@
     <PackageReference Include="Deorcify" />
     <PackageReference Include="DialogHost.Avalonia" />
     <PackageReference Include="Gress" />
+    <PackageReference Include="MacBundle" />
     <PackageReference Include="Markdig" />
     <PackageReference Include="Material.Avalonia" />
     <PackageReference Include="Material.Icons.Avalonia" />
@@ -46,11 +49,4 @@
   <ItemGroup>
     <ProjectReference Include="../DiscordChatExporter.Core/DiscordChatExporter.Core.csproj" />
   </ItemGroup>
-
-  <Target Name="PublishMacOSBundle" AfterTargets="Publish" Condition="$(PublishMacOSBundle)">
-    <Exec
-      Command="dotnet run --file &quot;$(ProjectDir)PublishMacOSBundle.csx&quot; -- --publish-dir &quot;$(PublishDir)&quot; --icons-file &quot;$(ProjectDir)../favicon.icns&quot; --full-version $(Version) --short-version $(AssemblyVersion)"
-      LogStandardErrorAsError="true"
-    />
-  </Target>
 </Project>

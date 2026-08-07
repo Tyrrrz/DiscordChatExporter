@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
+using DiscordChatExporter.Core.Discord.Data.Components;
 using DiscordChatExporter.Core.Discord.Data.Embeds;
 using DiscordChatExporter.Core.Markdown.Parsing;
 using JsonExtensions.Writing;
@@ -369,6 +370,45 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
         );
 
         _writer.WriteEndObject();
+        await _writer.FlushAsync(cancellationToken);
+    }
+
+    private async ValueTask WriteComponentAsync(
+        MessageComponent component,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _writer.WriteStartObject();
+
+        _writer.WriteString("type", component.Kind.ToString());
+
+        if (component.Button is not null)
+        {
+            _writer.WriteString("style", component.Button.Style.ToString());
+            _writer.WriteString("label", component.Button.Label);
+            _writer.WriteString("url", component.Button.Url);
+            _writer.WriteString("customId", component.Button.CustomId);
+            _writer.WriteString("skuId", component.Button.SkuId?.ToString());
+            _writer.WriteBoolean("isDisabled", component.Button.IsDisabled);
+
+            if (component.Button.Emoji is not null)
+            {
+                _writer.WritePropertyName("emoji");
+                await WriteEmojiAsync(component.Button.Emoji, cancellationToken);
+            }
+        }
+
+        if (component.Components.Any())
+        {
+            _writer.WriteStartArray("components");
+
+            foreach (var child in component.Components)
+                await WriteComponentAsync(child, cancellationToken);
+
+            _writer.WriteEndArray();
+        }
+
+        _writer.WriteEndObject();
     }
 
     public override async ValueTask WritePreambleAsync(
@@ -474,6 +514,14 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
 
         foreach (var attachment in message.Attachments)
             await WriteAttachmentAsync(attachment, cancellationToken);
+
+        _writer.WriteEndArray();
+
+        // Components
+        _writer.WriteStartArray("components");
+
+        foreach (var component in message.Components)
+            await WriteComponentAsync(component, cancellationToken);
 
         _writer.WriteEndArray();
 

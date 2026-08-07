@@ -4,6 +4,7 @@
 @using System.Threading.Tasks
 @using RazorBlade
 @using DiscordChatExporter.Core.Discord.Data
+@using DiscordChatExporter.Core.Discord.Data.Components
 @using DiscordChatExporter.Core.Discord.Data.Embeds
 @using DiscordChatExporter.Core.Markdown.Parsing
 @using DiscordChatExporter.Core.Utils.Extensions
@@ -731,6 +732,67 @@
                                 </div>
                             </div>
                         }
+                    }
+
+                    @* Components *@
+                    @if (message.Components.Any(c => c.Kind == MessageComponentType.ActionRow && c.HasButtons))
+                    {
+                        <div class="chatlog__components">
+                            @foreach (var actionRow in message.Components.Where(c => c.Kind == MessageComponentType.ActionRow && c.HasButtons))
+                            {
+                                <div class="chatlog__action-row">
+                                    @foreach (var button in actionRow.Buttons)
+                                    {
+                                        var styleClass = button.Style switch
+                                        {
+                                            ButtonStyle.Primary => "chatlog__component-button--primary",
+                                            ButtonStyle.Secondary => "chatlog__component-button--secondary",
+                                            ButtonStyle.Success => "chatlog__component-button--success",
+                                            ButtonStyle.Danger => "chatlog__component-button--danger",
+                                            ButtonStyle.Link => "chatlog__component-button--link",
+                                            ButtonStyle.Premium => "chatlog__component-button--premium",
+                                            _ => "chatlog__component-button--secondary"
+                                        };
+
+                                        var isUrlButton = button.IsUrlButton;
+                                        var isDisabled = button.IsDisabled;
+                                        var hasEmoji = button.Emoji is not null;
+                                        var hasLabel = !string.IsNullOrWhiteSpace(button.Label);
+                                        var emojiUrl = hasEmoji ? await ResolveAssetUrlAsync(button.Emoji.ImageUrl) : null;
+                                        var cssClass = $"chatlog__component-button {styleClass}";
+
+                                        if (isUrlButton && !isDisabled)
+                                        {
+                                            <a class="@cssClass" href="@button.Url" target="_blank" rel="noreferrer noopener">
+                                                @if (hasEmoji)
+                                                {
+                                                    <img class="chatlog__emoji chatlog__emoji--small" alt="@button.Emoji.Name" src="@emojiUrl" loading="lazy">
+                                                }
+
+                                                @if (hasLabel)
+                                                {
+                                                    <span>@button.Label</span>
+                                                }
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <button class="@cssClass" type="button" disabled="@isDisabled" data-url="@(isUrlButton ? button.Url : null)">
+                                                @if (hasEmoji)
+                                                {
+                                                    <img class="chatlog__emoji chatlog__emoji--small" alt="@button.Emoji.Name" src="@emojiUrl" loading="lazy">
+                                                }
+
+                                                @if (hasLabel)
+                                                {
+                                                    <span>@button.Label</span>
+                                                }
+                                            </button>
+                                        }
+                                    }
+                                </div>
+                            }
+                        </div>
                     }
 
                     @* Stickers *@

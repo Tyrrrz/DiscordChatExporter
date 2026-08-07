@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
+using DiscordChatExporter.Core.Discord.Data.Components;
 using DiscordChatExporter.Core.Discord.Data.Embeds;
 using JsonExtensions.Reading;
 using PowerKit.Extensions;
@@ -23,6 +24,7 @@ public partial record Message(
     IReadOnlyList<Attachment> Attachments,
     IReadOnlyList<Embed> Embeds,
     IReadOnlyList<Sticker> Stickers,
+    IReadOnlyList<MessageComponent> Components,
     IReadOnlyList<Reaction> Reactions,
     IReadOnlyList<User> MentionedUsers,
     MessageReference? Reference,
@@ -34,6 +36,7 @@ public partial record Message(
     public bool IsEmpty { get; } =
         string.IsNullOrWhiteSpace(Content)
         && !Attachments.Any()
+        && !Components.Any()
         && !Embeds.Any()
         && !Stickers.Any();
 
@@ -161,6 +164,14 @@ public partial record Message
                 .ToArray()
             ?? [];
 
+        var components =
+            json.GetPropertyOrNull("components")
+                ?.EnumerateArrayOrNull()
+                ?.Select(MessageComponent.Parse)
+                .WhereNotNull()
+                .ToArray()
+            ?? [];
+
         var reactions =
             json.GetPropertyOrNull("reactions")
                 ?.EnumerateArrayOrNull()
@@ -200,6 +211,7 @@ public partial record Message
             attachments,
             embeds,
             stickers,
+            components,
             reactions,
             mentionedUsers,
             messageReference,

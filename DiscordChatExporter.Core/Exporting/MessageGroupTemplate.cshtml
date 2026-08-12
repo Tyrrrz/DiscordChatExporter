@@ -401,6 +401,64 @@
                         </div>
                     }
 
+                    @* Poll *@
+                    @if (message.Poll is { } poll)
+                    {
+                        <div class="chatlog__poll">
+                            <div class="chatlog__poll-question">@poll.Question</div>
+
+                            <div class="chatlog__poll-answers">
+                                @foreach (var answer in poll.Answers)
+                                {
+                                    var answerCount = poll.Results?.GetAnswerCount(answer.Id);
+
+                                    <div class="chatlog__poll-answer @(answerCount?.DidCurrentUserVote == true ? "chatlog__poll-answer--selected" : null)">
+                                        <div class="chatlog__poll-answer-content">
+                                            @if (answer.Emoji is not null)
+                                            {
+                                                <img class="chatlog__poll-answer-emoji" alt="@answer.Emoji.Name" title="@answer.Emoji.Code" src="@await ResolveAssetUrlAsync(answer.Emoji.ImageUrl)" loading="lazy">
+                                            }
+                                            <span class="chatlog__poll-answer-text">@answer.Text</span>
+                                        </div>
+
+                                        @if (answerCount is not null)
+                                        {
+                                            <span class="chatlog__poll-answer-count">@answerCount.Count.ToString("N0", Context.Request.CultureInfo)</span>
+                                        }
+                                    </div>
+                                }
+                            </div>
+
+                            @if (poll.Results is not null || poll.AllowsMultipleAnswers || poll.ExpiresAt is not null)
+                            {
+                                <div class="chatlog__poll-footer">
+                                    @if (poll.Results is not null)
+                                    {
+                                        <span class="chatlog__poll-footer-item">@poll.Results.TotalVoteCount.ToString("N0", Context.Request.CultureInfo) @(poll.Results.TotalVoteCount == 1 ? "vote" : "votes")</span>
+                                    }
+
+                                    @if (poll.AllowsMultipleAnswers)
+                                    {
+                                        <span class="chatlog__poll-footer-item">Multiple answers allowed</span>
+                                    }
+
+                                    @if (poll.Results?.IsFinalized == true)
+                                    {
+                                        <span class="chatlog__poll-footer-item">Final results</span>
+                                    }
+
+                                    @if (poll.ExpiresAt is not null)
+                                    {
+                                        <span class="chatlog__poll-footer-item">
+                                            @(poll.Results?.IsFinalized == true ? "Ended" : "Ends")
+                                            <time datetime="@poll.ExpiresAt.Value.ToString("O")" title="@FormatDate(poll.ExpiresAt.Value, "f")">@FormatDate(poll.ExpiresAt.Value)</time>
+                                        </span>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+
                     @* Invites *@
                     @{
                         var inviteCodes = MarkdownParser

@@ -12,4 +12,8 @@
     <PackageReference Include="WebMarkupMin.Core" />
     <PackageReference Include="YoutubeExplode" />
   </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="DiscordChatExporter.Cli.Tests" />
+  </ItemGroup>
 </Project>

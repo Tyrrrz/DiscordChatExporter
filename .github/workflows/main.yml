@@ -50,8 +50,30 @@ jobs:
         if: ${{ failure() && steps.verify.outcome == 'failure' }}
         run: echo "::error title=Bad formatting::Formatting issues detected. Please build the solution locally to fix them."
 
+  test-unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+
+      - name: Run token-free tests
+        run: >
+          dotnet test DiscordChatExporter.Cli.Tests
+          -p:CSharpier_Bypass=true
+          --configuration Release
+          --filter FullyQualifiedName~ClientPropertiesSpecs
+          --logger "GitHubActions;summary.includePassedTests=true;summary.includeSkippedTests=true"
+
   test:
-    # Tests need access to secrets, so we can't run them against PRs because of limited trust
+    # Live export tests need access to secrets, so we can't run them against PRs
     if: ${{ github.event_name != 'pull_request' }}
 
     runs-on: ubuntu-latest
@@ -151,6 +173,7 @@ jobs:
     needs:
       - format
       - test
+      - test-unit
       - pack
 
     runs-on: ubuntu-latest

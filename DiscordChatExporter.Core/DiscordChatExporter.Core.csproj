@@ -1,5 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
+    <InternalsVisibleTo Include="DiscordChatExporter.Cli.Tests" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="AngleSharp" />
     <PackageReference Include="AsyncKeyedLock" />
     <PackageReference Include="CSharpier.MsBuild" PrivateAssets="all" />

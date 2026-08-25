@@ -188,6 +188,7 @@ public partial record Message
             .FirstOrDefault();
 
         var interaction = json.GetPropertyOrNull("interaction")?.Pipe(Interaction.Parse);
+
         var poll = json.GetPropertyOrNull("poll")?.Pipe(Poll.Parse);
 
         return new Message(

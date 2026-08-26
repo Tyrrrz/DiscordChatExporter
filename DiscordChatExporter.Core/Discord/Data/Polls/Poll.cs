@@ -29,8 +29,10 @@ public record Poll(
             ?? [];
 
         var expiresAt = json.GetPropertyOrNull("expiry")?.GetDateTimeOffsetOrNull();
+
         var allowsMultipleAnswers =
             json.GetPropertyOrNull("allow_multiselect")?.GetBooleanOrNull() ?? false;
+
         var results = json.GetPropertyOrNull("results")?.Pipe(PollResults.Parse);
 
         return new Poll(question, answers, expiresAt, allowsMultipleAnswers, results);

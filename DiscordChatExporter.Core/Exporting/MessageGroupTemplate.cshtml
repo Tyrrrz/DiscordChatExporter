@@ -410,9 +410,10 @@
                             <div class="chatlog__poll-answers">
                                 @foreach (var answer in poll.Answers)
                                 {
-                                    var answerCount = poll.Results?.GetAnswerCount(answer.Id);
+                                    var answerResult = poll.Results?.GetAnswerResult(answer.Id);
+                                    var isSelected = answerResult?.DidCurrentUserVote == true;
 
-                                    <div class="chatlog__poll-answer @(answerCount?.DidCurrentUserVote == true ? "chatlog__poll-answer--selected" : null)">
+                                    <div class="chatlog__poll-answer @(isSelected ? "chatlog__poll-answer--selected" : null)">
                                         <div class="chatlog__poll-answer-content">
                                             @if (answer.Emoji is not null)
                                             {
@@ -421,10 +422,17 @@
                                             <span class="chatlog__poll-answer-text">@answer.Text</span>
                                         </div>
 
-                                        @if (answerCount is not null)
-                                        {
-                                            <span class="chatlog__poll-answer-count">@answerCount.Count.ToString("N0", Context.Request.CultureInfo)</span>
-                                        }
+                                        <div class="chatlog__poll-answer-details">
+                                            @if (isSelected)
+                                            {
+                                                <span class="chatlog__poll-answer-selected"><span aria-hidden="true">✓ </span>Selected</span>
+                                            }
+
+                                            @if (poll.Results is not null)
+                                            {
+                                                <span class="chatlog__poll-answer-count">@((answerResult?.Count ?? 0).ToString("N0", Context.Request.CultureInfo))</span>
+                                            }
+                                        </div>
                                     </div>
                                 }
                             </div>

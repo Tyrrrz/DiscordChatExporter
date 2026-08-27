@@ -46,6 +46,7 @@
     var authorDisplayName = message.Author.IsBot
         ? message.Author.DisplayName
         : authorMember?.DisplayName ?? message.Author.DisplayName;
+
     var pollResult = message.Embeds
         .Select(e => e.TryGetPollResult())
         .WhereNotNull()

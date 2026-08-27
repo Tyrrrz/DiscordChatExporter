@@ -37,6 +37,15 @@ internal static class PlainTextMessageExtensions
                 MessageKind.ChannelPinnedMessage => "Pinned a message.",
                 MessageKind.ThreadCreated => "Started a thread.",
                 MessageKind.GuildMemberJoin => "Joined the server.",
+                MessageKind.PollResult => message
+                    .Embeds.Select(e => e.TryGetPollResult())
+                    .WhereNotNull()
+                    .FirstOrDefault()
+                    is { } pollResult
+                    ? string.IsNullOrWhiteSpace(pollResult.QuestionText)
+                        ? $"{message.Author.DisplayName}'s poll has closed."
+                        : $"{message.Author.DisplayName}'s poll {pollResult.QuestionText} has closed."
+                    : "A poll has closed.",
 
                 _ => message.Content,
             };

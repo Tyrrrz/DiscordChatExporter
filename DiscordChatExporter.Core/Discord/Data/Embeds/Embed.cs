@@ -28,6 +28,9 @@ public partial record Embed(
     // but the client can render multiple images in some cases.
     public EmbedImage? Image => Images.FirstOrDefault();
 
+    public PollResultEmbedProjection? TryGetPollResult() =>
+        PollResultEmbedProjection.TryResolve(this);
+
     public SpotifyTrackEmbedProjection? TryGetSpotifyTrack() =>
         SpotifyTrackEmbedProjection.TryResolve(this);
 
@@ -47,6 +50,7 @@ public partial record Embed
         var kind =
             json.GetPropertyOrNull("type")
                 ?.GetStringOrNull()
+                ?.Replace("_", "")
                 .Pipe(s => Enum.ParseOrNull<EmbedKind>(s, true))
             ?? EmbedKind.Rich;
 

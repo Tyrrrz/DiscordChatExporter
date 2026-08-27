@@ -8,4 +8,5 @@ public enum EmbedKind
     Video,
     Gifv,
     Link,
+    PollResult,
 }

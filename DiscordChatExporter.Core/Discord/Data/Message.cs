@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Discord.Data.Embeds;
+using DiscordChatExporter.Core.Discord.Data.Polls;
 using JsonExtensions.Reading;
 using PowerKit.Extensions;
 
@@ -28,17 +29,20 @@ public partial record Message(
     MessageReference? Reference,
     Message? ReferencedMessage,
     MessageSnapshot? ForwardedMessage,
-    Interaction? Interaction
+    Interaction? Interaction,
+    Poll? Poll
 ) : IHasId
 {
     public bool IsEmpty { get; } =
         string.IsNullOrWhiteSpace(Content)
         && !Attachments.Any()
         && !Embeds.Any()
-        && !Stickers.Any();
+        && !Stickers.Any()
+        && Poll is null;
 
     public bool IsSystemNotification { get; } =
-        Kind is >= MessageKind.RecipientAdd and <= MessageKind.ThreadCreated;
+        Kind is >= MessageKind.RecipientAdd and <= MessageKind.ThreadCreated
+        || Kind == MessageKind.PollResult;
 
     public bool IsReply { get; } = Kind == MessageKind.Reply;
 
@@ -187,6 +191,8 @@ public partial record Message
 
         var interaction = json.GetPropertyOrNull("interaction")?.Pipe(Interaction.Parse);
 
+        var poll = json.GetPropertyOrNull("poll")?.Pipe(Poll.Parse);
+
         return new Message(
             id,
             kind,
@@ -205,7 +211,8 @@ public partial record Message
             messageReference,
             referencedMessage,
             forwardedMessage,
-            interaction
+            interaction,
+            poll
         );
     }
 }

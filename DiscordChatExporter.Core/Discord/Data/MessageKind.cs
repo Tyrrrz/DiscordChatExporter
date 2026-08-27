@@ -14,4 +14,5 @@ public enum MessageKind
     ThreadCreated = 18,
     Reply = 19,
     ThreadStarterMessage = 21,
+    PollResult = 46,
 }

@@ -22,6 +22,8 @@ internal class ContainsMessageFilter(string text) : MessageFilter
 
     public override bool IsMatch(Message message) =>
         IsMatch(message.Content)
+        || IsMatch(message.Poll?.Question)
+        || message.Poll?.Answers.Any(a => IsMatch(a.Text)) == true
         || message.Embeds.Any(e =>
             IsMatch(e.Title)
             || IsMatch(e.Author?.Name)

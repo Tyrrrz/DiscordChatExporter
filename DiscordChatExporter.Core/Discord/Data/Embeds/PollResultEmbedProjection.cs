@@ -7,8 +7,8 @@ using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Discord.Data.Embeds;
 
-// https://discord.com/developers/docs/resources/message#poll-result-embed-fields
-public record PollResultEmbedProjection(
+// https://docs.discord.com/developers/resources/message#embed-fields-by-embed-type-poll-result-embed-fields
+public partial record PollResultEmbedProjection(
     string QuestionText,
     int WinningVoteCount,
     int TotalVoteCount,
@@ -19,7 +19,10 @@ public record PollResultEmbedProjection(
 {
     public double WinningVotePercentage { get; } =
         TotalVoteCount > 0 ? (double)WinningVoteCount / TotalVoteCount : 0;
+}
 
+public partial record PollResultEmbedProjection
+{
     private static string? TryGetFieldValue(Embed embed, string name) =>
         embed
             .Fields.FirstOrDefault(f => string.Equals(f.Name, name, StringComparison.Ordinal))

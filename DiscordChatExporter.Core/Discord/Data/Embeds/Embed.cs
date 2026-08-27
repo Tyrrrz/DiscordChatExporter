@@ -28,6 +28,9 @@ public partial record Embed(
     // but the client can render multiple images in some cases.
     public EmbedImage? Image => Images.FirstOrDefault();
 
+    public PollResultEmbedProjection? TryGetPollResult() =>
+        PollResultEmbedProjection.TryResolve(this);
+
     public SpotifyTrackEmbedProjection? TryGetSpotifyTrack() =>
         SpotifyTrackEmbedProjection.TryResolve(this);
 
@@ -36,9 +39,6 @@ public partial record Embed(
 
     public YouTubeVideoEmbedProjection? TryGetYouTubeVideo() =>
         YouTubeVideoEmbedProjection.TryResolve(this);
-
-    public PollResultEmbedProjection? TryGetPollResult() =>
-        PollResultEmbedProjection.TryResolve(this);
 }
 
 public partial record Embed

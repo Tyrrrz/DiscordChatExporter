@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
+using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Discord.Data.Embeds;
 
@@ -23,11 +24,6 @@ public record PollResultEmbedProjection(
         embed
             .Fields.FirstOrDefault(f => string.Equals(f.Name, name, StringComparison.Ordinal))
             ?.Value;
-
-    private static int ParseInt32OrDefault(string? value) =>
-        int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result)
-            ? result
-            : 0;
 
     private static Emoji? TryParseWinningAnswerEmoji(Embed embed)
     {
@@ -56,17 +52,18 @@ public record PollResultEmbedProjection(
             return null;
 
         var questionText = TryGetFieldValue(embed, "poll_question_text") ?? "";
-        var winningVoteCount = ParseInt32OrDefault(TryGetFieldValue(embed, "victor_answer_votes"));
-        var totalVoteCount = ParseInt32OrDefault(TryGetFieldValue(embed, "total_votes"));
-
-        var winningAnswerId = int.TryParse(
+        var winningVoteCount = int.ParseOrDefault(
+            TryGetFieldValue(embed, "victor_answer_votes"),
+            CultureInfo.InvariantCulture
+        );
+        var totalVoteCount = int.ParseOrDefault(
+            TryGetFieldValue(embed, "total_votes"),
+            CultureInfo.InvariantCulture
+        );
+        var winningAnswerId = int.ParseOrNull(
             TryGetFieldValue(embed, "victor_answer_id"),
-            NumberStyles.Integer,
-            CultureInfo.InvariantCulture,
-            out var parsedWinningAnswerId
-        )
-            ? parsedWinningAnswerId
-            : (int?)null;
+            CultureInfo.InvariantCulture
+        );
 
         var winningAnswerText = TryGetFieldValue(embed, "victor_answer_text");
         var winningAnswerEmoji = TryParseWinningAnswerEmoji(embed);

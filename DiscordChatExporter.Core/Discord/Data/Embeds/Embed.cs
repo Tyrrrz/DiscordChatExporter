@@ -47,10 +47,12 @@ public partial record Embed
     {
         var title = json.GetPropertyOrNull("title")?.GetStringOrNull();
 
-        var kindName = json.GetPropertyOrNull("type")?.GetStringOrNull();
-        var kind = string.Equals(kindName, "poll_result", StringComparison.OrdinalIgnoreCase)
-            ? EmbedKind.PollResult
-            : kindName?.Pipe(s => Enum.ParseOrNull<EmbedKind>(s, true)) ?? EmbedKind.Rich;
+        var kind =
+            json.GetPropertyOrNull("type")
+                ?.GetStringOrNull()
+                ?.Replace("_", "")
+                .Pipe(s => Enum.ParseOrNull<EmbedKind>(s, true))
+            ?? EmbedKind.Rich;
 
         var url = json.GetPropertyOrNull("url")?.GetNonWhiteSpaceStringOrNull();
         var timestamp = json.GetPropertyOrNull("timestamp")?.GetDateTimeOffsetOrNull();

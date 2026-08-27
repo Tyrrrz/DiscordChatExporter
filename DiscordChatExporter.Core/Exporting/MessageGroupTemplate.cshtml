@@ -500,11 +500,9 @@
                                         ? (double)(answerResult?.Count ?? 0) / pollResults.TotalVoteCount
                                         : 0;
                                     var answerVotePercentageCss =
-                                        (answerVotePercentage * 100).ToString(
-                                            "0.##",
-                                            CultureInfo.InvariantCulture
-                                        )
-                                        + "%";
+                                        answerVotePercentage
+                                            .ToString("P2", CultureInfo.InvariantCulture)
+                                            .Replace(" ", "");
 
                                     <div class="chatlog__poll-answer @(isWinning ? "chatlog__poll-answer--winning" : isActiveSelection ? "chatlog__poll-answer--selected" : null)" style="--poll-answer-fill: @answerVotePercentageCss">
                                         <div class="chatlog__poll-answer-content">

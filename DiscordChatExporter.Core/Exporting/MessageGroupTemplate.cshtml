@@ -138,17 +138,17 @@
                         }
                         else if (message.Kind == MessageKind.PollResult && pollResult is not null)
                         {
-                            @if (!string.IsNullOrWhiteSpace(pollResult.QuestionText))
+                            @if (!string.IsNullOrWhiteSpace(pollResult.Question))
                             {
                                 <span>'s poll </span>
 
                                 @if (message.Reference?.MessageId is not null)
                                 {
-                                    <a class="chatlog__system-notification-link" href="#chatlog__message-container-@message.Reference.MessageId">@pollResult.QuestionText</a>
+                                    <a class="chatlog__system-notification-link" href="#chatlog__message-container-@message.Reference.MessageId">@pollResult.Question</a>
                                 }
                                 else
                                 {
-                                    <span class="chatlog__system-notification-link">@pollResult.QuestionText</span>
+                                    <span class="chatlog__system-notification-link">@pollResult.Question</span>
                                 }
 
                                 <span> has closed.</span>
@@ -175,8 +175,6 @@
 
                     @if (message.Kind == MessageKind.PollResult && pollResult is not null)
                     {
-                        var hasWinningAnswer = pollResult.WinningAnswerId is not null;
-
                         <div class="chatlog__poll-result">
                             <div class="chatlog__poll-result-answer">
                                 @if (pollResult.WinningAnswerEmoji is not null)
@@ -188,19 +186,19 @@
 
                                 <div class="chatlog__poll-result-answer-info">
                                     <div class="chatlog__poll-result-answer-text">
-                                        @(hasWinningAnswer ? pollResult.WinningAnswerText : "Poll closed")
+                                        @(pollResult.WinningAnswerId is not null ? pollResult.WinningAnswerText : "Poll closed")
 
-                                        @if (hasWinningAnswer)
+                                        @if (pollResult.WinningAnswerId is not null)
                                         {
                                             <span class="chatlog__poll-result-winner" title="Winning answer"><span aria-hidden="true">✓</span><span class="chatlog__poll-accessible-label">Winning answer</span></span>
                                         }
                                     </div>
                                     <div class="chatlog__poll-result-answer-details">
-                                        @if (hasWinningAnswer)
+                                        @if (pollResult.WinningAnswerId is not null)
                                         {
                                             <span>Winning answer</span>
                                             <span aria-hidden="true"> • </span>
-                                            <span>@pollResult.WinningVotePercentage.ToString("P0", Context.Request.CultureInfo)</span>
+                                            <span>@pollResult.WinningVoteShare.ToString("P0", Context.Request.CultureInfo)</span>
                                         }
                                         else
                                         {
@@ -490,22 +488,19 @@
                             <div class="chatlog__poll-answers">
                                 @foreach (var answer in poll.Answers)
                                 {
-                                    var pollResults = poll.Results;
-                                    var answerResult = pollResults?.TryGetAnswerResult(answer.Id);
-                                    var isSelected = answerResult?.DidCurrentUserVote == true;
-                                    var isWinning =
-                                        pollResults is { IsFinalized: true, WinningVoteCount: > 0 }
-                                        && answerResult?.Count == pollResults.WinningVoteCount;
-                                    var isActiveSelection = pollResults?.IsFinalized != true && isSelected;
-                                    var answerVotePercentage = pollResults is { TotalVoteCount: > 0 }
-                                        ? (double)(answerResult?.Count ?? 0) / pollResults.TotalVoteCount
-                                        : 0;
-                                    var answerVotePercentageCss =
-                                        answerVotePercentage
-                                            .ToString("P2", CultureInfo.InvariantCulture)
-                                            .Replace(" ", "");
+                                    var answerResult = poll.Results?.TryGetAnswerResult(answer.Id);
 
-                                    <div class="chatlog__poll-answer @(isWinning ? "chatlog__poll-answer--winning" : isActiveSelection ? "chatlog__poll-answer--selected" : null)" style="--poll-answer-fill: @answerVotePercentageCss">
+                                    var isSelected = answerResult?.DidCurrentUserVote == true;
+
+                                    var isWinning =
+                                        poll.Results is { IsFinalized: true, WinningVoteCount: > 0 }
+                                        && answerResult?.Count >= poll.Results.WinningVoteCount;
+
+                                    var answerVoteShare = poll.Results?.TotalVoteCount > 0
+                                        ? (double)(answerResult?.Count ?? 0) / poll.Results.TotalVoteCount
+                                        : 0;
+
+                                    <div class="chatlog__poll-answer @(isWinning ? "chatlog__poll-answer--winning" : poll.Results?.IsFinalized != true && isSelected ? "chatlog__poll-answer--selected" : null)" style="--poll-answer-fill: @answerVoteShare.ToString("P2", CultureInfo.InvariantCulture).Replace(" ", "")">
                                         <div class="chatlog__poll-answer-content">
                                             @if (answer.Emoji is not null)
                                             {
@@ -515,12 +510,12 @@
                                         </div>
 
                                         <div class="chatlog__poll-answer-details">
-                                            @if (pollResults is not null)
+                                            @if (poll.Results is not null)
                                             {
                                                 var answerVoteCount = answerResult?.Count ?? 0;
 
                                                 <span class="chatlog__poll-answer-count">@answerVoteCount.ToString("N0", Context.Request.CultureInfo) @(answerVoteCount == 1 ? "vote" : "votes")</span>
-                                                <span class="chatlog__poll-answer-percentage">@answerVotePercentage.ToString("P0", Context.Request.CultureInfo)</span>
+                                                <span class="chatlog__poll-answer-percentage">@answerVoteShare.ToString("P0", Context.Request.CultureInfo)</span>
                                             }
 
                                             @if (isSelected)

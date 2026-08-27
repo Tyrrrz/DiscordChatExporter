@@ -1,5 +1,4 @@
 using System.Text.Json;
-using DiscordChatExporter.Core.Discord.Data;
 using JsonExtensions.Reading;
 using PowerKit.Extensions;
 
@@ -11,9 +10,14 @@ public record PollAnswer(int Id, string Text, Emoji? Emoji)
     public static PollAnswer Parse(JsonElement json)
     {
         var id = json.GetProperty("answer_id").GetInt32();
-        var media = json.GetProperty("poll_media");
-        var text = media.GetPropertyOrNull("text")?.GetStringOrNull() ?? "";
-        var emoji = media.GetPropertyOrNull("emoji")?.Pipe(Emoji.Parse);
+
+        var text =
+            json.GetPropertyOrNull("poll_media")?.GetPropertyOrNull("text")?.GetStringOrNull()
+            ?? "";
+
+        var emoji = json.GetPropertyOrNull("poll_media")
+            ?.GetPropertyOrNull("emoji")
+            ?.Pipe(Emoji.Parse);
 
         return new PollAnswer(id, text, emoji);
     }

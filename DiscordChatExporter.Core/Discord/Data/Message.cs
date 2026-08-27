@@ -41,8 +41,9 @@ public partial record Message(
         && Poll is null;
 
     public bool IsSystemNotification { get; } =
-        Kind is >= MessageKind.RecipientAdd and <= MessageKind.ThreadCreated
-        || Kind == MessageKind.PollResult;
+        Kind
+        is (>= MessageKind.RecipientAdd and <= MessageKind.ThreadCreated)
+            or MessageKind.PollResult;
 
     public bool IsReply { get; } = Kind == MessageKind.Reply;
 

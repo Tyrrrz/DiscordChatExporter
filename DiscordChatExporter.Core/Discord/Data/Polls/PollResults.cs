@@ -13,7 +13,7 @@ public record PollResults(bool IsFinalized, IReadOnlyList<PollAnswerResult> Answ
     public int WinningVoteCount { get; } = Answers.Select(a => a.Count).DefaultIfEmpty().Max();
 
     public PollAnswerResult? TryGetAnswerResult(int answerId) =>
-        Answers.FirstOrDefault(a => a.AnswerId == answerId);
+        Answers.FirstOrDefault(a => a.Id == answerId);
 
     public static PollResults Parse(JsonElement json)
     {

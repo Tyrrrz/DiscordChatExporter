@@ -42,9 +42,9 @@ internal static class PlainTextMessageExtensions
                     .WhereNotNull()
                     .FirstOrDefault()
                     is { } pollResult
-                    ? string.IsNullOrWhiteSpace(pollResult.QuestionText)
+                    ? string.IsNullOrWhiteSpace(pollResult.Question)
                         ? $"{message.Author.DisplayName}'s poll has closed."
-                        : $"{message.Author.DisplayName}'s poll {pollResult.QuestionText} has closed."
+                        : $"{message.Author.DisplayName}'s poll {pollResult.Question} has closed."
                     : "A poll has closed.",
 
                 _ => message.Content,

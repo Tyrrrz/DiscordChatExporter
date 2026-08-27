@@ -28,6 +28,9 @@ public partial record Embed(
     // but the client can render multiple images in some cases.
     public EmbedImage? Image => Images.FirstOrDefault();
 
+    public EmbedField? TryGetField(string name) =>
+        Fields.FirstOrDefault(f => string.Equals(f.Name, name, StringComparison.Ordinal));
+
     public PollResultEmbedProjection? TryGetPollResult() =>
         PollResultEmbedProjection.TryResolve(this);
 

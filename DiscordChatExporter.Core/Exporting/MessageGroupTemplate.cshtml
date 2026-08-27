@@ -175,7 +175,7 @@
 
                     @if (message.Kind == MessageKind.PollResult && pollResult is not null)
                     {
-                        var hasWinningAnswer = !string.IsNullOrWhiteSpace(pollResult.WinningAnswerText);
+                        var hasWinningAnswer = pollResult.WinningAnswerId is not null;
 
                         <div class="chatlog__poll-result">
                             <div class="chatlog__poll-result-answer">

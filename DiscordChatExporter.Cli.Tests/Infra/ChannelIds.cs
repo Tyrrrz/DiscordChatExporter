@@ -22,6 +22,8 @@ public static class ChannelIds
 
     public static Snowflake MentionTestCases { get; } = Snowflake.Parse("866458801389174794");
 
+    public static Snowflake PollTestCases { get; } = Snowflake.Parse("1296445312759627786");
+
     public static Snowflake ReplyTestCases { get; } = Snowflake.Parse("866459871934677052");
 
     public static Snowflake SelfContainedTestCases { get; } = Snowflake.Parse("887441432678379560");

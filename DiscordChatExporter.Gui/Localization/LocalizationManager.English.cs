@@ -112,6 +112,9 @@ public partial class LocalizationManager
             [nameof(FormatMarkdownLabel)] = "Format markdown",
             [nameof(FormatMarkdownTooltip)] =
                 "Process markdown, mentions, and other special tokens",
+            [nameof(MachineMetadataLabel)] = "Include machine-readable metadata",
+            [nameof(MachineMetadataTooltip)] =
+                "Preserve stable identifiers, exact timestamps, and message relationships in HTML attributes. Disable this to reduce HTML file size.",
             [nameof(DownloadAssetsLabel)] = "Download assets",
             [nameof(DownloadAssetsTooltip)] =
                 "Download assets referenced by the export (user avatars, attached files, embedded images, etc.)",

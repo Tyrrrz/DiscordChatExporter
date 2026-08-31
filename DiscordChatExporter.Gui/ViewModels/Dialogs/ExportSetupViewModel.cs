@@ -36,6 +36,7 @@ public partial class ExportSetupViewModel(
     public partial string? OutputPath { get; set; }
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsMachineMetadataAvailable))]
     public partial ExportFormat SelectedFormat { get; set; }
 
     [ObservableProperty]
@@ -69,6 +70,9 @@ public partial class ExportSetupViewModel(
     public partial bool ShouldFormatMarkdown { get; set; }
 
     [ObservableProperty]
+    public partial bool ShouldIncludeMachineMetadata { get; set; }
+
+    [ObservableProperty]
     public partial bool ShouldDownloadAssets { get; set; }
 
     [ObservableProperty]
@@ -81,6 +85,9 @@ public partial class ExportSetupViewModel(
     public partial bool IsAdvancedSectionDisplayed { get; set; }
 
     public bool IsSingleChannel => Channels?.Count == 1;
+
+    public bool IsMachineMetadataAvailable =>
+        SelectedFormat is ExportFormat.HtmlDark or ExportFormat.HtmlLight;
 
     public IReadOnlyList<ExportFormat> AvailableFormats { get; } = Enum.GetValues<ExportFormat>();
 
@@ -110,6 +117,7 @@ public partial class ExportSetupViewModel(
         MessageFilterValue = settingsService.LastMessageFilterValue;
         IsReverseMessageOrder = settingsService.LastIsReverseMessageOrder;
         ShouldFormatMarkdown = settingsService.LastShouldFormatMarkdown;
+        ShouldIncludeMachineMetadata = settingsService.LastShouldIncludeMachineMetadata;
         ShouldDownloadAssets = settingsService.LastShouldDownloadAssets;
         ShouldReuseAssets = settingsService.LastShouldReuseAssets;
         AssetsDirPath = settingsService.LastAssetsDirPath;
@@ -124,7 +132,8 @@ public partial class ExportSetupViewModel(
             || ShouldDownloadAssets
             || ShouldReuseAssets
             || !string.IsNullOrWhiteSpace(AssetsDirPath)
-            || IsReverseMessageOrder;
+            || IsReverseMessageOrder
+            || !ShouldIncludeMachineMetadata;
 
         return Task.CompletedTask;
     }
@@ -192,6 +201,7 @@ public partial class ExportSetupViewModel(
         settingsService.LastMessageFilterValue = MessageFilterValue;
         settingsService.LastIsReverseMessageOrder = IsReverseMessageOrder;
         settingsService.LastShouldFormatMarkdown = ShouldFormatMarkdown;
+        settingsService.LastShouldIncludeMachineMetadata = ShouldIncludeMachineMetadata;
         settingsService.LastShouldDownloadAssets = ShouldDownloadAssets;
         settingsService.LastShouldReuseAssets = ShouldReuseAssets;
         settingsService.LastAssetsDirPath = AssetsDirPath;

@@ -96,6 +96,12 @@ public abstract class ExportCommandBase : DiscordCommandBase
     public bool ShouldFormatMarkdown { get; set; } = true;
 
     [CommandOption(
+        "machine-metadata",
+        Description = "Include machine-readable metadata in HTML exports (enabled by default)."
+    )]
+    public bool ShouldIncludeMachineMetadata { get; set; } = true;
+
+    [CommandOption(
         "media",
         Description = "Download assets referenced by the export (user avatars, attached files, embedded images, etc.)."
     )]
@@ -286,7 +292,8 @@ public abstract class ExportCommandBase : DiscordCommandBase
                                         ShouldDownloadAssets,
                                         ShouldReuseAssets,
                                         Locale,
-                                        IsUtcNormalizationEnabled
+                                        IsUtcNormalizationEnabled,
+                                        ShouldIncludeMachineMetadata
                                     );
 
                                     await Exporter.ExportChannelAsync(

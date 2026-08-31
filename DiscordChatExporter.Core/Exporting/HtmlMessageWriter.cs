@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
@@ -16,6 +18,106 @@ internal class HtmlMessageWriter(Stream stream, ExportContext context, string th
 
     private readonly HtmlMinifier _minifier = new();
     private readonly List<Message> _messageGroup = [];
+
+    private static string FormatMetadataAttribute(string name, object? value)
+    {
+        if (value is null)
+            return "";
+
+        var stringValue =
+            value switch
+            {
+                bool boolean => boolean ? "true" : "false",
+                IFormattable formattable => formattable.ToString(
+                    null,
+                    CultureInfo.InvariantCulture
+                ),
+                _ => value.ToString(),
+            } ?? "";
+
+        return $" {name}=\"{WebUtility.HtmlEncode(stringValue)}\"";
+    }
+
+    private static string FormatMetadataAttributes(
+        params (string Name, object? Value)[] attributes
+    ) =>
+        string.Concat(
+            attributes.Select(attribute => FormatMetadataAttribute(attribute.Name, attribute.Value))
+        );
+
+    private string FormatMachineTimestamp(DateTimeOffset timestamp) =>
+        Context.NormalizeDate(timestamp).ToString("O", CultureInfo.InvariantCulture);
+
+    private string AddExportMetadata(string html)
+    {
+        if (!Context.Request.ShouldIncludeMachineMetadata)
+            return html;
+
+        const string marker = "<div class=\"chatlog\">";
+        var replacement =
+            "<div class=\"chatlog\""
+            + FormatMetadataAttributes(
+                ("data-machine-metadata-version", 1),
+                ("data-guild-id", Context.Request.Guild.IsDirect ? null : Context.Request.Guild.Id),
+                ("data-channel-id", Context.Request.Channel.Id),
+                ("data-channel-type", Context.Request.Channel.Kind),
+                ("data-parent-channel-id", Context.Request.Channel.Parent?.Id)
+            )
+            + ">";
+
+        return html.Replace(marker, replacement, StringComparison.Ordinal);
+    }
+
+    private string AddMessageMetadata(string html, IReadOnlyList<Message> messages)
+    {
+        if (!Context.Request.ShouldIncludeMachineMetadata)
+            return html;
+
+        foreach (var message in messages)
+        {
+            var authorMember = Context.TryGetMember(message.Author.Id);
+            var authorDisplayName = message.Author.IsBot
+                ? message.Author.DisplayName
+                : authorMember?.DisplayName ?? message.Author.DisplayName;
+
+            var marker = $"data-message-id=\"{message.Id}\"";
+            var replacement =
+                marker
+                + FormatMetadataAttributes(
+                    ("data-message-type", message.Kind),
+                    ("data-author-id", message.Author.Id),
+                    ("data-author-name", message.Author.Name),
+                    ("data-author-display-name", authorDisplayName),
+                    ("data-author-is-bot", message.Author.IsBot),
+                    ("data-timestamp", FormatMachineTimestamp(message.Timestamp)),
+                    (
+                        "data-edited-timestamp",
+                        message.EditedTimestamp is { } editedTimestamp
+                            ? FormatMachineTimestamp(editedTimestamp)
+                            : null
+                    ),
+                    (
+                        "data-call-ended-timestamp",
+                        message.CallEndedTimestamp is { } callEndedTimestamp
+                            ? FormatMachineTimestamp(callEndedTimestamp)
+                            : null
+                    ),
+                    ("data-is-pinned", message.IsPinned),
+                    ("data-is-forwarded", message.IsForwarded),
+                    ("data-reference-type", message.Reference?.Kind),
+                    ("data-reference-message-id", message.Reference?.MessageId),
+                    ("data-reference-channel-id", message.Reference?.ChannelId),
+                    ("data-reference-guild-id", message.Reference?.GuildId),
+                    ("data-interaction-id", message.Interaction?.Id),
+                    ("data-interaction-name", message.Interaction?.Name),
+                    ("data-interaction-user-id", message.Interaction?.User.Id)
+                );
+
+            html = html.Replace(marker, replacement, StringComparison.Ordinal);
+        }
+
+        return html;
+    }
 
     // Note: in reverse order, last message appears earlier than the first message
     private bool CanJoinGroup(Message message)
@@ -72,13 +174,13 @@ internal class HtmlMessageWriter(Stream stream, ExportContext context, string th
         CancellationToken cancellationToken = default
     )
     {
-        await _writer.WriteLineAsync(
-            Minify(
-                await new PreambleTemplate { Context = Context, ThemeName = themeName }.RenderAsync(
-                    cancellationToken
-                )
-            )
-        );
+        var html = await new PreambleTemplate
+        {
+            Context = Context,
+            ThemeName = themeName,
+        }.RenderAsync(cancellationToken);
+
+        await _writer.WriteLineAsync(Minify(AddExportMetadata(html)));
     }
 
     private async ValueTask WriteMessageGroupAsync(
@@ -86,15 +188,13 @@ internal class HtmlMessageWriter(Stream stream, ExportContext context, string th
         CancellationToken cancellationToken = default
     )
     {
-        await _writer.WriteLineAsync(
-            Minify(
-                await new MessageGroupTemplate
-                {
-                    Context = Context,
-                    Messages = messages,
-                }.RenderAsync(cancellationToken)
-            )
-        );
+        var html = await new MessageGroupTemplate
+        {
+            Context = Context,
+            Messages = messages,
+        }.RenderAsync(cancellationToken);
+
+        await _writer.WriteLineAsync(Minify(AddMessageMetadata(html, messages)));
     }
 
     public override async ValueTask WriteMessageAsync(

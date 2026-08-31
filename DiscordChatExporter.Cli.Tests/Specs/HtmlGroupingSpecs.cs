@@ -38,6 +38,16 @@ public class HtmlGroupingSpecs
 
         messageGroups.Should().HaveCount(2);
 
+        foreach (
+            var message in messageGroups.SelectMany(group =>
+                group.QuerySelectorAll(".chatlog__message-container")
+            )
+        )
+        {
+            message.GetAttribute("data-author-id").Should().NotBeNullOrWhiteSpace();
+            message.GetAttribute("data-timestamp").Should().NotBeNullOrWhiteSpace();
+        }
+
         messageGroups[0]
             .QuerySelectorAll(".chatlog__content")
             .Select(e => e.Text())

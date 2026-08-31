@@ -220,6 +220,22 @@
               <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding ShouldFormatMarkdown}" />
             </DockPanel>
 
+            <!--  Machine-readable metadata  -->
+            <DockPanel
+              IsVisible="{Binding IsMachineMetadataAvailable}"
+              LastChildFill="False"
+              ToolTip.Tip="{Binding LocalizationManager.MachineMetadataTooltip}"
+            >
+              <TextBlock
+                DockPanel.Dock="Left"
+                Text="{Binding LocalizationManager.MachineMetadataLabel}"
+              />
+              <ToggleSwitch
+                DockPanel.Dock="Right"
+                IsChecked="{Binding ShouldIncludeMachineMetadata}"
+              />
+            </DockPanel>
+
             <!--  Download assets  -->
             <DockPanel
               LastChildFill="False"

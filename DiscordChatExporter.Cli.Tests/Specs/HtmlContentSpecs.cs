@@ -1,3 +1,5 @@
+using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,9 +21,18 @@ public class HtmlContentSpecs
     public async Task I_can_export_a_channel_in_the_HTML_format()
     {
         // Act
-        var messages = await ExportWrapper.GetMessagesAsHtmlAsync(ChannelIds.DateRangeTestCases);
+        var document = await ExportWrapper.ExportAsHtmlAsync(ChannelIds.DateRangeTestCases);
+        var chatlog = document.QuerySelector(".chatlog");
+        var messages = document.QuerySelectorAll("[data-message-id]").ToArray();
 
         // Assert
+        chatlog.Should().NotBeNull();
+        chatlog!.GetAttribute("data-machine-metadata-version").Should().Be("1");
+        chatlog
+            .GetAttribute("data-channel-id")
+            .Should()
+            .Be(ChannelIds.DateRangeTestCases.ToString());
+
         messages
             .Select(e => e.GetAttribute("data-message-id"))
             .Should()
@@ -49,6 +60,58 @@ public class HtmlContentSpecs
                 "Three",
                 "Yeet"
             );
+
+        foreach (var message in messages)
+        {
+            message.GetAttribute("data-message-type").Should().NotBeNullOrWhiteSpace();
+            message.GetAttribute("data-author-id").Should().NotBeNullOrWhiteSpace();
+            message.GetAttribute("data-author-name").Should().NotBeNullOrWhiteSpace();
+            message.GetAttribute("data-author-display-name").Should().NotBeNullOrWhiteSpace();
+
+            DateTimeOffset
+                .TryParseExact(
+                    message.GetAttribute("data-timestamp"),
+                    "O",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.RoundtripKind,
+                    out _
+                )
+                .Should()
+                .BeTrue();
+        }
+    }
+
+    [Fact]
+    public async Task I_can_disable_machine_metadata_in_the_HTML_format()
+    {
+        // Arrange
+        using var file = TempFile.Create();
+
+        // Act
+        await new ExportChannelsCommand
+        {
+            Token = Secrets.DiscordToken,
+            ChannelIds = [ChannelIds.DateRangeTestCases],
+            ExportFormat = ExportFormat.HtmlDark,
+            OutputPath = file.Path,
+            Locale = "en-US",
+            IsUtcNormalizationEnabled = true,
+            ShouldIncludeMachineMetadata = false,
+        }.ExecuteAsync(new FakeConsole());
+
+        var document = Html.Parse(await File.ReadAllTextAsync(file.Path));
+        var chatlog = document.QuerySelector(".chatlog");
+        var messages = document.QuerySelectorAll("[data-message-id]");
+
+        // Assert
+        chatlog.Should().NotBeNull();
+        chatlog!.HasAttribute("data-machine-metadata-version").Should().BeFalse();
+
+        foreach (var message in messages)
+        {
+            message.HasAttribute("data-author-id").Should().BeFalse();
+            message.HasAttribute("data-timestamp").Should().BeFalse();
+        }
     }
 
     [Fact]

@@ -37,6 +37,8 @@ public partial class ExportRequest
 
     public bool ShouldFormatMarkdown { get; }
 
+    public bool ShouldIncludeMachineMetadata { get; }
+
     public bool ShouldDownloadAssets { get; }
 
     public bool ShouldReuseAssets { get; }
@@ -62,7 +64,8 @@ public partial class ExportRequest
         bool shouldDownloadAssets,
         bool shouldReuseAssets,
         string? locale,
-        bool isUtcNormalizationEnabled
+        bool isUtcNormalizationEnabled,
+        bool shouldIncludeMachineMetadata = true
     )
     {
         Guild = guild;
@@ -74,6 +77,7 @@ public partial class ExportRequest
         MessageFilter = messageFilter;
         IsReverseMessageOrder = isReverseMessageOrder;
         ShouldFormatMarkdown = shouldFormatMarkdown;
+        ShouldIncludeMachineMetadata = shouldIncludeMachineMetadata;
         ShouldDownloadAssets = shouldDownloadAssets;
         ShouldReuseAssets = shouldReuseAssets;
         Locale = locale;

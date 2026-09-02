@@ -9,9 +9,150 @@
   xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
   xmlns:utils="clr-namespace:DiscordChatExporter.Gui.Utils"
   x:Name="UserControl"
-  Width="380"
+  Width="520"
   x:DataType="dialogs:ExportSetupViewModel"
 >
+  <UserControl.Resources>
+    <DataTemplate x:Key="ForumAssetSettingsTemplate" x:DataType="dialogs:ExportSetupViewModel">
+      <StackPanel Margin="8" Orientation="Vertical" Spacing="14">
+        <TextBlock FontWeight="SemiBold" Text="Forum export (JSON)" />
+        <TextBlock
+          Opacity="0.75"
+          Text="These options apply only to posts expanded from selected forum channels."
+          TextWrapping="Wrap"
+        />
+
+        <DockPanel LastChildFill="False">
+          <TextBlock DockPanel.Dock="Left" Text="Download post files and resources" />
+          <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding ForumShouldDownloadAssets}" />
+        </DockPanel>
+
+        <DockPanel IsEnabled="{Binding ForumShouldDownloadAssets}" LastChildFill="False">
+          <TextBlock DockPanel.Dock="Left" Text="Reuse files already downloaded" />
+          <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding ForumShouldReuseAssets}" />
+        </DockPanel>
+
+        <DockPanel IsEnabled="{Binding ForumShouldDownloadAssets}" LastChildFill="False">
+          <TextBlock DockPanel.Dock="Left" Text="Download user avatars" />
+          <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding ForumShouldDownloadAvatars}" />
+        </DockPanel>
+
+        <ComboBox
+          IsEnabled="{Binding ForumShouldDownloadAssets}"
+          ItemsSource="{Binding AvailableForumCommonAssetModes}"
+          materialAssists:ComboBoxAssist.Label="Common resources (emoji, icons, previews)"
+          SelectedItem="{Binding SelectedForumCommonAssetMode}"
+          Theme="{DynamicResource MaterialFilledComboBox}"
+        >
+          <ComboBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding Converter={x:Static converters:ForumAssetOptionToStringConverter.Instance}}" />
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <ComboBox
+          IsEnabled="{Binding ForumShouldDownloadAssets}"
+          ItemsSource="{Binding AvailableForumAttachmentFolderModes}"
+          materialAssists:ComboBoxAssist.Label="Post attachment folders"
+          SelectedItem="{Binding SelectedForumAttachmentFolderMode}"
+          Theme="{DynamicResource MaterialFilledComboBox}"
+        >
+          <ComboBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding Converter={x:Static converters:ForumAssetOptionToStringConverter.Instance}}" />
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <ComboBox
+          IsEnabled="{Binding ForumShouldDownloadAssets}"
+          ItemsSource="{Binding AvailableForumAttachmentNamingModes}"
+          materialAssists:ComboBoxAssist.Label="Post attachment names"
+          SelectedItem="{Binding SelectedForumAttachmentNamingMode}"
+          Theme="{DynamicResource MaterialFilledComboBox}"
+        >
+          <ComboBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding Converter={x:Static converters:ForumAssetOptionToStringConverter.Instance}}" />
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <ComboBox
+          ItemsSource="{Binding AvailableForumParallelLimits}"
+          materialAssists:ComboBoxAssist.Label="Parallel forum export workers"
+          SelectedItem="{Binding SelectedForumParallelLimit}"
+          Theme="{DynamicResource MaterialFilledComboBox}"
+          ToolTip.Tip="4 is the recommended balance between speed and Discord rate limits."
+        />
+
+        <TextBox
+          IsEnabled="{Binding ForumShouldDownloadAssets}"
+          materialAssists:TextFieldAssist.Label="Forum assets root (optional)"
+          Text="{Binding ForumAssetsDirPath}"
+          Theme="{DynamicResource FilledTextBox}"
+        >
+          <TextBox.InnerRightContent>
+            <Button
+              Margin="8,8,8,6"
+              Padding="8"
+              Command="{Binding ShowForumAssetsDirPathPromptCommand}"
+              Theme="{DynamicResource MaterialFlatButton}"
+            >
+              <materialIcons:MaterialIcon Width="20" Height="20" Kind="FolderOpen" />
+            </Button>
+          </TextBox.InnerRightContent>
+        </TextBox>
+      </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RegularAssetSettingsTemplate" x:DataType="dialogs:ExportSetupViewModel">
+      <StackPanel Margin="8" Orientation="Vertical" Spacing="14">
+        <TextBlock FontWeight="SemiBold" Text="Regular channel assets" />
+
+        <DockPanel
+          LastChildFill="False"
+          ToolTip.Tip="{Binding LocalizationManager.DownloadAssetsTooltip}"
+        >
+          <TextBlock
+            DockPanel.Dock="Left"
+            Text="{Binding LocalizationManager.DownloadAssetsLabel}"
+          />
+          <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding ShouldDownloadAssets}" />
+        </DockPanel>
+
+        <DockPanel
+          IsEnabled="{Binding ShouldDownloadAssets}"
+          LastChildFill="False"
+          ToolTip.Tip="{Binding LocalizationManager.ReuseAssetsTooltip}"
+        >
+          <TextBlock DockPanel.Dock="Left" Text="{Binding LocalizationManager.ReuseAssetsLabel}" />
+          <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding ShouldReuseAssets}" />
+        </DockPanel>
+
+        <TextBox
+          IsEnabled="{Binding ShouldDownloadAssets}"
+          materialAssists:TextFieldAssist.Label="{Binding LocalizationManager.AssetsDirPathLabel}"
+          Text="{Binding AssetsDirPath}"
+          Theme="{DynamicResource FilledTextBox}"
+          ToolTip.Tip="{Binding LocalizationManager.AssetsDirPathTooltip}"
+        >
+          <TextBox.InnerRightContent>
+            <Button
+              Margin="8,8,8,6"
+              Padding="8"
+              Command="{Binding ShowAssetsDirPathPromptCommand}"
+              Theme="{DynamicResource MaterialFlatButton}"
+            >
+              <materialIcons:MaterialIcon Width="20" Height="20" Kind="FolderOpen" />
+            </Button>
+          </TextBox.InnerRightContent>
+        </TextBox>
+      </StackPanel>
+    </DataTemplate>
+  </UserControl.Resources>
+
   <Grid RowDefinitions="Auto,*,Auto">
     <!--  Guild/channel info  -->
     <Grid Grid.Row="0" Margin="16" ColumnDefinitions="Auto,*">
@@ -89,6 +230,7 @@
 
           <!--  Format  -->
           <ComboBox
+            IsVisible="{Binding HasRegularChannels}"
             Margin="16,8"
             materialAssists:ComboBoxAssist.Label="{Binding LocalizationManager.FormatLabel}"
             ItemsSource="{Binding AvailableFormats}"
@@ -102,6 +244,28 @@
               </DataTemplate>
             </ComboBox.ItemTemplate>
           </ComboBox>
+
+          <ContentControl
+            Margin="16,8"
+            Content="{Binding}"
+            ContentTemplate="{StaticResource ForumAssetSettingsTemplate}"
+            IsVisible="{Binding HasOnlyForumChannels}"
+          />
+
+          <TabControl Margin="16,8" IsVisible="{Binding HasMixedChannelTypes}">
+            <TabItem Header="FORUM POSTS">
+              <ContentControl
+                Content="{Binding}"
+                ContentTemplate="{StaticResource ForumAssetSettingsTemplate}"
+              />
+            </TabItem>
+            <TabItem Header="REGULAR CHANNELS">
+              <ContentControl
+                Content="{Binding}"
+                ContentTemplate="{StaticResource RegularAssetSettingsTemplate}"
+              />
+            </TabItem>
+          </TabControl>
 
           <!--  Advanced section  -->
           <StackPanel
@@ -220,51 +384,11 @@
               <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding ShouldFormatMarkdown}" />
             </DockPanel>
 
-            <!--  Download assets  -->
-            <DockPanel
-              LastChildFill="False"
-              ToolTip.Tip="{Binding LocalizationManager.DownloadAssetsTooltip}"
-            >
-              <TextBlock
-                DockPanel.Dock="Left"
-                Text="{Binding LocalizationManager.DownloadAssetsLabel}"
-              />
-              <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding ShouldDownloadAssets}" />
-            </DockPanel>
-
-            <!--  Reuse assets  -->
-            <DockPanel
-              IsEnabled="{Binding ShouldDownloadAssets}"
-              LastChildFill="False"
-              ToolTip.Tip="{Binding LocalizationManager.ReuseAssetsTooltip}"
-            >
-              <TextBlock
-                DockPanel.Dock="Left"
-                Text="{Binding LocalizationManager.ReuseAssetsLabel}"
-              />
-              <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding ShouldReuseAssets}" />
-            </DockPanel>
-
-            <!--  Assets path  -->
-            <TextBox
-              materialAssists:TextFieldAssist.Label="{Binding LocalizationManager.AssetsDirPathLabel}"
-              IsEnabled="{Binding ShouldDownloadAssets}"
-              Text="{Binding AssetsDirPath}"
-              Theme="{DynamicResource FilledTextBox}"
-              ToolTip.Tip="{Binding LocalizationManager.AssetsDirPathTooltip}"
-            >
-              <TextBox.InnerRightContent>
-                <Button
-                  Margin="8,8,8,6"
-                  Padding="8"
-                  VerticalAlignment="Center"
-                  Command="{Binding ShowAssetsDirPathPromptCommand}"
-                  Theme="{DynamicResource MaterialFlatButton}"
-                >
-                  <materialIcons:MaterialIcon Width="20" Height="20" Kind="FolderOpen" />
-                </Button>
-              </TextBox.InnerRightContent>
-            </TextBox>
+            <ContentControl
+              Content="{Binding}"
+              ContentTemplate="{StaticResource RegularAssetSettingsTemplate}"
+              IsVisible="{Binding HasOnlyRegularChannels}"
+            />
           </StackPanel>
         </StackPanel>
       </ScrollViewer>

@@ -147,7 +147,7 @@
             ItemsSource="{Binding AvailableChannels}"
             SelectedItems="{Binding SelectedChannels}"
             SelectionChanged="AvailableChannelsTreeView_OnSelectionChanged"
-            SelectionMode="Multiple"
+            SelectionMode="{Binding ChannelSelectionMode}"
             TextSearch.Text="Name"
           >
             <TreeView.Styles>
@@ -302,22 +302,39 @@
         </ScrollViewer>
       </Panel>
 
-      <!--  Export button  -->
-      <Button
-        Width="56"
-        Height="56"
+      <!--  Selection mode and export buttons  -->
+      <StackPanel
         Margin="32,24"
-        Padding="0"
         HorizontalAlignment="Right"
         VerticalAlignment="Bottom"
-        Background="{DynamicResource MaterialSecondaryMidBrush}"
-        Command="{Binding ExportCommand}"
-        Foreground="{DynamicResource MaterialSecondaryMidForegroundBrush}"
         IsVisible="{Binding $self.IsEffectivelyEnabled}"
-        Theme="{DynamicResource MaterialIconButton}"
+        Orientation="Horizontal"
+        Spacing="12"
       >
-        <materialIcons:MaterialIcon Width="32" Height="32" Kind="Download" />
-      </Button>
+        <ToggleButton
+          Width="56"
+          Height="56"
+          Padding="0"
+          IsChecked="{Binding IsMultiSelectionEnabled}"
+          Theme="{DynamicResource MaterialIconButton}"
+          ToolTip.Tip="Enable multi-select mode"
+        >
+          <materialIcons:MaterialIcon Width="28" Height="28" Kind="CheckboxMultipleMarked" />
+        </ToggleButton>
+
+        <Button
+          Width="56"
+          Height="56"
+          Padding="0"
+          Background="{DynamicResource MaterialSecondaryMidBrush}"
+          Command="{Binding ExportCommand}"
+          Foreground="{DynamicResource MaterialSecondaryMidForegroundBrush}"
+          Theme="{DynamicResource MaterialIconButton}"
+          ToolTip.Tip="Export selected channels"
+        >
+          <materialIcons:MaterialIcon Width="32" Height="32" Kind="Download" />
+        </Button>
+      </StackPanel>
     </Panel>
   </DockPanel>
 </UserControl>

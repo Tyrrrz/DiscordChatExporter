@@ -41,6 +41,16 @@ public partial class ExportRequest
 
     public bool ShouldReuseAssets { get; }
 
+    public bool IsForumExport { get; }
+
+    public bool ShouldDownloadForumAvatars { get; }
+
+    public ForumCommonAssetMode ForumCommonAssetMode { get; }
+
+    public ForumAttachmentFolderMode ForumAttachmentFolderMode { get; }
+
+    public ForumAttachmentNamingMode ForumAttachmentNamingMode { get; }
+
     public string? Locale { get; }
 
     public CultureInfo? CultureInfo { get; }
@@ -62,7 +72,13 @@ public partial class ExportRequest
         bool shouldDownloadAssets,
         bool shouldReuseAssets,
         string? locale,
-        bool isUtcNormalizationEnabled
+        bool isUtcNormalizationEnabled,
+        bool isForumExport = false,
+        bool shouldDownloadForumAvatars = false,
+        ForumCommonAssetMode forumCommonAssetMode = ForumCommonAssetMode.SharedFolder,
+        ForumAttachmentFolderMode forumAttachmentFolderMode = ForumAttachmentFolderMode.PerThread,
+        ForumAttachmentNamingMode forumAttachmentNamingMode =
+            ForumAttachmentNamingMode.AttachmentIdAndOriginal
     )
     {
         Guild = guild;
@@ -76,6 +92,11 @@ public partial class ExportRequest
         ShouldFormatMarkdown = shouldFormatMarkdown;
         ShouldDownloadAssets = shouldDownloadAssets;
         ShouldReuseAssets = shouldReuseAssets;
+        IsForumExport = isForumExport;
+        ShouldDownloadForumAvatars = shouldDownloadForumAvatars;
+        ForumCommonAssetMode = forumCommonAssetMode;
+        ForumAttachmentFolderMode = forumAttachmentFolderMode;
+        ForumAttachmentNamingMode = forumAttachmentNamingMode;
         Locale = locale;
         IsUtcNormalizationEnabled = isUtcNormalizationEnabled;
 
@@ -83,8 +104,10 @@ public partial class ExportRequest
 
         OutputDirPath = Path.GetDirectoryName(OutputFilePath)!;
 
-        AssetsDirPath = !string.IsNullOrWhiteSpace(assetsDirPath)
-            ? FormatPath(assetsDirPath, Guild, Channel, After, Before)
+        AssetsDirPath =
+            !string.IsNullOrWhiteSpace(assetsDirPath)
+                ? FormatPath(assetsDirPath, Guild, Channel, After, Before)
+            : IsForumExport ? Path.Combine(OutputDirPath, "_forum_assets")
             : $"{OutputFilePath}_Files{Path.DirectorySeparatorChar}";
 
         CultureInfo = Locale?.Pipe(CultureInfo.GetCultureInfo);

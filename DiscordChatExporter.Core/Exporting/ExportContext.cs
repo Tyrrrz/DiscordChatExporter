@@ -120,6 +120,92 @@ internal class ExportContext(DiscordClient discord, ExportRequest request)
     public Color? TryGetUserColor(Snowflake id) =>
         GetUserRoles(id).Where(r => r.Color is not null).Select(r => r.Color).FirstOrDefault();
 
+    private string GetForumThreadDirPath()
+    {
+        var channelName = Path.EscapeFileName(Request.Channel.Name).Truncate(60);
+        return Path.Combine("threads", $"{Request.Channel.Id}-{channelName}");
+    }
+
+    private string? GetForumCommonAssetDirPath() =>
+        Request.ForumCommonAssetMode switch
+        {
+            ForumCommonAssetMode.SharedFolder => "common",
+            ForumCommonAssetMode.PerThreadFolder => Path.Combine(GetForumThreadDirPath(), "common"),
+            ForumCommonAssetMode.Skip => null,
+            _ => throw new ArgumentOutOfRangeException(),
+        };
+
+    private string GetForumAttachmentDirPath(Attachment attachment, Snowflake messageId)
+    {
+        var baseDirPath = Path.Combine(GetForumThreadDirPath(), "attachments");
+
+        return Request.ForumAttachmentFolderMode switch
+        {
+            ForumAttachmentFolderMode.PerThread => baseDirPath,
+            ForumAttachmentFolderMode.ByMediaType => Path.Combine(
+                baseDirPath,
+                attachment.IsImage ? "images"
+                    : attachment.IsVideo ? "videos"
+                    : attachment.IsAudio ? "audio"
+                    : "files"
+            ),
+            ForumAttachmentFolderMode.ByMessage => Path.Combine(
+                baseDirPath,
+                "messages",
+                messageId.ToString()
+            ),
+            _ => throw new ArgumentOutOfRangeException(),
+        };
+    }
+
+    private string? GetForumAttachmentFileName(Attachment attachment, Snowflake messageId) =>
+        Request.ForumAttachmentNamingMode switch
+        {
+            ForumAttachmentNamingMode.OriginalWithHash => null,
+            ForumAttachmentNamingMode.AttachmentIdAndOriginal =>
+                $"{attachment.Id}_{attachment.FileName}",
+            ForumAttachmentNamingMode.MessageAndAttachmentIdsAndOriginal =>
+                $"{messageId}_{attachment.Id}_{attachment.FileName}",
+            _ => throw new ArgumentOutOfRangeException(),
+        };
+
+    private async ValueTask<string> ResolveDownloadedAssetUrlAsync(
+        string url,
+        string? relativeDirPath,
+        string? preferredFileName,
+        CancellationToken cancellationToken
+    )
+    {
+        var filePath = await _assetDownloader.DownloadAsync(
+            url,
+            relativeDirPath,
+            preferredFileName,
+            cancellationToken
+        );
+
+        var relativeFilePath = Path.GetRelativePath(Request.OutputDirPath, filePath);
+
+        // Prefer the relative path so that the export package can be copied around without breaking references.
+        // However, if the assets directory lies outside the export directory, use the absolute path instead.
+        var shouldUseAbsoluteFilePath =
+            relativeFilePath.StartsWith(
+                ".." + Path.DirectorySeparatorChar,
+                StringComparison.Ordinal
+            )
+            || relativeFilePath.StartsWith(
+                ".." + Path.AltDirectorySeparatorChar,
+                StringComparison.Ordinal
+            );
+
+        var optimalFilePath = shouldUseAbsoluteFilePath ? filePath : relativeFilePath;
+
+        // For HTML, the path needs to be properly formatted
+        if (Request.Format is ExportFormat.HtmlDark or ExportFormat.HtmlLight)
+            return Url.EncodeFilePath(optimalFilePath);
+
+        return optimalFilePath;
+    }
+
     public async ValueTask<string> ResolveAssetUrlAsync(
         string url,
         CancellationToken cancellationToken = default
@@ -128,30 +214,18 @@ internal class ExportContext(DiscordClient discord, ExportRequest request)
         if (!Request.ShouldDownloadAssets)
             return url;
 
+        var relativeDirPath = Request.IsForumExport ? GetForumCommonAssetDirPath() : null;
+        if (Request.IsForumExport && relativeDirPath is null)
+            return url;
+
         try
         {
-            var filePath = await _assetDownloader.DownloadAsync(url, cancellationToken);
-            var relativeFilePath = Path.GetRelativePath(Request.OutputDirPath, filePath);
-
-            // Prefer the relative path so that the export package can be copied around without breaking references.
-            // However, if the assets directory lies outside the export directory, use the absolute path instead.
-            var shouldUseAbsoluteFilePath =
-                relativeFilePath.StartsWith(
-                    ".." + Path.DirectorySeparatorChar,
-                    StringComparison.Ordinal
-                )
-                || relativeFilePath.StartsWith(
-                    ".." + Path.AltDirectorySeparatorChar,
-                    StringComparison.Ordinal
-                );
-
-            var optimalFilePath = shouldUseAbsoluteFilePath ? filePath : relativeFilePath;
-
-            // For HTML, the path needs to be properly formatted
-            if (Request.Format is ExportFormat.HtmlDark or ExportFormat.HtmlLight)
-                return Url.EncodeFilePath(optimalFilePath);
-
-            return optimalFilePath;
+            return await ResolveDownloadedAssetUrlAsync(
+                url,
+                relativeDirPath,
+                null,
+                cancellationToken
+            );
         }
         // Try to catch only exceptions related to failed HTTP requests
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/332
@@ -161,6 +235,38 @@ internal class ExportContext(DiscordClient discord, ExportRequest request)
             // We don't want this to crash the exporting process in case of failure.
             // TODO: add logging so we can be more liberal with catching exceptions.
             return url;
+        }
+    }
+
+    public ValueTask<string> ResolveAvatarUrlAsync(
+        string url,
+        CancellationToken cancellationToken = default
+    ) =>
+        Request.IsForumExport && !Request.ShouldDownloadForumAvatars
+            ? ValueTask.FromResult(url)
+            : ResolveAssetUrlAsync(url, cancellationToken);
+
+    public async ValueTask<string> ResolveAttachmentUrlAsync(
+        Attachment attachment,
+        Snowflake messageId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        if (!Request.ShouldDownloadAssets || !Request.IsForumExport)
+            return await ResolveAssetUrlAsync(attachment.Url, cancellationToken);
+
+        try
+        {
+            return await ResolveDownloadedAssetUrlAsync(
+                attachment.Url,
+                GetForumAttachmentDirPath(attachment, messageId),
+                GetForumAttachmentFileName(attachment, messageId),
+                cancellationToken
+            );
+        }
+        catch (Exception ex) when (ex is HttpRequestException or OperationCanceledException)
+        {
+            return attachment.Url;
         }
     }
 }

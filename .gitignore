@@ -1,5 +1,6 @@
 # User-specific files
 .vs/
+.vscode/
 .idea/
 *.suo
 *.user

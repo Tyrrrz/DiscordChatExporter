@@ -110,6 +110,32 @@
             Orientation="Vertical"
             Spacing="16"
           >
+            <!--  Threads output path  -->
+            <TextBox
+              materialAssists:TextFieldAssist.Label="{Binding LocalizationManager.ThreadsOutputPathLabel}"
+              Text="{Binding ThreadsOutputPath}"
+              Theme="{DynamicResource FilledTextBox}"
+            >
+              <ToolTip.Tip>
+                <TextBlock
+                  MaxWidth="400"
+                  Inlines="{Binding LocalizationManager.ThreadsOutputPathTooltip, Converter={x:Static converters:MarkdownToInlinesConverter.Instance}}"
+                  TextWrapping="Wrap"
+                />
+              </ToolTip.Tip>
+              <TextBox.InnerRightContent>
+                <Button
+                  Margin="8,8,8,6"
+                  Padding="8"
+                  VerticalAlignment="Center"
+                  Command="{Binding ShowThreadsOutputPathPromptCommand}"
+                  Theme="{DynamicResource MaterialFlatButton}"
+                >
+                  <materialIcons:MaterialIcon Width="20" Height="20" Kind="FolderOpen" />
+                </Button>
+              </TextBox.InnerRightContent>
+            </TextBox>
+
             <!--  Date limits  -->
             <Grid ColumnDefinitions="*,*" ColumnSpacing="16" RowDefinitions="*,*" RowSpacing="16">
               <DatePicker

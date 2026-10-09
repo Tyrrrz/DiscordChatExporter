@@ -82,12 +82,36 @@ public partial class LocalizationManager
             Verfügbare Vorlagen-Token:
             **%g** — Server-ID
             **%G** — Servername
-            **%t** — Kategorie-ID
-            **%T** — Kategoriename
+            **%t** | **%m** — Kategorie-ID
+            **%T** | **%M** — Kategoriename
             **%c** — Kanal-ID
             **%C** — Kanalname
             **%p** — Kanalposition
-            **%P** — Kategorieposition
+            **%P** | **%N** — Kategorieposition
+            **%a** — Datum ab
+            **%b** — Datum bis
+            **%d** — aktuelles Datum
+            """,
+        [nameof(ThreadsOutputPathLabel)] = "Thread Ausgabepfad",
+        [nameof(ThreadsOutputPathTooltip)] = """
+            Ausgabedatei- oder Verzeichnispfad für Threads.
+
+            Wenn nicht angegeben, werden die Pfade und Dateinamen der Threads basierend auf dem Hauptausgabepfad generiert.
+
+            Verzeichnispfade müssen mit einem Schrägstrich enden, um Mehrdeutigkeiten zu vermeiden.
+
+            Verfügbare Vorlagen-Token:
+            **%g** — Server-ID
+            **%G** — Servername
+            **%m** — Kategorie-ID
+            **%M** — Kategoriename
+            **%t** — Kanal-ID
+            **%T** — Kanalname
+            **%c** — Thread-ID
+            **%C** — Threadname
+            **%p** — Thread-Position
+            **%P** — Kanalposition
+            **%N** — Kategorienposition
             **%a** — Datum ab
             **%b** — Datum bis
             **%d** — aktuelles Datum

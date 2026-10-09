@@ -82,12 +82,36 @@ public partial class LocalizationManager
             Jetons de modèle disponibles :
             **%g** — ID du serveur
             **%G** — nom du serveur
-            **%t** — ID de la catégorie
-            **%T** — nom de la catégorie
+            **%t** ou **%m** — ID de la catégorie
+            **%T** ou **%M** — nom de la catégorie
             **%c** — ID du canal
             **%C** — nom du canal
             **%p** — position du canal
-            **%P** — position de la catégorie
+            **%P** ou **%N** — position de la catégorie
+            **%a** — date après
+            **%b** — date avant
+            **%d** — date actuelle
+            """,
+        [nameof(ThreadsOutputPathLabel)] = "Chemin de sortie des fils",
+        [nameof(ThreadsOutputPathTooltip)] = """
+            Chemin du fichier ou répertoire de sortie pour les fils.
+
+            Si non spécifié, les chemins et noms de fichiers des fils seront générés en fonction du chemin de sortie principal.
+
+            Les chemins de répertoire doivent se terminer par un slash pour éviter toute ambiguïté.
+
+            Jetons de modèle disponibles :
+            **%g** — ID du serveur
+            **%G** — nom du serveur
+            **%m** — ID de la catégorie
+            **%M** — nom de la catégorie
+            **%t** — ID du canal
+            **%T** — nom du canal
+            **%c** — ID du fil
+            **%C** — nom du fil
+            **%p** — position du fil
+            **%P** — position du canal
+            **%N** — position de la catégorie
             **%a** — date après
             **%b** — date avant
             **%d** — date actuelle

@@ -80,12 +80,36 @@ public partial class LocalizationManager
                 Tokens de plantilla disponibles:
                 **%g** — ID del servidor
                 **%G** — nombre del servidor
-                **%t** — ID de categoría
-                **%T** — nombre de categoría
+                **%t** o **%m** — ID de categoría
+                **%T** o **%M** — nombre de categoría
                 **%c** — ID del canal
                 **%C** — nombre del canal
                 **%p** — posición del canal
-                **%P** — posición de la categoría
+                **%P** o **%N** — posición de la categoría
+                **%a** — fecha desde
+                **%b** — fecha hasta
+                **%d** — fecha actual
+                """,
+            [nameof(ThreadsOutputPathLabel)] = "Ruta de salida de hilos",
+            [nameof(ThreadsOutputPathTooltip)] = """
+                Ruta del archivo o directorio de salida para los hilos.
+
+                Si no se especifica, las rutas y nombres de archivo de los hilos se generarán basándose en la ruta de salida principal.
+
+                Las rutas de directorio deben terminar con una barra diagonal para evitar ambigüedades.
+
+                Tokens de plantilla disponibles:
+                **%g** — ID del servidor
+                **%G** — nombre del servidor
+                **%m** — ID de categoría
+                **%M** — nombre de categoría
+                **%t** — ID del canal
+                **%T** — nombre del canal
+                **%c** — ID del hilo
+                **%C** — nombre del hilo
+                **%p** — posición del hilo
+                **%P** — posición del canal
+                **%N** — posición de la categoría
                 **%a** — fecha desde
                 **%b** — fecha hasta
                 **%d** — fecha actual

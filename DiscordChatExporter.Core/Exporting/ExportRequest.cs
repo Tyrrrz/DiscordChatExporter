@@ -168,15 +168,34 @@ public partial class ExportRequest
                         "%g" => guild.Id.ToString(),
                         "%G" => guild.Name,
 
+                        // Always resolves to direct parent
                         "%t" => channel.Parent?.Id.ToString() ?? "",
                         "%T" => channel.Parent?.Name ?? "",
+
+                        // Always resolves to category ID and name
+                        "%m" => channel.IsThread
+                            ? (channel.Parent?.Parent?.Id.ToString() ?? "")
+                            : channel.Parent?.Id.ToString() ?? "",
+                        "%M" => channel.IsThread
+                            ? (channel.Parent?.Parent?.Name ?? "")
+                            : channel.Parent?.Name ?? "",
 
                         "%c" => channel.Id.ToString(),
                         "%C" => channel.Name,
 
                         "%p" => channel.Position?.ToString(CultureInfo.InvariantCulture) ?? "0",
+                        // Always resolves to direct parent
                         "%P" => channel.Parent?.Position?.ToString(CultureInfo.InvariantCulture)
                             ?? "0",
+                        // Always resolves to category position
+                        "%N" => channel.IsThread
+                            ? (
+                                channel.Parent?.Parent?.Position?.ToString(
+                                    CultureInfo.InvariantCulture
+                                ) ?? "0"
+                            )
+                            : channel.Parent?.Position?.ToString(CultureInfo.InvariantCulture)
+                                ?? "0",
 
                         "%a" => after?.ToDate().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
                             ?? "",

@@ -261,4 +261,30 @@ public class HtmlEmbedSpecs
         // Assert
         message.Text().Should().Contain("DiscordChatExporter Test Server");
     }
+
+    [Fact]
+    public async Task I_can_export_a_channel_that_contains_a_message_with_an_embed_that_has_unsafe_links_and_they_are_not_rendered_as_links()
+    {
+        // https://github.com/Tyrrrz/DiscordChatExporter/issues/1575
+
+        // Act
+        var message = await ExportWrapper.GetMessageAsHtmlAsync(
+            ChannelIds.EmbedTestCases,
+            Snowflake.Parse("1533115193692000257")
+        );
+
+        // Assert
+        message.Text().Should().ContainAll("Testhook", "XSS Test");
+
+        message
+            .QuerySelectorAll("a")
+            .Select(e => e.GetAttribute("href"))
+            .WhereNotNull()
+            .Should()
+            .OnlyContain(h =>
+                h.StartsWith('#')
+                || h.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+                || h.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+            );
+    }
 }

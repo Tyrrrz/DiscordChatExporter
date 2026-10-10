@@ -30,7 +30,19 @@ public partial class ExportSetupViewModel(
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsSingleChannel))]
+    [NotifyPropertyChangedFor(nameof(HasRegularChannels))]
+    [NotifyPropertyChangedFor(nameof(HasMixedChannelTypes))]
+    [NotifyPropertyChangedFor(nameof(HasOnlyForumChannels))]
+    [NotifyPropertyChangedFor(nameof(HasOnlyRegularChannels))]
     public partial IReadOnlyList<Channel>? Channels { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasForumChannels))]
+    [NotifyPropertyChangedFor(nameof(HasRegularChannels))]
+    [NotifyPropertyChangedFor(nameof(HasMixedChannelTypes))]
+    [NotifyPropertyChangedFor(nameof(HasOnlyForumChannels))]
+    [NotifyPropertyChangedFor(nameof(HasOnlyRegularChannels))]
+    public partial IReadOnlySet<Snowflake>? ForumChannelIds { get; set; }
 
     [ObservableProperty]
     public partial string? OutputPath { get; set; }
@@ -78,11 +90,59 @@ public partial class ExportSetupViewModel(
     public partial string? AssetsDirPath { get; set; }
 
     [ObservableProperty]
+    public partial bool ForumShouldDownloadAssets { get; set; }
+
+    [ObservableProperty]
+    public partial bool ForumShouldReuseAssets { get; set; }
+
+    [ObservableProperty]
+    public partial string? ForumAssetsDirPath { get; set; }
+
+    [ObservableProperty]
+    public partial bool ForumShouldDownloadAvatars { get; set; }
+
+    [ObservableProperty]
+    public partial ForumCommonAssetMode SelectedForumCommonAssetMode { get; set; }
+
+    [ObservableProperty]
+    public partial ForumAttachmentFolderMode SelectedForumAttachmentFolderMode { get; set; }
+
+    [ObservableProperty]
+    public partial ForumAttachmentNamingMode SelectedForumAttachmentNamingMode { get; set; }
+
+    [ObservableProperty]
+    public partial int SelectedForumParallelLimit { get; set; }
+
+    [ObservableProperty]
     public partial bool IsAdvancedSectionDisplayed { get; set; }
 
     public bool IsSingleChannel => Channels?.Count == 1;
 
+    public bool HasForumChannels => ForumChannelIds?.Count > 0;
+
+    public bool HasRegularChannels =>
+        Channels?.Any(c => ForumChannelIds?.Contains(c.Id) != true) == true;
+
+    public bool HasMixedChannelTypes => HasForumChannels && HasRegularChannels;
+
+    public bool HasOnlyForumChannels => HasForumChannels && !HasRegularChannels;
+
+    public bool HasOnlyRegularChannels => HasRegularChannels && !HasForumChannels;
+
+    public bool IsForumChannel(Channel channel) => ForumChannelIds?.Contains(channel.Id) == true;
+
     public IReadOnlyList<ExportFormat> AvailableFormats { get; } = Enum.GetValues<ExportFormat>();
+
+    public IReadOnlyList<ForumCommonAssetMode> AvailableForumCommonAssetModes { get; } =
+        Enum.GetValues<ForumCommonAssetMode>();
+
+    public IReadOnlyList<ForumAttachmentFolderMode> AvailableForumAttachmentFolderModes { get; } =
+        Enum.GetValues<ForumAttachmentFolderMode>();
+
+    public IReadOnlyList<ForumAttachmentNamingMode> AvailableForumAttachmentNamingModes { get; } =
+        Enum.GetValues<ForumAttachmentNamingMode>();
+
+    public IReadOnlyList<int> AvailableForumParallelLimits { get; } = [1, 2, 4, 8];
 
     public bool IsAfterDateSet => AfterDate is not null;
 
@@ -113,6 +173,14 @@ public partial class ExportSetupViewModel(
         ShouldDownloadAssets = settingsService.LastShouldDownloadAssets;
         ShouldReuseAssets = settingsService.LastShouldReuseAssets;
         AssetsDirPath = settingsService.LastAssetsDirPath;
+        ForumShouldDownloadAssets = settingsService.LastForumShouldDownloadAssets;
+        ForumShouldReuseAssets = settingsService.LastForumShouldReuseAssets;
+        ForumAssetsDirPath = settingsService.LastForumAssetsDirPath;
+        ForumShouldDownloadAvatars = settingsService.LastForumShouldDownloadAvatars;
+        SelectedForumCommonAssetMode = settingsService.LastForumCommonAssetMode;
+        SelectedForumAttachmentFolderMode = settingsService.LastForumAttachmentFolderMode;
+        SelectedForumAttachmentNamingMode = settingsService.LastForumAttachmentNamingMode;
+        SelectedForumParallelLimit = settingsService.LastForumParallelLimit;
 
         // Show the "advanced options" section by default if any
         // of the advanced options are set to non-default values.
@@ -174,6 +242,14 @@ public partial class ExportSetupViewModel(
     }
 
     [RelayCommand]
+    private async Task ShowForumAssetsDirPathPromptAsync()
+    {
+        var path = await dialogManager.PromptDirectoryPathAsync();
+        if (!string.IsNullOrWhiteSpace(path))
+            ForumAssetsDirPath = path;
+    }
+
+    [RelayCommand]
     private async Task ConfirmAsync()
     {
         // Prompt the output path if it hasn't been set yet
@@ -195,6 +271,14 @@ public partial class ExportSetupViewModel(
         settingsService.LastShouldDownloadAssets = ShouldDownloadAssets;
         settingsService.LastShouldReuseAssets = ShouldReuseAssets;
         settingsService.LastAssetsDirPath = AssetsDirPath;
+        settingsService.LastForumShouldDownloadAssets = ForumShouldDownloadAssets;
+        settingsService.LastForumShouldReuseAssets = ForumShouldReuseAssets;
+        settingsService.LastForumAssetsDirPath = ForumAssetsDirPath;
+        settingsService.LastForumShouldDownloadAvatars = ForumShouldDownloadAvatars;
+        settingsService.LastForumCommonAssetMode = SelectedForumCommonAssetMode;
+        settingsService.LastForumAttachmentFolderMode = SelectedForumAttachmentFolderMode;
+        settingsService.LastForumAttachmentNamingMode = SelectedForumAttachmentNamingMode;
+        settingsService.LastForumParallelLimit = SelectedForumParallelLimit;
 
         Close(true);
     }

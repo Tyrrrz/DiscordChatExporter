@@ -150,6 +150,20 @@ public abstract class ExportCommandBase : DiscordCommandBase
 
     protected async ValueTask ExportAsync(IConsole console, IReadOnlyList<Channel> channels)
     {
+        try
+        {
+            await ExportCoreAsync(console, channels);
+        }
+        catch (DiscordChatExporterException ex)
+        {
+            // Fatal domain-specific errors (e.g. invalid token) are reported as a message only,
+            // without a stack trace. Other exceptions are left as is.
+            throw new CommandException(ex.Message, innerException: ex);
+        }
+    }
+
+    private async ValueTask ExportCoreAsync(IConsole console, IReadOnlyList<Channel> channels)
+    {
         var cancellationToken = console.RegisterCancellationHandler();
 
         // Asset reuse can only be enabled if the download assets option is set
@@ -304,11 +318,6 @@ public abstract class ExportCommandBase : DiscordCommandBase
                         catch (DiscordChatExporterException ex) when (!ex.IsFatal)
                         {
                             errorsByChannel[channel] = ex.Message;
-                        }
-                        catch (DiscordChatExporterException ex)
-                        {
-                            // Fatal errors (e.g. invalid token, missing intent) are shown succinctly, without a stack trace
-                            throw new CommandException(ex.Message);
                         }
                     }
                 );

@@ -210,6 +210,28 @@ public abstract class ExportCommandBase : DiscordCommandBase
             );
         }
 
+        // Since we don't know if the channel IDs are from channels or threads yet,
+        // we'll validate the thread output paths regardless of the number of
+        // channels being exported or the thread inclusion mode.
+        if (ThreadsOutputPath != null)
+        {
+            var isValidThreadsOutputPath =
+                // When using template tokens, assume the user knows what they're doing
+                ThreadsOutputPath.Contains('%')
+                // Otherwise, require an existing directory or an unambiguous directory path
+                || Directory.Exists(ThreadsOutputPath)
+                || Path.EndsInDirectorySeparator(ThreadsOutputPath);
+
+            if (!isValidThreadsOutputPath)
+            {
+                throw new CommandException(
+                    "Attempted to set a custom thread output path, but the path is neither a directory nor a template. "
+                        + "If the provided thread output path is meant to be treated as a directory, make sure it ends with a slash. "
+                        + $"Provided thread output path: '{ThreadsOutputPath}'."
+                );
+            }
+        }
+
         var unwrappedChannels = new List<Channel>(channels);
 
         // Unwrap threads
@@ -248,27 +270,6 @@ public abstract class ExportCommandBase : DiscordCommandBase
             unwrappedChannels.RemoveAll(channel => channel.Kind == ChannelKind.GuildForum);
 
             await console.Output.WriteLineAsync($"Fetched {fetchedThreadsCount} thread(s).");
-        }
-
-        if (ThreadsOutputPath != null)
-        {
-            var isValidThreadsOutputPath =
-                // Anything is valid when exporting a single channel
-                unwrappedChannels.Count <= 1
-                // When using template tokens, assume the user knows what they're doing
-                || ThreadsOutputPath.Contains('%')
-                // Otherwise, require an existing directory or an unambiguous directory path
-                || Directory.Exists(ThreadsOutputPath)
-                || Path.EndsInDirectorySeparator(ThreadsOutputPath);
-
-            if (!isValidThreadsOutputPath)
-            {
-                throw new CommandException(
-                    "Attempted to export multiple channels, but the thread output path is neither a directory nor a template. "
-                        + "If the provided thread output path is meant to be treated as a directory, make sure it ends with a slash. "
-                        + $"Provided thread output path: '{ThreadsOutputPath}'."
-                );
-            }
         }
 
         // Export

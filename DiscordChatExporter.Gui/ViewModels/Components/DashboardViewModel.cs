@@ -136,20 +136,11 @@ public partial class DashboardViewModel : ViewModelBase
         {
             _snackbarManager.Notify(ex.Message.TrimEnd('.'));
         }
-        catch (DiscordChatExporterException ex)
-        {
-            var dialog = _viewModelManager.GetMessageBoxViewModel(
-                LocalizationManager.ErrorPullingGuildsTitle,
-                ex.Message
-            );
-
-            await _dialogManager.ShowDialogAsync(dialog);
-        }
         catch (Exception ex)
         {
             var dialog = _viewModelManager.GetMessageBoxViewModel(
                 LocalizationManager.ErrorPullingGuildsTitle,
-                ex.ToString()
+                ex is DiscordChatExporterException ? ex.Message : ex.ToString()
             );
 
             await _dialogManager.ShowDialogAsync(dialog);
@@ -212,20 +203,11 @@ public partial class DashboardViewModel : ViewModelBase
         {
             _snackbarManager.Notify(ex.Message.TrimEnd('.'));
         }
-        catch (DiscordChatExporterException ex)
-        {
-            var dialog = _viewModelManager.GetMessageBoxViewModel(
-                LocalizationManager.ErrorPullingChannelsTitle,
-                ex.Message
-            );
-
-            await _dialogManager.ShowDialogAsync(dialog);
-        }
         catch (Exception ex)
         {
             var dialog = _viewModelManager.GetMessageBoxViewModel(
                 LocalizationManager.ErrorPullingChannelsTitle,
-                ex.ToString()
+                ex is DiscordChatExporterException ? ex.Message : ex.ToString()
             );
 
             await _dialogManager.ShowDialogAsync(dialog);
@@ -327,20 +309,11 @@ public partial class DashboardViewModel : ViewModelBase
                 );
             }
         }
-        catch (DiscordChatExporterException ex)
-        {
-            var dialog = _viewModelManager.GetMessageBoxViewModel(
-                LocalizationManager.ErrorExportingTitle,
-                ex.Message
-            );
-
-            await _dialogManager.ShowDialogAsync(dialog);
-        }
         catch (Exception ex)
         {
             var dialog = _viewModelManager.GetMessageBoxViewModel(
                 LocalizationManager.ErrorExportingTitle,
-                ex.ToString()
+                ex is DiscordChatExporterException ? ex.Message : ex.ToString()
             );
 
             await _dialogManager.ShowDialogAsync(dialog);

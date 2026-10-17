@@ -373,6 +373,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
                 throw new CommandException("Export failed.");
         }
         catch (DiscordChatExporterException ex)
+            when (ex.GetBaseException() is DiscordChatExporterException)
         {
             // Show only the message for domain-specific errors, without the stack trace
             throw new CommandException(ex.Message, innerException: ex);

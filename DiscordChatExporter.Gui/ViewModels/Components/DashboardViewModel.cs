@@ -313,7 +313,10 @@ public partial class DashboardViewModel : ViewModelBase
         {
             var dialog = _viewModelManager.GetMessageBoxViewModel(
                 LocalizationManager.ErrorExportingTitle,
-                ex is DiscordChatExporterException ? ex.Message : ex.ToString()
+                ex is DiscordChatExporterException
+                && ex.GetBaseException() is DiscordChatExporterException
+                    ? ex.Message
+                    : ex.ToString()
             );
 
             await _dialogManager.ShowDialogAsync(dialog);

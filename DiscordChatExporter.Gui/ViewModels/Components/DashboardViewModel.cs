@@ -140,7 +140,7 @@ public partial class DashboardViewModel : ViewModelBase
         {
             var dialog = _viewModelManager.GetMessageBoxViewModel(
                 LocalizationManager.ErrorPullingGuildsTitle,
-                ex.ToString()
+                ex is DiscordChatExporterException ? ex.Message : ex.ToString()
             );
 
             await _dialogManager.ShowDialogAsync(dialog);
@@ -207,7 +207,7 @@ public partial class DashboardViewModel : ViewModelBase
         {
             var dialog = _viewModelManager.GetMessageBoxViewModel(
                 LocalizationManager.ErrorPullingChannelsTitle,
-                ex.ToString()
+                ex is DiscordChatExporterException ? ex.Message : ex.ToString()
             );
 
             await _dialogManager.ShowDialogAsync(dialog);
@@ -313,7 +313,10 @@ public partial class DashboardViewModel : ViewModelBase
         {
             var dialog = _viewModelManager.GetMessageBoxViewModel(
                 LocalizationManager.ErrorExportingTitle,
-                ex.ToString()
+                ex is DiscordChatExporterException
+                && ex.GetBaseException() is DiscordChatExporterException
+                    ? ex.Message
+                    : ex.ToString()
             );
 
             await _dialogManager.ShowDialogAsync(dialog);

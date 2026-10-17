@@ -305,6 +305,11 @@ public abstract class ExportCommandBase : DiscordCommandBase
                         {
                             errorsByChannel[channel] = ex.Message;
                         }
+                        catch (DiscordChatExporterException ex)
+                        {
+                            // Fatal errors (e.g. invalid token, missing intent) are shown succinctly, without a stack trace
+                            throw new CommandException(ex.Message);
+                        }
                     }
                 );
             });

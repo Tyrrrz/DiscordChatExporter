@@ -137,6 +137,12 @@ public class SettingsViewModel : DialogViewModelBase
         set => _settingsService.ParallelLimit = Math.Clamp(value, 1, 10);
     }
 
+    public bool IsDiagnosticLoggingEnabled
+    {
+        get => _settingsService.IsDiagnosticLoggingEnabled;
+        set => _settingsService.IsDiagnosticLoggingEnabled = value;
+    }
+
     protected override void Dispose(bool disposing)
     {
         if (disposing)

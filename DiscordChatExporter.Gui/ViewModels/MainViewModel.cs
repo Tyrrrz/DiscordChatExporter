@@ -1,5 +1,7 @@
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using DiscordChatExporter.Core.Utils.Logging;
 using DiscordChatExporter.Gui.Framework;
 using DiscordChatExporter.Gui.Localization;
 using DiscordChatExporter.Gui.Services;
@@ -89,8 +91,10 @@ public partial class MainViewModel(
                 }
             );
         }
-        catch
+        catch (Exception ex)
         {
+            Logger.Warning(LogCategory.App, "Failed to perform application update.", ex);
+
             // Failure to update shouldn't crash the application
             snackbarManager.Notify(localizationManager.UpdateFailedMessage);
         }

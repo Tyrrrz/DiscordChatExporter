@@ -123,6 +123,9 @@ public partial class LocalizationManager
         [nameof(AssetsDirPathLabel)] = "Chemin du dossier des ressources",
         [nameof(AssetsDirPathTooltip)] =
             "Télécharger les ressources dans ce dossier. Si non spécifié, le chemin sera dérivé du chemin de sortie.",
+        [nameof(SkipReactionDetailsLabel)] = "Ignorer les détails des réactions",
+        [nameof(SkipReactionDetailsTooltip)] =
+            "Exporter uniquement les émojis et le nombre de réactions, en omettant les détails des utilisateurs ayant réagi. Accélère considérablement les exports JSON.",
         [nameof(AdvancedOptionsTooltip)] = "Basculer les options avancées",
         [nameof(ExportButton)] = "EXPORTER",
         // Common buttons

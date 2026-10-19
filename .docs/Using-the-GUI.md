@@ -103,3 +103,6 @@ In this screen you can customize the following:
   > Try to keep this number low so that your account doesn't get flagged.
 
 - **Normalize to UTC** - Convert all dates to UTC before exporting.
+
+- **Diagnostic logging** - Write diagnostic logs to a file in the `logs/` directory (`DiscordChatExporter-YYYY-MM-DD.log`) to help troubleshoot issues. You can also customize the log level via the `DISCORDCHATEXPORTER_LOG_LEVEL` environment variable (`Trace`, `Debug`, `Info`, `Warning`, `Error`) or override the log path via `DISCORDCHATEXPORTER_LOG_PATH`.
+  Default: Disabled (Enabled in debug builds)

@@ -220,6 +220,21 @@
               <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding ShouldFormatMarkdown}" />
             </DockPanel>
 
+            <!--  Skip reaction details (JSON only)  -->
+            <DockPanel
+              LastChildFill="False"
+              ToolTip.Tip="{Binding LocalizationManager.SkipReactionDetailsTooltip}"
+            >
+              <TextBlock
+                DockPanel.Dock="Left"
+                Text="{Binding LocalizationManager.SkipReactionDetailsLabel}"
+              />
+              <ToggleSwitch
+                DockPanel.Dock="Right"
+                IsChecked="{Binding ShouldSkipReactionDetails}"
+              />
+            </DockPanel>
+
             <!--  Download assets  -->
             <DockPanel
               LastChildFill="False"

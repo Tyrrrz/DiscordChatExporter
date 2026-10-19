@@ -137,6 +137,13 @@ public abstract class ExportCommandBase : DiscordCommandBase
     public bool IsUtcNormalizationEnabled { get; set; } = false;
 
     [CommandOption(
+        "skip-reaction-details",
+        Description = "Export reaction emojis and counts only, omitting details of all users that reacted. "
+            + "Significantly speeds up JSON exports."
+    )]
+    public bool ShouldSkipReactionDetails { get; set; } = false;
+
+    [CommandOption(
         "fuck-russia",
         EnvironmentVariable = "FUCK_RUSSIA",
         Description = "Don't print the Support Ukraine message to the console.",
@@ -292,7 +299,8 @@ public abstract class ExportCommandBase : DiscordCommandBase
                                             ShouldDownloadAssets,
                                             ShouldReuseAssets,
                                             Locale,
-                                            IsUtcNormalizationEnabled
+                                            IsUtcNormalizationEnabled,
+                                            ShouldSkipReactionDetails
                                         );
 
                                         await Exporter.ExportChannelAsync(

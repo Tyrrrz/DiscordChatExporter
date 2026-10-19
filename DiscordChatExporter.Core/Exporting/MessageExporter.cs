@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
+using DiscordChatExporter.Core.Utils.Logging;
 
 namespace DiscordChatExporter.Core.Exporting;
 
@@ -12,6 +13,8 @@ internal partial class MessageExporter(ExportContext context) : IAsyncDisposable
     private MessageWriter? _writer;
 
     public long MessagesExported { get; private set; }
+
+    public int PartitionsCreated => _partitionIndex + 1;
 
     private async ValueTask<MessageWriter> InitializeWriterAsync(
         CancellationToken cancellationToken = default
@@ -26,8 +29,21 @@ internal partial class MessageExporter(ExportContext context) : IAsyncDisposable
             )
         )
         {
+            var prevMessages = _writer.MessagesWritten;
+            var prevBytes = _writer.BytesWritten;
+
             await UninitializeWriterAsync(cancellationToken);
             _partitionIndex++;
+
+            var nextFilePath = GetPartitionFilePath(
+                context.Request.OutputFilePath,
+                _partitionIndex
+            );
+
+            Logger.Debug(
+                LogCategory.Export,
+                $"Partition limit reached (Messages: {prevMessages}, Bytes: {prevBytes}); rolling over to partition #{_partitionIndex + 1} ('{nextFilePath}')."
+            );
         }
 
         // Writer is still valid, return

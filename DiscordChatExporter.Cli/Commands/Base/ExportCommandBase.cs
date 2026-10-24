@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -69,6 +69,20 @@ public abstract class ExportCommandBase : DiscordCommandBase
         Converter = typeof(ThreadInclusionModeInputConverter)
     )]
     public ThreadInclusionMode ThreadInclusionMode { get; set; } = ThreadInclusionMode.None;
+
+    [CommandOption(
+        "threads-output",
+        Description = "Output file or directory path of threads. "
+            + "See --output for formatting instructions. "
+            + "If not specified, threads will use the same output path template as other channels. "
+    )]
+    public string? ThreadsOutputPath
+    {
+        get;
+        // Handle ~/ in paths on Unix systems
+        // https://github.com/Tyrrrz/DiscordChatExporter/pull/903
+        set => field = value is not null ? Path.GetFullPath(value) : null;
+    }
 
     [CommandOption(
         "filter",
@@ -198,6 +212,28 @@ public abstract class ExportCommandBase : DiscordCommandBase
                 );
             }
 
+            // Since we don't know if the channel IDs are from channels or threads yet,
+            // we'll validate the thread output paths regardless of the number of
+            // channels being exported or the thread inclusion mode.
+            if (ThreadsOutputPath != null)
+            {
+                var isValidThreadsOutputPath =
+                    // When using template tokens, assume the user knows what they're doing
+                    ThreadsOutputPath.Contains('%')
+                    // Otherwise, require an existing directory or an unambiguous directory path
+                    || Directory.Exists(ThreadsOutputPath)
+                    || Path.EndsInDirectorySeparator(ThreadsOutputPath);
+
+                if (!isValidThreadsOutputPath)
+                {
+                    throw new CommandException(
+                        "Attempted to set a custom thread output path, but the path is neither a directory nor a template. "
+                            + "If the provided thread output path is meant to be treated as a directory, make sure it ends with a slash. "
+                            + $"Provided thread output path: '{ThreadsOutputPath}'."
+                    );
+                }
+            }
+
             var unwrappedChannels = new List<Channel>(channels);
 
             // Unwrap threads
@@ -277,10 +313,16 @@ public abstract class ExportCommandBase : DiscordCommandBase
                                             innerCancellationToken
                                         );
 
+                                        // Resolve which output path to use
+                                        var OutPath =
+                                            (channel.IsThread && ThreadsOutputPath != null)
+                                                ? ThreadsOutputPath
+                                                : OutputPath;
+
                                         var request = new ExportRequest(
                                             guild,
                                             channel,
-                                            OutputPath,
+                                            OutPath,
                                             AssetsDirPath,
                                             ExportFormat,
                                             After,

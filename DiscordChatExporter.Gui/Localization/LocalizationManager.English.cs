@@ -80,12 +80,35 @@ public partial class LocalizationManager
                 Available template tokens:
                 **%g** — server ID
                 **%G** — server name
-                **%t** — category ID
-                **%T** — category name
-                **%c** — channel ID
-                **%C** — channel name
+                **%t** or **%m** — category ID
+                **%T** or **%M** — category name
+                **%c** — channel name
                 **%p** — channel position
-                **%P** — category position
+                **%P** or **%N** — category position
+                **%a** — after date
+                **%b** — before date
+                **%d** — current date
+                """,
+            [nameof(ThreadsOutputPathLabel)] = "Threads output path",
+            [nameof(ThreadsOutputPathTooltip)] = """
+                Output file or directory path of threads.
+
+                If not specified, thread paths and file names will be generated based on the main output path.
+
+                Directory paths must end with a slash to avoid ambiguity.
+
+                Available template tokens:
+                **%g** — server ID
+                **%G** — server name
+                **%m** — category ID
+                **%M** — category name
+                **%t** — channel ID
+                **%T** — channel name
+                **%c** — thread ID
+                **%C** — thread name
+                **%p** — thread position
+                **%P** — channel position
+                **%N** — category position
                 **%a** — after date
                 **%b** — before date
                 **%d** — current date

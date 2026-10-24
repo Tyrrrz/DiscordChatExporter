@@ -23,10 +23,10 @@ public partial class SettingsService()
     public partial Language Language { get; set; }
 
     [ObservableProperty]
-    public partial bool IsAutoUpdateEnabled { get; set; } = true;
+    public partial bool IsAutoUpdateEnabled { get; set; }
 
     [ObservableProperty]
-    public partial bool IsTokenPersisted { get; set; } = true;
+    public partial bool IsTokenPersisted { get; set; }
 
     [ObservableProperty]
     public partial RateLimitPreference RateLimitPreference { get; set; } =
@@ -49,7 +49,7 @@ public partial class SettingsService()
     public partial string? LastToken { get; set; }
 
     [ObservableProperty]
-    public partial ExportFormat LastExportFormat { get; set; } = ExportFormat.HtmlDark;
+    public partial ExportFormat LastExportFormat { get; set; } = ExportFormat.Json;
 
     [ObservableProperty]
     public partial string? LastPartitionLimitValue { get; set; }
@@ -64,13 +64,40 @@ public partial class SettingsService()
     public partial bool LastShouldFormatMarkdown { get; set; } = true;
 
     [ObservableProperty]
-    public partial bool LastShouldDownloadAssets { get; set; }
+    public partial bool LastShouldDownloadAssets { get; set; } = true;
 
     [ObservableProperty]
-    public partial bool LastShouldReuseAssets { get; set; }
+    public partial bool LastShouldReuseAssets { get; set; } = true;
 
     [ObservableProperty]
     public partial string? LastAssetsDirPath { get; set; }
+
+    [ObservableProperty]
+    public partial bool LastForumShouldDownloadAssets { get; set; } = true;
+
+    [ObservableProperty]
+    public partial bool LastForumShouldReuseAssets { get; set; } = true;
+
+    [ObservableProperty]
+    public partial string? LastForumAssetsDirPath { get; set; }
+
+    [ObservableProperty]
+    public partial bool LastForumShouldDownloadAvatars { get; set; }
+
+    [ObservableProperty]
+    public partial ForumCommonAssetMode LastForumCommonAssetMode { get; set; } =
+        ForumCommonAssetMode.SharedFolder;
+
+    [ObservableProperty]
+    public partial ForumAttachmentFolderMode LastForumAttachmentFolderMode { get; set; } =
+        ForumAttachmentFolderMode.ByMediaType;
+
+    [ObservableProperty]
+    public partial ForumAttachmentNamingMode LastForumAttachmentNamingMode { get; set; } =
+        ForumAttachmentNamingMode.AttachmentIdAndOriginal;
+
+    [ObservableProperty]
+    public partial int LastForumParallelLimit { get; set; } = 4;
 
     public override void Save()
     {

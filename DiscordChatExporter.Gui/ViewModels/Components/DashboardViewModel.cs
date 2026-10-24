@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DiscordChatExporter.Core.Discord;
@@ -90,6 +91,25 @@ public partial class DashboardViewModel : ViewModelBase
     public partial IReadOnlyList<ChannelConnection>? AvailableChannels { get; set; }
 
     public ObservableCollection<ChannelConnection> SelectedChannels { get; } = [];
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ChannelSelectionMode))]
+    public partial bool IsMultiSelectionEnabled { get; set; }
+
+    public SelectionMode ChannelSelectionMode =>
+        IsMultiSelectionEnabled
+            ? SelectionMode.Multiple | SelectionMode.Toggle
+            : SelectionMode.Single;
+
+    partial void OnIsMultiSelectionEnabledChanged(bool value)
+    {
+        if (value || SelectedChannels.Count <= 1)
+            return;
+
+        var lastSelectedChannel = SelectedChannels[^1];
+        SelectedChannels.Clear();
+        SelectedChannels.Add(lastSelectedChannel);
+    }
 
     public override Task InitializeAsync()
     {
@@ -222,6 +242,47 @@ public partial class DashboardViewModel : ViewModelBase
     private bool CanExport() =>
         !IsBusy && _discord is not null && SelectedGuild is not null && SelectedChannels.Any();
 
+    private async Task<IReadOnlyList<Channel>> ExpandForumChannelsAsync(
+        IReadOnlyList<Channel> channels,
+        CancellationToken cancellationToken = default
+    )
+    {
+        if (_discord is null)
+            return channels;
+
+        var expandedChannels = new List<Channel>();
+        var seenChannelIds = new HashSet<Snowflake>();
+
+        // Keep regular channels and explicitly selected threads as-is. Forum channels are
+        // containers without their own message history, so they are replaced with all of
+        // their accessible active and archived threads below.
+        foreach (var channel in channels.Where(c => c.Kind != ChannelKind.GuildForum))
+        {
+            if (seenChannelIds.Add(channel.Id))
+                expandedChannels.Add(channel);
+        }
+
+        var forums = channels.Where(c => c.Kind == ChannelKind.GuildForum).ToArray();
+        if (forums.Length <= 0)
+            return expandedChannels;
+
+        await foreach (
+            var thread in _discord.GetChannelThreadsAsync(
+                forums,
+                includeArchived: true,
+                cancellationToken: cancellationToken
+            )
+        )
+        {
+            // A thread may already be selected explicitly or may transition from active to
+            // archived while it is being discovered. Export every thread only once.
+            if (seenChannelIds.Add(thread.Id))
+                expandedChannels.Add(thread);
+        }
+
+        return expandedChannels;
+    }
+
     [RelayCommand(CanExecute = nameof(CanExport))]
     private async Task ExportAsync()
     {
@@ -232,9 +293,31 @@ public partial class DashboardViewModel : ViewModelBase
             if (_discord is null || SelectedGuild is null || !SelectedChannels.Any())
                 return;
 
+            var selectedChannels = SelectedChannels.Select(c => c.Channel).ToArray();
+            var channelsToExport = await ExpandForumChannelsAsync(selectedChannels);
+
+            if (channelsToExport.Count <= 0)
+            {
+                _snackbarManager.Notify(
+                    "No accessible active or archived threads were found in the selected forum."
+                );
+                return;
+            }
+
+            var selectedForumIds = selectedChannels
+                .Where(c => c.Kind == ChannelKind.GuildForum)
+                .Select(c => c.Id)
+                .ToHashSet();
+
+            var forumChannelIds = channelsToExport
+                .Where(c => c.Parent is not null && selectedForumIds.Contains(c.Parent.Id))
+                .Select(c => c.Id)
+                .ToHashSet();
+
             var dialog = _viewModelManager.GetExportSetupViewModel(
                 SelectedGuild,
-                SelectedChannels.Select(c => c.Channel).ToArray()
+                channelsToExport,
+                forumChannelIds
             );
 
             if (await _dialogManager.ShowDialogAsync(dialog) != true)
@@ -252,7 +335,12 @@ public partial class DashboardViewModel : ViewModelBase
                 channelProgressPairs,
                 new ParallelOptions
                 {
-                    MaxDegreeOfParallelism = Math.Max(1, _settingsService.ParallelLimit),
+                    MaxDegreeOfParallelism = Math.Max(
+                        1,
+                        dialog.HasForumChannels
+                            ? dialog.SelectedForumParallelLimit
+                            : _settingsService.ParallelLimit
+                    ),
                 },
                 async (pair, cancellationToken) =>
                 {
@@ -261,22 +349,33 @@ public partial class DashboardViewModel : ViewModelBase
 
                     try
                     {
+                        var isForumChannel = dialog.IsForumChannel(channel);
+
                         var request = new ExportRequest(
                             dialog.Guild!,
                             channel,
                             dialog.OutputPath!,
-                            dialog.AssetsDirPath,
-                            dialog.SelectedFormat,
+                            isForumChannel ? dialog.ForumAssetsDirPath : dialog.AssetsDirPath,
+                            isForumChannel ? ExportFormat.Json : dialog.SelectedFormat,
                             dialog.After?.Pipe(Snowflake.FromDate),
                             dialog.Before?.Pipe(Snowflake.FromDate),
                             dialog.PartitionLimit,
                             dialog.MessageFilter,
                             dialog.IsReverseMessageOrder,
                             dialog.ShouldFormatMarkdown,
-                            dialog.ShouldDownloadAssets,
-                            dialog.ShouldReuseAssets,
+                            isForumChannel
+                                ? dialog.ForumShouldDownloadAssets
+                                : dialog.ShouldDownloadAssets,
+                            isForumChannel
+                                ? dialog.ForumShouldReuseAssets
+                                : dialog.ShouldReuseAssets,
                             _settingsService.Locale,
-                            _settingsService.IsUtcNormalizationEnabled
+                            _settingsService.IsUtcNormalizationEnabled,
+                            isForumChannel,
+                            dialog.ForumShouldDownloadAvatars,
+                            dialog.SelectedForumCommonAssetMode,
+                            dialog.SelectedForumAttachmentFolderMode,
+                            dialog.SelectedForumAttachmentNamingMode
                         );
 
                         await exporter.ExportChannelAsync(request, progress, cancellationToken);

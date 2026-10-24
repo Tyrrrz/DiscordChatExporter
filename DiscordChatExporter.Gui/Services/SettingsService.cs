@@ -11,7 +11,7 @@ namespace DiscordChatExporter.Gui.Services;
 
 [ObservableObject]
 public partial class SettingsService()
-    : SettingsBase(StartOptions.Current.SettingsPath, SerializerContext.Default)
+    : SettingsBase(StartOptions.Current.SettingsPath, SettingsSerializerContext.Default)
 {
     [ObservableProperty]
     public partial bool IsUkraineSupportMessageEnabled { get; set; } = true;
@@ -88,5 +88,6 @@ public partial class SettingsService()
 public partial class SettingsService
 {
     [JsonSerializable(typeof(SettingsService))]
-    private partial class SerializerContext : JsonSerializerContext;
+    [JsonSourceGenerationOptions(UseStringEnumConverter = true)]
+    private partial class SettingsSerializerContext : JsonSerializerContext;
 }

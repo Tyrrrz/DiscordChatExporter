@@ -121,6 +121,9 @@ public partial class LocalizationManager
             [nameof(AssetsDirPathLabel)] = "Assets directory path",
             [nameof(AssetsDirPathTooltip)] =
                 "Download assets to this directory. If not specified, the asset directory path will be derived from the output path.",
+            [nameof(SkipReactionDetailsLabel)] = "Skip reaction details",
+            [nameof(SkipReactionDetailsTooltip)] =
+                "Export reaction emojis and counts only, omitting details of all users that reacted. Significantly speeds up JSON exports.",
             [nameof(AdvancedOptionsTooltip)] = "Toggle advanced options",
             [nameof(ExportButton)] = "EXPORT",
             // Common buttons

@@ -78,6 +78,9 @@ public partial class ExportSetupViewModel(
     public partial string? AssetsDirPath { get; set; }
 
     [ObservableProperty]
+    public partial bool ShouldSkipReactionDetails { get; set; }
+
+    [ObservableProperty]
     public partial bool IsAdvancedSectionDisplayed { get; set; }
 
     public bool IsSingleChannel => Channels?.Count == 1;
@@ -113,6 +116,7 @@ public partial class ExportSetupViewModel(
         ShouldDownloadAssets = settingsService.LastShouldDownloadAssets;
         ShouldReuseAssets = settingsService.LastShouldReuseAssets;
         AssetsDirPath = settingsService.LastAssetsDirPath;
+        ShouldSkipReactionDetails = settingsService.LastShouldSkipReactionDetails;
 
         // Show the "advanced options" section by default if any
         // of the advanced options are set to non-default values.
@@ -124,7 +128,8 @@ public partial class ExportSetupViewModel(
             || ShouldDownloadAssets
             || ShouldReuseAssets
             || !string.IsNullOrWhiteSpace(AssetsDirPath)
-            || IsReverseMessageOrder;
+            || IsReverseMessageOrder
+            || ShouldSkipReactionDetails;
 
         return Task.CompletedTask;
     }
@@ -195,6 +200,7 @@ public partial class ExportSetupViewModel(
         settingsService.LastShouldDownloadAssets = ShouldDownloadAssets;
         settingsService.LastShouldReuseAssets = ShouldReuseAssets;
         settingsService.LastAssetsDirPath = AssetsDirPath;
+        settingsService.LastShouldSkipReactionDetails = ShouldSkipReactionDetails;
 
         Close(true);
     }

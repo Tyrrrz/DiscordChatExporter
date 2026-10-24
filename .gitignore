@@ -3,6 +3,7 @@
 .idea/
 *.suo
 *.user
+.vscode/
 
 # Build results
 bin/

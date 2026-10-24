@@ -138,6 +138,8 @@ public partial class LocalizationManager
     public string ReuseAssetsTooltip => Get();
     public string AssetsDirPathLabel => Get();
     public string AssetsDirPathTooltip => Get();
+    public string SkipReactionDetailsLabel => Get();
+    public string SkipReactionDetailsTooltip => Get();
     public string AdvancedOptionsTooltip => Get();
     public string ExportButton => Get();
 

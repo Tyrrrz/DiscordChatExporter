@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Utils;
+using DiscordChatExporter.Core.Utils.Logging;
 using Gress;
 using JsonExtensions.Http;
 using JsonExtensions.Reading;
@@ -30,8 +32,11 @@ public class DiscordClient(
         string url,
         TokenKind tokenKind,
         CancellationToken cancellationToken = default
-    ) =>
-        await Http.ResponseResiliencePipeline.ExecuteAsync(
+    )
+    {
+        Logger.RegisterSecret(token);
+
+        return await Http.ResponseResiliencePipeline.ExecuteAsync(
             async innerCancellationToken =>
             {
                 using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, url));
@@ -43,11 +48,45 @@ public class DiscordClient(
                     tokenKind == TokenKind.Bot ? $"Bot {token}" : token
                 );
 
+                var startTimestamp = Stopwatch.GetTimestamp();
+
                 var response = await Http.Client.SendAsync(
                     request,
                     HttpCompletionOption.ResponseHeadersRead,
                     innerCancellationToken
                 );
+
+                var elapsed = Stopwatch.GetElapsedTime(startTimestamp);
+
+                var remainingRequestCount = response
+                    .Headers.TryGetValue("X-RateLimit-Remaining")
+                    ?.Pipe(s => int.ParseOrNull(s, CultureInfo.InvariantCulture));
+
+                var limitRequestCount = response
+                    .Headers.TryGetValue("X-RateLimit-Limit")
+                    ?.Pipe(s => int.ParseOrNull(s, CultureInfo.InvariantCulture));
+
+                var resetAfterDelay = response
+                    .Headers.TryGetValue("X-RateLimit-Reset-After")
+                    ?.Pipe(s => double.ParseOrNull(s, CultureInfo.InvariantCulture))
+                    ?.Pipe(TimeSpan.FromSeconds);
+
+                var bucket = response.Headers.TryGetValue("X-RateLimit-Bucket");
+
+                if (Logger.IsEnabled(LogLevel.Debug))
+                {
+                    var rateLimitDetails =
+                        remainingRequestCount is not null
+                        || resetAfterDelay is not null
+                        || bucket is not null
+                            ? $" [Remaining: {remainingRequestCount?.ToString(CultureInfo.InvariantCulture) ?? "?"}/{limitRequestCount?.ToString(CultureInfo.InvariantCulture) ?? "?"}, ResetAfter: {(resetAfterDelay?.TotalSeconds ?? 0).ToString("0.0", CultureInfo.InvariantCulture)}s, Bucket: {bucket ?? "-"}]"
+                            : "";
+
+                    Logger.Debug(
+                        LogCategory.Http,
+                        $"GET {url} -> {(int)response.StatusCode} {response.StatusCode} ({elapsed.TotalMilliseconds.ToString("0", CultureInfo.InvariantCulture)}ms){rateLimitDetails}"
+                    );
+                }
 
                 // Discord has advisory rate limits (communicated via response headers), but they are typically
                 // way stricter than the actual rate limits enforced by the server.
@@ -56,15 +95,6 @@ public class DiscordClient(
                 // https://github.com/Tyrrrz/DiscordChatExporter/issues/1021
                 if (rateLimitPreference.IsRespectedFor(tokenKind))
                 {
-                    var remainingRequestCount = response
-                        .Headers.TryGetValue("X-RateLimit-Remaining")
-                        ?.Pipe(s => int.ParseOrNull(s, CultureInfo.InvariantCulture));
-
-                    var resetAfterDelay = response
-                        .Headers.TryGetValue("X-RateLimit-Reset-After")
-                        ?.Pipe(s => double.ParseOrNull(s, CultureInfo.InvariantCulture))
-                        ?.Pipe(TimeSpan.FromSeconds);
-
                     // If this was the last request available before hitting the rate limit,
                     // wait out the reset time so that future requests can succeed.
                     // This may add an unnecessary delay in case the user doesn't intend to
@@ -82,6 +112,11 @@ public class DiscordClient(
                             // is not actually enforced by the server. So we cap it at a reasonable value.
                             .Clamp(TimeSpan.Zero, TimeSpan.FromSeconds(60));
 
+                        Logger.Warning(
+                            LogCategory.Http,
+                            $"Advisory rate limit reached on '{url}' (Bucket: {bucket ?? "-"}, ResetAfter: {resetAfterDelay.Value.TotalSeconds.ToString("0.0", CultureInfo.InvariantCulture)}s). Waiting {delay.TotalSeconds.ToString("0.0", CultureInfo.InvariantCulture)}s..."
+                        );
+
                         await Task.Delay(delay, innerCancellationToken);
                     }
                 }
@@ -90,6 +125,7 @@ public class DiscordClient(
             },
             cancellationToken
         );
+    }
 
     private async ValueTask<TokenKind> ResolveTokenKindAsync(
         CancellationToken cancellationToken = default
@@ -106,7 +142,14 @@ public class DiscordClient(
         );
 
         if (userResponse.StatusCode != HttpStatusCode.Unauthorized)
-            return (_resolvedTokenKind = TokenKind.User).Value;
+        {
+            _resolvedTokenKind = TokenKind.User;
+            Logger.Info(
+                LogCategory.Discord,
+                $"Resolved authentication token kind: {_resolvedTokenKind}"
+            );
+            return _resolvedTokenKind.Value;
+        }
 
         // Try authenticating as a bot
         using var botResponse = await GetResponseAsync(
@@ -116,8 +159,19 @@ public class DiscordClient(
         );
 
         if (botResponse.StatusCode != HttpStatusCode.Unauthorized)
-            return (_resolvedTokenKind = TokenKind.Bot).Value;
+        {
+            _resolvedTokenKind = TokenKind.Bot;
+            Logger.Info(
+                LogCategory.Discord,
+                $"Resolved authentication token kind: {_resolvedTokenKind}"
+            );
+            return _resolvedTokenKind.Value;
+        }
 
+        Logger.Error(
+            LogCategory.Discord,
+            "Authentication failed: token was rejected as both User and Bot."
+        );
         throw new DiscordChatExporterException("Authentication token is invalid.", true);
     }
 
@@ -140,6 +194,25 @@ public class DiscordClient(
 
         if (!response.IsSuccessStatusCode)
         {
+            var responseContent = response.StatusCode
+                is not (
+                    HttpStatusCode.Unauthorized
+                    or HttpStatusCode.Forbidden
+                    or HttpStatusCode.NotFound
+                )
+                ? await response.Content.ReadAsStringAsync(cancellationToken)
+                : null;
+
+            Logger.Error(
+                LogCategory.Discord,
+                $"API request to '{url}' failed with status {(int)response.StatusCode} {response.StatusCode}."
+                    + (
+                        !string.IsNullOrWhiteSpace(responseContent)
+                            ? $" Response: {responseContent}"
+                            : ""
+                    )
+            );
+
             throw response.StatusCode switch
             {
                 HttpStatusCode.Unauthorized => throw new DiscordChatExporterException(
@@ -161,9 +234,7 @@ public class DiscordClient(
                         .StatusCode.ToString()
                         .SeparateWords(' ')
                         .ToLowerInvariant()}.
-                    Response content: {await response.Content.ReadAsStringAsync(
-                        cancellationToken
-                    )}
+                    Response content: {responseContent}
                     """,
                     true
                 ),
@@ -179,9 +250,16 @@ public class DiscordClient(
     )
     {
         using var response = await GetResponseAsync(url, cancellationToken);
-        return response.IsSuccessStatusCode
-            ? await response.Content.ReadAsJsonAsync(cancellationToken)
-            : null;
+        if (!response.IsSuccessStatusCode)
+        {
+            Logger.Debug(
+                LogCategory.Discord,
+                $"Optional request to '{url}' returned {(int)response.StatusCode} {response.StatusCode}; resolving to null."
+            );
+            return null;
+        }
+
+        return await response.Content.ReadAsJsonAsync(cancellationToken);
     }
 
     public async ValueTask<Application> GetApplicationAsync(
@@ -203,6 +281,11 @@ public class DiscordClient(
         if (application.IsMessageContentIntentEnabled)
             return;
 
+        Logger.Error(
+            LogCategory.Discord,
+            "Provided bot account is missing the MESSAGE_CONTENT privileged intent."
+        );
+
         throw new DiscordChatExporterException(
             "Provided bot account is missing the MESSAGE_CONTENT privileged intent.",
             true
@@ -222,7 +305,10 @@ public class DiscordClient(
         [EnumeratorCancellation] CancellationToken cancellationToken = default
     )
     {
+        Logger.Info(LogCategory.Discord, "Fetching user guilds...");
+
         yield return Guild.DirectMessages;
+        var totalGuilds = 1;
 
         var currentAfter = Snowflake.Zero;
         while (true)
@@ -243,11 +329,14 @@ public class DiscordClient(
 
                 currentAfter = guild.Id;
                 count++;
+                totalGuilds++;
             }
 
             if (count <= 0)
-                yield break;
+                break;
         }
+
+        Logger.Info(LogCategory.Discord, $"Fetched {totalGuilds} guild(s) (including DMs).");
     }
 
     public async ValueTask<Guild> GetGuildAsync(
@@ -269,12 +358,22 @@ public class DiscordClient(
     {
         if (guildId == Guild.DirectMessages.Id)
         {
+            Logger.Info(LogCategory.Discord, "Fetching direct message channels...");
+
             var response = await GetJsonResponseAsync("users/@me/channels", cancellationToken);
+            var count = 0;
             foreach (var channelJson in response.EnumerateArray())
+            {
                 yield return Channel.Parse(channelJson);
+                count++;
+            }
+
+            Logger.Info(LogCategory.Discord, $"Fetched {count} direct message channel(s).");
         }
         else
         {
+            Logger.Info(LogCategory.Discord, $"Fetching channels for guild #{guildId}...");
+
             var response = await GetJsonResponseAsync(
                 $"guilds/{guildId}/channels",
                 cancellationToken
@@ -306,6 +405,11 @@ public class DiscordClient(
                 yield return Channel.Parse(channelJson, parent, position);
                 position++;
             }
+
+            Logger.Info(
+                LogCategory.Discord,
+                $"Fetched {position} channel(s) for guild #{guildId}."
+            );
         }
     }
 
@@ -447,9 +551,16 @@ public class DiscordClient(
         // from active to archived between the two separate API calls used to fetch threads.
         // https://github.com/Tyrrrz/DiscordChatExporter/issues/1433
         var seenThreadIds = new HashSet<Snowflake>();
+        var tokenKind = await ResolveTokenKindAsync(cancellationToken);
+        var startTimestamp = Stopwatch.GetTimestamp();
+
+        Logger.Info(
+            LogCategory.Discord,
+            $"Searching for threads across {filteredChannels.Length} eligible channel(s) (IncludeArchived: {includeArchived}, TokenKind: {tokenKind})..."
+        );
 
         // User accounts can only fetch threads using the search endpoint
-        if (await ResolveTokenKindAsync(cancellationToken) == TokenKind.User)
+        if (tokenKind == TokenKind.User)
         {
             foreach (var channel in filteredChannels)
             {
@@ -590,6 +701,12 @@ public class DiscordClient(
                 }
             }
         }
+
+        var elapsed = Stopwatch.GetElapsedTime(startTimestamp);
+        Logger.Info(
+            LogCategory.Discord,
+            $"Discovered {seenThreadIds.Count} thread(s) in {elapsed.ToString(@"hh\:mm\:ss\.fff", CultureInfo.InvariantCulture)}."
+        );
     }
 
     public async ValueTask<Message?> TryGetMessageAsync(
@@ -697,8 +814,17 @@ public class DiscordClient(
             || (isReverse && omegaMessage.Timestamp > before?.ToDate())
         )
         {
+            Logger.Debug(
+                LogCategory.Discord,
+                $"No messages found in range for channel #{channelId} (Omega: {omegaMessage?.Id.ToString() ?? "null"}, After: {after?.ToString() ?? "none"}, Before: {before?.ToString() ?? "none"})."
+            );
             yield break;
         }
+
+        Logger.Debug(
+            LogCategory.Discord,
+            $"Resolved terminal message boundary for channel #{channelId}: #{omegaMessage.Id} ({omegaMessage.Timestamp:O}, Reverse: {isReverse})."
+        );
 
         // Persist the Alpha message as soon as we fetch the initial batch of messages.
         // This is only used for calculating progress.
@@ -707,6 +833,8 @@ public class DiscordClient(
         var currentBoundary = !isReverse ? after ?? Snowflake.Zero : before;
         while (true)
         {
+            var batchStartTimestamp = Stopwatch.GetTimestamp();
+
             var url = new UrlBuilder()
                 .SetPath($"channels/{channelId}/messages")
                 .SetQueryParameter("limit", "100")
@@ -722,9 +850,16 @@ public class DiscordClient(
                 .Pipe(messages => isReverse ? messages : messages.Reverse())
                 .ToArray();
 
+            var batchElapsed = Stopwatch.GetElapsedTime(batchStartTimestamp);
+
             // Break if there are no messages (can happen if messages are deleted during execution)
             if (!messages.Any())
                 yield break;
+
+            Logger.Debug(
+                LogCategory.Discord,
+                $"Fetched batch of {messages.Length} message(s) in {batchElapsed.TotalMilliseconds.ToString("0", CultureInfo.InvariantCulture)}ms (IDs: {messages.First().Id}..{messages.Last().Id})."
+            );
 
             // If all messages are empty, make sure that it's not because the bot account doesn't
             // have the MESSAGE_CONTENT intent enabled.
@@ -766,16 +901,24 @@ public class DiscordClient(
 
                 // Some messages, for example thread starter messages, are returned by the API as content-less references.
                 // Try to resolve them to the actual message so that they appear as they do in the Discord client.
-                var actualMessage =
+                Message? actualMessage = null;
+                if (
                     message.Kind == MessageKind.ThreadStarterMessage
                     && message.Reference?.ChannelId is { } referencedChannelId
                     && message.Reference?.MessageId is { } referencedMessageId
-                        ? await TryGetMessageAsync(
-                            referencedChannelId,
-                            referencedMessageId,
-                            cancellationToken
-                        )
-                        : null;
+                )
+                {
+                    Logger.Debug(
+                        LogCategory.Discord,
+                        $"Resolving thread starter message #{message.Id} -> #{referencedMessageId} in parent channel #{referencedChannelId}."
+                    );
+
+                    actualMessage = await TryGetMessageAsync(
+                        referencedChannelId,
+                        referencedMessageId,
+                        cancellationToken
+                    );
+                }
 
                 yield return actualMessage ?? message;
             }
@@ -848,6 +991,11 @@ public class DiscordClient(
         var currentAfter = Snowflake.Zero;
         while (true)
         {
+            Logger.Debug(
+                LogCategory.Discord,
+                $"Fetching reaction users for message #{messageId} (Emoji: {reactionName}, After: {currentAfter})."
+            );
+
             var url = new UrlBuilder()
                 .SetPath(
                     $"channels/{channelId}/messages/{messageId}/reactions/{Uri.EscapeDataString(reactionName)}"

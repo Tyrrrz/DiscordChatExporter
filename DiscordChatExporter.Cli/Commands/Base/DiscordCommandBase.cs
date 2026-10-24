@@ -1,11 +1,14 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using CliFx;
 using CliFx.Binding;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Utils;
+using DiscordChatExporter.Core.Utils.Logging;
 
 namespace DiscordChatExporter.Cli.Commands.Base;
 
@@ -34,6 +37,18 @@ public abstract class DiscordCommandBase : ICommand
     )]
     public bool ShouldRespectRateLimits { get; set; } = true;
 
+    [CommandOption(
+        "log-level",
+        EnvironmentVariable = "DISCORDCHATEXPORTER_LOG_LEVEL",
+        Description = "Minimum log level to write to the log file (Trace, Debug, Info, Warning, Error)."
+    )]
+    public LogLevel? LogLevel { get; set; } =
+#if DEBUG
+        DiscordChatExporter.Core.Utils.Logging.LogLevel.Debug;
+#else
+        null;
+#endif
+
     [field: AllowNull, MaybeNull]
     protected DiscordClient Discord =>
         field ??= new DiscordClient(
@@ -43,6 +58,16 @@ public abstract class DiscordCommandBase : ICommand
 
     public virtual ValueTask ExecuteAsync(IConsole console)
     {
+        Logger.RegisterSecret(Token);
+        Logger.Configure(LogLevel);
+
+        var version = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "0.0.0";
+
+        Logger.Info(
+            LogCategory.App,
+            $"DiscordChatExporter.Cli v{version} started (OS: {RuntimeInformation.OSDescription}, .NET: {Environment.Version}, LogLevel: {LogLevel}, Command: {GetType().Name})."
+        );
+
 #pragma warning disable CS0618
         // Warn if the bot option is used
         if (IsBotToken)

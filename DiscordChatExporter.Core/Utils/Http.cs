@@ -1,10 +1,12 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Threading.Tasks;
+using DiscordChatExporter.Core.Utils.Logging;
 using Polly;
 using Polly.Retry;
 using PowerKit.Extensions;
@@ -40,6 +42,19 @@ public static class Http
                     MaxRetryAttempts = 4,
                     BackoffType = DelayBackoffType.Exponential,
                     Delay = TimeSpan.FromSeconds(1),
+                    OnRetry = args =>
+                    {
+                        var reason = args.Outcome.Exception is { } ex
+                            ? $"{ex.GetType().Name}: {ex.Message}"
+                            : "unknown error";
+
+                        Logger.Warning(
+                            LogCategory.Http,
+                            $"HTTP request failed ({reason}). Retrying (attempt {args.AttemptNumber + 1}/4) in {args.RetryDelay.TotalSeconds.ToString("0.0", CultureInfo.InvariantCulture)}s..."
+                        );
+
+                        return default;
+                    },
                 }
             )
             .Build();
@@ -68,6 +83,32 @@ public static class Http
                         return ValueTask.FromResult<TimeSpan?>(
                             TimeSpan.FromSeconds(Math.Pow(2, args.AttemptNumber) + 1)
                         );
+                    },
+                    OnRetry = args =>
+                    {
+                        var response = args.Outcome.Result;
+                        var requestUri = response?.RequestMessage?.RequestUri?.PathAndQuery;
+                        var target = !string.IsNullOrWhiteSpace(requestUri)
+                            ? $" '{requestUri}'"
+                            : "";
+
+                        var reason =
+                            response is not null
+                                ? $"HTTP {(int)response.StatusCode} {response.StatusCode}"
+                            : args.Outcome.Exception is { } ex
+                                ? $"{ex.GetType().Name}: {ex.Message}"
+                            : "unknown error";
+
+                        var retryAfterInfo = response?.Headers.RetryAfter?.Delta is { } retryAfter
+                            ? $" (Retry-After: {retryAfter.TotalSeconds.ToString("0.0", CultureInfo.InvariantCulture)}s)"
+                            : "";
+
+                        Logger.Warning(
+                            LogCategory.Http,
+                            $"API request{target} failed with {reason}{retryAfterInfo}. Retrying (attempt {args.AttemptNumber + 1}/8) in {args.RetryDelay.TotalSeconds.ToString("0.0", CultureInfo.InvariantCulture)}s..."
+                        );
+
+                        return default;
                     },
                 }
             )

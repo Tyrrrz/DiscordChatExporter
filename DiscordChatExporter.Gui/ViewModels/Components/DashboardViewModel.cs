@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,6 +12,7 @@ using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Exporting;
+using DiscordChatExporter.Core.Utils.Logging;
 using DiscordChatExporter.Gui.Framework;
 using DiscordChatExporter.Gui.Localization;
 using DiscordChatExporter.Gui.Models;
@@ -122,6 +125,7 @@ public partial class DashboardViewModel : ViewModelBase
             AvailableChannels = null;
             SelectedChannels.Clear();
 
+            Logger.RegisterSecret(token);
             _discord = new DiscordClient(token, _settingsService.RateLimitPreference);
             _settingsService.LastToken = token;
 
@@ -134,10 +138,13 @@ public partial class DashboardViewModel : ViewModelBase
         }
         catch (DiscordChatExporterException ex) when (!ex.IsFatal)
         {
+            Logger.Warning(LogCategory.Discord, $"Non-fatal error pulling guilds: {ex.Message}");
             _snackbarManager.Notify(ex.Message.TrimEnd('.'));
         }
         catch (Exception ex)
         {
+            Logger.Error(LogCategory.Discord, "Error pulling guilds.", ex);
+
             var dialog = _viewModelManager.GetMessageBoxViewModel(
                 LocalizationManager.ErrorPullingGuildsTitle,
                 ex is DiscordChatExporterException ? ex.Message : ex.ToString()
@@ -201,10 +208,13 @@ public partial class DashboardViewModel : ViewModelBase
         }
         catch (DiscordChatExporterException ex) when (!ex.IsFatal)
         {
+            Logger.Warning(LogCategory.Discord, $"Non-fatal error pulling channels: {ex.Message}");
             _snackbarManager.Notify(ex.Message.TrimEnd('.'));
         }
         catch (Exception ex)
         {
+            Logger.Error(LogCategory.Discord, "Error pulling channels.", ex);
+
             var dialog = _viewModelManager.GetMessageBoxViewModel(
                 LocalizationManager.ErrorPullingChannelsTitle,
                 ex is DiscordChatExporterException ? ex.Message : ex.ToString()
@@ -246,7 +256,16 @@ public partial class DashboardViewModel : ViewModelBase
                 .Channels!.Select(c => new { Channel = c, Progress = _progressMuxer.CreateInput() })
                 .ToArray();
 
+            var batchStartTimestamp = Stopwatch.GetTimestamp();
+
+            Logger.Debug(
+                LogCategory.App,
+                $"Export configuration: Guild='{dialog.Guild?.Name}' (#{dialog.Guild?.Id}), Channels={channelProgressPairs.Length}, Format={dialog.SelectedFormat}, ParallelLimit={_settingsService.ParallelLimit}, RateLimitPreference={_settingsService.RateLimitPreference}, ThreadInclusionMode={_settingsService.ThreadInclusionMode}, After={dialog.After?.ToString("O", CultureInfo.InvariantCulture) ?? "none"}, Before={dialog.Before?.ToString("O", CultureInfo.InvariantCulture) ?? "none"}, PartitionLimit={dialog.PartitionLimitValue?.NullIfWhiteSpace() ?? "none"}, Filter={(!string.IsNullOrWhiteSpace(dialog.MessageFilterValue) ? "set" : "none")}, Reverse={dialog.IsReverseMessageOrder}, Markdown={dialog.ShouldFormatMarkdown}, Media={dialog.ShouldDownloadAssets}, ReuseMedia={dialog.ShouldReuseAssets}, Utc={_settingsService.IsUtcNormalizationEnabled}, Locale={_settingsService.Locale ?? "system"}."
+            );
+
             var successfulExportCount = 0;
+            var warningCount = 0;
+            var errorCount = 0;
 
             await Parallel.ForEachAsync(
                 channelProgressPairs,
@@ -285,10 +304,12 @@ public partial class DashboardViewModel : ViewModelBase
                     }
                     catch (ChannelEmptyException ex)
                     {
+                        Interlocked.Increment(ref warningCount);
                         _snackbarManager.Notify(ex.Message.TrimEnd('.'));
                     }
                     catch (DiscordChatExporterException ex) when (!ex.IsFatal)
                     {
+                        Interlocked.Increment(ref errorCount);
                         _snackbarManager.Notify(ex.Message.TrimEnd('.'));
                     }
                     finally
@@ -296,6 +317,13 @@ public partial class DashboardViewModel : ViewModelBase
                         progress.ReportCompletion();
                     }
                 }
+            );
+
+            var batchElapsed = Stopwatch.GetElapsedTime(batchStartTimestamp);
+            var succeededCount = successfulExportCount + warningCount;
+            Logger.Info(
+                LogCategory.Export,
+                $"Batch export finished in {batchElapsed.ToString(@"hh\:mm\:ss\.fff", CultureInfo.InvariantCulture)}: {succeededCount}/{channelProgressPairs.Length} succeeded, {warningCount} warning(s), {errorCount} error(s)."
             );
 
             // Notify of the overall completion
@@ -311,6 +339,8 @@ public partial class DashboardViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
+            Logger.Error(LogCategory.App, "Error exporting channel(s) in GUI.", ex);
+
             var dialog = _viewModelManager.GetMessageBoxViewModel(
                 LocalizationManager.ErrorExportingTitle,
                 ex is DiscordChatExporterException

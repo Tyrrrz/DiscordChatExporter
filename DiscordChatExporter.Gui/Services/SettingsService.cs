@@ -45,6 +45,14 @@ public partial class SettingsService()
     public partial int ParallelLimit { get; set; } = 1;
 
     [ObservableProperty]
+    public partial bool IsDiagnosticLoggingEnabled { get; set; } =
+#if DEBUG
+        true;
+#else
+        false;
+#endif
+
+    [ObservableProperty]
     [JsonConverter(typeof(TokenEncryptionConverter))]
     public partial string? LastToken { get; set; }
 

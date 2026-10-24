@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,6 +19,7 @@ using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Core.Exporting.Filtering;
 using DiscordChatExporter.Core.Exporting.Partitioning;
+using DiscordChatExporter.Core.Utils.Logging;
 using Gress;
 using Spectre.Console;
 
@@ -153,6 +156,12 @@ public abstract class ExportCommandBase : DiscordCommandBase
         try
         {
             var cancellationToken = console.RegisterCancellationHandler();
+            var batchStartTimestamp = Stopwatch.GetTimestamp();
+
+            Logger.Debug(
+                LogCategory.App,
+                $"Export configuration: Channels={channels.Count}, Format={ExportFormat}, ParallelLimit={ParallelLimit}, RespectRateLimits={ShouldRespectRateLimits}, ThreadInclusionMode={ThreadInclusionMode}, After={After?.ToString() ?? "none"}, Before={Before?.ToString() ?? "none"}, PartitionLimit={(PartitionLimit != PartitionLimit.Null ? "set" : "none")}, Filter={(MessageFilter != MessageFilter.Null ? "set" : "none")}, Reverse={IsReverseMessageOrder}, Markdown={ShouldFormatMarkdown}, Media={ShouldDownloadAssets}, ReuseMedia={ShouldReuseAssets}, Utc={IsUtcNormalizationEnabled}, Locale={Locale ?? "system"}."
+            );
 
             // Asset reuse can only be enabled if the download assets option is set
             // https://github.com/Tyrrrz/DiscordChatExporter/issues/425
@@ -315,11 +324,19 @@ public abstract class ExportCommandBase : DiscordCommandBase
                     );
                 });
 
+            var batchElapsed = Stopwatch.GetElapsedTime(batchStartTimestamp);
+            var succeededCount = unwrappedChannels.Count - errorsByChannel.Count;
+
+            Logger.Info(
+                LogCategory.Export,
+                $"Batch export finished in {batchElapsed.ToString(@"hh\:mm\:ss\.fff", CultureInfo.InvariantCulture)}: {succeededCount}/{unwrappedChannels.Count} succeeded, {warningsByChannel.Count} warning(s), {errorsByChannel.Count} error(s)."
+            );
+
             // Print the result
             using (console.WithForegroundColor(ConsoleColor.White))
             {
                 await console.Output.WriteLineAsync(
-                    $"Successfully exported {unwrappedChannels.Count - errorsByChannel.Count} channel(s)."
+                    $"Successfully exported {succeededCount} channel(s)."
                 );
             }
 
@@ -375,8 +392,15 @@ public abstract class ExportCommandBase : DiscordCommandBase
         catch (DiscordChatExporterException ex)
             when (ex.GetBaseException() is DiscordChatExporterException)
         {
+            Logger.Error(LogCategory.App, $"Fatal export error: {ex.Message}", ex);
+
             // Show only the message for domain-specific errors, without the stack trace
             throw new CommandException(ex.Message, innerException: ex);
+        }
+        catch (Exception ex) when (ex is not CommandException)
+        {
+            Logger.Error(LogCategory.App, "Unhandled exception during CLI export.", ex);
+            throw;
         }
     }
 

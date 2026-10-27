@@ -111,26 +111,53 @@ You can use template tokens to generate the output file path based on the server
 ./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 -o "C:\Discord Exports\%G\%T\%C.html"
 ```
 
-Assuming you are exporting a channel named `"my-channel"` in the `"Text channels"` category from a server
-called `"My server"`, you will get the following output file
-path: `C:\Discord Exports\My server\Text channels\my-channel.html`
+Assuming you are exporting a channel named `"my-channel"` in the `"Text channels"` category from a server called `"My server"`, you will get the following output file path: `C:\Discord Exports\My server\Text channels\my-channel.html`
 
 Here is the full list of supported template tokens:
 
 - `%g` - server ID
 - `%G` - server name
-- `%t` - category ID
-- `%T` - category name
+- `%t` or `%m` - category ID
+- `%T` or `%M` - category name
 - `%c` - channel ID
 - `%C` - channel name
 - `%p` - channel position
-- `%P` - category position
+- `%P` or `%N` - category position
 - `%a` - the "after" date
 - `%b` - the "before" date
 - `%d` - the current date
 - `%%` - escapes `%`
 
-#### Partitioning
+#### Setting a different output directory and/or filenames for threads
+
+By default, threads will follow the same output path as all channels, using either the default or the path set with `-o`.
+
+But note that if the channel being exported is a thread, some template tokens will resolve differently:
+
+- `%m` - category ID
+- `%M` - category name
+- `%t` - parent channel ID
+- `%T` - parent channel name
+- `%c` - thread ID
+- `%C` - thread name
+- `%p` - thread position
+- `%P` - parent channel position
+- `%N` - category position
+
+If you want to define a different output directory and/or filename template for threads, you can use `--threads-output` and provide a path.
+
+```console
+./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 -o "C:\Discord Exports\%G\%T\%C.html" --threads-output "C:\Discord Exports\%G\%M\Threads\%T# %C.html" --include-threads all
+```
+
+Assuming you are exporting a channel named `"my-channel"` that has a thread `"My Thread"`, in the `"Text channels"` category from a server
+called `"My server"`:
+
+- If you **do not** use `--threads-output`, the thread will be saved as: `C:\Discord Exports\My server\my-channel\My Thread.html`
+- If you **do** use `--threads-output`, the thread will be saved as: `C:\Discord Exports\My server\Text channels\Threads\my-channel# My Thread.html`
+
+
+### Partitioning
 
 You can use partitioning to split files after a given number of messages or file size.
 For example, a channel with 36 messages set to be partitioned every 10 messages will output 4 files.

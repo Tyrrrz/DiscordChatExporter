@@ -55,6 +55,8 @@ In this screen you can customize the following:
 
 - **Export format** - HTML (Dark), HTML (Light), TXT, CSV and JSON
 
+- **Threads output path** (Optional) - A different folder or naming convention for threads. If not set, it will use the main output path.
+
 - **Date range (after/before)** (Optional) - If set, only messages sent in the provided date range will be exported. Only one value (either after or before) is required if you want to use this option.
 
   > **Note**:

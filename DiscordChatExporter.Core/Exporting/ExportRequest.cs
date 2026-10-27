@@ -47,6 +47,8 @@ public partial class ExportRequest
 
     public bool IsUtcNormalizationEnabled { get; }
 
+    public bool ShouldSkipReactionDetails { get; }
+
     public ExportRequest(
         Guild guild,
         Channel channel,
@@ -62,7 +64,8 @@ public partial class ExportRequest
         bool shouldDownloadAssets,
         bool shouldReuseAssets,
         string? locale,
-        bool isUtcNormalizationEnabled
+        bool isUtcNormalizationEnabled,
+        bool shouldSkipReactionDetails = false
     )
     {
         Guild = guild;
@@ -78,6 +81,7 @@ public partial class ExportRequest
         ShouldReuseAssets = shouldReuseAssets;
         Locale = locale;
         IsUtcNormalizationEnabled = isUtcNormalizationEnabled;
+        ShouldSkipReactionDetails = shouldSkipReactionDetails;
 
         OutputFilePath = GetOutputBaseFilePath(Guild, Channel, outputPath, Format, After, Before);
 

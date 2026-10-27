@@ -121,6 +121,9 @@ public partial class LocalizationManager
             [nameof(AssetsDirPathLabel)] = "Ruta del directorio de recursos",
             [nameof(AssetsDirPathTooltip)] =
                 "Descargar recursos en este directorio. Si no se especifica, la ruta se derivará de la ruta de salida.",
+            [nameof(SkipReactionDetailsLabel)] = "Omitir detalles de reacciones",
+            [nameof(SkipReactionDetailsTooltip)] =
+                "Exportar solo los emojis y número de reacciones, omitiendo los detalles de todos los usuarios que reaccionaron. Acelera mucho las exportaciones en JSON.",
             [nameof(AdvancedOptionsTooltip)] = "Alternar opciones avanzadas",
             [nameof(ExportButton)] = "EXPORTAR",
             // Common buttons

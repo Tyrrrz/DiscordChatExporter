@@ -121,6 +121,9 @@ public partial class LocalizationManager
             [nameof(AssetsDirPathLabel)] = "Шлях до директорії ресурсів",
             [nameof(AssetsDirPathTooltip)] =
                 "Завантажувати ресурси до цієї директорії. Якщо не вказано, шлях до директорії ресурсів буде визначено з шляху збереження.",
+            [nameof(SkipReactionDetailsLabel)] = "Пропускати деталі реакцій",
+            [nameof(SkipReactionDetailsTooltip)] =
+                "Експортувати лише емодзі та кількість реакцій, пропускаючи інформацію про користувачів, які відреагували. Значно пришвидшує експорт у форматі JSON.",
             [nameof(AdvancedOptionsTooltip)] = "Перемкнути розширені параметри",
             [nameof(ExportButton)] = "ЕКСПОРТУВАТИ",
             // Common buttons

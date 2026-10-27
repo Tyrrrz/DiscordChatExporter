@@ -276,7 +276,8 @@ public partial class DashboardViewModel : ViewModelBase
                             dialog.ShouldDownloadAssets,
                             dialog.ShouldReuseAssets,
                             _settingsService.Locale,
-                            _settingsService.IsUtcNormalizationEnabled
+                            _settingsService.IsUtcNormalizationEnabled,
+                            dialog.ShouldSkipReactionDetails
                         );
 
                         await exporter.ExportChannelAsync(request, progress, cancellationToken);

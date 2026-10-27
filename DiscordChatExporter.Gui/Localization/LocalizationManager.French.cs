@@ -69,6 +69,9 @@ public partial class LocalizationManager
         [nameof(NormalizeToUtcTooltip)] = "Normaliser tous les horodatages en UTC+0",
         [nameof(ParallelLimitLabel)] = "Limite parallèle",
         [nameof(ParallelLimitTooltip)] = "Combien de canaux peuvent être exportés simultanément",
+        [nameof(DiagnosticLoggingLabel)] = "Journalisation de diagnostic",
+        [nameof(DiagnosticLoggingTooltip)] =
+            "Écrire des journaux de diagnostic dans un fichier du dossier 'logs' pour aider à résoudre les problèmes",
         // Export Setup
         [nameof(ChannelsSelectedText)] = "canaux sélectionnés",
         [nameof(OutputPathLabel)] = "Chemin de sortie",

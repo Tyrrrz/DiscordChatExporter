@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using DiscordChatExporter.Core.Utils.Logging;
 using JsonExtensions.Reading;
 
 namespace DiscordChatExporter.Core.Discord.Dump;
@@ -41,6 +42,11 @@ public partial class DataDump
         CancellationToken cancellationToken = default
     )
     {
+        Logger.Info(
+            LogCategory.Discord,
+            $"Loading channel index from data package '{zipFilePath}'..."
+        );
+
         await using var archive = await ZipFile.OpenReadAsync(zipFilePath, cancellationToken);
 
         // Use case-insensitive search to accommodate for different data dump versions
@@ -56,6 +62,12 @@ public partial class DataDump
         await using var stream = await entry.OpenAsync(cancellationToken);
         using var document = await JsonDocument.ParseAsync(stream, default, cancellationToken);
 
-        return Parse(document.RootElement);
+        var dump = Parse(document.RootElement);
+        Logger.Info(
+            LogCategory.Discord,
+            $"Extracted {dump.Channels.Count} channel(s) from data package."
+        );
+
+        return dump;
     }
 }

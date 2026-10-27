@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Net.Http;
 using System.Security.Cryptography;
@@ -9,6 +11,7 @@ using System.Threading.Tasks;
 using System.Web;
 using AsyncKeyedLock;
 using DiscordChatExporter.Core.Utils;
+using DiscordChatExporter.Core.Utils.Logging;
 using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting;
@@ -19,6 +22,10 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
 
     // File paths of the previously downloaded assets
     private readonly Dictionary<string, string> _previousPathsByUrl = new(StringComparer.Ordinal);
+
+    public int ReusedCount { get; private set; }
+
+    public int DownloadedCount { get; private set; }
 
     public async ValueTask<string> DownloadAsync(
         string url,
@@ -31,11 +38,25 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
         using var _ = await Locker.LockAsync(filePath, cancellationToken);
 
         if (_previousPathsByUrl.TryGetValue(url, out var cachedFilePath))
+        {
+            ReusedCount++;
+            Logger.Trace(
+                LogCategory.Asset,
+                $"Reused asset from session cache: '{fileName}' ({NormalizeUrl(url)})."
+            );
             return cachedFilePath;
+        }
 
         // Reuse existing files if we're allowed to
         if (reuse && File.Exists(filePath))
+        {
+            ReusedCount++;
+            Logger.Trace(
+                LogCategory.Asset,
+                $"Reused existing asset on disk: '{fileName}' ({NormalizeUrl(url)})."
+            );
             return _previousPathsByUrl[url] = filePath;
+        }
 
         // Check for a file cached by the legacy naming scheme (5-char hash) and rename it
         // to the new naming scheme to preserve backwards compatibility with existing exports.
@@ -53,6 +74,11 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
                     try
                     {
                         File.Move(legacyFilePath, filePath, true);
+                        ReusedCount++;
+                        Logger.Debug(
+                            LogCategory.Asset,
+                            $"Migrated legacy cached asset '{legacyFileName}' -> '{fileName}'."
+                        );
                         return _previousPathsByUrl[url] = filePath;
                     }
                     catch (IOException)
@@ -65,6 +91,8 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
         }
 
         Directory.CreateDirectory(workingDirPath);
+
+        var startTimestamp = Stopwatch.GetTimestamp();
 
         await Http.ResiliencePipeline.ExecuteAsync(
             async innerCancellationToken =>
@@ -82,6 +110,14 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
                 await response.Content.CopyToAsync(output, innerCancellationToken);
             },
             cancellationToken
+        );
+
+        var elapsed = Stopwatch.GetElapsedTime(startTimestamp);
+        DownloadedCount++;
+
+        Logger.Debug(
+            LogCategory.Asset,
+            $"Downloaded asset '{fileName}' from '{NormalizeUrl(url)}' in {elapsed.TotalMilliseconds.ToString("0", CultureInfo.InvariantCulture)}ms."
         );
 
         return _previousPathsByUrl[url] = filePath;

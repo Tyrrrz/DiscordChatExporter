@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Utils;
+using DiscordChatExporter.Core.Utils.Logging;
 using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting;
@@ -27,6 +28,18 @@ internal class ExportContext(DiscordClient discord, ExportRequest request)
     public DiscordClient Discord { get; } = discord;
 
     public ExportRequest Request { get; } = request;
+
+    public int MemberCacheHits { get; private set; }
+
+    public int MembersFetched { get; private set; }
+
+    public int MemberFallbackLookups { get; private set; }
+
+    public int ReusedAssetsCount => _assetDownloader.ReusedCount;
+
+    public int DownloadedAssetsCount => _assetDownloader.DownloadedCount;
+
+    public int FailedAssetsCount { get; private set; }
 
     public DateTimeOffset NormalizeDate(DateTimeOffset instant) =>
         Request.IsUtcNormalizationEnabled ? instant.ToUniversalTime() : instant.ToLocalTime();
@@ -49,6 +62,11 @@ internal class ExportContext(DiscordClient discord, ExportRequest request)
         {
             _rolesById[role.Id] = role;
         }
+
+        Logger.Debug(
+            LogCategory.Export,
+            $"Preloaded {_channelsById.Count} channel(s) and {_rolesById.Count} role(s) into context for guild '{Request.Guild.Name}' (#{Request.Guild.Id})."
+        );
     }
 
     // Threads are not preloaded, so we resolve them on demand
@@ -58,7 +76,12 @@ internal class ExportContext(DiscordClient discord, ExportRequest request)
     )
     {
         if (_channelsById.ContainsKey(id))
+        {
+            Logger.Trace(LogCategory.Export, $"Channel #{id} resolved from context cache.");
             return;
+        }
+
+        Logger.Debug(LogCategory.Export, $"Resolving uncached channel mention #{id} via API...");
 
         var channel = await Discord.TryGetChannelAsync(id, cancellationToken);
 
@@ -74,19 +97,57 @@ internal class ExportContext(DiscordClient discord, ExportRequest request)
     )
     {
         if (_membersById.ContainsKey(id))
+        {
+            MemberCacheHits++;
+            Logger.Trace(LogCategory.Export, $"Member #{id} resolved from context cache.");
             return;
+        }
 
         var member = await Discord.TryGetGuildMemberAsync(Request.Guild.Id, id, cancellationToken);
 
+        if (member is not null)
+        {
+            MembersFetched++;
+            Logger.Debug(
+                LogCategory.Export,
+                $"Fetched guild member #{id} ('{member.User.FullName}')."
+            );
+        }
         // User may have left the guild since they were mentioned.
         // Create a dummy member object based on the user info.
-        if (member is null)
+        else
         {
-            var user = fallbackUser ?? await Discord.TryGetUserAsync(id, cancellationToken);
+            User? user;
+            if (fallbackUser is not null)
+            {
+                user = fallbackUser;
+                Logger.Debug(
+                    LogCategory.Export,
+                    $"Member #{id} not found in guild #{Request.Guild.Id}; using message author/user fallback ('{fallbackUser.FullName}')."
+                );
+            }
+            else
+            {
+                MemberFallbackLookups++;
+                Logger.Debug(
+                    LogCategory.Export,
+                    $"Member #{id} not found in guild #{Request.Guild.Id}; falling back to global user lookup."
+                );
+                user = await Discord.TryGetUserAsync(id, cancellationToken);
+            }
 
             // User may have been deleted since they were mentioned
             if (user is not null)
+            {
                 member = Member.CreateFallback(user);
+            }
+            else
+            {
+                Logger.Debug(
+                    LogCategory.Export,
+                    $"User #{id} could not be resolved (account may be deleted)."
+                );
+            }
         }
 
         // Store the result even if it's null, to avoid re-fetching non-existing members
@@ -159,7 +220,11 @@ internal class ExportContext(DiscordClient discord, ExportRequest request)
         catch (Exception ex) when (ex is HttpRequestException or OperationCanceledException)
         {
             // We don't want this to crash the exporting process in case of failure.
-            // TODO: add logging so we can be more liberal with catching exceptions.
+            FailedAssetsCount++;
+            Logger.Warning(
+                LogCategory.Asset,
+                $"Failed to download asset '{url}'; falling back to remote URL ({ex.GetType().Name}: {ex.Message})."
+            );
             return url;
         }
     }

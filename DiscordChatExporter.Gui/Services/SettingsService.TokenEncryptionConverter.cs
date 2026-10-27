@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using DiscordChatExporter.Core.Utils.Logging;
 using DiscordChatExporter.Gui.Utils.Extensions;
 
 namespace DiscordChatExporter.Gui.Services;
@@ -65,6 +66,10 @@ public partial class SettingsService
                             or IndexOutOfRangeException
                 )
             {
+                Logger.Warning(
+                    LogCategory.App,
+                    $"Failed to decrypt persisted token from settings ({ex.GetType().Name})."
+                );
                 return null;
             }
         }

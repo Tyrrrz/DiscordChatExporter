@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using DiscordChatExporter.Core.Utils.Logging;
 using Onova;
 using Onova.Exceptions;
 using Onova.Services;
@@ -37,8 +38,20 @@ public class UpdateService(SettingsService settingsService) : IDisposable
         if (!settingsService.IsAutoUpdateEnabled)
             return null;
 
+        Logger.Info(LogCategory.App, "Checking for application updates...");
+
         var check = await _updateManager.CheckForUpdatesAsync();
-        return check.CanUpdate ? check.LastVersion : null;
+        if (check.CanUpdate && check.LastVersion is not null)
+        {
+            Logger.Info(
+                LogCategory.App,
+                $"New application version available: v{check.LastVersion}."
+            );
+            return check.LastVersion;
+        }
+
+        Logger.Info(LogCategory.App, "Application is up to date.");
+        return null;
     }
 
     public async ValueTask PrepareUpdateAsync(Version version)
@@ -51,16 +64,24 @@ public class UpdateService(SettingsService settingsService) : IDisposable
 
         try
         {
+            Logger.Info(LogCategory.App, $"Preparing update v{version}...");
             await _updateManager.PrepareUpdateAsync(_updateVersion = version);
             _isUpdatePrepared = true;
+            Logger.Info(LogCategory.App, $"Update v{version} prepared and ready to install.");
         }
-        catch (UpdaterAlreadyLaunchedException)
+        catch (UpdaterAlreadyLaunchedException ex)
         {
-            // Ignore race conditions
+            Logger.Warning(
+                LogCategory.App,
+                $"Skipped preparing update v{version}: updater was already launched ({ex.GetType().Name})."
+            );
         }
-        catch (LockFileNotAcquiredException)
+        catch (LockFileNotAcquiredException ex)
         {
-            // Ignore race conditions
+            Logger.Warning(
+                LogCategory.App,
+                $"Skipped preparing update v{version}: update lock file could not be acquired ({ex.GetType().Name})."
+            );
         }
     }
 
@@ -79,14 +100,24 @@ public class UpdateService(SettingsService settingsService) : IDisposable
         {
             _updateManager.LaunchUpdater(_updateVersion, needRestart);
             _isUpdaterLaunched = true;
+            Logger.Info(
+                LogCategory.App,
+                $"Launched updater for v{_updateVersion} (Restart: {needRestart})."
+            );
         }
-        catch (UpdaterAlreadyLaunchedException)
+        catch (UpdaterAlreadyLaunchedException ex)
         {
-            // Ignore race conditions
+            Logger.Warning(
+                LogCategory.App,
+                $"Skipped launching updater for v{_updateVersion}: updater was already launched ({ex.GetType().Name})."
+            );
         }
-        catch (LockFileNotAcquiredException)
+        catch (LockFileNotAcquiredException ex)
         {
-            // Ignore race conditions
+            Logger.Warning(
+                LogCategory.App,
+                $"Skipped launching updater for v{_updateVersion}: update lock file could not be acquired ({ex.GetType().Name})."
+            );
         }
     }
 

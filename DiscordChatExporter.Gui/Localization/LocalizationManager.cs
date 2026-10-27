@@ -108,6 +108,8 @@ public partial class LocalizationManager
     public string NormalizeToUtcTooltip => Get();
     public string ParallelLimitLabel => Get();
     public string ParallelLimitTooltip => Get();
+    public string DiagnosticLoggingLabel => Get();
+    public string DiagnosticLoggingTooltip => Get();
 
     // ---- Export Setup ----
 

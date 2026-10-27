@@ -290,3 +290,15 @@ To list all servers accessible by the current account, use the `guilds` command:
 ```console
 ./DiscordChatExporter.Cli guilds -t "mfa.Ifrn" > C:\path\to\output.txt
 ```
+
+### Diagnostic logging
+
+By default, logging to a file is disabled in release builds. To enable diagnostic logging to help troubleshoot rate limits, network retries, or export issues, pass `--log-level` (or set the `DISCORDCHATEXPORTER_LOG_LEVEL` environment variable) with one of: `Trace`, `Debug`, `Info`, `Warning`, or `Error`.
+
+```console
+./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 --log-level Debug
+```
+
+Log files are written to the `logs/` directory next to the executable, with the default file name `DiscordChatExporter-YYYY-MM-DD.log`.
+
+You can override the log directory or file path by setting the `DISCORDCHATEXPORTER_LOG_PATH` environment variable. You can set either a directory name, or a custom file name.

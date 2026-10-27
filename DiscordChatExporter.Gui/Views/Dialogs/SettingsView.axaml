@@ -168,6 +168,18 @@
               />
             </StackPanel>
           </DockPanel>
+
+          <!--  Diagnostic logging  -->
+          <DockPanel
+            LastChildFill="False"
+            ToolTip.Tip="{Binding LocalizationManager.DiagnosticLoggingTooltip}"
+          >
+            <TextBlock
+              DockPanel.Dock="Left"
+              Text="{Binding LocalizationManager.DiagnosticLoggingLabel}"
+            />
+            <ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding IsDiagnosticLoggingEnabled}" />
+          </DockPanel>
         </StackPanel>
       </ScrollViewer>
     </Border>

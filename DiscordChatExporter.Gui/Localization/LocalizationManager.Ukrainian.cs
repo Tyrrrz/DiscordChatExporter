@@ -67,6 +67,9 @@ public partial class LocalizationManager
             [nameof(NormalizeToUtcTooltip)] = "Нормалізувати всі часові мітки до UTC+0",
             [nameof(ParallelLimitLabel)] = "Ліміт паралелізації",
             [nameof(ParallelLimitTooltip)] = "Скільки каналів може експортуватись одночасно",
+            [nameof(DiagnosticLoggingLabel)] = "Діагностичне логування",
+            [nameof(DiagnosticLoggingTooltip)] =
+                "Записувати діагностичні логи у файл в директорії 'logs' для допомоги у вирішенні проблем",
             // Export Setup
             [nameof(ChannelsSelectedText)] = "каналів вибрано",
             [nameof(OutputPathLabel)] = "Шлях збереження",

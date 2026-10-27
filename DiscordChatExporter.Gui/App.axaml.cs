@@ -1,9 +1,11 @@
 using System;
+using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Platform;
+using DiscordChatExporter.Core.Utils.Logging;
 using DiscordChatExporter.Gui.Framework;
 using DiscordChatExporter.Gui.Localization;
 using DiscordChatExporter.Gui.Services;
@@ -25,6 +27,8 @@ public partial class App : Application, IDisposable
 
     private readonly IDisposable _eventSubscription;
 
+    private bool _isSettingsLoaded;
+    private bool _isStartupLogged;
     private bool _isDisposed;
 
     public App()
@@ -54,7 +58,7 @@ public partial class App : Application, IDisposable
         _services = services.BuildServiceProvider(true);
         _settingsService = _services.GetRequiredService<SettingsService>();
 
-        // Re-initialize the theme when the user changes it
+        // Re-initialize the theme and logger when the user changes settings
         _eventSubscription = Disposable.Merge(
             _settingsService.WatchProperty(
                 o => o.Theme,
@@ -69,8 +73,35 @@ public partial class App : Application, IDisposable
 
                     InitializeTheme();
                 }
+            ),
+            _settingsService.WatchProperty(
+                o => o.IsDiagnosticLoggingEnabled,
+                _ =>
+                {
+                    if (_isSettingsLoaded)
+                        InitializeLogging();
+                }
             )
         );
+    }
+
+    private void InitializeLogging()
+    {
+        var envLevel = Logger.ResolveEnvironmentLogLevel();
+        var effectiveLevel = _settingsService.IsDiagnosticLoggingEnabled
+            ? envLevel ?? LogLevel.Debug
+            : envLevel;
+
+        Logger.Configure(effectiveLevel);
+
+        if (effectiveLevel is not null && !_isStartupLogged)
+        {
+            _isStartupLogged = true;
+            Logger.Info(
+                LogCategory.App,
+                $"DiscordChatExporter.Gui v{Program.VersionString} started (OS: {RuntimeInformation.OSDescription}, .NET: {Environment.Version}, LogLevel: {effectiveLevel})."
+            );
+        }
     }
 
     private void InitializeTheme()
@@ -99,6 +130,11 @@ public partial class App : Application, IDisposable
     {
         // Load settings
         _settingsService.Load();
+        _isSettingsLoaded = true;
+
+        // Initialize logging after settings are loaded so we don't create log files in Release
+        // unless enabled by user settings or environment variable
+        InitializeLogging();
 
         // Initialize and configure the main window
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)

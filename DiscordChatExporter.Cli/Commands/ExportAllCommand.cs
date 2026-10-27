@@ -9,6 +9,7 @@ using DiscordChatExporter.Cli.Utils.Extensions;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Discord.Dump;
 using DiscordChatExporter.Core.Exceptions;
+using DiscordChatExporter.Core.Utils.Logging;
 using Spectre.Console;
 
 namespace DiscordChatExporter.Cli.Commands;
@@ -114,8 +115,12 @@ public partial class ExportAllCommand : ExportCommandBase
 
                                 channels.Add(channel);
                             }
-                            catch (DiscordChatExporterException)
+                            catch (DiscordChatExporterException ex)
                             {
+                                Logger.Warning(
+                                    LogCategory.Discord,
+                                    $"Channel '{dumpChannel.Name}' (#{dumpChannel.Id}) from data package is inaccessible: {ex.Message}"
+                                );
                                 inaccessibleChannels.Add(dumpChannel);
                             }
                         }

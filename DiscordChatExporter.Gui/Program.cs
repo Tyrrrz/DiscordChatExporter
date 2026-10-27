@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using Avalonia;
+using DiscordChatExporter.Core.Utils.Logging;
 using DiscordChatExporter.Gui.Utils;
 
 namespace DiscordChatExporter.Gui;
@@ -38,6 +39,9 @@ public static class Program
         }
         catch (Exception ex)
         {
+            Logger.Error(LogCategory.App, "Unhandled fatal exception in GUI application.", ex);
+            Logger.Flush();
+
             if (OperatingSystem.IsWindows())
                 _ = NativeMethods.Windows.MessageBox(0, ex.ToString(), "Fatal Error", 0x10);
 

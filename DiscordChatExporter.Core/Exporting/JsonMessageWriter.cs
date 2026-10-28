@@ -6,6 +6,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Discord.Data.Embeds;
 using DiscordChatExporter.Core.Markdown.Parsing;
@@ -66,7 +67,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
 
         _writer.WriteString(
             "avatarUrl",
-            await Context.ResolveAssetUrlAsync(
+            await Context.ResolveAvatarUrlAsync(
                 Context.TryGetMember(user.Id)?.AvatarUrl ?? user.AvatarUrl,
                 cancellationToken
             )
@@ -121,6 +122,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
 
     private async ValueTask WriteAttachmentAsync(
         Attachment attachment,
+        Snowflake messageId,
         CancellationToken cancellationToken = default
     )
     {
@@ -129,7 +131,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
         _writer.WriteString("id", attachment.Id.ToString());
         _writer.WriteString(
             "url",
-            await Context.ResolveAssetUrlAsync(attachment.Url, cancellationToken)
+            await Context.ResolveAttachmentUrlAsync(attachment, messageId, cancellationToken)
         );
         _writer.WriteString("fileName", attachment.FileName);
         _writer.WriteNumber("fileSizeBytes", attachment.FileSize.TotalBytes);
@@ -473,7 +475,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
         _writer.WriteStartArray("attachments");
 
         foreach (var attachment in message.Attachments)
-            await WriteAttachmentAsync(attachment, cancellationToken);
+            await WriteAttachmentAsync(attachment, message.Id, cancellationToken);
 
         _writer.WriteEndArray();
 
@@ -570,7 +572,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
             _writer.WriteStartArray("attachments");
 
             foreach (var attachment in message.ForwardedMessage.Attachments)
-                await WriteAttachmentAsync(attachment, cancellationToken);
+                await WriteAttachmentAsync(attachment, message.Id, cancellationToken);
 
             _writer.WriteEndArray();
 

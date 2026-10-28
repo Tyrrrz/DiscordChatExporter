@@ -17,30 +17,43 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
 {
     private static readonly AsyncKeyedLocker<string> Locker = new();
 
-    // File paths of the previously downloaded assets
-    private readonly Dictionary<string, string> _previousPathsByUrl = new(StringComparer.Ordinal);
+    // File paths of the previously downloaded assets. The same URL can intentionally be stored
+    // in different forum folders, so the destination path is part of the cache key.
+    private readonly Dictionary<string, string> _previousPathsByRequest = new(
+        StringComparer.Ordinal
+    );
 
     public async ValueTask<string> DownloadAsync(
         string url,
+        string? relativeDirPath = null,
+        string? preferredFileName = null,
         CancellationToken cancellationToken = default
     )
     {
-        var fileName = GetFileNameFromUrl(url);
-        var filePath = Path.Combine(workingDirPath, fileName);
+        var actualWorkingDirPath = !string.IsNullOrWhiteSpace(relativeDirPath)
+            ? Path.Combine(workingDirPath, relativeDirPath)
+            : workingDirPath;
+
+        var fileName = !string.IsNullOrWhiteSpace(preferredFileName)
+            ? Path.EscapeFileName(preferredFileName)
+            : GetFileNameFromUrl(url);
+
+        var filePath = Path.Combine(actualWorkingDirPath, fileName);
+        var requestKey = url + '\n' + filePath;
 
         using var _ = await Locker.LockAsync(filePath, cancellationToken);
 
-        if (_previousPathsByUrl.TryGetValue(url, out var cachedFilePath))
+        if (_previousPathsByRequest.TryGetValue(requestKey, out var cachedFilePath))
             return cachedFilePath;
 
         // Reuse existing files if we're allowed to
         if (reuse && File.Exists(filePath))
-            return _previousPathsByUrl[url] = filePath;
+            return _previousPathsByRequest[requestKey] = filePath;
 
         // Check for a file cached by the legacy naming scheme (5-char hash) and rename it
         // to the new naming scheme to preserve backwards compatibility with existing exports.
         // This will catch both the 5-char lowercase hash and the 5-char uppercase hash variants.
-        if (reuse)
+        if (reuse && string.IsNullOrWhiteSpace(preferredFileName))
         {
             var legacyFileNames = GetLegacyFileNamesFromUrl(url);
             foreach (var legacyFileName in legacyFileNames)
@@ -53,7 +66,7 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
                     try
                     {
                         File.Move(legacyFilePath, filePath, true);
-                        return _previousPathsByUrl[url] = filePath;
+                        return _previousPathsByRequest[requestKey] = filePath;
                     }
                     catch (IOException)
                     {
@@ -64,7 +77,7 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
             }
         }
 
-        Directory.CreateDirectory(workingDirPath);
+        Directory.CreateDirectory(actualWorkingDirPath);
 
         await Http.ResiliencePipeline.ExecuteAsync(
             async innerCancellationToken =>
@@ -84,7 +97,7 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
             cancellationToken
         );
 
-        return _previousPathsByUrl[url] = filePath;
+        return _previousPathsByRequest[requestKey] = filePath;
     }
 }
 

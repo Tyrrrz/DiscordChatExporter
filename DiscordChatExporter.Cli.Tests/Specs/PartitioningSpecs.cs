@@ -5,7 +5,7 @@ using DiscordChatExporter.Cli.Commands;
 using DiscordChatExporter.Cli.Tests.Infra;
 using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Core.Exporting.Partitioning;
-using FluentAssertions;
+using AwesomeAssertions;
 using PowerKit;
 using Xunit;
 

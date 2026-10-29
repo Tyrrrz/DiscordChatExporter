@@ -9,6 +9,7 @@
     <PackageVersion Include="AsyncKeyedLock" Version="8.1.2" />
     <PackageVersion Include="Avalonia" Version="12.1.3" />
     <PackageVersion Include="Avalonia.Desktop" Version="12.1.3" />
+    <PackageVersion Include="AwesomeAssertions" Version="9.6.0" />
     <PackageVersion Include="CliFx" Version="3.0.1" />
     <PackageVersion Include="Cogwheel" Version="2.1.1" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
@@ -16,7 +17,6 @@
     <PackageVersion Include="CSharpier.MsBuild" Version="1.3.0" />
     <PackageVersion Include="Deorcify" Version="2.0.1" />
     <PackageVersion Include="DialogHost.Avalonia" Version="0.12.3" />
-    <PackageVersion Include="FluentAssertions" Version="8.11.0" />
     <PackageVersion Include="GitHubActionsTestLogger" Version="3.0.5" />
     <PackageVersion Include="Gress" Version="2.2.0" />
     <PackageVersion Include="JsonExtensions" Version="1.2.3" />

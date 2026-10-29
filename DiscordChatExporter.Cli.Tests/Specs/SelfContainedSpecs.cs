@@ -6,7 +6,7 @@ using DiscordChatExporter.Cli.Commands;
 using DiscordChatExporter.Cli.Tests.Infra;
 using DiscordChatExporter.Cli.Tests.Utils;
 using DiscordChatExporter.Core.Exporting;
-using FluentAssertions;
+using AwesomeAssertions;
 using PowerKit;
 using Xunit;
 

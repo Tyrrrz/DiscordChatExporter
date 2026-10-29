@@ -7,7 +7,7 @@ using DiscordChatExporter.Cli.Commands;
 using DiscordChatExporter.Cli.Tests.Infra;
 using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Core.Exporting.Filtering;
-using FluentAssertions;
+using AwesomeAssertions;
 using JsonExtensions;
 using PowerKit;
 using Xunit;

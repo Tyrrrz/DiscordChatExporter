@@ -2,9 +2,9 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
+using AwesomeAssertions;
 using DiscordChatExporter.Cli.Tests.Infra;
 using DiscordChatExporter.Core.Discord;
-using AwesomeAssertions;
 using Xunit;
 
 namespace DiscordChatExporter.Cli.Tests.Specs;

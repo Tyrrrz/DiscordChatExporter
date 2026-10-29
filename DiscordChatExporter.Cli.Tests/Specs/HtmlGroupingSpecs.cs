@@ -2,12 +2,12 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
+using AwesomeAssertions;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands;
 using DiscordChatExporter.Cli.Tests.Infra;
 using DiscordChatExporter.Cli.Tests.Utils;
 using DiscordChatExporter.Core.Exporting;
-using AwesomeAssertions;
 using PowerKit;
 using Xunit;
 

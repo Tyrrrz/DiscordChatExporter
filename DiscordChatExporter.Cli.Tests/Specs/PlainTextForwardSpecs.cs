@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
-using DiscordChatExporter.Cli.Tests.Infra;
 using AwesomeAssertions;
+using DiscordChatExporter.Cli.Tests.Infra;
 using PowerKit.Extensions;
 using Xunit;
 

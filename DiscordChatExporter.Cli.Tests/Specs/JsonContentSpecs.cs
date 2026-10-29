@@ -1,11 +1,11 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AwesomeAssertions;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands;
 using DiscordChatExporter.Cli.Tests.Infra;
 using DiscordChatExporter.Core.Exporting;
-using AwesomeAssertions;
 using JsonExtensions;
 using PowerKit;
 using Xunit;

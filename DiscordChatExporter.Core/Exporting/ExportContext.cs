@@ -19,6 +19,13 @@ internal class ExportContext(DiscordClient discord, ExportRequest request)
     private readonly Dictionary<Snowflake, Channel?> _channelsById = new();
     private readonly Dictionary<Snowflake, Role> _rolesById = new();
 
+    // Members captured ahead of time, used instead of requesting each one from Discord
+    private readonly MemberSnapshot _memberSnapshot = MemberSnapshot.Load(
+        request.MemberSnapshotPath,
+        request.Guild.Id
+    );
+    private readonly Dictionary<Snowflake, MemberSnapshotEntry> _memberSnapshotEntriesById = new();
+
     private readonly ExportAssetDownloader _assetDownloader = new(
         request.AssetsDirPath,
         request.ShouldReuseAssets
@@ -76,6 +83,13 @@ internal class ExportContext(DiscordClient discord, ExportRequest request)
         if (_membersById.ContainsKey(id))
             return;
 
+        if (_memberSnapshot.TryGetEntry(id) is { } snapshotEntry)
+        {
+            _membersById[id] = snapshotEntry.Member;
+            _memberSnapshotEntriesById[id] = snapshotEntry;
+            return;
+        }
+
         var member = await Discord.TryGetGuildMemberAsync(Request.Guild.Id, id, cancellationToken);
 
         // User may have left the guild since they were mentioned.
@@ -104,6 +118,10 @@ internal class ExportContext(DiscordClient discord, ExportRequest request)
     ) => await PopulateMemberAsync(user.Id, user, cancellationToken);
 
     public Member? TryGetMember(Snowflake id) => _membersById.GetValueOrDefault(id);
+
+    // Returns the snapshot entry if the member's data came from the snapshot instead of Discord
+    public MemberSnapshotEntry? TryGetMemberSnapshotEntry(Snowflake id) =>
+        _memberSnapshotEntriesById.GetValueOrDefault(id);
 
     public Channel? TryGetChannel(Snowflake id) => _channelsById.GetValueOrDefault(id);
 

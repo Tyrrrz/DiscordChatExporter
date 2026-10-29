@@ -223,6 +223,49 @@ Use `--filter` to filter what messages are included in the export.
 
 Documentation on message filter syntax can be found [here](https://github.com/Tyrrrz/DiscordChatExporter/blob/prime/.docs/Message-filters.md).
 
+#### Reusing member data from a snapshot
+
+Discord doesn't allow user tokens to list all members of a server ([#749](https://github.com/Tyrrrz/DiscordChatExporter/issues/749)), so DCE requests each message author's member data (nickname and roles) individually, in every exported channel. If you already have this data, for example from earlier exports, you can use `--member-snapshot` to point DCE to a JSONL file that contains it:
+
+```console
+./DiscordChatExporter.Cli exportguild -t "mfa.Ifrn" -g 21814 -f Json --member-snapshot members.jsonl
+```
+
+The option can also be set through the `DCE_MEMBER_SNAPSHOT` environment variable.
+
+Each line of the file is a JSON object with the following shape (shown here on multiple lines for readability):
+
+```json
+{
+  "id": "123456789012345678",
+  "guildId": "21814",
+  "asOf": "2026-10-20T08:07:44Z",
+  "member": {
+    "user": {
+      "id": "123456789012345678",
+      "username": "tyrrrz",
+      "discriminator": "0",
+      "bot": false
+    },
+    "nick": "Tyrrrz",
+    "roles": ["234567890123456789", "345678901234567890"]
+  }
+}
+```
+
+- `member` is a [guild member object](https://discord.com/developers/docs/resources/guild#guild-member-object) as returned by Discord.
+- `nick` is either a string or `null`.
+- `asOf` is the time the member data was captured at.
+- Lines for other servers are ignored.
+- Lines with an `asOf` that can't be parsed, or that is more than 30 days old, are ignored.
+- Malformed lines are ignored.
+- If the same user appears on multiple lines, the one with the most recent `asOf` is used.
+- If the file doesn't exist, all members are requested from Discord as usual.
+
+Members found in the snapshot are not requested from Discord; all other members are requested as usual. In the `Json` format, user objects whose member data came from the snapshot have an additional `memberSnapshotAt` property (right after `roles`) containing the `asOf` value from the file, because their roles and nickname reflect that time rather than the time of the export.
+
+DCE doesn't produce this file. Building it, for example from the author objects of earlier exports, is up to you.
+
 ### Export channels from a specific server
 
 To export all channels in a specific server, use the `exportguild` command and provide the server ID through the `-g|--guild` option:

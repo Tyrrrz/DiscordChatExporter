@@ -62,6 +62,11 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
         {
             _writer.WritePropertyName("roles");
             await WriteRolesAsync(Context.GetUserRoles(user.Id), cancellationToken);
+
+            // Member data came from the snapshot: roles and nickname are as of this time,
+            // rather than as of the export time
+            if (Context.TryGetMemberSnapshotEntry(user.Id) is { } snapshotEntry)
+                _writer.WriteString("memberSnapshotAt", snapshotEntry.RawAsOf);
         }
 
         _writer.WriteString(

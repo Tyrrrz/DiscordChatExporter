@@ -137,6 +137,15 @@ public abstract class ExportCommandBase : DiscordCommandBase
     public bool IsUtcNormalizationEnabled { get; set; } = false;
 
     [CommandOption(
+        "member-snapshot",
+        EnvironmentVariable = "DCE_MEMBER_SNAPSHOT",
+        Description = "Path to a JSONL file with previously captured guild members. "
+            + "Members found in it (if captured within the last 30 days) are not requested from Discord individually. "
+            + "See the documentation for the file format."
+    )]
+    public string? MemberSnapshotPath { get; set; }
+
+    [CommandOption(
         "fuck-russia",
         EnvironmentVariable = "FUCK_RUSSIA",
         Description = "Don't print the Support Ukraine message to the console.",
@@ -292,7 +301,8 @@ public abstract class ExportCommandBase : DiscordCommandBase
                                             ShouldDownloadAssets,
                                             ShouldReuseAssets,
                                             Locale,
-                                            IsUtcNormalizationEnabled
+                                            IsUtcNormalizationEnabled,
+                                            MemberSnapshotPath
                                         );
 
                                         await Exporter.ExportChannelAsync(

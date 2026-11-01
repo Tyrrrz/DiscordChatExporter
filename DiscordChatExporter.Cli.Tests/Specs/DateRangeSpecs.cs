@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AwesomeAssertions;
 using CliFx.Infrastructure;
@@ -8,7 +9,6 @@ using DiscordChatExporter.Cli.Commands;
 using DiscordChatExporter.Cli.Tests.Infra;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Exporting;
-using JsonExtensions;
 using PowerKit;
 using Xunit;
 
@@ -34,7 +34,8 @@ public class DateRangeSpecs
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        var timestamps = Json.Parse(await File.ReadAllTextAsync(file.Path))
+        var timestamps = JsonElement
+            .Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("timestamp").GetDateTimeOffset())
@@ -79,7 +80,8 @@ public class DateRangeSpecs
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        var timestamps = Json.Parse(await File.ReadAllTextAsync(file.Path))
+        var timestamps = JsonElement
+            .Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("timestamp").GetDateTimeOffset())
@@ -124,7 +126,8 @@ public class DateRangeSpecs
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        var timestamps = Json.Parse(await File.ReadAllTextAsync(file.Path))
+        var timestamps = JsonElement
+            .Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("timestamp").GetDateTimeOffset())
@@ -168,7 +171,8 @@ public class DateRangeSpecs
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        var timestamps = Json.Parse(await File.ReadAllTextAsync(file.Path))
+        var timestamps = JsonElement
+            .Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("timestamp").GetDateTimeOffset())
@@ -211,7 +215,8 @@ public class DateRangeSpecs
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        var timestamps = Json.Parse(await File.ReadAllTextAsync(file.Path))
+        var timestamps = JsonElement
+            .Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("timestamp").GetDateTimeOffset())

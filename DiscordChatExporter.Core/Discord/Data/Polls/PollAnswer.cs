@@ -1,6 +1,6 @@
 using System.Text.Json;
-using JsonExtensions.Reading;
 using PowerKit.Extensions;
+using PowerKit.Json.Extensions;
 
 namespace DiscordChatExporter.Core.Discord.Data.Polls;
 

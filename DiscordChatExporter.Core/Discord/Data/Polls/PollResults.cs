@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
-using JsonExtensions.Reading;
+using PowerKit.Json.Extensions;
 
 namespace DiscordChatExporter.Core.Discord.Data.Polls;
 

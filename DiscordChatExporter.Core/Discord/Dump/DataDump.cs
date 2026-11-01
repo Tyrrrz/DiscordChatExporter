@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using JsonExtensions.Reading;
+using PowerKit.Json.Extensions;
 
 namespace DiscordChatExporter.Core.Discord.Dump;
 

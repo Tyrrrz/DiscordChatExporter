@@ -4,9 +4,9 @@
     <PackageReference Include="AsyncKeyedLock" />
     <PackageReference Include="CSharpier.MsBuild" PrivateAssets="all" />
     <PackageReference Include="Gress" />
-    <PackageReference Include="JsonExtensions" />
     <PackageReference Include="Polly" />
     <PackageReference Include="PowerKit" />
+    <PackageReference Include="PowerKit.Json" />
     <PackageReference Include="RazorBlade" />
     <PackageReference Include="Superpower" />
     <PackageReference Include="WebMarkupMin.Core" />

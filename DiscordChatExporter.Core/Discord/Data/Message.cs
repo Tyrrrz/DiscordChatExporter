@@ -5,8 +5,8 @@ using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
 using DiscordChatExporter.Core.Discord.Data.Embeds;
 using DiscordChatExporter.Core.Discord.Data.Polls;
-using JsonExtensions.Reading;
 using PowerKit.Extensions;
+using PowerKit.Json.Extensions;
 
 namespace DiscordChatExporter.Core.Discord.Data;
 

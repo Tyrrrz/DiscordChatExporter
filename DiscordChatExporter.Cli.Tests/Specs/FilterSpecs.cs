@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AwesomeAssertions;
 using CliFx.Infrastructure;
@@ -8,7 +9,6 @@ using DiscordChatExporter.Cli.Commands;
 using DiscordChatExporter.Cli.Tests.Infra;
 using DiscordChatExporter.Core.Exporting;
 using DiscordChatExporter.Core.Exporting.Filtering;
-using JsonExtensions;
 using PowerKit;
 using Xunit;
 
@@ -33,7 +33,8 @@ public class FilterSpecs
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        Json.Parse(await File.ReadAllTextAsync(file.Path))
+        JsonElement
+            .Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("content").GetString())
@@ -58,7 +59,8 @@ public class FilterSpecs
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        Json.Parse(await File.ReadAllTextAsync(file.Path))
+        JsonElement
+            .Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("author").GetProperty("name").GetString())
@@ -83,7 +85,8 @@ public class FilterSpecs
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        Json.Parse(await File.ReadAllTextAsync(file.Path))
+        JsonElement
+            .Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("content").GetString())
@@ -108,7 +111,8 @@ public class FilterSpecs
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        Json.Parse(await File.ReadAllTextAsync(file.Path))
+        JsonElement
+            .Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("content").GetString())
@@ -133,7 +137,8 @@ public class FilterSpecs
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        Json.Parse(await File.ReadAllTextAsync(file.Path))
+        JsonElement
+            .Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("content").GetString())
@@ -158,7 +163,8 @@ public class FilterSpecs
         }.ExecuteAsync(new FakeConsole());
 
         // Assert
-        Json.Parse(await File.ReadAllTextAsync(file.Path))
+        JsonElement
+            .Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
             .EnumerateArray()
             .Select(j => j.GetProperty("content").GetString())

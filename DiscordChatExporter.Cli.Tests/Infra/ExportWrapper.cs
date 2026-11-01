@@ -13,7 +13,6 @@ using DiscordChatExporter.Cli.Commands;
 using DiscordChatExporter.Cli.Tests.Utils;
 using DiscordChatExporter.Core.Discord;
 using DiscordChatExporter.Core.Exporting;
-using JsonExtensions;
 
 namespace DiscordChatExporter.Cli.Tests.Infra;
 
@@ -67,7 +66,7 @@ public static class ExportWrapper
         Html.Parse(await ExportAsync(channelId, ExportFormat.HtmlDark));
 
     public static async ValueTask<JsonElement> ExportAsJsonAsync(Snowflake channelId) =>
-        Json.Parse(await ExportAsync(channelId, ExportFormat.Json));
+        JsonElement.Parse(await ExportAsync(channelId, ExportFormat.Json));
 
     public static async ValueTask<string> ExportAsPlainTextAsync(Snowflake channelId) =>
         await ExportAsync(channelId, ExportFormat.PlainText);

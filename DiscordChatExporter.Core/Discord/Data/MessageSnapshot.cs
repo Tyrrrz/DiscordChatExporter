@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Embeds;
-using JsonExtensions.Reading;
+using PowerKit.Json.Extensions;
 
 namespace DiscordChatExporter.Core.Discord.Data;
 

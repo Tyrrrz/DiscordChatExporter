@@ -2,8 +2,8 @@ using System;
 using System.IO;
 using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
-using JsonExtensions.Reading;
 using PowerKit.Extensions;
+using PowerKit.Json.Extensions;
 
 namespace DiscordChatExporter.Core.Discord.Data;
 

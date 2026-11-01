@@ -12,9 +12,8 @@ using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Exceptions;
 using DiscordChatExporter.Core.Utils;
 using Gress;
-using JsonExtensions.Http;
-using JsonExtensions.Reading;
 using PowerKit.Extensions;
+using PowerKit.Json.Extensions;
 
 namespace DiscordChatExporter.Core.Discord;
 

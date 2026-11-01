@@ -15,12 +15,12 @@
     <PackageReference Include="coverlet.collector" PrivateAssets="all" />
     <PackageReference Include="CSharpier.MsBuild" PrivateAssets="all" />
     <PackageReference Include="GitHubActionsTestLogger" />
-    <PackageReference Include="JsonExtensions" />
     <PackageReference Include="Microsoft.Extensions.Configuration" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="PowerKit" />
+    <PackageReference Include="PowerKit.Json" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
   </ItemGroup>

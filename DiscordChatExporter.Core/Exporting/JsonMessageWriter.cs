@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
 using DiscordChatExporter.Core.Discord.Data.Embeds;
 using DiscordChatExporter.Core.Markdown.Parsing;
-using JsonExtensions.Writing;
 using PowerKit.Extensions;
+using PowerKit.Json.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting;
 

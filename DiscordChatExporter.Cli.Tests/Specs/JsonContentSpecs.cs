@@ -1,12 +1,12 @@
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AwesomeAssertions;
 using CliFx.Infrastructure;
 using DiscordChatExporter.Cli.Commands;
 using DiscordChatExporter.Cli.Tests.Infra;
 using DiscordChatExporter.Core.Exporting;
-using JsonExtensions;
 using PowerKit;
 using Xunit;
 
@@ -68,7 +68,8 @@ public class JsonContentSpecs
             IsReverseMessageOrder = true,
         }.ExecuteAsync(new FakeConsole());
 
-        var messages = Json.Parse(await File.ReadAllTextAsync(file.Path))
+        var messages = JsonElement
+            .Parse(await File.ReadAllTextAsync(file.Path))
             .GetProperty("messages")
             .EnumerateArray()
             .ToArray();

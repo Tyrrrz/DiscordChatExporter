@@ -1,14 +1,12 @@
 # DiscordChatExporter
 
 [![Status](https://img.shields.io/badge/status-maintenance-ffd700.svg)](https://github.com/Tyrrrz/.github/blob/prime/docs/project-status.md)
-[![Made in Ukraine](https://img.shields.io/badge/made_in-ukraine-ffd700.svg?labelColor=0057b7)](https://tyrrrz.me/ukraine)
 [![Build](https://img.shields.io/github/actions/workflow/status/Tyrrrz/DiscordChatExporter/main.yml?branch=prime)](https://github.com/Tyrrrz/DiscordChatExporter/actions)
 [![Coverage](https://img.shields.io/codecov/c/github/Tyrrrz/DiscordChatExporter/prime)](https://codecov.io/gh/Tyrrrz/DiscordChatExporter)
 [![Release](https://img.shields.io/github/release/Tyrrrz/DiscordChatExporter.svg)](https://github.com/Tyrrrz/DiscordChatExporter/releases)
 [![Downloads](https://img.shields.io/github/downloads/Tyrrrz/DiscordChatExporter/total.svg)](https://github.com/Tyrrrz/DiscordChatExporter/releases)
 [![Pulls](https://img.shields.io/docker/pulls/tyrrrz/discordchatexporter)](https://hub.docker.com/r/tyrrrz/discordchatexporter)
 [![Discord](https://img.shields.io/discord/869237470565392384?label=discord)](https://discord.gg/2SUWKFnHSm)
-[![Fuck Russia](https://img.shields.io/badge/fuck-russia-e4181c.svg?labelColor=000000)](https://twitter.com/tyrrrz/status/1495972128977571848)
 
 <table>
     <tr>
@@ -20,23 +18,15 @@
     <img src="favicon.png" alt="Icon" />
 </p>
 
+> **Made in 🇺🇦 Ukraine — [despite Russia's best efforts](https://tyrrrz.me/ukraine)**.
+> Using this project or its source code comes with the implicit agreement that you condemn Russia's war of aggression against Ukraine, recognize Russia as a terrorist state, and support Ukraine's territorial integrity.
+
 **DiscordChatExporter** is an application that can be used to export message history from any [Discord](https://discord.com) channel to a file.
 It works with direct messages, group messages, and server channels, and supports Discord's dialect of markdown as well as most other rich media features.
 
 > [!WARNING]
 > While **DiscordChatExporter** allows it, automating user accounts is against Discord TOS and may result in you getting banned.
 > If possible, use a bot to export chat logs from accessible channels.
-
-## Terms of use<sup>[[?]](https://github.com/Tyrrrz/.github/blob/prime/docs/why-so-political.md)</sup>
-
-By using this project or its source code, for any purpose and in any shape or form, you grant your **implicit agreement** to all the following statements:
-
-- You **condemn Russia and its military aggression against Ukraine**
-- You **recognize that Russia is an occupant that unlawfully invaded a sovereign state**
-- You **support Ukraine's territorial integrity, including its claims over temporarily occupied territories of Crimea and Donbas**
-- You **reject false narratives perpetuated by Russian state propaganda**
-
-To learn more about the war and how you can help, [click here](https://tyrrrz.me/ukraine). Glory to Ukraine! 🇺🇦
 
 ## Download
 

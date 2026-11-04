@@ -49,10 +49,6 @@ It works with direct messages, group messages, and server channels, and supports
   - 📦 [AUR](https://aur.archlinux.org/packages/discord-chat-exporter-cli): `yay -S discord-chat-exporter-cli` (community-maintained)
   - 📦 [Nix](https://search.nixos.org/packages?show=discordchatexporter-cli): `nix-shell -p discordchatexporter-cli` (community-maintained)
 
-> [!IMPORTANT]
-> To launch the GUI version of the app on MacOS, you may need to first remove the downloaded file from quarantine.
-> You can do that by running the following command in the terminal: `xattr -rd com.apple.quarantine DiscordChatExporter.app`.
-
 > [!NOTE]
 > Community-maintained packages are published independently from this repository and may not always be up to date with the latest release.
 

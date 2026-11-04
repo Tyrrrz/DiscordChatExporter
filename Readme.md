@@ -28,6 +28,10 @@ It works with direct messages, group messages, and server channels, and supports
 > While **DiscordChatExporter** allows it, automating user accounts is against Discord TOS and may result in you getting banned.
 > If possible, use a bot to export chat logs from accessible channels.
 
+**See also**:
+- 📦 [mlomb/chat-analytics](https://github.com/mlomb/chat-analytics) — solution for analyzing chat patterns of Discord users, using exports produced by **DiscordChatExporter**
+- 📦 [slatinsky/DiscordChatExporter-frontend](https://github.com/slatinsky/DiscordChatExporter-frontend) — convenient viewer for exports produced by **DiscordChatExporter**
+
 ## Download
 
 - **Graphical user interface** (desktop app):
@@ -68,8 +72,3 @@ It works with direct messages, group messages, and server channels, and supports
 
 ![channel list](.assets/list.png)
 ![rendered output](.assets/output.png)
-
-## See also
-
-- [**Chat Analytics**](https://github.com/mlomb/chat-analytics) — solution for analyzing chat patterns of Discord users, using exports produced by **DiscordChatExporter**.
-- [**DiscordChatExporter-frontend**](https://github.com/slatinsky/DiscordChatExporter-frontend) — convenient viewer for exports produced by **DiscordChatExporter**.

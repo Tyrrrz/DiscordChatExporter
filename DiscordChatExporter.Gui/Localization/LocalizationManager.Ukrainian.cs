@@ -12,6 +12,8 @@ public partial class LocalizationManager
             [nameof(SettingsTooltip)] = "Налаштування",
             [nameof(LastMessageSentTooltip)] = "Останнє повідомлення:",
             [nameof(TokenPlaceholderText)] = "Токен",
+            [nameof(SearchChannelsPlaceholderText)] = "Пошук каналів",
+            [nameof(SearchDirectMessagesPlaceholderText)] = "Пошук особистих повідомлень",
             // Token instructions (personal account)
             [nameof(TokenPersonalHeader)] = "Як отримати токен для персонального акаунту:",
             [nameof(TokenPersonalTosWarning)] =

@@ -76,6 +76,8 @@ public partial class LocalizationManager
     public string SettingsTooltip => Get();
     public string LastMessageSentTooltip => Get();
     public string TokenPlaceholderText => Get();
+    public string SearchChannelsPlaceholderText => Get();
+    public string SearchDirectMessagesPlaceholderText => Get();
 
     // Token instructions (personal account)
     public string TokenPersonalHeader => Get();

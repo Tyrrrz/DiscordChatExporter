@@ -21,6 +21,15 @@ public partial class DashboardView : UserControl<DashboardViewModel>
         SelectionChangedEventArgs args
     ) => DataContext.PullChannelsCommand.ExecuteIfCan(null);
 
+    private void ChannelSearchQueryTextBox_OnKeyDown(object? sender, KeyEventArgs args)
+    {
+        if (args.Key == Key.Escape)
+        {
+            DataContext.ClearChannelSearchQueryCommand.ExecuteIfCan(null);
+            args.Handled = true;
+        }
+    }
+
     private void AvailableChannelsTreeView_OnSelectionChanged(
         object? sender,
         SelectionChangedEventArgs args

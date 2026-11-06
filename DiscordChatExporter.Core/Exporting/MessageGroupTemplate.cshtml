@@ -7,6 +7,7 @@
 @using DiscordChatExporter.Core.Discord.Data
 @using DiscordChatExporter.Core.Discord.Data.Embeds
 @using DiscordChatExporter.Core.Markdown.Parsing
+@using DiscordChatExporter.Core.Utils
 @using DiscordChatExporter.Core.Utils.Extensions
 @using PowerKit.Extensions
 
@@ -24,9 +25,6 @@
 
     string FormatDate(DateTimeOffset instant, string format = "g") =>
         Context.FormatDate(instant, format);
-
-    string? EnsureSafeUrl(string? url) =>
-        ExportContext.EnsureSafeUrl(url);
 
     async ValueTask<IEncodedContent> FormatMarkdownAsync(string markdown) =>
         Context.Request.ShouldFormatMarkdown
@@ -643,9 +641,9 @@
 
                                                     @if (!string.IsNullOrWhiteSpace(embed.Author.Name))
                                                     {
-                                                        if (EnsureSafeUrl(embed.Author.Url) is { } authorUrl)
+                                                        if (!string.IsNullOrWhiteSpace(embed.Author.Url) && Url.IsHttp(embed.Author.Url))
                                                         {
-                                                            <a class="chatlog__embed-author-link" href="@authorUrl">
+                                                            <a class="chatlog__embed-author-link" href="@embed.Author.Url">
                                                                 <div class="chatlog__embed-author">@embed.Author.Name</div>
                                                             </a>
                                                         }
@@ -661,9 +659,9 @@
                                             @if (!string.IsNullOrWhiteSpace(embed.Title))
                                             {
                                                 <div class="chatlog__embed-title">
-                                                    @if (EnsureSafeUrl(embed.Url) is { } titleUrl)
+                                                    @if (!string.IsNullOrWhiteSpace(embed.Url) && Url.IsHttp(embed.Url))
                                                     {
-                                                        <a class="chatlog__embed-title-link" href="@titleUrl">
+                                                        <a class="chatlog__embed-title-link" href="@embed.Url">
                                                             <div class="chatlog__markdown chatlog__markdown-preserve"><!--wmm:ignore-->@(await FormatEmbedMarkdownAsync(embed.Title))<!--/wmm:ignore--></div>
                                                         </a>
                                                     }
@@ -763,9 +761,9 @@
 
                                                     @if (!string.IsNullOrWhiteSpace(embed.Author.Name))
                                                     {
-                                                        if (EnsureSafeUrl(embed.Author.Url) is { } authorUrl)
+                                                        if (!string.IsNullOrWhiteSpace(embed.Author.Url) && Url.IsHttp(embed.Author.Url))
                                                         {
-                                                            <a class="chatlog__embed-author-link" href="@authorUrl">
+                                                            <a class="chatlog__embed-author-link" href="@embed.Author.Url">
                                                                 <div class="chatlog__embed-author">@embed.Author.Name</div>
                                                             </a>
                                                         }
@@ -781,9 +779,9 @@
                                             @if (!string.IsNullOrWhiteSpace(embed.Title))
                                             {
                                                 <div class="chatlog__embed-title">
-                                                    @if (EnsureSafeUrl(embed.Url) is { } titleUrl)
+                                                    @if (!string.IsNullOrWhiteSpace(embed.Url) && Url.IsHttp(embed.Url))
                                                     {
-                                                        <a class="chatlog__embed-title-link" href="@titleUrl">
+                                                        <a class="chatlog__embed-title-link" href="@embed.Url">
                                                             <div class="chatlog__markdown chatlog__markdown-preserve"><!--wmm:ignore-->@(await FormatEmbedMarkdownAsync(embed.Title))<!--/wmm:ignore--></div>
                                                         </a>
                                                     }

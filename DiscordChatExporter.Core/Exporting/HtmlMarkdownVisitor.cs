@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Markdown;
 using DiscordChatExporter.Core.Markdown.Parsing;
+using DiscordChatExporter.Core.Utils;
 using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting;
@@ -183,7 +184,7 @@ internal partial class HtmlMarkdownVisitor(
     )
     {
         // Links with unsafe URLs are rendered as plain text
-        if (ExportContext.EnsureSafeUrl(link.Url) is not { } url)
+        if (!Url.IsHttp(link.Url))
         {
             await VisitAsync(link.Children, cancellationToken);
             return;
@@ -191,16 +192,16 @@ internal partial class HtmlMarkdownVisitor(
 
         // Try to extract the message ID if the link points to a Discord message
         var linkedMessageId = Regex
-            .Match(url, @"^https?://(?:discord|discordapp)\.com/channels/.*?/(\d+)/?$")
+            .Match(link.Url, @"^https?://(?:discord|discordapp)\.com/channels/.*?/(\d+)/?$")
             .Groups[1]
             .Value;
 
         buffer.Append(
             !string.IsNullOrWhiteSpace(linkedMessageId)
                 // lang=html
-                ? $"""<a href="{HtmlEncode(url)}" onclick="scrollToMessage(event, '{linkedMessageId}')">"""
+                ? $"""<a href="{HtmlEncode(link.Url)}" onclick="scrollToMessage(event, '{linkedMessageId}')">"""
                 // lang=html
-                : $"""<a href="{HtmlEncode(url)}">"""
+                : $"""<a href="{HtmlEncode(link.Url)}">"""
         );
 
         await VisitAsync(link.Children, cancellationToken);

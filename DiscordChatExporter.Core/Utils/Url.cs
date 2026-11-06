@@ -6,6 +6,11 @@ namespace DiscordChatExporter.Core.Utils;
 
 public static class Url
 {
+    // https://github.com/Tyrrrz/DiscordChatExporter/issues/1575
+    public static bool IsHttp(string url) =>
+        Uri.TryCreate(url, UriKind.Absolute, out var uri)
+        && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+
     public static string EncodeFilePath(string filePath)
     {
         var buffer = new StringBuilder();

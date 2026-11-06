@@ -19,8 +19,20 @@ public partial record struct Snowflake
 {
     public static Snowflake Zero { get; } = new(0);
 
-    public static Snowflake FromDate(DateTimeOffset instant) =>
-        new(((ulong)instant.ToUnixTimeMilliseconds() - 1420070400000UL) << 22);
+    public static Snowflake FromDate(DateTimeOffset instant)
+    {
+        long milliseconds = instant.ToUnixTimeMilliseconds() - 1420070400000L;
+        if (milliseconds < 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(instant),
+                instant,
+                "Date cannot be earlier than the Discord epoch (2015-01-01 UTC)."
+            );
+        }
+
+        return new Snowflake((ulong)milliseconds << 22);
+    }
 
     public static Snowflake? TryParse(string? value, IFormatProvider? formatProvider = null)
     {

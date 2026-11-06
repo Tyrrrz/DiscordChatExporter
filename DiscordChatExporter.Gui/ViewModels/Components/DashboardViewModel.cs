@@ -32,6 +32,7 @@ public partial class DashboardViewModel : ViewModelBase
     private readonly AutoResetProgressMuxer _progressMuxer;
 
     private DiscordClient? _discord;
+    private IReadOnlyList<ChannelConnection>? _channelTree;
 
     public DashboardViewModel(
         ViewModelManager viewModelManager,
@@ -57,6 +58,10 @@ public partial class DashboardViewModel : ViewModelBase
             SelectedChannels.WatchProperty(
                 o => o.Count,
                 _ => ExportCommand.NotifyCanExecuteChanged()
+            ),
+            LocalizationManager.WatchProperty(
+                o => o.Language,
+                _ => OnPropertyChanged(nameof(SearchPlaceholderText))
             )
         );
     }
@@ -79,12 +84,27 @@ public partial class DashboardViewModel : ViewModelBase
     public partial string? Token { get; set; }
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasGuilds))]
     public partial IReadOnlyList<Guild>? AvailableGuilds { get; set; }
+
+    public bool HasGuilds => AvailableGuilds is { Count: > 0 };
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PullChannelsCommand))]
     [NotifyCanExecuteChangedFor(nameof(ExportCommand))]
+    [NotifyPropertyChangedFor(nameof(SearchPlaceholderText))]
     public partial Guild? SelectedGuild { get; set; }
+
+    public string SearchPlaceholderText =>
+        SelectedGuild?.IsDirect == true
+            ? LocalizationManager.SearchDirectMessagesPlaceholderText
+            : LocalizationManager.SearchChannelsPlaceholderText;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasChannelSearchQuery))]
+    public partial string? ChannelSearchQuery { get; set; }
+
+    public bool HasChannelSearchQuery => !string.IsNullOrWhiteSpace(ChannelSearchQuery);
 
     [ObservableProperty]
     public partial IReadOnlyList<ChannelConnection>? AvailableChannels { get; set; }
@@ -121,6 +141,8 @@ public partial class DashboardViewModel : ViewModelBase
             SelectedGuild = null;
             AvailableChannels = null;
             SelectedChannels.Clear();
+            _channelTree = null;
+            ChannelSearchQuery = null;
 
             _discord = new DiscordClient(token, _settingsService.RateLimitPreference);
             _settingsService.LastToken = token;
@@ -167,6 +189,8 @@ public partial class DashboardViewModel : ViewModelBase
 
             AvailableChannels = null;
             SelectedChannels.Clear();
+            _channelTree = null;
+            ChannelSearchQuery = null;
 
             var channels = new List<Channel>();
 
@@ -196,7 +220,8 @@ public partial class DashboardViewModel : ViewModelBase
                     .ToArray()
             );
 
-            AvailableChannels = channelTree;
+            _channelTree = channelTree;
+            UpdateAvailableChannels();
             SelectedChannels.Clear();
         }
         catch (DiscordChatExporterException ex) when (!ex.IsFatal)
@@ -217,6 +242,29 @@ public partial class DashboardViewModel : ViewModelBase
             progress.ReportCompletion();
             IsBusy = false;
         }
+    }
+
+    partial void OnChannelSearchQueryChanged(string? value) => UpdateAvailableChannels();
+
+    [RelayCommand]
+    private void ClearChannelSearchQuery() => ChannelSearchQuery = null;
+
+    private void UpdateAvailableChannels()
+    {
+        if (_channelTree is null)
+        {
+            AvailableChannels = null;
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(ChannelSearchQuery))
+        {
+            if (!ReferenceEquals(AvailableChannels, _channelTree))
+                AvailableChannels = _channelTree;
+            return;
+        }
+
+        AvailableChannels = ChannelConnection.FilterTree(_channelTree, ChannelSearchQuery.Trim());
     }
 
     private bool CanExport() =>

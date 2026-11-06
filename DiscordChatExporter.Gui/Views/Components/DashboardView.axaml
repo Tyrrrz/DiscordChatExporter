@@ -98,7 +98,7 @@
                 </Style>
             </Panel.Styles>
             <!--  Guilds and channels  -->
-            <Grid ColumnDefinitions="Auto,*" IsVisible="{Binding !!AvailableGuilds.Count}">
+            <Grid ColumnDefinitions="Auto,*" IsVisible="{Binding HasGuilds}">
                 <!--  Guilds  -->
                 <Border
                     Grid.Column="0"
@@ -145,8 +145,55 @@
                 </Border>
 
                 <!--  Channels  -->
-                <Border Grid.Column="1">
+                <Grid Grid.Column="1" RowDefinitions="Auto,*">
+                    <Border
+                        Grid.Row="0"
+                        BorderBrush="{DynamicResource MaterialDividerBrush}"
+                        BorderThickness="0,0,0,1"
+                    >
+                        <TextBox
+                            x:Name="ChannelSearchQueryTextBox"
+                            Margin="8"
+                            FontSize="14"
+                            KeyDown="ChannelSearchQueryTextBox_OnKeyDown"
+                            PlaceholderText="{Binding SearchPlaceholderText}"
+                            Text="{Binding ChannelSearchQuery}"
+                            Theme="{DynamicResource SoloTextBox}"
+                        >
+                            <TextBox.InnerLeftContent>
+                                <materialIcons:MaterialIcon
+                                    Width="20"
+                                    Height="20"
+                                    Margin="8,0,4,0"
+                                    Kind="Magnify"
+                                    Opacity="0.75"
+                                />
+                            </TextBox.InnerLeftContent>
+                            <TextBox.InnerRightContent>
+                                <Button
+                                    Width="28"
+                                    Height="28"
+                                    Margin="4,0"
+                                    Padding="0"
+                                    VerticalAlignment="Center"
+                                    Command="{Binding ClearChannelSearchQueryCommand}"
+                                    CornerRadius="14"
+                                    Focusable="False"
+                                    IsVisible="{Binding HasChannelSearchQuery}"
+                                    Theme="{DynamicResource MaterialFlatButton}"
+                                >
+                                    <materialIcons:MaterialIcon
+                                        Width="16"
+                                        Height="16"
+                                        Kind="Close"
+                                    />
+                                </Button>
+                            </TextBox.InnerRightContent>
+                        </TextBox>
+                    </Border>
+
                     <TreeView
+                        Grid.Row="1"
                         x:Name="AvailableChannelsTreeView"
                         ItemsSource="{Binding AvailableChannels}"
                         SelectedItems="{Binding SelectedChannels}"
@@ -227,11 +274,11 @@
                             </TreeDataTemplate>
                         </TreeView.ItemTemplate>
                     </TreeView>
-                </Border>
+                </Grid>
             </Grid>
 
             <!--  Placeholder / usage instructions  -->
-            <Panel IsVisible="{Binding !AvailableGuilds.Count}">
+            <Panel IsVisible="{Binding !HasGuilds}">
                 <ScrollViewer
                     HorizontalScrollBarVisibility="Disabled"
                     VerticalScrollBarVisibility="Auto"

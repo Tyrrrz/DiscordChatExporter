@@ -14,6 +14,8 @@ public partial class LocalizationManager
         [nameof(SettingsTooltip)] = "Einstellungen",
         [nameof(LastMessageSentTooltip)] = "Letzte Nachricht gesendet:",
         [nameof(TokenPlaceholderText)] = "Token",
+        [nameof(SearchChannelsPlaceholderText)] = "Kanäle suchen",
+        [nameof(SearchDirectMessagesPlaceholderText)] = "Direktnachrichten suchen",
         // Token instructions (personal account)
         [nameof(TokenPersonalHeader)] = "Token für Ihr persönliches Konto abrufen:",
         [nameof(TokenPersonalTosWarning)] =

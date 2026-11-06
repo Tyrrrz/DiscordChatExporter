@@ -120,6 +120,15 @@ internal class ExportContext(DiscordClient discord, ExportRequest request)
     public Color? TryGetUserColor(Snowflake id) =>
         GetUserRoles(id).Where(r => r.Color is not null).Select(r => r.Color).FirstOrDefault();
 
+    // Only absolute http(s) URLs are allowed to be rendered as links.
+    // Other schemes (e.g. javascript:) can be used to inject scripts into the export.
+    // https://github.com/Tyrrrz/DiscordChatExporter/issues/1575
+    public static string? EnsureSafeUrl(string? url) =>
+        Uri.TryCreate(url, UriKind.Absolute, out var uri)
+        && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)
+            ? url
+            : null;
+
     public async ValueTask<string> ResolveAssetUrlAsync(
         string url,
         CancellationToken cancellationToken = default

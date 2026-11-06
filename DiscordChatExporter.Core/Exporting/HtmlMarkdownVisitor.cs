@@ -182,18 +182,25 @@ internal partial class HtmlMarkdownVisitor(
         CancellationToken cancellationToken = default
     )
     {
+        // Links with unsafe URLs are rendered as plain text
+        if (ExportContext.EnsureSafeUrl(link.Url) is not { } url)
+        {
+            await VisitAsync(link.Children, cancellationToken);
+            return;
+        }
+
         // Try to extract the message ID if the link points to a Discord message
         var linkedMessageId = Regex
-            .Match(link.Url, @"^https?://(?:discord|discordapp)\.com/channels/.*?/(\d+)/?$")
+            .Match(url, @"^https?://(?:discord|discordapp)\.com/channels/.*?/(\d+)/?$")
             .Groups[1]
             .Value;
 
         buffer.Append(
             !string.IsNullOrWhiteSpace(linkedMessageId)
                 // lang=html
-                ? $"""<a href="{HtmlEncode(link.Url)}" onclick="scrollToMessage(event, '{linkedMessageId}')">"""
+                ? $"""<a href="{HtmlEncode(url)}" onclick="scrollToMessage(event, '{linkedMessageId}')">"""
                 // lang=html
-                : $"""<a href="{HtmlEncode(link.Url)}">"""
+                : $"""<a href="{HtmlEncode(url)}">"""
         );
 
         await VisitAsync(link.Children, cancellationToken);

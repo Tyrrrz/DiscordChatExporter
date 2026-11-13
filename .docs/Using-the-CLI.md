@@ -185,6 +185,8 @@ locales. The default locale is `en-US`.
 
 #### Date ranges
 
+Dates are converted to Discord Snowflake IDs internally, so they must be greater than the Discord Epoch (January 1st, 2015).
+
 **Messages sent before a date**
 Use `--before` to export messages sent before the provided date. e.g., messages sent before September 18th, 2019:
 

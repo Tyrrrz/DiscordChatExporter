@@ -24,11 +24,7 @@ public partial record struct Snowflake
         long milliseconds = instant.ToUnixTimeMilliseconds() - 1420070400000L;
         if (milliseconds < 0)
         {
-            throw new ArgumentOutOfRangeException(
-                nameof(instant),
-                instant,
-                "Date cannot be earlier than the Discord epoch (2015-01-01 UTC)."
-            );
+            milliseconds = 0;
         }
 
         return new Snowflake((ulong)milliseconds << 22);

@@ -8,4 +8,5 @@ internal enum FormattingKind
     Strikethrough,
     Spoiler,
     Quote,
+    Subtext,
 }

@@ -76,6 +76,13 @@ internal partial class HtmlMarkdownVisitor(
                 """</div></div>"""
             ),
 
+            FormattingKind.Subtext => (
+                // lang=html
+                """<small class="chatlog__markdown-subtext">""",
+                // lang=html
+                """</small>"""
+            ),
+
             _ => throw new InvalidOperationException(
                 $"Unknown formatting kind '{formatting.Kind}'."
             ),

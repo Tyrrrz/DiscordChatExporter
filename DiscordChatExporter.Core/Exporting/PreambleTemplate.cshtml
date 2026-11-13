@@ -892,6 +892,206 @@
             font-weight: 500;
         }
 
+        .chatlog__components {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.3rem;
+            max-width: 600px;
+        }
+
+        .chatlog__component-container {
+            position: relative;
+            padding: 1rem;
+            border: 1px solid @Themed("rgba(46, 48, 54, 0.6)", "rgba(204, 204, 204, 0.3)");
+            border-left: 4px solid @Themed("#202225", "rgba(227, 229, 232, 1)");
+            border-radius: 8px;
+            background-color: @Themed("rgba(46, 48, 54, 0.3)", "rgba(249, 249, 249, 0.3)");
+            overflow: hidden;
+        }
+
+        .chatlog__component-container.chatlog__attachment--hidden .chatlog__component-container-content {
+            filter: blur(44px);
+        }
+
+        .chatlog__component-container-content,
+        .chatlog__component-section-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            min-width: 0;
+        }
+
+        .chatlog__component-section {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .chatlog__component-section-content {
+            flex: 1;
+        }
+
+        .chatlog__component-section-accessory {
+            flex-shrink: 0;
+        }
+
+        .chatlog__component-text {
+            color: @Themed("#dcddde", "#2e3338");
+            font-size: 0.9375rem;
+            overflow-wrap: anywhere;
+        }
+
+        .chatlog__component-thumbnail-container {
+            position: relative;
+            width: 85px;
+            height: 85px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .chatlog__component-thumbnail {
+            display: block;
+            width: 85px;
+            height: 85px;
+            object-fit: cover;
+        }
+
+        .chatlog__component-gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .chatlog__component-gallery--1 {
+            grid-template-columns: 1fr;
+        }
+
+        .chatlog__component-gallery--2,
+        .chatlog__component-gallery--4 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .chatlog__component-gallery--3 {
+            grid-template-columns: 2fr 1fr;
+        }
+
+        .chatlog__component-gallery--3 .chatlog__component-gallery-item:first-child {
+            grid-row: span 2;
+        }
+
+        .chatlog__component-gallery--many {
+            grid-template-columns: repeat(6, 1fr);
+        }
+
+        .chatlog__component-gallery--many .chatlog__component-gallery-item {
+            grid-column: span 2;
+        }
+
+        .chatlog__component-gallery--lead-1 .chatlog__component-gallery-item:first-child {
+            grid-column: span 6;
+            aspect-ratio: 16 / 9;
+        }
+
+        .chatlog__component-gallery--lead-2 .chatlog__component-gallery-item:nth-child(-n + 2) {
+            grid-column: span 3;
+        }
+
+        .chatlog__component-gallery-item {
+            position: relative;
+            min-width: 0;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+        }
+
+        .chatlog__component-gallery--1 .chatlog__component-gallery-item {
+            aspect-ratio: auto;
+        }
+
+        .chatlog__component-gallery--3 .chatlog__component-gallery-item:first-child {
+            aspect-ratio: auto;
+        }
+
+        .chatlog__component-media-link {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .chatlog__component-gallery-media {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .chatlog__component-gallery--1 .chatlog__component-gallery-media {
+            max-height: 500px;
+            object-fit: contain;
+        }
+
+        .chatlog__attachment--hidden .chatlog__component-gallery-media,
+        .chatlog__attachment--hidden .chatlog__component-thumbnail {
+            filter: blur(44px);
+        }
+
+        .chatlog__component-separator--divider {
+            border-top: 1px solid @Themed("rgba(255, 255, 255, 0.1)", "rgba(6, 6, 7, 0.1)");
+        }
+
+        .chatlog__component-separator--large {
+            margin: 0.5rem 0;
+        }
+
+        .chatlog__component-action-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .chatlog__component-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            min-height: 32px;
+            padding: 2px 16px;
+            border-radius: 8px;
+            background-color: @Themed("#4e5058", "#6d6f78");
+            color: #ffffff;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .chatlog__component-button:hover {
+            text-decoration: none;
+        }
+
+        .chatlog__component-button--primary {
+            background-color: #5865f2;
+        }
+
+        .chatlog__component-button--success {
+            background-color: #248046;
+        }
+
+        .chatlog__component-button--danger {
+            background-color: #da373c;
+        }
+
+        .chatlog__component-button--disabled {
+            opacity: 0.5;
+        }
+
+        .chatlog__component-select {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid @Themed("rgba(255, 255, 255, 0.1)", "rgba(6, 6, 7, 0.1)");
+            border-radius: 8px;
+            background-color: @Themed("#1e1f22", "#ebedef");
+            color: @Themed("#949ba4", "#5c5e66");
+            font-size: 0.875rem;
+        }
+
         .chatlog__embed-invite-container {
             min-width: 320px;
             padding: 0.6rem 0.7rem;
@@ -1066,6 +1266,13 @@
 
         .chatlog__markdown-preserve {
             white-space: pre-wrap;
+        }
+
+        .chatlog__markdown-subtext {
+            display: block;
+            color: @Themed("#949ba4", "#5c5e66");
+            font-size: 0.75rem;
+            line-height: 1.3;
         }
 
         .chatlog__markdown-spoiler {

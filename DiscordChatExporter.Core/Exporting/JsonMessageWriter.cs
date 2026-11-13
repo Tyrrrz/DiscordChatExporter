@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
+using DiscordChatExporter.Core.Discord.Data.Components;
 using DiscordChatExporter.Core.Discord.Data.Embeds;
 using DiscordChatExporter.Core.Markdown.Parsing;
 using PowerKit.Extensions;
@@ -276,6 +277,165 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
         await _writer.FlushAsync(cancellationToken);
     }
 
+    private async ValueTask WriteUnfurledMediaItemAsync(
+        UnfurledMediaItem media,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _writer.WriteStartObject();
+        {
+            _writer.WriteString(
+                "url",
+                await Context.ResolveAssetUrlAsync(media.ProxyUrl ?? media.Url, cancellationToken)
+            );
+
+            _writer.WriteString("canonicalUrl", media.Url);
+            _writer.WriteString("contentType", media.ContentType);
+            _writer.WriteNumber("width", media.Width);
+            _writer.WriteNumber("height", media.Height);
+        }
+        _writer.WriteEndObject();
+    }
+
+    private async ValueTask WriteComponentsAsync(
+        string propertyName,
+        IReadOnlyList<MessageComponent> components,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _writer.WriteStartArray(propertyName);
+        {
+            foreach (var component in components)
+                await WriteComponentAsync(component, cancellationToken);
+        }
+        _writer.WriteEndArray();
+    }
+
+    private async ValueTask WriteComponentAsync(
+        MessageComponent component,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _writer.WriteStartObject();
+        {
+            _writer.WriteString("type", component.Kind.ToString());
+
+            switch (component)
+            {
+                case ContainerComponent container:
+                    if (container.AccentColor is not null)
+                        _writer.WriteString(
+                            "accentColor",
+                            container.AccentColor.Value.ToHexString()
+                        );
+
+                    _writer.WriteBoolean("isSpoiler", container.IsSpoiler);
+                    await WriteComponentsAsync(
+                        "components",
+                        container.Components,
+                        cancellationToken
+                    );
+                    break;
+
+                case SectionComponent section:
+                    await WriteComponentsAsync("components", section.Components, cancellationToken);
+
+                    if (section.Accessory is not null)
+                    {
+                        _writer.WritePropertyName("accessory");
+                        await WriteComponentAsync(section.Accessory, cancellationToken);
+                    }
+                    break;
+
+                case TextDisplayComponent textDisplay:
+                    _writer.WriteString(
+                        "content",
+                        await FormatMarkdownAsync(textDisplay.Content, cancellationToken)
+                    );
+                    break;
+
+                case ThumbnailComponent thumbnail:
+                    if (thumbnail.Media is not null)
+                    {
+                        _writer.WritePropertyName("media");
+                        await WriteUnfurledMediaItemAsync(thumbnail.Media, cancellationToken);
+                    }
+
+                    _writer.WriteString("description", thumbnail.Description);
+                    _writer.WriteBoolean("isSpoiler", thumbnail.IsSpoiler);
+                    break;
+
+                case MediaGalleryComponent gallery:
+                    _writer.WriteStartArray("items");
+
+                    {
+                        foreach (var item in gallery.Items)
+                        {
+                            _writer.WriteStartObject();
+                            {
+                                _writer.WritePropertyName("media");
+                                await WriteUnfurledMediaItemAsync(item.Media, cancellationToken);
+                                _writer.WriteString("description", item.Description);
+                                _writer.WriteBoolean("isSpoiler", item.IsSpoiler);
+                            }
+                            _writer.WriteEndObject();
+                        }
+                    }
+                    _writer.WriteEndArray();
+                    break;
+
+                case FileComponent file:
+                    if (file.File is not null)
+                    {
+                        _writer.WritePropertyName("media");
+                        await WriteUnfurledMediaItemAsync(file.File, cancellationToken);
+                    }
+
+                    _writer.WriteString("fileName", file.Name);
+
+                    if (file.Size is not null)
+                        _writer.WriteNumber("fileSizeBytes", file.Size.Value.TotalBytes);
+
+                    _writer.WriteBoolean("isSpoiler", file.IsSpoiler);
+                    break;
+
+                case SeparatorComponent separator:
+                    _writer.WriteBoolean("isDivider", separator.IsDivider);
+                    _writer.WriteString("spacing", separator.IsLarge ? "Large" : "Small");
+                    break;
+
+                case ActionRowComponent actionRow:
+                    await WriteComponentsAsync(
+                        "components",
+                        actionRow.Components,
+                        cancellationToken
+                    );
+                    break;
+
+                case ButtonComponent button:
+                    _writer.WriteString("style", button.Style.ToString());
+                    _writer.WriteString("label", button.Label);
+                    _writer.WriteString("url", button.Url);
+                    _writer.WriteBoolean("isDisabled", button.IsDisabled);
+
+                    if (button.Emoji is not null)
+                    {
+                        _writer.WritePropertyName("emoji");
+                        await WriteEmojiAsync(button.Emoji, cancellationToken);
+                    }
+                    break;
+
+                case SelectMenuComponent selectMenu:
+                    _writer.WriteString("placeholder", selectMenu.Placeholder);
+                    _writer.WriteBoolean("isDisabled", selectMenu.IsDisabled);
+                    break;
+            }
+        }
+        _writer.WriteEndObject();
+
+        await _writer.FlushAsync(cancellationToken);
+    }
+
     private async ValueTask WriteEmbedAsync(
         Embed embed,
         CancellationToken cancellationToken = default
@@ -514,6 +674,9 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                     await WriteEmbedAsync(embed, cancellationToken);
             }
             _writer.WriteEndArray();
+
+            // Components
+            await WriteComponentsAsync("components", message.Components, cancellationToken);
 
             // Stickers
             _writer.WriteStartArray("stickers");

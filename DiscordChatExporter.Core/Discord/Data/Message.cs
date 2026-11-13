@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using DiscordChatExporter.Core.Discord.Data.Common;
+using DiscordChatExporter.Core.Discord.Data.Components;
 using DiscordChatExporter.Core.Discord.Data.Embeds;
 using DiscordChatExporter.Core.Discord.Data.Polls;
 using PowerKit.Extensions;
@@ -23,6 +24,7 @@ public partial record Message(
     string Content,
     IReadOnlyList<Attachment> Attachments,
     IReadOnlyList<Embed> Embeds,
+    IReadOnlyList<MessageComponent> Components,
     IReadOnlyList<Sticker> Stickers,
     IReadOnlyList<Reaction> Reactions,
     IReadOnlyList<User> MentionedUsers,
@@ -37,6 +39,7 @@ public partial record Message(
         string.IsNullOrWhiteSpace(Content)
         && !Attachments.Any()
         && !Embeds.Any()
+        && !Components.Any()
         && !Stickers.Any()
         && Poll is null;
 
@@ -51,6 +54,37 @@ public partial record Message(
     public bool IsReplyLike => IsReply || Interaction is not null;
 
     public bool IsForwarded { get; } = Reference?.Kind == MessageReferenceKind.Forward;
+
+    // Media referenced by components (e.g. media galleries) is uploaded as message attachments,
+    // but the Discord client only renders it inside the component, not as a separate attachment.
+    public IReadOnlyList<Attachment> UnreferencedAttachments { get; } =
+        Attachments.Where(a => !GetComponentMedia(Components).Any(m => m.Refers(a))).ToArray();
+
+    // Text of all text display components, in display order
+    public IEnumerable<string> GetComponentTexts() =>
+        Components
+            .SelectMany(c => c.Flatten())
+            .OfType<TextDisplayComponent>()
+            .Select(t => t.Content)
+            .Where(t => !string.IsNullOrWhiteSpace(t));
+
+    // Media of all components (thumbnails, gallery items, files), in display order
+    public IEnumerable<UnfurledMediaItem> GetComponentMedia() => GetComponentMedia(Components);
+
+    private static IEnumerable<UnfurledMediaItem> GetComponentMedia(
+        IReadOnlyList<MessageComponent> components
+    ) =>
+        components
+            .SelectMany(c => c.Flatten())
+            .SelectMany(c =>
+                c switch
+                {
+                    ThumbnailComponent { Media: { } media } => [media],
+                    FileComponent { File: { } file } => [file],
+                    MediaGalleryComponent gallery => gallery.Items.Select(i => i.Media),
+                    _ => [],
+                }
+            );
 
     public IEnumerable<User> GetReferencedUsers()
     {
@@ -159,6 +193,8 @@ public partial record Message
                 ?? []
         );
 
+        var components = MessageComponent.ParseMany(json.GetPropertyOrNull("components"));
+
         var stickers =
             json.GetPropertyOrNull("sticker_items")
                 ?.EnumerateArrayOrNull()
@@ -206,6 +242,7 @@ public partial record Message
             content,
             attachments,
             embeds,
+            components,
             stickers,
             reactions,
             mentionedUsers,

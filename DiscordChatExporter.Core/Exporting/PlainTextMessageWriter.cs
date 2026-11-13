@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
+using DiscordChatExporter.Core.Discord.Data.Components;
 using DiscordChatExporter.Core.Discord.Data.Embeds;
 
 namespace DiscordChatExporter.Core.Exporting;
@@ -51,6 +52,73 @@ internal class PlainTextMessageWriter(Stream stream, ExportContext context)
             await _writer.WriteLineAsync(
                 await Context.ResolveAssetUrlAsync(attachment.Url, cancellationToken)
             );
+        }
+
+        await _writer.WriteLineAsync();
+    }
+
+    private async ValueTask WriteComponentsAsync(
+        IReadOnlyList<MessageComponent> components,
+        CancellationToken cancellationToken = default
+    )
+    {
+        if (!components.Any())
+            return;
+
+        await _writer.WriteLineAsync("{Components}");
+
+        foreach (var component in components.SelectMany(c => c.Flatten()))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            switch (component)
+            {
+                case TextDisplayComponent textDisplay
+                    when !string.IsNullOrWhiteSpace(textDisplay.Content):
+                    await _writer.WriteLineAsync(
+                        await FormatMarkdownAsync(textDisplay.Content, cancellationToken)
+                    );
+                    break;
+
+                case ThumbnailComponent { Media: { } media }:
+                    await _writer.WriteLineAsync(
+                        await Context.ResolveAssetUrlAsync(
+                            media.ProxyUrl ?? media.Url,
+                            cancellationToken
+                        )
+                    );
+                    break;
+
+                case MediaGalleryComponent gallery:
+                    foreach (var item in gallery.Items)
+                    {
+                        await _writer.WriteLineAsync(
+                            await Context.ResolveAssetUrlAsync(
+                                item.Media.ProxyUrl ?? item.Media.Url,
+                                cancellationToken
+                            )
+                        );
+                    }
+                    break;
+
+                case FileComponent { File: { } file }:
+                    await _writer.WriteLineAsync(
+                        await Context.ResolveAssetUrlAsync(
+                            file.ProxyUrl ?? file.Url,
+                            cancellationToken
+                        )
+                    );
+                    break;
+
+                case ButtonComponent button:
+                    await _writer.WriteLineAsync(
+                        string.Join(
+                            " ",
+                            new[] { button.Label, button.Url }.Where(s => s is not null)
+                        )
+                    );
+                    break;
+            }
         }
 
         await _writer.WriteLineAsync();
@@ -279,8 +347,9 @@ internal class PlainTextMessageWriter(Stream stream, ExportContext context)
         }
 
         // Attachments, embeds, reactions, etc.
-        await WriteAttachmentsAsync(message.Attachments, cancellationToken);
+        await WriteAttachmentsAsync(message.UnreferencedAttachments, cancellationToken);
         await WriteEmbedsAsync(message.Embeds, cancellationToken);
+        await WriteComponentsAsync(message.Components, cancellationToken);
         await WriteStickersAsync(message.Stickers, cancellationToken);
         await WriteReactionsAsync(message.Reactions, cancellationToken);
 

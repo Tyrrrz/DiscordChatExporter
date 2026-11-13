@@ -5,6 +5,7 @@
 @using System.Threading.Tasks
 @using RazorBlade
 @using DiscordChatExporter.Core.Discord.Data
+@using DiscordChatExporter.Core.Discord.Data.Components
 @using DiscordChatExporter.Core.Discord.Data.Embeds
 @using DiscordChatExporter.Core.Markdown.Parsing
 @using DiscordChatExporter.Core.Utils
@@ -35,6 +36,155 @@
         Context.Request.ShouldFormatMarkdown
             ? Html.Raw(await HtmlMarkdownVisitor.FormatAsync(Context, markdown, false, CancellationToken))
             : Html.Raw(Html.Encode(markdown));
+
+    string? FormatColorStyle(string property, System.Drawing.Color? color) =>
+        color is { } c ? $"{property}: rgb({c.R}, {c.G}, {c.B})" : null;
+
+    async Task RenderMediaAsync(UnfurledMediaItem media, string cssClass, string? description)
+    {
+        var mediaUrl = await ResolveAssetUrlAsync(media.ProxyUrl ?? media.Url);
+
+        if (media.IsVideo)
+        {
+            <video class="@cssClass" controls preload="metadata" data-canonical-url="@media.Url">
+                <source src="@mediaUrl" alt="@(description ?? "Video")">
+            </video>
+        }
+        else
+        {
+            <a class="chatlog__component-media-link" href="@mediaUrl">
+                <img class="@cssClass" src="@mediaUrl" alt="@(description ?? "Image")" title="@description" loading="lazy" data-canonical-url="@media.Url">
+            </a>
+        }
+    }
+
+    async Task RenderComponentAsync(MessageComponent component)
+    {
+        switch (component)
+        {
+            case ContainerComponent container:
+                <div class="chatlog__component-container @(container.IsSpoiler ? "chatlog__attachment--hidden" : null)" style="@FormatColorStyle("border-left-color", container.AccentColor)" onclick="@(container.IsSpoiler ? "showSpoiler(event, this)" : null)">
+                    @if (container.IsSpoiler)
+                    {
+                        <div class="chatlog__attachment-spoiler-caption">SPOILER</div>
+                    }
+
+                    <div class="chatlog__component-container-content">
+                        @foreach (var child in container.Components)
+                        {
+                            await RenderComponentAsync(child);
+                        }
+                    </div>
+                </div>
+                break;
+
+            case SectionComponent section:
+                <div class="chatlog__component-section">
+                    <div class="chatlog__component-section-content">
+                        @foreach (var child in section.Components)
+                        {
+                            await RenderComponentAsync(child);
+                        }
+                    </div>
+
+                    @if (section.Accessory is not null)
+                    {
+                        <div class="chatlog__component-section-accessory">
+                            @{ await RenderComponentAsync(section.Accessory); }
+                        </div>
+                    }
+                </div>
+                break;
+
+            case TextDisplayComponent textDisplay:
+                <div class="chatlog__component-text chatlog__markdown chatlog__markdown-preserve"><!--wmm:ignore-->@(await FormatEmbedMarkdownAsync(textDisplay.Content))<!--/wmm:ignore--></div>
+                break;
+
+            case ThumbnailComponent { Media: { } thumbnailMedia } thumbnail:
+                <div class="chatlog__component-thumbnail-container @(thumbnail.IsSpoiler ? "chatlog__attachment--hidden" : null)" onclick="@(thumbnail.IsSpoiler ? "showSpoiler(event, this)" : null)">
+                    @{ await RenderMediaAsync(thumbnailMedia, "chatlog__component-thumbnail", thumbnail.Description); }
+                </div>
+                break;
+
+            case MediaGalleryComponent gallery:
+                // Like the Discord client, galleries with more than 4 items are laid out in rows of 3,
+                // with any remaining items (1 or 2) taking up the full first row.
+                var galleryLayout = gallery.Items.Count <= 4
+                    ? gallery.Items.Count.ToString(CultureInfo.InvariantCulture)
+                    : $"many chatlog__component-gallery--lead-{gallery.Items.Count % 3}";
+
+                <div class="chatlog__component-gallery chatlog__component-gallery--@galleryLayout">
+                    @foreach (var item in gallery.Items)
+                    {
+                        <div class="chatlog__component-gallery-item @(item.IsSpoiler ? "chatlog__attachment--hidden" : null)" onclick="@(item.IsSpoiler ? "showSpoiler(event, this)" : null)">
+                            @if (item.IsSpoiler)
+                            {
+                                <div class="chatlog__attachment-spoiler-caption">SPOILER</div>
+                            }
+
+                            @{ await RenderMediaAsync(item.Media, "chatlog__component-gallery-media", item.Description); }
+                        </div>
+                    }
+                </div>
+                break;
+
+            case FileComponent { File: { } file } fileComponent:
+                <div class="chatlog__attachment @(fileComponent.IsSpoiler ? "chatlog__attachment--hidden" : null)" onclick="@(fileComponent.IsSpoiler ? "showSpoiler(event, this)" : null)">
+                    @if (fileComponent.IsSpoiler)
+                    {
+                        <div class="chatlog__attachment-spoiler-caption">SPOILER</div>
+                    }
+
+                    <div class="chatlog__attachment-generic">
+                        <svg class="chatlog__attachment-generic-icon">
+                            <use href="#attachment-icon"/>
+                        </svg>
+                        <div class="chatlog__attachment-generic-name">
+                            <a href="@await ResolveAssetUrlAsync(file.ProxyUrl ?? file.Url)">
+                                @(fileComponent.Name ?? System.IO.Path.GetFileName(new Uri(file.Url).AbsolutePath))
+                            </a>
+                        </div>
+                        @if (fileComponent.Size is not null)
+                        {
+                            <div class="chatlog__attachment-generic-size">
+                                @fileComponent.Size
+                            </div>
+                        }
+                    </div>
+                </div>
+                break;
+
+            case SeparatorComponent separator:
+                <div class="chatlog__component-separator @(separator.IsDivider ? "chatlog__component-separator--divider" : null) @(separator.IsLarge ? "chatlog__component-separator--large" : null)"></div>
+                break;
+
+            case ActionRowComponent actionRow:
+                <div class="chatlog__component-action-row">
+                    @foreach (var child in actionRow.Components)
+                    {
+                        await RenderComponentAsync(child);
+                    }
+                </div>
+                break;
+
+            case ButtonComponent button:
+                <a class="chatlog__component-button chatlog__component-button--@button.Style.ToString().ToLowerInvariant() @(button.IsDisabled ? "chatlog__component-button--disabled" : null)" href="@button.Url">
+                    @if (button.Emoji is not null)
+                    {
+                        <img class="chatlog__emoji chatlog__emoji--small" alt="@button.Emoji.Name" title="@button.Emoji.Code" src="@await ResolveAssetUrlAsync(button.Emoji.ImageUrl)" loading="lazy">
+                    }
+                    @if (button.Label is not null)
+                    {
+                        <span>@button.Label</span>
+                    }
+                </a>
+                break;
+
+            case SelectMenuComponent selectMenu:
+                <div class="chatlog__component-select">@(selectMenu.Placeholder ?? "Make a selection")</div>
+                break;
+        }
+    }
 }
 
 <div class="chatlog__message-group">
@@ -433,7 +583,7 @@
                     }
 
                     @* Attachments *@
-                    @foreach (var attachment in message.Attachments)
+                    @foreach (var attachment in message.UnreferencedAttachments)
                     {
                         <div class="chatlog__attachment @(attachment.IsSpoiler ? "chatlog__attachment--hidden" : null)" onclick="@(attachment.IsSpoiler ? "showSpoiler(event, this)" : null)">
                             @* Spoiler caption *@
@@ -888,6 +1038,17 @@
                                 </div>
                             </div>
                         }
+                    }
+
+                    @* Components *@
+                    @if (message.Components.Any())
+                    {
+                        <div class="chatlog__components">
+                            @foreach (var component in message.Components)
+                            {
+                                await RenderComponentAsync(component);
+                            }
+                        </div>
                     }
 
                     @* Stickers *@

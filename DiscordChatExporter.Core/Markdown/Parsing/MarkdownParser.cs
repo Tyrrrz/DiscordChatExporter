@@ -132,8 +132,17 @@ internal static partial class MarkdownParser
     private static readonly IMatcher<MarkdownContext, MarkdownNode> HeadingNodeMatcher =
         new RegexMatcher<MarkdownContext, MarkdownNode>(
             // Consume the linebreak so that it's not attached to following nodes.
-            new Regex(@"^(\#{1,3})\s(.+)\n", DefaultRegexOptions),
+            // A heading may also be the last line of the text, in which case there is no linebreak.
+            new Regex(@"^(\#{1,3})\s(.+)(?:\n|\z)", DefaultRegexOptions),
             (c, s, m) => new HeadingNode(m.Groups[1].Length, Parse(c, s.Relocate(m.Groups[2])))
+        );
+
+    private static readonly IMatcher<MarkdownContext, MarkdownNode> SubtextNodeMatcher =
+        new RegexMatcher<MarkdownContext, MarkdownNode>(
+            // Consume the linebreak so that it's not attached to following nodes.
+            new Regex(@"^-\#\s(.+)(?:\n|\z)", DefaultRegexOptions),
+            (c, s, m) =>
+                new FormattingNode(FormattingKind.Subtext, Parse(c, s.Relocate(m.Groups[1])))
         );
 
     private static readonly IMatcher<MarkdownContext, MarkdownNode> ListNodeMatcher =
@@ -263,9 +272,16 @@ internal static partial class MarkdownParser
 
     private static readonly IMatcher<MarkdownContext, MarkdownNode> MaskedLinkNodeMatcher =
         new RegexMatcher<MarkdownContext, MarkdownNode>(
-            // Capture [title](link)
-            new Regex(@"\[(.+?)\]\((https?://\S*[^\.,:;""'\s])\)", DefaultRegexOptions),
-            (c, s, m) => new LinkNode(m.Groups[2].Value, Parse(c, s.Relocate(m.Groups[1])))
+            // Capture [title](link) or [title](<link>), the latter being used to suppress embeds
+            new Regex(
+                @"\[(.+?)\]\((?:<(https?://[^>\s]+)>|(https?://\S*[^\.,:;""'\s]))\)",
+                DefaultRegexOptions
+            ),
+            (c, s, m) =>
+                new LinkNode(
+                    m.Groups[2].Success ? m.Groups[2].Value : m.Groups[3].Value,
+                    Parse(c, s.Relocate(m.Groups[1]))
+                )
         );
 
     /* Text */
@@ -386,6 +402,7 @@ internal static partial class MarkdownParser
             RepeatedSingleLineQuoteNodeMatcher,
             SingleLineQuoteNodeMatcher,
             HeadingNodeMatcher,
+            SubtextNodeMatcher,
             ListNodeMatcher,
             // Code blocks
             MultiLineCodeBlockNodeMatcher,

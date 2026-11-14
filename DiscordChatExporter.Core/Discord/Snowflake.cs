@@ -20,7 +20,7 @@ public partial record struct Snowflake
     public static Snowflake Zero { get; } = new(0);
 
     public static Snowflake FromDate(DateTimeOffset instant) =>
-        new(Math.Max(0, (ulong)instant.ToUnixTimeMilliseconds() - 1420070400000UL) << 22);
+        new((ulong)Math.Max(0L, instant.ToUnixTimeMilliseconds() - 1420070400000L) << 22);
 
     public static Snowflake? TryParse(string? value, IFormatProvider? formatProvider = null)
     {

@@ -58,16 +58,16 @@ internal class PlainTextMessageWriter(Stream stream, ExportContext context)
     }
 
     private async ValueTask WriteComponentsAsync(
-        IReadOnlyList<MessageComponent> components,
+        Message message,
         CancellationToken cancellationToken = default
     )
     {
-        if (!components.Any())
+        if (!message.Components.Any())
             return;
 
         await _writer.WriteLineAsync("{Components}");
 
-        foreach (var component in components.SelectMany(c => c.Flatten()))
+        foreach (var component in message.Components.SelectMany(c => c.Flatten()))
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -83,7 +83,7 @@ internal class PlainTextMessageWriter(Stream stream, ExportContext context)
                 case ThumbnailComponent { Media: { } media }:
                     await _writer.WriteLineAsync(
                         await Context.ResolveAssetUrlAsync(
-                            media.ProxyUrl ?? media.Url,
+                            message.ResolveComponentMediaUrl(media),
                             cancellationToken
                         )
                     );
@@ -94,7 +94,7 @@ internal class PlainTextMessageWriter(Stream stream, ExportContext context)
                     {
                         await _writer.WriteLineAsync(
                             await Context.ResolveAssetUrlAsync(
-                                item.Media.ProxyUrl ?? item.Media.Url,
+                                message.ResolveComponentMediaUrl(item.Media),
                                 cancellationToken
                             )
                         );
@@ -104,7 +104,7 @@ internal class PlainTextMessageWriter(Stream stream, ExportContext context)
                 case FileComponent { File: { } file }:
                     await _writer.WriteLineAsync(
                         await Context.ResolveAssetUrlAsync(
-                            file.ProxyUrl ?? file.Url,
+                            message.ResolveComponentMediaUrl(file),
                             cancellationToken
                         )
                     );
@@ -349,7 +349,7 @@ internal class PlainTextMessageWriter(Stream stream, ExportContext context)
         // Attachments, embeds, reactions, etc.
         await WriteAttachmentsAsync(message.UnreferencedAttachments, cancellationToken);
         await WriteEmbedsAsync(message.Embeds, cancellationToken);
-        await WriteComponentsAsync(message.Components, cancellationToken);
+        await WriteComponentsAsync(message, cancellationToken);
         await WriteStickersAsync(message.Stickers, cancellationToken);
         await WriteReactionsAsync(message.Reactions, cancellationToken);
 

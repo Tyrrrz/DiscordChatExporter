@@ -68,8 +68,14 @@ public partial record Message(
             .Select(t => t.Content)
             .Where(t => !string.IsNullOrWhiteSpace(t));
 
-    // Media of all components (thumbnails, gallery items, files), in display order
-    public IEnumerable<UnfurledMediaItem> GetComponentMedia() => GetComponentMedia(Components);
+    // Message attachment that the specified component media item points at, if any
+    public Attachment? TryGetComponentMediaAttachment(UnfurledMediaItem media) =>
+        Attachments.FirstOrDefault(media.Refers);
+
+    // Media items may reference message attachments (e.g. 'attachment://file.png'),
+    // in which case the attachment URL is used, same as for regular attachments.
+    public string ResolveComponentMediaUrl(UnfurledMediaItem media) =>
+        TryGetComponentMediaAttachment(media)?.Url ?? media.ProxyUrl ?? media.Url;
 
     private static IEnumerable<UnfurledMediaItem> GetComponentMedia(
         IReadOnlyList<MessageComponent> components

@@ -29,6 +29,7 @@ internal class ContainsMessageFilter(string text) : MessageFilter
             || IsMatch(e.Footer?.Text)
             || e.Fields.Any(f => IsMatch(f.Name) || IsMatch(f.Value))
         )
+        || message.GetComponentTexts().Any(IsMatch)
         || IsMatch(message.Poll?.Question)
         || message.Poll?.Answers.Any(a => IsMatch(a.Text)) == true;
 }

@@ -278,6 +278,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
     }
 
     private async ValueTask WriteUnfurledMediaItemAsync(
+        Message message,
         UnfurledMediaItem media,
         CancellationToken cancellationToken = default
     )
@@ -286,7 +287,10 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
         {
             _writer.WriteString(
                 "url",
-                await Context.ResolveAssetUrlAsync(media.ProxyUrl ?? media.Url, cancellationToken)
+                await Context.ResolveAssetUrlAsync(
+                    message.ResolveComponentMediaUrl(media),
+                    cancellationToken
+                )
             );
 
             _writer.WriteString("canonicalUrl", media.Url);
@@ -298,6 +302,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
     }
 
     private async ValueTask WriteComponentsAsync(
+        Message message,
         string propertyName,
         IReadOnlyList<MessageComponent> components,
         CancellationToken cancellationToken = default
@@ -306,12 +311,13 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
         _writer.WriteStartArray(propertyName);
         {
             foreach (var component in components)
-                await WriteComponentAsync(component, cancellationToken);
+                await WriteComponentAsync(message, component, cancellationToken);
         }
         _writer.WriteEndArray();
     }
 
     private async ValueTask WriteComponentAsync(
+        Message message,
         MessageComponent component,
         CancellationToken cancellationToken = default
     )
@@ -331,6 +337,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
 
                     _writer.WriteBoolean("isSpoiler", container.IsSpoiler);
                     await WriteComponentsAsync(
+                        message,
                         "components",
                         container.Components,
                         cancellationToken
@@ -338,12 +345,17 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                     break;
 
                 case SectionComponent section:
-                    await WriteComponentsAsync("components", section.Components, cancellationToken);
+                    await WriteComponentsAsync(
+                        message,
+                        "components",
+                        section.Components,
+                        cancellationToken
+                    );
 
                     if (section.Accessory is not null)
                     {
                         _writer.WritePropertyName("accessory");
-                        await WriteComponentAsync(section.Accessory, cancellationToken);
+                        await WriteComponentAsync(message, section.Accessory, cancellationToken);
                     }
                     break;
 
@@ -352,13 +364,34 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                         "content",
                         await FormatMarkdownAsync(textDisplay.Content, cancellationToken)
                     );
+
+                    _writer.WriteStartArray("inlineEmojis");
+
+                    {
+                        foreach (
+                            var emoji in MarkdownParser
+                                .ExtractEmojis(textDisplay.Content)
+                                .DistinctBy(e => e.Name, StringComparer.Ordinal)
+                        )
+                        {
+                            await WriteEmojiAsync(
+                                new Emoji(emoji.Id, emoji.Name, emoji.IsAnimated),
+                                cancellationToken
+                            );
+                        }
+                    }
+                    _writer.WriteEndArray();
                     break;
 
                 case ThumbnailComponent thumbnail:
                     if (thumbnail.Media is not null)
                     {
                         _writer.WritePropertyName("media");
-                        await WriteUnfurledMediaItemAsync(thumbnail.Media, cancellationToken);
+                        await WriteUnfurledMediaItemAsync(
+                            message,
+                            thumbnail.Media,
+                            cancellationToken
+                        );
                     }
 
                     _writer.WriteString("description", thumbnail.Description);
@@ -374,7 +407,11 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                             _writer.WriteStartObject();
                             {
                                 _writer.WritePropertyName("media");
-                                await WriteUnfurledMediaItemAsync(item.Media, cancellationToken);
+                                await WriteUnfurledMediaItemAsync(
+                                    message,
+                                    item.Media,
+                                    cancellationToken
+                                );
                                 _writer.WriteString("description", item.Description);
                                 _writer.WriteBoolean("isSpoiler", item.IsSpoiler);
                             }
@@ -388,7 +425,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
                     if (file.File is not null)
                     {
                         _writer.WritePropertyName("media");
-                        await WriteUnfurledMediaItemAsync(file.File, cancellationToken);
+                        await WriteUnfurledMediaItemAsync(message, file.File, cancellationToken);
                     }
 
                     _writer.WriteString("fileName", file.Name);
@@ -406,6 +443,7 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
 
                 case ActionRowComponent actionRow:
                     await WriteComponentsAsync(
+                        message,
                         "components",
                         actionRow.Components,
                         cancellationToken
@@ -676,7 +714,12 @@ internal class JsonMessageWriter(Stream stream, ExportContext context)
             _writer.WriteEndArray();
 
             // Components
-            await WriteComponentsAsync("components", message.Components, cancellationToken);
+            await WriteComponentsAsync(
+                message,
+                "components",
+                message.Components,
+                cancellationToken
+            );
 
             // Stickers
             _writer.WriteStartArray("stickers");

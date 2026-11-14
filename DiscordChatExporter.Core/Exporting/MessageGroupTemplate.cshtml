@@ -40,9 +40,9 @@
     string? FormatColorStyle(string property, System.Drawing.Color? color) =>
         color is { } c ? $"{property}: rgb({c.R}, {c.G}, {c.B})" : null;
 
-    async Task RenderMediaAsync(UnfurledMediaItem media, string cssClass, string? description)
+    async Task RenderMediaAsync(Message message, UnfurledMediaItem media, string cssClass, string? description)
     {
-        var mediaUrl = await ResolveAssetUrlAsync(media.ProxyUrl ?? media.Url);
+        var mediaUrl = await ResolveAssetUrlAsync(message.ResolveComponentMediaUrl(media));
 
         if (media.IsVideo)
         {
@@ -58,7 +58,7 @@
         }
     }
 
-    async Task RenderComponentAsync(MessageComponent component)
+    async Task RenderComponentAsync(Message message, MessageComponent component)
     {
         switch (component)
         {
@@ -72,7 +72,7 @@
                     <div class="chatlog__component-container-content">
                         @foreach (var child in container.Components)
                         {
-                            await RenderComponentAsync(child);
+                            await RenderComponentAsync(message, child);
                         }
                     </div>
                 </div>
@@ -83,14 +83,14 @@
                     <div class="chatlog__component-section-content">
                         @foreach (var child in section.Components)
                         {
-                            await RenderComponentAsync(child);
+                            await RenderComponentAsync(message, child);
                         }
                     </div>
 
                     @if (section.Accessory is not null)
                     {
                         <div class="chatlog__component-section-accessory">
-                            @{ await RenderComponentAsync(section.Accessory); }
+                            @{ await RenderComponentAsync(message, section.Accessory); }
                         </div>
                     }
                 </div>
@@ -102,7 +102,7 @@
 
             case ThumbnailComponent { Media: { } thumbnailMedia } thumbnail:
                 <div class="chatlog__component-thumbnail-container @(thumbnail.IsSpoiler ? "chatlog__attachment--hidden" : null)" onclick="@(thumbnail.IsSpoiler ? "showSpoiler(event, this)" : null)">
-                    @{ await RenderMediaAsync(thumbnailMedia, "chatlog__component-thumbnail", thumbnail.Description); }
+                    @{ await RenderMediaAsync(message, thumbnailMedia, "chatlog__component-thumbnail", thumbnail.Description); }
                 </div>
                 break;
 
@@ -122,13 +122,17 @@
                                 <div class="chatlog__attachment-spoiler-caption">SPOILER</div>
                             }
 
-                            @{ await RenderMediaAsync(item.Media, "chatlog__component-gallery-media", item.Description); }
+                            @{ await RenderMediaAsync(message, item.Media, "chatlog__component-gallery-media", item.Description); }
                         </div>
                     }
                 </div>
                 break;
 
             case FileComponent { File: { } file } fileComponent:
+                var fileAttachment = message.TryGetComponentMediaAttachment(file);
+                var fileName = fileComponent.Name ?? fileAttachment?.FileName ?? System.IO.Path.GetFileName(new Uri(file.Url).AbsolutePath);
+                var fileSize = fileComponent.Size ?? fileAttachment?.FileSize;
+
                 <div class="chatlog__attachment @(fileComponent.IsSpoiler ? "chatlog__attachment--hidden" : null)" onclick="@(fileComponent.IsSpoiler ? "showSpoiler(event, this)" : null)">
                     @if (fileComponent.IsSpoiler)
                     {
@@ -140,14 +144,14 @@
                             <use href="#attachment-icon"/>
                         </svg>
                         <div class="chatlog__attachment-generic-name">
-                            <a href="@await ResolveAssetUrlAsync(file.ProxyUrl ?? file.Url)">
-                                @(fileComponent.Name ?? System.IO.Path.GetFileName(new Uri(file.Url).AbsolutePath))
+                            <a href="@await ResolveAssetUrlAsync(message.ResolveComponentMediaUrl(file))">
+                                @fileName
                             </a>
                         </div>
-                        @if (fileComponent.Size is not null)
+                        @if (fileSize is not null)
                         {
                             <div class="chatlog__attachment-generic-size">
-                                @fileComponent.Size
+                                @fileSize
                             </div>
                         }
                     </div>
@@ -162,13 +166,13 @@
                 <div class="chatlog__component-action-row">
                     @foreach (var child in actionRow.Components)
                     {
-                        await RenderComponentAsync(child);
+                        await RenderComponentAsync(message, child);
                     }
                 </div>
                 break;
 
             case ButtonComponent button:
-                <a class="chatlog__component-button chatlog__component-button--@button.Style.ToString().ToLowerInvariant() @(button.IsDisabled ? "chatlog__component-button--disabled" : null)" href="@button.Url">
+                <a class="chatlog__component-button chatlog__component-button--@button.Style.ToString().ToLowerInvariant() @(button.IsDisabled ? "chatlog__component-button--disabled" : null)" href="@(button.IsDisabled ? null : button.Url)">
                     @if (button.Emoji is not null)
                     {
                         <img class="chatlog__emoji chatlog__emoji--small" alt="@button.Emoji.Name" title="@button.Emoji.Code" src="@await ResolveAssetUrlAsync(button.Emoji.ImageUrl)" loading="lazy">
@@ -1046,7 +1050,7 @@
                         <div class="chatlog__components">
                             @foreach (var component in message.Components)
                             {
-                                await RenderComponentAsync(component);
+                                await RenderComponentAsync(message, component);
                             }
                         </div>
                     }

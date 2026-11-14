@@ -27,34 +27,19 @@ internal partial class CsvMessageWriter(Stream stream, ExportContext context)
     ) => await _writer.WriteLineAsync("AuthorID,Author,Date,Content,Attachments,Reactions");
 
     private async ValueTask WriteAttachmentsAsync(
-        Message message,
+        IReadOnlyList<Attachment> attachments,
         CancellationToken cancellationToken = default
     )
     {
         var buffer = new StringBuilder();
 
-        foreach (var attachment in message.UnreferencedAttachments)
+        foreach (var attachment in attachments)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             buffer
                 .AppendIfNotEmpty(',')
                 .Append(await Context.ResolveAssetUrlAsync(attachment.Url, cancellationToken));
-        }
-
-        // Media shown inside components (e.g. media galleries) is listed as attachments too
-        foreach (var media in message.GetComponentMedia())
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            buffer
-                .AppendIfNotEmpty(',')
-                .Append(
-                    await Context.ResolveAssetUrlAsync(
-                        media.ProxyUrl ?? media.Url,
-                        cancellationToken
-                    )
-                );
         }
 
         await _writer.WriteAsync(CsvEncode(buffer.ToString()));
@@ -109,30 +94,15 @@ internal partial class CsvMessageWriter(Stream stream, ExportContext context)
         }
         else
         {
-            // Text inside components is appended to the content, one line per text display
-            var contentParts = new List<string>();
-
-            if (!string.IsNullOrWhiteSpace(message.Content))
-                contentParts.Add(message.Content);
-
-            contentParts.AddRange(message.GetComponentTexts());
-
-            var content = new StringBuilder();
-
-            foreach (var part in contentParts)
-            {
-                content
-                    .AppendIfNotEmpty('\n')
-                    .Append(await FormatMarkdownAsync(part, cancellationToken));
-            }
-
-            await _writer.WriteAsync(CsvEncode(content.ToString()));
+            await _writer.WriteAsync(
+                CsvEncode(await FormatMarkdownAsync(message.Content, cancellationToken))
+            );
         }
 
         await _writer.WriteAsync(',');
 
         // Attachments
-        await WriteAttachmentsAsync(message, cancellationToken);
+        await WriteAttachmentsAsync(message.Attachments, cancellationToken);
         await _writer.WriteAsync(',');
 
         // Reactions

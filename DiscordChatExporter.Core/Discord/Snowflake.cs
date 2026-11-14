@@ -19,16 +19,8 @@ public partial record struct Snowflake
 {
     public static Snowflake Zero { get; } = new(0);
 
-    public static Snowflake FromDate(DateTimeOffset instant)
-    {
-        long milliseconds = instant.ToUnixTimeMilliseconds() - 1420070400000L;
-        if (milliseconds < 0)
-        {
-            milliseconds = 0;
-        }
-
-        return new Snowflake((ulong)milliseconds << 22);
-    }
+    public static Snowflake FromDate(DateTimeOffset instant) =>
+        new(Math.Max(0L, instant.ToUnixTimeMilliseconds() - 1420070400000L) << 22);
 
     public static Snowflake? TryParse(string? value, IFormatProvider? formatProvider = null)
     {

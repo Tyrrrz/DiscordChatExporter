@@ -83,6 +83,27 @@ You can change the filename by using `-o name.ext`. e.g., for the `HTML` format:
 ./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 -o myserver.html
 ```
 
+#### Updating an existing HTML export
+
+Select one channel and specify its existing HTML export as the output file:
+
+```console
+./DiscordChatExporter.Cli export -c 53555 -o "channel [53555].html" --append
+```
+
+Provide the token via the `DISCORD_TOKEN` environment variable or the usual `-t` option.
+`--append` fetches only messages after the last exported message, so older edits and deletions are
+not reflected. When the file changes, a backup is created next to the original as
+`<filename>.dce-backup-<id>`; it contains private chat data.
+
+Updates require an unpartitioned HTML export and cannot be combined with date limits, filters,
+reverse ordering, or multiple channels. Appending additionally requires a chronological, non-empty
+export and does not support threads. Older exports must retain the channel ID in square brackets in
+their filename; newer exports store the channel ID in the HTML. Previously filtered or incomplete
+exports cannot be automatically detected, so verify their contents before appending. Use the same
+formatting and media settings as the original export. An update is refused if the channel has no
+accessible last message, to avoid replacing an archive when its history cannot be verified.
+
 #### Changing the output directory
 
 You can change the export directory by using `-o` and providing a path that ends with a slash or does not have a file

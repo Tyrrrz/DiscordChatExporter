@@ -110,6 +110,22 @@
                         </ComboBox.ItemTemplate>
                     </ComboBox>
 
+                    <DockPanel
+                        Margin="16,8"
+                        IsEnabled="{Binding IsSingleChannel}"
+                        LastChildFill="False"
+                        ToolTip.Tip="{Binding LocalizationManager.AppendToHtmlTooltip}"
+                    >
+                        <TextBlock
+                            DockPanel.Dock="Left"
+                            Text="{Binding LocalizationManager.AppendToHtmlLabel}"
+                        />
+                        <ToggleSwitch
+                            DockPanel.Dock="Right"
+                            IsChecked="{Binding ShouldAppendToHtml}"
+                        />
+                    </DockPanel>
+
                     <!--  Advanced section  -->
                     <StackPanel
                         Margin="16,8"

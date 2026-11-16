@@ -3,6 +3,7 @@
 .idea/
 *.suo
 *.user
+Settings.dat
 
 # Build results
 bin/
@@ -10,3 +11,7 @@ obj/
 
 # Test results
 TestResults/
+
+*.[hH][tT][mM][lL].dce-backup-*
+.dce-update-*.tmp
+.dce-fragment-*.tmp

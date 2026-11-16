@@ -39,6 +39,17 @@ public partial class ExportSetupViewModel(
     public partial ExportFormat SelectedFormat { get; set; }
 
     [ObservableProperty]
+    public partial bool ShouldAppendToHtml { get; set; }
+
+    partial void OnShouldAppendToHtmlChanged(bool value)
+    {
+        if (value && SelectedFormat is not (ExportFormat.HtmlDark or ExportFormat.HtmlLight))
+        {
+            SelectedFormat = ExportFormat.HtmlDark;
+        }
+    }
+
+    [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsAfterDateSet))]
     [NotifyPropertyChangedFor(nameof(After))]
     public partial DateTimeOffset? AfterDate { get; set; }
@@ -134,6 +145,17 @@ public partial class ExportSetupViewModel(
     {
         if (IsSingleChannel)
         {
+            if (ShouldAppendToHtml)
+            {
+                var existingPath = await dialogManager.PromptOpenFilePathAsync([
+                    new FilePickerFileType("HTML file") { Patterns = ["*.html"] },
+                ]);
+                if (!string.IsNullOrWhiteSpace(existingPath))
+                    OutputPath = existingPath;
+
+                return;
+            }
+
             var defaultFileName = ExportRequest.GetDefaultOutputFileName(
                 Guild!,
                 Channels!.Single(),

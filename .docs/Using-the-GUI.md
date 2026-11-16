@@ -55,6 +55,22 @@ In this screen you can customize the following:
 
 - **Export format** - HTML (Dark), HTML (Light), TXT, CSV and JSON
 
+- **Append to existing HTML export** - Select one channel and an existing HTML export. Only
+  messages newer than the last exported message are fetched; edits and deletions of older messages
+  are not reflected.
+
+  Updates require an unpartitioned HTML export, without date limits, filters, or reverse ordering.
+  Appending also requires a chronological, non-empty export and does not support threads.
+  An update is refused if the channel has no accessible last message, to avoid replacing an
+  archive when its history cannot be verified.
+  Older exports must retain the channel ID in square brackets in their filename. New exports store
+  the channel ID in the HTML itself.
+
+  An update that changes the file creates a backup next to the original, named
+  `<filename>.dce-backup-<id>`. Backups contain the original private chat data.
+  Previously filtered or incomplete exports cannot be automatically detected, so verify their
+  contents before using append. Choose the same formatting and media settings as the original.
+
 - **Date range (after/before)** (Optional) - If set, only messages sent in the provided date range will be exported. Only one value (either after or before) is required if you want to use this option.
 
   > **Note**:

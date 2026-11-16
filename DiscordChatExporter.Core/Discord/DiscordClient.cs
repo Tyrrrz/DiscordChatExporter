@@ -17,13 +17,30 @@ using PowerKit.Json.Extensions;
 
 namespace DiscordChatExporter.Core.Discord;
 
-public class DiscordClient(
-    string token,
-    RateLimitPreference rateLimitPreference = RateLimitPreference.RespectAll
-)
+public class DiscordClient
 {
+    private readonly string _token;
+    private readonly RateLimitPreference _rateLimitPreference;
+    private readonly HttpClient _httpClient;
     private readonly Uri _baseUri = new("https://discord.com/api/v10/", UriKind.Absolute);
     private TokenKind? _resolvedTokenKind;
+
+    public DiscordClient(
+        string token,
+        RateLimitPreference rateLimitPreference = RateLimitPreference.RespectAll
+    )
+        : this(token, rateLimitPreference, Http.Client) { }
+
+    internal DiscordClient(
+        string token,
+        RateLimitPreference rateLimitPreference,
+        HttpClient httpClient
+    )
+    {
+        _token = token;
+        _rateLimitPreference = rateLimitPreference;
+        _httpClient = httpClient;
+    }
 
     private async ValueTask<HttpResponseMessage> GetResponseAsync(
         string url,
@@ -39,10 +56,10 @@ public class DiscordClient(
                 // https://github.com/Tyrrrz/DiscordChatExporter/issues/828
                 request.Headers.TryAddWithoutValidation(
                     "Authorization",
-                    tokenKind == TokenKind.Bot ? $"Bot {token}" : token
+                    tokenKind == TokenKind.Bot ? $"Bot {_token}" : _token
                 );
 
-                var response = await Http.Client.SendAsync(
+                var response = await _httpClient.SendAsync(
                     request,
                     HttpCompletionOption.ResponseHeadersRead,
                     innerCancellationToken
@@ -53,7 +70,7 @@ public class DiscordClient(
                 // The user may choose to ignore the advisory rate limits and only retry on hard rate limits,
                 // if they want to prioritize speed over compliance (and safety of their account/bot).
                 // https://github.com/Tyrrrz/DiscordChatExporter/issues/1021
-                if (rateLimitPreference.IsRespectedFor(tokenKind))
+                if (_rateLimitPreference.IsRespectedFor(tokenKind))
                 {
                     var remainingRequestCount = response
                         .Headers.TryGetValue("X-RateLimit-Remaining")
@@ -666,6 +683,7 @@ public class DiscordClient(
         Snowflake? before,
         IProgress<Percentage>? progress,
         bool isReverse,
+        bool requireComplete,
         [EnumeratorCancellation] CancellationToken cancellationToken
     )
     {
@@ -696,6 +714,10 @@ public class DiscordClient(
             || (isReverse && omegaMessage.Timestamp > before?.ToDate())
         )
         {
+            if (requireComplete)
+                throw new DiscordChatExporterException(
+                    "The channel history could not be verified; the existing export was not replaced."
+                );
             yield break;
         }
 
@@ -723,7 +745,13 @@ public class DiscordClient(
 
             // Break if there are no messages (can happen if messages are deleted during execution)
             if (!messages.Any())
+            {
+                if (requireComplete)
+                    throw new DiscordChatExporterException(
+                        "Message history changed during the update; the existing export was not replaced."
+                    );
                 yield break;
+            }
 
             // If all messages are empty, make sure that it's not because the bot account doesn't
             // have the MESSAGE_CONTENT intent enabled.
@@ -736,6 +764,10 @@ public class DiscordClient(
                 // Ensure that we're still in range by checking against the Omega
                 if (!isReverse ? message.Id > omegaMessage.Id : message.Id < omegaMessage.Id)
                 {
+                    if (requireComplete)
+                        throw new DiscordChatExporterException(
+                            "Message history changed during the update; the existing export was not replaced."
+                        );
                     yield break;
                 }
 
@@ -777,6 +809,9 @@ public class DiscordClient(
                         : null;
 
                 yield return actualMessage ?? message;
+
+                if (requireComplete && message.Id == omegaMessage.Id)
+                    yield break;
             }
 
             // The new boundary is always determined by the last message in the batch,
@@ -800,6 +835,30 @@ public class DiscordClient(
                 before,
                 progress,
                 false,
+                false,
+                cancellationToken
+            )
+        )
+        {
+            yield return message;
+        }
+    }
+
+    internal async IAsyncEnumerable<Message> GetMessagesForUpdateAsync(
+        Snowflake channelId,
+        Snowflake? after,
+        IProgress<Percentage>? progress,
+        [EnumeratorCancellation] CancellationToken cancellationToken
+    )
+    {
+        await foreach (
+            var message in GetMessagesAsync(
+                channelId,
+                after,
+                null,
+                progress,
+                false,
+                true,
                 cancellationToken
             )
         )
@@ -823,6 +882,7 @@ public class DiscordClient(
                 before,
                 progress,
                 true,
+                false,
                 cancellationToken
             )
         )

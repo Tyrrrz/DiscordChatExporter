@@ -6,7 +6,11 @@ using DiscordChatExporter.Core.Discord.Data;
 
 namespace DiscordChatExporter.Core.Exporting;
 
-internal partial class MessageExporter(ExportContext context) : IAsyncDisposable
+internal partial class MessageExporter(
+    ExportContext context,
+    string? outputFilePath = null,
+    bool htmlFragment = false
+) : IAsyncDisposable
 {
     private int _partitionIndex;
     private MessageWriter? _writer;
@@ -35,10 +39,14 @@ internal partial class MessageExporter(ExportContext context) : IAsyncDisposable
             return _writer;
 
         Directory.CreateDirectory(context.Request.OutputDirPath);
-        var filePath = GetPartitionFilePath(context.Request.OutputFilePath, _partitionIndex);
+        var filePath = GetPartitionFilePath(
+            outputFilePath ?? context.Request.OutputFilePath,
+            _partitionIndex
+        );
 
         var writer = CreateMessageWriter(filePath, context.Request.Format, context);
-        await writer.WritePreambleAsync(cancellationToken);
+        if (!htmlFragment)
+            await writer.WritePreambleAsync(cancellationToken);
 
         return _writer = writer;
     }
@@ -49,7 +57,10 @@ internal partial class MessageExporter(ExportContext context) : IAsyncDisposable
         {
             try
             {
-                await _writer.WritePostambleAsync(cancellationToken);
+                if (htmlFragment && _writer is HtmlMessageWriter htmlWriter)
+                    await htmlWriter.FinishMessageGroupsAsync(cancellationToken);
+                else
+                    await _writer.WritePostambleAsync(cancellationToken);
             }
             // Writer must be disposed, even if it fails to write the postamble
             finally

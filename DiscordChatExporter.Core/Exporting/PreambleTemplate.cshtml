@@ -1,5 +1,7 @@
 @using System
 @using System.Threading.Tasks
+@using DiscordChatExporter.Core.Exporting.Filtering
+@using DiscordChatExporter.Core.Exporting.Partitioning
 @using RazorBlade
 
 @inherits RazorBlade.HtmlTemplate
@@ -1315,5 +1317,5 @@
 
 @* Preamble cuts off at this point *@
 <!--wmm:ignore-->
-<div class="chatlog">
+<div class="chatlog" data-channel-id="@Context.Request.Channel.Id" data-dce-complete="@(Context.Request.After is null && Context.Request.Before is null && Context.Request.PartitionLimit == PartitionLimit.Null && Context.Request.MessageFilter == MessageFilter.Null && !Context.Request.IsReverseMessageOrder ? "true" : "false")">
 <!--/wmm:ignore-->

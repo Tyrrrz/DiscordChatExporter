@@ -13,7 +13,11 @@ using PowerKit.Extensions;
 
 namespace DiscordChatExporter.Core.Exporting;
 
-internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
+internal partial class ExportAssetDownloader(
+    string workingDirPath,
+    bool reuse,
+    bool preserveLegacyAssets = false
+)
 {
     private static readonly AsyncKeyedLocker<string> Locker = new();
 
@@ -37,7 +41,7 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
         if (reuse && File.Exists(filePath))
             return _previousPathsByUrl[url] = filePath;
 
-        // Check for a file cached by the legacy naming scheme (5-char hash) and rename it
+        // Check for a file cached by the legacy naming scheme (5-char hash) and copy or rename it
         // to the new naming scheme to preserve backwards compatibility with existing exports.
         // This will catch both the 5-char lowercase hash and the 5-char uppercase hash variants.
         if (reuse)
@@ -49,10 +53,14 @@ internal partial class ExportAssetDownloader(string workingDirPath, bool reuse)
                 if (File.Exists(legacyFilePath))
                 {
                     // Overwrite in case the destination file was created concurrently between our
-                    // earlier existence check and this move operation
+                    // earlier existence check and this operation
                     try
                     {
-                        File.Move(legacyFilePath, filePath, true);
+                        if (preserveLegacyAssets)
+                            File.Copy(legacyFilePath, filePath, true);
+                        else
+                            File.Move(legacyFilePath, filePath, true);
+
                         return _previousPathsByUrl[url] = filePath;
                     }
                     catch (IOException)

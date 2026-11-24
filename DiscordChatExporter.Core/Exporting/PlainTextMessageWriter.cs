@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordChatExporter.Core.Discord.Data;
+using DiscordChatExporter.Core.Discord.Data.Components;
 using DiscordChatExporter.Core.Discord.Data.Embeds;
 
 namespace DiscordChatExporter.Core.Exporting;
@@ -52,6 +53,85 @@ internal class PlainTextMessageWriter(Stream stream, ExportContext context)
                 await Context.ResolveAssetUrlAsync(attachment.Url, cancellationToken)
             );
         }
+
+        await _writer.WriteLineAsync();
+    }
+
+    private async ValueTask WriteComponentsAsync(
+        Message message,
+        CancellationToken cancellationToken = default
+    )
+    {
+        if (!message.Components.Any())
+            return;
+
+        var lines = new List<string>();
+
+        foreach (var component in message.Components.SelectMany(c => c.Flatten()))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            switch (component)
+            {
+                case TextDisplayComponent textDisplay
+                    when !string.IsNullOrWhiteSpace(textDisplay.Content):
+                    lines.Add(await FormatMarkdownAsync(textDisplay.Content, cancellationToken));
+                    break;
+
+                case ThumbnailComponent { Media: { } media }:
+                    lines.Add(
+                        await Context.ResolveAssetUrlAsync(
+                            message.ResolveComponentMediaUrl(media),
+                            cancellationToken
+                        )
+                    );
+                    break;
+
+                case MediaGalleryComponent gallery:
+                    foreach (var item in gallery.Items)
+                    {
+                        lines.Add(
+                            await Context.ResolveAssetUrlAsync(
+                                message.ResolveComponentMediaUrl(item.Media),
+                                cancellationToken
+                            )
+                        );
+                    }
+                    break;
+
+                case FileComponent { File: { } file }:
+                    lines.Add(
+                        await Context.ResolveAssetUrlAsync(
+                            message.ResolveComponentMediaUrl(file),
+                            cancellationToken
+                        )
+                    );
+                    break;
+
+                case ButtonComponent button:
+                    var label = !string.IsNullOrWhiteSpace(button.Label)
+                        ? button.Label
+                        : button.Emoji?.Name;
+
+                    var buttonText = string.Join(
+                        " ",
+                        new[] { label, button.Url }.Where(s => !string.IsNullOrWhiteSpace(s))
+                    );
+
+                    if (!string.IsNullOrWhiteSpace(buttonText))
+                        lines.Add(buttonText);
+
+                    break;
+            }
+        }
+
+        if (!lines.Any())
+            return;
+
+        await _writer.WriteLineAsync("{Components}");
+
+        foreach (var line in lines)
+            await _writer.WriteLineAsync(line);
 
         await _writer.WriteLineAsync();
     }
@@ -279,8 +359,9 @@ internal class PlainTextMessageWriter(Stream stream, ExportContext context)
         }
 
         // Attachments, embeds, reactions, etc.
-        await WriteAttachmentsAsync(message.Attachments, cancellationToken);
+        await WriteAttachmentsAsync(message.UnreferencedAttachments, cancellationToken);
         await WriteEmbedsAsync(message.Embeds, cancellationToken);
+        await WriteComponentsAsync(message, cancellationToken);
         await WriteStickersAsync(message.Stickers, cancellationToken);
         await WriteReactionsAsync(message.Reactions, cancellationToken);
 

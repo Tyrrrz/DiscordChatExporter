@@ -112,6 +112,9 @@ public partial class LocalizationManager
             [nameof(FormatMarkdownLabel)] = "Форматувати markdown",
             [nameof(FormatMarkdownTooltip)] =
                 "Обробляти markdown, згадки та інші спеціальні токени",
+            [nameof(IncludeReactionDetailsLabel)] = "Включати деталі реакцій",
+            [nameof(IncludeReactionDetailsTooltip)] =
+                "Включати інформацію про користувачів, які відреагували на повідомлення. Якщо вимкнено, експортуватимуться лише емоджі та кількість реакцій, що значно пришвидшує експорт. Наразі застосовується до експорту у форматі JSON.",
             [nameof(DownloadAssetsLabel)] = "Завантажувати ресурси",
             [nameof(DownloadAssetsTooltip)] =
                 "Завантажувати ресурси, на які посилається експорт (аватари, вкладені файли, вбудовані зображення тощо)",

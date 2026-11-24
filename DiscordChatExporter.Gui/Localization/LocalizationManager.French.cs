@@ -114,6 +114,9 @@ public partial class LocalizationManager
         [nameof(FormatMarkdownLabel)] = "Formater le markdown",
         [nameof(FormatMarkdownTooltip)] =
             "Traiter le markdown, les mentions et autres tokens spéciaux",
+        [nameof(IncludeReactionDetailsLabel)] = "Inclure les détails des réactions",
+        [nameof(IncludeReactionDetailsTooltip)] =
+            "Inclure les détails des utilisateurs ayant réagi aux messages. Désactiver cette option peut considérablement accélérer les exports. S'applique actuellement aux exports JSON.",
         [nameof(DownloadAssetsLabel)] = "Télécharger les ressources",
         [nameof(DownloadAssetsTooltip)] =
             "Télécharger les ressources référencées par l'export (avatars, fichiers joints, images intégrées, etc.)",

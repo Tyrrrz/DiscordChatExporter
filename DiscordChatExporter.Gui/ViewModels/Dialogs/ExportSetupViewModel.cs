@@ -69,6 +69,9 @@ public partial class ExportSetupViewModel(
     public partial bool ShouldFormatMarkdown { get; set; }
 
     [ObservableProperty]
+    public partial bool ShouldIncludeReactionDetails { get; set; } = true;
+
+    [ObservableProperty]
     public partial bool ShouldDownloadAssets { get; set; }
 
     [ObservableProperty]
@@ -110,6 +113,7 @@ public partial class ExportSetupViewModel(
         MessageFilterValue = settingsService.LastMessageFilterValue;
         IsReverseMessageOrder = settingsService.LastIsReverseMessageOrder;
         ShouldFormatMarkdown = settingsService.LastShouldFormatMarkdown;
+        ShouldIncludeReactionDetails = settingsService.LastShouldIncludeReactionDetails;
         ShouldDownloadAssets = settingsService.LastShouldDownloadAssets;
         ShouldReuseAssets = settingsService.LastShouldReuseAssets;
         AssetsDirPath = settingsService.LastAssetsDirPath;
@@ -121,6 +125,7 @@ public partial class ExportSetupViewModel(
             || Before is not null
             || !string.IsNullOrWhiteSpace(PartitionLimitValue)
             || !string.IsNullOrWhiteSpace(MessageFilterValue)
+            || !ShouldIncludeReactionDetails
             || ShouldDownloadAssets
             || ShouldReuseAssets
             || !string.IsNullOrWhiteSpace(AssetsDirPath)
@@ -192,6 +197,7 @@ public partial class ExportSetupViewModel(
         settingsService.LastMessageFilterValue = MessageFilterValue;
         settingsService.LastIsReverseMessageOrder = IsReverseMessageOrder;
         settingsService.LastShouldFormatMarkdown = ShouldFormatMarkdown;
+        settingsService.LastShouldIncludeReactionDetails = ShouldIncludeReactionDetails;
         settingsService.LastShouldDownloadAssets = ShouldDownloadAssets;
         settingsService.LastShouldReuseAssets = ShouldReuseAssets;
         settingsService.LastAssetsDirPath = AssetsDirPath;

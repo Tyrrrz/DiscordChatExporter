@@ -66,6 +66,8 @@ In this screen you can customize the following:
 
 - **Format markdown** (Optional) - Disable markdown processing when exporting. You can use this to produce JSON or plain text exports without unwrapping mentions, custom emoji, and certain other special tokens.
 
+- **Include reaction details** (Optional) - Include details of users who reacted to messages. Disabling this option exports reaction emojis and counts only and can significantly speed up exports. Currently applies to JSON exports.
+
 - **Download assets** (Optional) - If this option is set, the export will include additional files such as user avatars, attached files, images, etc. Only files that are referenced by the export are downloaded, which means that, for example, user avatars will not be downloaded when using the plain text (TXT) export format. A folder containing the assets will be created along with the exported chat. They must be kept together.
 
 - **Reuse assets** (Optional) - If this option is set, the export will reuse already downloaded assets to skip redundant requests. This option is only available when **Download assets** is enabled.

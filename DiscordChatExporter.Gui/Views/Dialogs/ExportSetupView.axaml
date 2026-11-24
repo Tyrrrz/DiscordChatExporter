@@ -250,6 +250,22 @@
                             />
                         </DockPanel>
 
+                        <!--  Include reaction details  -->
+                        <DockPanel
+                            LastChildFill="False"
+                            ToolTip.Tip="{Binding LocalizationManager.IncludeReactionDetailsTooltip}"
+                        >
+                            <TextBlock
+                                DockPanel.Dock="Left"
+                                Text="{Binding LocalizationManager.IncludeReactionDetailsLabel}"
+                            />
+                            <ToggleSwitch
+                                AutomationProperties.Name="{Binding LocalizationManager.IncludeReactionDetailsLabel}"
+                                DockPanel.Dock="Right"
+                                IsChecked="{Binding ShouldIncludeReactionDetails}"
+                            />
+                        </DockPanel>
+
                         <!--  Download assets  -->
                         <DockPanel
                             LastChildFill="False"

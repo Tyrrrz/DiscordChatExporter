@@ -223,6 +223,17 @@ Use `--filter` to filter what messages are included in the export.
 
 Documentation on message filter syntax can be found [here](https://github.com/Tyrrrz/DiscordChatExporter/blob/prime/.docs/Message-filters.md).
 
+#### Including reaction details
+
+By default, DCE fetches the full list of users who reacted to each message. You can disable this behavior by passing `--include-reaction-details false` to export only reaction emojis and counts (leaving `"users": []` empty). This can significantly speed up exports on channels with many reactions, though third-party tools that rely on reaction user lists may be affected.
+
+```console
+./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 -f Json --include-reaction-details false
+```
+
+> **Note**:
+> Currently, this option only affects exports in the `Json` format.
+
 ### Export channels from a specific server
 
 To export all channels in a specific server, use the `exportguild` command and provide the server ID through the `-g|--guild` option:

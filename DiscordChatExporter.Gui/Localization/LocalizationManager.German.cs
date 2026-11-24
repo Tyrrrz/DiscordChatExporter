@@ -118,6 +118,9 @@ public partial class LocalizationManager
         [nameof(FormatMarkdownLabel)] = "Markdown formatieren",
         [nameof(FormatMarkdownTooltip)] =
             "Markdown, Erwähnungen und andere spezielle Token verarbeiten",
+        [nameof(IncludeReactionDetailsLabel)] = "Reaktionsdetails einschließen",
+        [nameof(IncludeReactionDetailsTooltip)] =
+            "Details der Benutzer einschließen, die auf Nachrichten reagiert haben. Das Deaktivieren dieser Option kann Exporte erheblich beschleunigen. Gilt derzeit für JSON-Exporte.",
         [nameof(DownloadAssetsLabel)] = "Assets herunterladen",
         [nameof(DownloadAssetsTooltip)] =
             "Vom Export referenzierte Assets herunterladen (Benutzeravatare, angehängte Dateien, eingebettete Bilder usw.)",

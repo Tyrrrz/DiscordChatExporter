@@ -261,10 +261,15 @@ public partial class DashboardViewModel : ViewModelBase
 
                     try
                     {
+                        var outputPath =
+                            channel.IsThread && !string.IsNullOrWhiteSpace(dialog.ThreadsOutputPath)
+                                ? dialog.ThreadsOutputPath
+                                : dialog.OutputPath!;
+
                         var request = new ExportRequest(
                             dialog.Guild!,
                             channel,
-                            dialog.OutputPath!,
+                            outputPath,
                             dialog.AssetsDirPath,
                             dialog.SelectedFormat,
                             dialog.After?.Pipe(Snowflake.FromDate),

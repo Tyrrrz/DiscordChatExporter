@@ -157,8 +157,11 @@ public partial class ExportRequest
         Channel channel,
         Snowflake? after,
         Snowflake? before
-    ) =>
-        Regex.Replace(
+    )
+    {
+        var category = channel.IsThread ? channel.Parent?.Parent : channel.Parent;
+
+        return Regex.Replace(
             path,
             "%.",
             m =>
@@ -168,15 +171,23 @@ public partial class ExportRequest
                         "%g" => guild.Id.ToString(),
                         "%G" => guild.Name,
 
+                        // Always resolves to direct parent
                         "%t" => channel.Parent?.Id.ToString() ?? "",
                         "%T" => channel.Parent?.Name ?? "",
+
+                        // Always resolves to category
+                        "%m" => category?.Id.ToString() ?? "",
+                        "%M" => category?.Name ?? "",
 
                         "%c" => channel.Id.ToString(),
                         "%C" => channel.Name,
 
                         "%p" => channel.Position?.ToString(CultureInfo.InvariantCulture) ?? "0",
+                        // Always resolves to direct parent
                         "%P" => channel.Parent?.Position?.ToString(CultureInfo.InvariantCulture)
                             ?? "0",
+                        // Always resolves to category
+                        "%N" => category?.Position?.ToString(CultureInfo.InvariantCulture) ?? "0",
 
                         "%a" => after?.ToDate().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
                             ?? "",
@@ -194,6 +205,7 @@ public partial class ExportRequest
                     }
                 )
         );
+    }
 
     private static string GetOutputBaseFilePath(
         Guild guild,

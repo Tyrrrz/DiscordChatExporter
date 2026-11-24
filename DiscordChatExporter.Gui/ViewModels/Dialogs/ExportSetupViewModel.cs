@@ -36,6 +36,9 @@ public partial class ExportSetupViewModel(
     public partial string? OutputPath { get; set; }
 
     [ObservableProperty]
+    public partial string? ThreadsOutputPath { get; set; }
+
+    [ObservableProperty]
     public partial ExportFormat SelectedFormat { get; set; }
 
     [ObservableProperty]
@@ -162,6 +165,42 @@ public partial class ExportSetupViewModel(
             var path = await dialogManager.PromptDirectoryPathAsync();
             if (!string.IsNullOrWhiteSpace(path))
                 OutputPath = path;
+        }
+    }
+
+    [RelayCommand]
+    private async Task ShowThreadsOutputPathPromptAsync()
+    {
+        if (IsSingleChannel)
+        {
+            var defaultFileName = ExportRequest.GetDefaultOutputFileName(
+                Guild!,
+                Channels!.Single(),
+                SelectedFormat,
+                After?.Pipe(Snowflake.FromDate),
+                Before?.Pipe(Snowflake.FromDate)
+            );
+
+            var extension = SelectedFormat.GetFileExtension();
+
+            var path = await dialogManager.PromptSaveFilePathAsync(
+                [
+                    new FilePickerFileType($"{extension.ToUpperInvariant()} file")
+                    {
+                        Patterns = [$"*.{extension}"],
+                    },
+                ],
+                defaultFileName
+            );
+
+            if (!string.IsNullOrWhiteSpace(path))
+                ThreadsOutputPath = path;
+        }
+        else
+        {
+            var path = await dialogManager.PromptDirectoryPathAsync();
+            if (!string.IsNullOrWhiteSpace(path))
+                ThreadsOutputPath = path;
         }
     }
 

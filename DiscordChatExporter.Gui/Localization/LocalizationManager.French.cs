@@ -94,6 +94,9 @@ public partial class LocalizationManager
             """,
         [nameof(FormatLabel)] = "Format",
         [nameof(FormatTooltip)] = "Format d'exportation",
+        [nameof(AppendToHtmlLabel)] = "Ajouter à un export HTML existant",
+        [nameof(AppendToHtmlTooltip)] =
+            "Ajouter les nouveaux messages à un export HTML existant. Les modifications et suppressions antérieures ne sont pas reflétées. Une sauvegarde est créée.",
         [nameof(AfterDateLabel)] = "Après (date)",
         [nameof(AfterDateTooltip)] = "Inclure uniquement les messages envoyés après cette date",
         [nameof(BeforeDateLabel)] = "Avant (date)",

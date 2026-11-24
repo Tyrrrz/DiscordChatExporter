@@ -116,6 +116,8 @@ public partial class LocalizationManager
     public string OutputPathTooltip => Get();
     public string FormatLabel => Get();
     public string FormatTooltip => Get();
+    public string AppendToHtmlLabel => Get();
+    public string AppendToHtmlTooltip => Get();
     public string AfterDateLabel => Get();
     public string AfterDateTooltip => Get();
     public string BeforeDateLabel => Get();

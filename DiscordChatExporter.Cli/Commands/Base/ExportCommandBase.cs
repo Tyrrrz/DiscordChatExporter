@@ -44,6 +44,13 @@ public abstract class ExportCommandBase : DiscordCommandBase
     public ExportFormat ExportFormat { get; set; } = ExportFormat.HtmlDark;
 
     [CommandOption(
+        "append",
+        Description = "Append new messages to an existing HTML export. "
+            + "Requires one channel and an explicit HTML output file."
+    )]
+    public bool ShouldAppendToHtml { get; set; }
+
+    [CommandOption(
         "after",
         Description = "Only include messages sent after this date or message ID."
     )]
@@ -180,6 +187,18 @@ public abstract class ExportCommandBase : DiscordCommandBase
                 // Thread inclusion can add more channels to the export
                 || ThreadInclusionMode != ThreadInclusionMode.None;
 
+            if (
+                ShouldAppendToHtml
+                && (
+                    mayExportMultipleChannels || channels.Count != 1 || Directory.Exists(OutputPath)
+                )
+            )
+            {
+                throw new CommandException(
+                    "Option --append requires exactly one channel and an explicit HTML output file."
+                );
+            }
+
             var isValidOutputPath =
                 // Anything is valid when exporting a single channel
                 !mayExportMultipleChannels
@@ -292,7 +311,8 @@ public abstract class ExportCommandBase : DiscordCommandBase
                                             ShouldDownloadAssets,
                                             ShouldReuseAssets,
                                             Locale,
-                                            IsUtcNormalizationEnabled
+                                            IsUtcNormalizationEnabled,
+                                            ShouldAppendToHtml
                                         );
 
                                         await Exporter.ExportChannelAsync(

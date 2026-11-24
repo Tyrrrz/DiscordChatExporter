@@ -119,13 +119,20 @@ internal class HtmlMessageWriter(Stream stream, ExportContext context, string th
         }
     }
 
+    internal async ValueTask FinishMessageGroupsAsync(CancellationToken cancellationToken = default)
+    {
+        if (_messageGroup.Any())
+        {
+            await WriteMessageGroupAsync(_messageGroup, cancellationToken);
+            _messageGroup.Clear();
+        }
+    }
+
     public override async ValueTask WritePostambleAsync(
         CancellationToken cancellationToken = default
     )
     {
-        // Flush current message group
-        if (_messageGroup.Any())
-            await WriteMessageGroupAsync(_messageGroup, cancellationToken);
+        await FinishMessageGroupsAsync(cancellationToken);
 
         await _writer.WriteLineAsync(
             Minify(

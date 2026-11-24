@@ -92,6 +92,9 @@ public partial class LocalizationManager
                 """,
             [nameof(FormatLabel)] = "Формат",
             [nameof(FormatTooltip)] = "Формат експорту",
+            [nameof(AppendToHtmlLabel)] = "Доповнити існуючий HTML-експорт",
+            [nameof(AppendToHtmlTooltip)] =
+                "Додати нові повідомлення до існуючого HTML-експорту. Попередні редагування та видалення не відображаються. Створюється резервна копія.",
             [nameof(AfterDateLabel)] = "Після (дата)",
             [nameof(AfterDateTooltip)] = "Включати лише повідомлення, надіслані після цієї дати",
             [nameof(BeforeDateLabel)] = "До (дата)",

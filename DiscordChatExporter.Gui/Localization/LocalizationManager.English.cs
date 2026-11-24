@@ -112,6 +112,9 @@ public partial class LocalizationManager
             [nameof(FormatMarkdownLabel)] = "Format markdown",
             [nameof(FormatMarkdownTooltip)] =
                 "Process markdown, mentions, and other special tokens",
+            [nameof(IncludeReactionDetailsLabel)] = "Include reaction details",
+            [nameof(IncludeReactionDetailsTooltip)] =
+                "Include details of users who reacted to messages. Disabling this option can significantly speed up exports. Currently applies to JSON exports.",
             [nameof(DownloadAssetsLabel)] = "Download assets",
             [nameof(DownloadAssetsTooltip)] =
                 "Download assets referenced by the export (user avatars, attached files, embedded images, etc.)",

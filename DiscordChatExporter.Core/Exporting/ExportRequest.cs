@@ -37,6 +37,8 @@ public partial class ExportRequest
 
     public bool ShouldFormatMarkdown { get; }
 
+    public bool ShouldIncludeReactionDetails { get; }
+
     public bool ShouldDownloadAssets { get; }
 
     public bool ShouldReuseAssets { get; }
@@ -59,6 +61,7 @@ public partial class ExportRequest
         MessageFilter messageFilter,
         bool isReverseMessageOrder,
         bool shouldFormatMarkdown,
+        bool shouldIncludeReactionDetails,
         bool shouldDownloadAssets,
         bool shouldReuseAssets,
         string? locale,
@@ -74,6 +77,7 @@ public partial class ExportRequest
         MessageFilter = messageFilter;
         IsReverseMessageOrder = isReverseMessageOrder;
         ShouldFormatMarkdown = shouldFormatMarkdown;
+        ShouldIncludeReactionDetails = shouldIncludeReactionDetails;
         ShouldDownloadAssets = shouldDownloadAssets;
         ShouldReuseAssets = shouldReuseAssets;
         Locale = locale;

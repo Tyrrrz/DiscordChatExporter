@@ -96,6 +96,13 @@ public abstract class ExportCommandBase : DiscordCommandBase
     public bool ShouldFormatMarkdown { get; set; } = true;
 
     [CommandOption(
+        "include-reaction-details",
+        Description = "Include detailed user lists for message reactions. "
+            + "Disabling this option can significantly speed up exports."
+    )]
+    public bool ShouldIncludeReactionDetails { get; set; } = true;
+
+    [CommandOption(
         "media",
         Description = "Download assets referenced by the export (user avatars, attached files, embedded images, etc.)."
     )]
@@ -289,6 +296,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
                                             MessageFilter,
                                             IsReverseMessageOrder,
                                             ShouldFormatMarkdown,
+                                            ShouldIncludeReactionDetails,
                                             ShouldDownloadAssets,
                                             ShouldReuseAssets,
                                             Locale,

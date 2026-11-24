@@ -132,6 +132,8 @@ public partial class LocalizationManager
     public string ReverseMessageOrderTooltip => Get();
     public string FormatMarkdownLabel => Get();
     public string FormatMarkdownTooltip => Get();
+    public string IncludeReactionDetailsLabel => Get();
+    public string IncludeReactionDetailsTooltip => Get();
     public string DownloadAssetsLabel => Get();
     public string DownloadAssetsTooltip => Get();
     public string ReuseAssetsLabel => Get();

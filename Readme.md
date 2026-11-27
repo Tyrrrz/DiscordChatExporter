@@ -48,7 +48,7 @@ It works with direct messages, group messages, and server channels, and supports
   - 📦 [WinGet](https://winstall.app/apps/Tyrrrz.DiscordChatExporter.CLI): `winget install Tyrrrz.DiscordChatExporter.CLI` (community-maintained)
   - 📦 [AUR](https://aur.archlinux.org/packages/discord-chat-exporter-cli): `yay -S discord-chat-exporter-cli` (community-maintained)
   - 📦 [Nix](https://search.nixos.org/packages?show=discordchatexporter-cli): `nix-shell -p discordchatexporter-cli` (community-maintained)
-
+ - 📦 [Homebrew](https://formulae.brew.sh/formula/discordchatexporter): `brew install discordchatexporter` (community-maintained)
 > [!NOTE]
 > Community-maintained packages are published independently from this repository and may not always be up to date with the latest release.
 
